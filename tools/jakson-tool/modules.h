@@ -22,12 +22,12 @@
 
 #include <jakson/std/opt.h>
 
-bool moduleCheckJsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
-bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
-bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
-bool moduleInspectInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
-bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
-bool moduleListInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
-
+bool moduleCheckJsInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
+bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
+bool moduleViewCabInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
+bool moduleInspectInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
+bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
+bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
+bool moduleListInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager);
 
 #endif

@@ -17,7 +17,7 @@ struct js_to_context
 };
 
 static int convertJs2Model(struct js_to_context *context, FILE *file, bool optimizeForReads, const char *fileName,
-                           size_t fileNum, size_t fileMax)
+        size_t fileNum, size_t fileMax)
 {
 
     CONSOLE_WRITELN(file, "** Process file %zu of %zu **", fileNum, fileMax);
@@ -536,7 +536,7 @@ bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
         memblock_drop(stream);
         fclose(inputFile);
 
-    }
+        }
 
     return true;
 }
@@ -627,8 +627,11 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
     }
 }
 
+#define SCHEMA_STRICT_VAL "--size-optimized"
+
 bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager)
 {
+    bool strict = false;
     JAK_UNUSED(manager);
 
     if (argc < 2) {
@@ -643,15 +646,21 @@ bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *man
         for (i = 0; i < argc; i++) {
             char *opt = argv[i];
             if (strncmp(opt, "--", 2) == 0) {
-                // TODO: fancy flag options
-                JAK_CONSOLE_WRITELN(file, "** ERROR ** unrecognized option '%s'", opt);
-                return false;
+                // flag options
+                // - normal (some files failed) -> skip and continue, return true. If all files fail -> return false
+                // - strict (any file failed) -> break and return false
+                if (strcmp(opt, SCHEMA_STRICT_VAL) == 0) {
+                    strict = true;
+                } else {
+                    JAK_CONSOLE_WRITELN(file, "** ERROR ** unrecognized option '%s'", opt);
+                    return false;
+                }
             }
             // schemafile should be right after flag options
             schemaIdx = i;
             if (schemaIdx + 1 >= argc) {
                 JAK_CONSOLE_WRITELN(file, "** ERROR ** require schema and CARBON parameter: %d remain", argc);
-            return false;
+                return false;
             }
             break;
         }
@@ -663,48 +672,84 @@ bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *man
             return false;
         }
         JAK_CONSOLE_WRITELN(file, "  - Read schema contents into memory%s", "");
-
         FILE *f = fopen(pathSchemaFileIn, "rb");
         fseek(f, 0, SEEK_END);
         long fsize = ftell(f);
         fseek(f, 0, SEEK_SET);
-        static const char *schemaContent = JAK_MALLOC(fsize + 1);
+        char *schemaContent = JAK_MALLOC(fsize + 1);
         size_t nread = fread(schemaContent, fsize, 1, f);
         JAK_UNUSED(nread);
         fclose(f);
         schemaContent[fsize] = 0;
+        // schema is valid json?
+        jak_json schema;
+        jak_json_err error_desc;
+        jak_json_parser parser;
+        jak_json_parser_create(&parser);
 
-        int skippedFiles = 0;
-        int failedFiles = 0;
-        for (i = schemaIdx + 1; i < argc; i++) {
-            char *pathCarbonFileIn = argv[i];
-            if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
-                JAK_CONSOLE_WRITELN(file, "Warning: File %s does not exist. Skipping.", pathCarbonFileIn);
-                skippedFiles++;
+        if(!(jak_json_parse(&schema, &error_desc, &parser, schemaContent))) {
+            JAK_CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
+            if (error_desc.token) {
+                JAK_CONSOLE_WRITELN(file, "** ERROR ** Parsing failed: %s\nBut token %s was found in line %u column %u", error_desc.msg, error_desc.token_type_str, error_desc.token->line, error_desc.token->column);
             } else {
-                FILE *f = fopen(pathCarbonFileIn, "rb");
-                fseek(f, 0, SEEK_END);
-                long fsize = ftell(f);
-                char *carbonContent = JAK_MALLOC(fsize +1);
-                size_t nread = fread(carbonContent, fsize, 1, f);
-                JAK_UNUSED(nread);
-                fclose(f);
-                carbonContent[fsize]=0;
-                // validate schema
-                if(jak_validate_schema(schemaContent, carbonContent) != true) {
-                    // TODO: details on failure
-                    JAK_CONSOLE_WRITELN(file, "Warning: File %s failed the schema validation!", pathCarbonFileIn);
-                    failedFiles++;
-                } else {
-                    JAK_CONSOLE_WRITELN(file, "File %s: passed", pathCarbonFileIn);
-                }
-                free(carbonContent);
+                JAK_CONSOLE_WRITELN(file, "** ERROR ** Parsing failed: %s", error_desc.msg);
             }
-        }
-        free(schemaContent);
-        JAK_CONSOLE_WRITELN(file, "  - Schema validation completed with %d skipped and %d failed CARBON files.", skippedFiles, failedFiles);
 
-        return true;
+            free(schemaContent);
+            return false;
+        } else {
+            free(schemaContent);
+            // process carbon files
+            int skippedFiles = 0;
+            int failedFiles = 0;
+            for (i = schemaIdx + 1; i < argc; i++) {
+                char *pathCarbonFileIn = argv[i];
+                if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
+                    if (strict != true) {
+                        JAK_CONSOLE_WRITELN(file, "Warning: File %s does not exist. Skipping.", pathCarbonFileIn);
+                        skippedFiles++;
+                    } else {
+                        JAK_CONSOLE_WRITELN(file, "Error: File %s does not exist. Aborting.", pathCarbonFileIn);
+                        jak_json_drop(&schema);
+                        return false;
+                    }
+                } else {
+                    FILE *f = fopen(pathCarbonFileIn, "rb");
+                    jak_memblock *carbon;
+                    if(!(jak_archive_load(&carbon, f))) {
+                        JAK_CONSOLE_WRITELN(file, "Error opening CARBON file!%s","");
+                        jak_json_drop(&schema);
+                        return false;
+                    }
+                    fclose(f);
+
+                    // validate carbon files according to schema
+                    if(!(jak_carbon_validate_schema(&schema, carbon))) {
+                        // TODO: details on failure
+                        if (strict != true) {
+                            JAK_CONSOLE_WRITELN(file, "Warning: File %s failed the schema validation!", pathCarbonFileIn);
+                            failedFiles++;
+                        } else {
+                            JAK_CONSOLE_WRITELN(file, "Error: File %s failed the schema validation! Aborting.", pathCarbonFileIn);
+                            jak_json_drop(&schema);
+                            jak_memblock_drop(carbon);
+                            return false;
+                        }
+                    } else {
+                        JAK_CONSOLE_WRITELN(file, "File %s: passed the schema validation!", pathCarbonFileIn);
+                    }
+                    jak_json_drop(&schema);
+                    jak_memblock_drop(carbon);
+                }
+            }
+
+            if (skippedFiles == 0 && failedFiles == 0){
+                JAK_CONSOLE_WRITELN(file, "  - Success: Schema validation completed without warnings.%s","");
+            } else {
+                JAK_CONSOLE_WRITELN(file, "  - Schema validation completed with %d skipped and %d failed CARBON files.", skippedFiles, failedFiles);
+            }
+            return true;
+        }
     }
 }
 
@@ -728,8 +773,18 @@ bool moduleListInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *ma
             CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
             CONSOLE_WRITELN(file, "Constant '%s' is not known.", constant);
             return false;
-        }
+        } else {
+            const char *constant = argv[0];
+            if (strcmp(constant, "compressors") == 0) {
+                for (size_t i = 0; i < JAK_ARRAY_LENGTH(jak_global_pack_strategy_register); i++) {
+                    JAK_CONSOLE_WRITELN(file, "%s", jak_global_pack_strategy_register[i].name);
+                }
+            } else {
+                JAK_CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
+                JAK_CONSOLE_WRITELN(file, "Constant '%s' is not known.", constant);
+                return false;
+            }
 
-        return true;
+            return true;
+        }
     }
-}

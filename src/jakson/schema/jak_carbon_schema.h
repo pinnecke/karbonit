@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Marcus Pinnecke
+/*
+ * Copyright 2019 Marcus Pinnecke, Jasper Orschulko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,11 +21,37 @@
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
-#include "jak_json.h"
+#include <jak_stdinc.h>
+#include <jak_error.h>
 
 JAK_BEGIN_DECL
 
-bool jak_carbon_validate_schema(jak_carbon *schema, jak_memblock *carbon);
+typedef struct jak_carbon_schema_content {
+    const char *key;
+    void *value;
+} jak_carbon_schema_content;
+
+typedef struct jak_carbon_schema {
+    jak_carbon_schema_content *content;
+    unsigned int content_size;
+    jak_error err;
+} jak_carbon_schema;
+
+typedef struct jak_carbon_schema_input_file {
+    const char *file_name;
+    jak_carbon *data;
+    bool passed;
+} jak_carbon_schema_input_file;
+
+typedef struct jak_carbon_schema_input {
+    jak_carbon_schema_input_file *files;
+    unsigned int num_files;
+} jak_carbon_schema_input;
+
+bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon_schema_input *carbonFiles);
+bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object_it *oit, jak_carbon_schema_input *carbonFiles);
+bool jak_carbon_schema_handleKeys(jak_carbon_schema *schema, jak_carbon_schema_input *carbonFiles);
+unsigned int jak_carbon_schema_getSchemaSize(jak_carbon_object_it *oit);
 
 JAK_END_DECL
 

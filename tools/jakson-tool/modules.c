@@ -53,8 +53,8 @@ static int convertJs2Model(struct js_to_context *context, FILE *file, bool optim
         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
         if (error_desc.token) {
             CONSOLE_WRITELN(file, "** ERROR ** Parsing failed: %s\nBut token %s was found in line %u column %u",
-                                   error_desc.msg, error_desc.token_type_str, error_desc.token->line,
-                                   error_desc.token->column);
+                    error_desc.msg, error_desc.token_type_str, error_desc.token->line,
+                    error_desc.token->column);
         } else {
             CONSOLE_WRITELN(file, "** ERROR ** Parsing failed: %s", error_desc.msg);
         }
@@ -348,7 +348,7 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
                     const char *compressor_name = argv[i];
                     if (!pack_by_name(&compressor, compressor_name)) {
                         CONSOLE_WRITE(file, "unsupported pack requested: '%s'",
-                                             compressor_name);
+                                compressor_name);
                         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
                         CONSOLE_WRITELN(file, "** ERROR ** unsupported operation requested: %s", opt);
                         return false;
@@ -361,7 +361,7 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
                         dic_type = SYNC;
                     } else {
                         CONSOLE_WRITE(file, "unsupported dictionary type requested: '%s'",
-                                             dic_type_name);
+                                dic_type_name);
                         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
                         CONSOLE_WRITELN(file, "** ERROR ** unsupported operation requested: %s", opt);
                         return false;
@@ -373,7 +373,7 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
                         string_dic_async_nthreads = nthreads_atoid;
                     } else {
                         CONSOLE_WRITE(file, "not a number or zero threads assigned: '%s'",
-                                             nthreads_str);
+                                nthreads_str);
                         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
                         CONSOLE_WRITELN(file, "** ERROR ** thread setting cannot be applied: %s", opt);
                         return false;
@@ -389,7 +389,7 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
 
         if (!flagSizeOptimized && compressor != PACK_NONE) {
             CONSOLE_WRITELN(file, "** WARNING ** a pack was specified but will be ignored because size "
-                "optimization is turned off. Use '--size-optimized' such that a pack has any effect%s", "");
+                    "optimization is turned off. Use '--size-optimized' such that a pack has any effect%s", "");
         }
 
         if (i + 1 >= argc) {
@@ -460,8 +460,8 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
         progress_tracker.end_string_id_index_baking = tracker_end_string_id_index_baking;
 
         if (!archive_from_json(&archive, pathCarbonFileOut, &err, jsonContent,
-                                      compressor, dic_type, string_dic_async_nthreads, flagReadOptimized,
-                                      flagBakeStringIdIndex, &progress_tracker)) {
+                    compressor, dic_type, string_dic_async_nthreads, flagReadOptimized,
+                    flagBakeStringIdIndex, &progress_tracker)) {
             error_print_to_stderr(&err);
             return false;
         } else {
@@ -471,35 +471,35 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
 
         free(jsonContent);
 
-//        memblock *carbonFile;
-//        CONSOLE_WRITE(file, "  - Convert partition into in-memory CARBON file%s", "");
-//        err err;
-//        if (!archive_from_model(&carbonFile, &err, cabContext.partitionMetaModel, pack, flagBakeStringIdIndex)) {
-//            error_print_and_abort(&err);
-//        }
-//        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
-//
-//        CONSOLE_WRITE(file, "  - Write in-memory CARBON file to disk%s", "");
-//        FILE *outputFile = fopen(pathCarbonFileOut, "w");
-//        if (!outputFile) {
-//            CONSOLE_WRITE(file, "Unable to open file for writing: '%s'", pathCarbonFileOut);
-//            CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
-//            return false;
-//        } else {
-//            if (archive_write(outputFile, carbonFile) != true) {
-//                CONSOLE_WRITE(file, "Unable to write to file: '%s'", pathCarbonFileOut);
-//                CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
-//                return false;
-//            }
-//            fclose(outputFile);
-//        }
-//        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
-//
-//        CONSOLE_WRITE(file, "  - Clean up in-memory CARBON file%s", "");
-//        memblock_drop(carbonFile);
-//        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
-//
-//        cleanup(file, &cabContext);
+        //        memblock *carbonFile;
+        //        CONSOLE_WRITE(file, "  - Convert partition into in-memory CARBON file%s", "");
+        //        err err;
+        //        if (!archive_from_model(&carbonFile, &err, cabContext.partitionMetaModel, pack, flagBakeStringIdIndex)) {
+        //            error_print_and_abort(&err);
+        //        }
+        //        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
+        //
+        //        CONSOLE_WRITE(file, "  - Write in-memory CARBON file to disk%s", "");
+        //        FILE *outputFile = fopen(pathCarbonFileOut, "w");
+        //        if (!outputFile) {
+        //            CONSOLE_WRITE(file, "Unable to open file for writing: '%s'", pathCarbonFileOut);
+        //            CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
+        //            return false;
+        //        } else {
+        //            if (archive_write(outputFile, carbonFile) != true) {
+        //                CONSOLE_WRITE(file, "Unable to write to file: '%s'", pathCarbonFileOut);
+        //                CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
+        //                return false;
+        //            }
+        //            fclose(outputFile);
+        //        }
+        //        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
+        //
+        //        CONSOLE_WRITE(file, "  - Clean up in-memory CARBON file%s", "");
+        //        memblock_drop(carbonFile);
+        //        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
+        //
+        //        cleanup(file, &cabContext);
 
         CONSOLE_WRITELN(file, "Conversion successfull%s", "");
 
@@ -516,25 +516,25 @@ bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
 
     CONSOLE_OUTPUT_OFF()
 
-    if (argc != 1) {
-        CONSOLE_WRITE(file, "Require exactly one argument <types-file> that is a path to a types file.%s", "");
-    } else {
-        const char *carbonFilePath = argv[0];
-        if (testFileExists(file, carbonFilePath, 1, 1, true) != true) {
-            CONSOLE_OUTPUT_ON()
-            CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", carbonFilePath);
-            return false;
-        }
-        err err;
-        FILE *inputFile = fopen(carbonFilePath, "r");
-        memblock *stream;
-        archive_load(&stream, inputFile);
-        if (!archive_print(stdout, &err, stream)) {
-            error_print_to_stderr(&err);
-            error_drop(&err);
-        }
-        memblock_drop(stream);
-        fclose(inputFile);
+        if (argc != 1) {
+            CONSOLE_WRITE(file, "Require exactly one argument <types-file> that is a path to a types file.%s", "");
+        } else {
+            const char *carbonFilePath = argv[0];
+            if (testFileExists(file, carbonFilePath, 1, 1, true) != true) {
+                CONSOLE_OUTPUT_ON()
+                    CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", carbonFilePath);
+                return false;
+            }
+            err err;
+            FILE *inputFile = fopen(carbonFilePath, "r");
+            memblock *stream;
+            archive_load(&stream, inputFile);
+            if (!archive_print(stdout, &err, stream)) {
+                error_print_to_stderr(&err);
+                error_drop(&err);
+            }
+            memblock_drop(stream);
+            fclose(inputFile);
 
         }
 
@@ -555,14 +555,14 @@ bool moduleInspectInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
         const char *pathCarbonFileIn = argv[filePathArgIdx];
 
         CONSOLE_OUTPUT_OFF()
-        if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
-            CONSOLE_OUTPUT_ON()
-            CONSOLE_WRITELN(file, "Input file cannot be found. %s", "STOP.");
-            return false;
-        }
+            if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
+                CONSOLE_OUTPUT_ON()
+                    CONSOLE_WRITELN(file, "Input file cannot be found. %s", "STOP.");
+                return false;
+            }
         CONSOLE_OUTPUT_ON()
 
-        archive archive;
+            archive archive;
         archive_info info;
         if ((archive_open(&archive, pathCarbonFileIn)) != true) {
             CONSOLE_WRITE(file, "Cannot open requested CARBON file: %s", pathCarbonFileIn);
@@ -602,14 +602,14 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
         const char *pathCarbonFileIn = argv[filePathArgIdx];
 
         CONSOLE_OUTPUT_OFF()
-        if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
-            CONSOLE_OUTPUT_ON()
-            CONSOLE_WRITELN(file, "Input file cannot be found. %s", "STOP.");
-            return false;
-        }
+            if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
+                CONSOLE_OUTPUT_ON()
+                    CONSOLE_WRITELN(file, "Input file cannot be found. %s", "STOP.");
+                return false;
+            }
         CONSOLE_OUTPUT_ON()
 
-        archive archive;
+            archive archive;
         int status;
         if ((status = archive_open(&archive, pathCarbonFileIn))) {
             encoded_doc_list collection;
@@ -636,119 +636,119 @@ bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *man
     JAK_UNUSED(file);
     JAK_UNUSED(manager);
 
-//    bool strict = false;
-//    JAK_UNUSED(manager);
-//
-//    if (argc < 2) {
-//        JAK_CONSOLE_WRITE(file, "Require one schema file and at least one BISON file to test for <args>.%s", "");
-//        JAK_CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
-//        JAK_CONSOLE_WRITELN(file, "Run '%s' to see an example on the usage.", "$ types schema");
-//        return false;
-//    } 
-//
-//    int schemaIdx = 0;
-//    int i;
-//
-//    for (i = 0; i < argc; i++) {
-//        char *opt = argv[i];
-//        if (strncmp(opt, "--", 2) == 0) {
-//            // flag options
-//            // - normal (some files failed) -> skip and continue, return true. If all files fail -> return false
-//            // - strict (any file failed) -> break and return false
-//            if (strcmp(opt, SCHEMA_STRICT_VAL) == 0) {
-//                strict = true;
-//            } else {
-//                JAK_CONSOLE_WRITELN(file, "** ERROR ** unrecognized option '%s'", opt);
-//                return false;
-//            }
-//        }
-//        // schemafile should be right after flag options
-//        schemaIdx = i;
-//        if (schemaIdx + 1 >= argc) {
-//            JAK_CONSOLE_WRITELN(file, "** ERROR ** require schema and CARBON parameter: %d remain", argc);
-//            return false;
-//        }
-//        break;
-//    }
-//
-//    // read schema into memory
-//    const char *pathSchemaFileIn = argv[schemaIdx];
-//    if (testFileExists(file, pathSchemaFileIn, 1, 1, true) != true) {
-//        JAK_CONSOLE_WRITELN(file, "Schema file cannot be found. %s", "STOP.");
-//        return false;
-//    }
-//    FILE *f = fopen(pathSchemaFileIn, "rb");
-//    fseek(f, 0, SEEK_END);
-//    long fsize = ftell(f);
-//    fseek(f, 0, SEEK_SET);
-//    char *schemaContent = JAK_MALLOC(fsize + 1);
-//    size_t nread = fread(schemaContent, fsize, 1, f);
-//    JAK_UNUSED(nread);
-//    fclose(f);
-//    schemaContent[fsize] = 0;
-//
-//    // translate to carbon
-//    jak_carbon schema;
-//    jak_error err;
-//    if (!(jak_carbon_from_json(&schema, schemaContent, JAK_CARBON_KEY_AUTOKEY, NULL, &err))) {
-//        JAK_CONSOLE_WRITELN(file, "** ERROR ** Parsing schema file failed:%s", "");
-//        jak_error_print_to_stderr(&err);
-//        jak_carbon_drop(&schema);
-//        free(schemaContent);
-//        return false;
-//    }
-//    // delete now useless json schemaContent (available as carbon)
-//    free(schemaContent);
-//
-//    // load carbon files
-//    int skippedFiles = 0;
-//    int failedFiles = 0;
-//    for (i = schemaIdx + 1; i < argc; i++) {
-//        char *pathCarbonFileIn = argv[i];
-//        if (!(testFileExists(file, pathCarbonFileIn, 1, 1, true))) {
-//            if (strict != true) {
-//                JAK_CONSOLE_WRITELN(file, "Warning: File %s does not exist. Skipping.", pathCarbonFileIn);
-//                skippedFiles++;
-//            } else {
-//                JAK_CONSOLE_WRITELN(file, "Error: File %s does not exist. Aborting.", pathCarbonFileIn);
-//                jak_carbon_drop(&schema);
-//                return false;
-//            }
-//        }
-//
-//        FILE *f = fopen(pathCarbonFileIn, "rb");
-//        jak_carbon carbon;
-//        if(!(jak_archive_load(&carbon.memblock, f))) {
-//            JAK_CONSOLE_WRITELN(file, "Error loading CARBON file!%s","");
-//            jak_carbon_drop(&schema);
-//            return false;
-//        }
-//        fclose(f);
-//
-//        // validate carbon files according to schema
-//        if(!(jak_carbon_validate_schema(&schema, &carbon))) {
-//            // TODO: details on failure
-//            if (strict != true) {
-//                JAK_CONSOLE_WRITELN(file, "Warning: File %s failed the schema validation!", pathCarbonFileIn);
-//                failedFiles++;
-//            } else {
-//                JAK_CONSOLE_WRITELN(file, "Error: File %s failed the schema validation! Aborting.", pathCarbonFileIn);
-//                jak_carbon_drop(&schema);
-//                jak_carbon_drop(&carbon);
-//                return false;
-//            }
-//        } else {
-//            JAK_CONSOLE_WRITELN(file, "File %s: passed the schema validation!", pathCarbonFileIn);
-//        }
-//        jak_carbon_drop(&schema);
-//        jak_carbon_drop(&carbon);
-//    }
-//
-//    if (skippedFiles == 0 && failedFiles == 0){
-//        JAK_CONSOLE_WRITELN(file, "  - Success: Schema validation completed without warnings.%s","");
-//    } else {
-//        JAK_CONSOLE_WRITELN(file, "  - Schema validation completed with %d skipped and %d failed CARBON files.", skippedFiles, failedFiles);
-//    }
+    //    bool strict = false;
+    //    JAK_UNUSED(manager);
+    //
+    //    if (argc < 2) {
+    //        JAK_CONSOLE_WRITE(file, "Require one schema file and at least one BISON file to test for <args>.%s", "");
+    //        JAK_CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
+    //        JAK_CONSOLE_WRITELN(file, "Run '%s' to see an example on the usage.", "$ types schema");
+    //        return false;
+    //    } 
+    //
+    //    int schemaIdx = 0;
+    //    int i;
+    //
+    //    for (i = 0; i < argc; i++) {
+    //        char *opt = argv[i];
+    //        if (strncmp(opt, "--", 2) == 0) {
+    //            // flag options
+    //            // - normal (some files failed) -> skip and continue, return true. If all files fail -> return false
+    //            // - strict (any file failed) -> break and return false
+    //            if (strcmp(opt, SCHEMA_STRICT_VAL) == 0) {
+    //                strict = true;
+    //            } else {
+    //                JAK_CONSOLE_WRITELN(file, "** ERROR ** unrecognized option '%s'", opt);
+    //                return false;
+    //            }
+    //        }
+    //        // schemafile should be right after flag options
+    //        schemaIdx = i;
+    //        if (schemaIdx + 1 >= argc) {
+    //            JAK_CONSOLE_WRITELN(file, "** ERROR ** require schema and CARBON parameter: %d remain", argc);
+    //            return false;
+    //        }
+    //        break;
+    //    }
+    //
+    //    // read schema into memory
+    //    const char *pathSchemaFileIn = argv[schemaIdx];
+    //    if (testFileExists(file, pathSchemaFileIn, 1, 1, true) != true) {
+    //        JAK_CONSOLE_WRITELN(file, "Schema file cannot be found. %s", "STOP.");
+    //        return false;
+    //    }
+    //    FILE *f = fopen(pathSchemaFileIn, "rb");
+    //    fseek(f, 0, SEEK_END);
+    //    long fsize = ftell(f);
+    //    fseek(f, 0, SEEK_SET);
+    //    char *schemaContent = JAK_MALLOC(fsize + 1);
+    //    size_t nread = fread(schemaContent, fsize, 1, f);
+    //    JAK_UNUSED(nread);
+    //    fclose(f);
+    //    schemaContent[fsize] = 0;
+    //
+    //    // translate to carbon
+    //    jak_carbon schema;
+    //    jak_error err;
+    //    if (!(jak_carbon_from_json(&schema, schemaContent, JAK_CARBON_KEY_AUTOKEY, NULL, &err))) {
+    //        JAK_CONSOLE_WRITELN(file, "** ERROR ** Parsing schema file failed:%s", "");
+    //        jak_error_print_to_stderr(&err);
+    //        jak_carbon_drop(&schema);
+    //        free(schemaContent);
+    //        return false;
+    //    }
+    //    // delete now useless json schemaContent (available as carbon)
+    //    free(schemaContent);
+    //
+    //    // load carbon files
+    //    int skippedFiles = 0;
+    //    int failedFiles = 0;
+    //    for (i = schemaIdx + 1; i < argc; i++) {
+    //        char *pathCarbonFileIn = argv[i];
+    //        if (!(testFileExists(file, pathCarbonFileIn, 1, 1, true))) {
+    //            if (strict != true) {
+    //                JAK_CONSOLE_WRITELN(file, "Warning: File %s does not exist. Skipping.", pathCarbonFileIn);
+    //                skippedFiles++;
+    //            } else {
+    //                JAK_CONSOLE_WRITELN(file, "Error: File %s does not exist. Aborting.", pathCarbonFileIn);
+    //                jak_carbon_drop(&schema);
+    //                return false;
+    //            }
+    //        }
+    //
+    //        FILE *f = fopen(pathCarbonFileIn, "rb");
+    //        jak_carbon carbon;
+    //        if(!(jak_archive_load(&carbon.memblock, f))) {
+    //            JAK_CONSOLE_WRITELN(file, "Error loading CARBON file!%s","");
+    //            jak_carbon_drop(&schema);
+    //            return false;
+    //        }
+    //        fclose(f);
+    //
+    //        // validate carbon files according to schema
+    //        if(!(jak_carbon_validate_schema(&schema, &carbon))) {
+    //            // TODO: details on failure
+    //            if (strict != true) {
+    //                JAK_CONSOLE_WRITELN(file, "Warning: File %s failed the schema validation!", pathCarbonFileIn);
+    //                failedFiles++;
+    //            } else {
+    //                JAK_CONSOLE_WRITELN(file, "Error: File %s failed the schema validation! Aborting.", pathCarbonFileIn);
+    //                jak_carbon_drop(&schema);
+    //                jak_carbon_drop(&carbon);
+    //                return false;
+    //            }
+    //        } else {
+    //            JAK_CONSOLE_WRITELN(file, "File %s: passed the schema validation!", pathCarbonFileIn);
+    //        }
+    //        jak_carbon_drop(&schema);
+    //        jak_carbon_drop(&carbon);
+    //    }
+    //
+    //    if (skippedFiles == 0 && failedFiles == 0){
+    //        JAK_CONSOLE_WRITELN(file, "  - Success: Schema validation completed without warnings.%s","");
+    //    } else {
+    //        JAK_CONSOLE_WRITELN(file, "  - Schema validation completed with %d skipped and %d failed CARBON files.", skippedFiles, failedFiles);
+    //    }
     return true;
 }
 

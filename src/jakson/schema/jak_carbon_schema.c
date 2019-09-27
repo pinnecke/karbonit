@@ -24,9 +24,9 @@
 #include <jak_carbon_object_it.h>
 #include <jak_carbon_schema_keywords.h>
 
-bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon_schema_input *carbonFiles) {
+bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon *fileToVal) {
     JAK_ERROR_IF_NULL(schemaCarbon);
-    JAK_ERROR_IF_NULL(carbonFiles);
+    JAK_ERROR_IF_NULL(fileToVal);
 
     jak_carbon_array_it it;
     jak_carbon_field_type_e field_type;
@@ -34,6 +34,7 @@ bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon_schema_inpu
     jak_carbon_iterator_open(&it, schemaCarbon);
     jak_carbon_array_it_next(&it);
     jak_carbon_array_it_field_type(&field_type, &it);
+
     // a schema always has to be an object.
     if (!(jak_carbon_field_type_is_object(field_type))){
         JAK_ERROR_WDETAILS(&it.err, JAK_ERR_BADTYPE, "schema has to be an object.");
@@ -43,7 +44,9 @@ bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon_schema_inpu
     }
 
     jak_carbon_schema schema;
-    if(!(jak_carbon_schema_createSchema(&schema, jak_carbon_array_it_object_value(&it), carbonFiles))) {
+    schema->fileToVal = fileToVal;
+
+    if(!(jak_carbon_schema_createSchema(&schema, jak_carbon_array_it_object_value(&it)))) {
         //TODO: error handling
         return false;
     }
@@ -52,22 +55,22 @@ bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon_schema_inpu
     return true;   
 }
 
-bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object_it *oit, jak_carbon_schema_input *carbonFiles) {
+bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object_it *oit) {
 
     // get schema size to avoid unnecessary reallocs
-    unsigned int schemaSize = jak_carbon_schema_getSchemaSize(oit);
+    jak_u64 schemaSize = jak_carbon_schema_getSchemaSize(oit);
     jak_carbon_schema_content *content = malloc(schemaSize * sizeof(jak_carbon_schema_content*));
     schema->content = content;
     schema->content_size = schemaSize;
     
-    unsigned int pos = 0;
+    jak_u64 pos = 0;
     while(jak_carbon_object_it_next(oit)) {
         jak_u64 key_len;
         const char *prop_name = jak_carbon_object_it_prop_name(&key_len,oit);
         content[pos].key = strndup(prop_name,key_len);
         content[pos].value = oit; 
     }
-    if(!(jak_carbon_schema_handleKeys(schema, carbonFiles))) {
+    if(!(jak_carbon_schema_handleKeys(schema))) {
         //TODO: error handling
         free(content);
         return false;

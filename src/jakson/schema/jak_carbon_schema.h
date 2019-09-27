@@ -33,25 +33,15 @@ typedef struct jak_carbon_schema_content {
 
 typedef struct jak_carbon_schema {
     jak_carbon_schema_content *content;
-    unsigned int content_size;
+    jak_u64 content_size;
+    jak_carbon *fileToVal;
     jak_error err;
 } jak_carbon_schema;
 
-typedef struct jak_carbon_schema_input_file {
-    const char *file_name;
-    jak_carbon *data;
-    bool passed;
-} jak_carbon_schema_input_file;
-
-typedef struct jak_carbon_schema_input {
-    jak_carbon_schema_input_file *files;
-    unsigned int num_files;
-} jak_carbon_schema_input;
-
-bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon_schema_input *carbonFiles);
-bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object_it *oit, jak_carbon_schema_input *carbonFiles);
-bool jak_carbon_schema_handleKeys(jak_carbon_schema *schema, jak_carbon_schema_input *carbonFiles);
-unsigned int jak_carbon_schema_getSchemaSize(jak_carbon_object_it *oit);
+bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon *fileToVal);
+bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object_it *oit);
+bool jak_carbon_schema_handleKeys(jak_carbon_schema *schema);
+jak_u64 jak_carbon_schema_getSchemaSize(jak_carbon_object_it *oit);
 
 JAK_END_DECL
 

@@ -21,8 +21,8 @@
 #define JAKSON_BENCH_UBJSON_H
 
 
-#include <jak_stdinc.h>
-#include <jak_error.h>
+#include <jakson/stdinc.h>
+#include <jakson/error.h>
 
 #include <libs/ubjsc/ubjs.h>
 

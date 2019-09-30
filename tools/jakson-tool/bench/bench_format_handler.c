@@ -5,11 +5,11 @@ bool bench_format_handler_create_carbon(bench_format_handler *handler, bench_car
                                         bench_error *error, const char* filePath)
 {
     // TODO: Implement function
-    JAK_ERROR_IF_NULL(handler);
-    JAK_ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(manager);
 
-    JAK_UNUSED(error);
-    JAK_UNUSED(filePath);
+    UNUSED(error);
+    UNUSED(filePath);
 
     return false;
 }
@@ -18,8 +18,8 @@ bool bench_format_handler_create_bson_handler(bench_format_handler *handler, ben
 {
     //JAK_ERROR_IF_NULL(handler);
 
-    JAK_UNUSED(error);
-    JAK_UNUSED(filePath);
+    UNUSED(error);
+    UNUSED(filePath);
     handler->format_name = BENCH_FORMAT_BSON;
     error = malloc(sizeof(*error));
     error->msg = NULL;
@@ -72,7 +72,7 @@ bool bench_format_handler_destroy(bench_format_handler *handler)
 }
 
 bool bench_format_handler_get_doc(char *str, bench_format_handler *handler) {
-    JAK_ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(handler);
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
         // TODO: Implement
         return false;

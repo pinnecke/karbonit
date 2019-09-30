@@ -20,15 +20,16 @@
 #ifndef JAKSON_BENCH_CARBON_H
 #define JAKSON_BENCH_CARBON_H
 
-#include <jak_stdinc.h>
-#include <jak_carbon.h>
-#include <jak_carbon_find.h>
+#include <jakson/stdinc.h>
+#include <jakson/carbon.h>
+#include <jakson/carbon/find.h>
 
 typedef struct bench_carbon_mgr {
-    jak_carbon doc;
-    jak_error err;
-    jak_carbon_find find;
-    jak_string result;
+    carbon doc;
+    err err;
+    carbon_find find;
+    string_buffer result;
+
 } bench_carbon_mgr;
 
 

@@ -21,7 +21,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, const char* filePa
 {
     //JAK_ERROR_IF_NULL(manager);
     //JAK_ERROR_IF_NULL(error);
-    JAK_UNUSED(filePath);
+    UNUSED(filePath);
     bson_t b = BSON_INITIALIZER;
     bson_json_reader_t *jReader;
     bench_bson_error *error = malloc(sizeof(bench_bson_error));
@@ -59,8 +59,8 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, const char* filePa
 
 bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error)
 {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_ERROR_IF_NULL(error);
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(error);
 
     bson_t *b = bson_new();
     manager->b = b;
@@ -94,7 +94,7 @@ bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
 
 bool bench_bson_insert_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key, int32_t val)
 {
-    JAK_ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(manager);
     if(!it) {
         return bson_append_int32(manager->b, key, strlen(key), val);
     } else {
@@ -104,15 +104,15 @@ bool bench_bson_insert_int32(bench_bson_mgr *manager, bson_iter_t *it, const cha
 }
 
 bool bench_bson_find_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key, int32_t val) {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_UNUSED(val);
+    ERROR_IF_NULL(manager);
+    UNUSED(val);
 
     return bson_iter_find(it, key);
 }
 
 bool bench_bson_change_val_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key, int32_t newVal) {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_UNUSED(key);
+    ERROR_IF_NULL(manager);
+    UNUSED(key);
 
     bson_iter_overwrite_int32(it, newVal);
 
@@ -120,9 +120,9 @@ bool bench_bson_change_val_int32(bench_bson_mgr *manager, bson_iter_t *it, const
 }
 
 bool bench_bson_convert_entry_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key) {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_ERROR_IF_NULL(key);
-    JAK_UNUSED(it);
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(key);
+    UNUSED(it);
 
     bson_iter_t itStart;
     bson_t *bNew = bson_new();
@@ -153,9 +153,9 @@ bool bench_bson_convert_entry_int32(bench_bson_mgr *manager, bson_iter_t *it, co
 }
 
 bool bench_bson_convert_entry_int64(bench_bson_mgr *manager, bson_iter_t *it, const char *key) {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_ERROR_IF_NULL(key);
-    JAK_UNUSED(it);
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(key);
+    UNUSED(it);
 
     bson_iter_t itStart;
     bson_t *bNew = bson_new();
@@ -178,8 +178,8 @@ bool bench_bson_convert_entry_int64(bench_bson_mgr *manager, bson_iter_t *it, co
 }
 
 bool bench_bson_delete_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key) {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_UNUSED(it);
+    ERROR_IF_NULL(manager);
+    UNUSED(it);
 
     bson_t *bNew= bson_new();
     bson_copy_to_excluding_noinit(manager->b, bNew, key, NULL);
@@ -188,8 +188,8 @@ bool bench_bson_delete_int32(bench_bson_mgr *manager, bson_iter_t *it, const cha
 }
 
 bool bench_bson_execute_benchmark(bench_bson_mgr *manager, const char *benchType) {
-    JAK_ERROR_IF_NULL(manager);
-    JAK_UNUSED(benchType);
+    ERROR_IF_NULL(manager);
+    UNUSED(benchType);
 
     assert(bench_bson_insert_int32(manager, 0, "Test1", 41));
     assert(bench_bson_insert_int32(manager, 0, "Test2", 42));

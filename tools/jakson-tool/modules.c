@@ -6,7 +6,6 @@
 #include <jak_carbon.h>
 
 #include "bench/bench_format_handler.h"
-#include <libs/ubj/ubj.h>
 
 #include "modules.h"
 
@@ -675,9 +674,9 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *m
             return false;
         }
 
-        if(strcmp(format, "CARBON") == 0) {
+        if(strcmp(format, BENCH_FORMAT_CARBON) == 0) {
             // TODO: Include CARBON file benchmarking
-        } else if(strcmp(format, "BSON") == 0) {
+        } else if(strcmp(format, BENCH_FORMAT_BSON) == 0) {
             // TODO: Include BSON file benchmarking
             /*
             bson_reader_t *bReader;
@@ -707,58 +706,16 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *m
             //bench_bson_error error;
             //bench_bson_mgr_create_empty(&mgr, &error);
             //bench_bson_mgr_insert_int32(&mgr, "test", 42);
-            bench_format_handler_insert_int32(&handler, "test", 42);
-            char buffer[512];
+            //bench_format_handler_insert_int32(&handler, "test", 42);
+            //char buffer[512];
             //strcpy(buffer, "test");
-            bench_format_handler_get_doc(buffer, &handler);
-            JAK_CONSOLE_WRITE(file, "The following keys were found:\n%s", buffer);
+            //bench_format_handler_get_doc(buffer, &handler);
+            //JAK_CONSOLE_WRITE(file, "The following keys were found:\n%s", buffer);
+            bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
             bench_format_handler_destroy(&handler);
 
-        } else if(strcmp(format, "UBJSON") == 0) {
+        } else if(strcmp(format, BENCH_FORMAT_UBJSON) == 0) {
             // TODO: Include UBJSON file benchmarking
-
-            const char *testStr = "[i\x05Si\x05helloi\x0a]";
-            size_t len_testStr = strlen(testStr);
-            const char expected_mixed_dynamic_array[]= "[i\x05Si\x05helloi\x0a]";
-            uint8_t *memory = malloc(2 * len_testStr);
-            ubjw_context_t *ctx = ubjw_open_memory(memory, memory + 2 * len_testStr);
-
-            JAK_UNUSED(expected_mixed_dynamic_array);
-
-            ubjw_begin_array(ctx, UBJ_MIXED, 0);
-            ubjw_write_int8(ctx, 5);
-            ubjw_write_string(ctx, "hello");
-            ubjw_write_int8(ctx, 10);
-            ubjw_end(ctx);
-
-            size_t n = ubjw_close_context(ctx);
-            int c = memcmp(memory, testStr, len_testStr);
-            if (c == 0 && n == len_testStr) {
-                printf("PASSED\n");
-            } else {
-                printf("FAILED (");
-            }
-
-            ubjr_context_t* rctx = ubjr_open_memory(testStr,testStr + len_testStr);
-            ubjw_context_t* wctx = ubjw_open_memory(memory,memory+2*len_testStr);
-            ubjr_dynamic_t filestruct=ubjr_read_dynamic(rctx);
-            ubjrw_write_dynamic(ctx,filestruct,0);
-
-            n = ubjw_close_context(ctx);
-            c = memcmp(memory, testStr, len_testStr);
-            if (c == 0 && n == len_testStr) {
-                printf("PASSED\n");
-            } else {
-                printf("FAILED (");
-            }
-
-            ubjr_cleanup_dynamic(&filestruct);
-
-            ubjr_close_context(rctx);
-            ubjw_close_context(wctx);
-
-            free(memory);
-
         } else {
             JAK_CONSOLE_WRITELN(file, "Format type '%s' is not supported. STOP", format);
         }

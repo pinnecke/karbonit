@@ -1,7 +1,7 @@
 // file: bench_ubjson.h
 
 /**
- *  Copyright (C) 2018 Marcus Pinnecke
+ *  Copyright (C) 2018 Marcel Plumbohm
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -55,8 +55,6 @@ typedef struct bench_ubjson_mgr {
     //ubjs_object_iterator *itObj;
 } bench_ubjson_mgr;
 
-typedef struct json_t json_t;
-static void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_prmtv **pobj);
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOffset);

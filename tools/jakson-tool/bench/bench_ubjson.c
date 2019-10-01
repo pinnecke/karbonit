@@ -1,22 +1,28 @@
 #include "bench_ubjson.h"
 
-#include <jansson.h>
+#include <libs/jansson/jansson.h>
+#include <libs/jansson/load.c>
+#include <libs/jansson/error.c>
+#include <libs/jansson/strbuffer.h>
+#include <libs/jansson/value.c>
+
 /*
-Copyright (c) 2009-2018 Petri Lehtinen <petri@digip.org>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-        of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ * Copyright (c) 2016 Tomasz Sieprawski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
 */
 
+/* js2ubj_main.c */
+typedef struct json_t json_t;
 typedef struct ctx ctx;
-
 struct ctx
 {
     ubjs_bool verbose;
@@ -26,10 +32,42 @@ struct ctx
     unsigned int verbose_after;
 };
 
-static void js2ubj_main_writer_context_would_write(void *, uint8_t *, unsigned int);
-static void js2ubj_main_writer_context_would_print(void *, char *, unsigned int);
-static void js2ubj_main_writer_context_free(void *);
+static void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
+                                                   unsigned int len)
+{
+    ctx *my_ctx = (ctx *)userdata;
 
+    if (UTRUE == my_ctx->verbose)
+    {
+        printf("After: [%u]\n", len);
+    }
+
+    fwrite((void *)data, sizeof(uint8_t), len, stdout);
+
+    if (UTRUE == my_ctx->verbose)
+    {
+        my_ctx->verbose_after = len;
+        printf("\nCompression/expansion: [%u percent]\n",
+               100 * my_ctx->verbose_after / my_ctx->verbose_before);
+    }
+}
+
+static void js2ubj_main_writer_context_would_print(void *userdata, char *data,
+                                                   unsigned int len)
+{
+    UNUSED(userdata)
+    char *tmp = (char *)malloc(sizeof(char) * (len + 1));
+
+    strncpy(tmp, data, len);
+    tmp[len] = 0;
+    printf("Pretty-printed [%u]: %s\n", len, tmp);
+    free(tmp);
+}
+
+static void js2ubj_main_writer_context_free(void *userdata)
+{
+    UNUSED(userdata)
+}
 static void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_prmtv **pobj)
 {
     size_t index;
@@ -85,43 +123,6 @@ static void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib,
         default:
             break;
     }
-}
-
-static void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
-                                                   unsigned int len)
-{
-    ctx *my_ctx = (ctx *)userdata;
-
-    if (UTRUE == my_ctx->verbose)
-    {
-        printf("After: [%u]\n", len);
-    }
-
-    fwrite((void *)data, sizeof(uint8_t), len, stdout);
-
-    if (UTRUE == my_ctx->verbose)
-    {
-        my_ctx->verbose_after = len;
-        printf("\nCompression/expansion: [%u percent]\n",
-               100 * my_ctx->verbose_after / my_ctx->verbose_before);
-    }
-}
-
-static void js2ubj_main_writer_context_would_print(void *userdata, char *data,
-                                                   unsigned int len)
-{
-    UNUSED(userdata)
-    char *tmp = (char *)malloc(sizeof(char) * (len + 1));
-
-    strncpy(tmp, data, len);
-    tmp[len] = 0;
-    printf("Pretty-printed [%u]: %s\n", len, tmp);
-    free(tmp);
-}
-
-static void js2ubj_main_writer_context_free(void *userdata)
-{
-    UNUSED(userdata)
 }
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError)
@@ -198,7 +199,7 @@ bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager)
 {
     ERROR_IF_NULL(manager)
     ubjs_library_free(&manager->lib);
-    return false;
+    return true;
 }
 
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager)
@@ -220,26 +221,47 @@ bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, const char *key, int32
 
 bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t val)
 {
-
+    // TODO : Implement function
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(key)
+    ERROR_IF_NULL(val)
+    UNUSED(it)
+    return false;
 }
 
 bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t newVal)
 {
-
+    // TODO : Implement function
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(key)
+    ERROR_IF_NULL(newVal)
+    UNUSED(it)
+    return false;
 }
 
 bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key)
 {
-
+    // TODO : Implement function
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(key)
+    UNUSED(it)
+    return false;
 }
 
 bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key)
 {
-
+    // TODO : Implement function
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(key)
+    UNUSED(it)
+    return false;
 }
 
 bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key)
 {
-
+    // TODO : Implement function
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(key)
+    UNUSED(it)
+    return false;
 }
-*/

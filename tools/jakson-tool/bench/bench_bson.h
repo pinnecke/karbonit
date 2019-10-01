@@ -34,7 +34,6 @@ typedef struct bench_bson_error {
 } bench_bson_error;
 
 typedef struct bench_bson_mgr {
-    //bench_format_handler handler;
     bson_t *b;
     bench_bson_error *error;
     bson_iter_t *it;

@@ -18,59 +18,59 @@
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
-#include "jak_carbon_schema.h"
-#include <jak_carbon.h>
-#include <jak_carbon_array_it.h>
-#include <jak_carbon_object_it.h>
-#include <jak_carbon_schema_keywords.h>
+#include "schema.h"
+#include <jakson/carbon.h>
+#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/object_it.h>
+#include <jakson/schema/keywords.h>
 
-bool jak_carbon_schema_validate(jak_carbon *schemaCarbon, jak_carbon *fileToVal) {
-    JAK_ERROR_IF_NULL(schemaCarbon);
-    JAK_ERROR_IF_NULL(fileToVal);
+bool schema_validate(carbon *schemaCarbon, carbon *fileToVal) {
+    ERROR_IF_NULL(schemaCarbon);
+    ERROR_IF_NULL(fileToVal);
 
-    jak_carbon_array_it it;
-    jak_carbon_field_type_e field_type;
+    carbon_array_it it;
+    carbon_field_type_e field_type;
 
-    jak_carbon_iterator_open(&it, schemaCarbon);
-    jak_carbon_array_it_next(&it);
-    jak_carbon_array_it_field_type(&field_type, &it);
+    carbon_iterator_open(&it, schemaCarbon);
+    carbon_array_it_next(&it);
+    carbon_array_it_field_type(&field_type, &it);
 
     // a schema always has to be an object.
-    if (!(jak_carbon_field_type_is_object(field_type))){
-        JAK_ERROR_WDETAILS(&it.err, JAK_ERR_BADTYPE, "schema has to be an object.");
-        jak_carbon_iterator_close(&it);
+    if (!(carbon_field_type_is_object_or_subtype(field_type))){
+        ERROR_WDETAILS(&it.err, ERR_BADTYPE, "schema has to be an object.");
+        carbon_iterator_close(&it);
         //TODO: cleanup?
         return false;
     }
 
-    jak_carbon_schema schema;
-    schema->fileToVal = fileToVal;
+    schema schema;
+    schema.fileToVal = fileToVal;
 
-    if(!(jak_carbon_schema_createSchema(&schema, jak_carbon_array_it_object_value(&it)))) {
+    if(!(schema_createSchema(&schema, carbon_array_it_object_value(&it)))) {
         //TODO: error handling
         return false;
     }
-    jak_carbon_iterator_close(&it);
+    carbon_iterator_close(&it);
 
     return true;   
 }
 
-bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object_it *oit) {
+bool schema_createSchema(schema *schema, carbon_object_it *oit) {
 
     // get schema size to avoid unnecessary reallocs
-    jak_u64 schemaSize = jak_carbon_schema_getSchemaSize(oit);
-    jak_carbon_schema_content *content = malloc(schemaSize * sizeof(jak_carbon_schema_content*));
+    u64 schemaSize = schema_getSchemaSize(oit);
+    schema_content *content = malloc(schemaSize * sizeof(schema_content*));
     schema->content = content;
     schema->content_size = schemaSize;
     
-    jak_u64 pos = 0;
-    while(jak_carbon_object_it_next(oit)) {
-        jak_u64 key_len;
-        const char *prop_name = jak_carbon_object_it_prop_name(&key_len,oit);
+    u64 pos = 0;
+    while(carbon_object_it_next(oit)) {
+        u64 key_len;
+        const char *prop_name = carbon_object_it_prop_name(&key_len,oit);
         content[pos].key = strndup(prop_name,key_len);
         content[pos].value = oit; 
     }
-    if(!(jak_carbon_schema_handleKeys(schema))) {
+    if(!(schema_handleKeys(schema))) {
         //TODO: error handling
         free(content);
         return false;
@@ -80,14 +80,14 @@ bool jak_carbon_schema_createSchema(jak_carbon_schema *schema, jak_carbon_object
 }
 
 
-bool jak_carbon_schema_handleKeys(jak_carbon_schema *schema, jak_carbon_schema_input *carbonFiles) {
+bool schema_handleKeys(schema *schema) {
     bool status = true;
     for (unsigned int i = 0; i < schema->content_size; i++) {
         if (strcmp(schema->content[i].key, "type")==0) {
-            status = jak_carbon_schema_keywords_type(schema->content[i].value, carbonFiles, &(schema->err));
+            status = schema_keywords_type(schema->content[i].value, carbonFiles, &(schema->err));
         }
         else if (strcmp(schema->content[i].key, "properties")==0) {
-                status = jak_carbon_schema_keywords_properties(schema->content[i].value, carbonFiles, &(schema->err));
+                status = schema_keywords_properties(schema->content[i].value, carbonFiles, &(schema->err));
         }
         else {
             //TODO: error handling
@@ -102,11 +102,11 @@ bool jak_carbon_schema_handleKeys(jak_carbon_schema *schema, jak_carbon_schema_i
 }
 
 
-unsigned int jak_carbon_schema_getSchemaSize(jak_carbon_object_it *oit) {
+unsigned int schema_getSchemaSize(carbon_object_it *oit) {
     unsigned int size = 0;
-    while (jak_carbon_object_it_next(oit)) {
+    while (carbon_object_it_next(oit)) {
         size++;
     }
-    jak_carbon_object_it_rewind(oit);
+    carbon_object_it_rewind(oit);
     return size;
 }

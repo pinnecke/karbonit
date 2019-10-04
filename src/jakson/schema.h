@@ -15,19 +15,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef JAK_CARBON_SCHEMA_KEYWORDS_H
-#define JAK_CARBON_SCHEMA_KEYWORDS_H
+#ifndef SCHEMA_H
+#define SCHEMA_H
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
-#include <jak_stdinc.h>
-#include <jak_error.h>
+#include <jakson/stdinc.h>
+#include <jakson/error.h>
 
-JAK_BEGIN_DECL
+BEGIN_DECL
 
+typedef struct schema_content {
+    const char *key;
+    void *value;
+} schema_content;
 
+typedef struct schema {
+    schema_content *content;
+    u64 content_size;
+    carbon *fileToVal;
+} schema;
 
-JAK_END_DECL
+bool schema_validate(carbon *schemaCarbon, carbon *fileToVal);
+bool schema_createSchema(schema *schema, carbon_object_it *oit);
+bool schema_handleKeys(schema *schema);
+u64  schema_getSchemaSize(carbon_object_it *oit);
+
+END_DECL
 
 #endif

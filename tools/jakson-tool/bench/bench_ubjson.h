@@ -51,6 +51,7 @@ typedef struct bench_ubjson_error {
 typedef struct bench_ubjson_mgr {
     ubjs_library *lib;
     bench_ubjson_error *error;
+    ubjs_prmtv *obj;
     //ubjs_array_iterator *itArr;
     //ubjs_object_iterator *itObj;
 } bench_ubjson_mgr;
@@ -58,8 +59,8 @@ typedef struct bench_ubjson_mgr {
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOffset);
-bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *filePath, bench_ubjson_error *error);
-bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *error);
+bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *filePath);
+bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager);
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager);
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager);
 

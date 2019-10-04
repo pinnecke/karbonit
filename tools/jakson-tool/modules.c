@@ -717,6 +717,13 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
 
         } else if(strcmp(format, BENCH_FORMAT_UBJSON) == 0) {
             // TODO: Include UBJSON file benchmarking
+            bench_format_handler handler;
+            bench_error err;
+            if(bench_format_handler_create_ubjson_handler(&handler, &err, filePath)) {
+                // TODO : Error handling
+                return false;
+            }
+
         } else {
             CONSOLE_WRITELN(file, "Format type '%s' is not supported. STOP", format);
         }

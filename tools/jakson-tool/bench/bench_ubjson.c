@@ -142,12 +142,12 @@ bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOf
     return false;
 }
 
-bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *filePath, bench_ubjson_error *error)
+bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *filePath)
 {
     // TODO : Implement function
     UNUSED(manager)
     UNUSED(filePath)
-    bench_ubjson_mgr_create_empty(manager, error);
+    bench_ubjson_mgr_create_empty(manager);
     ubjs_writer_builder *writer_builder = 0;
     ubjs_writer *writer = 0;
     ubjs_prmtv *obj = 0;
@@ -157,12 +157,15 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *fi
     ctx my_ctx;
     my_ctx.verbose = false;
     my_ctx.pretty_print_output = false;
+    FILE *file;
+    file = fopen(filePath, "r");
 
-    json = json_loadf(stdin, JSON_DECODE_ANY, &jError);
+    json = json_loadf(file, JSON_DECODE_ANY, &jError);
     if(json == 0) {
         // TODO : Error feedback
         return false;
     }
+    fclose(file);
 
     js2ubj_main_encode_json_to_ubjson(json, lib, &obj);
     ubjs_writer_builder_new(lib, &writer_builder);
@@ -175,29 +178,33 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *fi
     ubjs_writer_write(writer, obj);
 
     ubjs_writer_free(&writer);
-    ubjs_prmtv_free(&obj);
+    obj = 0;
+    manager->obj = obj;
     manager->lib = lib;
     return true;
 }
 
-bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *error)
+bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager)
 {
     ERROR_IF_NULL(manager);
-    ERROR_IF_NULL(error);
+    //ERROR_IF_NULL(error);
 
     ubjs_library_builder builder;
     ubjs_library *lib = 0;
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_build(&builder, &lib);
+    ubjs_prmtv *obj = 0;
 
+    manager->obj = obj;
     manager->lib = lib;
-    manager->error = error;
+    //manager->error = error;
     return true;
 }
 
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager)
 {
     ERROR_IF_NULL(manager)
+    ubjs_prmtv_free(&manager->obj);
     ubjs_library_free(&manager->lib);
     return true;
 }

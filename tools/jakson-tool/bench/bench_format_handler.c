@@ -38,17 +38,22 @@ bool bench_format_handler_create_bson_handler(bench_format_handler *handler, ben
 
     return true;
 }
-/**
-bool bench_format_handler_create_ubjson(bench_format_handler *handler, bench_error *error, const char* filePath)
+
+bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath)
 {
     // TODO: Implement function
-    JAK_UNUSED(handler);
-    JAK_UNUSED(error);
-    JAK_UNUSED(filePath);
+    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(error);
+    //bench_ubjson_error *ubjsonError = malloc(sizeof(*ubjsonError));
+    bench_ubjson_mgr *manager = malloc(sizeof(*manager));
+    if(filePath) {
+        bench_ubjson_mgr_create_from_file(manager, filePath);
+    } else {
+        bench_ubjson_mgr_create_empty(manager);
+    }
 
-    return false;
+    return true;
 }
-**/
 
 bool bench_format_handler_destroy(bench_format_handler *handler)
 {

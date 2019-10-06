@@ -629,15 +629,15 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
 
 #define SCHEMA_STRICT_VAL "--size-optimized"
 
-bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager)
+bool moduleValSchema(int argc, char **argv, FILE *file, command_opt_mgr *manager)
 {
-    JAK_UNUSED(argc);
-    JAK_UNUSED(argv);
-    JAK_UNUSED(file);
-    JAK_UNUSED(manager);
+    UNUSED(argc);
+    UNUSED(argv);
+    UNUSED(file);
+    UNUSED(manager);
 
     //    bool strict = false;
-    //    JAK_UNUSED(manager);
+    //    UNUSED(manager);
     //
     //    if (argc < 2) {
     //        JAK_CONSOLE_WRITE(file, "Require one schema file and at least one BISON file to test for <args>.%s", "");
@@ -683,7 +683,7 @@ bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *man
     //    fseek(f, 0, SEEK_SET);
     //    char *schemaContent = JAK_MALLOC(fsize + 1);
     //    size_t nread = fread(schemaContent, fsize, 1, f);
-    //    JAK_UNUSED(nread);
+    //    UNUSED(nread);
     //    fclose(f);
     //    schemaContent[fsize] = 0;
     //
@@ -753,7 +753,7 @@ bool moduleValSchema(int argc, char **argv, FILE *file, jak_command_opt_mgr *man
 }
 
 
-bool moduleListInvoke(int argc, char **argv, FILE *file, jak_command_opt_mgr *manager)
+bool moduleListInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager)
 {
     UNUSED(manager);
 

@@ -24,89 +24,106 @@
 #include <jakson/carbon/object_it.h>
 #include <jakson/schema/keywords.h>
 
-bool schema_validate(carbon *schemaCarbon, carbon *fileToVal) {
-    ERROR_IF_NULL(schemaCarbon);
-    ERROR_IF_NULL(fileToVal);
 
-    carbon_array_it it;
+fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
+    FN_FAIL_IF_NULL(schemaFile, fileToVal);
+
+    schema s;
+    carbon_array_it ait;
     carbon_field_type_e field_type;
 
-    carbon_iterator_open(&it, schemaCarbon);
-    carbon_array_it_next(&it);
-    carbon_array_it_field_type(&field_type, &it);
+    if (!(FN_IS_OK(schema_init(&s, NULL)))) {
+        return FN_FAIL_FORWARD();
+    }
+
+    carbon_iterator_open(&ait, schemaFile);
+    carbon_array_it_next(&ait);
 
     // a schema always has to be an object.
+    carbon_array_it_field_type(&field_type, &ait);
     if (!(carbon_field_type_is_object_or_subtype(field_type))){
-        ERROR_WDETAILS(&it.err, ERR_BADTYPE, "schema has to be an object.");
-        carbon_iterator_close(&it);
-        //TODO: cleanup?
-        return false;
+        return FN_FAIL(ERR_BADTYPE, "schema has to be an object");
     }
 
-    schema schema;
-    schema.fileToVal = fileToVal;
-
-    if(!(schema_createSchema(&schema, carbon_array_it_object_value(&it)))) {
-        //TODO: error handling
-        return false;
+    carbon_object_it *oit = carbon_array_it_object_value(&ait);
+    if (!(FN_IS_OK(schema_generate(&s, oit)))) {
+        return FN_FAIL_FORWARD();
     }
-    carbon_iterator_close(&it);
 
-    return true;   
-}
-
-bool schema_createSchema(schema *schema, carbon_object_it *oit) {
-
-    // get schema size to avoid unnecessary reallocs
-    u64 schemaSize = schema_getSchemaSize(oit);
-    schema_content *content = malloc(schemaSize * sizeof(schema_content*));
-    schema->content = content;
-    schema->content_size = schemaSize;
-    
-    u64 pos = 0;
-    while(carbon_object_it_next(oit)) {
-        u64 key_len;
-        const char *prop_name = carbon_object_it_prop_name(&key_len,oit);
-        content[pos].key = strndup(prop_name,key_len);
-        content[pos].value = oit; 
+    if (!(FN_IS_OK(schema_validate_run(&s, fileToVal)))) {
+        return FN_FAIL_FORWARD();
     }
-    if(!(schema_handleKeys(schema))) {
-        //TODO: error handling
-        free(content);
-        return false;
-    }
-    free(content);
-    return true;
+
+    return FN_OK();
 }
 
 
-bool schema_handleKeys(schema *schema) {
-    bool status = true;
-    for (unsigned int i = 0; i < schema->content_size; i++) {
-        if (strcmp(schema->content[i].key, "type")==0) {
-            status = schema_keywords_type(schema->content[i].value, carbonFiles, &(schema->err));
-        }
-        else if (strcmp(schema->content[i].key, "properties")==0) {
-                status = schema_keywords_properties(schema->content[i].value, carbonFiles, &(schema->err));
-        }
-        else {
-            //TODO: error handling
-            return false;
-        }
-        if (status != true) {
-            //TODO: error handling
-            return false;
-        }
-    }
-    return true;
-}
+fn_result schema_generate(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s);
 
-
-unsigned int schema_getSchemaSize(carbon_object_it *oit) {
-    unsigned int size = 0;
     while (carbon_object_it_next(oit)) {
-        size++;
+        u64 key_len;
+        const char *_keyword = carbon_object_it_prop_name(&key_len, oit);
+        const char *keyword = strndup(_keyword, key_len);
+
+        if (!(FN_IS_OK(schema_keyword_handle(s, keyword, oit)))) {
+            return FN_FAIL_FORWARD();
+        }
     }
-    carbon_object_it_rewind(oit);
-    return size;
+    return FN_OK();
+}
+
+
+fn_result schema_validate_run(schema *s, carbon *fileToVal) {
+    FN_FAIL_IF_NULL(s, fileToVal);
+
+    carbon_array_it ait;
+    carbon_field_type_e field_type;
+    carbon_iterator_open(&ait, fileToVal);
+
+    if (s->applies.has_type) {
+        bool passed = false;
+        carbon_array_it_next(&ait);
+        while (!(vector_is_empty(s->data.type))) {
+            carbon_array_it_field_type(&field_type, &ait);
+            int constraint = (int)(vector_pop(s->data.type));
+
+            if (constraint == NUMBER && carbon_field_type_is_number(field_type)) {
+                passed = true;
+            }
+            else if (constraint == STRING && carbon_field_type_is_string(field_type)) {
+                passed = true;
+            }
+            else if (constraint == BOOLEAN && carbon_field_type_is_boolean(field_type)) {
+                passed = true;
+            }
+            else if (constraint == BINARY && carbon_field_type_is_binary(field_type)) {
+                passed = true;
+            }
+            else if (constraint == ARRAY && carbon_field_type_is_array_or_subtype(field_type)) {
+                passed = true;
+            }
+            else if (constraint == COLUMN && carbon_field_type_is_column_or_subtype(field_type)) {
+                passed = true;
+            }
+            else if (constraint == OBJECT && carbon_field_type_is_object_or_subtype(field_type)) {
+                passed = true;
+            }
+            else if (constraint == _NULL && carbon_field_type_is_null(field_type)) {
+                passed = true;
+            }
+            if (!(passed)) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint");
+            }
+            if (carbon_array_it_has_next(&ait)) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint, expected atomar element"); 
+            }
+            if (passed) {
+                break;
+            }
+        }
+    }
+
+    return FN_OK();
+
 }

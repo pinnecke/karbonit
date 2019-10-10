@@ -223,6 +223,9 @@ bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, const char *key, int32
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     ERROR_IF_NULL(val)
+
+    ubjs_prmtv_int32(manager->lib, val, &manager->obj);
+
     return false;
 }
 
@@ -233,16 +236,21 @@ bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it,
     ERROR_IF_NULL(key)
     ERROR_IF_NULL(val)
     UNUSED(it)
+
     return false;
 }
 
-bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t newVal)
+bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t newVal)
 {
     // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     ERROR_IF_NULL(newVal)
     UNUSED(it)
+
+    ubjs_prmtv_int32_set(manager->obj, newVal);
+
+
     return false;
 }
 
@@ -264,11 +272,14 @@ bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iter
     return false;
 }
 
-bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key)
+bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key)
 {
     // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     UNUSED(it)
+
+    ubjs_prmtv_object_delete(manager->obj, sizeof(uint32_t), key);
+
     return false;
 }

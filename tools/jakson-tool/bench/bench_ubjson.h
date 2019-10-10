@@ -68,12 +68,12 @@ bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, const char *key, int32
 
 bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t val);
 
-bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t newVal);
+bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t newVal);
 
 bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key);
 bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key);
 
-bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key);
+bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key);
 
 bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *benchType);
 

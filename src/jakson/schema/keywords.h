@@ -23,11 +23,12 @@
 // ---------------------------------------------------------------------------------------------------------------------
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
+#include <jakson/fn_result.h>
 
 BEGIN_DECL
 
 
-inline fn_result schema_keyword_handle_properties(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_properties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -40,18 +41,16 @@ inline fn_result schema_keyword_handle_properties(schema *s, carbon_object_it *o
     carbon_object_it_clone(&p_oit, carbon_object_it_object_value(oit));
     s->data.properties = &p_oit;        
     s->applies.has_properties = true;
-    s->applies.has_keyword_for_objects = true;
     
     return FN_OK();
 }
 
 
-inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
-    vector ofType(int) vec;
-    vector_create(&vec, NULL, sizeof(int), 8);
+    vector_create(&(s->data.type), NULL, sizeof(int), 8);
     
     carbon_object_it_prop_type(&field_type, oit);
     if (!(carbon_field_type_is_array_or_subtype(field_type))) {
@@ -61,6 +60,10 @@ inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *oit) {
     carbon_array_it *ait = carbon_object_it_array_value(oit);
 
     while (carbon_array_it_next(ait)) {
+        carbon_array_it_field_type(&field_type, ait);
+        if (!(carbon_field_type_is_string(field_type))) {
+            return FN_FAIL(ERR_BADTYPE, "keyword \"type\" expects an array of strings");
+        }
         u64 strlen;
         const char* _str = carbon_array_it_string_value(&strlen, ait);
         const char* str = strndup(_str, strlen);
@@ -91,17 +94,179 @@ inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *oit) {
         else {
             return FN_FAIL(ERR_UNSUPPORTEDTYPE, "\"type\" keyword contains unsupported constraint");
         }
-        vector_push(&vec, &type, 1);
+        vector_push(&(s->data.type), &type, 1);
     }
 
     s->applies.has_type = true;
-    s->data.type = &vec;
+
+    return FN_OK();
+}
+
+static inline fn_result schema_keyword_handle_minimum(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    bool isnull;
+    long double val;
+    
+    if (!(FN_IS_OK(longDoubleFromOit(&isnull, &val, oit)))) {
+        return FN_FAIL_FORWARD();
+    }
+    if(isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minimum\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_minimum = true;
+    s->data.minimum = val;
 
     return FN_OK();
 }
 
 
-inline fn_result schema_keyword_handle_minimum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_maximum(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    bool isnull;
+    long double val;
+    
+    if (!(FN_IS_OK(longDoubleFromOit(&isnull, &val, oit)))) {
+        return FN_FAIL_FORWARD();
+    }
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maximum\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_maximum = true;
+    s->data.maximum = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_exclusiveMinimum(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    bool isnull;
+    long double val;
+
+    if (!(FN_IS_OK(longDoubleFromOit(&isnull, &val, oit)))) {
+        return FN_FAIL_FORWARD();
+    }
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"exclusiveMinimum\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_exclusiveMinimum = true;
+    s->data.exclusiveMinimum = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_exclusiveMaximum(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    bool isnull;
+    long double val;
+
+    if (!(FN_IS_OK(longDoubleFromOit(&isnull, &val, oit)))) {
+        return FN_FAIL_FORWARD();
+    }
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"exclusiveMaximum\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_exclusiveMaximum = true;
+    s->data.exclusiveMaximum = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_multipleOf(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    bool isnull;
+    long double val;
+
+    if (!(FN_IS_OK(longDoubleFromOit(&isnull, &val, oit)))) {
+        return FN_FAIL_FORWARD();
+    }
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"multipleOf\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_multipleOf = true;
+    s->data.multipleOf = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_minLength(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    bool isnull;
+    u64 val;
+    if (!(carbon_field_type_is_unsigned(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minLength\" expects a positive numeric value");
+    }
+    carbon_object_it_unsigned_value(&isnull, &val, oit);
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minLength\" expects a positive numeric value. Got NULL");
+    }
+    s->applies.has_minLength = true;
+    s->data.minLength = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_maxLength(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    bool isnull;
+    u64 val;
+    if (!(carbon_field_type_is_number(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maxLength\" expects a numeric value");
+    }
+    carbon_object_it_unsigned_value(&isnull, &val, oit);
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maxLength\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_maxLength = true;
+    s->data.maxLength = val;
+
+    return FN_OK();
+}
+
+//TODO: implement
+static inline fn_result schema_keyword_handle_pattern(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+//TODO: implement
+static inline fn_result schema_keyword_handle_format(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+//TODO: implement
+static inline fn_result schema_keyword_handle_formatMinimum(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+//TODO: implement
+static inline fn_result schema_keyword_handle_formatMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -110,7 +275,8 @@ inline fn_result schema_keyword_handle_minimum(schema *s, carbon_object_it *oit)
 }
 
 
-inline fn_result schema_keyword_handle_maximum(schema *s, carbon_object_it *oit) {
+//TODO: implement
+static inline fn_result schema_keyword_handle_formatExclusiveMinimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -119,7 +285,8 @@ inline fn_result schema_keyword_handle_maximum(schema *s, carbon_object_it *oit)
 }
 
 
-inline fn_result schema_keyword_handle_exclusiveMinimum(schema *s, carbon_object_it *oit) {
+//TODO: implement
+static inline fn_result schema_keyword_handle_formatExclusiveMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -128,7 +295,77 @@ inline fn_result schema_keyword_handle_exclusiveMinimum(schema *s, carbon_object
 }
 
 
-inline fn_result schema_keyword_handle_exclusiveMaximum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_minItems(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    bool isnull;
+    u64 val;
+    if (!(carbon_field_type_is_unsigned(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minItems\" expects a positve numeric value");
+    }
+    carbon_object_it_unsigned_value(&isnull, &val, oit);
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minItems\" expects a positive numeric value. Got NULL");
+    }
+    s->applies.has_minItems = true;
+    s->data.minItems = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_maxItems(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    bool isnull;
+    u64 val;
+    if (!(carbon_field_type_is_unsigned(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maxItems\" expects a positive numeric value");
+    }
+    carbon_object_it_unsigned_value(&isnull, &val, oit);
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maxItems\" expects a postive numeric value. Got NULL");
+    }
+    s->applies.has_maxItems = true;
+    s->data.maxItems = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_uniqueItems(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_number(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"uniqueItems\" expects a boolean value");
+    }
+    u8 val;
+    carbon_object_it_u8_value(&val, oit);
+
+    switch (val) {
+        case 0 :
+            s->data.uniqueItems = false;
+            break;
+        case 1 :
+            s->data.uniqueItems = true;
+            break;
+        default :
+            return FN_FAIL(ERR_BADTYPE, "keyword \"uniqueItems\" expects a boolean value");
+    }
+    s->applies.has_uniqueItems = true;
+
+    return FN_OK();
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_items(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -137,7 +374,36 @@ inline fn_result schema_keyword_handle_exclusiveMaximum(schema *s, carbon_object
 }
 
 
-inline fn_result schema_keyword_handle_multipleOf(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_additionalItems(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_number(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"additionalItems\" expects a boolean value");
+    }
+
+    u8 val;
+    carbon_object_it_u8_value(&val, oit);
+
+    switch (val) {
+        case 0 :
+            s->data.additionalItems = false;
+            break;
+        case 1 :
+            s->data.additionalItems = true;
+            break;
+        default :
+            return FN_FAIL(ERR_BADTYPE, "keyword \"additionalItems\" expects a boolean value");
+    }
+    s->applies.has_additionalItems =true;
+
+    return FN_OK();
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_contains(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -146,7 +412,59 @@ inline fn_result schema_keyword_handle_multipleOf(schema *s, carbon_object_it *o
 }
 
 
-inline fn_result schema_keyword_handle_minLength(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_minProperties(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    bool isnull;
+    u64 val;
+    if (!(carbon_field_type_is_number(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minProperties\" expects a numeric value");
+    }
+    carbon_object_it_unsigned_value(&isnull, &val, oit);
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"minProperties\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_minProperties = true;
+    s->data.minProperties = val;
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_keyword_handle_maxProperties(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    bool isnull;
+    u64 val;
+    if (!(carbon_field_type_is_number(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maxProperties\" expects a numeric value");
+    }
+    carbon_object_it_unsigned_value(&isnull, &val, oit);
+    if (isnull) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"maxProperties\" expects a numeric value. Got NULL");
+    }
+    s->applies.has_maxProperties = true;
+    s->data.maxProperties = val;
+
+    return FN_OK();
+}
+
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_required(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_patternProperties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -155,7 +473,116 @@ inline fn_result schema_keyword_handle_minLength(schema *s, carbon_object_it *oi
 }
 
 
-inline fn_result schema_keyword_handle_maxLength(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle_additionalProperties(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_number(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"additionalProperties\" expects a boolean value");
+    }
+    u8 val;
+    carbon_object_it_u8_value(&val, oit);
+
+    switch (val) {
+        case 0 :
+            s->data.additionalProperties = false;
+            break;
+        case 1 :
+            s->data.additionalProperties = true;
+            break;
+        default :
+            return FN_FAIL(ERR_BADTYPE, "keyword \"additionalProperties\" expects a boolean value");
+    }
+    s->applies.has_additionalProperties = true;
+
+    return FN_OK();
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_dependencies(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_propertyNames(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_patternRequired(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_enum(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_const(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_not(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_oneOf(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_anyOf(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_allOf(schema *s, carbon_object_it *oit) {
+    FN_FAIL_IF_NULL(s, oit);
+    UNUSED(s);
+    UNUSED(oit);
+
+    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+}
+
+// TODO: implement
+static inline fn_result schema_keyword_handle_ifThenElse(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -164,251 +591,9 @@ inline fn_result schema_keyword_handle_maxLength(schema *s, carbon_object_it *oi
 }
 
 
-inline fn_result schema_keyword_handle_pattern(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_format(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_formatMinimum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_formatMaximum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_formatExclusiveMinimum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_formatExclusiveMaximum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_minItems(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_maxItems(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_uniqueItems(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_items(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_additionalItems(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_contains(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_minProperties(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_maxProperties(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_required(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_patternProperties(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_additionalProperties(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_dependencies(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_propertyNames(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_patternRequired(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_enum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_const(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_not(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_oneOf(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_anyOf(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_allOf(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-
-inline fn_result schema_keyword_handle_ifThenElse(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
-inline fn_result schema_keyword_handle(schema *s, const char *keyword, carbon_object_it *oit) {
+static inline fn_result schema_keyword_handle(schema *s, const char *keyword, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, keyword, oit);
-
+    // TODO: maybe replace with own strcmp, trees are cool!
     if (strcmp(keyword, "type") == 0) {
         if (!(FN_IS_OK(schema_keyword_handle_type(s, oit)))) {
             return FN_FAIL_FORWARD();

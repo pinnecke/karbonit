@@ -19,9 +19,6 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 #include "schema.h"
-#include <jakson/carbon.h>
-#include <jakson/carbon/array_it.h>
-#include <jakson/carbon/object_it.h>
 #include <jakson/schema/keywords.h>
 
 
@@ -59,7 +56,7 @@ fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
 
 
 fn_result schema_generate(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s);
+    FN_FAIL_IF_NULL(s, oit);
 
     while (carbon_object_it_next(oit)) {
         u64 key_len;
@@ -80,50 +77,103 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
     carbon_array_it ait;
     carbon_field_type_e field_type;
     carbon_iterator_open(&ait, fileToVal);
-
+    carbon_array_it_next(&ait);
+    carbon_array_it_field_type(&field_type, &ait);
+    
     if (s->applies.has_type) {
         bool passed = false;
-        carbon_array_it_next(&ait);
-        while (!(vector_is_empty(s->data.type))) {
-            carbon_array_it_field_type(&field_type, &ait);
-            int constraint = (int)(vector_pop(s->data.type));
+        for (size_t i = 0; i < vector_length(&(s->data.type)); i++) {
+            int *constraint = (int*)(vector_at(&(s->data.type), i));
 
-            if (constraint == NUMBER && carbon_field_type_is_number(field_type)) {
+            if (*constraint == NUMBER && carbon_field_type_is_number(field_type)) {
                 passed = true;
             }
-            else if (constraint == STRING && carbon_field_type_is_string(field_type)) {
+            else if (*constraint == STRING && carbon_field_type_is_string(field_type)) {
                 passed = true;
             }
-            else if (constraint == BOOLEAN && carbon_field_type_is_boolean(field_type)) {
+            else if (*constraint == BOOLEAN && carbon_field_type_is_boolean(field_type)) {
                 passed = true;
             }
-            else if (constraint == BINARY && carbon_field_type_is_binary(field_type)) {
+            else if (*constraint == BINARY && carbon_field_type_is_binary(field_type)) {
                 passed = true;
             }
-            else if (constraint == ARRAY && carbon_field_type_is_array_or_subtype(field_type)) {
+            else if (*constraint == ARRAY && carbon_field_type_is_array_or_subtype(field_type)) {
                 passed = true;
             }
-            else if (constraint == COLUMN && carbon_field_type_is_column_or_subtype(field_type)) {
+            else if (*constraint == COLUMN && carbon_field_type_is_column_or_subtype(field_type)) {
                 passed = true;
             }
-            else if (constraint == OBJECT && carbon_field_type_is_object_or_subtype(field_type)) {
+            else if (*constraint == OBJECT && carbon_field_type_is_object_or_subtype(field_type)) {
                 passed = true;
             }
-            else if (constraint == _NULL && carbon_field_type_is_null(field_type)) {
+            else if (*constraint == _NULL && carbon_field_type_is_null(field_type)) {
                 passed = true;
-            }
-            if (!(passed)) {
-                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint");
-            }
-            if (carbon_array_it_has_next(&ait)) {
-                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint, expected atomar element"); 
             }
             if (passed) {
                 break;
             }
         }
+        if (!(passed)) {
+            return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint");
+        }
+        if (carbon_array_it_has_next(&ait)) {
+            return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint, expected atomar element"); 
+        }
     }
 
-    return FN_OK();
+    if (s->applies.has_minimum && carbon_field_type_is_number(field_type)) {
+        bool isnull;
+        long double val;
+        longDoubleFromAit(&isnull, &val, &ait);
+        if (!isnull) {
+            if (val < s->data.minimum) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"minimum\" constraint not met");
+            }
+        }
+    }
+        
+    if (s->applies.has_maximum && carbon_field_type_is_number(field_type)) {
+        bool isnull;
+        long double val;
+        longDoubleFromAit(&isnull, &val, &ait);
+        if (!isnull) {
+            if (val > s->data.maximum) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"maximum\" constraint not met");
+            }
+        }
+    }
 
+    if (s->applies.has_exclusiveMinimum && carbon_field_type_is_number(field_type)) {
+        bool isnull;
+        long double val;
+        longDoubleFromAit(&isnull, &val, &ait);
+        if (!isnull) {
+            if (val <= s->data.exclusiveMinimum) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"exclusiveMinimum\" constraint not met");
+            }
+        }
+    }
+
+    if (s->applies.has_exclusiveMaximum && carbon_field_type_is_number(field_type)) {
+        bool isnull;
+        long double val;
+        longDoubleFromAit(&isnull, &val, &ait);
+        if (!isnull) {
+            if (val >= s->data.exclusiveMaximum) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"exclusiveMaximum\" constraint not met");
+            }
+        }
+    }
+
+    if (s->applies.has_multipleOf && carbon_field_type_is_number(field_type)) {
+        bool isnull;
+        long double val;
+        longDoubleFromAit(&isnull, &val, &ait);
+        if (!isnull) {
+            if (!(fmod(val, s->data.multipleOf) == 0)) {
+                return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"multipleOf\" constraint not met");
+            }
+        }
+    }
+    return FN_OK();
 }

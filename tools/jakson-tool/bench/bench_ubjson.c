@@ -212,10 +212,43 @@ bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager)
 
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager)
 {
-    // TODO : Implement function
     UNUSED(str)
-    UNUSED(manager)
-    return false;
+    ERROR_IF_NULL(manager)
+
+    ubjs_object_iterator *it;
+    ubjs_prmtv_object_iterate(manager->obj, &it);
+
+    while(UR_OK == ubjs_object_iterator_next(it)) {
+        unsigned int key_length;
+        unsigned int value_length;
+        char *key;
+        char *value;
+        int32_t val;
+        ubjs_prmtv *item;
+        
+        ubjs_object_iterator_get_key_length(it, &key_length);
+        key = (char*) malloc(sizeof(char) * key_length);
+        ubjs_object_iterator_copy_key(it, key);
+        ubjs_object_iterator_get_value(it, &item);
+        ubjs_prmtv_str_get_length(item, &value_length);
+
+        value = (char*)malloc(sizeof(char) * value_length);
+        // TODO : Implement for all value types
+        ubjs_prmtv_int32_get(item, &val);
+        sprintf(value, "%d", val);
+
+        strcat(str, key);
+        strcat(str, ":");
+        strcat(str, value);
+        strcat(str, "\n");
+
+        free(key);
+        free(value);
+    }
+
+    ubjs_object_iterator_free(&it);
+
+    return true;
 }
 
 bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val)

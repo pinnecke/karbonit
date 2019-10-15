@@ -699,7 +699,6 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
             bench_format_handler handler;
             bench_error err;
             if(!bench_format_handler_create_bson_handler(&handler, &err, filePath)) {
-
                 //JAK_CONSOLE_WRITELN(file, err.msg, "");
                 return false;
             }
@@ -719,11 +718,13 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
             // TODO: Include UBJSON file benchmarking
             bench_format_handler handler;
             bench_error err;
-            if(bench_format_handler_create_ubjson_handler(&handler, &err, filePath)) {
-                // TODO : Error handling
+            if(!bench_format_handler_create_ubjson_handler(&handler, &err, filePath)) {
+                //CONSOLE_WRITELN(file, err.msg, "");
                 return false;
             }
 
+            bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
+            bench_format_handler_destroy(&handler);
         } else {
             CONSOLE_WRITELN(file, "Format type '%s' is not supported. STOP", format);
         }

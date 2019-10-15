@@ -2,12 +2,15 @@
    the hash function.
 */
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
 #ifdef HAVE_CONFIG_H
 #include <jansson_private_config.h>
 #endif
 
 #include <stdio.h>
 #include <time.h>
+#include <stdint.h>
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
@@ -275,3 +278,5 @@ void json_object_seed(size_t seed) {
     }
 }
 #endif
+
+#pragma clang diagnostic pop

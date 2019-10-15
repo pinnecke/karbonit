@@ -52,6 +52,7 @@ typedef struct bench_ubjson_mgr {
     ubjs_library *lib;
     bench_ubjson_error *error;
     ubjs_prmtv *obj;
+    uint32_t test;
     //ubjs_array_iterator *itArr;
     //ubjs_object_iterator *itObj;
 } bench_ubjson_mgr;
@@ -59,19 +60,19 @@ typedef struct bench_ubjson_mgr {
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOffset);
-bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *filePath);
-bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager);
+bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *error, const char *filePath);
+bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *error);
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager);
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager);
 
-bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, const char *key, int32_t val);
+bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val);
 
-bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t val);
+bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t val);
 
 bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t newVal);
 
-bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key);
-bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key);
+bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key);
+bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key);
 
 bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key);
 

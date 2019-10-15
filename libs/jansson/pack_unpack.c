@@ -227,7 +227,7 @@ static char *read_string(scanner_t *s, va_list *ap,
 
 static json_t *pack_object(scanner_t *s, va_list *ap)
 {
-    json_t *object = json_object();
+    json_t *object = jansson_json_object();
     next_token(s);
 
     while(token(s) != '}') {
@@ -293,7 +293,7 @@ error:
 
 static json_t *pack_array(scanner_t *s, va_list *ap)
 {
-    json_t *array = json_array();
+    json_t *array = jansson_json_array();
     next_token(s);
 
     while(token(s) != ']') {

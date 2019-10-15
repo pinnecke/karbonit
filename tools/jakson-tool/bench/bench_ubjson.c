@@ -142,12 +142,11 @@ bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOf
     return false;
 }
 
-bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *filePath)
+bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *error, const char *filePath)
 {
-    // TODO : Implement function
     UNUSED(manager)
     UNUSED(filePath)
-    bench_ubjson_mgr_create_empty(manager);
+    bench_ubjson_mgr_create_empty(manager, error);
     ubjs_writer_builder *writer_builder = 0;
     ubjs_writer *writer = 0;
     ubjs_prmtv *obj = 0;
@@ -184,20 +183,22 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, const char *fi
     return true;
 }
 
-bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager)
+bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *error)
 {
     ERROR_IF_NULL(manager);
-    //ERROR_IF_NULL(error);
+    ERROR_IF_NULL(error);
 
     ubjs_library_builder builder;
     ubjs_library *lib = 0;
     ubjs_library_builder_init(&builder);
     ubjs_library_builder_build(&builder, &lib);
     ubjs_prmtv *obj = 0;
+    //unsigned int len = -1;
+    ubjs_prmtv_object(lib, &obj);
 
     manager->obj = obj;
     manager->lib = lib;
-    //manager->error = error;
+    manager->error = error;
     return true;
 }
 
@@ -217,69 +218,128 @@ bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager)
     return false;
 }
 
-bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, const char *key, int32_t val)
+bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val)
 {
-    // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     ERROR_IF_NULL(val)
 
-    ubjs_prmtv_int32(manager->lib, val, &manager->obj);
+    ubjs_prmtv *item = 0;
+    ubjs_prmtv_int32(manager->lib, val, &item);
 
+    if(UR_OK == ubjs_prmtv_object_set(manager->obj, sizeof(key), key, item))
+        return true;
+    free(item);
     return false;
 }
 
-bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key, int32_t val)
+bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t val)
 {
-    // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
-    ERROR_IF_NULL(val)
+    UNUSED(val)
     UNUSED(it)
 
+    ubjs_prmtv *item = 0;
+    if(UR_OK == ubjs_prmtv_object_get(manager->obj, sizeof(key), key, &item))
+        return true;
+    free(item);
     return false;
 }
 
 bool bench_ubjson_change_val_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t newVal)
 {
-    // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     ERROR_IF_NULL(newVal)
     UNUSED(it)
 
-    ubjs_prmtv_int32_set(manager->obj, newVal);
+    ubjs_prmtv *item = 0;
+    ubjs_prmtv_int32(manager->lib, newVal, &item);
 
-
+    if(UR_OK == ubjs_prmtv_object_set(manager->obj, sizeof(key), key, item))
+        return true;
+    free(item);
     return false;
 }
 
-bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key)
+bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key)
 {
-    // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     UNUSED(it)
+
+    ubjs_prmtv *item = 0;
+    int32_t itemVal;
+
+    ubjs_prmtv_object_get(manager->obj, sizeof(key), key, &item);
+    ubjs_prmtv_int32_get(item, &itemVal);
+    ubjs_prmtv_int32(manager->lib, itemVal, &item);
+
+    if(UR_OK == ubjs_prmtv_object_set(manager->obj, sizeof(key), key, item)) {
+        return true;
+    }
+    free(item);
     return false;
 }
 
-bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, const char *key)
+bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key)
 {
-    // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     UNUSED(it)
+
+    ubjs_prmtv *item = 0;
+    int64_t itemVal;
+
+    ubjs_prmtv_object_get(manager->obj, sizeof(key), key, &item);
+    ubjs_prmtv_int64_get(item, &itemVal);
+    ubjs_prmtv_int64(manager->lib, itemVal, &item);
+
+    if(UR_OK == ubjs_prmtv_object_set(manager->obj, sizeof(key), key, item)) {
+        return true;
+    }
+    free(item);
+    return false;
+
     return false;
 }
 
 bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key)
 {
-    // TODO : Implement function
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(key)
     UNUSED(it)
 
-    ubjs_prmtv_object_delete(manager->obj, sizeof(uint32_t), key);
+    return ubjs_prmtv_object_delete(manager->obj, sizeof(uint32_t), key);
+}
 
-    return false;
+bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *benchType) {
+    ERROR_IF_NULL(manager);
+    UNUSED(benchType);
+
+    assert(bench_ubjson_insert_int32(manager,"Test1", 41));
+    assert(bench_ubjson_insert_int32(manager, "Test2", 42));
+    assert(bench_ubjson_insert_int32(manager, "Test3", 43));
+    assert(bench_ubjson_insert_int32(manager, "Test4", 44));
+    assert(bench_ubjson_insert_int32(manager, "Test5", 45));
+    assert(bench_ubjson_insert_int32(manager, "Test6", 46));
+
+
+    if(!bench_ubjson_find_int32(manager, 0, "Test3", 0))
+        return bench_ubjson_error_write(manager->error, "Failed to find int32 value.", 0);
+
+    if(!bench_ubjson_change_val_int32(manager, 0, "Test3", 21))
+        return bench_ubjson_error_write(manager->error, "Failed to change int32 value.", 0);
+
+    if(!bench_ubjson_convert_entry_int64(manager, 0, "Test4"))
+        return bench_ubjson_error_write(manager->error, "Failed to convert to int64 entry.", 0);
+
+    if(!bench_ubjson_convert_entry_int32(manager, 0, "Test4"))
+        return bench_ubjson_error_write(manager->error, "Failed to convert to int32 entry.", 0);
+
+    if(!bench_ubjson_delete_int32(manager, 0, "Test4"))
+        return bench_ubjson_error_write(manager->error, "Failed to delete int32 entry.", 0);
+
+    return true;
 }

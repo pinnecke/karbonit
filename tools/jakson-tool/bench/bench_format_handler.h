@@ -71,36 +71,36 @@ bool bench_format_handler_get_doc(char *str, bench_format_handler *handler);
 bool bench_format_handler_get_document_size(bench_format_handler *handler, size_t size);
 bool bench_format_handler_write_error(bench_format_handler *handler);
 
-bool bench_format_handler_insert_int8(bench_format_handler *handler, const char *key, int8_t val);
-bool bench_format_handler_insert_int16(bench_format_handler *handler, const char *key, int16_t val);
-bool bench_format_handler_insert_int32(bench_format_handler *handler, const char *key, int32_t val);
-bool bench_format_handler_insert_int64(bench_format_handler *handler, const char *key, int64_t val);
-bool bench_format_handler_insert_string(bench_format_handler *handler, const char *key, const char *val);
+bool bench_format_handler_insert_int8(bench_format_handler *handler, char *key, int8_t val);
+bool bench_format_handler_insert_int16(bench_format_handler *handler, char *key, int16_t val);
+bool bench_format_handler_insert_int32(bench_format_handler *handler, char *key, int32_t val);
+bool bench_format_handler_insert_int64(bench_format_handler *handler, char *key, int64_t val);
+bool bench_format_handler_insert_string(bench_format_handler *handler, char *key, const char *val);
 
-bool bench_format_handler_find_int8(bench_format_handler *handler, const char *key, int8_t val);
-bool bench_format_handler_find_int16(bench_format_handler *handler, const char *key, int16_t val);
-bool bench_format_handler_find_int32(bench_format_handler *handler, const char *key, int32_t val);
-bool bench_format_handler_find_int64(bench_format_handler *handler, const char *key, int64_t val);
-bool bench_format_handler_find_string(bench_format_handler *handler, const char *key, const char *val);
+bool bench_format_handler_find_int8(bench_format_handler *handler, char *key, int8_t val);
+bool bench_format_handler_find_int16(bench_format_handler *handler, char *key, int16_t val);
+bool bench_format_handler_find_int32(bench_format_handler *handler, char *key, int32_t val);
+bool bench_format_handler_find_int64(bench_format_handler *handler, char *key, int64_t val);
+bool bench_format_handler_find_string(bench_format_handler *handler, char *key, const char *val);
 
-bool bench_format_handler_change_val_int8(bench_format_handler *handler, const char *key, int8_t newVal);
-bool bench_format_handler_change_val_int16(bench_format_handler *handler, const char *key, int16_t newVal);
-bool bench_format_handler_change_val_int32(bench_format_handler *handler, const char *key, int32_t newVal);
-bool bench_format_handler_change_val_int64(bench_format_handler *handler, const char *key, int64_t newVal);
-bool bench_format_handler_change_val_string(bench_format_handler *handler, const char *key, const char *newVal);
+bool bench_format_handler_change_val_int8(bench_format_handler *handler, char *key, int8_t newVal);
+bool bench_format_handler_change_val_int16(bench_format_handler *handler, char *key, int16_t newVal);
+bool bench_format_handler_change_val_int32(bench_format_handler *handler, char *key, int32_t newVal);
+bool bench_format_handler_change_val_int64(bench_format_handler *handler, char *key, int64_t newVal);
+bool bench_format_handler_change_val_string(bench_format_handler *handler, char *key, const char *newVal);
 
-bool bench_format_handler_convert_entry_int8(bench_format_handler *handler, const char *key);
-bool bench_format_handler_convert_entry_int16(bench_format_handler *handler, const char *key);
-bool bench_format_handler_convert_entry_int32(bench_format_handler *handler, const char *key);
-bool bench_format_handler_convert_entry_int64(bench_format_handler *handler, const char *key);
-bool bench_format_handler_convert_entry_string(bench_format_handler *handler, const char *key, size_t size);
-bool bench_format_handler_convert_entry_object(bench_format_handler *handler, const char *key);
+bool bench_format_handler_convert_entry_int8(bench_format_handler *handler, char *key);
+bool bench_format_handler_convert_entry_int16(bench_format_handler *handler, char *key);
+bool bench_format_handler_convert_entry_int32(bench_format_handler *handler, char *key);
+bool bench_format_handler_convert_entry_int64(bench_format_handler *handler, char *key);
+bool bench_format_handler_convert_entry_string(bench_format_handler *handler, char *key, size_t size);
+bool bench_format_handler_convert_entry_object(bench_format_handler *handler, char *key);
 
-bool bench_format_handler_delete_int8(bench_format_handler *handler, const char *key);
-bool bench_format_handler_delete_int16(bench_format_handler *handler, const char *key);
-bool bench_format_handler_delete_int32(bench_format_handler *handler, const char *key);
-bool bench_format_handler_delete_int64(bench_format_handler *handler, const char *key);
-bool bench_format_handler_delete_string(bench_format_handler *handler, const char *key);
+bool bench_format_handler_delete_int8(bench_format_handler *handler, char *key);
+bool bench_format_handler_delete_int16(bench_format_handler *handler, char *key);
+bool bench_format_handler_delete_int32(bench_format_handler *handler, char *key);
+bool bench_format_handler_delete_int64(bench_format_handler *handler, char *key);
+bool bench_format_handler_delete_string(bench_format_handler *handler, char *key);
 
 // TODO : Write centralized benchmark access point
 bool bench_format_handler_execute_benchmark(bench_format_handler *handler, const char *benchType);

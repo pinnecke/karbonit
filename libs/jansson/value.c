@@ -154,7 +154,7 @@ int json_object_clear(json_t *json)
         return -1;
 
     object = json_to_object(json);
-    hashtable_clear(&object->hashtable);
+    jansson_hashtable_clear(&object->hashtable);
 
     return 0;
 }

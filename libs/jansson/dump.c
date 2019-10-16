@@ -196,7 +196,7 @@ static int compare_keys(const void *key1, const void *key2)
     return strcmp(*(const char **)key1, *(const char **)key2);
 }
 
-static int loop_check(hashtable_t *parents, const json_t *json, char *key, size_t key_size)
+static int loop_check(jansson_hashtable_t *parents, const json_t *json, char *key, size_t key_size)
 {
     snprintf(key, key_size, "%p", json);
     if (hashtable_get(parents, key))
@@ -206,7 +206,7 @@ static int loop_check(hashtable_t *parents, const json_t *json, char *key, size_
 }
 
 static int do_dump(const json_t *json, size_t flags, int depth,
-                   hashtable_t *parents, json_dump_callback_t dump, void *data)
+                   jansson_hashtable_t *parents, json_dump_callback_t dump, void *data)
 {
     int embed = flags & JSON_EMBED;
 
@@ -488,7 +488,7 @@ int json_dump_file(const json_t *json, const char *path, size_t flags)
 int json_dump_callback(const json_t *json, json_dump_callback_t callback, void *data, size_t flags)
 {
     int res;
-    hashtable_t parents_set;
+    jansson_hashtable_t parents_set;
 
     if(!(flags & JSON_ENCODE_ANY)) {
         if(!json_is_array(json) && !json_is_object(json))

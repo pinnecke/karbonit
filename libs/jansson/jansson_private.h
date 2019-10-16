@@ -34,7 +34,7 @@
 
 typedef struct {
     json_t json;
-    hashtable_t hashtable;
+    jansson_hashtable_t hashtable;
 } json_object_t;
 
 typedef struct {

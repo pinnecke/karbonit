@@ -489,7 +489,7 @@ static int unpack_object(scanner_t *s, json_t *root, va_list *ap)
        were accessed is not enough, as the same key can be unpacked
        multiple times.
     */
-    hashtable_t key_set;
+    jansson_hashtable_t key_set;
 
     if(hashtable_init(&key_set)) {
         set_error(s, "<internal>", json_error_out_of_memory, "Out of memory");

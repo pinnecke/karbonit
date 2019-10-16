@@ -27,7 +27,7 @@
 
 typedef struct hashtable_list list_t;
 typedef struct hashtable_pair pair_t;
-typedef struct hashtable_bucket bucket_t;
+typedef struct jansson_hashtable_bucket bucket_t;
 
 extern volatile uint32_t hashtable_seed;
 
@@ -58,12 +58,12 @@ static JSON_INLINE void list_remove(list_t *list)
     list->next->prev = list->prev;
 }
 
-static JSON_INLINE int bucket_is_empty(hashtable_t *hashtable, bucket_t *bucket)
+static JSON_INLINE int bucket_is_empty(jansson_hashtable_t *hashtable, bucket_t *bucket)
 {
     return bucket->first == &hashtable->list && bucket->first == bucket->last;
 }
 
-static void insert_to_bucket(hashtable_t *hashtable, bucket_t *bucket,
+static void insert_to_bucket(jansson_hashtable_t *hashtable, bucket_t *bucket,
                              list_t *list)
 {
     if(bucket_is_empty(hashtable, bucket))
@@ -78,7 +78,7 @@ static void insert_to_bucket(hashtable_t *hashtable, bucket_t *bucket,
     }
 }
 
-static pair_t *hashtable_find_pair(hashtable_t *hashtable, bucket_t *bucket,
+static pair_t *hashtable_find_pair(jansson_hashtable_t *hashtable, bucket_t *bucket,
                                    const char *key, size_t hash)
 {
     list_t *list;
@@ -104,7 +104,7 @@ static pair_t *hashtable_find_pair(hashtable_t *hashtable, bucket_t *bucket,
 }
 
 /* returns 0 on success, -1 if key was not found */
-static int hashtable_do_del(hashtable_t *hashtable,
+static int hashtable_do_del(jansson_hashtable_t *hashtable,
                             const char *key, size_t hash)
 {
     pair_t *pair;
@@ -137,7 +137,7 @@ static int hashtable_do_del(hashtable_t *hashtable,
     return 0;
 }
 
-static void hashtable_do_clear(hashtable_t *hashtable)
+static void hashtable_do_clear(jansson_hashtable_t *hashtable)
 {
     list_t *list, *next;
     pair_t *pair;
@@ -151,12 +151,12 @@ static void hashtable_do_clear(hashtable_t *hashtable)
     }
 }
 
-static int hashtable_do_rehash(hashtable_t *hashtable)
+static int hashtable_do_rehash(jansson_hashtable_t *hashtable)
 {
     list_t *list, *next;
     pair_t *pair;
     size_t i, index, new_size, new_order;
-    struct hashtable_bucket *new_buckets;
+    struct jansson_hashtable_bucket *new_buckets;
 
     new_order = hashtable->order + 1;
     new_size = hashsize(new_order);
@@ -189,7 +189,7 @@ static int hashtable_do_rehash(hashtable_t *hashtable)
 }
 
 
-int hashtable_init(hashtable_t *hashtable)
+int hashtable_init(jansson_hashtable_t *hashtable)
 {
     size_t i;
 
@@ -211,13 +211,13 @@ int hashtable_init(hashtable_t *hashtable)
     return 0;
 }
 
-void hashtable_close(hashtable_t *hashtable)
+void hashtable_close(jansson_hashtable_t *hashtable)
 {
     hashtable_do_clear(hashtable);
     jsonp_free(hashtable->buckets);
 }
 
-int hashtable_set(hashtable_t *hashtable, const char *key, json_t *value)
+int hashtable_set(jansson_hashtable_t *hashtable, const char *key, json_t *value)
 {
     pair_t *pair;
     bucket_t *bucket;
@@ -268,7 +268,7 @@ int hashtable_set(hashtable_t *hashtable, const char *key, json_t *value)
     return 0;
 }
 
-void *hashtable_get(hashtable_t *hashtable, const char *key)
+void *hashtable_get(jansson_hashtable_t *hashtable, const char *key)
 {
     pair_t *pair;
     size_t hash;
@@ -284,13 +284,13 @@ void *hashtable_get(hashtable_t *hashtable, const char *key)
     return pair->value;
 }
 
-int hashtable_del(hashtable_t *hashtable, const char *key)
+int hashtable_del(jansson_hashtable_t *hashtable, const char *key)
 {
     size_t hash = hash_str(key);
     return hashtable_do_del(hashtable, key, hash);
 }
 
-void jansson_hashtable_clear(hashtable_t *hashtable)
+void jansson_hashtable_clear(jansson_hashtable_t *hashtable)
 {
     size_t i;
 
@@ -307,12 +307,12 @@ void jansson_hashtable_clear(hashtable_t *hashtable)
     hashtable->size = 0;
 }
 
-void *hashtable_iter(hashtable_t *hashtable)
+void *hashtable_iter(jansson_hashtable_t *hashtable)
 {
     return hashtable_iter_next(hashtable, &hashtable->ordered_list);
 }
 
-void *hashtable_iter_at(hashtable_t *hashtable, const char *key)
+void *hashtable_iter_at(jansson_hashtable_t *hashtable, const char *key)
 {
     pair_t *pair;
     size_t hash;
@@ -328,7 +328,7 @@ void *hashtable_iter_at(hashtable_t *hashtable, const char *key)
     return &pair->ordered_list;
 }
 
-void *hashtable_iter_next(hashtable_t *hashtable, void *iter)
+void *hashtable_iter_next(jansson_hashtable_t *hashtable, void *iter)
 {
     list_t *list = (list_t *)iter;
     if(list->next == &hashtable->ordered_list)

@@ -1,63 +1,84 @@
 
 #include "bench_format_handler.h"
 
-bool bench_format_handler_create_carbon(bench_format_handler *handler, bench_carbon_mgr *manager,
-                                        bench_error *error, const char* filePath)
+bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath)
 {
-    // TODO: Implement function
-    ERROR_IF_NULL(handler);
-    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(handler)
+    ERROR_IF_NULL(error)
+    UNUSED(filePath)
 
-    UNUSED(error);
-    UNUSED(filePath);
+    error = malloc(sizeof(*error));
+    error->msg = NULL;
+    error->code = 0;
 
-    return false;
+    bench_carbon_error *carbonError = malloc(sizeof(*carbonError));
+    bench_carbon_mgr *manager = malloc(sizeof(*manager));
+
+    bench_carbon_error_create(carbonError, error);
+    /*if(filePath) {
+        bench_carbon_mgr_create_from_file(manager, carbonError, filePath);
+    } else {*/
+        bench_carbon_mgr_create_empty(manager, carbonError);
+    //}
+
+    handler->manager = manager;
+    handler->format_name = BENCH_FORMAT_CARBON;
+    handler->error = error;
+
+    return true;
 }
 
 bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath)
 {
-    //JAK_ERROR_IF_NULL(handler);
-    UNUSED(error);
-    UNUSED(filePath);
+    ERROR_IF_NULL(handler)
+    ERROR_IF_NULL(error)
+    UNUSED(filePath)
 
-    handler->format_name = BENCH_FORMAT_BSON;
+
     error = malloc(sizeof(*error));
     error->msg = NULL;
     error->code = 0;
-    handler->error = error;
 
     bench_bson_error *bsonError = malloc(sizeof(*bsonError));
     bench_bson_mgr *manager = malloc(sizeof(*manager));
+
+    bench_bson_error_create(bsonError, error);
     //if(filePath == NULL) {
-        bench_bson_error_create(bsonError, error);
+
         bench_bson_mgr_create_empty(manager, bsonError);
     //} else {
     //    bench_bson_mgr_create_from_file(&manager, filePath);
     //}
     handler->manager = manager;
+    handler->error = error;
+    handler->format_name = BENCH_FORMAT_BSON;
 
     return true;
 }
 
 bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath)
 {
-    ERROR_IF_NULL(handler);
-    ERROR_IF_NULL(error);
-    UNUSED(filePath);
+    ERROR_IF_NULL(handler)
+    ERROR_IF_NULL(error)
+    UNUSED(filePath)
 
-    handler->format_name = BENCH_FORMAT_UBJSON;
     error = malloc(sizeof(*error));
     error->msg = NULL;
     error->code = 0;
-    handler->error = error;
+
 
     bench_ubjson_error *ubjsonError = malloc(sizeof(*ubjsonError));
     bench_ubjson_mgr *manager = malloc(sizeof(*manager));
 
     bench_ubjson_error_create(ubjsonError, error);
-    bench_ubjson_mgr_create_empty(manager, ubjsonError);
-
+    /*if(filePath == NULL) {
+        bench_ubjson_mgr_create_from_file(manager, ubjsonError, filePath);
+    } else {*/
+        bench_ubjson_mgr_create_empty(manager, ubjsonError);
+    //}
     handler->manager = manager;
+    handler->format_name = BENCH_FORMAT_UBJSON;
+    handler->error = error;
 
     return true;
 }
@@ -68,7 +89,8 @@ bool bench_format_handler_destroy(bench_format_handler *handler)
         return false;
 
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
-        // TODO: Implement
+        if(!bench_carbon_mgr_destroy((bench_carbon_mgr*) handler->manager))
+            return false;
     } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
         if(!bench_bson_mgr_destroy((bench_bson_mgr*) handler->manager))
             return false;
@@ -85,10 +107,9 @@ bool bench_format_handler_destroy(bench_format_handler *handler)
 }
 
 bool bench_format_handler_get_doc(char *str, bench_format_handler *handler) {
-    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(handler)
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
-        // TODO: Implement
-        return false;
+        return bench_carbon_get_doc(str, (bench_carbon_mgr*) handler->manager);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
         return bench_bson_get_doc(str, (bench_bson_mgr*) handler->manager);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {

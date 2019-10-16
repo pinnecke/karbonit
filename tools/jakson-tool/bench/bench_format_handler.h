@@ -1,7 +1,7 @@
 // file: bench_format_handler.h
 
 /**
- *  Copyright (C) 2018 Marcus Pinnecke
+ *  Copyright (C) 2018 Marcus Pinnecke, Marcel Plumbohm
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ typedef struct bench_format_handler {
     char *format_name;
 } bench_format_handler;
 
-bool bench_format_handler_create_carbon_handler(bench_format_handler *handler,bench_carbon_mgr *manager, bench_error *error, const char* filePath);
+bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_init_error(bench_error *error);

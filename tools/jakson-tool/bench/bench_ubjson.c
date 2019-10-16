@@ -1,4 +1,5 @@
 #include "bench_ubjson.h"
+#include "bench_format_handler.h"
 
 #include <libs/jansson/jansson.h>
 #include <libs/jansson/load.c>
@@ -125,21 +126,27 @@ static void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib,
     }
 }
 
+/* Copyright End */
+
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError)
 {
-    // TODO : Implement function
-    UNUSED(ubjsonError)
-    UNUSED(benchError)
-    return false;
+    ERROR_IF_NULL(ubjsonError)
+    ERROR_IF_NULL(benchError)
+
+    ubjsonError->err = benchError;
+
+    return true;
 }
 
 bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOffset)
 {
-    // TODO : Implement function
-    UNUSED(error)
-    UNUSED(msg)
+    ERROR_IF_NULL(error)
+    ERROR_IF_NULL(msg)
     UNUSED(errOffset)
-    return false;
+
+    error->err->msg = msg;
+
+    return true;
 }
 
 bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *error, const char *filePath)
@@ -225,13 +232,12 @@ bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager)
         char *value;
         int32_t val;
         ubjs_prmtv *item;
-        
+
         ubjs_object_iterator_get_key_length(it, &key_length);
         key = (char*) malloc(sizeof(char) * key_length);
         ubjs_object_iterator_copy_key(it, key);
         ubjs_object_iterator_get_value(it, &item);
         ubjs_prmtv_str_get_length(item, &value_length);
-
         value = (char*)malloc(sizeof(char) * value_length);
         // TODO : Implement for all value types
         ubjs_prmtv_int32_get(item, &val);
@@ -347,7 +353,8 @@ bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *i
     return ubjs_prmtv_object_delete(manager->obj, sizeof(uint32_t), key);
 }
 
-bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *benchType) {
+bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *benchType)
+{
     ERROR_IF_NULL(manager);
     UNUSED(benchType);
 

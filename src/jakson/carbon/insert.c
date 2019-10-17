@@ -70,8 +70,8 @@ fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_arr
 
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_it *context)
 {
-        ERROR_IF_NULL(inserter)
-        ERROR_IF_NULL(context)
+        DEBUG_ERROR_IF_NULL(inserter)
+        DEBUG_ERROR_IF_NULL(context)
         carbon_column_it_lock(context);
         inserter->context_type = CARBON_COLUMN;
         inserter->context.column = context;
@@ -81,8 +81,8 @@ bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_
 
 bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object_it *context)
 {
-        ERROR_IF_NULL(inserter)
-        ERROR_IF_NULL(context)
+        DEBUG_ERROR_IF_NULL(inserter)
+        DEBUG_ERROR_IF_NULL(context)
         carbon_object_it_lock(context);
         inserter->context_type = CARBON_OBJECT;
         inserter->context.object = context;
@@ -385,7 +385,7 @@ bool carbon_insert_signed(carbon_insert *inserter, i64 value)
 
 bool carbon_insert_float(carbon_insert *inserter, float value)
 {
-        ERROR_IF_NULL(inserter)
+        DEBUG_ERROR_IF_NULL(inserter)
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_float_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
@@ -451,8 +451,8 @@ static void insert_binary(carbon_insert *inserter, const void *value, size_t nby
 bool carbon_insert_binary(carbon_insert *inserter, const void *value, size_t nbytes,
                           const char *file_ext, const char *user_type)
 {
-        ERROR_IF_NULL(inserter)
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(inserter)
+        DEBUG_ERROR_IF_NULL(value)
         ERROR_IF(inserter->context_type != CARBON_ARRAY, &inserter->err, ERR_UNSUPPCONTAINER);
 
         insert_binary(inserter, value, nbytes, file_ext, user_type);
@@ -464,8 +464,8 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
                                                   carbon_insert *inserter, carbon_map_derivable_e derivation,
                                                   u64 object_capacity)
 {
-        ERROR_IF_NULL(out)
-        ERROR_IF_NULL(inserter)
+        DEBUG_ERROR_IF_NULL(out)
+        DEBUG_ERROR_IF_NULL(inserter)
 
         ERROR_IF_AND_RETURN(!out, &inserter->err, ERR_NULLPTR, NULL);
         if (!inserter) {
@@ -499,7 +499,7 @@ carbon_insert *carbon_insert_object_begin(carbon_insert_object_state *out,
 
 bool carbon_insert_object_end(carbon_insert_object_state *state)
 {
-        ERROR_IF_NULL(state);
+        DEBUG_ERROR_IF_NULL(state);
 
         carbon_object_it scan;
         carbon_object_it_create(&scan, &state->parent_inserter->memfile, &state->parent_inserter->err,
@@ -568,7 +568,7 @@ carbon_insert *carbon_insert_array_begin(carbon_insert_array_state *state_out,
 
 bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 {
-        ERROR_IF_NULL(state_in);
+        DEBUG_ERROR_IF_NULL(state_in);
 
         carbon_array_it scan;
         carbon_array_it_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
@@ -639,7 +639,7 @@ carbon_insert *carbon_insert_column_begin(carbon_insert_column_state *state_out,
 
 bool carbon_insert_column_end(carbon_insert_column_state *state_in)
 {
-        ERROR_IF_NULL(state_in);
+        DEBUG_ERROR_IF_NULL(state_in);
 
         carbon_column_it scan;
         carbon_column_it_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,

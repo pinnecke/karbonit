@@ -58,8 +58,8 @@ struct sid_to_offset {
 
 bool query_create(query *query, archive *archive)
 {
-        ERROR_IF_NULL(query)
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(query)
+        DEBUG_ERROR_IF_NULL(archive)
         query->archive = archive;
         query->context = archive_io_context_create(archive);
         error_init(&query->err);
@@ -68,14 +68,14 @@ bool query_create(query *query, archive *archive)
 
 bool query_drop(query *query)
 {
-        ERROR_IF_NULL(query)
+        DEBUG_ERROR_IF_NULL(query)
         return io_context_drop(query->context);
 }
 
 bool query_scan_strids(strid_iter *it, query *query)
 {
-        ERROR_IF_NULL(it)
-        ERROR_IF_NULL(query)
+        DEBUG_ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(query)
         return strid_iter_open(it, &query->err, query->archive);
 }
 
@@ -96,8 +96,8 @@ index_string_id_to_offset_open_file(struct sid_to_offset *index, err *err, const
 
 bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query *query)
 {
-        ERROR_IF_NULL(index)
-        ERROR_IF_NULL(query)
+        DEBUG_ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(query)
 
         strid_iter strid_iter;
         strid_info *info;
@@ -159,10 +159,10 @@ bool query_index_id_to_offset_serialize(FILE *file, err *err, struct sid_to_offs
 bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, err *err,
                                               const char *file_path, offset_t offset)
 {
-        ERROR_IF_NULL(index)
-        ERROR_IF_NULL(err)
-        ERROR_IF_NULL(file_path)
-        ERROR_IF_NULL(offset)
+        DEBUG_ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(err)
+        DEBUG_ERROR_IF_NULL(file_path)
+        DEBUG_ERROR_IF_NULL(offset)
 
         struct sid_to_offset *result = MALLOC(sizeof(struct sid_to_offset));
         if (!result) {

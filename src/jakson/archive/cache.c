@@ -66,8 +66,8 @@ bool string_id_cache_create_lru(struct string_cache **cache, archive *archive)
 
 bool string_id_cache_create_lru_ex(struct string_cache **cache, archive *archive, size_t capacity)
 {
-        ERROR_IF_NULL(cache)
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(cache)
+        DEBUG_ERROR_IF_NULL(archive)
 
         struct string_cache *result = MALLOC(sizeof(struct string_cache));
 
@@ -91,16 +91,16 @@ bool string_id_cache_create_lru_ex(struct string_cache **cache, archive *archive
 
 bool string_id_cache_get_error(err *err, const struct string_cache *cache)
 {
-        ERROR_IF_NULL(err)
-        ERROR_IF_NULL(cache)
+        DEBUG_ERROR_IF_NULL(err)
+        DEBUG_ERROR_IF_NULL(cache)
         *err = cache->err;
         return true;
 }
 
 bool string_id_cache_get_size(size_t *size, const struct string_cache *cache)
 {
-        ERROR_IF_NULL(size)
-        ERROR_IF_NULL(cache)
+        DEBUG_ERROR_IF_NULL(size)
+        DEBUG_ERROR_IF_NULL(cache)
         *size = cache->capacity;
         return true;
 }
@@ -126,7 +126,7 @@ static void make_most_recent(struct lru_list *list, struct cache_entry *entry)
 
 char *string_id_cache_get(struct string_cache *cache, archive_field_sid_t id)
 {
-        ERROR_IF_NULL(cache)
+        DEBUG_ERROR_IF_NULL(cache)
         hash32_t id_hash = HASH_BERNSTEIN(sizeof(archive_field_sid_t), &id);
         size_t bucket_pos = id_hash % cache->list_entries.num_elems;
         struct lru_list *list = VECTOR_GET(&cache->list_entries, bucket_pos, struct lru_list);
@@ -153,22 +153,22 @@ char *string_id_cache_get(struct string_cache *cache, archive_field_sid_t id)
 
 bool string_id_cache_get_statistics(sid_cache_stats *statistics, struct string_cache *cache)
 {
-        ERROR_IF_NULL(statistics);
-        ERROR_IF_NULL(cache);
+        DEBUG_ERROR_IF_NULL(statistics);
+        DEBUG_ERROR_IF_NULL(cache);
         *statistics = cache->statistics;
         return true;
 }
 
 bool string_id_cache_reset_statistics(struct string_cache *cache)
 {
-        ERROR_IF_NULL(cache);
+        DEBUG_ERROR_IF_NULL(cache);
         ZERO_MEMORY(&cache->statistics, sizeof(sid_cache_stats));
         return true;
 }
 
 bool string_id_cache_drop(struct string_cache *cache)
 {
-        ERROR_IF_NULL(cache);
+        DEBUG_ERROR_IF_NULL(cache);
         for (size_t i = 0; i < cache->list_entries.num_elems; i++) {
                 struct lru_list *entry = VECTOR_GET(&cache->list_entries, i, struct lru_list);
                 for (size_t k = 0; k < sizeof(entry->entries) / sizeof(entry->entries[0]); k++) {

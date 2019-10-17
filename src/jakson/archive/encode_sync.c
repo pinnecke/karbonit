@@ -84,7 +84,7 @@ int
 encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, size_t num_index_bucket_cap,
                    size_t num_threads, const allocator *alloc)
 {
-        ERROR_IF_NULL(dic);
+        DEBUG_ERROR_IF_NULL(dic);
 
         CHECK_SUCCESS(alloc_this_or_std(&dic->alloc, alloc));
 
@@ -325,9 +325,9 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
 
 static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings, size_t num_strings)
 {
-        ERROR_IF_NULL(self);
-        ERROR_IF_NULL(strings);
-        ERROR_IF_NULL(num_strings);
+        DEBUG_ERROR_IF_NULL(self);
+        DEBUG_ERROR_IF_NULL(strings);
+        DEBUG_ERROR_IF_NULL(num_strings);
         CHECK_TAG(self->tag, SYNC)
         _encode_sync_lock(self);
 
@@ -375,12 +375,12 @@ _encode_sync_locate_safe(string_dict *self, archive_field_sid_t **out, bool **fo
         timestamp begin = wallclock();
         TRACE(STRING_DIC_SYNC_TAG, "'locate_safe' function invoked for %zu strings", num_keys)
 
-        ERROR_IF_NULL(self);
-        ERROR_IF_NULL(out);
-        ERROR_IF_NULL(found_mask);
-        ERROR_IF_NULL(num_not_found);
-        ERROR_IF_NULL(keys);
-        ERROR_IF_NULL(num_keys);
+        DEBUG_ERROR_IF_NULL(self);
+        DEBUG_ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(found_mask);
+        DEBUG_ERROR_IF_NULL(num_not_found);
+        DEBUG_ERROR_IF_NULL(keys);
+        DEBUG_ERROR_IF_NULL(num_keys);
         CHECK_TAG(self->tag, SYNC)
 
         _encode_sync_lock(self);

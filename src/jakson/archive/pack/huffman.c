@@ -32,7 +32,7 @@ static void huff_tree_create(vector ofType(pack_huffman_entry) *table,
 
 bool coding_huffman_create(huffman *dic)
 {
-        ERROR_IF_NULL(dic);
+        DEBUG_ERROR_IF_NULL(dic);
 
         vector_create(&dic->table, NULL, sizeof(pack_huffman_entry), UCHAR_MAX / 4);
         error_init(&dic->err);
@@ -42,8 +42,8 @@ bool coding_huffman_create(huffman *dic)
 
 bool coding_huffman_cpy(huffman *dst, huffman *src)
 {
-        ERROR_IF_NULL(dst);
-        ERROR_IF_NULL(src);
+        DEBUG_ERROR_IF_NULL(dst);
+        DEBUG_ERROR_IF_NULL(src);
         if (!vector_cpy(&dst->table, &src->table)) {
                 ERROR(&src->err, ERR_HARDCOPYFAILED);
                 return false;
@@ -54,8 +54,8 @@ bool coding_huffman_cpy(huffman *dst, huffman *src)
 
 bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
 {
-        ERROR_IF_NULL(encoder);
-        ERROR_IF_NULL(strings);
+        DEBUG_ERROR_IF_NULL(encoder);
+        DEBUG_ERROR_IF_NULL(strings);
 
         vector ofType(u32) frequencies;
         vector_create(&frequencies, NULL, sizeof(u32), UCHAR_MAX);
@@ -81,15 +81,15 @@ bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
 
 bool coding_huffman_get_error(err *err, const huffman *dic)
 {
-        ERROR_IF_NULL(err)
-        ERROR_IF_NULL(dic)
+        DEBUG_ERROR_IF_NULL(err)
+        DEBUG_ERROR_IF_NULL(dic)
         error_cpy(err, &dic->err);
         return true;
 }
 
 bool coding_huffman_drop(huffman *dic)
 {
-        ERROR_IF_NULL(dic);
+        DEBUG_ERROR_IF_NULL(dic);
 
         for (size_t i = 0; i < dic->table.num_elems; i++) {
                 pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
@@ -105,8 +105,8 @@ bool coding_huffman_drop(huffman *dic)
 
 bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_symbol)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(dic)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(dic)
 
         for (size_t i = 0; i < dic->table.num_elems; i++) {
                 pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
@@ -194,9 +194,9 @@ static size_t encodeString(memfile *file, huffman *dic, const char *string)
 
 bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(dic)
-        ERROR_IF_NULL(string)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(dic)
+        DEBUG_ERROR_IF_NULL(string)
 
         u32 num_bytes_encoded = 0;
 
@@ -281,7 +281,7 @@ static struct huff_node *seek_to_end(struct huff_node *handle)
         return handle;
 }
 
-FUNC_UNUSED
+MAYBE_UNUSED
 static void __diag_print_insight(struct huff_node *n)
 {
         printf("(");
@@ -300,7 +300,7 @@ static void __diag_print_insight(struct huff_node *n)
         printf(": %"PRIu64"", n->freq);
 }
 
-FUNC_UNUSED
+MAYBE_UNUSED
 static void __diag_dump_remaining_candidates(struct huff_node *n)
 {
         struct huff_node *it = seek_to_begin(n);

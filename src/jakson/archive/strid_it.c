@@ -23,8 +23,8 @@
 
 bool strid_iter_open(strid_iter *it, err *err, archive *archive)
 {
-        ERROR_IF_NULL(it)
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(archive)
 
         memset(&it->vector, 0, sizeof(it->vector));
         it->disk_file = fopen(archive->disk_file_path, "r");
@@ -42,9 +42,9 @@ bool strid_iter_open(strid_iter *it, err *err, archive *archive)
 bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_length,
                          strid_iter *it)
 {
-        ERROR_IF_NULL(info)
-        ERROR_IF_NULL(info_length)
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(info)
+        DEBUG_ERROR_IF_NULL(info_length)
+        DEBUG_ERROR_IF_NULL(it)
 
         if (it->disk_offset != 0 && it->is_open) {
                 string_entry_header header;
@@ -80,7 +80,7 @@ bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_le
 
 bool strid_iter_close(strid_iter *it)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
         if (it->is_open) {
                 fclose(it->disk_file);
                 it->is_open = false;

@@ -32,9 +32,9 @@ typedef struct archive_io_context {
 
 bool io_context_create(archive_io_context **context, err *err, const char *file_path)
 {
-        ERROR_IF_NULL(context);
-        ERROR_IF_NULL(err);
-        ERROR_IF_NULL(file_path);
+        DEBUG_ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(err);
+        DEBUG_ERROR_IF_NULL(file_path);
 
         archive_io_context *result = MALLOC(sizeof(archive_io_context));
 
@@ -89,7 +89,7 @@ bool io_context_unlock(archive_io_context *context)
 
 bool io_context_drop(archive_io_context *context)
 {
-        ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(context);
         OPTIONAL(context->file != NULL, fclose(context->file);
                 context->file = NULL)
         free(context);

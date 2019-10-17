@@ -129,70 +129,70 @@ bool unique_id_create(unique_id_t *out)
 
 bool unique_id_get_global_wallclocktime(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->global_wallclock;
         return true;
 }
 
 bool unique_id_get_global_build_path_bit(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->global_build_path;
         return true;
 }
 
 bool unique_id_get_global_build_time_bit(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->global_build_date;
         return true;
 }
 
 bool unique_id_get_process_id(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->process_id;
         return true;
 }
 
 bool unique_id_get_process_magic(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->process_magic;
         return true;
 }
 
 bool unique_id_get_process_counter(uint_fast16_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->process_counter;
         return true;
 }
 
 bool unique_id_get_thread_id(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->thread_id;
         return true;
 }
 
 bool unique_id_get_thread_magic(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->thread_magic;
         return true;
 }
 
 bool unique_id_get_thread_counter(uint_fast32_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->thread_counter;
         return true;
 }
 
 bool unique_id_get_call_random(uint_fast8_t *out, unique_id_t id)
 {
-        ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(out);
         *out = ((union global_id *) &id)->call_random;
         return true;
 }

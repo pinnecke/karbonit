@@ -20,8 +20,8 @@
 
 bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
 {
-        ERROR_IF_NULL(dst);
-        ERROR_IF_NULL(base);
+        DEBUG_ERROR_IF_NULL(dst);
+        DEBUG_ERROR_IF_NULL(base);
         char buffer[11];
 
         sprintf(buffer, "%08x  ", 0);

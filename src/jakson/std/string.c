@@ -26,8 +26,8 @@ bool string_buffer_create(string_buffer *builder)
 
 bool string_buffer_create_ex(string_buffer *builder, size_t capacity)
 {
-        ERROR_IF_NULL(builder)
-        ERROR_IF_NULL(capacity)
+        DEBUG_ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(capacity)
         error_init(&builder->err);
         builder->cap = capacity;
         builder->end = 0;
@@ -39,16 +39,16 @@ bool string_buffer_create_ex(string_buffer *builder, size_t capacity)
 
 bool string_buffer_add(string_buffer *builder, const char *str)
 {
-        ERROR_IF_NULL(builder)
-        ERROR_IF_NULL(str)
+        DEBUG_ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(str)
         u64 len = strlen(str);
         return string_buffer_add_nchar(builder, str, len);
 }
 
 bool string_buffer_add_nchar(string_buffer *builder, const char *str, u64 strlen)
 {
-        ERROR_IF_NULL(builder)
-        ERROR_IF_NULL(str)
+        DEBUG_ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(str)
 
         /** resize if needed */
         if (UNLIKELY(builder->end + strlen >= builder->cap)) {
@@ -68,7 +68,7 @@ bool string_buffer_add_nchar(string_buffer *builder, const char *str, u64 strlen
 
 bool string_buffer_add_char(string_buffer *builder, char c)
 {
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(builder)
         char buffer[2];
         sprintf(buffer, "%c", c);
         return string_buffer_add(builder, buffer);
@@ -153,9 +153,28 @@ bool string_buffer_add_float(string_buffer *builder, float value)
         return string_buffer_add(builder, buffer);
 }
 
+bool string_buffer_add_bool(string_buffer *builder, bool value)
+{
+        char buffer[6];
+        sprintf(buffer, "%s", value ? "true" : "false");
+        return string_buffer_add(builder, buffer);
+}
+
+bool string_buffer_add_boolean(string_buffer *builder, boolean value)
+{
+        char buffer[6];
+        if (IS_NULL_BOOLEAN(value)) {
+                sprintf(buffer, "null");
+        } else {
+                sprintf(buffer, "%s", value ? "true" : "false");
+        }
+
+        return string_buffer_add(builder, buffer);
+}
+
 bool string_buffer_clear(string_buffer *builder)
 {
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(builder)
         ZERO_MEMORY(builder->data, builder->cap);
         builder->end = 0;
         return true;
@@ -163,7 +182,7 @@ bool string_buffer_clear(string_buffer *builder)
 
 bool string_buffer_ensure_capacity(string_buffer *builder, u64 cap)
 {
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(builder)
         /** resize if needed */
         if (UNLIKELY(cap > builder->cap)) {
                 size_t new_cap = cap * 1.7f;
@@ -177,13 +196,13 @@ bool string_buffer_ensure_capacity(string_buffer *builder, u64 cap)
 
 size_t string_len(string_buffer *builder)
 {
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(builder)
         return builder->end;
 }
 
 bool string_buffer_trim(string_buffer *builder)
 {
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(builder)
         if (builder->end > 0) {
                 char *string = builder->data;
                 int len = strlen(string);
@@ -209,7 +228,7 @@ bool string_buffer_is_empty(string_buffer *builder)
 
 bool string_buffer_drop(string_buffer *builder)
 {
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(builder)
         free(builder->data);
         return true;
 }
@@ -221,8 +240,8 @@ bool string_buffer_print(string_buffer *builder)
 
 bool string_buffer_fprint(FILE *file, string_buffer *builder)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(builder)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(builder)
         fprintf(file, "%s\n", string_cstr(builder));
         return true;
 }

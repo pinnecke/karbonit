@@ -25,7 +25,7 @@
 
 bool carbon_commit_hash_create(memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
 
         u64 init_rev = 0;
         unique_id_create(&init_rev);
@@ -38,32 +38,32 @@ bool carbon_commit_hash_create(memfile *file)
 
 bool carbon_commit_hash_skip(memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         memfile_skip(file, sizeof(u64));
         return true;
 }
 
 bool carbon_commit_hash_read(u64 *commit_hash, memfile *file)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(commit_hash)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(commit_hash)
         *commit_hash = *MEMFILE_READ_TYPE(file, u64);
         return true;
 }
 
 bool carbon_commit_hash_peek(u64 *commit_hash, memfile *file)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(commit_hash)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(commit_hash)
         *commit_hash = *MEMFILE_PEEK(file, u64);
         return true;
 }
 
 bool carbon_commit_hash_update(memfile *file, const char *base, u64 len)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(base)
-        ERROR_IF_NULL(len)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(base)
+        DEBUG_ERROR_IF_NULL(len)
         u64 commit_hash;
         carbon_commit_hash_compute(&commit_hash, base, len);
         memfile_write(file, &commit_hash, sizeof(u64));
@@ -72,9 +72,9 @@ bool carbon_commit_hash_update(memfile *file, const char *base, u64 len)
 
 bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len)
 {
-        ERROR_IF_NULL(commit_hash)
-        ERROR_IF_NULL(base)
-        ERROR_IF_NULL(len)
+        DEBUG_ERROR_IF_NULL(commit_hash)
+        DEBUG_ERROR_IF_NULL(base)
+        DEBUG_ERROR_IF_NULL(len)
         *commit_hash = HASH64_FNV(len, base);
         return true;
 }
@@ -92,7 +92,7 @@ const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash)
 
 bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash)
 {
-        ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(dst)
         string_buffer_add_u64_as_hex(dst, commit_hash);
         return true;
 }

@@ -113,7 +113,7 @@ static const char *next_token(struct dot_token *token, const char *str)
 
 bool carbon_dot_path_create(carbon_dot_path *path)
 {
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(path)
         error_init(&path->err);
         path->path_len = 0;
         ZERO_MEMORY(&path->nodes, ARRAY_LENGTH(path->nodes) * sizeof(carbon_dot_node));
@@ -122,7 +122,7 @@ bool carbon_dot_path_create(carbon_dot_path *path)
 
 bool carbon_dot_path_from_string(carbon_dot_path *path, const char *path_string)
 {
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(path)
         UNUSED(path_string);
 
         struct dot_token token;
@@ -183,8 +183,8 @@ bool carbon_dot_path_add_key(carbon_dot_path *dst, const char *key)
 
 bool carbon_dot_path_add_nkey(carbon_dot_path *dst, const char *key, size_t len)
 {
-        ERROR_IF_NULL(dst)
-        ERROR_IF_NULL(key)
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(key)
         if (LIKELY(dst->path_len < ARRAY_LENGTH(dst->nodes))) {
                 carbon_dot_node *node = dst->nodes + dst->path_len++;
                 bool enquoted = strings_is_enquoted_wlen(key, len);
@@ -205,7 +205,7 @@ bool carbon_dot_path_add_nkey(carbon_dot_path *dst, const char *key, size_t len)
 
 bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx)
 {
-        ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(dst)
         if (LIKELY(dst->path_len < ARRAY_LENGTH(dst->nodes))) {
                 carbon_dot_node *node = dst->nodes + dst->path_len++;
                 node->type = DOT_NODE_ARRAY_IDX;
@@ -219,22 +219,22 @@ bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx)
 
 bool carbon_dot_path_len(u32 *len, const carbon_dot_path *path)
 {
-        ERROR_IF_NULL(len)
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(len)
+        DEBUG_ERROR_IF_NULL(path)
         *len = path->path_len;
         return true;
 }
 
 bool carbon_dot_path_is_empty(const carbon_dot_path *path)
 {
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(path)
         return (path->path_len == 0);
 }
 
 bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const carbon_dot_path *path)
 {
-        ERROR_IF_NULL(type_out)
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(type_out)
+        DEBUG_ERROR_IF_NULL(path)
         if (LIKELY(pos < ARRAY_LENGTH(path->nodes))) {
                 *type_out = path->nodes[pos].type;
         } else {
@@ -246,8 +246,8 @@ bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const ca
 
 bool carbon_dot_path_idx_at(u32 *idx, u32 pos, const carbon_dot_path *path)
 {
-        ERROR_IF_NULL(idx)
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(idx)
+        DEBUG_ERROR_IF_NULL(path)
         ERROR_IF_AND_RETURN(pos >= ARRAY_LENGTH(path->nodes), &((carbon_dot_path *) path)->err,
                             ERR_OUTOFBOUNDS, NULL);
         ERROR_IF_AND_RETURN(path->nodes[pos].type != DOT_NODE_ARRAY_IDX, &((carbon_dot_path *) path)->err,
@@ -259,7 +259,7 @@ bool carbon_dot_path_idx_at(u32 *idx, u32 pos, const carbon_dot_path *path)
 
 const char *carbon_dot_path_key_at(u32 pos, const carbon_dot_path *path)
 {
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(path)
         ERROR_IF_AND_RETURN(pos >= ARRAY_LENGTH(path->nodes), &((carbon_dot_path *) path)->err,
                             ERR_OUTOFBOUNDS, NULL);
         ERROR_IF_AND_RETURN(path->nodes[pos].type != DOT_NODE_KEY_NAME, &((carbon_dot_path *) path)->err,
@@ -270,7 +270,7 @@ const char *carbon_dot_path_key_at(u32 pos, const carbon_dot_path *path)
 
 bool carbon_dot_path_drop(carbon_dot_path *path)
 {
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(path)
         for (u32 i = 0; i < path->path_len; i++) {
                 carbon_dot_node *node = path->nodes + i;
                 if (node->type == DOT_NODE_KEY_NAME) {
@@ -283,7 +283,7 @@ bool carbon_dot_path_drop(carbon_dot_path *path)
 
 bool carbon_dot_path_to_str(string_buffer *sb, carbon_dot_path *path)
 {
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(path)
         for (u32 i = 0; i < path->path_len; i++) {
                 carbon_dot_node *node = path->nodes + i;
                 switch (node->type) {
@@ -315,8 +315,8 @@ bool carbon_dot_path_to_str(string_buffer *sb, carbon_dot_path *path)
 
 bool carbon_dot_path_fprint(FILE *file, carbon_dot_path *path)
 {
-        ERROR_IF_NULL(file);
-        ERROR_IF_NULL(path);
+        DEBUG_ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(path);
         string_buffer sb;
         string_buffer_create(&sb);
         carbon_dot_path_to_str(&sb, path);

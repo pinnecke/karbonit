@@ -42,8 +42,8 @@ static void sort_columndoc_entries(column_doc_obj *columndoc);
 
 bool doc_bulk_create(doc_bulk *bulk, string_dict *dic)
 {
-        ERROR_IF_NULL(bulk)
-        ERROR_IF_NULL(dic)
+        DEBUG_ERROR_IF_NULL(bulk)
+        DEBUG_ERROR_IF_NULL(dic)
         bulk->dic = dic;
         vector_create(&bulk->keys, NULL, sizeof(char *), 500);
         vector_create(&bulk->values, NULL, sizeof(char *), 1000);
@@ -66,7 +66,7 @@ bool doc_bulk_get_dic_contents(vector ofType (const char *) **strings,
                                vector ofType(archive_field_sid_t) **string_ids,
                                const doc_bulk *context)
 {
-        ERROR_IF_NULL(context)
+        DEBUG_ERROR_IF_NULL(context)
 
         size_t num_distinct_values;
         string_dict_num_distinct(&num_distinct_values, context->dic);
@@ -103,7 +103,7 @@ doc *doc_bulk_new_doc(doc_bulk *context, archive_field_e type)
 
 bool doc_bulk_drop(doc_bulk *bulk)
 {
-        ERROR_IF_NULL(bulk)
+        DEBUG_ERROR_IF_NULL(bulk)
         for (size_t i = 0; i < bulk->keys.num_elems; i++) {
                 char *string = *VECTOR_GET(&bulk->keys, i, char *);
                 free(string);
@@ -129,7 +129,7 @@ bool doc_bulk_drop(doc_bulk *bulk)
 
 bool doc_bulk_shrink(doc_bulk *bulk)
 {
-        ERROR_IF_NULL(bulk)
+        DEBUG_ERROR_IF_NULL(bulk)
         vector_shrink(&bulk->keys);
         vector_shrink(&bulk->values);
         return true;
@@ -137,8 +137,8 @@ bool doc_bulk_shrink(doc_bulk *bulk)
 
 bool doc_bulk_print(FILE *file, doc_bulk *bulk)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(bulk)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(bulk)
 
         fprintf(file, "{");
         char **key_strings = VECTOR_ALL(&bulk->keys, char *);
@@ -160,8 +160,8 @@ bool doc_bulk_print(FILE *file, doc_bulk *bulk)
 
 bool doc_print(FILE *file, const doc *doc)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(doc)
 
         if (doc->obj_model.num_elems == 0) {
                 fprintf(file, "{ }");
@@ -205,9 +205,9 @@ void doc_drop(doc_obj *model)
 
 bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_field_e type)
 {
-        ERROR_IF_NULL(out)
-        ERROR_IF_NULL(obj)
-        ERROR_IF_NULL(key)
+        DEBUG_ERROR_IF_NULL(out)
+        DEBUG_ERROR_IF_NULL(obj)
+        DEBUG_ERROR_IF_NULL(key)
 
         size_t entry_idx;
         char *key_dup = strdup(key);
@@ -227,8 +227,8 @@ bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_f
 
 bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 {
-        ERROR_IF_NULL(entry)
-        ERROR_IF_NULL((entry->type == FIELD_NULL) || (value != NULL))
+        DEBUG_ERROR_IF_NULL(entry)
+        DEBUG_ERROR_IF_NULL((entry->type == FIELD_NULL) || (value != NULL))
 
         switch (entry->type) {
                 case FIELD_NULL:
@@ -249,8 +249,8 @@ bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 
 bool doc_obj_push_object(doc_obj **out, doc_entries *entry)
 {
-        ERROR_IF_NULL(out);
-        ERROR_IF_NULL(entry);
+        DEBUG_ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(entry);
 
         JAK_ASSERT(entry->type == FIELD_OBJECT);
 

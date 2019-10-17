@@ -23,8 +23,8 @@
 
 bool hashset_create(hashset *map, err *err, size_t key_size, size_t capacity)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(key_size)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(key_size)
 
         int err_code = ERR_INITFAILED;
 
@@ -55,7 +55,7 @@ bool hashset_create(hashset *map, err *err, size_t key_size, size_t capacity)
 
 bool hashset_drop(hashset *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
 
         bool status = true;
 
@@ -117,7 +117,7 @@ hashset *hashset_cpy(hashset *src)
 
 bool hashset_clear(hashset *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
 
@@ -141,8 +141,8 @@ bool hashset_clear(hashset *map)
 
 bool hashset_avg_displace(float *displace, const hashset *map)
 {
-        ERROR_IF_NULL(displace);
-        ERROR_IF_NULL(map);
+        DEBUG_ERROR_IF_NULL(displace);
+        DEBUG_ERROR_IF_NULL(map);
 
         size_t sum_dis = 0;
         for (size_t i = 0; i < map->table.num_elems; i++) {
@@ -156,14 +156,14 @@ bool hashset_avg_displace(float *displace, const hashset *map)
 
 bool hashset_lock(hashset *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         spinlock_acquire(&map->lock);
         return true;
 }
 
 bool hashset_unlock(hashset *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         spinlock_release(&map->lock);
         return true;
 }
@@ -256,8 +256,8 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
 
 bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_pairs)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(keys)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(keys)
 
         JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
@@ -299,8 +299,8 @@ bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_
 
 bool hashset_remove_if_contained(hashset *map, const void *keys, size_t num_pairs)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(keys)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(keys)
 
         hashset_lock(map);
 
@@ -351,8 +351,8 @@ bool hashset_remove_if_contained(hashset *map, const void *keys, size_t num_pair
 
 bool hashset_contains_key(hashset *map, const void *key)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(key)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(key)
 
         bool result = false;
 
@@ -380,8 +380,8 @@ bool hashset_contains_key(hashset *map, const void *key)
 
 bool hashset_get_load_factor(float *factor, hashset *map)
 {
-        ERROR_IF_NULL(factor)
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(factor)
+        DEBUG_ERROR_IF_NULL(map)
 
         hashset_lock(map);
 
@@ -394,7 +394,7 @@ bool hashset_get_load_factor(float *factor, hashset *map)
 
 bool hashset_rehash(hashset *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
 
         hashset_lock(map);
 

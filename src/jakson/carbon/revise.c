@@ -100,7 +100,7 @@ static void key_string_set(carbon *doc, const char *key)
 
 bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context)
 {
-        ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_AUTOKEY) {
@@ -117,7 +117,7 @@ bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context)
 
 bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value)
 {
-        ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_UKEY) {
@@ -131,7 +131,7 @@ bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value)
 
 bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value)
 {
-        ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_IKEY) {
@@ -145,7 +145,7 @@ bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value)
 
 bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value)
 {
-        ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_SKEY) {
@@ -215,8 +215,8 @@ bool carbon_revise_remove_one(const char *dot_path, carbon *rev_doc, carbon *doc
 
 bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
 {
-        ERROR_IF_NULL(dot_path)
-        ERROR_IF_NULL(context)
+        DEBUG_ERROR_IF_NULL(dot_path)
+        DEBUG_ERROR_IF_NULL(context)
 
         carbon_dot_path dot;
         carbon_path_evaluator eval;
@@ -254,7 +254,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
 
 bool carbon_revise_pack(carbon_revise *context)
 {
-        ERROR_IF_NULL(context);
+        DEBUG_ERROR_IF_NULL(context);
         carbon_array_it it;
         carbon_revise_iterator_open(&it, context);
         internal_pack_array(&it);
@@ -296,7 +296,7 @@ fn_result ofType(const carbon *) carbon_revise_end(carbon_revise *context)
 
 bool carbon_revise_abort(carbon_revise *context)
 {
-        ERROR_IF_NULL(context)
+        DEBUG_ERROR_IF_NULL(context)
 
         carbon_drop(context->revised_doc);
         context->original->versioning.is_latest = true;

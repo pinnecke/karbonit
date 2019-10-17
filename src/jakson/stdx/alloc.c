@@ -66,15 +66,15 @@ void *alloc_realloc(allocator *alloc, void *ptr, size_t size)
 
 bool alloc_free(allocator *alloc, void *ptr)
 {
-        ERROR_IF_NULL(alloc);
-        ERROR_IF_NULL(ptr);
+        DEBUG_ERROR_IF_NULL(alloc);
+        DEBUG_ERROR_IF_NULL(ptr);
         alloc->free(alloc, ptr);
         return true;
 }
 
 bool alloc_clone(allocator *dst, const allocator *src)
 {
-        ERROR_IF_NULL(dst && src)
+        DEBUG_ERROR_IF_NULL(dst && src)
         src->clone(dst, src);
         return true;
 }

@@ -50,7 +50,7 @@ typedef struct page_##x##b_t                                                    
     char                          data[x];                                                                             \
 } page_##x##b_t;                                                                                                       \
                                                                                                                        \
-FUNC_UNUSED static inline void *page_##x##b_new(size_t user_size) {                                             \
+MAYBE_UNUSED static inline void *page_##x##b_new(size_t user_size) {                                             \
     JAK_ASSERT (user_size <= x);                                                                                           \
     struct page_##x##b_t *page = malloc(sizeof(struct page_##x##b_t));                                                 \
     page->user_size = user_size;                                                                                       \
@@ -207,7 +207,7 @@ if (!global_trace_stats.malloc_sizes) {                                         
 
 int trace_alloc_create(allocator *alloc)
 {
-        ERROR_IF_NULL(alloc);
+        DEBUG_ERROR_IF_NULL(alloc);
         allocator default_alloc;
         alloc_create_std(&default_alloc);
 

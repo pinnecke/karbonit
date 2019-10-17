@@ -31,9 +31,9 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it);
 
 bool carbon_find_open(carbon_find *out, const char *dot_path, carbon *doc)
 {
-        ERROR_IF_NULL(out)
-        ERROR_IF_NULL(dot_path)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(out)
+        DEBUG_ERROR_IF_NULL(dot_path)
+        DEBUG_ERROR_IF_NULL(doc)
         carbon_dot_path path;
         carbon_dot_path_from_string(&path, dot_path);
         carbon_find_create(out, &path, doc);
@@ -724,7 +724,7 @@ static void result_from_array(carbon_find *find, carbon_array_it *it)
                         carbon_array_it_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
-                        carbon_array_it_float_value(&find->value_is_nulled, &find->value.float_number, it);
+                        carbon_array_it_float_value_nullable(&find->value_is_nulled, &find->value.float_number, it);
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
@@ -817,7 +817,7 @@ static void result_from_object(carbon_find *find, carbon_object_it *it)
                         carbon_object_it_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
-                        carbon_object_it_float_value(&find->value_is_nulled, &find->value.float_number, it);
+                        carbon_object_it_float_value_nullable(&find->value_is_nulled, &find->value.float_number, it);
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:

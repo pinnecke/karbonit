@@ -114,6 +114,7 @@ bool memfile_inplace_insert(memfile *file, size_t nbytes);
 bool memfile_inplace_remove(memfile *file, size_t nbytes_from_here);
 bool memfile_end_bit_mode(size_t *num_bytes_written, memfile *file);
 void *memfile_current_pos(memfile *file, offset_t nbytes);
+
 bool memfile_hexdump(string_buffer *sb, memfile *file);
 bool memfile_hexdump_printf(FILE *file, memfile *memfile);
 bool memfile_hexdump_print(memfile *memfile);

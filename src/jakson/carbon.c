@@ -134,8 +134,8 @@ fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation
 bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type,
                       const void *key, err *err)
 {
-        ERROR_IF_NULL(doc)
-        ERROR_IF_NULL(json)
+        DEBUG_ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(json)
 
         struct json data;
         json_err status;
@@ -170,10 +170,10 @@ bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type,
 
 bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len)
 {
-        ERROR_IF_NULL(doc);
-        ERROR_IF_NULL(err);
-        ERROR_IF_NULL(data);
-        ERROR_IF_NULL(len);
+        DEBUG_ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(err);
+        DEBUG_ERROR_IF_NULL(data);
+        DEBUG_ERROR_IF_NULL(len);
 
         error_init(&doc->err);
         memblock_from_raw_data(&doc->memblock, data, len);
@@ -189,7 +189,7 @@ bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len)
 
 bool carbon_drop(carbon *doc)
 {
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(doc);
         return internal_drop(doc);
 }
 
@@ -205,14 +205,14 @@ const void *carbon_raw_data(u64 *len, carbon *doc)
 
 bool carbon_is_up_to_date(carbon *doc)
 {
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(doc);
         return doc->versioning.is_latest;
 }
 
 bool carbon_key_type(carbon_key_e *out, carbon *doc)
 {
-        ERROR_IF_NULL(out)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(out)
+        DEBUG_ERROR_IF_NULL(doc)
         memfile_save_position(&doc->memfile);
         carbon_key_skip(out, &doc->memfile);
         memfile_restore_position(&doc->memfile);
@@ -297,8 +297,8 @@ bool carbon_has_key(carbon_key_e type)
 
 bool carbon_clone(carbon *clone, carbon *doc)
 {
-        ERROR_IF_NULL(clone);
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(clone);
+        DEBUG_ERROR_IF_NULL(doc);
         CHECK_SUCCESS(memblock_cpy(&clone->memblock, doc->memblock));
         CHECK_SUCCESS(memfile_open(&clone->memfile, clone->memblock, READ_WRITE));
         CHECK_SUCCESS(error_init(&clone->err));
@@ -312,7 +312,7 @@ bool carbon_clone(carbon *clone, carbon *doc)
 
 bool carbon_commit_hash(u64 *hash, carbon *doc)
 {
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(doc);
         *hash = carbon_int_header_get_commit_hash(doc);
         return true;
 }
@@ -353,7 +353,7 @@ fn_result carbon_update_list_type(carbon *revised_doc, carbon *doc, carbon_list_
 
 bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *doc)
 {
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(doc);
 
         carbon_printer p;
         string_buffer b;
@@ -362,6 +362,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
         u64 rev;
 
         string_buffer_clear(dst);
+        string_buffer_ensure_capacity(dst, 2 * memfile_size(&doc->memfile));
 
         memfile_save_position(&doc->memfile);
 
@@ -400,16 +401,16 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
 
 const char *carbon_to_json_extended(string_buffer *dst, carbon *doc)
 {
-        ERROR_IF_NULL(dst)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(doc)
         carbon_to_str(dst, JSON_EXTENDED, doc);
         return string_cstr(dst);
 }
 
 const char *carbon_to_json_compact(string_buffer *dst, carbon *doc)
 {
-        ERROR_IF_NULL(dst)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(doc)
         carbon_to_str(dst, JSON_COMPACT, doc);
         return string_cstr(dst);
 }
@@ -449,8 +450,8 @@ fn_result carbon_iterator_close(carbon_array_it *it)
 
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, carbon *doc)
 {
-        ERROR_IF_NULL(file);
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(doc);
 
         string_buffer builder;
         string_buffer_create(&builder);
@@ -463,8 +464,8 @@ bool carbon_print(FILE *file, carbon_printer_impl_e printer, carbon *doc)
 
 bool carbon_hexdump_print(FILE *file, carbon *doc)
 {
-        ERROR_IF_NULL(file);
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(doc);
         memfile_save_position(&doc->memfile);
         memfile_seek(&doc->memfile, 0);
         bool status = hexdump_print(file, memfile_peek(&doc->memfile, 1), memfile_size(&doc->memfile));

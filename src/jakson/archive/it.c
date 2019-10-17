@@ -392,9 +392,9 @@ static void prop_iter_state_init(prop_iter *iter)
 static bool archive_prop_iter_from_memblock(prop_iter *iter, err *err, u16 mask,
                                             memblock *memblock, offset_t object_offset)
 {
-        ERROR_IF_NULL(iter)
-        ERROR_IF_NULL(err)
-        ERROR_IF_NULL(memblock)
+        DEBUG_ERROR_IF_NULL(iter)
+        DEBUG_ERROR_IF_NULL(err)
+        DEBUG_ERROR_IF_NULL(memblock)
 
         iter->mask = mask;
         if (!memfile_open(&iter->record_table_memfile, memblock, READ_ONLY)) {
@@ -513,8 +513,8 @@ static bool is_array_type(prop_iter_state_e state)
 bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_vector,
                                 independent_iter_state *collection_iter, prop_iter *prop_iter)
 {
-        ERROR_IF_NULL(type);
-        ERROR_IF_NULL(prop_iter);
+        DEBUG_ERROR_IF_NULL(type);
+        DEBUG_ERROR_IF_NULL(prop_iter);
 
         if (prop_iter->prop_cursor != PROP_ITER_DONE) {
                 switch (prop_iter->mode) {
@@ -570,8 +570,8 @@ archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter)
 bool archive_collection_next_column_group(independent_iter_state *group_iter,
                                               independent_iter_state *iter)
 {
-        ERROR_IF_NULL(group_iter)
-        ERROR_IF_NULL(iter)
+        DEBUG_ERROR_IF_NULL(group_iter)
+        DEBUG_ERROR_IF_NULL(iter)
 
         if (iter->state.current_column_group_idx < iter->state.num_column_groups) {
                 collection_iter_read_next_column_group(&iter->state, &iter->record_table_memfile);
@@ -599,8 +599,8 @@ archive_column_group_get_object_ids(u32 *num_objects, independent_iter_state *it
 bool archive_column_group_next_column(independent_iter_state *column_iter,
                                           independent_iter_state *iter)
 {
-        ERROR_IF_NULL(column_iter)
-        ERROR_IF_NULL(iter)
+        DEBUG_ERROR_IF_NULL(column_iter)
+        DEBUG_ERROR_IF_NULL(iter)
 
         if (iter->state.current_column_group.current_column.idx < iter->state.current_column_group.num_columns) {
                 prop_iter_read_column(&iter->state, &iter->record_table_memfile);
@@ -616,7 +616,7 @@ bool archive_column_group_next_column(independent_iter_state *column_iter,
 bool archive_column_get_name(archive_field_sid_t *name, enum archive_field_type *type,
                                  independent_iter_state *column_iter)
 {
-        ERROR_IF_NULL(column_iter)
+        DEBUG_ERROR_IF_NULL(column_iter)
         OPTIONAL_SET(name, column_iter->state.current_column_group.current_column.name)
         OPTIONAL_SET(type, column_iter->state.current_column_group.current_column.type)
         return true;
@@ -637,8 +637,8 @@ archive_column_get_entry_positions(u32 *num_entry, independent_iter_state *colum
 bool
 archive_column_next_entry(independent_iter_state *entry_iter, independent_iter_state *iter)
 {
-        ERROR_IF_NULL(entry_iter)
-        ERROR_IF_NULL(iter)
+        DEBUG_ERROR_IF_NULL(entry_iter)
+        DEBUG_ERROR_IF_NULL(iter)
 
         if (iter->state.current_column_group.current_column.current_entry.idx
             < iter->state.current_column_group.current_column.num_elem) {
@@ -654,8 +654,8 @@ archive_column_next_entry(independent_iter_state *entry_iter, independent_iter_s
 
 bool archive_column_entry_get_type(enum archive_field_type *type, independent_iter_state *entry)
 {
-        ERROR_IF_NULL(type)
-        ERROR_IF_NULL(entry)
+        DEBUG_ERROR_IF_NULL(type)
+        DEBUG_ERROR_IF_NULL(entry)
         *type = entry->state.current_column_group.current_column.type;
         return true;
 }
@@ -705,8 +705,8 @@ DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, nulls, FIELD_NU
 
 bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter_state *entry)
 {
-        ERROR_IF_NULL(iter)
-        ERROR_IF_NULL(entry)
+        DEBUG_ERROR_IF_NULL(iter)
+        DEBUG_ERROR_IF_NULL(entry)
 
         iter->entry_state = entry->state;
         memfile_open(&iter->memfile, entry->record_table_memfile.memblock, READ_ONLY);
@@ -742,8 +742,8 @@ const archive_object *archive_column_entry_object_iter_next_object(column_object
 
 bool archive_object_get_object_id(unique_id_t *id, const archive_object *object)
 {
-        ERROR_IF_NULL(id)
-        ERROR_IF_NULL(object)
+        DEBUG_ERROR_IF_NULL(id)
+        DEBUG_ERROR_IF_NULL(object)
         *id = object->object_id;
         return true;
 }
@@ -758,8 +758,8 @@ bool archive_object_get_prop_iter(prop_iter *iter, const archive_object *object)
 
 bool archive_value_vector_get_object_id(unique_id_t *id, const archive_value_vector *iter)
 {
-        ERROR_IF_NULL(id)
-        ERROR_IF_NULL(iter)
+        DEBUG_ERROR_IF_NULL(id)
+        DEBUG_ERROR_IF_NULL(iter)
         *id = iter->object_id;
         return true;
 }
@@ -920,8 +920,8 @@ static void value_vector_init_object(archive_value_vector *value)
 bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err,
                                              prop_iter *prop_iter)
 {
-        ERROR_IF_NULL(value);
-        ERROR_IF_NULL(prop_iter);
+        DEBUG_ERROR_IF_NULL(value);
+        DEBUG_ERROR_IF_NULL(prop_iter);
 
         ERROR_IF_AND_RETURN (prop_iter->mode != PROP_ITER_MODE_OBJECT,
                              &prop_iter->err,
@@ -978,32 +978,32 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err,
 bool archive_value_vector_get_basic_type(enum archive_field_type *type,
                                                  const archive_value_vector *value)
 {
-        ERROR_IF_NULL(type)
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(type)
+        DEBUG_ERROR_IF_NULL(value)
         *type = value->prop_type;
         return true;
 }
 
 bool archive_value_vector_is_array_type(bool *is_array, const archive_value_vector *value)
 {
-        ERROR_IF_NULL(is_array)
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(is_array)
+        DEBUG_ERROR_IF_NULL(value)
         *is_array = value->is_array;
         return true;
 }
 
 bool archive_value_vector_get_length(u32 *length, const archive_value_vector *value)
 {
-        ERROR_IF_NULL(length)
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(length)
+        DEBUG_ERROR_IF_NULL(value)
         *length = value->value_max_idx;
         return true;
 }
 
 bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *value)
 {
-        ERROR_IF_NULL(is_object)
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(is_object)
+        DEBUG_ERROR_IF_NULL(value)
 
         *is_object = value->prop_type == FIELD_OBJECT && !value->is_array;
 
@@ -1013,8 +1013,8 @@ bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *v
 bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                                                 archive_value_vector *value)
 {
-        ERROR_IF_NULL(object)
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(object)
+        DEBUG_ERROR_IF_NULL(value)
 
         if (idx >= value->value_max_idx) {
                 ERROR(&value->err, ERR_OUTOFBOUNDS);
@@ -1040,8 +1040,8 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
 bool                                                                                                    \
 archive_value_vector_is_##name(bool *type_match, archive_value_vector *value)                          \
 {                                                                                                                      \
-    ERROR_IF_NULL(type_match)                                                                               \
-    ERROR_IF_NULL(value)                                                                                    \
+    DEBUG_ERROR_IF_NULL(type_match)                                                                               \
+    DEBUG_ERROR_IF_NULL(value)                                                                                    \
                                                                                                                        \
     *type_match = value->prop_type == basic_type;                                                                      \
                                                                                                                        \
@@ -1076,7 +1076,7 @@ DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null, FIELD_NULL)
 const built_in_type *                                                                                   \
 archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)                    \
 {                                                                                                                      \
-    ERROR_IF_NULL(value)                                                                                    \
+    DEBUG_ERROR_IF_NULL(value)                                                                                    \
                                                                                                                        \
     bool is_array;                                                                                                     \
     bool type_match;                                                                                                   \
@@ -1118,7 +1118,7 @@ DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(booleans, boolean, archive_field_boo
 const archive_field_u32_t *
 archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *value)
 {
-        ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(value)
 
         bool is_array;
         bool type_match;
@@ -1138,7 +1138,7 @@ const built_in_type *                                                           
 archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,                               \
                                                archive_value_vector *value)                                   \
 {                                                                                                                      \
-    ERROR_IF_NULL(value)                                                                                    \
+    DEBUG_ERROR_IF_NULL(value)                                                                                    \
                                                                                                                        \
     bool is_array;                                                                                                     \
     bool type_match;                                                                                                   \

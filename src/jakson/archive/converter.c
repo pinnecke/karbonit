@@ -295,8 +295,8 @@ DEFINE_VISIT_OBJECT_ARRAY_OBJECT_PROP_HANDLER(null, archive_field_u32_t);
 bool archive_converter(encoded_doc_list *collection, archive *archive)
 {
 
-        ERROR_IF_NULL(collection);
-        ERROR_IF_NULL(archive);
+        DEBUG_ERROR_IF_NULL(collection);
+        DEBUG_ERROR_IF_NULL(archive);
 
         encoded_doc_collection_create(collection, &archive->err, archive);
 

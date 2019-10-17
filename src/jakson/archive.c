@@ -154,10 +154,10 @@ bool archive_from_json(archive *out, const char *file, err *err, const char *jso
                            bool read_optimized,
                            bool bake_string_id_index, archive_callback *callback)
 {
-        ERROR_IF_NULL(out);
-        ERROR_IF_NULL(file);
-        ERROR_IF_NULL(err);
-        ERROR_IF_NULL(json_string);
+        DEBUG_ERROR_IF_NULL(out);
+        DEBUG_ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(err);
+        DEBUG_ERROR_IF_NULL(json_string);
 
         OPTIONAL_CALL(callback, begin_create_from_json);
 
@@ -217,9 +217,9 @@ bool archive_stream_from_json(memblock **stream, err *err, const char *json_stri
                                   bool read_optimized,
                                   bool bake_id_index, archive_callback *callback)
 {
-        ERROR_IF_NULL(stream);
-        ERROR_IF_NULL(err);
-        ERROR_IF_NULL(json_string);
+        DEBUG_ERROR_IF_NULL(stream);
+        DEBUG_ERROR_IF_NULL(err);
+        DEBUG_ERROR_IF_NULL(json_string);
 
         string_dict dic;
         json_parser parser;
@@ -382,9 +382,9 @@ bool archive_from_model(memblock **stream, err *err, column_doc *model,
                             packer_e compressor,
                             bool bake_string_id_index, archive_callback *callback)
 {
-        ERROR_IF_NULL(model)
-        ERROR_IF_NULL(stream)
-        ERROR_IF_NULL(err)
+        DEBUG_ERROR_IF_NULL(model)
+        DEBUG_ERROR_IF_NULL(stream)
+        DEBUG_ERROR_IF_NULL(err)
 
         OPTIONAL_CALL(callback, begin_create_from_model)
 
@@ -430,7 +430,7 @@ bool archive_from_model(memblock **stream, err *err, column_doc *model,
 
 archive_io_context *archive_io_context_create(archive *archive)
 {
-        ERROR_IF_NULL(archive);
+        DEBUG_ERROR_IF_NULL(archive);
         archive_io_context *context;
         if (io_context_create(&context, &archive->err, archive->disk_file_path)) {
                 return context;
@@ -2451,15 +2451,15 @@ bool archive_open(archive *out, const char *file_path)
 
 bool archive_get_info(archive_info *info, const archive *archive)
 {
-        ERROR_IF_NULL(info);
-        ERROR_IF_NULL(archive);
+        DEBUG_ERROR_IF_NULL(info);
+        DEBUG_ERROR_IF_NULL(archive);
         *info = archive->info;
         return true;
 }
 
 bool archive_close(archive *archive)
 {
-        ERROR_IF_NULL(archive);
+        DEBUG_ERROR_IF_NULL(archive);
         archive_drop_indexes(archive);
         archive_drop_query_string_id_cache(archive);
         free(archive->disk_file_path);
@@ -2499,23 +2499,23 @@ bool archive_query_run(query *query, archive *archive)
 
 bool archive_has_query_index_string_id_to_offset(bool *state, archive *archive)
 {
-        ERROR_IF_NULL(state)
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(state)
+        DEBUG_ERROR_IF_NULL(archive)
         *state = (archive->query_index_string_id_to_offset != NULL);
         return true;
 }
 
 bool archive_hash_query_string_id_cache(bool *has_cache, archive *archive)
 {
-        ERROR_IF_NULL(has_cache)
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(has_cache)
+        DEBUG_ERROR_IF_NULL(archive)
         *has_cache = archive->string_id_cache != NULL;
         return true;
 }
 
 bool archive_drop_query_string_id_cache(archive *archive)
 {
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(archive)
         if (archive->string_id_cache) {
                 string_id_cache_drop(archive->string_id_cache);
                 archive->string_id_cache = NULL;

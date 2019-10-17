@@ -94,9 +94,9 @@ typedef enum access_mode_e {
         READ_ONLY
 } access_mode_e;
 
-#define FUNC_UNUSED __attribute__((unused))
+#define MAYBE_UNUSED __attribute__((unused))
 
-FUNC_UNUSED static const char *basic_type_to_json_type_str(enum archive_field_type t)
+MAYBE_UNUSED static const char *basic_type_to_json_type_str(enum archive_field_type t)
 {
         switch (t) {
                 case FIELD_INT8:
@@ -123,7 +123,7 @@ FUNC_UNUSED static const char *basic_type_to_json_type_str(enum archive_field_ty
         }
 }
 
-FUNC_UNUSED static const char *basic_type_to_system_type_str(enum archive_field_type t)
+MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field_type t)
 {
         switch (t) {
                 case FIELD_INT8:
@@ -284,7 +284,7 @@ FUNC_UNUSED static const char *basic_type_to_system_type_str(enum archive_field_
 
 #define UNUSED(x)   (void)(x);
 
-#define BUILT_IN(x)   FUNC_UNUSED x
+#define BUILT_IN(x)   MAYBE_UNUSED x
 
 #define ofType(x) /** a convenience way to write types for generic containers; no effect than just a visual one */
 #define ofMapping(x, y) /** a convenience way to write types for generic containers; no effect than just a visual one */
@@ -297,7 +297,8 @@ FUNC_UNUSED static const char *basic_type_to_system_type_str(enum archive_field_
 #define JAK_MIN(a, b)                                                                                                  \
     ((a) < (b) ? (a) : (b))
 
-#define ERROR_IF_NULL(x)                                                                                               \
+#ifndef NDEBUG
+#define DEBUG_ERROR_IF_NULL(x)                                                                                              \
 {                                                                                                                      \
     if (!(x)) {                                                                                                        \
         struct err err;                                                                                                \
@@ -307,6 +308,10 @@ FUNC_UNUSED static const char *basic_type_to_system_type_str(enum archive_field_
         return false;                                                                                                  \
     }                                                                                                                  \
 }
+#else
+#define DEBUG_ERROR_IF_NULL(x)    UNUSED(x)
+#endif
+
 
 #define CHECK_SUCCESS(x)                                                                                           \
 {                                                                                                                      \

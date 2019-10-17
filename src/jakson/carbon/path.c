@@ -56,8 +56,8 @@ fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const
 
 bool carbon_path_evaluator_status(carbon_path_status_e *status, carbon_path_evaluator *state)
 {
-        ERROR_IF_NULL(status)
-        ERROR_IF_NULL(state)
+        DEBUG_ERROR_IF_NULL(status)
+        DEBUG_ERROR_IF_NULL(state)
         *status = state->status;
         return true;
 }
@@ -70,7 +70,7 @@ fn_result ofType(bool) carbon_path_evaluator_has_result(carbon_path_evaluator *s
 
 bool carbon_path_evaluator_end(carbon_path_evaluator *state)
 {
-        ERROR_IF_NULL(state)
+        DEBUG_ERROR_IF_NULL(state)
         switch (state->result.container_type) {
                 case CARBON_OBJECT:
                         carbon_object_it_drop(&state->result.containers.object.it);

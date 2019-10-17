@@ -64,7 +64,7 @@ bool carbon_column_it_values_info(carbon_field_type_e *type, u32 *nvalues, carbo
 
 bool carbon_column_it_value_is_null(carbon_column_it *it, u32 pos);
 
-const u8 *carbon_column_it_boolean_values(u32 *nvalues, carbon_column_it *it);
+const boolean *carbon_column_it_boolean_values(u32 *nvalues, carbon_column_it *it);
 const u8 *carbon_column_it_u8_values(u32 *nvalues, carbon_column_it *it);
 const u16 *carbon_column_it_u16_values(u32 *nvalues, carbon_column_it *it);
 const u32 *carbon_column_it_u32_values(u32 *nvalues, carbon_column_it *it);

@@ -22,9 +22,9 @@ static command_opt *option_by_name(command_opt_mgr *manager, const char *name);
 bool opt_manager_create(command_opt_mgr *manager, char *module_name, char *module_desc, module_arg_policy policy,
                     bool (*fallback)(int argc, char **argv, FILE *file, command_opt_mgr *manager))
 {
-        ERROR_IF_NULL(manager)
-        ERROR_IF_NULL(module_name)
-        ERROR_IF_NULL(fallback)
+        DEBUG_ERROR_IF_NULL(manager)
+        DEBUG_ERROR_IF_NULL(module_name)
+        DEBUG_ERROR_IF_NULL(fallback)
         manager->module_name = strdup(module_name);
         manager->module_desc = module_desc ? strdup(module_desc) : NULL;
         manager->policy = policy;
@@ -35,7 +35,7 @@ bool opt_manager_create(command_opt_mgr *manager, char *module_name, char *modul
 
 bool opt_manager_drop(command_opt_mgr *manager)
 {
-        ERROR_IF_NULL(manager);
+        DEBUG_ERROR_IF_NULL(manager);
         for (size_t i = 0; i < manager->groups.num_elems; i++) {
                 command_opt_group *cmdGroup = VECTOR_GET(&manager->groups, i, command_opt_group);
                 for (size_t j = 0; j < cmdGroup->cmd_options.num_elems; j++) {
@@ -58,9 +58,9 @@ bool opt_manager_drop(command_opt_mgr *manager)
 
 bool opt_manager_process(command_opt_mgr *manager, int argc, char **argv, FILE *file)
 {
-        ERROR_IF_NULL(manager)
-        ERROR_IF_NULL(argv)
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(manager)
+        DEBUG_ERROR_IF_NULL(argv)
+        DEBUG_ERROR_IF_NULL(file)
 
         if (argc == 0) {
                 if (manager->policy == MOD_ARG_REQUIRED) {
@@ -83,9 +83,9 @@ bool opt_manager_process(command_opt_mgr *manager, int argc, char **argv, FILE *
 
 bool opt_manager_create_group(command_opt_group **group, const char *desc, command_opt_mgr *manager)
 {
-        ERROR_IF_NULL(group)
-        ERROR_IF_NULL(desc)
-        ERROR_IF_NULL(manager)
+        DEBUG_ERROR_IF_NULL(group)
+        DEBUG_ERROR_IF_NULL(desc)
+        DEBUG_ERROR_IF_NULL(manager)
         command_opt_group *cmdGroup = VECTOR_NEW_AND_GET(&manager->groups, command_opt_group);
         cmdGroup->desc = strdup(desc);
         CHECK_SUCCESS(vector_create(&cmdGroup->cmd_options, NULL, sizeof(command_opt), 10));
@@ -96,11 +96,11 @@ bool opt_manager_create_group(command_opt_group **group, const char *desc, comma
 bool opt_group_add_cmd(command_opt_group *group, const char *opt_name, char *opt_desc, char *opt_manfile,
                        int (*callback)(int argc, char **argv, FILE *file))
 {
-        ERROR_IF_NULL(group)
-        ERROR_IF_NULL(opt_name)
-        ERROR_IF_NULL(opt_desc)
-        ERROR_IF_NULL(opt_manfile)
-        ERROR_IF_NULL(callback)
+        DEBUG_ERROR_IF_NULL(group)
+        DEBUG_ERROR_IF_NULL(opt_name)
+        DEBUG_ERROR_IF_NULL(opt_desc)
+        DEBUG_ERROR_IF_NULL(opt_manfile)
+        DEBUG_ERROR_IF_NULL(callback)
 
         command_opt *command = VECTOR_NEW_AND_GET(&group->cmd_options, command_opt);
         command->opt_desc = strdup(opt_desc);
@@ -113,8 +113,8 @@ bool opt_group_add_cmd(command_opt_group *group, const char *opt_name, char *opt
 
 bool opt_manager_show_help(FILE *file, command_opt_mgr *manager)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(manager)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(manager)
 
         if (manager->groups.num_elems > 0) {
                 fprintf(file,

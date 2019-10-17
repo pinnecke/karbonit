@@ -111,9 +111,9 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, carbon_array_it_u
 static bool
 create(carbon_update *updater, carbon_revise *context, const carbon_dot_path *path)
 {
-        ERROR_IF_NULL(updater)
-        ERROR_IF_NULL(context)
-        ERROR_IF_NULL(path)
+        DEBUG_ERROR_IF_NULL(updater)
+        DEBUG_ERROR_IF_NULL(context)
+        DEBUG_ERROR_IF_NULL(path)
 
         error_init(&updater->err);
         updater->context = context;

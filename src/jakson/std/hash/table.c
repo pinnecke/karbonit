@@ -24,9 +24,9 @@
 bool hashtable_create(hashtable *map, err *err, size_t key_size, size_t value_size,
                       size_t capacity)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(key_size)
-        ERROR_IF_NULL(value_size)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(key_size)
+        DEBUG_ERROR_IF_NULL(value_size)
 
         int err_code = ERR_INITFAILED;
 
@@ -62,7 +62,7 @@ bool hashtable_create(hashtable *map, err *err, size_t key_size, size_t value_si
 
 bool hashtable_drop(hashtable *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
 
         bool status = true;
 
@@ -116,7 +116,7 @@ hashtable *hashtable_cpy(hashtable *src)
 
 bool hashtable_clear(hashtable *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
@@ -144,8 +144,8 @@ bool hashtable_clear(hashtable *map)
 
 bool hashtable_avg_displace(float *displace, const hashtable *map)
 {
-        ERROR_IF_NULL(displace);
-        ERROR_IF_NULL(map);
+        DEBUG_ERROR_IF_NULL(displace);
+        DEBUG_ERROR_IF_NULL(map);
 
         size_t sum_dis = 0;
         for (size_t i = 0; i < map->table.num_elems; i++) {
@@ -159,14 +159,14 @@ bool hashtable_avg_displace(float *displace, const hashtable *map)
 
 bool hashtable_lock(hashtable *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         //spinlock_acquire(&map->lock);
         return true;
 }
 
 bool hashtable_unlock(hashtable *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         //spinlock_release(&map->lock);
         return true;
 }
@@ -274,9 +274,9 @@ static inline uint_fast32_t _hash_table_insert_or_update(hashtable *map, const u
 bool hashtable_insert_or_update(hashtable *map, const void *keys, const void *values,
                                 uint_fast32_t num_pairs)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(keys)
-        ERROR_IF_NULL(values)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(keys)
+        DEBUG_ERROR_IF_NULL(values)
 
         JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
@@ -364,9 +364,9 @@ bool hashtable_serialize(FILE *file, hashtable *table)
 
 bool hashtable_deserialize(hashtable *table, err *err, FILE *file)
 {
-        ERROR_IF_NULL(table)
-        ERROR_IF_NULL(err)
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(table)
+        DEBUG_ERROR_IF_NULL(err)
+        DEBUG_ERROR_IF_NULL(file)
 
         int err_code = ERR_NOERR;
 
@@ -412,8 +412,8 @@ bool hashtable_deserialize(hashtable *table, err *err, FILE *file)
 
 bool hashtable_remove_if_contained(hashtable *map, const void *keys, size_t num_pairs)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(keys)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(keys)
 
         hashtable_lock(map);
 
@@ -465,8 +465,8 @@ bool hashtable_remove_if_contained(hashtable *map, const void *keys, size_t num_
 
 const void *hashtable_get_value(hashtable *map, const void *key)
 {
-        ERROR_IF_NULL(map)
-        ERROR_IF_NULL(key)
+        DEBUG_ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(key)
 
         const void *result = NULL;
 
@@ -501,8 +501,8 @@ const void *hashtable_get_value(hashtable *map, const void *key)
 
 bool hashtable_get_load_factor(float *factor, hashtable *map)
 {
-        ERROR_IF_NULL(factor)
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(factor)
+        DEBUG_ERROR_IF_NULL(map)
 
         hashtable_lock(map);
 
@@ -515,7 +515,7 @@ bool hashtable_get_load_factor(float *factor, hashtable *map)
 
 bool hashtable_rehash(hashtable *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
 
         hashtable_lock(map);
 

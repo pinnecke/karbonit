@@ -58,7 +58,7 @@ static void write_skey(memfile *file)
 
 bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
 
         switch (type) {
                 case CARBON_KEY_NOKEY:
@@ -85,14 +85,14 @@ bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
 
 bool carbon_key_skip(carbon_key_e *out, memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         carbon_key_read(NULL, out, file);
         return true;
 }
 
 bool carbon_key_write_unsigned(memfile *file, u64 key)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
 
         DECLARE_AND_INIT(carbon_key_e, key_type)
 
@@ -108,7 +108,7 @@ bool carbon_key_write_unsigned(memfile *file, u64 key)
 
 bool carbon_key_write_signed(memfile *file, i64 key)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
 
         DECLARE_AND_INIT(carbon_key_e, key_type)
 
@@ -129,7 +129,7 @@ bool carbon_key_update_string(memfile *file, const char *key)
 
 bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t length)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         DECLARE_AND_INIT(carbon_key_e, key_type)
         carbon_key_read_type(&key_type, file);
         if (carbon_key_is_string(key_type)) {
@@ -143,7 +143,7 @@ bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t leng
 
 bool carbon_key_write_string(memfile *file, const char *key)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
 
         DECLARE_AND_INIT(carbon_key_e, key_type)
 

@@ -347,7 +347,7 @@ static void _json_printer_extended_obj_prop_name(carbon_printer *self, string_bu
 
 bool json_extended_printer_create(carbon_printer *printer)
 {
-        ERROR_IF_NULL(printer);
+        DEBUG_ERROR_IF_NULL(printer);
         printer->drop = _json_printer_extended_drop;
 
         printer->record_begin = _json_printer_extended_obj_begin;

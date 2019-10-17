@@ -53,8 +53,8 @@ static int set_error(json_err *error_desc, const json_token *token, const char *
 
 bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input)
 {
-        ERROR_IF_NULL(tokenizer)
-        ERROR_IF_NULL(input)
+        DEBUG_ERROR_IF_NULL(tokenizer)
+        DEBUG_ERROR_IF_NULL(input)
         tokenizer->cursor = input;
         tokenizer->token =
                 (json_token) {.type = JSON_UNKNOWN, .length = 0, .column = 0, .line = 1, .string = NULL};
@@ -264,7 +264,7 @@ static bool json_ast_node_element_print(FILE *file, err *err, json_element *elem
 
 bool json_parser_create(json_parser *parser)
 {
-        ERROR_IF_NULL(parser)
+        DEBUG_ERROR_IF_NULL(parser)
 
         error_init(&parser->err);
 
@@ -274,8 +274,8 @@ bool json_parser_create(json_parser *parser)
 bool
 json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input)
 {
-        ERROR_IF_NULL(parser)
-        ERROR_IF_NULL(input)
+        DEBUG_ERROR_IF_NULL(parser)
+        DEBUG_ERROR_IF_NULL(input)
 
         string_buffer str;
         string_buffer_create(&str);
@@ -1105,8 +1105,8 @@ bool json_list_is_empty(const json_elements *elements)
 
 bool json_list_length(u32 *len, const json_elements *elements)
 {
-        ERROR_IF_NULL(len)
-        ERROR_IF_NULL(elements)
+        DEBUG_ERROR_IF_NULL(len)
+        DEBUG_ERROR_IF_NULL(elements)
         *len = elements->elements.num_elems;
         return true;
 }
@@ -1364,8 +1364,8 @@ static json_list_type_e number_type_to_list_type(number_min_type_e type)
 
 bool json_array_get_type(json_list_type_e *type, const json_array *array)
 {
-        ERROR_IF_NULL(type)
-        ERROR_IF_NULL(array)
+        DEBUG_ERROR_IF_NULL(type)
+        DEBUG_ERROR_IF_NULL(array)
         json_list_type_e list_type = JSON_LIST_EMPTY;
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);

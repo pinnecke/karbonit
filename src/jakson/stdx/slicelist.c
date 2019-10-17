@@ -66,8 +66,8 @@ static void _slicelist_unlock(slice_list_t *list);
 
 bool slice_list_create(slice_list_t *list, const allocator *alloc, size_t slice_capacity)
 {
-        ERROR_IF_NULL(list)
-        ERROR_IF_NULL(slice_capacity)
+        DEBUG_ERROR_IF_NULL(list)
+        DEBUG_ERROR_IF_NULL(slice_capacity)
 
         alloc_this_or_std(&list->alloc, alloc);
         spinlock_init(&list->lock);

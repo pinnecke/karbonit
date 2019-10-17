@@ -304,7 +304,7 @@ static void _json_printer_compact_obj_prop_name(carbon_printer *self, string_buf
 
 bool json_compact_printer_create(carbon_printer *printer)
 {
-        ERROR_IF_NULL(printer);
+        DEBUG_ERROR_IF_NULL(printer);
         printer->drop = _json_printer_compact_drop;
 
         printer->record_begin = _json_printer_compact_nop;

@@ -21,7 +21,7 @@
 
 u64 carbon_prop_size(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         offset_t prop_start = memfile_save_position(file);
         carbon_string_nomarker_skip(file);
         carbon_field_skip(file);

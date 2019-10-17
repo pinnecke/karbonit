@@ -658,8 +658,8 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
 bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
                                visitor *visitor, void *capture)
 {
-        ERROR_IF_NULL(archive)
-        ERROR_IF_NULL(visitor)
+        DEBUG_ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(visitor)
 
         prop_iter prop_iter;
         vector ofType(path_entry) path_stack;
@@ -702,9 +702,9 @@ void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
 bool archive_visitor_print_path(FILE *file, archive *archive,
                                     const vector ofType(path_entry) *path_stack)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(path_stack)
-        ERROR_IF_NULL(archive)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(path_stack)
+        DEBUG_ERROR_IF_NULL(archive)
 
         query *query = archive_query_default(archive);
 

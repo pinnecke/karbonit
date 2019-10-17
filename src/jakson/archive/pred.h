@@ -35,7 +35,7 @@ typedef struct string_pred {
 
 BUILT_IN(static bool) string_pred_validate(err *err, const string_pred *pred)
 {
-        ERROR_IF_NULL(pred);
+        DEBUG_ERROR_IF_NULL(pred);
         ERROR_IF_NOT_IMPLEMENTED(err, pred, func)
         return true;
 }
@@ -53,8 +53,8 @@ BUILT_IN(static bool) string_pred_eval(const string_pred *pred, size_t *idxs_mat
 
 BUILT_IN(static bool) string_pred_get_limit(i64 *limit, const string_pred *pred)
 {
-        ERROR_IF_NULL(limit);
-        ERROR_IF_NULL(pred);
+        DEBUG_ERROR_IF_NULL(limit);
+        DEBUG_ERROR_IF_NULL(pred);
         *limit = pred->limit;
         return true;
 }

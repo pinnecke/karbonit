@@ -50,10 +50,10 @@ bool columndoc_create(column_doc *columndoc, err *err, const doc *doc,
                       const doc_bulk *bulk,
                       const doc_entries *entries, string_dict *dic)
 {
-        ERROR_IF_NULL(columndoc)
-        ERROR_IF_NULL(doc)
-        ERROR_IF_NULL(dic)
-        ERROR_IF_NULL(bulk)
+        DEBUG_ERROR_IF_NULL(columndoc)
+        DEBUG_ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(dic)
+        DEBUG_ERROR_IF_NULL(bulk)
 
         columndoc->dic = dic;
         columndoc->doc = doc;
@@ -277,7 +277,7 @@ static void object_meta_model_free(column_doc_obj *columndoc)
 
 bool columndoc_free(column_doc *doc)
 {
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(doc);
         object_meta_model_free(&doc->columndoc);
         return true;
 }
@@ -881,8 +881,8 @@ _column_doc_print_object(FILE *file, err *err, const column_doc_obj *object, str
 
 bool columndoc_print(FILE *file, column_doc *doc)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(doc)
         return _column_doc_print_object(file, &doc->err, &doc->columndoc, doc->dic);
 }
 

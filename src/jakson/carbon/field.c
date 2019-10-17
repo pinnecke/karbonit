@@ -257,7 +257,7 @@ bool carbon_field_type_is_constant(carbon_field_type_e type)
 
 bool carbon_field_skip(memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         u8 type_marker = *MEMFILE_PEEK(file, u8);
 
         switch (type_marker) {

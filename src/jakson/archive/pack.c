@@ -75,15 +75,15 @@ bool pack_by_name(packer_e *type, const char *name)
 
 bool pack_cpy(err *err, packer *dst, const packer *src)
 {
-        ERROR_IF_NULL(dst)
-        ERROR_IF_NULL(src)
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(src)
         ERROR_IF_NOT_IMPLEMENTED(err, src, cpy)
         return src->cpy(src, dst);
 }
 
 bool pack_drop(err *err, packer *self)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, drop)
         return self->drop(self);
 }
@@ -91,35 +91,35 @@ bool pack_drop(err *err, packer *self)
 bool pack_write_extra(err *err, packer *self, memfile *dst,
                       const vector ofType (const char *) *strings)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, write_extra)
         return self->write_extra(self, dst, strings);
 }
 
 bool pack_read_extra(err *err, packer *self, FILE *src, size_t nbytes)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, read_extra)
         return self->read_extra(self, src, nbytes);
 }
 
 bool pack_encode(err *err, packer *self, memfile *dst, const char *string)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, encode_string)
         return self->encode_string(self, dst, err, string);
 }
 
 bool pack_decode(err *err, packer *self, char *dst, size_t strlen, FILE *src)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, decode_string)
         return self->decode_string(self, dst, strlen, src);
 }
 
 bool pack_print_extra(err *err, packer *self, FILE *file, memfile *src)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, print_extra)
         return self->print_extra(self, file, src);
 }
@@ -127,7 +127,7 @@ bool pack_print_extra(err *err, packer *self, FILE *file, memfile *src)
 bool pack_print_encoded(err *err, packer *self, FILE *file, memfile *src,
                         u32 decompressed_strlen)
 {
-        ERROR_IF_NULL(self)
+        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, print_encoded)
         return self->print_encoded(self, file, src, decompressed_strlen);
 }

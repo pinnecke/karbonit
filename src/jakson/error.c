@@ -32,15 +32,15 @@ bool error_init(err *err)
 
 bool error_cpy(err *dst, const err *src)
 {
-        ERROR_IF_NULL(dst);
-        ERROR_IF_NULL(src);
+        DEBUG_ERROR_IF_NULL(dst);
+        DEBUG_ERROR_IF_NULL(src);
         *dst = *src;
         return true;
 }
 
 bool error_drop(err *err)
 {
-        ERROR_IF_NULL(err);
+        DEBUG_ERROR_IF_NULL(err);
         if (err->details) {
                 free(err->details);
                 err->details = NULL;

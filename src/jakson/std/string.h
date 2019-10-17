@@ -52,6 +52,8 @@ bool string_buffer_add_i64(string_buffer *builder, i64 value);
 bool string_buffer_add_u64_as_hex(string_buffer *builder, u64 value);
 bool string_buffer_add_u64_as_hex_0x_prefix_compact(string_buffer *builder, u64 value);
 bool string_buffer_add_float(string_buffer *builder, float value);
+bool string_buffer_add_bool(string_buffer *builder, bool value);
+bool string_buffer_add_boolean(string_buffer *builder, boolean value);
 bool string_buffer_clear(string_buffer *builder);
 bool string_buffer_ensure_capacity(string_buffer *builder, u64 cap);
 size_t string_len(string_buffer *builder);

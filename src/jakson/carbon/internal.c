@@ -64,7 +64,7 @@ insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 c
 
 bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes)
 {
-        ERROR_IF_NULL(memfile);
+        DEBUG_ERROR_IF_NULL(memfile);
         assert(derivation == CARBON_MAP_UNSORTED_MULTIMAP || derivation == CARBON_MAP_SORTED_MULTIMAP ||
                derivation == CARBON_MAP_UNSORTED_MAP || derivation == CARBON_MAP_SORTED_MAP);
         carbon_derived_e begin_marker;
@@ -75,7 +75,7 @@ bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivatio
 
 bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes)
 {
-        ERROR_IF_NULL(memfile);
+        DEBUG_ERROR_IF_NULL(memfile);
         assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
                derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
         carbon_derived_e begin_marker;
@@ -87,8 +87,8 @@ bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivatio
 bool carbon_int_insert_column(memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type,
                               size_t capactity)
 {
-        ERROR_IF_NULL(memfile_in);
-        ERROR_IF_NULL(err_in);
+        DEBUG_ERROR_IF_NULL(memfile_in);
+        DEBUG_ERROR_IF_NULL(err_in);
         assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
                derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
 
@@ -238,7 +238,7 @@ bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_
 
 bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         if (object_it_is_slot_occupied(is_empty_slot, is_object_end, it)) {
                 carbon_int_object_it_prop_key_access(it);
                 carbon_int_field_data_access(&it->memfile, &it->err, &it->field.value.data);
@@ -250,7 +250,7 @@ bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carb
 
 bool carbon_int_object_it_prop_key_access(carbon_object_it *it)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
         //memfile_skip(&it->mem, sizeof(media_type));
 
         it->field.key.offset = memfile_tell(&it->memfile);
@@ -265,14 +265,14 @@ bool carbon_int_object_it_prop_key_access(carbon_object_it *it)
 
 bool carbon_int_object_it_prop_value_skip(carbon_object_it *it)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
         memfile_seek(&it->memfile, it->field.value.offset);
         return carbon_field_skip(&it->memfile);
 }
 
 bool carbon_int_object_it_prop_skip(carbon_object_it *it)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
 
         it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->memfile);
         memfile_skip(&it->memfile, it->field.key.name_len);
@@ -294,7 +294,7 @@ bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, car
 
 bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         carbon_int_field_access_drop(&it->field_access);
         if (array_it_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_array_it_field_type_read(it);
@@ -307,7 +307,7 @@ bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, carbon
 
 bool carbon_int_array_it_field_type_read(carbon_array_it *it)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
         ERROR_IF(memfile_remain_size(&it->memfile) < 1, &it->err, ERR_ILLEGALOP);
         memfile_save_position(&it->memfile);
         it->field_offset = memfile_tell(&it->memfile);
@@ -539,8 +539,8 @@ bool carbon_int_field_access_create(field_access *field)
 
 bool carbon_int_field_access_clone(field_access *dst, field_access *src)
 {
-        ERROR_IF_NULL(dst)
-        ERROR_IF_NULL(src)
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(src)
 
         dst->it_field_type = src->it_field_type;
         dst->it_field_data = src->it_field_data;
@@ -621,7 +621,7 @@ void carbon_int_auto_close_nested_column_it(field_access *field)
 
 bool carbon_int_field_auto_close(field_access *field)
 {
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(field)
         if (field->nested_array_it_is_created && !field->nested_array_it_accessed) {
                 carbon_int_auto_close_nested_array_it(field);
                 field->nested_array_it_is_created = false;
@@ -642,16 +642,16 @@ bool carbon_int_field_auto_close(field_access *field)
 
 bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field)
 {
-        ERROR_IF_NULL(type)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(type)
+        DEBUG_ERROR_IF_NULL(field)
         *type = field->it_field_type;
         return true;
 }
 
 bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U8, err, ERR_TYPEMISMATCH);
         *value = *(u8 *) field->it_field_data;
         return true;
@@ -659,8 +659,8 @@ bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err)
 
 bool carbon_int_field_access_u16_value(u16 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U16, err, ERR_TYPEMISMATCH);
         *value = *(u16 *) field->it_field_data;
         return true;
@@ -668,8 +668,8 @@ bool carbon_int_field_access_u16_value(u16 *value, field_access *field, err *err
 
 bool carbon_int_field_access_u32_value(u32 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U32, err, ERR_TYPEMISMATCH);
         *value = *(u32 *) field->it_field_data;
         return true;
@@ -677,8 +677,8 @@ bool carbon_int_field_access_u32_value(u32 *value, field_access *field, err *err
 
 bool carbon_int_field_access_u64_value(u64 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U64, err, ERR_TYPEMISMATCH);
         *value = *(u64 *) field->it_field_data;
         return true;
@@ -686,8 +686,8 @@ bool carbon_int_field_access_u64_value(u64 *value, field_access *field, err *err
 
 bool carbon_int_field_access_i8_value(i8 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I8, err, ERR_TYPEMISMATCH);
         *value = *(i8 *) field->it_field_data;
         return true;
@@ -695,8 +695,8 @@ bool carbon_int_field_access_i8_value(i8 *value, field_access *field, err *err)
 
 bool carbon_int_field_access_i16_value(i16 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I16, err, ERR_TYPEMISMATCH);
         *value = *(i16 *) field->it_field_data;
         return true;
@@ -704,8 +704,8 @@ bool carbon_int_field_access_i16_value(i16 *value, field_access *field, err *err
 
 bool carbon_int_field_access_i32_value(i32 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I32, err, ERR_TYPEMISMATCH);
         *value = *(i32 *) field->it_field_data;
         return true;
@@ -713,17 +713,26 @@ bool carbon_int_field_access_i32_value(i32 *value, field_access *field, err *err
 
 bool carbon_int_field_access_i64_value(i64 *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(value)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I64, err, ERR_TYPEMISMATCH);
         *value = *(i64 *) field->it_field_data;
         return true;
 }
 
-bool
-carbon_int_field_access_float_value(bool *is_null_in, float *value, field_access *field, err *err)
+bool carbon_int_field_access_float_value(float *value, field_access *field, err *err)
 {
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
+        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, err, ERR_TYPEMISMATCH);
+        *value = *(float *) field->it_field_data;
+        return true;
+}
+
+bool
+carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field, err *err)
+{
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, err, ERR_TYPEMISMATCH);
         float read_value = *(float *) field->it_field_data;
         OPTIONAL_SET(value, read_value);
@@ -735,7 +744,7 @@ carbon_int_field_access_float_value(bool *is_null_in, float *value, field_access
 bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_access *field,
                                           err *err)
 {
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_I8: {
                         i8 read_value;
@@ -774,7 +783,7 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_ac
 bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_access *field,
                                             err *err)
 {
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_U8: {
                         u8 read_value;
@@ -812,7 +821,7 @@ bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_
 
 const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field, err *err)
 {
-        ERROR_IF_NULL(strlen);
+        DEBUG_ERROR_IF_NULL(strlen);
         ERROR_IF_AND_RETURN(field == NULL, err, ERR_NULLPTR, NULL);
         ERROR_IF(field->it_field_type != CARBON_FIELD_STRING, err, ERR_TYPEMISMATCH);
         *strlen = field->it_field_len;
@@ -822,8 +831,8 @@ const char *carbon_int_field_access_string_value(u64 *strlen, field_access *fiel
 bool
 carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err)
 {
-        ERROR_IF_NULL(out)
-        ERROR_IF_NULL(field)
+        DEBUG_ERROR_IF_NULL(out)
+        DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_BINARY &&
                  field->it_field_type != CARBON_FIELD_BINARY_CUSTOM,
                  err, ERR_TYPEMISMATCH);
@@ -1587,7 +1596,7 @@ static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end,
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         char c = *memfile_peek(file, 1);
         bool is_empty = c == 0, is_end = c == end_marker;
         OPTIONAL_SET(is_empty_slot, is_empty)

@@ -37,9 +37,9 @@
 bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err,
                              offset_t column_start_offset)
 {
-        ERROR_IF_NULL(it);
-        ERROR_IF_NULL(memfile);
-        ERROR_IF_NULL(err);
+        DEBUG_ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(memfile);
+        DEBUG_ERROR_IF_NULL(err);
 
         it->column_start_offset = column_start_offset;
         it->mod_size = 0;
@@ -92,14 +92,14 @@ bool carbon_column_it_clone(carbon_column_it *dst, carbon_column_it *src)
 
 bool carbon_column_it_insert(carbon_insert *inserter, carbon_column_it *it)
 {
-        ERROR_IF_NULL(inserter)
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(inserter)
+        DEBUG_ERROR_IF_NULL(it)
         return carbon_int_insert_create_for_column(inserter, it);
 }
 
 bool carbon_column_it_fast_forward(carbon_column_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         carbon_column_it_values(NULL, NULL, it);
         return true;
 }
@@ -134,7 +134,7 @@ offset_t carbon_column_it_tell(carbon_column_it *it, u32 elem_idx)
 
 bool carbon_column_it_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_column_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
 
         if (nvalues) {
                 memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
@@ -149,7 +149,7 @@ bool carbon_column_it_values_info(carbon_field_type_e *type, u32 *nvalues, carbo
 
 bool carbon_column_it_value_is_null(carbon_column_it *it, u32 pos)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         carbon_field_type_e type;
         u32 nvalues = 0;
         carbon_column_it_values_info(&type, &nvalues, it);
@@ -212,7 +212,7 @@ bool carbon_column_it_value_is_null(carbon_column_it *it, u32 pos)
 
 const void *carbon_column_it_values(carbon_field_type_e *type, u32 *nvalues, carbon_column_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
         u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->memfile);
         u32 cap_elements = (u32) memfile_read_uintvar_stream(NULL, &it->memfile);
@@ -229,9 +229,9 @@ const void *carbon_column_it_values(carbon_field_type_e *type, u32 *nvalues, car
         return result;
 }
 
-const u8 *carbon_column_it_boolean_values(u32 *nvalues, carbon_column_it *it)
+const boolean *carbon_column_it_boolean_values(u32 *nvalues, carbon_column_it *it)
 {
-        return safe_cast(u8, nvalues, it, carbon_field_type_is_column_bool_or_subtype(type));
+        return safe_cast(boolean, nvalues, it, carbon_field_type_is_column_bool_or_subtype(type));
 }
 
 const u8 *carbon_column_it_u8_values(u32 *nvalues, carbon_column_it *it)
@@ -281,7 +281,7 @@ const float *carbon_column_it_float_values(u32 *nvalues, carbon_column_it *it)
 
 bool carbon_column_it_remove(carbon_column_it *it, u32 pos)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
 
         ERROR_IF(pos >= it->column_num_elements, &it->err, ERR_OUTOFBOUNDS);
         memfile_save_position(&it->memfile);
@@ -351,7 +351,7 @@ fn_result carbon_column_it_update_type(carbon_column_it *it, carbon_list_derivab
 
 bool carbon_column_it_update_set_null(carbon_column_it *it, u32 pos)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
         ERROR_IF(pos >= it->column_num_elements, &it->err, ERR_OUTOFBOUNDS)
 
         memfile_save_position(&it->memfile);
@@ -575,7 +575,7 @@ static bool rewrite_column_to_array(carbon_column_it *it)
 
 bool carbon_column_it_update_set_true(carbon_column_it *it, u32 pos)
 {
-        ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(it)
         ERROR_IF(pos >= it->column_num_elements, &it->err, ERR_OUTOFBOUNDS)
 
         memfile_save_position(&it->memfile);
@@ -798,7 +798,7 @@ bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float valu
  */
 bool carbon_column_it_lock(carbon_column_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         spinlock_acquire(&it->lock);
         return true;
 }
@@ -808,14 +808,14 @@ bool carbon_column_it_lock(carbon_column_it *it)
  */
 bool carbon_column_it_unlock(carbon_column_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         spinlock_release(&it->lock);
         return true;
 }
 
 bool carbon_column_it_rewind(carbon_column_it *it)
 {
-        ERROR_IF_NULL(it);
+        DEBUG_ERROR_IF_NULL(it);
         offset_t playload_start = carbon_int_column_get_payload_off(it);
         ERROR_IF(playload_start >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
         return memfile_seek(&it->memfile, playload_start);

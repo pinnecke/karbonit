@@ -20,8 +20,8 @@
 
 bool memfile_open(memfile *file, memblock *block, access_mode_e mode)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(block)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(block)
         ZERO_MEMORY(file, sizeof(memfile))
         file->memblock = block;
         file->pos = 0;
@@ -34,8 +34,8 @@ bool memfile_open(memfile *file, memblock *block, access_mode_e mode)
 
 bool memfile_clone(memfile *dst, memfile *src)
 {
-        ERROR_IF_NULL(dst)
-        ERROR_IF_NULL(src)
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(src)
         memfile_open(dst, src->memblock, src->mode);
         memfile_seek(dst, memfile_tell(src));
         dst->bit_mode = src->bit_mode;
@@ -47,7 +47,7 @@ bool memfile_clone(memfile *dst, memfile *src)
 
 bool memfile_seek(memfile *file, offset_t pos)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         offset_t file_size = 0;
         memblock_size(&file_size, file->memblock);
         if (UNLIKELY(pos >= file_size)) {
@@ -72,14 +72,14 @@ bool memfile_seek_from_here(memfile *file, signed_offset_t where)
 
 bool memfile_rewind(memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         file->pos = 0;
         return true;
 }
 
 bool memfile_grow(memfile *file_in, size_t grow_by_bytes)
 {
-        ERROR_IF_NULL(file_in)
+        DEBUG_ERROR_IF_NULL(file_in)
         if (LIKELY(grow_by_bytes > 0)) {
                 offset_t block_size = 0;
                 memblock_size(&block_size, file_in->memblock);
@@ -90,8 +90,8 @@ bool memfile_grow(memfile *file_in, size_t grow_by_bytes)
 
 bool memfile_get_offset(offset_t *pos, const memfile *file)
 {
-        ERROR_IF_NULL(pos)
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(pos)
+        DEBUG_ERROR_IF_NULL(file)
         *pos = file->pos;
         return true;
 }
@@ -109,7 +109,7 @@ size_t memfile_size(memfile *file)
 
 bool memfile_cut(memfile *file, size_t how_many_bytes)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         offset_t block_size = 0;
         memblock_size(&block_size, file->memblock);
 
@@ -132,7 +132,7 @@ size_t memfile_remain_size(memfile *file)
 
 bool memfile_shrink(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
                 int status = memblock_shrink(file->memblock);
                 u64 size;
@@ -212,8 +212,8 @@ bool memfile_write_byte(memfile *file, u8 data)
 
 bool memfile_write(memfile *file, const void *data, offset_t nbytes)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(data)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(data)
         if (file->mode == READ_WRITE) {
                 if (LIKELY(nbytes != 0)) {
                         offset_t file_size = 0;
@@ -237,8 +237,8 @@ bool memfile_write(memfile *file, const void *data, offset_t nbytes)
 
 bool memfile_write_zero(memfile *file, size_t how_many)
 {
-        ERROR_IF_NULL(file);
-        ERROR_IF_NULL(how_many);
+        DEBUG_ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(how_many);
         char empty = 0;
         while (how_many--) {
                 memfile_write(file, &empty, sizeof(char));
@@ -248,7 +248,7 @@ bool memfile_write_zero(memfile *file, size_t how_many)
 
 bool memfile_begin_bit_mode(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
                 file->bit_mode = true;
                 file->current_read_bit = file->current_write_bit = file->bytes_completed = 0;
@@ -268,7 +268,7 @@ bool memfile_begin_bit_mode(memfile *file)
 
 bool memfile_write_bit(memfile *file, bool flag)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         file->current_read_bit = 0;
 
         if (file->bit_mode) {
@@ -337,7 +337,7 @@ bool memfile_read_bit(memfile *file)
 
 offset_t memfile_save_position(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         offset_t pos = memfile_tell(file);
         if (LIKELY(file->saved_pos_ptr < (i8) (ARRAY_LENGTH(file->saved_pos)))) {
                 file->saved_pos[file->saved_pos_ptr++] = pos;
@@ -349,7 +349,7 @@ offset_t memfile_save_position(memfile *file)
 
 bool memfile_restore_position(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         if (LIKELY(file->saved_pos_ptr >= 0)) {
                 offset_t pos = file->saved_pos[--file->saved_pos_ptr];
                 memfile_seek(file, pos);
@@ -362,7 +362,7 @@ bool memfile_restore_position(memfile *file)
 
 signed_offset_t memfile_ensure_space(memfile *memfile, u64 nbytes)
 {
-        ERROR_IF_NULL(memfile)
+        DEBUG_ERROR_IF_NULL(memfile)
 
         DECLARE_AND_INIT(offset_t, block_size);
 
@@ -402,7 +402,7 @@ u64 memfile_read_uintvar_stream(u8 *nbytes, memfile *memfile)
 
 bool memfile_skip_uintvar_stream(memfile *memfile)
 {
-        ERROR_IF_NULL(memfile)
+        DEBUG_ERROR_IF_NULL(memfile)
         memfile_read_uintvar_stream(NULL, memfile);
         return true;
 }
@@ -428,7 +428,7 @@ u64 memfile_write_uintvar_stream(u64 *nbytes_moved, memfile *memfile, u64 value)
 
 signed_offset_t memfile_update_uintvar_stream(memfile *memfile, u64 value)
 {
-        ERROR_IF_NULL(memfile);
+        DEBUG_ERROR_IF_NULL(memfile);
 
         u8 bytes_used_now, bytes_used_then;
 
@@ -457,26 +457,26 @@ bool memfile_seek_to_start(memfile *file)
 
 bool memfile_seek_to_end(memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         size_t size = memblock_last_used_byte(file->memblock);
         return memfile_seek(file, size);
 }
 
 bool memfile_inplace_insert(memfile *file, size_t nbytes)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         return memblock_move_right(file->memblock, file->pos, nbytes);
 }
 
 bool memfile_inplace_remove(memfile *file, size_t nbytes_from_here)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         return memblock_move_left(file->memblock, file->pos, nbytes_from_here);
 }
 
 bool memfile_end_bit_mode(size_t *num_bytes_written, memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         file->bit_mode = false;
         if (file->current_write_bit <= 8) {
                 memfile_skip(file, 1);
@@ -510,8 +510,8 @@ void *memfile_current_pos(memfile *file, offset_t nbytes)
 
 bool memfile_hexdump(string_buffer *sb, memfile *file)
 {
-        ERROR_IF_NULL(sb);
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(sb);
+        DEBUG_ERROR_IF_NULL(file);
         DECLARE_AND_INIT(offset_t, block_size)
         memblock_size(&block_size, file->memblock);
         hexdump(sb, memblock_raw_data(file->memblock), block_size);
@@ -520,8 +520,8 @@ bool memfile_hexdump(string_buffer *sb, memfile *file)
 
 bool memfile_hexdump_printf(FILE *file, memfile *memfile)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(memfile)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(memfile)
         DECLARE_AND_INIT(offset_t, block_size)
         memblock_size(&block_size, memfile->memblock);
         hexdump_print(file, memblock_raw_data(memfile->memblock), block_size);

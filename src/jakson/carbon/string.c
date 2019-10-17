@@ -34,8 +34,8 @@ bool carbon_string_nomarker_write(memfile *file, const char *string)
 
 bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(string)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(string)
         write_payload(file, string, str_len);
 
         return true;
@@ -43,7 +43,7 @@ bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 s
 
 bool carbon_string_nomarker_remove(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         u8 len_nbytes;
         u64 str_len = memfile_read_uintvar_stream(&len_nbytes, file);
         memfile_skip(file, -len_nbytes);
@@ -53,7 +53,7 @@ bool carbon_string_nomarker_remove(memfile *file)
 
 bool carbon_string_remove(memfile *file)
 {
-        ERROR_IF_NULL(file);
+        DEBUG_ERROR_IF_NULL(file);
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 memfile_inplace_remove(file, sizeof(u8));
@@ -71,8 +71,8 @@ bool carbon_string_write(memfile *file, const char *string)
 
 bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
 {
-        ERROR_IF_NULL(file)
-        ERROR_IF_NULL(string)
+        DEBUG_ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(string)
 
         memfile_ensure_space(file, sizeof(media_type));
         carbon_media_write(file, CARBON_FIELD_STRING);
@@ -117,7 +117,7 @@ bool carbon_string_nomarker_skip(memfile *file)
 
 const char *carbon_string_read(u64 *len, memfile *file)
 {
-        ERROR_IF_NULL(file)
+        DEBUG_ERROR_IF_NULL(file)
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 return carbon_string_nomarker_read(len, file);

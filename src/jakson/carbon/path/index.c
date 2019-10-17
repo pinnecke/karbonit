@@ -612,7 +612,7 @@ static void array_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-FUNC_UNUSED
+MAYBE_UNUSED
 static void node_into_carbon(carbon_insert *ins, carbon_path_index *index)
 {
         u8 next = memfile_peek_byte(&index->memfile);
@@ -721,7 +721,7 @@ static u8 _insert_field_ref(carbon_insert *ins, carbon_path_index *index, bool i
         return ret;
 }
 
-FUNC_UNUSED
+MAYBE_UNUSED
 static void column_into_carbon(carbon_insert *ins, carbon_path_index *index)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
@@ -954,7 +954,7 @@ static void prop_to_str(string_buffer *str, carbon_path_index *index, unsigned i
         container_to_str(str, index, field_type, intent_level);
 }
 
-FUNC_UNUSED
+MAYBE_UNUSED
 static void prop_into_carbon(carbon_insert *ins, carbon_path_index *index)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
@@ -1152,8 +1152,8 @@ static void record_ref_to_carbon(carbon_insert *roins, carbon_path_index *index)
 
 bool carbon_path_index_create(carbon_path_index *index, carbon *doc)
 {
-        ERROR_IF_NULL(index);
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(index);
+        DEBUG_ERROR_IF_NULL(doc);
         memblock_create(&index->memblock, PATH_INDEX_CAPACITY);
         memfile_open(&index->memfile, index->memblock, READ_WRITE);
         error_init(&index->err);
@@ -1185,24 +1185,24 @@ const void *carbon_path_index_raw_data(u64 *size, carbon_path_index *index)
 
 bool carbon_path_index_commit_hash(u64 *commit_hash, carbon_path_index *index)
 {
-        ERROR_IF_NULL(commit_hash)
-        ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(commit_hash)
+        DEBUG_ERROR_IF_NULL(index)
         record_ref_read(NULL, NULL, commit_hash, &index->memfile);
         return true;
 }
 
 bool carbon_path_index_key_type(carbon_key_e *key_type, carbon_path_index *index)
 {
-        ERROR_IF_NULL(key_type)
-        ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(key_type)
+        DEBUG_ERROR_IF_NULL(index)
         record_ref_read(key_type, NULL, NULL, &index->memfile);
         return true;
 }
 
 bool carbon_path_index_key_unsigned_value(u64 *key, carbon_path_index *index)
 {
-        ERROR_IF_NULL(key)
-        ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(key)
+        DEBUG_ERROR_IF_NULL(index)
         carbon_key_e key_type;
         u64 ret = *(u64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
         ERROR_IF(key_type != CARBON_KEY_AUTOKEY && key_type != CARBON_KEY_UKEY, &index->err, ERR_TYPEMISMATCH);
@@ -1212,8 +1212,8 @@ bool carbon_path_index_key_unsigned_value(u64 *key, carbon_path_index *index)
 
 bool carbon_path_index_key_signed_value(i64 *key, carbon_path_index *index)
 {
-        ERROR_IF_NULL(key)
-        ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(key)
+        DEBUG_ERROR_IF_NULL(index)
         carbon_key_e key_type;
         i64 ret = *(i64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
         ERROR_IF(key_type != CARBON_KEY_IKEY, &index->err, ERR_TYPEMISMATCH);
@@ -1236,7 +1236,7 @@ const char *carbon_path_index_key_string_value(u64 *str_len, carbon_path_index *
 
 bool carbon_path_index_indexes_doc(carbon_path_index *index, carbon *doc)
 {
-        ERROR_IF_NULL(doc);
+        DEBUG_ERROR_IF_NULL(doc);
 
         u64 index_hash = 0, doc_hash = 0;
         carbon_path_index_commit_hash(&index_hash, index);
@@ -1287,9 +1287,9 @@ bool carbon_path_index_indexes_doc(carbon_path_index *index, carbon *doc)
 bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *index,
                                carbon *doc)
 {
-        ERROR_IF_NULL(it)
-        ERROR_IF_NULL(index)
-        ERROR_IF_NULL(doc)
+        DEBUG_ERROR_IF_NULL(it)
+        DEBUG_ERROR_IF_NULL(index)
+        DEBUG_ERROR_IF_NULL(doc)
         if (carbon_path_index_indexes_doc(index, doc)) {
                 ZERO_MEMORY(it, sizeof(carbon_path_index_it));
                 error_init(&it->err);

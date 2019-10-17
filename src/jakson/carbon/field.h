@@ -249,8 +249,10 @@ bool carbon_field_type_is_constant(carbon_field_type_e type);
 carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type, err *err);
 
 bool carbon_field_skip(memfile *file);
+
 fn_result carbon_field_skip_object(memfile *file);
 fn_result carbon_field_skip_array(memfile *file);
+
 bool carbon_field_skip_column(memfile *file);
 bool carbon_field_skip_binary(memfile *file);
 bool carbon_field_skip_custom_binary(memfile *file);

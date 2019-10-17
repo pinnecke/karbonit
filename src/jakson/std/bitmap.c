@@ -23,7 +23,7 @@
 
 bool bitmap_create(bitmap *bitmap, u16 num_bits)
 {
-        ERROR_IF_NULL(bitmap);
+        DEBUG_ERROR_IF_NULL(bitmap);
 
         allocator alloc;
         alloc_create_std(&alloc);
@@ -49,13 +49,13 @@ bool bitmap_drop(bitmap *bitset)
 
 size_t bitmap_nbits(const bitmap *bitset)
 {
-        ERROR_IF_NULL(bitset);
+        DEBUG_ERROR_IF_NULL(bitset);
         return bitset->num_bits;
 }
 
 bool bitmap_clear(bitmap *bitset)
 {
-        ERROR_IF_NULL(bitset);
+        DEBUG_ERROR_IF_NULL(bitset);
         void *data = (void *) vector_data(&bitset->data);
         memset(data, 0, sizeof(u32) * vector_capacity(&bitset->data));
         return true;
@@ -63,7 +63,7 @@ bool bitmap_clear(bitmap *bitset)
 
 bool bitmap_set(bitmap *bitset, u16 bit_position, bool on)
 {
-        ERROR_IF_NULL(bitset)
+        DEBUG_ERROR_IF_NULL(bitset)
         size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(u32));
         size_t block_bit = bit_position % BIT_NUM_OF(u32);
         u32 block = *VECTOR_GET(&bitset->data, block_pos, u32);
@@ -79,7 +79,7 @@ bool bitmap_set(bitmap *bitset, u16 bit_position, bool on)
 
 bool bitmap_get(bitmap *bitset, u16 bit_position)
 {
-        ERROR_IF_NULL(bitset)
+        DEBUG_ERROR_IF_NULL(bitset)
         size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(u32));
         size_t block_bit = bit_position % BIT_NUM_OF(u32);
         u32 block = *VECTOR_GET(&bitset->data, block_pos, u32);
@@ -89,7 +89,7 @@ bool bitmap_get(bitmap *bitset, u16 bit_position)
 
 bool bitmap_lshift(bitmap *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
         for (int i = map->num_bits - 1; i >= 0; i--) {
                 bool f = i > 0 ? bitmap_get(map, i - 1) : false;
                 bitmap_set(map, i, f);
@@ -118,9 +118,9 @@ void bitmap_print_bits_in_char(FILE *file, char n)
 
 bool bitmap_blocks(u32 **blocks, u32 *num_blocks, const bitmap *map)
 {
-        ERROR_IF_NULL(blocks)
-        ERROR_IF_NULL(num_blocks)
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(blocks)
+        DEBUG_ERROR_IF_NULL(num_blocks)
+        DEBUG_ERROR_IF_NULL(map)
 
         u32 *result = MALLOC(map->data.num_elems * sizeof(u32));
         i32 k = 0;
@@ -135,7 +135,7 @@ bool bitmap_blocks(u32 **blocks, u32 *num_blocks, const bitmap *map)
 
 bool bitmap_print(FILE *file, const bitmap *map)
 {
-        ERROR_IF_NULL(map)
+        DEBUG_ERROR_IF_NULL(map)
 
         u32 *blocks, num_blocks;
 

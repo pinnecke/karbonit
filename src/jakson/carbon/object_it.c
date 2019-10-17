@@ -199,6 +199,16 @@ bool carbon_object_it_prop_type(carbon_field_type_e *type, carbon_object_it *it)
         return carbon_int_field_access_field_type(type, &it->field.value.data);
 }
 
+bool carbon_object_it_bool_value(bool *is_true, carbon_object_it *it)
+{
+        return carbon_int_field_access_bool_value(is_true, &it->field.value.data, &it->err);
+}
+
+bool carbon_object_it_is_null(bool *is_null, carbon_object_it *it)
+{
+        return carbon_int_field_access_is_null(is_null, &it->field.value.data);
+}
+
 bool carbon_object_it_u8_value(u8 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_u8_value(value, &it->field.value.data, &it->err);

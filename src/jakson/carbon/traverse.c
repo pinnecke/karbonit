@@ -76,9 +76,9 @@ void carbon_traverse_carbon(struct carbon *rev_out, struct carbon_traverse *trav
                 carbon_revise_iterator_close(&it);
                 carbon_revise_end(&context);
         } else {
-                carbon_iterator_open(&it, record);
+                carbon_read_begin(&it, record);
                 carbon_traverse_array(traverse, &it);
-                carbon_iterator_close(&it);
+                carbon_read_end(&it);
         }
 
 }

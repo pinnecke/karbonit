@@ -96,7 +96,7 @@ bool carbon_array_it_update_in_place_null(carbon_array_it *it);
 fn_result carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err, offset_t payload_start);
 bool carbon_array_it_copy(carbon_array_it *dst, carbon_array_it *src);
 bool carbon_array_it_clone(carbon_array_it *dst, carbon_array_it *src);
-bool carbon_array_it_readonly(carbon_array_it *it);
+bool carbon_array_it_set_mode(carbon_array_it *it, access_mode_e mode);
 bool carbon_array_it_length(u64 *len, carbon_array_it *it);
 bool carbon_array_it_is_empty(carbon_array_it *it);
 
@@ -135,6 +135,8 @@ bool carbon_int_array_it_offset(offset_t *off, carbon_array_it *it);
 bool carbon_array_it_fast_forward(carbon_array_it *it);
 
 bool carbon_array_it_field_type(carbon_field_type_e *type, carbon_array_it *it);
+bool carbon_array_it_bool_value(bool *value, carbon_array_it *it);
+bool carbon_array_it_is_null(bool *is_null, carbon_array_it *it);
 bool carbon_array_it_u8_value(u8 *value, carbon_array_it *it);
 bool carbon_array_it_u16_value(u16 *value, carbon_array_it *it);
 bool carbon_array_it_u32_value(u32 *value, carbon_array_it *it);

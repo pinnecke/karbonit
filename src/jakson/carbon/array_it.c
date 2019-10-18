@@ -202,10 +202,10 @@ bool carbon_array_it_clone(carbon_array_it *dst, carbon_array_it *src)
         return true;
 }
 
-bool carbon_array_it_readonly(carbon_array_it *it)
+bool carbon_array_it_set_mode(carbon_array_it *it, access_mode_e mode)
 {
         DEBUG_ERROR_IF_NULL(it);
-        it->memfile.mode = READ_ONLY;
+        it->memfile.mode = mode;
         return true;
 }
 
@@ -373,6 +373,16 @@ bool carbon_array_it_fast_forward(carbon_array_it *it)
 bool carbon_array_it_field_type(carbon_field_type_e *type, carbon_array_it *it)
 {
         return carbon_int_field_access_field_type(type, &it->field_access);
+}
+
+bool carbon_array_it_bool_value(bool *value, carbon_array_it *it)
+{
+        return carbon_int_field_access_bool_value(value, &it->field_access, &it->err);
+}
+
+bool carbon_array_it_is_null(bool *is_null, carbon_array_it *it)
+{
+        return carbon_int_field_access_is_null(is_null, &it->field_access);
 }
 
 bool carbon_array_it_u8_value(u8 *value, carbon_array_it *it)

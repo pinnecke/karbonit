@@ -418,7 +418,7 @@ static inline void __carbon_print_json_exit_object_fast(struct carbon_traverse_e
 // ---------------------------------------------------------------------------------------------------------------------
 
 static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse, struct string_buffer *str,
-                                                struct carbon_print_json_config *config)
+                                                struct carbon_json_from_opts *config)
 {
         bool use_fast_formatter = !config || config->force_fast_formatter;
         carbon_visit_record_t visit_record = use_fast_formatter ? NULL /* no meta information for fast printing */:
@@ -452,8 +452,8 @@ static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-void carbon_print_json_from_carbon(struct string_buffer *str, struct carbon *record,
-                                   struct carbon_print_json_config *config)
+void carbon_json_from_carbon(struct string_buffer *str, struct carbon *record,
+                             struct carbon_json_from_opts *config)
 {
         assert(str);
         assert(record);
@@ -467,8 +467,8 @@ void carbon_print_json_from_carbon(struct string_buffer *str, struct carbon *rec
 
 }
 
-void carbon_print_json_from_array(struct string_buffer *str, struct carbon_array_it *it,
-                                  struct carbon_print_json_config *config)
+void carbon_json_from_array(struct string_buffer *str, struct carbon_array_it *it,
+                            struct carbon_json_from_opts *config)
 {
         assert(str);
         assert(it);
@@ -480,8 +480,8 @@ void carbon_print_json_from_array(struct string_buffer *str, struct carbon_array
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_print_json_from_column(struct string_buffer *str, struct carbon_column_it *it,
-                                   struct carbon_print_json_config *config)
+void carbon_json_from_column(struct string_buffer *str, struct carbon_column_it *it,
+                             struct carbon_json_from_opts *config)
 {
         assert(str);
         assert(it);
@@ -493,8 +493,8 @@ void carbon_print_json_from_column(struct string_buffer *str, struct carbon_colu
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_print_json_from_object(struct string_buffer *str, struct carbon_object_it *it,
-                                   struct carbon_print_json_config *config)
+void carbon_json_from_object(struct string_buffer *str, struct carbon_object_it *it,
+                             struct carbon_json_from_opts *config)
 {
         assert(str);
         assert(it);

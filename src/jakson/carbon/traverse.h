@@ -29,7 +29,7 @@ struct carbon_object_it;
 struct carbon_traverse;
 struct carbon_traverse_extra;
 
-struct carbon_print_json_config;
+struct carbon_json_from_opts;
 
 /* called before traversing is started; used to allocate 'extra' allocated memory */
 typedef void (*carbon_traverse_setup_t)(struct carbon_traverse_extra *extra);
@@ -73,7 +73,7 @@ struct carbon_traverse_extra {
         union {
             struct {
                 struct string_buffer *str;
-                struct carbon_print_json_config *config;
+                struct carbon_json_from_opts *config;
                 enum carbon_print_json_collection_convert convert;
             } print_json;
             struct {

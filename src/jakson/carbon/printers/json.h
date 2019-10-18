@@ -15,8 +15,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef HAD_CARBON_PRINTERS_JSON_H
-#define HAD_CARBON_PRINTERS_JSON_H
+#ifndef HAD_JSON_FROM_CARBON_H
+#define HAD_JSON_FROM_CARBON_H
 
 #include <jakson/stdinc.h>
 #include <jakson/std/string.h>
@@ -26,10 +26,10 @@ BEGIN_DECL
 struct array_it;
 struct column_it;
 struct object_it;
-struct carbon_print_json_config;
+struct carbon_json_from_opts;
 
 /* built-in json formatter configuration */
-static struct carbon_print_json_config
+static struct carbon_json_from_opts
 {
     /* ignores all format options below and uses a specialized, fast formatter */
     bool force_fast_formatter: 1;
@@ -143,17 +143,17 @@ static struct carbon_print_json_config
  * for using a built-in fast formatter. Use built-in formatter 'CARBON_PRINT_JSON_PRETTY' for 'config' to format
  * into a nice human readable form. */
 
-void carbon_print_json_from_carbon(struct string_buffer *str, struct carbon *record,
-                                   struct carbon_print_json_config *config);
+void carbon_json_from_carbon(struct string_buffer *str, struct carbon *record,
+                             struct carbon_json_from_opts *config);
 
-void carbon_print_json_from_array(struct string_buffer *str, struct carbon_array_it *it,
-                                  struct carbon_print_json_config *config);
+void carbon_json_from_array(struct string_buffer *str, struct carbon_array_it *it,
+                            struct carbon_json_from_opts *config);
 
-void carbon_print_json_from_column(struct string_buffer *str, struct carbon_column_it *it,
-                                   struct carbon_print_json_config *config);
+void carbon_json_from_column(struct string_buffer *str, struct carbon_column_it *it,
+                             struct carbon_json_from_opts *config);
 
-void carbon_print_json_from_object(struct string_buffer *str, struct carbon_object_it *it,
-                                   struct carbon_print_json_config *config);
+void carbon_json_from_object(struct string_buffer *str, struct carbon_object_it *it,
+                             struct carbon_json_from_opts *config);
 
 END_DECL
 

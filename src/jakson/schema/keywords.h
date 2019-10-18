@@ -238,60 +238,106 @@ static inline fn_result schema_keyword_handle_maxLength(schema *s, carbon_object
     return FN_OK();
 }
 
-//TODO: implement
+
 static inline fn_result schema_keyword_handle_pattern(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    if (!(carbon_field_type_is_string(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"pattern\" expects a string value");
+    }
+    u64 strlen;
+    const char* _str = carbon_object_it_string_value(&strlen, oit);
+    s->applies.has_pattern = true;
+    s->data.pattern = strndup(_str, strlen);
+
+    return FN_OK();
 }
 
-//TODO: implement
+
 static inline fn_result schema_keyword_handle_format(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    if (!(carbon_field_type_is_string(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"format\" expects a string value");
+    }
+    u64 strlen;
+    const char* _str = carbon_object_it_string_value(&strlen, oit);
+    s->applies.has_format = true;
+    s->data.format = strndup(_str, strlen);
+
+    return FN_OK();
 }
 
-//TODO: implement
+
 static inline fn_result schema_keyword_handle_formatMinimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    if (!(carbon_field_type_is_string(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"formatMinimum\" expects a string value");
+    }
+    u64 strlen;
+    const char* _str = carbon_object_it_string_value(&strlen, oit);
+    s->applies.has_formatMinimum = true;
+    s->data.formatMinimum = strndup(_str, strlen);
+
+    return FN_OK();
 }
 
-//TODO: implement
+
 static inline fn_result schema_keyword_handle_formatMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    if (!(carbon_field_type_is_string(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"formatMaximum\" expects a string value");
+    }
+    u64 strlen;
+    const char* _str = carbon_object_it_string_value(&strlen, oit);
+    s->applies.has_formatMaximum = true;
+    s->data.formatMaximum = strndup(_str, strlen);
+
+    return FN_OK();
 }
 
 
-//TODO: implement
 static inline fn_result schema_keyword_handle_formatExclusiveMinimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    if (!(carbon_field_type_is_string(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"formatMaximum\" expects a string value");
+    }
+    u64 strlen;
+    const char* _str = carbon_object_it_string_value(&strlen, oit);
+    s->applies.has_formatExclusiveMinimum = true;
+    s->data.formatExclusiveMinimum = strndup(_str, strlen);
+
+    return FN_OK();
 }
 
 
-//TODO: implement
 static inline fn_result schema_keyword_handle_formatExclusiveMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    if (!(carbon_field_type_is_string(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"formatExclusiveMaximum\" expects a string value");
+    }
+    u64 strlen;
+    const char* _str = carbon_object_it_string_value(&strlen, oit);
+    s->applies.has_formatExclusiveMaximum = true;
+    s->data.formatExclusiveMaximum = strndup(_str, strlen);
+
+    return FN_OK();
 }
 
 
@@ -352,13 +398,37 @@ static inline fn_result schema_keyword_handle_uniqueItems(schema *s, carbon_obje
     return FN_OK();
 }
 
-// TODO: implement
 static inline fn_result schema_keyword_handle_items(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    vector_create(&(s->data.items), NULL, sizeof(carbon_object_it), 5);
+
+    if (carbon_field_type_is_object_or_subtype(field_type)) {
+        carbon_object_it *coit = (carbon_object_it*) malloc (sizeof(carbon_object_it));
+        carbon_object_it_clone(coit, oit);
+        vector_push(&(s->data.items), coit, 1);
+    }
+
+    else if (carbon_field_type_is_array_or_subtype(field_type)) {
+        carbon_array_it *ait = carbon_object_it_array_value(oit);
+        while (carbon_array_it_next(ait)) {
+            carbon_array_it_field_type(&field_type, ait);
+            if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+                return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
+            }
+            carbon_object_it *coit = (carbon_object_it*) malloc(sizeof(carbon_object_it));
+            carbon_object_it_clone (coit, oit);
+            vector_push(&(s->data.items), coit, 1);
+        }
+    }
+
+    else {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
+    }
+
+    return FN_OK();
 }
 
 
@@ -377,13 +447,35 @@ static inline fn_result schema_keyword_handle_additionalItems(schema *s, carbon_
     return FN_OK();
 }
 
-// TODO: implement
+
 static inline fn_result schema_keyword_handle_contains(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+    carbon_object_it_next(oit);
+    if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"contains\" expects an object");
+    }
+    carbon_object_it *_soit = carbon_object_it_object_value(oit);
+    carbon_object_it *soit = (carbon_object_it*) malloc(sizeof(carbon_object_it));
+    carbon_object_it_clone(soit, _soit);
+    schema *contains = (schema*) malloc(sizeof(schema));
+    if (!(FN_IS_OK(schema_init(contains, NULL)))) {
+        free(contains);
+        free(soit);
+        return FN_FAIL_FORWARD();
+    }
+    if (!(FN_IS_OK(schema_generate(contains, soit)))) {
+        free(contains);
+        free(soit);
+        return FN_FAIL_FORWARD();
+    }
+
+    s->applies.has_contains = true;
+    s->data.contains = contains;
+
+    return FN_OK();
 }
 
 
@@ -429,13 +521,34 @@ static inline fn_result schema_keyword_handle_maxProperties(schema *s, carbon_ob
 }
 
 
-// TODO: implement
 static inline fn_result schema_keyword_handle_required(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"required\" expects an array of strings");
+    }
+    
+    vector_create(&(s->data.required), NULL, sizeof(char*), 5);
+    carbon_array_it *ait = carbon_object_it_array_value(oit);
+    
+    while (carbon_array_it_next(ait)) {
+        carbon_array_it_field_type(&field_type, ait);
+        if (!(carbon_field_type_is_string(field_type))) {
+            vector_drop(&(s->data.required));
+            return FN_FAIL(ERR_BADTYPE, "keyword \"required\" expects an array of strings");
+        }
+        u64 strlen;
+        const char *_required = carbon_array_it_string_value(&strlen, ait); 
+        char *required = (char*) malloc(sizeof(char*));
+        required = strndup(_required, strlen);
+        vector_push(&(s->data.required), &required, 1);
+    }
+    s->applies.has_required = true;
+
+    return FN_OK();
 }
 
 // TODO: implement

@@ -48,6 +48,45 @@ typedef struct schema {
     const char *key_name;
 
     struct {
+        vector type;
+        vector items;
+        vector required;
+        vector patternRequired;
+        vector oneOf;
+        vector anyOf;
+        vector allOf;
+        long double minimum;
+        long double maximum;
+        long double exclusiveMinimum;
+        long double exclusiveMaximum;
+        long double multipleOf;
+        u64 minLength;
+        u64 maxLength;
+        u64 minItems;
+        u64 maxItems;
+        u64 minProperties;
+        u64 maxProperties;
+        char *pattern;
+        char *format;
+        char *formatMinimum;
+        char *formatMaximum;
+        char *formatExclusiveMinimum;
+        char *formatExclusiveMaximum;
+        struct schema *propertyNames;
+        struct schema *contains;
+        struct schema *_not;
+        hashtable *patternProperties;
+        hashtable *dependencies;
+        hashtable *ifThenElse;
+        carbon_object_it *properties;
+        carbon_array_it *_enum;
+        void *_const;
+        bool additionalProperties;
+        bool uniqueItems;
+        bool additionalItems;
+    } data;
+
+    struct {
 
         u8 has_type : 1;
         // keywords for numbers:
@@ -92,45 +131,6 @@ typedef struct schema {
         u8 has_allOf : 1;
         u8 has_ifThenElse : 1;
     } applies;
-
-    struct {
-        vector type;
-        long double minimum;
-        long double maximum;
-        long double exclusiveMinimum;
-        long double exclusiveMaximum;
-        long double multipleOf;
-        u64 minLength;
-        u64 maxLength;
-        char *pattern;
-        char *format;
-        char *formatMinimum;
-        char *formatMaximum;
-        char *formatExclusiveMinimum;
-        char *formatExclusiveMaximum;
-        u64 minItems;
-        u64 maxItems;
-        bool uniqueItems;
-        vector *items;
-        bool additionalItems;
-        struct schema *contains;
-        u64 minProperties;
-        u64 maxProperties;
-        vector *required;
-        carbon_object_it *properties;
-        hashtable *patternProperties;
-        bool additionalProperties;
-        hashtable *dependencies;
-        struct schema *propertyNames;
-        vector *patternRequired;
-        carbon_array_it *_enum;
-        void* _const;
-        struct schema *_not;
-        vector *oneOf;
-        vector *anyOf;
-        vector *allOf;
-        hashtable *ifThenElse;
-    } data;
 
 } schema;
 

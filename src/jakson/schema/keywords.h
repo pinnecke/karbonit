@@ -343,23 +343,11 @@ static inline fn_result schema_keyword_handle_uniqueItems(schema *s, carbon_obje
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
 
-    if (!(carbon_field_type_is_number(field_type))) {
+    if (!(carbon_field_type_is_boolean(field_type))) {
         return FN_FAIL(ERR_BADTYPE, "keyword \"uniqueItems\" expects a boolean value");
     }
-    u8 val;
-    carbon_object_it_u8_value(&val, oit);
-
-    switch (val) {
-        case 0 :
-            s->data.uniqueItems = false;
-            break;
-        case 1 :
-            s->data.uniqueItems = true;
-            break;
-        default :
-            return FN_FAIL(ERR_BADTYPE, "keyword \"uniqueItems\" expects a boolean value");
-    }
     s->applies.has_uniqueItems = true;
+    carbon_object_it_bool_value(&(s->data.uniqueItems), oit);
 
     return FN_OK();
 }
@@ -380,24 +368,11 @@ static inline fn_result schema_keyword_handle_additionalItems(schema *s, carbon_
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
 
-    if (!(carbon_field_type_is_number(field_type))) {
+    if (!(carbon_field_type_is_boolean(field_type))) {
         return FN_FAIL(ERR_BADTYPE, "keyword \"additionalItems\" expects a boolean value");
     }
-
-    u8 val;
-    carbon_object_it_u8_value(&val, oit);
-
-    switch (val) {
-        case 0 :
-            s->data.additionalItems = false;
-            break;
-        case 1 :
-            s->data.additionalItems = true;
-            break;
-        default :
-            return FN_FAIL(ERR_BADTYPE, "keyword \"additionalItems\" expects a boolean value");
-    }
-    s->applies.has_additionalItems =true;
+    s->applies.has_additionalItems = true;
+    carbon_object_it_bool_value(&(s->data.additionalItems), oit);
 
     return FN_OK();
 }
@@ -479,23 +454,11 @@ static inline fn_result schema_keyword_handle_additionalProperties(schema *s, ca
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
 
-    if (!(carbon_field_type_is_number(field_type))) {
+    if (!(carbon_field_type_is_boolean(field_type))) {
         return FN_FAIL(ERR_BADTYPE, "keyword \"additionalProperties\" expects a boolean value");
     }
-    u8 val;
-    carbon_object_it_u8_value(&val, oit);
-
-    switch (val) {
-        case 0 :
-            s->data.additionalProperties = false;
-            break;
-        case 1 :
-            s->data.additionalProperties = true;
-            break;
-        default :
-            return FN_FAIL(ERR_BADTYPE, "keyword \"additionalProperties\" expects a boolean value");
-    }
     s->applies.has_additionalProperties = true;
+    carbon_object_it_bool_value(&(s->data.additionalProperties), oit);
 
     return FN_OK();
 }

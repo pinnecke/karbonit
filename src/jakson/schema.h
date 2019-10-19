@@ -55,6 +55,9 @@ typedef struct schema {
         vector oneOf;
         vector anyOf;
         vector allOf;
+        vector patternProperties;
+        hashtable dependencies;
+        hashtable ifThenElse;
         long double minimum;
         long double maximum;
         long double exclusiveMinimum;
@@ -75,9 +78,6 @@ typedef struct schema {
         struct schema *propertyNames;
         struct schema *contains;
         struct schema *_not;
-        hashtable *patternProperties;
-        hashtable *dependencies;
-        hashtable *ifThenElse;
         carbon_object_it *properties;
         carbon_array_it *_enum;
         void *_const;

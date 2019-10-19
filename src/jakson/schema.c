@@ -30,6 +30,7 @@ fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
     carbon_field_type_e field_type;
 
     if (!(FN_IS_OK(schema_init(&s, NULL)))) {
+        carbon_array_it_drop(&ait);
         return FN_FAIL_FORWARD();
     }
 
@@ -39,15 +40,20 @@ fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
     // a schema always has to be an object.
     carbon_array_it_field_type(&field_type, &ait);
     if (!(carbon_field_type_is_object_or_subtype(field_type))){
+        carbon_array_it_drop(&ait);
         return FN_FAIL(ERR_BADTYPE, "schema has to be an object");
     }
 
     carbon_object_it *oit = carbon_array_it_object_value(&ait);
     if (!(FN_IS_OK(schema_generate(&s, oit)))) {
+        carbon_array_it_drop(&ait);
+        carbon_object_it_drop(oit);
         return FN_FAIL_FORWARD();
     }
 
     if (!(FN_IS_OK(schema_validate_run(&s, fileToVal)))) {
+        carbon_array_it_drop(&ait);
+        carbon_object_it_drop(oit);
         return FN_FAIL_FORWARD();
     }
 
@@ -114,9 +120,11 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
             }
         }
         if (!(passed)) {
+            carbon_array_it_drop(&ait);
             return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint");
         }
         if (carbon_array_it_has_next(&ait)) {
+            carbon_array_it_drop(&ait);
             return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint, expected atomar element"); 
         }
     }
@@ -127,6 +135,7 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
         longDoubleFromAit(&isnull, &val, &ait);
         if (!isnull) {
             if (val < s->data.minimum) {
+                carbon_array_it_drop(&ait);
                 return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"minimum\" constraint not met");
             }
         }
@@ -138,6 +147,7 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
         longDoubleFromAit(&isnull, &val, &ait);
         if (!isnull) {
             if (val > s->data.maximum) {
+                carbon_array_it_drop(&ait);
                 return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"maximum\" constraint not met");
             }
         }
@@ -149,6 +159,7 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
         longDoubleFromAit(&isnull, &val, &ait);
         if (!isnull) {
             if (val <= s->data.exclusiveMinimum) {
+                carbon_array_it_drop(&ait);
                 return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"exclusiveMinimum\" constraint not met");
             }
         }
@@ -160,6 +171,7 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
         longDoubleFromAit(&isnull, &val, &ait);
         if (!isnull) {
             if (val >= s->data.exclusiveMaximum) {
+                carbon_array_it_drop(&ait);
                 return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"exclusiveMaximum\" constraint not met");
             }
         }
@@ -171,6 +183,7 @@ fn_result schema_validate_run(schema *s, carbon *fileToVal) {
         longDoubleFromAit(&isnull, &val, &ait);
         if (!isnull) {
             if (!(fmod(val, s->data.multipleOf) == 0)) {
+                carbon_array_it_drop(&ait);
                 return RESULT_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"multipleOf\" constraint not met");
             }
         }

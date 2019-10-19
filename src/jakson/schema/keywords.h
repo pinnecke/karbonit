@@ -62,6 +62,7 @@ static inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *
     while (carbon_array_it_next(ait)) {
         carbon_array_it_field_type(&field_type, ait);
         if (!(carbon_field_type_is_string(field_type))) {
+            carbon_array_it_drop(ait);
             return FN_FAIL(ERR_BADTYPE, "keyword \"type\" expects an array of strings");
         }
         u64 strlen;
@@ -92,10 +93,12 @@ static inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *
             type = _NULL;
         }
         else {
+            carbon_array_it_drop(ait);
             return FN_FAIL(ERR_UNSUPPORTEDTYPE, "\"type\" keyword contains unsupported constraint");
         }
         vector_push(&(s->data.type), &type, 1);
     }
+    carbon_array_it_drop(ait);
 
     s->applies.has_type = true;
 
@@ -416,14 +419,15 @@ static inline fn_result schema_keyword_handle_items(schema *s, carbon_object_it 
         while (carbon_array_it_next(ait)) {
             carbon_array_it_field_type(&field_type, ait);
             if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+                carbon_array_it_drop(ait);
                 return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
             }
             carbon_object_it *coit = (carbon_object_it*) malloc(sizeof(carbon_object_it));
             carbon_object_it_clone (coit, oit);
             vector_push(&(s->data.items), coit, 1);
         }
+        carbon_array_it_drop(ait);
     }
-
     else {
         return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
     }
@@ -457,20 +461,20 @@ static inline fn_result schema_keyword_handle_contains(schema *s, carbon_object_
     if (!(carbon_field_type_is_object_or_subtype(field_type))) {
         return FN_FAIL(ERR_BADTYPE, "keyword \"contains\" expects an object");
     }
-    carbon_object_it *_soit = carbon_object_it_object_value(oit);
-    carbon_object_it *soit = (carbon_object_it*) malloc(sizeof(carbon_object_it));
-    carbon_object_it_clone(soit, _soit);
+    carbon_object_it *soit = carbon_object_it_object_value(oit);
     schema *contains = (schema*) malloc(sizeof(schema));
+
     if (!(FN_IS_OK(schema_init(contains, NULL)))) {
+        carbon_object_it_drop(soit);
         free(contains);
-        free(soit);
         return FN_FAIL_FORWARD();
     }
     if (!(FN_IS_OK(schema_generate(contains, soit)))) {
+        carbon_object_it_drop(soit);
         free(contains);
-        free(soit);
         return FN_FAIL_FORWARD();
     }
+    carbon_object_it_drop(soit);
 
     s->applies.has_contains = true;
     s->data.contains = contains;
@@ -538,26 +542,66 @@ static inline fn_result schema_keyword_handle_required(schema *s, carbon_object_
         carbon_array_it_field_type(&field_type, ait);
         if (!(carbon_field_type_is_string(field_type))) {
             vector_drop(&(s->data.required));
+            carbon_array_it_drop(ait);
             return FN_FAIL(ERR_BADTYPE, "keyword \"required\" expects an array of strings");
         }
         u64 strlen;
         const char *_required = carbon_array_it_string_value(&strlen, ait); 
-        char *required = (char*) malloc(sizeof(char*));
+        char *required = (char*) malloc(sizeof(char)*strlen);
         required = strndup(_required, strlen);
         vector_push(&(s->data.required), &required, 1);
     }
+    carbon_array_it_drop(ait);
     s->applies.has_required = true;
 
     return FN_OK();
 }
 
-// TODO: implement
+
 static inline fn_result schema_keyword_handle_patternProperties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
+    
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"patternProperties\" expects an object");
+    }
+    
+    carbon_object_it *soit = carbon_object_it_object_value(oit);
+    vector_create(&(s->data.patternProperties), NULL, sizeof(schema*), 5);
+
+    while(carbon_object_it_next(soit)) {
+        carbon_object_it_prop_type(&field_type, soit);
+        
+        if(!(carbon_field_type_is_object_or_subtype(field_type))) {
+            return FN_FAIL(ERR_BADTYPE, "keyword \"patternProperties\" expects each property to be an object");
+        }
+
+        schema *patternProperty = (schema*) malloc(sizeof(schema));
+        char *key = (char*) malloc(sizeof(char)*oit->field.key.name_len);
+        key = strndup(oit->field.key.name, oit->field.key.name_len);
+
+        if (!(FN_IS_OK(schema_init(patternProperty, key)))) {
+            carbon_object_it_drop(soit);
+            free(patternProperty);
+            return FN_FAIL_FORWARD();
+        }
+
+        carbon_object_it *ssoit = carbon_object_it_object_value(soit);
+
+        if (!(FN_IS_OK(schema_generate(patternProperty, ssoit)))) {
+            carbon_object_it_drop(ssoit);      
+            carbon_object_it_drop(soit);
+            free(patternProperty);
+            return FN_FAIL_FORWARD();
+        }
+        vector_push(&(s->data.patternProperties), patternProperty, 1);
+        carbon_object_it_drop(ssoit);      
+    }
+    carbon_object_it_drop(soit);
+
+    return FN_OK();
 }
 
 
@@ -575,6 +619,7 @@ static inline fn_result schema_keyword_handle_additionalProperties(schema *s, ca
 
     return FN_OK();
 }
+
 
 // TODO: implement
 static inline fn_result schema_keyword_handle_dependencies(schema *s, carbon_object_it *oit) {

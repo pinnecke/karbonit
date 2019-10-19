@@ -602,14 +602,14 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
         const char *pathCarbonFileIn = argv[filePathArgIdx];
 
         CONSOLE_OUTPUT_OFF()
-            if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
-                CONSOLE_OUTPUT_ON()
-                    CONSOLE_WRITELN(file, "Input file cannot be found. %s", "STOP.");
-                return false;
-            }
+        if (testFileExists(file, pathCarbonFileIn, 1, 1, true) != true) {
+            CONSOLE_OUTPUT_ON()
+                CONSOLE_WRITELN(file, "Input file cannot be found. %s", "STOP.");
+            return false;
+        }
         CONSOLE_OUTPUT_ON()
 
-            archive archive;
+        archive archive;
         int status;
         if ((status = archive_open(&archive, pathCarbonFileIn))) {
             encoded_doc_list collection;

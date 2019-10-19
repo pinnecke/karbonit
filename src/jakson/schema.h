@@ -56,7 +56,7 @@ typedef struct schema {
         vector anyOf;
         vector allOf;
         vector patternProperties;
-        hashtable dependencies;
+        vector dependencies;
         hashtable ifThenElse;
         long double minimum;
         long double maximum;

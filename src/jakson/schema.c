@@ -46,14 +46,16 @@ fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
 
     carbon_object_it *oit = carbon_array_it_object_value(&ait);
     if (!(FN_IS_OK(schema_generate(&s, oit)))) {
-        carbon_array_it_drop(&ait);
         carbon_object_it_drop(oit);
+        carbon_array_it_drop(&ait);
         return FN_FAIL_FORWARD();
     }
+    carbon_object_it_drop(oit);
+    carbon_array_it_drop(&ait);
 
     if (!(FN_IS_OK(schema_validate_run(&s, fileToVal)))) {
-        carbon_array_it_drop(&ait);
-        carbon_object_it_drop(oit);
+        //TODO: remove s' subobjects. memleak!
+        //free(s);
         return FN_FAIL_FORWARD();
     }
 

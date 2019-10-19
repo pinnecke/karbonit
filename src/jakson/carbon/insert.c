@@ -49,10 +49,9 @@ static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos)
 
 static void write_binary_blob(carbon_insert *inserter, const void *value, size_t nbytes);
 
-bool carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array_it *context)
+fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array_it *context)
 {
-        ERROR_IF_NULL(inserter)
-        ERROR_IF_NULL(context)
+        FN_FAIL_IF_NULL(inserter, context)
         carbon_array_it_lock(context);
         inserter->context_type = CARBON_ARRAY;
         inserter->context.array = context;
@@ -66,7 +65,7 @@ bool carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array_it
         }
 
         internal_create(inserter, &context->memfile, pos);
-        return true;
+        return FN_OK();
 }
 
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_it *context)
@@ -522,12 +521,13 @@ bool carbon_insert_object_end(carbon_insert_object_state *state)
         return true;
 }
 
-carbon_insert *carbon_insert_map_begin(carbon_insert_object_state *out, carbon_insert *inserter, carbon_map_derivable_e derivation, u64 object_capacity)
+carbon_insert *carbon_insert_object_map_begin(carbon_insert_object_state *out, carbon_insert *inserter,
+                                              carbon_map_derivable_e derivation, u64 object_capacity)
 {
         return __carbon_insert_map_begin(out, inserter, derivation, object_capacity);
 }
 
-bool carbon_insert_map_end(carbon_insert_object_state *state)
+bool carbon_insert_object_map_end(carbon_insert_object_state *state)
 {
         return carbon_insert_object_end(state);
 }
@@ -886,7 +886,7 @@ static carbon_insert *__carbon_insert_prop_object_container_begin(carbon_insert_
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        return carbon_insert_map_begin(out, inserter, derivation, object_capacity);
+        return carbon_insert_object_map_begin(out, inserter, derivation, object_capacity);
 }
 
 carbon_insert *carbon_insert_prop_object_begin(carbon_insert_object_state *out,
@@ -944,9 +944,9 @@ u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in)
         return state_in->column_end - state_in->column_begin;
 }
 
-bool carbon_insert_drop(carbon_insert *inserter)
+fn_result carbon_insert_drop(carbon_insert *inserter)
 {
-        ERROR_IF_NULL(inserter)
+        FN_FAIL_IF_NULL(inserter)
         if (inserter->context_type == CARBON_ARRAY) {
                 carbon_array_it_unlock(inserter->context.array);
         } else if (inserter->context_type == CARBON_COLUMN) {
@@ -954,10 +954,10 @@ bool carbon_insert_drop(carbon_insert *inserter)
         } else if (inserter->context_type == CARBON_OBJECT) {
                 carbon_object_it_unlock(inserter->context.object);
         } else {
-                ERROR(&inserter->err, ERR_INTERNALERR);
+                FN_FAIL(ERR_INTERNALERR, "insertion context cleanup failed");
         }
 
-        return true;
+        return FN_OK();
 }
 
 static bool

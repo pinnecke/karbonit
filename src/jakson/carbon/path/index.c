@@ -1047,7 +1047,7 @@ static void index_build(memfile *file, carbon *doc)
 
         carbon_array_it it;
         u64 array_pos = 0;
-        carbon_iterator_open(&it, doc);
+        carbon_read_begin(&it, doc);
 
         /** build index as tree structure */
         while (carbon_array_it_next(&it)) {
@@ -1056,7 +1056,7 @@ static void index_build(memfile *file, carbon *doc)
                 array_build_index(node, &it);
                 array_pos++;
         }
-        carbon_iterator_close(&it);
+        carbon_read_end(&it);
 
         /** for debug */
         path_index_node_print_level(stdout, &root_array, 0); // TODO: Debug remove
@@ -1464,7 +1464,7 @@ bool carbon_path_index_hexdump(FILE *file, carbon_path_index *index)
         return memfile_hexdump_printf(file, &index->memfile);
 }
 
-bool carbon_path_index_to_carbon(carbon *doc, carbon_path_index *index)
+fn_result carbon_path_index_to_carbon(carbon *doc, carbon_path_index *index)
 {
         carbon_new context;
         carbon_insert_object_state object;
@@ -1490,7 +1490,7 @@ bool carbon_path_index_to_carbon(carbon *doc, carbon_path_index *index)
 
         carbon_insert_object_end(&object);
         carbon_create_end(&context);
-        return true;
+        return FN_OK();
 }
 
 const char *carbon_path_index_to_str(string_buffer *str, carbon_path_index *index)

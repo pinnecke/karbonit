@@ -648,6 +648,30 @@ bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access 
         return true;
 }
 
+bool carbon_int_field_access_bool_value(bool *value, field_access *field, err *err)
+{
+        ERROR_IF_NULL(value);
+        ERROR_IF_NULL(field);
+
+        bool is_true = field->it_field_type == CARBON_FIELD_TRUE;
+        bool is_false = field->it_field_type == CARBON_FIELD_FALSE;
+        if (LIKELY(is_true || is_false)) {
+                *value = is_true;
+                return true;
+        } else {
+                ERROR(err, ERR_TYPEMISMATCH);
+                return false;
+        }
+}
+
+bool carbon_int_field_access_is_null(bool *is_null, field_access *field)
+{
+        ERROR_IF_NULL(is_null);
+        ERROR_IF_NULL(field);
+        *is_null = field->it_field_type == CARBON_FIELD_NULL;
+        return true;
+}
+
 bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err)
 {
         ERROR_IF_NULL(value)
@@ -1548,7 +1572,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
         }
 }
 
-bool carbon_int_from_json(carbon *doc, const json *data,
+fn_result carbon_int_from_json(carbon *doc, const json *data,
                           carbon_key_e key_type, const void *primary_key, int mode)
 {
         UNUSED(data)
@@ -1560,7 +1584,7 @@ bool carbon_int_from_json(carbon *doc, const json *data,
 
         carbon_create_end(&context);
 
-        return true;
+        return FN_OK();
 }
 
 static void marker_insert(memfile *memfile, u8 marker)

@@ -23,6 +23,7 @@
 #include <jakson/stdinc.h>
 #include <jakson/carbon.h>
 #include <jakson/carbon/find.h>
+#include <jakson/jakson.h>
 
 #include "bench_fwd.h"
 
@@ -34,6 +35,7 @@ typedef struct bench_carbon_error {
 typedef struct bench_carbon_mgr {
     carbon *doc;
     err *err;
+    bench_carbon_error *error;
     //carbon_find *find;
     //string_buffer *result;
 
@@ -42,11 +44,11 @@ typedef struct bench_carbon_mgr {
 bool bench_carbon_error_create(bench_carbon_error *carbonError, bench_error *benchError);
 bool bench_carbon_error_write(bench_carbon_error *error, char *msg, size_t errOffset);
 bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *error, const char *filePath);
-bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *error);
+bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *error, bench_error *benchError);
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);
 bool bench_carbon_get_doc(char *str, bench_carbon_mgr *manager);
 
-bool bench_carbon_insert_int32(bench_carbon_mgr *manager, char *key, int32_t val);
+bool bench_carbon_insert_int32(bench_carbon_mgr *manager, carbon_object_it *it, carbon_insert *ins, char *key,  int32_t val);
 
 bool bench_carbon_find_int32(bench_carbon_mgr *manager, carbon_object_it *it, char *key, int32_t val);
 

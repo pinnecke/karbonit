@@ -34,8 +34,8 @@ BEGIN_DECL
 enum type {
     NUMBER,
     STRING,
-    BOOLEAN,
     BINARY,
+    BOOLEAN,
     ARRAY,
     COLUMN,
     OBJECT,
@@ -43,6 +43,11 @@ enum type {
 } type;
 
 
+//typedef struct schema_tuple {
+//    u8 type;
+//    void *value;
+//} schema_tuple;
+    
 typedef struct schema {
 
     const char *key_name;
@@ -57,7 +62,8 @@ typedef struct schema {
         vector allOf;
         vector patternProperties;
         vector dependencies;
-        hashtable ifThenElse;
+        vector _enum;
+        vector ifThenElse;
         long double minimum;
         long double maximum;
         long double exclusiveMinimum;
@@ -79,7 +85,6 @@ typedef struct schema {
         struct schema *contains;
         struct schema *_not;
         carbon_object_it *properties;
-        carbon_array_it *_enum;
         void *_const;
         bool additionalProperties;
         bool uniqueItems;

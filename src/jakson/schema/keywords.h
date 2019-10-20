@@ -27,8 +27,9 @@
 
 BEGIN_DECL
 
-//TODO: replace arrays with columns where appropriate
-//TODO: fix memory leaks!!
+// TODO: replace arrays with columns where appropriate
+// TODO: fix memory leaks!!
+// TODO: deduplicate functions
 
 static inline fn_result schema_keyword_handle_properties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
@@ -556,7 +557,7 @@ static inline fn_result schema_keyword_handle_required(schema *s, carbon_object_
         }
         u64 strlen;
         const char *_required = carbon_array_it_string_value(&strlen, ait); 
-        char *required = (char*) malloc(sizeof(char)*strlen);
+        char *required = (char*) malloc(sizeof(char)*strlen +1);
         required = strndup(_required, strlen);
         vector_push(&(s->data.required), &required, 1);
     }
@@ -590,7 +591,7 @@ static inline fn_result schema_keyword_handle_patternProperties(schema *s, carbo
         }
 
         schema *patternProperty = (schema*) malloc(sizeof(schema));
-        char *key = (char*) malloc(sizeof(char)*oit->field.key.name_len);
+        char *key = (char*) malloc(sizeof(char)*oit->field.key.name_len + 1);
         key = strndup(oit->field.key.name, oit->field.key.name_len);
 
         if (!(FN_IS_OK(schema_init(patternProperty, key)))) {
@@ -660,7 +661,7 @@ static inline fn_result schema_keyword_handle_dependencies(schema *s, carbon_obj
         }
     
         schema *dependency = (schema*) malloc(sizeof(schema));
-        char *key = (char*) malloc(sizeof(char)*oit->field.key.name_len);
+        char *key = (char*) malloc(sizeof(char)*oit->field.key.name_len + 1);
         key = strndup(oit->field.key.name, oit->field.key.name_len);
 
         if (!(FN_IS_OK(schema_init(dependency, key)))) {
@@ -744,7 +745,7 @@ static inline fn_result schema_keyword_handle_patternRequired(schema *s, carbon_
         }
         u64 strlen;
         const char *_pattern = carbon_array_it_string_value(&strlen, ait);
-        char *pattern = (char*) malloc(sizeof(char)*strlen);
+        char *pattern = (char*) malloc(sizeof(char)*strlen + 1);
         pattern = strndup(_pattern, strlen);
 
         vector_push(&(s->data.patternRequired), pattern, 1);
@@ -756,16 +757,67 @@ static inline fn_result schema_keyword_handle_patternRequired(schema *s, carbon_
     return FN_OK();
 }
 
-// TODO: implement
+// TODO: implement - a bit tricky!
 static inline fn_result schema_keyword_handle_enum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
 
+    //carbon_field_type_e field_type;
+    //carbon_object_it_prop_type(&field_type, oit);
+
+    //if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+    //    return FN_FAIL(ERR_BADTYPE, "keyword \"enum\" expects an array");
+    //}
+
+    //vector_create(&(s->data._enum), NULL, sizeof(schema_tuple*), 5);
+    //schema_tuple *tuple = (schema_tuple*) malloc(sizeof(schema_tuple));
+    //carbon_array_it *ait = carbon_object_it_array_value(oit);
+
+    //while (carbon_array_it_next(ait)) {
+    //    carbon_array_it_field_type(&field_type, ait);
+
+    //    if (carbon_field_type_is_number(field_type)) {
+    //        bool isnull;
+    //        long double *val = (long double*) malloc(sizeof(long double));
+    //        longDoubleFromAit (&isnull, val, ait);
+    //       
+    //        tuple->type = NUMBER;
+    //        tuple->value = val;
+    //    }
+
+    //    else if (carbon_field_type_is_string(field_type) || carbon_field_type_is_binary(field_type)) {
+    //        u64 strlen;
+    //        const char *_str = carbon_array_it_string_value(&strlen, ait);
+    //        char *str = (char*) malloc(sizeof(char)*strlen + 1);
+    //        str = strndup(_str, strlen);
+    //        if (carbon_field_type_is_string(field_type)) {
+    //            tuple->type = STRING;
+    //        }
+    //        else {
+    //            tuple->type = BINARY;
+    //        }
+    //        tuple->value = str;
+    //    }
+
+    //    else if (carbon_field_type_is_boolean(field_type)) {
+    //        bool *val = (bool*) malloc(sizeof(bool));
+    //        carbon_array_it_bool_value(val, ait);
+    //        tuple->type = BOOLEAN;
+    //        tuple->value = val;
+    //    }
+
+    //// ...
+
+    //        
+
+    //}
+
+
     return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
 }
 
-// TODO: implement
+// TODO: implement - a bit tricky!
 static inline fn_result schema_keyword_handle_const(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
@@ -774,49 +826,229 @@ static inline fn_result schema_keyword_handle_const(schema *s, carbon_object_it 
     return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
 }
 
-// TODO: implement
+
 static inline fn_result schema_keyword_handle_not(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"not\" expects an object");
+    }
+
+    carbon_object_it *soit = carbon_object_it_object_value(oit); 
+    schema *_not = (schema*) malloc(sizeof(schema));
+    
+    if (!(FN_IS_OK(schema_init(_not, NULL)))) {
+        carbon_object_it_drop(soit);
+        free(_not);
+        return FN_FAIL_FORWARD();
+    }
+    if (!(FN_IS_OK(schema_generate(_not, soit)))) {
+        carbon_object_it_drop(soit);
+        free(_not);
+        return FN_FAIL_FORWARD();
+    }
+    carbon_object_it_drop(soit);
+
+    s->applies.has_not = true;
+    s->data._not = _not;
+
+    return FN_OK();
 }
 
-// TODO: implement
+
 static inline fn_result schema_keyword_handle_oneOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"oneOf\" expects an array of objects");
+    }
+
+    carbon_array_it *ait = carbon_object_it_array_value(oit);
+    vector_create(&(s->data.oneOf), NULL, sizeof(schema*), 5);
+
+    while (carbon_array_it_next(ait)) {
+        
+        carbon_array_it_field_type(&field_type, ait);
+
+        if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+            vector_drop(&(s->data.oneOf));
+            carbon_array_it_drop(ait);
+            return FN_FAIL(ERR_BADTYPE, "keyword \"oneOf\" expects an array of objects");
+        }
+
+        carbon_object_it *soit = carbon_array_it_object_value(ait);
+        schema *oneOf = (schema*) malloc(sizeof(schema));
+
+        if (!(FN_IS_OK(schema_init(oneOf , NULL)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(oneOf);
+            return FN_FAIL_FORWARD();
+        }
+        if (!(FN_IS_OK(schema_generate(oneOf, soit)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(oneOf);
+            return FN_FAIL_FORWARD();
+        }
+        carbon_object_it_drop(soit);
+        vector_push(&(s->data.oneOf), oneOf, 1);
+    }
+    carbon_array_it_drop(ait);
+    s->applies.has_oneOf = true;
+    
+    return FN_OK();
 }
 
-// TODO: implement
+
 static inline fn_result schema_keyword_handle_anyOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"anyOf\" expects an array of objects");
+    }
+
+    carbon_array_it *ait = carbon_object_it_array_value(oit);
+    vector_create(&(s->data.anyOf), NULL, sizeof(schema*), 5);
+
+    while (carbon_array_it_next(ait)) {
+        
+        carbon_array_it_field_type(&field_type, ait);
+
+        if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+            vector_drop(&(s->data.anyOf));
+            carbon_array_it_drop(ait);
+            return FN_FAIL(ERR_BADTYPE, "keyword \"anyOf\" expects an array of objects");
+        }
+
+        carbon_object_it *soit = carbon_array_it_object_value(ait);
+        schema *anyOf = (schema*) malloc(sizeof(schema));
+
+        if (!(FN_IS_OK(schema_init(anyOf , NULL)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(anyOf);
+            return FN_FAIL_FORWARD();
+        }
+        if (!(FN_IS_OK(schema_generate(anyOf, soit)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(anyOf);
+            return FN_FAIL_FORWARD();
+        }
+        carbon_object_it_drop(soit);
+        vector_push(&(s->data.anyOf), anyOf, 1);
+    }
+    carbon_array_it_drop(ait);
+    s->applies.has_anyOf = true;
+    
+    return FN_OK();
 }
 
-// TODO: implement
+
 static inline fn_result schema_keyword_handle_allOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"allOf\" expects an array of objects");
+    }
+
+    carbon_array_it *ait = carbon_object_it_array_value(oit);
+    vector_create(&(s->data.allOf), NULL, sizeof(schema*), 5);
+
+    while (carbon_array_it_next(ait)) {
+        
+        carbon_array_it_field_type(&field_type, ait);
+
+        if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+            vector_drop(&(s->data.allOf));
+            carbon_array_it_drop(ait);
+            return FN_FAIL(ERR_BADTYPE, "keyword \"allOf\" expects an array of objects");
+        }
+
+        carbon_object_it *soit = carbon_array_it_object_value(ait);
+        schema *allOf = (schema*) malloc(sizeof(schema));
+
+        if (!(FN_IS_OK(schema_init(allOf , NULL)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(allOf);
+            return FN_FAIL_FORWARD();
+        }
+        if (!(FN_IS_OK(schema_generate(allOf, soit)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(allOf);
+            return FN_FAIL_FORWARD();
+        }
+        carbon_object_it_drop(soit);
+        vector_push(&(s->data.allOf), allOf, 1);
+    }
+    carbon_array_it_drop(ait);
+    s->applies.has_allOf = true;
+    
+    return FN_OK();
+
 }
 
 // TODO: implement
 static inline fn_result schema_keyword_handle_ifThenElse(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
+
+    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"ifThenElse\" expects an array of objects");
+    }
+
+    carbon_array_it *ait = carbon_object_it_array_value(oit);
+    vector_create(&(s->data.ifThenElse), NULL, sizeof(schema*), 5);
+
+    while (carbon_array_it_next(ait)) {
+        
+        carbon_array_it_field_type(&field_type, ait);
+
+        if (!(carbon_field_type_is_object_or_subtype(field_type))) {
+            vector_drop(&(s->data.ifThenElse));
+            carbon_array_it_drop(ait);
+            return FN_FAIL(ERR_BADTYPE, "keyword \"ifThenElse\" expects an array of objects");
+        }
+
+        carbon_object_it *soit = carbon_array_it_object_value(ait);
+        schema *ifThenElse = (schema*) malloc(sizeof(schema));
+
+        if (!(FN_IS_OK(schema_init(ifThenElse , NULL)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(ifThenElse);
+            return FN_FAIL_FORWARD();
+        }
+        if (!(FN_IS_OK(schema_generate(ifThenElse, soit)))) {
+            carbon_object_it_drop(soit);
+            carbon_array_it_drop(ait);
+            free(ifThenElse);
+            return FN_FAIL_FORWARD();
+        }
+        carbon_object_it_drop(soit);
+        vector_push(&(s->data.ifThenElse), ifThenElse, 1);
+    }
+    carbon_array_it_drop(ait);
+    s->applies.has_ifThenElse = true;
+    
+    return FN_OK();
 }
 
 

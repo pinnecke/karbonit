@@ -21,16 +21,13 @@
 #define JAKSON_BENCH_BSON_H
 
 #include <libs/bson/bson.h>
+#include <jakson/error.h>
 
 #include "bench_fwd.h"
 
-//typedef struct bench_format_handler bench_format_handler;
-//extern struct bench_error bench_error;
-//typedef struct bench_bson_error bench_bson_error;
-
 typedef struct bench_bson_error {
-    bench_error *err;
-    //bson_error_t *bError;
+    bench_error *benchErr;
+    err *err;
 } bench_bson_error;
 
 typedef struct bench_bson_mgr {
@@ -40,9 +37,10 @@ typedef struct bench_bson_mgr {
 } bench_bson_mgr;
 
 bool bench_bson_error_create(bench_bson_error *bsonError, bench_error *benchError);
-bool bench_bson_error_write(bench_bson_error *error, char *msg, size_t errOffset);
-bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, const char *filePath);
-bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error);
+bool bench_bson_error_destroy(bench_bson_error *error);
+bool bench_bson_error_write(bench_bson_error *error, const char *msg, size_t docOffset);
+bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *bsonError, bench_error *benchError, const char *filePath);
+bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error, bench_error *benchError);
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager);
 bool bench_bson_get_doc(char *str, bench_bson_mgr *manager);
 

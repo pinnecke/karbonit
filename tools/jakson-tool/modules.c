@@ -677,6 +677,16 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
 
         if(strcmp(format, BENCH_FORMAT_CARBON) == 0) {
             // TODO: Include CARBON file benchmarking
+            bench_format_handler handler;
+            bench_error err;
+            char buffer[512];
+
+            if(!bench_format_handler_create_carbon_handler(&handler, &err, filePath))
+                return false;
+
+            bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
+            bench_format_handler_get_doc(buffer, &handler);
+            bench_format_handler_destroy(&handler);
         } else if(strcmp(format, BENCH_FORMAT_BSON) == 0) {
             // TODO: Include BSON file benchmarking
             /*
@@ -719,10 +729,12 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
             bench_format_handler handler;
             bench_error err;
             char buffer[512];
+
             if(!bench_format_handler_create_ubjson_handler(&handler, &err, filePath)) {
                 //CONSOLE_WRITELN(file, err.msg, "");
                 return false;
             }
+
             bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
             bench_format_handler_get_doc(buffer, &handler);
             bench_format_handler_destroy(&handler);

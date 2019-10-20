@@ -28,23 +28,20 @@
 #include "bench_fwd.h"
 
 typedef struct bench_carbon_error {
-    bench_error *err;
-    //carbon_error_t *bError;
+    bench_error *benchErr;
+    err *err;
 } bench_carbon_error;
 
 typedef struct bench_carbon_mgr {
     carbon *doc;
-    err *err;
     bench_carbon_error *error;
-    //carbon_find *find;
-    //string_buffer *result;
-
 } bench_carbon_mgr;
 
 bool bench_carbon_error_create(bench_carbon_error *carbonError, bench_error *benchError);
-bool bench_carbon_error_write(bench_carbon_error *error, char *msg, size_t errOffset);
-bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *error, const char *filePath);
-bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *error, bench_error *benchError);
+bool bench_carbon_error_destroy(bench_carbon_error *error);
+bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, size_t docOffset);
+bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError, const char *filePath);
+bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError);
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);
 bool bench_carbon_get_doc(char *str, bench_carbon_mgr *manager);
 

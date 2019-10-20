@@ -20,8 +20,7 @@
 #ifndef JAKSON_BENCH_FWD_H
 #define JAKSON_BENCH_FWD_H
 
-//#include <jakson/carbon/find.h>
-//#include <jakson/carbon/array_it.h>
+#define ERROR_MSG_SIZE 256
 
 typedef struct bench_error bench_error;
 

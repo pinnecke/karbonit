@@ -3,74 +3,114 @@
 #include "bench_format_handler.h"
 
 bool bench_bson_error_create(bench_bson_error *bsonError, bench_error *benchError) {
-    bsonError->err = benchError;
-    return 0;
-}
+    ERROR_IF_NULL(bsonError)
+    ERROR_IF_NULL(benchError)
 
-// TODO : Use error write function implicitly by handling error messages in-function as additional parameter
-bool bench_bson_error_write(bench_bson_error *error, char *msg, size_t errOffset) {
-    if(errOffset)
-        strcat(error->err->msg , (const char *) errOffset);
+    struct err *err = malloc(sizeof(*err));
+    error_init(err);
 
-    strcat(error->err->msg, msg);
+    bsonError->benchErr = benchError;
+    bsonError->err = err;
 
     return true;
 }
 
-bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, const char* filePath)
+bool bench_bson_error_destroy(bench_bson_error *error)
 {
-    //JAK_ERROR_IF_NULL(manager);
-    //JAK_ERROR_IF_NULL(error);
-    UNUSED(filePath);
+    ERROR_IF_NULL(error)
+
+    CHECK_SUCCESS(error_drop(error->err));
+    free(error);
+    return true;
+}
+
+// TODO : Use error write function implicitly by handling error messages in-function as additional parameter
+bool bench_bson_error_write(bench_bson_error *error, const char *msg, size_t docOffset) {
+    ERROR_IF_NULL(error)
+    ERROR_IF_NULL(msg)
+
+    error_set_wdetails(error->err, ERR_FAILED, __FILE__, __LINE__, msg);
+
+    error->benchErr->msg = strdup(msg);
+    error->benchErr->file = __FILE__;
+    error->benchErr->line = __LINE__;
+    error->benchErr->offset = docOffset;
+
+    error_print_to_stderr(error->err);
+
+    return true;
+}
+
+bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *bsonError, bench_error *benchError, const char* filePath)
+{
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(bsonError);
+    ERROR_IF_NULL(benchError);
+    ERROR_IF_NULL(filePath);
+
     bson_t b = BSON_INITIALIZER;
     bson_json_reader_t *jReader;
-    bench_bson_error *error = malloc(sizeof(bench_bson_error));
+    bench_bson_error_create(bsonError, benchError);
     bson_error_t bError;
+    char msg[ERROR_MSG_SIZE];
 
     if(!(jReader = bson_json_reader_new_from_file (filePath, &bError))) {
-        char* msg = strcat("BSON reader failed to open: ", filePath);
-        msg = strcat(msg, strcat("\n", bError.message));
-        bench_bson_error_write(error, msg, 0);
+        snprintf(msg, sizeof(msg), "BSON reader failed to open: %s : %s", filePath, bError.message);
+        bench_bson_error_write(bsonError, msg, 0);
         return false;
     }
 
     int readResult;
     while((readResult = bson_json_reader_read (jReader, &b, &bError))) {
         if(readResult < 0) {
-            char* msg = strcat("Error in JSON parsing:\n", bError.message);
-            bench_bson_error_write(error, msg, 0);
+            snprintf(msg, sizeof(msg), "Error in JSON parsing: %s", bError.message);
+            bench_bson_error_write(bsonError, msg, 0);
             return false;
         }
     }
+
     size_t errOffset;
-    if(!bson_validate(&b, BSON_VALIDATE_NONE, &errOffset))
+    if(!bson_validate(&b, BSON_VALIDATE_NONE, &errOffset)) {
+        snprintf(msg, sizeof(msg), "BSON document failed to validate at offset: %s", (char*) errOffset);
+        bench_bson_error_write(bsonError, "BSON Document failed to validate.", errOffset);
         return false;
+    }
     bson_json_reader_destroy(jReader);
-    manager->b = &b;
-    //error->bError = bError;
-    manager->error = error;
+
     bson_iter_t *it = malloc(sizeof(bson_iter_t));
-    if (!bson_iter_init(it, manager->b))
+    if (!bson_iter_init(it, manager->b)) {
+        bench_bson_error_write(bsonError, "Failed to initialize BSON iterator.", 0);
         return false;
+    }
+
     manager->it = it;
+    manager->b = &b;
+    manager->error = bsonError;
 
     return true;
 }
 
-bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error)
+bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *bsonError, bench_error *benchError)
 {
     ERROR_IF_NULL(manager);
-    ERROR_IF_NULL(error);
+    ERROR_IF_NULL(bsonError);
+    ERROR_IF_NULL(benchError);
 
     bson_t *b = bson_new();
+    bench_bson_error_create(bsonError, benchError);
+
     manager->b = b;
-    manager->error = error;
+    manager->error = bsonError;
+
     return true;
 }
 
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager)
 {
+    ERROR_IF_NULL(manager)
+
     bson_destroy(manager->b);
+    CHECK_SUCCESS(bench_bson_error_destroy(manager->error));
     return true;
 }
 

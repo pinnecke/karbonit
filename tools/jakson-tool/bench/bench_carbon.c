@@ -1,3 +1,4 @@
+
 #include "bench_carbon.h"
 #include "bench_format_handler.h"
 
@@ -6,37 +7,52 @@ bool bench_carbon_error_create(bench_carbon_error *carbonError, bench_error *ben
     ERROR_IF_NULL(carbonError)
     ERROR_IF_NULL(benchError)
 
-    carbonError->err = benchError;
+    struct err *err = malloc(sizeof(*err));
+    error_init(err);
+
+    carbonError->benchErr = benchError;
+    carbonError->err = err;
 
     return true;
 }
 
-bool bench_carbon_error_write(bench_carbon_error *error, char *msg, size_t errOffset)
+bool bench_carbon_error_destroy(bench_carbon_error *error)
+{
+    ERROR_IF_NULL(error)
+
+    CHECK_SUCCESS(error_drop(error->err));
+    free(error);
+
+    return true;
+}
+
+bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, size_t docOffset)
 {
     ERROR_IF_NULL(error)
     ERROR_IF_NULL(msg)
-    UNUSED(errOffset)
 
-    if(errOffset)
-        strcat(error->err->msg, (const char *) errOffset);
+    error_set_wdetails(error->err, ERR_FAILED, __FILE__, __LINE__, msg);
 
-    strcat(error->err->msg, msg);
+    error->benchErr->msg = strdup(msg);
+    error->benchErr->file = __FILE__;
+    error->benchErr->line = __LINE__;
+    error->benchErr->offset = docOffset;
+
+    error_print_to_stderr(error->err);
 
     return true;
 }
 
-bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *error, const char *filePath)
+bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError, const char *filePath)
 {
     ERROR_IF_NULL(manager)
-    ERROR_IF_NULL(error)
+    ERROR_IF_NULL(carbonError)
+    ERROR_IF_NULL(benchError)
     ERROR_IF_NULL(filePath)
 
-    carbon *doc = 0;
-    err *err = 0;
-    /*
-    carbon_find *find;
-    carbon_find_create(find)
-    */
+    carbon *doc = malloc(sizeof(*doc));
+    bench_carbon_error_create(carbonError, benchError);
+
     FILE *f = fopen(filePath, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
@@ -47,33 +63,29 @@ bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_e
     fclose(f);
     jsonContent[fsize] = 0;
 
-    carbon_from_json(doc, jsonContent, CARBON_KEY_NOKEY, NULL, err);
+    CHECK_SUCCESS(carbon_from_json(doc, jsonContent, CARBON_KEY_NOKEY, NULL, carbonError->err));
 
-    manager->err = err;
-    manager->error = error;
+    manager->error = carbonError;
     manager->doc = doc;
 
     return true;
 }
 
-bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *error, bench_error *benchError)
+bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError)
 {
     ERROR_IF_NULL(manager)
-    ERROR_IF_NULL(error)
+    ERROR_IF_NULL(carbonError)
+    ERROR_IF_NULL(benchError)
 
-    //carbon_new context;
     carbon *doc = malloc(sizeof(*doc));
-    err *err = malloc(sizeof(*err));
+    bench_carbon_error_create(carbonError, benchError);
 
-    //carbon_create_begin(&context, doc, CARBON_KEY_NOKEY, CARBON_KEEP);
-    carbon_create_empty(doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
-    bench_carbon_error_create(error, benchError);
-    //carbon_create_end(&context);
-    error_init(err);
+    if(!FN_IS_OK(carbon_create_empty(doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY)))
+        bench_carbon_error_write(carbonError, "Failed to create CARBON doc", 0);
 
     manager->doc = doc;
-    manager->err = err;
-    manager->error = error;
+    manager->error = carbonError;
+
     return true;
 }
 
@@ -81,7 +93,7 @@ bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager)
 {
     ERROR_IF_NULL(manager)
     CHECK_SUCCESS(carbon_drop(manager->doc));
-    CHECK_SUCCESS(error_drop(manager->err));
+    CHECK_SUCCESS(bench_carbon_error_destroy(manager->error));
 
     return true;
 }
@@ -105,23 +117,28 @@ bool bench_carbon_insert_int32(bench_carbon_mgr *manager, carbon_object_it *it, 
     //carbon_insert ins;
     //carbon_int_insert_create_for_object(&ins, it);
 
+    // TODO : Initialize inserter and put it at the end of doc if null
+
     return carbon_insert_prop_i32(ins, key, val);
 }
 
+#define MAX_KEY_LENGTH 128
 bool bench_carbon_find_int32(bench_carbon_mgr *manager, carbon_object_it *it, char *key, int32_t val)
 {
     ERROR_IF_NULL(manager)
     UNUSED(it)
     ERROR_IF_NULL(key)
     UNUSED(val)
-
+    // Convert to dot path
+    char _key[MAX_KEY_LENGTH];
+    snprintf(_key, sizeof(_key), "0.\"%s%s", key, "\"");
     carbon_find find;
-    carbon_patch_find_begin(&find, "0.\"Test3\"", manager->doc);
+    carbon_patch_find_begin(&find, _key, manager->doc);
     carbon_field_type_e type;
     carbon_find_result_type(&type, &find);
 
     if(type != CARBON_FIELD_NUMBER_I32) {
-        // TODO : Error handling
+        bench_carbon_error_write(manager->error, strcat("Could not find int32 key ", _key), 0);
         return false;
     }
 

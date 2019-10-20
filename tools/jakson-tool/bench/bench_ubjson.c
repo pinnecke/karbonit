@@ -133,30 +133,50 @@ bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *ben
     ERROR_IF_NULL(ubjsonError)
     ERROR_IF_NULL(benchError)
 
-    ubjsonError->err = benchError;
+    struct err *err = malloc(sizeof(*err));
+    error_init(err);
+
+    ubjsonError->benchErr = benchError;
+    ubjsonError->err = err;
 
     return true;
 }
 
-bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOffset)
+bool bench_ubjson_error_destroy(bench_ubjson_error *error) {
+    ERROR_IF_NULL(error)
+
+    CHECK_SUCCESS(error_drop(error->err));
+    free(error);
+
+    return true;
+}
+
+bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t docOffset)
 {
     ERROR_IF_NULL(error)
     ERROR_IF_NULL(msg)
-    UNUSED(errOffset)
 
-    if(errOffset)
-        strcat(error->err->msg, (const char *) errOffset);
+    error_set_wdetails(error->err, ERR_FAILED, __FILE__, __LINE__, msg);
 
-    strcat(error->err->msg, msg);
+    error->benchErr->msg = strdup(msg);
+    error->benchErr->file = __FILE__;
+    error->benchErr->line = __LINE__;
+    error->benchErr->offset = docOffset;
+
+    error_print_to_stderr(error->err);
 
     return true;
 }
 
-bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *error, const char *filePath)
+bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError, const char *filePath)
 {
-    UNUSED(manager)
-    UNUSED(filePath)
-    bench_ubjson_mgr_create_empty(manager, error);
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(ubjsonError)
+    ERROR_IF_NULL(benchError)
+    ERROR_IF_NULL(filePath)
+
+    bench_ubjson_mgr_create_empty(manager, ubjsonError, benchError);
+
     ubjs_writer_builder *writer_builder = 0;
     ubjs_writer *writer = 0;
     ubjs_prmtv *obj = 0;
@@ -188,15 +208,20 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_e
 
     ubjs_writer_free(&writer);
     obj = 0;
+
     manager->obj = obj;
     manager->lib = lib;
+
     return true;
 }
 
-bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *error)
+bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError)
 {
     ERROR_IF_NULL(manager);
-    ERROR_IF_NULL(error);
+    ERROR_IF_NULL(ubjsonError);
+    ERROR_IF_NULL(benchError);
+
+    bench_ubjson_error_create(ubjsonError, benchError);
 
     ubjs_library_builder builder;
     ubjs_library *lib = 0;
@@ -208,7 +233,8 @@ bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error
 
     manager->obj = obj;
     manager->lib = lib;
-    manager->error = error;
+    manager->error = ubjsonError;
+
     return true;
 }
 

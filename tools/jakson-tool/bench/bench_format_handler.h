@@ -40,8 +40,10 @@
 typedef struct bench_bson_error bench_bson_error;
 
 typedef struct bench_error {
-    uint32_t code;
-    char msg[128];
+    size_t line;
+    char *msg;
+    char *file;
+    size_t offset;
 } bench_error;
 
 typedef struct bench_format_ops bench_format_ops;
@@ -62,10 +64,10 @@ typedef struct bench_format_handler {
     char *format_name;
 } bench_format_handler;
 
+bool bench_format_handler_create_error(bench_error *error);
 bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
-bool bench_format_handler_init_error(bench_error *error);
 bool bench_format_handler_destroy(bench_format_handler *handler);
 bool bench_format_handler_get_doc(char *str, bench_format_handler *handler);
 bool bench_format_handler_get_document_size(bench_format_handler *handler, size_t size);

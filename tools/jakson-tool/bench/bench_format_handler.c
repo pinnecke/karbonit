@@ -1,18 +1,29 @@
 
 #include "bench_format_handler.h"
 
+bool bench_format_handler_create_error(bench_error *error)
+{
+    ERROR_IF_NULL(error)
+
+    error->offset = 0;
+    error->line = 0;
+    error->file = NULL;
+    error->msg = NULL;
+
+    return true;
+}
+
 bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath)
 {
     ERROR_IF_NULL(handler)
     ERROR_IF_NULL(error)
     UNUSED(filePath)
-    error = malloc(sizeof(*error));
-    //error->code = 0;
+
+    bench_format_handler_create_error(error);
 
     bench_carbon_error *carbonError = malloc(sizeof(*carbonError));
     bench_carbon_mgr *manager = malloc(sizeof(*manager));
 
-    bench_carbon_error_create(carbonError, error);
     /*if(filePath) {
         bench_carbon_mgr_create_from_file(manager, carbonError, filePath);
     } else {*/
@@ -32,17 +43,15 @@ bool bench_format_handler_create_bson_handler(bench_format_handler *handler, ben
     ERROR_IF_NULL(error)
     UNUSED(filePath)
 
-
-    error = malloc(sizeof(*error));
-    //error->code = 0;
-
+    //error = malloc(sizeof(*error));
     bench_bson_error *bsonError = malloc(sizeof(*bsonError));
     bench_bson_mgr *manager = malloc(sizeof(*manager));
 
-    bench_bson_error_create(bsonError, error);
+    bench_format_handler_create_error(error);
+
     //if(filePath == NULL) {
 
-        bench_bson_mgr_create_empty(manager, bsonError);
+        bench_bson_mgr_create_empty(manager, bsonError, error);
     //} else {
     //    bench_bson_mgr_create_from_file(&manager, filePath);
     //}
@@ -59,18 +68,14 @@ bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, b
     ERROR_IF_NULL(error)
     UNUSED(filePath)
 
-    error = malloc(sizeof(*error));
-    //error->code = 0;
-
-
     bench_ubjson_error *ubjsonError = malloc(sizeof(*ubjsonError));
     bench_ubjson_mgr *manager = malloc(sizeof(*manager));
 
-    bench_ubjson_error_create(ubjsonError, error);
+    bench_format_handler_create_error(error);
     /*if(filePath == NULL) {
         bench_ubjson_mgr_create_from_file(manager, ubjsonError, filePath);
     } else {*/
-        bench_ubjson_mgr_create_empty(manager, ubjsonError);
+        bench_ubjson_mgr_create_empty(manager, ubjsonError, error);
     //}
     handler->manager = manager;
     handler->format_name = BENCH_FORMAT_UBJSON;
@@ -118,8 +123,7 @@ bool bench_format_handler_get_doc(char *str, bench_format_handler *handler) {
 bool bench_format_handler_insert_int32(bench_format_handler *handler, char *key, int32_t val)
 {
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
-        // TODO: Implement
-        return false;
+        return bench_carbon_insert_int32((bench_carbon_mgr*) handler->manager, 0, 0, key, val);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
         return bench_bson_insert_int32((bench_bson_mgr*) handler->manager, 0, key, val);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {

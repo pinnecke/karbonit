@@ -144,7 +144,10 @@ bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t errOf
     ERROR_IF_NULL(msg)
     UNUSED(errOffset)
 
-    error->err->msg = msg;
+    if(errOffset)
+        strcat(error->err->msg, (const char *) errOffset);
+
+    strcat(error->err->msg, msg);
 
     return true;
 }

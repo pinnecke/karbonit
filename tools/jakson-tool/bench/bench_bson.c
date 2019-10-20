@@ -9,11 +9,11 @@ bool bench_bson_error_create(bench_bson_error *bsonError, bench_error *benchErro
 
 // TODO : Use error write function implicitly by handling error messages in-function as additional parameter
 bool bench_bson_error_write(bench_bson_error *error, char *msg, size_t errOffset) {
-    if(errOffset) {
-        error->err->msg = strcat(msg, (const char *) errOffset);
-    } else {
-        error->err->msg = msg;
-    }
+    if(errOffset)
+        strcat(error->err->msg , (const char *) errOffset);
+
+    strcat(error->err->msg, msg);
+
     return true;
 }
 
@@ -30,7 +30,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, const char* filePa
     if(!(jReader = bson_json_reader_new_from_file (filePath, &bError))) {
         char* msg = strcat("BSON reader failed to open: ", filePath);
         msg = strcat(msg, strcat("\n", bError.message));
-        manager->error->err->msg = msg;
+        bench_bson_error_write(error, msg, 0);
         return false;
     }
 
@@ -38,7 +38,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, const char* filePa
     while((readResult = bson_json_reader_read (jReader, &b, &bError))) {
         if(readResult < 0) {
             char* msg = strcat("Error in JSON parsing:\n", bError.message);
-            manager->error->err->msg = msg;
+            bench_bson_error_write(error, msg, 0);
             return false;
         }
     }

@@ -41,7 +41,7 @@ typedef struct bench_bson_error bench_bson_error;
 
 typedef struct bench_error {
     uint32_t code;
-    char *msg;
+    char msg[128];
 } bench_error;
 
 typedef struct bench_format_ops bench_format_ops;

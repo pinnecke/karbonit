@@ -53,7 +53,6 @@ typedef struct carbon_object_it {
 
         carbon_map_derivable_e abstract_type;
 
-        spinlock lock;
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
 } carbon_object_it;
@@ -83,9 +82,6 @@ fn_result carbon_object_it_update_type(carbon_object_it *it, carbon_map_derivabl
 
 bool carbon_object_it_insert_begin(carbon_insert *inserter, carbon_object_it *it);
 fn_result carbon_object_it_insert_end(carbon_insert *inserter);
-
-bool carbon_object_it_lock(carbon_object_it *it);
-bool carbon_object_it_unlock(carbon_object_it *it);
 
 bool carbon_object_it_bool_value(bool *is_true, carbon_object_it *it);
 bool carbon_object_it_is_null(bool *is_null, carbon_object_it *it);

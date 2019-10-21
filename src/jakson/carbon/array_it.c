@@ -152,7 +152,6 @@ fn_result carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err
         it->field_offset = 0;
 
         error_init(&it->err);
-        spinlock_init(&it->lock);
         vector_create(&it->history, NULL, sizeof(offset_t), 40);
         memfile_open(&it->memfile, memfile->memblock, memfile->mode);
         memfile_seek(&it->memfile, payload_start);
@@ -191,7 +190,6 @@ bool carbon_array_it_clone(carbon_array_it *dst, carbon_array_it *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
         dst->array_begin_off = src->array_begin_off;
-        spinlock_init(&dst->lock);
         error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
         dst->array_end_reached = src->array_end_reached;
@@ -236,26 +234,6 @@ fn_result carbon_array_it_drop(carbon_array_it *it)
         carbon_int_field_access_drop(&it->field_access);
         vector_drop(&it->history);
         return FN_OK();
-}
-
-/**
- * Locks the iterator with a spinlock. A call to <code>carbon_array_it_unlock</code> is required for unlocking.
- */
-bool carbon_array_it_lock(carbon_array_it *it)
-{
-        DEBUG_ERROR_IF_NULL(it);
-        spinlock_acquire(&it->lock);
-        return true;
-}
-
-/**
- * Unlocks the iterator
- */
-bool carbon_array_it_unlock(carbon_array_it *it)
-{
-        DEBUG_ERROR_IF_NULL(it);
-        spinlock_release(&it->lock);
-        return true;
 }
 
 bool carbon_array_it_rewind(carbon_array_it *it)

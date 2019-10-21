@@ -26,7 +26,6 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/std/vector.h>
-#include <jakson/std/spinlock.h>
 #include <jakson/carbon.h>
 #include <jakson/carbon/field.h>
 
@@ -57,7 +56,6 @@ typedef struct field_access {
 typedef struct carbon_array_it {
         memfile memfile;
         offset_t array_begin_off;
-        spinlock lock;
         err err;
 
         carbon_list_derivable_e abstract_type;
@@ -104,16 +102,6 @@ bool carbon_array_it_is_empty(carbon_array_it *it);
  * Drops the iterator.
  */
 fn_result carbon_array_it_drop(carbon_array_it *it);
-
-/**
- * Locks the iterator with a spinlock. A call to <code>carbon_array_it_unlock</code> is required for unlocking.
- */
-bool carbon_array_it_lock(carbon_array_it *it);
-
-/**
- * Unlocks the iterator
- */
-bool carbon_array_it_unlock(carbon_array_it *it);
 
 /**
  * Positions the iterator at the beginning of this array.

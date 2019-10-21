@@ -45,7 +45,6 @@ bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err,
         it->mod_size = 0;
 
         error_init(&it->err);
-        spinlock_init(&it->lock);
         memfile_open(&it->memfile, memfile->memblock, memfile->mode);
         memfile_seek(&it->memfile, column_start_offset);
 
@@ -86,7 +85,6 @@ bool carbon_column_it_clone(carbon_column_it *dst, carbon_column_it *src)
         dst->mod_size = src->mod_size;
         dst->column_capacity = src->column_capacity;
         dst->column_num_elements = src->column_num_elements;
-        spinlock_init(&dst->lock);
         return true;
 }
 
@@ -791,26 +789,6 @@ bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float valu
         UNUSED(value)
         ERROR_PRINT(ERR_NOTIMPLEMENTED); // TODO: implement
         return false;
-}
-
-/**
- * Locks the iterator with a spinlock. A call to <code>carbon_column_it_unlock</code> is required for unlocking.
- */
-bool carbon_column_it_lock(carbon_column_it *it)
-{
-        DEBUG_ERROR_IF_NULL(it);
-        spinlock_acquire(&it->lock);
-        return true;
-}
-
-/**
- * Unlocks the iterator
- */
-bool carbon_column_it_unlock(carbon_column_it *it)
-{
-        DEBUG_ERROR_IF_NULL(it);
-        spinlock_release(&it->lock);
-        return true;
 }
 
 bool carbon_column_it_rewind(carbon_column_it *it)

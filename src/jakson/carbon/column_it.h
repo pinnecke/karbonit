@@ -25,7 +25,6 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/std/spinlock.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon.h>
 
@@ -48,7 +47,6 @@ typedef struct carbon_column_it {
         u32 column_capacity;
         u32 column_num_elements;
 
-        spinlock lock;
 } carbon_column_it;
 
 bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err, offset_t column_start_offset);
@@ -93,16 +91,6 @@ bool carbon_column_it_update_set_i16(carbon_column_it *it, u32 pos, i16 value);
 bool carbon_column_it_update_set_i32(carbon_column_it *it, u32 pos, i32 value);
 bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, i64 value);
 bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float value);
-
-/**
- * Locks the iterator with a spinlock. A call to <code>carbon_column_it_unlock</code> is required for unlocking.
- */
-bool carbon_column_it_lock(carbon_column_it *it);
-
-/**
- * Unlocks the iterator
- */
-bool carbon_column_it_unlock(carbon_column_it *it);
 
 /**
  * Positions the iterator at the beginning of this array.

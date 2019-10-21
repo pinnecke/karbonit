@@ -35,7 +35,6 @@ bool carbon_object_it_create(carbon_object_it *it, memfile *memfile, err *err,
         it->mod_size = 0;
         it->object_end_reached = false;
 
-        spinlock_init(&it->lock);
         error_init(&it->err);
 
         vector_create(&it->history, NULL, sizeof(offset_t), 40);
@@ -76,7 +75,6 @@ bool carbon_object_it_clone(carbon_object_it *dst, carbon_object_it *src)
         memfile_clone(&dst->memfile, &src->memfile);
         dst->object_contents_off = src->object_contents_off;
         dst->object_start_off = src->object_start_off;
-        spinlock_init(&dst->lock);
         error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
         dst->object_end_reached = src->object_end_reached;
@@ -341,20 +339,6 @@ fn_result carbon_object_it_insert_end(carbon_insert *inserter)
 {
         FN_FAIL_IF_NULL(inserter)
         return carbon_insert_drop(inserter);
-}
-
-bool carbon_object_it_lock(carbon_object_it *it)
-{
-        DEBUG_ERROR_IF_NULL(it)
-        spinlock_acquire(&it->lock);
-        return true;
-}
-
-bool carbon_object_it_unlock(carbon_object_it *it)
-{
-        DEBUG_ERROR_IF_NULL(it)
-        spinlock_release(&it->lock);
-        return true;
 }
 
 bool carbon_object_it_fast_forward(carbon_object_it *it)

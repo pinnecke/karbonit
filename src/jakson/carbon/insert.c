@@ -52,7 +52,6 @@ static void write_binary_blob(carbon_insert *inserter, const void *value, size_t
 fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array_it *context)
 {
         FN_FAIL_IF_NULL(inserter, context)
-        carbon_array_it_lock(context);
         inserter->context_type = CARBON_ARRAY;
         inserter->context.array = context;
         inserter->position = 0;
@@ -72,7 +71,6 @@ bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_
 {
         DEBUG_ERROR_IF_NULL(inserter)
         DEBUG_ERROR_IF_NULL(context)
-        carbon_column_it_lock(context);
         inserter->context_type = CARBON_COLUMN;
         inserter->context.column = context;
         internal_create(inserter, &context->memfile, memfile_tell(&context->memfile));
@@ -83,7 +81,6 @@ bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object_
 {
         DEBUG_ERROR_IF_NULL(inserter)
         DEBUG_ERROR_IF_NULL(context)
-        carbon_object_it_lock(context);
         inserter->context_type = CARBON_OBJECT;
         inserter->context.object = context;
 
@@ -947,16 +944,6 @@ u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in)
 fn_result carbon_insert_drop(carbon_insert *inserter)
 {
         FN_FAIL_IF_NULL(inserter)
-        if (inserter->context_type == CARBON_ARRAY) {
-                carbon_array_it_unlock(inserter->context.array);
-        } else if (inserter->context_type == CARBON_COLUMN) {
-                carbon_column_it_unlock(inserter->context.column);
-        } else if (inserter->context_type == CARBON_OBJECT) {
-                carbon_object_it_unlock(inserter->context.object);
-        } else {
-                FN_FAIL(ERR_INTERNALERR, "insertion context cleanup failed");
-        }
-
         return FN_OK();
 }
 

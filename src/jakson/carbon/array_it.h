@@ -32,34 +32,12 @@
 BEGIN_DECL
 
 // ---------------------------------------------------------------------------------------------------------------------
-//  public structures
+//  public interface
 // ---------------------------------------------------------------------------------------------------------------------
-
-typedef struct field_access {
-        carbon_field_type_e it_field_type;
-
-        const void *it_field_data;
-        u64 it_field_len;
-
-        const char *it_mime_type;
-        u64 it_mime_type_strlen;
-
-        bool nested_array_it_is_created;
-        bool nested_array_it_accessed;
-
-        bool nested_object_it_is_created;
-        bool nested_object_it_accessed;
-
-        bool nested_column_it_is_created;
-
-        struct carbon_array *nested_array_it;
-        carbon_column_it *nested_column_it;
-        carbon_object_it *nested_object_it;
-} field_access;
 
 struct carbon_array {
         memfile memfile;
-        offset_t array_begin_off;
+        offset_t begin;
         err err;
 
         carbon_list_derivable_e abstract_type;
@@ -69,13 +47,9 @@ struct carbon_array {
         bool array_end_reached;
 
         vector ofType(offset_t) history;
-        field_access field_access;
+        struct carbon_int_field_access field_access;
         offset_t field_offset;
 };
-
-// ---------------------------------------------------------------------------------------------------------------------
-//  public interface
-// ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * Constructs a new array iterator in a carbon document, where <code>payload_start</code> is a memory offset
@@ -83,16 +57,19 @@ struct carbon_array {
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
 fn_result carbon_array_it_create(struct carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
-bool carbon_array_it_copy(struct carbon_array *dst, struct carbon_array *src);
-bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src);
-bool carbon_array_it_set_mode(struct carbon_array *it, access_mode_e mode);
-bool carbon_array_it_length(u64 *len, struct carbon_array *it);
-bool carbon_array_it_is_empty(struct carbon_array *it);
 
 /**
  * Drops the iterator.
  */
 fn_result carbon_array_it_drop(struct carbon_array *it);
+
+bool carbon_array_it_copy(struct carbon_array *dst, struct carbon_array *src);
+
+bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src);
+
+bool carbon_array_it_length(u64 *len, struct carbon_array *it);
+
+bool carbon_array_it_is_empty(struct carbon_array *it);
 
 /**
  * Positions the iterator at the beginning of this array.
@@ -113,6 +90,7 @@ bool carbon_array_it_prev(struct carbon_array *it);
  */
 fn_result carbon_array_it_insert_begin(carbon_insert *inserter, struct carbon_array *it);
 fn_result carbon_array_it_insert_end(carbon_insert *inserter);
+
 bool carbon_array_it_remove(struct carbon_array *it);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
@@ -172,6 +150,7 @@ bool carbon_array_it_binary_value(carbon_binary *out, struct carbon_array *it);
 struct carbon_array *carbon_array_it_array_value(struct carbon_array *it_in);
 carbon_object_it *carbon_array_it_object_value(struct carbon_array *it_in);
 carbon_column_it *carbon_array_it_column_value(struct carbon_array *it_in);
+bool carbon_int_array_set_mode(struct carbon_array *it, access_mode_e mode);
 
 END_DECL
 

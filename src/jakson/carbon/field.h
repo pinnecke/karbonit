@@ -153,6 +153,28 @@ typedef enum carbon_constant {
         CARBON_CONSTANT_NULL
 } carbon_constant_e;
 
+struct carbon_int_field_access {
+    carbon_field_type_e it_field_type;
+
+    const void *it_field_data;
+    u64 it_field_len;
+
+    const char *it_mime_type;
+    u64 it_mime_type_strlen;
+
+    bool nested_array_it_is_created;
+    bool nested_array_it_accessed;
+
+    bool nested_object_it_is_created;
+    bool nested_object_it_accessed;
+
+    bool nested_column_it_is_created;
+
+    struct carbon_array *nested_array_it;
+    carbon_column_it *nested_column_it;
+    carbon_object_it *nested_object_it;
+};
+
 #define CARBON_FIELD_TYPE_NULL_STR "null"
 #define CARBON_FIELD_TYPE_TRUE_STR "boolean-true"
 #define CARBON_FIELD_TYPE_FALSE_STR "boolean-false"

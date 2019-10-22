@@ -86,8 +86,8 @@ typedef struct bitmap bitmap;
 typedef struct carbon carbon;
 typedef struct carbon_insert carbon_insert;
 typedef struct carbon_new carbon_new;
-typedef struct field_access field_access;
 
+struct carbon_int_field_access;
 struct carbon_array;
 struct carbon_traverse_extra;
 

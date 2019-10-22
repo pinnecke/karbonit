@@ -47,7 +47,7 @@ typedef struct carbon_object_it {
                 } key;
                 struct {
                         offset_t offset;
-                        field_access data;
+                        struct carbon_int_field_access data;
                 } value;
         } field;
 

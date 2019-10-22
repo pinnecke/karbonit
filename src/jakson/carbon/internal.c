@@ -319,7 +319,7 @@ bool carbon_int_array_it_field_type_read(struct carbon_array *it)
         return true;
 }
 
-bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_access)
+bool carbon_int_field_data_access(memfile *file, err *err, struct carbon_int_field_access *field_access)
 {
         memfile_save_position(file);
         memfile_skip(file, sizeof(media_type));
@@ -524,7 +524,7 @@ bool carbon_int_history_has(vector ofType(offset_t) *vec)
         return !vector_is_empty(vec);
 }
 
-bool carbon_int_field_access_create(field_access *field)
+bool carbon_int_field_access_create(struct carbon_int_field_access *field)
 {
         field->nested_array_it_is_created = false;
         field->nested_array_it_accessed = false;
@@ -537,7 +537,7 @@ bool carbon_int_field_access_create(field_access *field)
         return true;
 }
 
-bool carbon_int_field_access_clone(field_access *dst, field_access *src)
+bool carbon_int_field_access_clone(struct carbon_int_field_access *dst, struct carbon_int_field_access *src)
 {
         DEBUG_ERROR_IF_NULL(dst)
         DEBUG_ERROR_IF_NULL(src)
@@ -566,7 +566,7 @@ bool carbon_int_field_access_clone(field_access *dst, field_access *src)
         return true;
 }
 
-bool carbon_int_field_access_drop(field_access *field)
+bool carbon_int_field_access_drop(struct carbon_int_field_access *field)
 {
         carbon_int_field_auto_close(field);
         free(field->nested_array_it);
@@ -578,25 +578,25 @@ bool carbon_int_field_access_drop(field_access *field)
         return true;
 }
 
-bool carbon_int_field_access_object_it_opened(field_access *field)
+bool carbon_int_field_access_object_it_opened(struct carbon_int_field_access *field)
 {
         JAK_ASSERT(field);
         return field->nested_object_it_is_created && field->nested_object_it != NULL;
 }
 
-bool carbon_int_field_access_array_it_opened(field_access *field)
+bool carbon_int_field_access_array_it_opened(struct carbon_int_field_access *field)
 {
         JAK_ASSERT(field);
         return field->nested_array_it_is_created && field->nested_array_it != NULL;
 }
 
-bool carbon_int_field_access_column_it_opened(field_access *field)
+bool carbon_int_field_access_column_it_opened(struct carbon_int_field_access *field)
 {
         JAK_ASSERT(field);
         return field->nested_column_it_is_created && field->nested_column_it != NULL;
 }
 
-void carbon_int_auto_close_nested_array_it(field_access *field)
+void carbon_int_auto_close_nested_array_it(struct carbon_int_field_access *field)
 {
         if (carbon_int_field_access_array_it_opened(field)) {
                 carbon_array_it_drop(field->nested_array_it);
@@ -604,7 +604,7 @@ void carbon_int_auto_close_nested_array_it(field_access *field)
         }
 }
 
-void carbon_int_auto_close_nested_object_it(field_access *field)
+void carbon_int_auto_close_nested_object_it(struct carbon_int_field_access *field)
 {
         if (carbon_int_field_access_object_it_opened(field)) {
                 carbon_object_it_drop(field->nested_object_it);
@@ -612,14 +612,14 @@ void carbon_int_auto_close_nested_object_it(field_access *field)
         }
 }
 
-void carbon_int_auto_close_nested_column_it(field_access *field)
+void carbon_int_auto_close_nested_column_it(struct carbon_int_field_access *field)
 {
         if (carbon_int_field_access_column_it_opened(field)) {
                 ZERO_MEMORY(field->nested_column_it, sizeof(carbon_column_it));
         }
 }
 
-bool carbon_int_field_auto_close(field_access *field)
+bool carbon_int_field_auto_close(struct carbon_int_field_access *field)
 {
         DEBUG_ERROR_IF_NULL(field)
         if (field->nested_array_it_is_created && !field->nested_array_it_accessed) {
@@ -640,7 +640,7 @@ bool carbon_int_field_auto_close(field_access *field)
         return true;
 }
 
-bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field)
+bool carbon_int_field_access_field_type(carbon_field_type_e *type, struct carbon_int_field_access *field)
 {
         DEBUG_ERROR_IF_NULL(type)
         DEBUG_ERROR_IF_NULL(field)
@@ -648,7 +648,7 @@ bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access 
         return true;
 }
 
-bool carbon_int_field_access_bool_value(bool *value, field_access *field, err *err)
+bool carbon_int_field_access_bool_value(bool *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value);
         DEBUG_ERROR_IF_NULL(field);
@@ -664,7 +664,7 @@ bool carbon_int_field_access_bool_value(bool *value, field_access *field, err *e
         }
 }
 
-bool carbon_int_field_access_is_null(bool *is_null, field_access *field)
+bool carbon_int_field_access_is_null(bool *is_null, struct carbon_int_field_access *field)
 {
         DEBUG_ERROR_IF_NULL(is_null);
         DEBUG_ERROR_IF_NULL(field);
@@ -672,7 +672,7 @@ bool carbon_int_field_access_is_null(bool *is_null, field_access *field)
         return true;
 }
 
-bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err)
+bool carbon_int_field_access_u8_value(u8 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -681,7 +681,7 @@ bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err)
         return true;
 }
 
-bool carbon_int_field_access_u16_value(u16 *value, field_access *field, err *err)
+bool carbon_int_field_access_u16_value(u16 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -690,7 +690,7 @@ bool carbon_int_field_access_u16_value(u16 *value, field_access *field, err *err
         return true;
 }
 
-bool carbon_int_field_access_u32_value(u32 *value, field_access *field, err *err)
+bool carbon_int_field_access_u32_value(u32 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -699,7 +699,7 @@ bool carbon_int_field_access_u32_value(u32 *value, field_access *field, err *err
         return true;
 }
 
-bool carbon_int_field_access_u64_value(u64 *value, field_access *field, err *err)
+bool carbon_int_field_access_u64_value(u64 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -708,7 +708,7 @@ bool carbon_int_field_access_u64_value(u64 *value, field_access *field, err *err
         return true;
 }
 
-bool carbon_int_field_access_i8_value(i8 *value, field_access *field, err *err)
+bool carbon_int_field_access_i8_value(i8 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -717,7 +717,7 @@ bool carbon_int_field_access_i8_value(i8 *value, field_access *field, err *err)
         return true;
 }
 
-bool carbon_int_field_access_i16_value(i16 *value, field_access *field, err *err)
+bool carbon_int_field_access_i16_value(i16 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -726,7 +726,7 @@ bool carbon_int_field_access_i16_value(i16 *value, field_access *field, err *err
         return true;
 }
 
-bool carbon_int_field_access_i32_value(i32 *value, field_access *field, err *err)
+bool carbon_int_field_access_i32_value(i32 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -735,7 +735,7 @@ bool carbon_int_field_access_i32_value(i32 *value, field_access *field, err *err
         return true;
 }
 
-bool carbon_int_field_access_i64_value(i64 *value, field_access *field, err *err)
+bool carbon_int_field_access_i64_value(i64 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -744,7 +744,7 @@ bool carbon_int_field_access_i64_value(i64 *value, field_access *field, err *err
         return true;
 }
 
-bool carbon_int_field_access_float_value(float *value, field_access *field, err *err)
+bool carbon_int_field_access_float_value(float *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
@@ -754,7 +754,7 @@ bool carbon_int_field_access_float_value(float *value, field_access *field, err 
 }
 
 bool
-carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field, err *err)
+carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, err, ERR_TYPEMISMATCH);
@@ -765,7 +765,7 @@ carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, fie
         return true;
 }
 
-bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_access *field,
+bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, struct carbon_int_field_access *field,
                                           err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
@@ -804,7 +804,7 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_ac
         return true;
 }
 
-bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_access *field,
+bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, struct carbon_int_field_access *field,
                                             err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
@@ -843,7 +843,7 @@ bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_
         return true;
 }
 
-const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field, err *err)
+const char *carbon_int_field_access_string_value(u64 *strlen, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(strlen);
         ERROR_IF_AND_RETURN(field == NULL, err, ERR_NULLPTR, NULL);
@@ -853,7 +853,7 @@ const char *carbon_int_field_access_string_value(u64 *strlen, field_access *fiel
 }
 
 bool
-carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err)
+carbon_int_field_access_binary_value(carbon_binary *out, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(out)
         DEBUG_ERROR_IF_NULL(field)
@@ -867,7 +867,7 @@ carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, er
         return true;
 }
 
-struct carbon_array *carbon_int_field_access_array_value(field_access *field, err *err)
+struct carbon_array *carbon_int_field_access_array_value(struct carbon_int_field_access *field, err *err)
 {
         ERROR_PRINT_IF(!field, ERR_NULLPTR);
         ERROR_IF(!carbon_field_type_is_array_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
@@ -875,7 +875,7 @@ struct carbon_array *carbon_int_field_access_array_value(field_access *field, er
         return field->nested_array_it;
 }
 
-carbon_object_it *carbon_int_field_access_object_value(field_access *field, err *err)
+carbon_object_it *carbon_int_field_access_object_value(struct carbon_int_field_access *field, err *err)
 {
         ERROR_PRINT_IF(!field, ERR_NULLPTR);
         ERROR_IF(!carbon_field_type_is_object_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
@@ -883,7 +883,7 @@ carbon_object_it *carbon_int_field_access_object_value(field_access *field, err 
         return field->nested_object_it;
 }
 
-carbon_column_it *carbon_int_field_access_column_value(field_access *field, err *err)
+carbon_column_it *carbon_int_field_access_column_value(struct carbon_int_field_access *field, err *err)
 {
         ERROR_PRINT_IF(!field, ERR_NULLPTR);
         ERROR_IF(!carbon_field_type_is_column_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);

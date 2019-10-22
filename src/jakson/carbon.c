@@ -437,7 +437,7 @@ char *carbon_to_json_compact_dup(carbon *doc)
 fn_result carbon_read_begin(struct carbon_array *it, carbon *doc)
 {
         fn_result ret = carbon_patch_begin(it, doc);
-        carbon_array_it_set_mode(it, READ_ONLY);
+        carbon_int_array_set_mode(it, READ_ONLY);
         return ret;
 }
 

@@ -36,11 +36,11 @@ bool carbon_int_array_update_##type_name(struct carbon_array *it, type_name valu
         offset_t datum = 0;                                                                                                \
         DEBUG_ERROR_IF_NULL(it);                                                                                             \
         if (LIKELY(it->field_access.it_field_type == field_type)) {                                                    \
-                memfile_save_position(&it->memfile);                                                                   \
+                memfile_save_position(&it->file);                                                                   \
                 carbon_int_array_it_offset(&datum, it);                                                                 \
-                memfile_seek(&it->memfile, datum + sizeof(u8));                                                        \
-                memfile_write(&it->memfile, &value, sizeof(type_name));                                                \
-                memfile_restore_position(&it->memfile);                                                                \
+                memfile_seek(&it->file, datum + sizeof(u8));                                                        \
+                memfile_write(&it->file, &value, sizeof(type_name));                                                \
+                memfile_restore_position(&it->file);                                                                \
                 return true;                                                                                           \
         } else {                                                                                                       \
                 ERROR(&it->err, ERR_TYPEMISMATCH);                                                                 \
@@ -70,7 +70,7 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
 {
         DEBUG_ERROR_IF_NULL(it);
 
-        memfile_save_position(&it->memfile);
+        memfile_save_position(&it->file);
 
         if (carbon_field_type_is_constant(it->field_access.it_field_type)) {
                 u8 value;
@@ -89,8 +89,8 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
                 }
                 offset_t datum = 0;
                 carbon_int_array_it_offset(&datum, it);
-                memfile_seek(&it->memfile, datum);
-                memfile_write(&it->memfile, &value, sizeof(u8));
+                memfile_seek(&it->file, datum);
+                memfile_write(&it->file, &value, sizeof(u8));
         } else {
                 carbon_insert ins;
                 carbon_array_it_remove(it);
@@ -113,7 +113,7 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
                 carbon_array_it_insert_end(&ins);
         }
 
-        memfile_restore_position(&it->memfile);
+        memfile_restore_position(&it->file);
         return true;
 }
 
@@ -135,11 +135,11 @@ bool carbon_int_array_update_null(struct carbon_array *it)
 static void __carbon_array_it_load_abstract_type(struct carbon_array *it)
 {
         carbon_abstract_type_class_e type_class;
-        carbon_abstract_get_class(&type_class, &it->memfile);
+        carbon_abstract_get_class(&type_class, &it->file);
         carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
 }
 
-fn_result carbon_array_it_create(struct carbon_array *it, memfile *memfile, err *err,
+fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile *memfile, err *err,
                             offset_t payload_start)
 {
         FN_FAIL_IF_NULL(it, memfile, err);
@@ -148,17 +148,17 @@ fn_result carbon_array_it_create(struct carbon_array *it, memfile *memfile, err 
 
         it->begin = payload_start;
         it->mod_size = 0;
-        it->array_end_reached = false;
+        it->end_reached = false;
         it->field_offset = 0;
 
         error_init(&it->err);
         vector_create(&it->history, NULL, sizeof(offset_t), 40);
-        memfile_open(&it->memfile, memfile->memblock, memfile->mode);
-        memfile_seek(&it->memfile, payload_start);
+        memfile_open(&it->file, memfile->memblock, memfile->mode);
+        memfile_seek(&it->file, payload_start);
 
-        ERROR_IF(memfile_remain_size(&it->memfile) < sizeof(u8), err, ERR_CORRUPTED);
+        ERROR_IF(memfile_remain_size(&it->file) < sizeof(u8), err, ERR_CORRUPTED);
 
-        fn_result ofType(bool) instance = carbon_abstract_is_instanceof_array(&it->memfile);
+        fn_result ofType(bool) instance = carbon_abstract_is_instanceof_array(&it->file);
         if (!FN_IS_OK(instance)) {
                 return FN_FAIL_FORWARD();
         } else {
@@ -169,7 +169,7 @@ fn_result carbon_array_it_create(struct carbon_array *it, memfile *memfile, err 
 
         __carbon_array_it_load_abstract_type(it);
 
-        memfile_skip(&it->memfile, sizeof(u8));
+        memfile_skip(&it->file, sizeof(u8));
 
         carbon_int_field_access_create(&it->field_access);
 
@@ -182,17 +182,17 @@ bool carbon_array_it_copy(struct carbon_array *dst, struct carbon_array *src)
 {
         DEBUG_ERROR_IF_NULL(dst);
         DEBUG_ERROR_IF_NULL(src);
-        carbon_array_it_create(dst, &src->memfile, &src->err, src->begin);
+        carbon_array_it_create(dst, &src->file, &src->err, src->begin);
         return true;
 }
 
 bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src)
 {
-        memfile_clone(&dst->memfile, &src->memfile);
+        memfile_clone(&dst->file, &src->file);
         dst->begin = src->begin;
         error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
-        dst->array_end_reached = src->array_end_reached;
+        dst->end_reached = src->end_reached;
         dst->abstract_type = src->abstract_type;
         vector_cpy(&dst->history, &src->history);
         carbon_int_field_access_clone(&dst->field_access, &src->field_access);
@@ -203,7 +203,7 @@ bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src)
 bool carbon_int_array_set_mode(struct carbon_array *it, access_mode_e mode)
 {
         DEBUG_ERROR_IF_NULL(it);
-        it->memfile.mode = mode;
+        it->file.mode = mode;
         return true;
 }
 
@@ -239,15 +239,15 @@ fn_result carbon_array_it_drop(struct carbon_array *it)
 bool carbon_array_it_rewind(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
-        ERROR_IF(it->begin >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
+        ERROR_IF(it->begin >= memfile_size(&it->file), &it->err, ERR_OUTOFBOUNDS);
         carbon_int_history_clear(&it->history);
-        return memfile_seek(&it->memfile, it->begin + sizeof(u8));
+        return memfile_seek(&it->file, it->begin + sizeof(u8));
 }
 
 static void auto_adjust_pos_after_mod(struct carbon_array *it)
 {
         if (carbon_int_field_access_object_it_opened(&it->field_access)) {
-                memfile_skip(&it->memfile, it->field_access.nested_object_it->mod_size);
+                memfile_skip(&it->file, it->field_access.nested_object_it->mod_size);
         } else if (carbon_int_field_access_array_it_opened(&it->field_access)) {
                 //memfile_skip(&it->mem, it->carbon_int_field_access.nested_array_it->mod_size);
                 //abort(); // TODO: implement!
@@ -280,21 +280,21 @@ bool carbon_array_it_next(struct carbon_array *it)
         bool is_empty_slot = true;
 
         auto_adjust_pos_after_mod(it);
-        offset_t last_off = memfile_tell(&it->memfile);
+        offset_t last_off = memfile_tell(&it->file);
 
-        if (carbon_int_array_it_next(&is_empty_slot, &it->array_end_reached, it)) {
+        if (carbon_int_array_it_next(&is_empty_slot, &it->end_reached, it)) {
                 carbon_int_history_push(&it->history, last_off);
                 return true;
         } else {
                 /** skip remaining zeros until end of array is reached */
-                if (!it->array_end_reached) {
+                if (!it->end_reached) {
                         ERROR_IF(!is_empty_slot, &it->err, ERR_CORRUPTED);
 
-                        while (*memfile_peek(&it->memfile, 1) == 0) {
-                                memfile_skip(&it->memfile, 1);
+                        while (*memfile_peek(&it->file, 1) == 0) {
+                                memfile_skip(&it->file, 1);
                         }
                 }
-                JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
+                JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == CARBON_MARRAY_END);
                 carbon_int_field_auto_close(&it->field_access);
                 return false;
         }
@@ -305,7 +305,7 @@ bool carbon_array_it_prev(struct carbon_array *it)
         DEBUG_ERROR_IF_NULL(it);
         if (carbon_int_history_has(&it->history)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
-                memfile_seek(&it->memfile, prev_off);
+                memfile_seek(&it->file, prev_off);
                 return carbon_int_array_it_refresh(NULL, NULL, it);
         } else {
                 return false;
@@ -315,7 +315,7 @@ bool carbon_array_it_prev(struct carbon_array *it)
 offset_t carbon_array_it_memfilepos(struct carbon_array *it)
 {
         if (LIKELY(it != NULL)) {
-                return memfile_tell(&it->memfile);
+                return memfile_tell(&it->file);
         } else {
                 ERROR(&it->err, ERR_NULLPTR);
                 return 0;
@@ -343,8 +343,8 @@ bool carbon_array_it_fast_forward(struct carbon_array *it)
         DEBUG_ERROR_IF_NULL(it);
         while (carbon_array_it_next(it)) {}
 
-        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
-        memfile_skip(&it->memfile, sizeof(char));
+        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == CARBON_MARRAY_END);
+        memfile_skip(&it->file, sizeof(char));
         return true;
 }
 
@@ -466,8 +466,8 @@ bool carbon_array_it_remove(struct carbon_array *it)
         carbon_field_type_e type;
         if (carbon_array_it_field_type(&type, it)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
-                memfile_seek(&it->memfile, prev_off);
-                if (carbon_int_field_remove(&it->memfile, &it->err, type)) {
+                memfile_seek(&it->file, prev_off);
+                if (carbon_int_field_remove(&it->file, &it->err, type)) {
                         carbon_int_array_it_refresh(NULL, NULL, it);
                         return true;
                 } else {
@@ -503,13 +503,13 @@ fn_result carbon_array_it_update_type(struct carbon_array *it, carbon_list_deriv
 {
         FN_FAIL_IF_NULL(it)
 
-        memfile_save_position(&it->memfile);
-        memfile_seek(&it->memfile, it->begin);
+        memfile_save_position(&it->file);
+        memfile_seek(&it->file, it->begin);
 
         carbon_derived_e derive_marker;
         carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-        carbon_abstract_write_derived_type(&it->memfile, derive_marker);
+        carbon_abstract_write_derived_type(&it->file, derive_marker);
 
-        memfile_restore_position(&it->memfile);
+        memfile_restore_position(&it->file);
         return FN_OK();
 }

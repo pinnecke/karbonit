@@ -20,19 +20,19 @@
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/string.h>
 
-static void write_payload(memfile *file, const char *string, size_t str_len)
+static void write_payload(struct carbon_memfile *file, const char *string, size_t str_len)
 {
         memfile_write_uintvar_stream(NULL, file, str_len);
         memfile_ensure_space(file, str_len);
         memfile_write(file, string, str_len);
 }
 
-bool carbon_string_nomarker_write(memfile *file, const char *string)
+bool carbon_string_nomarker_write(struct carbon_memfile *file, const char *string)
 {
         return carbon_string_nomarker_nchar_write(file, string, strlen(string));
 }
 
-bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len)
+bool carbon_string_nomarker_nchar_write(struct carbon_memfile *file, const char *string, u64 str_len)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(string)
@@ -41,7 +41,7 @@ bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 s
         return true;
 }
 
-bool carbon_string_nomarker_remove(memfile *file)
+bool carbon_string_nomarker_remove(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         u8 len_nbytes;
@@ -51,7 +51,7 @@ bool carbon_string_nomarker_remove(memfile *file)
         return true;
 }
 
-bool carbon_string_remove(memfile *file)
+bool carbon_string_remove(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
@@ -64,12 +64,12 @@ bool carbon_string_remove(memfile *file)
         }
 }
 
-bool carbon_string_write(memfile *file, const char *string)
+bool carbon_string_write(struct carbon_memfile *file, const char *string)
 {
         return carbon_string_nchar_write(file, string, strlen(string));
 }
 
-bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
+bool carbon_string_nchar_write(struct carbon_memfile *file, const char *string, u64 str_len)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(string)
@@ -81,12 +81,12 @@ bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
         return true;
 }
 
-bool carbon_string_update(memfile *file, const char *string)
+bool carbon_string_update(struct carbon_memfile *file, const char *string)
 {
         return carbon_string_update_wnchar(file, string, strlen(string));
 }
 
-bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_len)
+bool carbon_string_update_wnchar(struct carbon_memfile *file, const char *string, size_t str_len)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
@@ -105,17 +105,17 @@ bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_l
         }
 }
 
-bool carbon_string_skip(memfile *file)
+bool carbon_string_skip(struct carbon_memfile *file)
 {
         return carbon_string_read(NULL, file);
 }
 
-bool carbon_string_nomarker_skip(memfile *file)
+bool carbon_string_nomarker_skip(struct carbon_memfile *file)
 {
         return carbon_string_nomarker_read(NULL, file);
 }
 
-const char *carbon_string_read(u64 *len, memfile *file)
+const char *carbon_string_read(u64 *len, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
@@ -127,7 +127,7 @@ const char *carbon_string_read(u64 *len, memfile *file)
         }
 }
 
-const char *carbon_string_nomarker_read(u64 *len, memfile *file)
+const char *carbon_string_nomarker_read(u64 *len, struct carbon_memfile *file)
 {
         u64 str_len = memfile_read_uintvar_stream(NULL, file);
         const char *result = memfile_read(file, str_len);

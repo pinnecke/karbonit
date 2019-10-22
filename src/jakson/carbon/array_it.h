@@ -36,19 +36,16 @@ BEGIN_DECL
 // ---------------------------------------------------------------------------------------------------------------------
 
 struct carbon_array {
-        memfile memfile;
+        struct carbon_memfile file;
         offset_t begin;
         err err;
-
-        carbon_list_derivable_e abstract_type;
-
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
-        bool array_end_reached;
-
+        bool end_reached;
         vector ofType(offset_t) history;
         struct carbon_int_field_access field_access;
         offset_t field_offset;
+        carbon_list_derivable_e abstract_type;
 };
 
 /**
@@ -56,7 +53,7 @@ struct carbon_array {
  * that starts with the first (potentially empty) array entry. If there is some data before the array contents
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
-fn_result carbon_array_it_create(struct carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
+fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile *memfile, err *err, offset_t payload_start);
 
 /**
  * Drops the iterator.

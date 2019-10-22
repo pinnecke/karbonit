@@ -29,13 +29,13 @@
 #include <jakson/json/parser.h>
 #include <jakson/carbon/object_it.h>
 
-static void marker_insert(memfile *memfile, u8 marker);
+static void marker_insert(struct carbon_memfile *memfile, u8 marker);
 
 static bool array_it_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
 
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
 
-static bool is_slot_occupied(bool *is_empty_slot, bool *is_array_end, memfile *file, u8 end_marker);
+static bool is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_memfile *file, u8 end_marker);
 
 static bool array_it_next_no_load(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
 
@@ -46,7 +46,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
 static void int_insert_prop_object(carbon_insert *oins, json_object *obj);
 
 static void
-insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 capacity)
+insert_embedded_container(struct carbon_memfile *memfile, u8 begin_marker, u8 end_marker, u8 capacity)
 {
         memfile_ensure_space(memfile, sizeof(u8));
         marker_insert(memfile, begin_marker);
@@ -62,7 +62,7 @@ insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 c
         memfile_seek(memfile, payload_begin);
 }
 
-bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes)
+bool carbon_int_insert_object(struct carbon_memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(memfile);
         assert(derivation == CARBON_MAP_UNSORTED_MULTIMAP || derivation == CARBON_MAP_SORTED_MULTIMAP ||
@@ -73,7 +73,7 @@ bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivatio
         return true;
 }
 
-bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes)
+bool carbon_int_insert_array(struct carbon_memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(memfile);
         assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
@@ -84,7 +84,7 @@ bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivatio
         return true;
 }
 
-bool carbon_int_insert_column(memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type,
+bool carbon_int_insert_column(struct carbon_memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type,
                               size_t capactity)
 {
         DEBUG_ERROR_IF_NULL(memfile_in);
@@ -219,7 +219,7 @@ size_t carbon_int_get_type_value_size(carbon_field_type_e type)
 bool carbon_int_array_it_next(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it)
 {
         if (carbon_int_array_it_refresh(is_empty_slot, is_array_end, it)) {
-                carbon_field_skip(&it->memfile);
+                carbon_field_skip(&it->file);
                 return true;
         } else {
                 return false;
@@ -298,7 +298,7 @@ bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, struct
         carbon_int_field_access_drop(&it->field_access);
         if (array_it_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_array_it_field_type_read(it);
-                carbon_int_field_data_access(&it->memfile, &it->err, &it->field_access);
+                carbon_int_field_data_access(&it->file, &it->err, &it->field_access);
                 return true;
         } else {
                 return false;
@@ -308,18 +308,18 @@ bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, struct
 bool carbon_int_array_it_field_type_read(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it)
-        ERROR_IF(memfile_remain_size(&it->memfile) < 1, &it->err, ERR_ILLEGALOP);
-        memfile_save_position(&it->memfile);
-        it->field_offset = memfile_tell(&it->memfile);
-        u8 media_type = *memfile_read(&it->memfile, 1);
+        ERROR_IF(memfile_remain_size(&it->file) < 1, &it->err, ERR_ILLEGALOP);
+        memfile_save_position(&it->file);
+        it->field_offset = memfile_tell(&it->file);
+        u8 media_type = *memfile_read(&it->file, 1);
         ERROR_IF(media_type == 0, &it->err, ERR_NOTFOUND)
         ERROR_IF(media_type == CARBON_MARRAY_END, &it->err, ERR_OUTOFBOUNDS)
         it->field_access.it_field_type = media_type;
-        memfile_restore_position(&it->memfile);
+        memfile_restore_position(&it->file);
         return true;
 }
 
-bool carbon_int_field_data_access(memfile *file, err *err, struct carbon_int_field_access *field_access)
+bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct carbon_int_field_access *field_access)
 {
         memfile_save_position(file);
         memfile_skip(file, sizeof(media_type));
@@ -890,7 +890,7 @@ carbon_column_it *carbon_int_field_access_column_value(struct carbon_int_field_a
         return field->nested_column_it;
 }
 
-bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e type)
+bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_field_type_e type)
 {
         JAK_ASSERT((carbon_field_type_e) *memfile_peek(memfile, sizeof(u8)) == type);
         offset_t start_off = memfile_tell(memfile);
@@ -1596,7 +1596,7 @@ fn_result carbon_int_from_json(carbon *doc, const json *data,
         return FN_OK();
 }
 
-static void marker_insert(memfile *memfile, u8 marker)
+static void marker_insert(struct carbon_memfile *memfile, u8 marker)
 {
         /** check whether marker can be written, otherwise make space for it */
         char c = *memfile_peek(memfile, sizeof(u8));
@@ -1609,7 +1609,7 @@ static void marker_insert(memfile *memfile, u8 marker)
 static bool array_it_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it)
 {
         carbon_int_field_auto_close(&it->field_access);
-        return is_slot_occupied(is_empty_slot, is_array_end, &it->memfile, CARBON_MARRAY_END);
+        return is_slot_occupied(is_empty_slot, is_array_end, &it->file, CARBON_MARRAY_END);
 }
 
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it)
@@ -1618,7 +1618,7 @@ static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end,
         return is_slot_occupied(is_empty_slot, is_object_end, &it->memfile, CARBON_MOBJECT_END);
 }
 
-static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)
+static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, struct carbon_memfile *file, u8 end_marker)
 {
         DEBUG_ERROR_IF_NULL(file);
         char c = *memfile_peek(file, 1);
@@ -1646,7 +1646,7 @@ static bool array_it_next_no_load(bool *is_empty_slot, bool *is_array_end, struc
 {
         if (array_it_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_array_it_field_type_read(it);
-                carbon_field_skip(&it->memfile);
+                carbon_field_skip(&it->file);
                 return true;
         } else {
                 return false;

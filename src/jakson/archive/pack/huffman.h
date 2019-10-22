@@ -31,11 +31,11 @@ BEGIN_DECL
 bool pack_huffman_init(packer *self);
 bool pack_coding_huffman_cpy(const packer *self, packer *dst);
 bool pack_coding_huffman_drop(packer *self);
-bool pack_huffman_write_extra(packer *self, memfile *dst, const vector ofType (const char *) *strings);
+bool pack_huffman_write_extra(packer *self, struct carbon_memfile *dst, const vector ofType (const char *) *strings);
 bool pack_huffman_read_extra(packer *self, FILE *src, size_t nbytes);
-bool pack_huffman_print_extra(packer *self, FILE *file, memfile *src);
-bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src, u32 decompressed_strlen);
-bool pack_huffman_encode_string(packer *self, memfile *dst, err *err, const char *string);
+bool pack_huffman_print_extra(packer *self, FILE *file, struct carbon_memfile *src);
+bool pack_huffman_print_encoded(packer *self, FILE *file, struct carbon_memfile *src, u32 decompressed_strlen);
+bool pack_huffman_encode_string(packer *self, struct carbon_memfile *dst, err *err, const char *string);
 bool pack_huffman_decode_string(packer *self, char *dst, size_t strlen, FILE *src);
 
 END_DECL

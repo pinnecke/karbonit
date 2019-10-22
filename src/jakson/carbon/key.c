@@ -19,13 +19,13 @@
 #include <jakson/carbon/string.h>
 #include <jakson/stdx/unique_id.h>
 
-static void write_nokey(memfile *file)
+static void write_nokey(struct carbon_memfile *file)
 {
         u8 marker = CARBON_MNOKEY;
         memfile_write(file, &marker, sizeof(u8));
 }
 
-static void write_autokey(memfile *file)
+static void write_autokey(struct carbon_memfile *file)
 {
         u8 marker = CARBON_MAUTOKEY;
         unique_id_t key;
@@ -34,7 +34,7 @@ static void write_autokey(memfile *file)
         memfile_write(file, &key, sizeof(unique_id_t));
 }
 
-static void write_ukey(memfile *file)
+static void write_ukey(struct carbon_memfile *file)
 {
         u8 marker = CARBON_MUKEY;
         u64 key = 0;
@@ -42,7 +42,7 @@ static void write_ukey(memfile *file)
         memfile_write(file, &key, sizeof(u64));
 }
 
-static void write_ikey(memfile *file)
+static void write_ikey(struct carbon_memfile *file)
 {
         u8 marker = CARBON_MIKEY;
         i64 key = 0;
@@ -50,7 +50,7 @@ static void write_ikey(memfile *file)
         memfile_write(file, &key, sizeof(u64));
 }
 
-static void write_skey(memfile *file)
+static void write_skey(struct carbon_memfile *file)
 {
         u8 marker = CARBON_MSKEY;
         const char *key = "";
@@ -58,7 +58,7 @@ static void write_skey(memfile *file)
         carbon_string_write(file, key);
 }
 
-bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
+bool carbon_key_create(struct carbon_memfile *file, carbon_key_e type, err *err)
 {
         DEBUG_ERROR_IF_NULL(file)
 
@@ -85,14 +85,14 @@ bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
         return true;
 }
 
-bool carbon_key_skip(carbon_key_e *out, memfile *file)
+bool carbon_key_skip(carbon_key_e *out, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         carbon_key_read(NULL, out, file);
         return true;
 }
 
-bool carbon_key_write_unsigned(memfile *file, u64 key)
+bool carbon_key_write_unsigned(struct carbon_memfile *file, u64 key)
 {
         DEBUG_ERROR_IF_NULL(file)
 
@@ -108,7 +108,7 @@ bool carbon_key_write_unsigned(memfile *file, u64 key)
         }
 }
 
-bool carbon_key_write_signed(memfile *file, i64 key)
+bool carbon_key_write_signed(struct carbon_memfile *file, i64 key)
 {
         DEBUG_ERROR_IF_NULL(file)
 
@@ -124,12 +124,12 @@ bool carbon_key_write_signed(memfile *file, i64 key)
         }
 }
 
-bool carbon_key_update_string(memfile *file, const char *key)
+bool carbon_key_update_string(struct carbon_memfile *file, const char *key)
 {
         return carbon_key_update_string_wnchar(file, key, strlen(key));
 }
 
-bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t length)
+bool carbon_key_update_string_wnchar(struct carbon_memfile *file, const char *key, size_t length)
 {
         DEBUG_ERROR_IF_NULL(file)
         DECLARE_AND_INIT(carbon_key_e, key_type)
@@ -143,7 +143,7 @@ bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t leng
         }
 }
 
-bool carbon_key_write_string(memfile *file, const char *key)
+bool carbon_key_write_string(struct carbon_memfile *file, const char *key)
 {
         DEBUG_ERROR_IF_NULL(file)
 
@@ -159,7 +159,7 @@ bool carbon_key_write_string(memfile *file, const char *key)
         }
 }
 
-bool carbon_key_read_type(carbon_key_e *out, memfile *file)
+bool carbon_key_read_type(carbon_key_e *out, struct carbon_memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -189,7 +189,7 @@ bool carbon_key_read_type(carbon_key_e *out, memfile *file)
         return true;
 }
 
-const void *carbon_key_read(u64 *len, carbon_key_e *out, memfile *file)
+const void *carbon_key_read(u64 *len, carbon_key_e *out, struct carbon_memfile *file)
 {
         carbon_key_e key_type = 0;
         carbon_key_read_type(&key_type, file);

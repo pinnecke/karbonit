@@ -18,7 +18,7 @@
 #include <jakson/carbon/abstract.h>
 #include <jakson/mem/file.h>
 
-fn_result carbon_abstract_type(carbon_abstract_e *type, memfile *memfile)
+fn_result carbon_abstract_type(carbon_abstract_e *type, struct carbon_memfile *memfile)
 {
         FN_FAIL_IF_NULL(memfile)
         carbon_derived_e derived;
@@ -86,7 +86,7 @@ return_true:
         }
 }
 
-fn_result ofType(bool) carbon_abstract_is_base(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_base(struct carbon_memfile *memfile)
 {
         carbon_abstract_e type;
         if (LIKELY(FN_IS_OK(carbon_abstract_type(&type, memfile)))) {
@@ -96,14 +96,14 @@ fn_result ofType(bool) carbon_abstract_is_base(memfile *memfile)
         }
 }
 
-fn_result ofType(bool) carbon_abstract_is_derived(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_derived(struct carbon_memfile *memfile)
 {
         fn_result ofType(bool) ret = carbon_abstract_is_base(memfile);
         bool result = FN_BOOL(ret);
         return FN_OK_BOOL(!result);
 }
 
-fn_result carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memfile)
+fn_result carbon_abstract_get_class(carbon_abstract_type_class_e *type, struct carbon_memfile *memfile)
 {
         FN_FAIL_IF_NULL(type, memfile)
         carbon_derived_e derived;
@@ -319,21 +319,21 @@ fn_result carbon_abstract_map_derivable_to_class(carbon_abstract_type_class_e *o
         return FN_OK();
 }
 
-fn_result carbon_abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type)
+fn_result carbon_abstract_write_base_type(struct carbon_memfile *memfile, carbon_container_sub_type_e type)
 {
         FN_FAIL_IF_NULL(memfile)
         memfile_write(memfile, &type, sizeof(u8));
         return FN_OK();
 }
 
-fn_result carbon_abstract_write_derived_type(memfile *memfile, carbon_derived_e type)
+fn_result carbon_abstract_write_derived_type(struct carbon_memfile *memfile, carbon_derived_e type)
 {
         FN_FAIL_IF_NULL(type, memfile)
         memfile_write(memfile, &type, sizeof(u8));
         return FN_OK();
 }
 
-fn_result carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile)
+fn_result carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, struct carbon_memfile *memfile)
 {
         FN_FAIL_IF_NULL(type, memfile)
         u8 marker = memfile_peek_byte(memfile);
@@ -428,7 +428,7 @@ fn_result carbon_abstract_get_container_subtype(carbon_container_sub_type_e *typ
         return FN_OK();
 }
 
-static fn_result ofType(bool) __carbon_abstract_is_instanceof(memfile *memfile, carbon_container_sub_type_e T)
+static fn_result ofType(bool) __carbon_abstract_is_instanceof(struct carbon_memfile *memfile, carbon_container_sub_type_e T)
 {
         carbon_container_sub_type_e type;
         if (LIKELY(FN_IS_OK(carbon_abstract_get_container_subtype(&type, memfile)))) {
@@ -438,67 +438,67 @@ static fn_result ofType(bool) __carbon_abstract_is_instanceof(memfile *memfile, 
         }
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_object(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_object(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_OBJECT);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_array(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_array(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_ARRAY);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u8(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_u8(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U8);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u16(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_u16(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U16);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u32(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_u32(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U32);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u64(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_u64(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U64);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i8(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_i8(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I8);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i16(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_i16(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I16);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i32(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_i32(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I32);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i64(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_i64(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I64);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_float(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_float(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_FLOAT);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_boolean(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column_boolean(struct carbon_memfile *memfile)
 {
         return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_column(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_column(struct carbon_memfile *memfile)
 {
        if (FN_IS_TRUE(carbon_abstract_is_instanceof_column_u8(memfile)) ||
                 FN_IS_TRUE(carbon_abstract_is_instanceof_column_u16(memfile)) ||
@@ -516,7 +516,7 @@ fn_result ofType(bool) carbon_abstract_is_instanceof_column(memfile *memfile)
         }
 }
 
-fn_result ofType(bool) carbon_abstract_is_instanceof_list(memfile *memfile)
+fn_result ofType(bool) carbon_abstract_is_instanceof_list(struct carbon_memfile *memfile)
 {
         if (FN_IS_TRUE(carbon_abstract_is_instanceof_array(memfile)) ||
             FN_IS_TRUE(carbon_abstract_is_instanceof_column(memfile))) {
@@ -746,7 +746,7 @@ fn_result carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_d
         }
 }
 
-fn_result carbon_abstract_get_derived_type(carbon_derived_e *type, memfile *memfile)
+fn_result carbon_abstract_get_derived_type(carbon_derived_e *type, struct carbon_memfile *memfile)
 {
         FN_FAIL_IF_NULL(type, memfile)
         u8 c = memfile_peek_byte(memfile);

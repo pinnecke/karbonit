@@ -23,7 +23,7 @@
 #include <jakson/carbon/prop.h>
 #include <jakson/carbon/object_it.h>
 
-bool carbon_object_it_create(carbon_object_it *it, memfile *memfile, err *err,
+bool carbon_object_it_create(carbon_object_it *it, struct carbon_memfile *memfile, err *err,
                              offset_t payload_start)
 {
         DEBUG_ERROR_IF_NULL(it);

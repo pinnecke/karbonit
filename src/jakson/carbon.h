@@ -90,7 +90,7 @@ BEGIN_DECL
  * for more. */
 typedef struct carbon {
         memblock *memblock;
-        memfile memfile;
+        struct carbon_memfile memfile;
 
         struct {
                 spinlock write_lock;

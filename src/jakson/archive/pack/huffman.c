@@ -103,7 +103,7 @@ bool coding_huffman_drop(huffman *dic)
         return true;
 }
 
-bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_symbol)
+bool coding_huffman_serialize(struct carbon_memfile *file, const huffman *dic, char marker_symbol)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(dic)
@@ -156,7 +156,7 @@ static pack_huffman_entry *find_dic_entry(huffman *dic, unsigned char c)
         return NULL;
 }
 
-static size_t encodeString(memfile *file, huffman *dic, const char *string)
+static size_t encodeString(struct carbon_memfile *file, huffman *dic, const char *string)
 {
         memfile_begin_bit_mode(file);
 
@@ -192,7 +192,7 @@ static size_t encodeString(memfile *file, huffman *dic, const char *string)
         return num_written_bytes;
 }
 
-bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
+bool coding_huffman_encode(struct carbon_memfile *file, huffman *dic, const char *string)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(dic)
@@ -215,14 +215,14 @@ bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
         return true;
 }
 
-bool coding_huffman_read_string(pack_huffman_str_info *info, memfile *src)
+bool coding_huffman_read_string(pack_huffman_str_info *info, struct carbon_memfile *src)
 {
         info->nbytes_encoded = *MEMFILE_READ_TYPE(src, u32);
         info->encoded_bytes = MEMFILE_READ(src, info->nbytes_encoded);
         return true;
 }
 
-bool coding_huffman_read_entry(pack_huffman_info *info, memfile *file, char marker_symbol)
+bool coding_huffman_read_entry(pack_huffman_info *info, struct carbon_memfile *file, char marker_symbol)
 {
         char marker = *MEMFILE_PEEK(file, char);
         if (marker == marker_symbol) {

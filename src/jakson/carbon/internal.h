@@ -43,7 +43,7 @@ typedef struct carbon_insert {
                 carbon_object_it *object;
         } context;
 
-        memfile memfile;
+        struct carbon_memfile memfile;
         offset_t position;
         err err;
 } carbon_insert;
@@ -70,9 +70,9 @@ typedef struct carbon_insert_column_state {
         offset_t column_begin, column_end;
 } carbon_insert_column_state;
 
-bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes);
-bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes);
-bool carbon_int_insert_column(memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type, size_t capactity);
+bool carbon_int_insert_object(struct carbon_memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes);
+bool carbon_int_insert_array(struct carbon_memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes);
+bool carbon_int_insert_column(struct carbon_memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type, size_t capactity);
 
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.
@@ -95,7 +95,7 @@ bool carbon_int_object_it_prop_key_access(carbon_object_it *it);
 bool carbon_int_object_it_prop_value_skip(carbon_object_it *it);
 bool carbon_int_object_it_prop_skip(carbon_object_it *it);
 bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_object_it *it);
-bool carbon_int_field_data_access(memfile *file, err *err, struct carbon_int_field_access *field_access);
+bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct carbon_int_field_access *field_access);
 
 offset_t carbon_int_column_get_payload_off(carbon_column_it *it);
 offset_t carbon_int_payload_after_header(carbon *doc);
@@ -140,7 +140,7 @@ void carbon_int_auto_close_nested_array_it(struct carbon_int_field_access *field
 void carbon_int_auto_close_nested_object_it(struct carbon_int_field_access *field);
 void carbon_int_auto_close_nested_column_it(struct carbon_int_field_access *field);
 
-bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e type);
+bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_field_type_e type);
 
 /**
  * For <code>mode</code>, see <code>carbon_create_begin</code>

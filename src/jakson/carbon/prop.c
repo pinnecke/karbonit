@@ -19,7 +19,7 @@
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/field.h>
 
-u64 carbon_prop_size(memfile *file)
+u64 carbon_prop_size(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         offset_t prop_start = memfile_save_position(file);

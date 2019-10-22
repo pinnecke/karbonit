@@ -60,7 +60,7 @@ bool pack_coding_huffman_drop(packer *self)
         return true;
 }
 
-bool huffman_dump_dictionary(FILE *file, memfile *memfile)
+bool huffman_dump_dictionary(FILE *file, struct carbon_memfile *memfile)
 {
         DECLARE_AND_INIT(pack_huffman_info, entry_info)
         DECLARE_AND_INIT(offset_t, offset);
@@ -90,7 +90,7 @@ bool huffman_dump_dictionary(FILE *file, memfile *memfile)
         return true;
 }
 
-bool huffman_dump_string_table_entry(FILE *file, memfile *memfile)
+bool huffman_dump_string_table_entry(FILE *file, struct carbon_memfile *memfile)
 {
         UNUSED(file);
         UNUSED(memfile);
@@ -110,7 +110,7 @@ bool huffman_dump_string_table_entry(FILE *file, memfile *memfile)
         return true;
 }
 
-bool pack_huffman_write_extra(packer *self, memfile *dst,
+bool pack_huffman_write_extra(packer *self, struct carbon_memfile *dst,
                               const vector ofType (const char *) *strings)
 {
         CHECK_TAG(self->tag, PACK_HUFFMAN);
@@ -135,7 +135,7 @@ bool pack_huffman_read_extra(packer *self, FILE *src, size_t nbytes)
         return false;
 }
 
-bool pack_huffman_print_extra(packer *self, FILE *file, memfile *src)
+bool pack_huffman_print_extra(packer *self, FILE *file, struct carbon_memfile *src)
 {
         UNUSED(self);
 
@@ -144,7 +144,7 @@ bool pack_huffman_print_extra(packer *self, FILE *file, memfile *src)
         return true;
 }
 
-bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src,
+bool pack_huffman_print_encoded(packer *self, FILE *file, struct carbon_memfile *src,
                                 u32 decompressed_strlen)
 {
         UNUSED(self);
@@ -158,7 +158,7 @@ bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src,
 }
 
 bool
-pack_huffman_encode_string(packer *self, memfile *dst, err *err, const char *string)
+pack_huffman_encode_string(packer *self, struct carbon_memfile *dst, err *err, const char *string)
 {
         CHECK_TAG(self->tag, PACK_HUFFMAN);
 

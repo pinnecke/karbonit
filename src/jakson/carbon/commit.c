@@ -23,7 +23,7 @@
 #include <jakson/stdx/unique_id.h>
 #include <jakson/std/hash.h>
 
-bool carbon_commit_hash_create(memfile *file)
+bool carbon_commit_hash_create(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
 
@@ -36,14 +36,14 @@ bool carbon_commit_hash_create(memfile *file)
         return true;
 }
 
-bool carbon_commit_hash_skip(memfile *file)
+bool carbon_commit_hash_skip(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         memfile_skip(file, sizeof(u64));
         return true;
 }
 
-bool carbon_commit_hash_read(u64 *commit_hash, memfile *file)
+bool carbon_commit_hash_read(u64 *commit_hash, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(commit_hash)
@@ -51,7 +51,7 @@ bool carbon_commit_hash_read(u64 *commit_hash, memfile *file)
         return true;
 }
 
-bool carbon_commit_hash_peek(u64 *commit_hash, memfile *file)
+bool carbon_commit_hash_peek(u64 *commit_hash, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(commit_hash)
@@ -59,7 +59,7 @@ bool carbon_commit_hash_peek(u64 *commit_hash, memfile *file)
         return true;
 }
 
-bool carbon_commit_hash_update(memfile *file, const char *base, u64 len)
+bool carbon_commit_hash_update(struct carbon_memfile *file, const char *base, u64 len)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(base)

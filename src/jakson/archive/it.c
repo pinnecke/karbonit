@@ -22,7 +22,7 @@
 #include <jakson/archive/it.h>
 #include <jakson/archive/internal.h>
 
-static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
+static bool init_object_from_memfile(archive_object *obj, struct carbon_memfile *memfile)
 {
         JAK_ASSERT(obj);
         offset_t object_off;
@@ -108,7 +108,7 @@ inline static offset_t offset_by_state(prop_iter *iter)
         }
 }
 
-static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *memfile)
+static bool prop_iter_read_colum_entry(collection_iter_state *state, struct carbon_memfile *memfile)
 {
         JAK_ASSERT(state->current_column_group.current_column.current_entry.idx
                    < state->current_column_group.current_column.num_elem);
@@ -125,7 +125,7 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *me
                < state->current_column_group.current_column.num_elem;
 }
 
-static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile)
+static bool prop_iter_read_column(collection_iter_state *state, struct carbon_memfile *memfile)
 {
         JAK_ASSERT(state->current_column_group.current_column.idx < state->current_column_group.num_columns);
 
@@ -148,7 +148,7 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
         return (++state->current_column_group.current_column.idx) < state->current_column_group.num_columns;
 }
 
-static bool collection_iter_read_next_column_group(collection_iter_state *state, memfile *memfile)
+static bool collection_iter_read_next_column_group(collection_iter_state *state, struct carbon_memfile *memfile)
 {
         JAK_ASSERT(state->current_column_group_idx < state->num_column_groups);
         memfile_seek(memfile, state->column_group_offsets[state->current_column_group_idx]);

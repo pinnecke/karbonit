@@ -29,11 +29,11 @@
 
 BEGIN_DECL
 
-bool carbon_commit_hash_create(memfile *file);
-bool carbon_commit_hash_skip(memfile *file);
-bool carbon_commit_hash_read(u64 *commit_hash, memfile *file);
-bool carbon_commit_hash_peek(u64 *commit_hash, memfile *file);
-bool carbon_commit_hash_update(memfile *file, const char *base, u64 len);
+bool carbon_commit_hash_create(struct carbon_memfile *file);
+bool carbon_commit_hash_skip(struct carbon_memfile *file);
+bool carbon_commit_hash_read(u64 *commit_hash, struct carbon_memfile *file);
+bool carbon_commit_hash_peek(u64 *commit_hash, struct carbon_memfile *file);
+bool carbon_commit_hash_update(struct carbon_memfile *file, const char *base, u64 len);
 bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len);
 const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash);
 bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash);

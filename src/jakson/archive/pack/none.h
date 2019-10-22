@@ -32,11 +32,11 @@ BEGIN_DECL
 bool pack_none_init(packer *self);
 bool pack_none_cpy(const packer *self, packer *dst);
 bool pack_none_drop(packer *self);
-bool pack_none_write_extra(packer *self, memfile *dst, const vector ofType (const char *) *strings);
+bool pack_none_write_extra(packer *self, struct carbon_memfile *dst, const vector ofType (const char *) *strings);
 bool pack_none_read_extra(packer *self, FILE *src, size_t nbytes);
-bool pack_none_print_extra(packer *self, FILE *file, memfile *src);
-bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src, u32 decompressed_strlen);
-bool pack_none_encode_string(packer *self, memfile *dst, err *err, const char *string);
+bool pack_none_print_extra(packer *self, FILE *file, struct carbon_memfile *src);
+bool pack_none_print_encoded_string(packer *self, FILE *file, struct carbon_memfile *src, u32 decompressed_strlen);
+bool pack_none_encode_string(packer *self, struct carbon_memfile *dst, err *err, const char *string);
 bool pack_none_decode_string(packer *self, char *dst, size_t strlen, FILE *src);
 
 END_DECL

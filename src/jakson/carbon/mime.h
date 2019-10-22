@@ -724,7 +724,7 @@ static struct mime_type {
 
 static const u32 _global_mime_type_register = (u32) ARRAY_LENGTH(global_mime_type_register);
 
-bool carbon_media_write(memfile *dst, carbon_field_type_e type);
+bool carbon_media_write(struct carbon_memfile *dst, carbon_field_type_e type);
 
 /**
  * Returns the mime type identifier for a file extension <code>ext</code>. If <code>ext</code> is not known,

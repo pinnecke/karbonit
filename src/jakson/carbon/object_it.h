@@ -31,7 +31,7 @@
 BEGIN_DECL
 
 typedef struct carbon_object_it {
-        memfile memfile;
+        struct carbon_memfile memfile;
         err err;
 
         offset_t object_contents_off, object_start_off;
@@ -57,7 +57,7 @@ typedef struct carbon_object_it {
         i64 mod_size;
 } carbon_object_it;
 
-bool carbon_object_it_create(carbon_object_it *it, memfile *memfile, err *err, offset_t payload_start);
+bool carbon_object_it_create(carbon_object_it *it, struct carbon_memfile *memfile, err *err, offset_t payload_start);
 bool carbon_object_it_copy(carbon_object_it *dst, carbon_object_it *src);
 bool carbon_object_it_clone(carbon_object_it *dst, carbon_object_it *src);
 bool carbon_object_it_drop(carbon_object_it *it);

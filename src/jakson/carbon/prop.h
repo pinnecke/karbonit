@@ -27,7 +27,7 @@
 
 BEGIN_DECL
 
-u64 carbon_prop_size(memfile *file);
+u64 carbon_prop_size(struct carbon_memfile *file);
 
 END_DECL
 

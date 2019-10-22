@@ -44,7 +44,7 @@ bool pack_none_drop(packer *self)
         return true;
 }
 
-bool pack_none_write_extra(packer *self, memfile *dst,
+bool pack_none_write_extra(packer *self, struct carbon_memfile *dst,
                            const vector ofType (const char *) *strings)
 {
         CHECK_TAG(self->tag, PACK_NONE);
@@ -67,7 +67,7 @@ bool pack_none_read_extra(packer *self, FILE *src, size_t nbytes)
         return true;
 }
 
-bool pack_none_print_extra(packer *self, FILE *file, memfile *src)
+bool pack_none_print_extra(packer *self, FILE *file, struct carbon_memfile *src)
 {
         CHECK_TAG(self->tag, PACK_NONE);
 
@@ -78,7 +78,7 @@ bool pack_none_print_extra(packer *self, FILE *file, memfile *src)
         return true;
 }
 
-bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src,
+bool pack_none_print_encoded_string(packer *self, FILE *file, struct carbon_memfile *src,
                                     u32 decompressed_strlen)
 {
         CHECK_TAG(self->tag, PACK_NONE);
@@ -98,7 +98,7 @@ bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src,
         return true;
 }
 
-bool pack_none_encode_string(packer *self, memfile *dst, err *err,
+bool pack_none_encode_string(packer *self, struct carbon_memfile *dst, err *err,
                              const char *string)
 {
         CHECK_TAG(self->tag, PACK_NONE);

@@ -1,19 +1,19 @@
 #include <gtest/gtest.h>
 #include <jakson/jakson.h>
 
-static void make_memfile(memfile *memfile) {
+static void make_memfile(struct carbon_memfile *memfile) {
         memblock *memblock;
         memblock_create(&memblock, 1024);
         memfile_open(memfile, memblock, READ_WRITE);
 }
 
-static void drop_memfile(memfile *memfile) {
+static void drop_memfile(struct carbon_memfile *memfile) {
         memblock_drop(memfile->memblock);
 }
 
 TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
 
-        memfile memfile;
+        struct carbon_memfile memfile;
         make_memfile(&memfile);
 
         carbon_abstract_e abstract_type;
@@ -91,7 +91,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
 
 TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
 
-        memfile memfile;
+        struct carbon_memfile memfile;
         make_memfile(&memfile);
 
         carbon_abstract_e abstract_type;
@@ -209,7 +209,7 @@ static fn_result gtest_helper_get_bool(bool *value, fn_result result)
         return FN_OK();
 }
 
-static void test_derived_is_base(memfile *memfile, carbon_derived_e type, bool is_base)
+static void test_derived_is_base(struct carbon_memfile *memfile, carbon_derived_e type, bool is_base)
 {
         bool status;
         ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(memfile, type)));
@@ -221,7 +221,7 @@ static void test_derived_is_base(memfile *memfile, carbon_derived_e type, bool i
 
 TEST(TestAbstractTypeMarker, DetectNonBaseTypeByDerivedType) {
 
-        memfile memfile;
+        struct carbon_memfile memfile;
         make_memfile(&memfile);
 
         test_derived_is_base(&memfile, CARBON_UNSORTED_MULTIMAP, true);
@@ -287,7 +287,7 @@ TEST(TestAbstractTypeMarker, DetectNonBaseTypeByDerivedType) {
         drop_memfile(&memfile);
 }
 
-static void test_get_class_of_concrete_derived(memfile *file, carbon_derived_e concrete,
+static void test_get_class_of_concrete_derived(struct carbon_memfile *file, carbon_derived_e concrete,
         carbon_abstract_type_class_e expected)
 {
         carbon_abstract_type_class_e clazz;
@@ -299,7 +299,7 @@ static void test_get_class_of_concrete_derived(memfile *file, carbon_derived_e c
 
 TEST(TestAbstractTypeMarker, GetClassOfConcreteDerivedType) {
 
-        memfile memfile;
+        struct carbon_memfile memfile;
         make_memfile(&memfile);
 
         test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTIMAP, CARBON_TYPE_UNSORTED_MULTIMAP);
@@ -365,7 +365,7 @@ TEST(TestAbstractTypeMarker, GetClassOfConcreteDerivedType) {
         drop_memfile(&memfile);
 }
 
-static void test_get_container_for_derived_type(memfile *memfile, carbon_derived_e derived,
+static void test_get_container_for_derived_type(struct carbon_memfile *memfile, carbon_derived_e derived,
                                                 carbon_container_sub_type_e expected)
 {
         carbon_container_sub_type_e sub_type;
@@ -377,7 +377,7 @@ static void test_get_container_for_derived_type(memfile *memfile, carbon_derived
 
 TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
 {
-        memfile memfile;
+        struct carbon_memfile memfile;
         make_memfile(&memfile);
 
         /* abstract types for object containers */

@@ -21,7 +21,7 @@
 
 #include <jakson/archive/internal.h>
 
-void int_read_prop_offsets(archive_prop_offs *prop_offsets, memfile *memfile,
+void int_read_prop_offsets(archive_prop_offs *prop_offsets, struct carbon_memfile *memfile,
                                const object_flags_u *flags)
 {
         ZERO_MEMORY(prop_offsets, sizeof(archive_prop_offs));
@@ -105,7 +105,7 @@ void int_read_prop_offsets(archive_prop_offs *prop_offsets, memfile *memfile,
         }
 }
 
-void int_embedded_fixed_props_read(fixed_prop *prop, memfile *memfile)
+void int_embedded_fixed_props_read(fixed_prop *prop, struct carbon_memfile *memfile)
 {
         prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop->header->num_entries *
@@ -113,7 +113,7 @@ void int_embedded_fixed_props_read(fixed_prop *prop, memfile *memfile)
         prop->values = memfile_peek(memfile, 1);
 }
 
-void int_embedded_var_props_read(var_prop *prop, memfile *memfile)
+void int_embedded_var_props_read(var_prop *prop, struct carbon_memfile *memfile)
 {
         prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop->header->num_entries *
@@ -122,14 +122,14 @@ void int_embedded_var_props_read(var_prop *prop, memfile *memfile)
         prop->values = memfile_peek(memfile, 1);
 }
 
-void int_embedded_null_props_read(null_prop *prop, memfile *memfile)
+void int_embedded_null_props_read(null_prop *prop, struct carbon_memfile *memfile)
 {
         prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
 }
 
-void int_embedded_array_props_read(array_prop *prop, memfile *memfile)
+void int_embedded_array_props_read(array_prop *prop, struct carbon_memfile *memfile)
 {
         prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop->header->num_entries *
@@ -138,7 +138,7 @@ void int_embedded_array_props_read(array_prop *prop, memfile *memfile)
         prop->values_begin = memfile_tell(memfile);
 }
 
-void int_embedded_table_props_read(table_prop *prop, memfile *memfile)
+void int_embedded_table_props_read(table_prop *prop, struct carbon_memfile *memfile)
 {
         prop->header->marker = *MEMFILE_READ_TYPE(memfile, char);
         prop->header->num_entries = *MEMFILE_READ_TYPE(memfile, u8);

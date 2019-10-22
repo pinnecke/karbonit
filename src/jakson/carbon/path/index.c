@@ -80,7 +80,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object_it 
 
 static void array_build_index(struct path_index_node *parent, struct carbon_array *elem_it);
 
-static void node_flat(memfile *file, struct path_index_node *node);
+static void node_flat(struct carbon_memfile *file, struct path_index_node *node);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  helper
@@ -198,7 +198,7 @@ static void path_index_node_print_level(FILE *file, struct path_index_node *node
 }
 
 static const void *
-record_ref_read(carbon_key_e *key_type, u64 *key_length, u64 *commit_hash, memfile *memfile)
+record_ref_read(carbon_key_e *key_type, u64 *key_length, u64 *commit_hash, struct carbon_memfile *memfile)
 {
         memfile_save_position(memfile);
         memfile_seek(memfile, 0);
@@ -209,7 +209,7 @@ record_ref_read(carbon_key_e *key_type, u64 *key_length, u64 *commit_hash, memfi
         return ret;
 }
 
-static void record_ref_create(memfile *memfile, carbon *doc)
+static void record_ref_create(struct carbon_memfile *memfile, carbon *doc)
 {
         carbon_key_e key_type;
         u64 commit_hash;
@@ -482,7 +482,7 @@ static void array_build_index(struct path_index_node *parent, struct carbon_arra
         }
 }
 
-static void field_ref_write(memfile *file, struct path_index_node *node)
+static void field_ref_write(struct carbon_memfile *file, struct path_index_node *node)
 {
         memfile_write_byte(file, node->field_type);
         if (node->field_type != CARBON_FIELD_NULL && node->field_type != CARBON_FIELD_TRUE &&
@@ -493,7 +493,7 @@ static void field_ref_write(memfile *file, struct path_index_node *node)
         }
 }
 
-static void container_contents_flat(memfile *file, struct path_index_node *node)
+static void container_contents_flat(struct carbon_memfile *file, struct path_index_node *node)
 {
         memfile_write_uintvar_stream(NULL, file, node->sub_entries.num_elems);
 
@@ -516,7 +516,7 @@ static void container_contents_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-static void container_field_flat(memfile *file, struct path_index_node *node)
+static void container_field_flat(struct carbon_memfile *file, struct path_index_node *node)
 {
         switch (node->field_type) {
                 case CARBON_FIELD_NULL:
@@ -593,7 +593,7 @@ static void container_field_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-static void prop_flat(memfile *file, struct path_index_node *node)
+static void prop_flat(struct carbon_memfile *file, struct path_index_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_PROP_NODE);
         field_ref_write(file, node);
@@ -601,7 +601,7 @@ static void prop_flat(memfile *file, struct path_index_node *node)
         container_field_flat(file, node);
 }
 
-static void array_flat(memfile *file, struct path_index_node *node)
+static void array_flat(struct carbon_memfile *file, struct path_index_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_ARRAY_NODE);
         field_ref_write(file, node);
@@ -1009,14 +1009,14 @@ array_to_str(string_buffer *str, carbon_path_index *index, bool is_root, unsigne
         }
 }
 
-static void column_flat(memfile *file, struct path_index_node *node)
+static void column_flat(struct carbon_memfile *file, struct path_index_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_COLUMN_NODE);
         field_ref_write(file, node);
         JAK_ASSERT(node->sub_entries.num_elems == 0);
 }
 
-static void node_flat(memfile *file, struct path_index_node *node)
+static void node_flat(struct carbon_memfile *file, struct path_index_node *node)
 {
         switch (node->type) {
                 case PATH_INDEX_PROP_KEY:
@@ -1033,12 +1033,12 @@ static void node_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-static void index_flat(memfile *file, struct path_index_node *root_array)
+static void index_flat(struct carbon_memfile *file, struct path_index_node *root_array)
 {
         array_flat(file, root_array);
 }
 
-static void index_build(memfile *file, carbon *doc)
+static void index_build(struct carbon_memfile *file, carbon *doc)
 {
         struct path_index_node root_array;
 

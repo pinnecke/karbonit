@@ -255,7 +255,7 @@ bool carbon_field_type_is_constant(carbon_field_type_e type)
         return (carbon_field_type_is_null(type) || carbon_field_type_is_boolean(type));
 }
 
-bool carbon_field_skip(memfile *file)
+bool carbon_field_skip(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         u8 type_marker = *MEMFILE_PEEK(file, u8);
@@ -356,7 +356,7 @@ bool carbon_field_skip(memfile *file)
         return true;
 }
 
-fn_result carbon_field_skip_object(memfile *file)
+fn_result carbon_field_skip_object(struct carbon_memfile *file)
 {
         fn_result result = carbon_abstract_is_instanceof_object(file);
         if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
@@ -371,14 +371,14 @@ fn_result carbon_field_skip_object(memfile *file)
         }
 }
 
-fn_result carbon_field_skip_array(memfile *file)
+fn_result carbon_field_skip_array(struct carbon_memfile *file)
 {
         fn_result result = carbon_abstract_is_instanceof_array(file);
         if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
                 struct carbon_array skip_it;
                 carbon_array_it_create(&skip_it, file, &file->err, memfile_tell(file));
                 carbon_array_it_fast_forward(&skip_it);
-                memfile_seek(file, memfile_tell(&skip_it.memfile));
+                memfile_seek(file, memfile_tell(&skip_it.file));
                 carbon_array_it_drop(&skip_it);
                 return FN_OK();
         } else {
@@ -386,7 +386,7 @@ fn_result carbon_field_skip_array(memfile *file)
         }
 }
 
-bool carbon_field_skip_column(memfile *file)
+bool carbon_field_skip_column(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -400,7 +400,7 @@ bool carbon_field_skip_column(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_binary(memfile *file)
+bool carbon_field_skip_binary(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -417,7 +417,7 @@ bool carbon_field_skip_binary(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_custom_binary(memfile *file)
+bool carbon_field_skip_custom_binary(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -432,7 +432,7 @@ bool carbon_field_skip_custom_binary(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_string(memfile *file)
+bool carbon_field_skip_string(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -442,7 +442,7 @@ bool carbon_field_skip_string(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_float(memfile *file)
+bool carbon_field_skip_float(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -451,7 +451,7 @@ bool carbon_field_skip_float(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_boolean(memfile *file)
+bool carbon_field_skip_boolean(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -460,7 +460,7 @@ bool carbon_field_skip_boolean(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_null(memfile *file)
+bool carbon_field_skip_null(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -468,7 +468,7 @@ bool carbon_field_skip_null(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_8(memfile *file)
+bool carbon_field_skip_8(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -479,7 +479,7 @@ bool carbon_field_skip_8(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_16(memfile *file)
+bool carbon_field_skip_16(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -490,7 +490,7 @@ bool carbon_field_skip_16(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_32(memfile *file)
+bool carbon_field_skip_32(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -501,7 +501,7 @@ bool carbon_field_skip_32(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_64(memfile *file)
+bool carbon_field_skip_64(struct carbon_memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 

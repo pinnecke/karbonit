@@ -270,22 +270,22 @@ bool carbon_field_type_is_constant(carbon_field_type_e type);
 
 carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type, err *err);
 
-bool carbon_field_skip(memfile *file);
+bool carbon_field_skip(struct carbon_memfile *file);
 
-fn_result carbon_field_skip_object(memfile *file);
-fn_result carbon_field_skip_array(memfile *file);
+fn_result carbon_field_skip_object(struct carbon_memfile *file);
+fn_result carbon_field_skip_array(struct carbon_memfile *file);
 
-bool carbon_field_skip_column(memfile *file);
-bool carbon_field_skip_binary(memfile *file);
-bool carbon_field_skip_custom_binary(memfile *file);
-bool carbon_field_skip_string(memfile *file);
-bool carbon_field_skip_float(memfile *file);
-bool carbon_field_skip_boolean(memfile *file);
-bool carbon_field_skip_null(memfile *file);
-bool carbon_field_skip_8(memfile *file);
-bool carbon_field_skip_16(memfile *file);
-bool carbon_field_skip_32(memfile *file);
-bool carbon_field_skip_64(memfile *file);
+bool carbon_field_skip_column(struct carbon_memfile *file);
+bool carbon_field_skip_binary(struct carbon_memfile *file);
+bool carbon_field_skip_custom_binary(struct carbon_memfile *file);
+bool carbon_field_skip_string(struct carbon_memfile *file);
+bool carbon_field_skip_float(struct carbon_memfile *file);
+bool carbon_field_skip_boolean(struct carbon_memfile *file);
+bool carbon_field_skip_null(struct carbon_memfile *file);
+bool carbon_field_skip_8(struct carbon_memfile *file);
+bool carbon_field_skip_16(struct carbon_memfile *file);
+bool carbon_field_skip_32(struct carbon_memfile *file);
+bool carbon_field_skip_64(struct carbon_memfile *file);
 
 carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivation, carbon_column_type_e type);
 carbon_field_type_e carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is_null, bool is_true);

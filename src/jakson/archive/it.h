@@ -64,7 +64,7 @@ typedef struct archive_object {
         offset_t offset;                        /** this objects header offset */
         archive_prop_offs prop_offsets;  /** per-property type offset in the record table byte stream */
         offset_t next_obj_off;                  /** offset to next object in list, or NULL if no such exists */
-        memfile memfile;
+        struct carbon_memfile memfile;
         err err;
 } archive_object;
 
@@ -112,7 +112,7 @@ typedef struct collection_iter_state {
 
 typedef struct archive_value_vector {
         prop_iter *prop_iter;            /** pointer to property iterator that created this iterator */
-        memfile record_table_memfile;    /** iterator-local read-only mem on archive record table */
+        struct carbon_memfile record_table_memfile;    /** iterator-local read-only mem on archive record table */
         enum archive_field_type prop_type;              /** property basic value type (e.g., int8, or object) */
         bool is_array;                          /** flag indicating whether value type is an array or not */
         offset_t data_off;                      /** offset in mem where type-dependent data begins */
@@ -165,7 +165,7 @@ typedef struct archive_value_vector {
 
 typedef struct prop_iter {
         archive_object object;                 /** current object */
-        memfile record_table_memfile;          /** iterator-local read-only mem on archive record table */
+        struct carbon_memfile record_table_memfile;          /** iterator-local read-only mem on archive record table */
         u16 mask;                                     /** user-defined mask which properties to include */
         prop_iter_mode_e mode;                     /** determines whether to iterating over object or collection */
         err err;                               /** ERROR information */
@@ -175,13 +175,13 @@ typedef struct prop_iter {
 } prop_iter;
 
 typedef struct independent_iter_state {
-        memfile record_table_memfile;           /** iterator-local read-only mem on archive record table */
+        struct carbon_memfile record_table_memfile;           /** iterator-local read-only mem on archive record table */
         collection_iter_state state;            /** iterator-local state */
         err err;                                /** ERROR information */
 } independent_iter_state;
 
 typedef struct column_object_iter {
-        memfile memfile;
+        struct carbon_memfile memfile;
         collection_iter_state entry_state;
         archive_object obj;
         offset_t next_obj_off;

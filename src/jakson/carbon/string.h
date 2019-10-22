@@ -28,18 +28,18 @@
 
 BEGIN_DECL
 
-bool carbon_string_write(memfile *file, const char *string);
-bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len);
-bool carbon_string_nomarker_write(memfile *file, const char *string);
-bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len);
-bool carbon_string_nomarker_remove(memfile *file);
-bool carbon_string_remove(memfile *file);
-bool carbon_string_update(memfile *file, const char *string);
-bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_len);
-bool carbon_string_skip(memfile *file);
-bool carbon_string_nomarker_skip(memfile *file);
-const char *carbon_string_read(u64 *len, memfile *file);
-const char *carbon_string_nomarker_read(u64 *len, memfile *file);
+bool carbon_string_write(struct carbon_memfile *file, const char *string);
+bool carbon_string_nchar_write(struct carbon_memfile *file, const char *string, u64 str_len);
+bool carbon_string_nomarker_write(struct carbon_memfile *file, const char *string);
+bool carbon_string_nomarker_nchar_write(struct carbon_memfile *file, const char *string, u64 str_len);
+bool carbon_string_nomarker_remove(struct carbon_memfile *file);
+bool carbon_string_remove(struct carbon_memfile *file);
+bool carbon_string_update(struct carbon_memfile *file, const char *string);
+bool carbon_string_update_wnchar(struct carbon_memfile *file, const char *string, size_t str_len);
+bool carbon_string_skip(struct carbon_memfile *file);
+bool carbon_string_nomarker_skip(struct carbon_memfile *file);
+const char *carbon_string_read(u64 *len, struct carbon_memfile *file);
+const char *carbon_string_nomarker_read(u64 *len, struct carbon_memfile *file);
 
 END_DECL
 

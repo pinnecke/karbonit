@@ -34,7 +34,7 @@
         (const builtin_type *) raw;                                                                                    \
 })
 
-bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err,
+bool carbon_column_it_create(carbon_column_it *it, struct carbon_memfile *memfile, err *err,
                              offset_t column_start_offset)
 {
         DEBUG_ERROR_IF_NULL(it);

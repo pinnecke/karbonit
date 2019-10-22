@@ -29,7 +29,7 @@
 
 BEGIN_DECL
 
-typedef struct memfile {
+struct carbon_memfile {
         memblock *memblock;
         offset_t pos;
         offset_t saved_pos[10];
@@ -38,7 +38,7 @@ typedef struct memfile {
         size_t current_read_bit, current_write_bit, bytes_completed;
         access_mode_e mode;
         err err;
-} memfile;
+};
 
 #define MEMFILE_PEEK(file, type)                                                                                   \
 ({                                                                                                                     \
@@ -68,56 +68,56 @@ typedef struct memfile {
     offset;                                                                                                            \
 })
 
-bool memfile_open(memfile *file, memblock *block, access_mode_e mode);
-bool memfile_clone(memfile *dst, memfile *src);
+bool memfile_open(struct carbon_memfile *file, memblock *block, access_mode_e mode);
+bool memfile_clone(struct carbon_memfile *dst, struct carbon_memfile *src);
 
-bool memfile_seek(memfile *file, offset_t pos);
-bool memfile_seek_from_here(memfile *file, signed_offset_t where);
-bool memfile_rewind(memfile *file);
-bool memfile_grow(memfile *file_in, size_t grow_by_bytes);
-bool memfile_get_offset(offset_t *pos, const memfile *file);
-size_t memfile_size(memfile *file);
-bool memfile_cut(memfile *file, size_t how_many_bytes);
-size_t memfile_remain_size(memfile *file);
-bool memfile_shrink(memfile *file);
-const char *memfile_read(memfile *file, offset_t nbytes);
-u8 memfile_read_byte(memfile *file);
-u8 memfile_peek_byte(memfile *file);
-u64 memfile_read_u64(memfile *file);
-i64 memfile_read_i64(memfile *file);
-bool memfile_skip(memfile *file, signed_offset_t nbytes);
+bool memfile_seek(struct carbon_memfile *file, offset_t pos);
+bool memfile_seek_from_here(struct carbon_memfile *file, signed_offset_t where);
+bool memfile_rewind(struct carbon_memfile *file);
+bool memfile_grow(struct carbon_memfile *file_in, size_t grow_by_bytes);
+bool memfile_get_offset(offset_t *pos, const struct carbon_memfile *file);
+size_t memfile_size(struct carbon_memfile *file);
+bool memfile_cut(struct carbon_memfile *file, size_t how_many_bytes);
+size_t memfile_remain_size(struct carbon_memfile *file);
+bool memfile_shrink(struct carbon_memfile *file);
+const char *memfile_read(struct carbon_memfile *file, offset_t nbytes);
+u8 memfile_read_byte(struct carbon_memfile *file);
+u8 memfile_peek_byte(struct carbon_memfile *file);
+u64 memfile_read_u64(struct carbon_memfile *file);
+i64 memfile_read_i64(struct carbon_memfile *file);
+bool memfile_skip(struct carbon_memfile *file, signed_offset_t nbytes);
 #define MEMFILE_SKIP_BYTE(file) memfile_skip(file, sizeof(u8))
-const char *memfile_peek(memfile *file, offset_t nbytes);
-bool memfile_write_byte(memfile *file, u8 data);
-bool memfile_write(memfile *file, const void *data, offset_t nbytes);
-bool memfile_write_zero(memfile *file, size_t how_many);
-bool memfile_begin_bit_mode(memfile *file);
-bool memfile_write_bit(memfile *file, bool flag);
-bool memfile_read_bit(memfile *file);
-offset_t memfile_save_position(memfile *file);
-bool memfile_restore_position(memfile *file);
-signed_offset_t memfile_ensure_space(memfile *memfile, u64 nbytes);
-u64 memfile_read_uintvar_stream(u8 *nbytes, memfile *memfile);
-bool memfile_skip_uintvar_stream(memfile *memfile);
-u64 memfile_peek_uintvar_stream(u8 *nbytes, memfile *memfile);
-u64 memfile_write_uintvar_stream(u64 *nbytes_moved, memfile *memfile, u64 value);
-signed_offset_t memfile_update_uintvar_stream(memfile *memfile, u64 value);
-bool memfile_seek_to_start(memfile *file);
-bool memfile_seek_to_end(memfile *file);
+const char *memfile_peek(struct carbon_memfile *file, offset_t nbytes);
+bool memfile_write_byte(struct carbon_memfile *file, u8 data);
+bool memfile_write(struct carbon_memfile *file, const void *data, offset_t nbytes);
+bool memfile_write_zero(struct carbon_memfile *file, size_t how_many);
+bool memfile_begin_bit_mode(struct carbon_memfile *file);
+bool memfile_write_bit(struct carbon_memfile *file, bool flag);
+bool memfile_read_bit(struct carbon_memfile *file);
+offset_t memfile_save_position(struct carbon_memfile *file);
+bool memfile_restore_position(struct carbon_memfile *file);
+signed_offset_t memfile_ensure_space(struct carbon_memfile *memfile, u64 nbytes);
+u64 memfile_read_uintvar_stream(u8 *nbytes, struct carbon_memfile *memfile);
+bool memfile_skip_uintvar_stream(struct carbon_memfile *memfile);
+u64 memfile_peek_uintvar_stream(u8 *nbytes, struct carbon_memfile *memfile);
+u64 memfile_write_uintvar_stream(u64 *nbytes_moved, struct carbon_memfile *memfile, u64 value);
+signed_offset_t memfile_update_uintvar_stream(struct carbon_memfile *memfile, u64 value);
+bool memfile_seek_to_start(struct carbon_memfile *file);
+bool memfile_seek_to_end(struct carbon_memfile *file);
 
 /**
  * Moves the contents of the underlying memory block <code>nbytes</code> towards the end of the file.
  * The offset in the memory block from where this move is done is the current position stored in this file.
  * In case of not enough space, the underlying memory block is resized.
  */
-bool memfile_inplace_insert(memfile *file, size_t nbytes);
-bool memfile_inplace_remove(memfile *file, size_t nbytes_from_here);
-bool memfile_end_bit_mode(size_t *num_bytes_written, memfile *file);
-void *memfile_current_pos(memfile *file, offset_t nbytes);
+bool memfile_inplace_insert(struct carbon_memfile *file, size_t nbytes);
+bool memfile_inplace_remove(struct carbon_memfile *file, size_t nbytes_from_here);
+bool memfile_end_bit_mode(size_t *num_bytes_written, struct carbon_memfile *file);
+void *memfile_current_pos(struct carbon_memfile *file, offset_t nbytes);
 
-bool memfile_hexdump(string_buffer *sb, memfile *file);
-bool memfile_hexdump_printf(FILE *file, memfile *memfile);
-bool memfile_hexdump_print(memfile *memfile);
+bool memfile_hexdump(string_buffer *sb, struct carbon_memfile *file);
+bool memfile_hexdump_printf(FILE *file, struct carbon_memfile *memfile);
+bool memfile_hexdump_print(struct carbon_memfile *memfile);
 
 END_DECL
 

@@ -18,11 +18,11 @@
 #include <jakson/mem/file.h>
 #include <jakson/std/uintvar/stream.h>
 
-bool memfile_open(memfile *file, memblock *block, access_mode_e mode)
+bool memfile_open(struct carbon_memfile *file, memblock *block, access_mode_e mode)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(block)
-        ZERO_MEMORY(file, sizeof(memfile))
+        ZERO_MEMORY(file, sizeof(struct carbon_memfile))
         file->memblock = block;
         file->pos = 0;
         file->bit_mode = false;
@@ -32,7 +32,7 @@ bool memfile_open(memfile *file, memblock *block, access_mode_e mode)
         return true;
 }
 
-bool memfile_clone(memfile *dst, memfile *src)
+bool memfile_clone(struct carbon_memfile *dst, struct carbon_memfile *src)
 {
         DEBUG_ERROR_IF_NULL(dst)
         DEBUG_ERROR_IF_NULL(src)
@@ -45,7 +45,7 @@ bool memfile_clone(memfile *dst, memfile *src)
         return true;
 }
 
-bool memfile_seek(memfile *file, offset_t pos)
+bool memfile_seek(struct carbon_memfile *file, offset_t pos)
 {
         DEBUG_ERROR_IF_NULL(file)
         offset_t file_size = 0;
@@ -63,21 +63,21 @@ bool memfile_seek(memfile *file, offset_t pos)
         return true;
 }
 
-bool memfile_seek_from_here(memfile *file, signed_offset_t where)
+bool memfile_seek_from_here(struct carbon_memfile *file, signed_offset_t where)
 {
         offset_t now = memfile_tell(file);
         offset_t then = now + where;
         return memfile_seek(file, then);
 }
 
-bool memfile_rewind(memfile *file)
+bool memfile_rewind(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         file->pos = 0;
         return true;
 }
 
-bool memfile_grow(memfile *file_in, size_t grow_by_bytes)
+bool memfile_grow(struct carbon_memfile *file_in, size_t grow_by_bytes)
 {
         DEBUG_ERROR_IF_NULL(file_in)
         if (LIKELY(grow_by_bytes > 0)) {
@@ -88,7 +88,7 @@ bool memfile_grow(memfile *file_in, size_t grow_by_bytes)
         return true;
 }
 
-bool memfile_get_offset(offset_t *pos, const memfile *file)
+bool memfile_get_offset(offset_t *pos, const struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(pos)
         DEBUG_ERROR_IF_NULL(file)
@@ -96,7 +96,7 @@ bool memfile_get_offset(offset_t *pos, const memfile *file)
         return true;
 }
 
-size_t memfile_size(memfile *file)
+size_t memfile_size(struct carbon_memfile *file)
 {
         if (!file || !file->memblock) {
                 return 0;
@@ -107,7 +107,7 @@ size_t memfile_size(memfile *file)
         }
 }
 
-bool memfile_cut(memfile *file, size_t how_many_bytes)
+bool memfile_cut(struct carbon_memfile *file, size_t how_many_bytes)
 {
         DEBUG_ERROR_IF_NULL(file);
         offset_t block_size = 0;
@@ -124,13 +124,13 @@ bool memfile_cut(memfile *file, size_t how_many_bytes)
         }
 }
 
-size_t memfile_remain_size(memfile *file)
+size_t memfile_remain_size(struct carbon_memfile *file)
 {
         JAK_ASSERT(file->pos <= memfile_size(file));
         return memfile_size(file) - file->pos;
 }
 
-bool memfile_shrink(memfile *file)
+bool memfile_shrink(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
@@ -145,34 +145,34 @@ bool memfile_shrink(memfile *file)
         }
 }
 
-const char *memfile_read(memfile *file, offset_t nbytes)
+const char *memfile_read(struct carbon_memfile *file, offset_t nbytes)
 {
         const char *result = memfile_peek(file, nbytes);
         file->pos += nbytes;
         return result;
 }
 
-u8 memfile_read_byte(memfile *file)
+u8 memfile_read_byte(struct carbon_memfile *file)
 {
         return *MEMFILE_READ_TYPE(file, u8);
 }
 
-u8 memfile_peek_byte(memfile *file)
+u8 memfile_peek_byte(struct carbon_memfile *file)
 {
         return *MEMFILE_PEEK(file, u8);
 }
 
-u64 memfile_read_u64(memfile *file)
+u64 memfile_read_u64(struct carbon_memfile *file)
 {
         return *MEMFILE_READ_TYPE(file, u64);
 }
 
-i64 memfile_read_i64(memfile *file)
+i64 memfile_read_i64(struct carbon_memfile *file)
 {
         return *MEMFILE_READ_TYPE(file, i64);
 }
 
-bool memfile_skip(memfile *file, signed_offset_t nbytes)
+bool memfile_skip(struct carbon_memfile *file, signed_offset_t nbytes)
 {
         offset_t required_size = file->pos + nbytes;
         file->pos += nbytes;
@@ -192,7 +192,7 @@ bool memfile_skip(memfile *file, signed_offset_t nbytes)
         return true;
 }
 
-const char *memfile_peek(memfile *file, offset_t nbytes)
+const char *memfile_peek(struct carbon_memfile *file, offset_t nbytes)
 {
         offset_t file_size = 0;
         memblock_size(&file_size, file->memblock);
@@ -205,12 +205,12 @@ const char *memfile_peek(memfile *file, offset_t nbytes)
         }
 }
 
-bool memfile_write_byte(memfile *file, u8 data)
+bool memfile_write_byte(struct carbon_memfile *file, u8 data)
 {
         return memfile_write(file, &data, sizeof(u8));
 }
 
-bool memfile_write(memfile *file, const void *data, offset_t nbytes)
+bool memfile_write(struct carbon_memfile *file, const void *data, offset_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(data)
@@ -235,7 +235,7 @@ bool memfile_write(memfile *file, const void *data, offset_t nbytes)
         }
 }
 
-bool memfile_write_zero(memfile *file, size_t how_many)
+bool memfile_write_zero(struct carbon_memfile *file, size_t how_many)
 {
         DEBUG_ERROR_IF_NULL(file);
         DEBUG_ERROR_IF_NULL(how_many);
@@ -246,7 +246,7 @@ bool memfile_write_zero(memfile *file, size_t how_many)
         return true;
 }
 
-bool memfile_begin_bit_mode(memfile *file)
+bool memfile_begin_bit_mode(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
@@ -266,7 +266,7 @@ bool memfile_begin_bit_mode(memfile *file)
         return true;
 }
 
-bool memfile_write_bit(memfile *file, bool flag)
+bool memfile_write_bit(struct carbon_memfile *file, bool flag)
 {
         DEBUG_ERROR_IF_NULL(file);
         file->current_read_bit = 0;
@@ -305,7 +305,7 @@ bool memfile_write_bit(memfile *file, bool flag)
         }
 }
 
-bool memfile_read_bit(memfile *file)
+bool memfile_read_bit(struct carbon_memfile *file)
 {
         if (!file) {
                 return false;
@@ -335,7 +335,7 @@ bool memfile_read_bit(memfile *file)
         }
 }
 
-offset_t memfile_save_position(memfile *file)
+offset_t memfile_save_position(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         offset_t pos = memfile_tell(file);
@@ -347,7 +347,7 @@ offset_t memfile_save_position(memfile *file)
         return pos;
 }
 
-bool memfile_restore_position(memfile *file)
+bool memfile_restore_position(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         if (LIKELY(file->saved_pos_ptr >= 0)) {
@@ -360,7 +360,7 @@ bool memfile_restore_position(memfile *file)
         }
 }
 
-signed_offset_t memfile_ensure_space(memfile *memfile, u64 nbytes)
+signed_offset_t memfile_ensure_space(struct carbon_memfile *memfile, u64 nbytes)
 {
         DEBUG_ERROR_IF_NULL(memfile)
 
@@ -391,7 +391,7 @@ signed_offset_t memfile_ensure_space(memfile *memfile, u64 nbytes)
         return shift;
 }
 
-u64 memfile_read_uintvar_stream(u8 *nbytes, memfile *memfile)
+u64 memfile_read_uintvar_stream(u8 *nbytes, struct carbon_memfile *memfile)
 {
         u8 nbytes_read;
         u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) memfile_peek(memfile, sizeof(char)));
@@ -400,14 +400,14 @@ u64 memfile_read_uintvar_stream(u8 *nbytes, memfile *memfile)
         return result;
 }
 
-bool memfile_skip_uintvar_stream(memfile *memfile)
+bool memfile_skip_uintvar_stream(struct carbon_memfile *memfile)
 {
         DEBUG_ERROR_IF_NULL(memfile)
         memfile_read_uintvar_stream(NULL, memfile);
         return true;
 }
 
-u64 memfile_peek_uintvar_stream(u8 *nbytes, memfile *memfile)
+u64 memfile_peek_uintvar_stream(u8 *nbytes, struct carbon_memfile *memfile)
 {
         memfile_save_position(memfile);
         u64 result = memfile_read_uintvar_stream(nbytes, memfile);
@@ -415,7 +415,7 @@ u64 memfile_peek_uintvar_stream(u8 *nbytes, memfile *memfile)
         return result;
 }
 
-u64 memfile_write_uintvar_stream(u64 *nbytes_moved, memfile *memfile, u64 value)
+u64 memfile_write_uintvar_stream(u64 *nbytes_moved, struct carbon_memfile *memfile, u64 value)
 {
         u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS(value);
         signed_offset_t shift = memfile_ensure_space(memfile, required_blocks);
@@ -426,7 +426,7 @@ u64 memfile_write_uintvar_stream(u64 *nbytes_moved, memfile *memfile, u64 value)
         return required_blocks;
 }
 
-signed_offset_t memfile_update_uintvar_stream(memfile *memfile, u64 value)
+signed_offset_t memfile_update_uintvar_stream(struct carbon_memfile *memfile, u64 value)
 {
         DEBUG_ERROR_IF_NULL(memfile);
 
@@ -450,31 +450,31 @@ signed_offset_t memfile_update_uintvar_stream(memfile *memfile, u64 value)
         return bytes_used_then - bytes_used_now;
 }
 
-bool memfile_seek_to_start(memfile *file)
+bool memfile_seek_to_start(struct carbon_memfile *file)
 {
         return memfile_seek(file, 0);
 }
 
-bool memfile_seek_to_end(memfile *file)
+bool memfile_seek_to_end(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         size_t size = memblock_last_used_byte(file->memblock);
         return memfile_seek(file, size);
 }
 
-bool memfile_inplace_insert(memfile *file, size_t nbytes)
+bool memfile_inplace_insert(struct carbon_memfile *file, size_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(file);
         return memblock_move_right(file->memblock, file->pos, nbytes);
 }
 
-bool memfile_inplace_remove(memfile *file, size_t nbytes_from_here)
+bool memfile_inplace_remove(struct carbon_memfile *file, size_t nbytes_from_here)
 {
         DEBUG_ERROR_IF_NULL(file);
         return memblock_move_left(file->memblock, file->pos, nbytes_from_here);
 }
 
-bool memfile_end_bit_mode(size_t *num_bytes_written, memfile *file)
+bool memfile_end_bit_mode(size_t *num_bytes_written, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         file->bit_mode = false;
@@ -487,7 +487,7 @@ bool memfile_end_bit_mode(size_t *num_bytes_written, memfile *file)
         return true;
 }
 
-void *memfile_current_pos(memfile *file, offset_t nbytes)
+void *memfile_current_pos(struct carbon_memfile *file, offset_t nbytes)
 {
         if (file && nbytes > 0) {
                 offset_t file_size = 0;
@@ -508,7 +508,7 @@ void *memfile_current_pos(memfile *file, offset_t nbytes)
         }
 }
 
-bool memfile_hexdump(string_buffer *sb, memfile *file)
+bool memfile_hexdump(string_buffer *sb, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(sb);
         DEBUG_ERROR_IF_NULL(file);
@@ -518,7 +518,7 @@ bool memfile_hexdump(string_buffer *sb, memfile *file)
         return true;
 }
 
-bool memfile_hexdump_printf(FILE *file, memfile *memfile)
+bool memfile_hexdump_printf(FILE *file, struct carbon_memfile *memfile)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(memfile)
@@ -528,7 +528,7 @@ bool memfile_hexdump_printf(FILE *file, memfile *memfile)
         return true;
 }
 
-bool memfile_hexdump_print(memfile *memfile)
+bool memfile_hexdump_print(struct carbon_memfile *memfile)
 {
         return memfile_hexdump_printf(stdout, memfile);
 }

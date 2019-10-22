@@ -45,7 +45,7 @@ static bool push_in_column(carbon_insert *inserter, const void *base, carbon_fie
 
 static bool push_media_type_for_array(carbon_insert *inserter, carbon_field_type_e type);
 
-static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos);
+static void internal_create(carbon_insert *inserter, struct carbon_memfile *src, offset_t pos);
 
 static void write_binary_blob(carbon_insert *inserter, const void *value, size_t nbytes);
 
@@ -57,13 +57,13 @@ fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, struct car
         inserter->position = 0;
 
         offset_t pos = 0;
-        if (context->array_end_reached) {
-                pos = memfile_tell(&context->memfile);
+        if (context->end_reached) {
+                pos = memfile_tell(&context->file);
         } else {
                 pos = carbon_int_history_has(&context->history) ? carbon_int_history_peek(&context->history) : 0;
         }
 
-        internal_create(inserter, &context->memfile, pos);
+        internal_create(inserter, &context->file, pos);
         return FN_OK();
 }
 
@@ -573,10 +573,10 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 
         carbon_array_it_fast_forward(&scan);
 
-        state_in->array_end = memfile_tell(&scan.memfile);
-        memfile_skip(&scan.memfile, 1);
+        state_in->array_end = memfile_tell(&scan.file);
+        memfile_skip(&scan.file, 1);
 
-        memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
+        memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.file) - 1);
         carbon_array_it_drop(&scan);
         carbon_insert_drop(&state_in->nested_inserter);
         carbon_array_it_drop(state_in->nested_array);
@@ -1006,7 +1006,7 @@ static bool push_media_type_for_array(carbon_insert *inserter, carbon_field_type
         return carbon_media_write(&inserter->memfile, type);
 }
 
-static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos)
+static void internal_create(carbon_insert *inserter, struct carbon_memfile *src, offset_t pos)
 {
         memfile_clone(&inserter->memfile, src);
         error_init(&inserter->err);

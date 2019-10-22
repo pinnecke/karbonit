@@ -88,7 +88,7 @@ bool pack_drop(err *err, packer *self)
         return self->drop(self);
 }
 
-bool pack_write_extra(err *err, packer *self, memfile *dst,
+bool pack_write_extra(err *err, packer *self, struct carbon_memfile *dst,
                       const vector ofType (const char *) *strings)
 {
         DEBUG_ERROR_IF_NULL(self)
@@ -103,7 +103,7 @@ bool pack_read_extra(err *err, packer *self, FILE *src, size_t nbytes)
         return self->read_extra(self, src, nbytes);
 }
 
-bool pack_encode(err *err, packer *self, memfile *dst, const char *string)
+bool pack_encode(err *err, packer *self, struct carbon_memfile *dst, const char *string)
 {
         DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, encode_string)
@@ -117,14 +117,14 @@ bool pack_decode(err *err, packer *self, char *dst, size_t strlen, FILE *src)
         return self->decode_string(self, dst, strlen, src);
 }
 
-bool pack_print_extra(err *err, packer *self, FILE *file, memfile *src)
+bool pack_print_extra(err *err, packer *self, FILE *file, struct carbon_memfile *src)
 {
         DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, print_extra)
         return self->print_extra(self, file, src);
 }
 
-bool pack_print_encoded(err *err, packer *self, FILE *file, memfile *src,
+bool pack_print_encoded(err *err, packer *self, FILE *file, struct carbon_memfile *src,
                         u32 decompressed_strlen)
 {
         DEBUG_ERROR_IF_NULL(self)

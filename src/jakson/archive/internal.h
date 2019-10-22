@@ -381,12 +381,12 @@ typedef struct __attribute__((packed)) string_entry_header {
         u32 string_len;
 } string_entry_header;
 
-void int_read_prop_offsets(archive_prop_offs *prop_offsets, memfile *memfile, const object_flags_u *flags);
-void int_embedded_fixed_props_read(fixed_prop *prop, memfile *memfile);
-void int_embedded_var_props_read(var_prop *prop, memfile *memfile);
-void int_embedded_null_props_read(null_prop *prop, memfile *memfile);
-void int_embedded_array_props_read(array_prop *prop, memfile *memfile);
-void int_embedded_table_props_read(table_prop *prop, memfile *memfile);
+void int_read_prop_offsets(archive_prop_offs *prop_offsets, struct carbon_memfile *memfile, const object_flags_u *flags);
+void int_embedded_fixed_props_read(fixed_prop *prop, struct carbon_memfile *memfile);
+void int_embedded_var_props_read(var_prop *prop, struct carbon_memfile *memfile);
+void int_embedded_null_props_read(null_prop *prop, struct carbon_memfile *memfile);
+void int_embedded_array_props_read(array_prop *prop, struct carbon_memfile *memfile);
+void int_embedded_table_props_read(table_prop *prop, struct carbon_memfile *memfile);
 archive_field_e int_get_value_type_of_char(char c);
 archive_field_e int_marker_to_field_type(char symbol);
 

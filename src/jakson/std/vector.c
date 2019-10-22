@@ -22,7 +22,7 @@
 #include <jakson/std/vector.h>
 
 #define DEFINE_PRINTER_FUNCTION_WCAST(type, castType, format_string)                                                   \
-void vector_##type##_printer_func(memfile *dst, void ofType(T) *values, size_t num_elems)                      \
+void vector_##type##_printer_func(struct carbon_memfile *dst, void ofType(T) *values, size_t num_elems)                      \
 {                                                                                                                      \
     char *data;                                                                                                        \
     type *typedValues = (type *) values;                                                                               \
@@ -350,10 +350,10 @@ const void *vector_data(const vector *vec)
 }
 
 char *vector_string(const vector ofType(T) *vec,
-                    void (*printerFunc)(memfile *dst, void ofType(T) *values, size_t num_elems))
+                    void (*printerFunc)(struct carbon_memfile *dst, void ofType(T) *values, size_t num_elems))
 {
         memblock *block;
-        memfile file;
+        struct carbon_memfile file;
         memblock_create(&block, vec->num_elems * vec->elem_size);
         memfile_open(&file, block, READ_WRITE);
         printerFunc(&file, vec->base, vec->num_elems);

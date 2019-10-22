@@ -31,7 +31,7 @@
 BEGIN_DECL
 
 typedef struct carbon_column_it {
-        memfile memfile;
+        struct carbon_memfile memfile;
 
         offset_t num_and_capacity_start_offset;
         offset_t column_start_offset;
@@ -49,7 +49,7 @@ typedef struct carbon_column_it {
 
 } carbon_column_it;
 
-bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err, offset_t column_start_offset);
+bool carbon_column_it_create(carbon_column_it *it, struct carbon_memfile *memfile, err *err, offset_t column_start_offset);
 bool carbon_column_it_clone(carbon_column_it *dst, carbon_column_it *src);
 
 bool carbon_column_it_insert(carbon_insert *inserter, carbon_column_it *it);

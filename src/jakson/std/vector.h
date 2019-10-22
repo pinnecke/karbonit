@@ -31,7 +31,7 @@
 BEGIN_DECL
 
 #define DECLARE_PRINTER_FUNC(type)                                                                                     \
-    void vector_##type##_printer_func(memfile *dst, void ofType(T) *values, size_t num_elems);
+    void vector_##type##_printer_func(struct carbon_memfile *dst, void ofType(T) *values, size_t num_elems);
 
 DECLARE_PRINTER_FUNC(u_char)
 
@@ -279,7 +279,7 @@ bool vector_cpy_to(vector *dst, vector *src);
 const void *vector_data(const vector *vec);
 
 char *vector_string(const vector ofType(T) *vec,
-                    void (*printerFunc)(memfile *dst, void ofType(T) *values, size_t num_elems));
+                    void (*printerFunc)(struct carbon_memfile *dst, void ofType(T) *values, size_t num_elems));
 
 #define VECTOR_ALL(vec, type) (type *) vector_data(vec)
 

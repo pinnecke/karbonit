@@ -38,13 +38,13 @@ BEGIN_DECL
 
 typedef struct carbon_path_index {
         memblock *memblock;
-        memfile memfile;
+        struct carbon_memfile memfile;
         err err;
 } carbon_path_index;
 
 typedef struct carbon_path_index_it {
         carbon *doc;
-        memfile memfile;
+        struct carbon_memfile memfile;
         err err;
 
         carbon_container_e container_type;

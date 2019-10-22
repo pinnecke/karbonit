@@ -8,12 +8,12 @@ int main (void)
         carbon record;
         err err;
         struct carbon_array it;
-        //string_buffer str;
+        //struct carbon_strbuf str;
 
         carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", CARBON_KEY_NOKEY, NULL, &err);
 
         carbon_read_begin(&it, &record);
-        while (carbon_array_it_next(&it)) {
+        while (carbon_array_next(&it)) {
                 //carbon_array_it_
         }
 

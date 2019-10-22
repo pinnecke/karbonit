@@ -256,7 +256,7 @@ static void record_ref_create(struct carbon_memfile *memfile, carbon *doc)
 static void array_traverse(struct path_index_node *parent, struct carbon_array *it)
 {
         carbon_u64 sub_elem_pos = 0;
-        while (carbon_array_it_next(it)) {
+        while (carbon_array_next(it)) {
                 offset_t sub_elem_off = carbon_array_it_tell(it);
                 struct path_index_node *elem_node = path_index_node_add_array_elem(parent, sub_elem_pos, sub_elem_off);
                 array_build_index(elem_node, it);
@@ -375,7 +375,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object_it 
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                         struct carbon_array *it = carbon_object_it_array_value(elem_it);
                         array_traverse(parent, it);
-                        carbon_array_it_drop(it);
+                        carbon_array_drop(it);
                 }
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -466,7 +466,7 @@ static void array_build_index(struct path_index_node *parent, struct carbon_arra
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                         struct carbon_array *it = carbon_array_it_array_value(elem_it);
                         array_traverse(parent, it);
-                        carbon_array_it_drop(it);
+                        carbon_array_drop(it);
                 }
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -1050,7 +1050,7 @@ static void index_build(struct carbon_memfile *file, carbon *doc)
         carbon_read_begin(&it, doc);
 
         /** build index as tree structure */
-        while (carbon_array_it_next(&it)) {
+        while (carbon_array_next(&it)) {
                 offset_t entry_offset = carbon_array_it_tell(&it);
                 struct path_index_node *node = path_index_node_add_array_elem(&root_array, array_pos, entry_offset);
                 array_build_index(node, &it);

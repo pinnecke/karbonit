@@ -49,61 +49,62 @@ struct carbon_array {
 };
 
 /**
- * Constructs a new array iterator in a carbon document, where <code>payload_start</code> is a memory offset
- * that starts with the first (potentially empty) array entry. If there is some data before the array contents
- * (e.g., a header), <code>payload_start</code> must not include this data.
- */
-fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile *memfile, err *err, offset_t payload_start);
-
-/**
  * Drops the iterator.
  */
-fn_result carbon_array_it_drop(struct carbon_array *it);
+fn_result carbon_array_drop(struct carbon_array *it);
 
-bool carbon_array_it_copy(struct carbon_array *dst, struct carbon_array *src);
+bool carbon_array_num_elems(carbon_u64 *len, struct carbon_array *it);
 
-bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src);
-
-bool carbon_array_it_length(carbon_u64 *len, struct carbon_array *it);
-
-bool carbon_array_it_is_empty(struct carbon_array *it);
+bool carbon_array_is_empty(struct carbon_array *it);
 
 /**
  * Positions the iterator at the beginning of this array.
  */
-bool carbon_array_it_rewind(struct carbon_array *it);
+bool carbon_array_rewind(struct carbon_array *it);
 
 /**
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
-bool carbon_array_it_next(struct carbon_array *it);
-bool carbon_array_it_has_next(struct carbon_array *it);
-bool carbon_array_it_is_unit(struct carbon_array *it);
-bool carbon_array_it_prev(struct carbon_array *it);
+bool carbon_array_next(struct carbon_array *it);
+bool carbon_array_has_next(struct carbon_array *it);
+bool carbon_array_is_unit(struct carbon_array *it);
+bool carbon_array_prev(struct carbon_array *it);
 
 /**
  * Inserts a new element at the current position of the iterator.
  */
-fn_result carbon_array_it_insert_begin(carbon_insert *inserter, struct carbon_array *it);
-fn_result carbon_array_it_insert_end(carbon_insert *inserter);
+fn_result carbon_array_insert_begin(carbon_insert *inserter, struct carbon_array *it);
+fn_result carbon_array_insert_end(carbon_insert *inserter);
 
-bool carbon_array_it_remove(struct carbon_array *it);
+bool carbon_array_remove(struct carbon_array *it);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_multiset(struct carbon_array *it);
+fn_result ofType(bool) carbon_array_is_multiset(struct carbon_array *it);
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
  * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_sorted(struct carbon_array *it);
+fn_result ofType(bool) carbon_array_is_sorted(struct carbon_array *it);
 
 /** Updates this arrays abstract type to the given abstract type */
-fn_result carbon_array_it_update_type(struct carbon_array *it, carbon_list_derivable_e derivation);
+fn_result carbon_array_update_type(struct carbon_array *it, carbon_list_derivable_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Constructs a new array iterator in a carbon document, where <code>payload_start</code> is a memory offset
+ * that starts with the first (potentially empty) array entry. If there is some data before the array contents
+ * (e.g., a header), <code>payload_start</code> must not include this data.
+ */
+fn_result carbon_int_array_create(struct carbon_array *it, struct carbon_memfile *memfile, err *err, offset_t payload_start);
+
+bool carbon_int_array_cpy(struct carbon_array *dst, struct carbon_array *src);
+
+bool carbon_int_array_clone(struct carbon_array *dst, struct carbon_array *src);
 
 #define DECLARE_IN_PLACE_UPDATE_FUNCTION(type_name, built_int_type)                                                                    \
 bool carbon_int_array_update_##type_name(struct carbon_array *it, built_int_type value);

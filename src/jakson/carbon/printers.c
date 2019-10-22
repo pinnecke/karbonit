@@ -430,7 +430,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                                 struct carbon_array *array = carbon_object_it_array_value(it);
                                 carbon_printer_array_prop_name(printer, builder, key_name, key_len);
                                 carbon_printer_print_array(array, printer, builder, false);
-                                carbon_array_it_drop(array);
+                                carbon_array_drop(array);
                         }
                                 break;
                         case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -509,9 +509,9 @@ bool carbon_printer_print_array(struct carbon_array *it, carbon_printer *printer
 
         bool first_entry = true;
         bool has_entries = false;
-        bool is_single_entry_array = carbon_array_it_is_unit(it);
+        bool is_single_entry_array = carbon_array_is_unit(it);
 
-        while (carbon_array_it_next(it)) {
+        while (carbon_array_next(it)) {
                 bool is_null_value;
 
                 if (LIKELY(!first_entry)) {
@@ -583,7 +583,7 @@ bool carbon_printer_print_array(struct carbon_array *it, carbon_printer *printer
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                 struct carbon_array *array = carbon_array_it_array_value(it);
                                 carbon_printer_print_array(array, printer, builder, false);
-                                carbon_array_it_drop(array);
+                                carbon_array_drop(array);
                         }
                                 break;
                         case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:

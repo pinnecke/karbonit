@@ -33,11 +33,11 @@
                 break;                                                                                                 \
                 default: {                                                                                             \
                         carbon_insert inserter;                                                                 \
-                        carbon_array_it_remove(it);                                                                    \
-                        carbon_array_it_next(it);                                                                      \
-                        carbon_array_it_insert_begin(&inserter, it);                                                   \
+                        carbon_array_remove(it);                                                                    \
+                        carbon_array_next(it);                                                                      \
+                        carbon_array_insert_begin(&inserter, it);                                                   \
                         status = insert_fn(&inserter, value);                                                          \
-                        carbon_array_it_insert_end(&inserter);                                                         \
+                        carbon_array_insert_end(&inserter);                                                         \
                 break;                                                                                                 \
                 }                                                                                                      \
         }                                                                                                              \

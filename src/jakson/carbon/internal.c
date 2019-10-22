@@ -376,7 +376,7 @@ bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct 
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         carbon_int_field_access_create(field_access);
                         field_access->nested_array_it_is_created = true;
-                        carbon_array_it_create(field_access->nested_array_it, file, err,
+                        carbon_int_array_create(field_access->nested_array_it, file, err,
                                                memfile_tell(file) - sizeof(carbon_u8));
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -561,7 +561,7 @@ bool carbon_int_field_access_clone(struct carbon_int_field_access *dst, struct c
         } else if (carbon_int_field_access_column_it_opened(src)) {
                 carbon_column_it_clone(dst->nested_column_it, src->nested_column_it);
         } else if (carbon_int_field_access_array_it_opened(src)) {
-                carbon_array_it_clone(dst->nested_array_it, src->nested_array_it);
+                carbon_int_array_clone(dst->nested_array_it, src->nested_array_it);
         }
         return true;
 }
@@ -599,7 +599,7 @@ bool carbon_int_field_access_column_it_opened(struct carbon_int_field_access *fi
 void carbon_int_auto_close_nested_array_it(struct carbon_int_field_access *field)
 {
         if (carbon_int_field_access_array_it_opened(field)) {
-                carbon_array_it_drop(field->nested_array_it);
+                carbon_array_drop(field->nested_array_it);
                 ZERO_MEMORY(field->nested_array_it, sizeof(struct carbon_array));
         }
 }
@@ -967,10 +967,10 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                         struct carbon_array it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_array_it_create(&it, memfile, err, begin_off - sizeof(carbon_u8));
+                        carbon_int_array_create(&it, memfile, err, begin_off - sizeof(carbon_u8));
                         carbon_array_it_fast_forward(&it);
                         offset_t end_off = carbon_array_it_memfilepos(&it);
-                        carbon_array_it_drop(&it);
+                        carbon_array_drop(&it);
 
                         JAK_ASSERT(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);

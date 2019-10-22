@@ -93,8 +93,8 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
                 memfile_write(&it->file, &value, sizeof(carbon_u8));
         } else {
                 carbon_insert ins;
-                carbon_array_it_remove(it);
-                carbon_array_it_insert_begin(&ins, it);
+                carbon_array_remove(it);
+                carbon_array_insert_begin(&ins, it);
 
                 switch (constant) {
                         case CARBON_CONSTANT_TRUE:
@@ -110,7 +110,7 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
                                 break;
                 }
 
-                carbon_array_it_insert_end(&ins);
+                carbon_array_insert_end(&ins);
         }
 
         memfile_restore_position(&it->file);
@@ -139,7 +139,7 @@ static void __carbon_array_it_load_abstract_type(struct carbon_array *it)
         carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
 }
 
-fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile *memfile, err *err,
+fn_result carbon_int_array_create(struct carbon_array *it, struct carbon_memfile *memfile, err *err,
                             offset_t payload_start)
 {
         FN_FAIL_IF_NULL(it, memfile, err);
@@ -173,20 +173,20 @@ fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile 
 
         carbon_int_field_access_create(&it->field_access);
 
-        carbon_array_it_rewind(it);
+        carbon_array_rewind(it);
 
         return FN_OK();
 }
 
-bool carbon_array_it_copy(struct carbon_array *dst, struct carbon_array *src)
+bool carbon_int_array_cpy(struct carbon_array *dst, struct carbon_array *src)
 {
         DEBUG_ERROR_IF_NULL(dst);
         DEBUG_ERROR_IF_NULL(src);
-        carbon_array_it_create(dst, &src->file, &src->err, src->begin);
+        carbon_int_array_create(dst, &src->file, &src->err, src->begin);
         return true;
 }
 
-bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src)
+bool carbon_int_array_clone(struct carbon_array *dst, struct carbon_array *src)
 {
         memfile_clone(&dst->file, &src->file);
         dst->begin = src->begin;
@@ -207,14 +207,14 @@ bool carbon_int_array_set_mode(struct carbon_array *it, access_mode_e mode)
         return true;
 }
 
-bool carbon_array_it_length(carbon_u64 *len, struct carbon_array *it)
+bool carbon_array_num_elems(carbon_u64 *len, struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(len)
         DEBUG_ERROR_IF_NULL(it)
 
         carbon_u64 num_elem = 0;
-        carbon_array_it_rewind(it);
-        while (carbon_array_it_next(it)) {
+        carbon_array_rewind(it);
+        while (carbon_array_next(it)) {
                 num_elem++;
         }
         *len = num_elem;
@@ -222,13 +222,13 @@ bool carbon_array_it_length(carbon_u64 *len, struct carbon_array *it)
         return true;
 }
 
-bool carbon_array_it_is_empty(struct carbon_array *it)
+bool carbon_array_is_empty(struct carbon_array *it)
 {
-        carbon_array_it_rewind(it);
-        return carbon_array_it_next(it);
+        carbon_array_rewind(it);
+        return carbon_array_next(it);
 }
 
-fn_result carbon_array_it_drop(struct carbon_array *it)
+fn_result carbon_array_drop(struct carbon_array *it)
 {
         carbon_int_field_auto_close(&it->field_access);
         carbon_int_field_access_drop(&it->field_access);
@@ -236,7 +236,7 @@ fn_result carbon_array_it_drop(struct carbon_array *it)
         return FN_OK();
 }
 
-bool carbon_array_it_rewind(struct carbon_array *it)
+bool carbon_array_rewind(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         ERROR_IF(it->begin >= memfile_size(&it->file), &it->err, ERR_OUTOFBOUNDS);
@@ -254,27 +254,27 @@ static void auto_adjust_pos_after_mod(struct carbon_array *it)
         }
 }
 
-bool carbon_array_it_has_next(struct carbon_array *it)
+bool carbon_array_has_next(struct carbon_array *it)
 {
-        bool has_next = carbon_array_it_next(it);
-        carbon_array_it_prev(it);
+        bool has_next = carbon_array_next(it);
+        carbon_array_prev(it);
         return has_next;
 }
 
-bool carbon_array_it_is_unit(struct carbon_array *it)
+bool carbon_array_is_unit(struct carbon_array *it)
 {
-        bool has_next = carbon_array_it_next(it);
+        bool has_next = carbon_array_next(it);
         if (has_next) {
-                has_next = carbon_array_it_next(it);
-                carbon_array_it_prev(it);
-                carbon_array_it_prev(it);
+                has_next = carbon_array_next(it);
+                carbon_array_prev(it);
+                carbon_array_prev(it);
                 return !has_next;
         }
-        carbon_array_it_prev(it);
+        carbon_array_prev(it);
         return false;
 }
 
-bool carbon_array_it_next(struct carbon_array *it)
+bool carbon_array_next(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         bool is_empty_slot = true;
@@ -300,7 +300,7 @@ bool carbon_array_it_next(struct carbon_array *it)
         }
 }
 
-bool carbon_array_it_prev(struct carbon_array *it)
+bool carbon_array_prev(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         if (carbon_int_history_has(&it->history)) {
@@ -341,7 +341,7 @@ bool carbon_int_array_it_offset(offset_t *off, struct carbon_array *it)
 bool carbon_array_it_fast_forward(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
-        while (carbon_array_it_next(it)) {}
+        while (carbon_array_next(it)) {}
 
         JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == CARBON_MARRAY_END);
         memfile_skip(&it->file, sizeof(char));
@@ -448,19 +448,19 @@ carbon_column_it *carbon_array_it_column_value(struct carbon_array *it_in)
         return carbon_int_field_access_column_value(&it_in->field_access, &it_in->err);
 }
 
-fn_result carbon_array_it_insert_begin(carbon_insert *inserter, struct carbon_array *it)
+fn_result carbon_array_insert_begin(carbon_insert *inserter, struct carbon_array *it)
 {
         FN_FAIL_IF_NULL(inserter, it)
         return carbon_int_insert_create_for_array(inserter, it);
 }
 
-fn_result carbon_array_it_insert_end(carbon_insert *inserter)
+fn_result carbon_array_insert_end(carbon_insert *inserter)
 {
         FN_FAIL_IF_NULL(inserter)
         return carbon_insert_drop(inserter);
 }
 
-bool carbon_array_it_remove(struct carbon_array *it)
+bool carbon_array_remove(struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         carbon_field_type_e type;
@@ -481,7 +481,7 @@ bool carbon_array_it_remove(struct carbon_array *it)
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_multiset(struct carbon_array *it)
+fn_result ofType(bool) carbon_array_is_multiset(struct carbon_array *it)
 {
         FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
@@ -491,7 +491,7 @@ fn_result ofType(bool) carbon_array_it_is_multiset(struct carbon_array *it)
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
  * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_sorted(struct carbon_array *it)
+fn_result ofType(bool) carbon_array_is_sorted(struct carbon_array *it)
 {
         FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
@@ -499,7 +499,7 @@ fn_result ofType(bool) carbon_array_it_is_sorted(struct carbon_array *it)
         return carbon_abstract_is_sorted(type_class);
 }
 
-fn_result carbon_array_it_update_type(struct carbon_array *it, carbon_list_derivable_e derivation)
+fn_result carbon_array_update_type(struct carbon_array *it, carbon_list_derivable_e derivation)
 {
         FN_FAIL_IF_NULL(it)
 

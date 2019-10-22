@@ -179,13 +179,13 @@ fn_result carbon_revise_iterator_open(struct carbon_array *it, carbon_revise *co
         if (UNLIKELY(context->revised_doc->memfile.mode != READ_WRITE)) {
                 return FN_FAIL(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
-        return carbon_array_it_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
+        return carbon_int_array_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
 }
 
 fn_result carbon_revise_iterator_close(struct carbon_array *it)
 {
         FN_FAIL_IF_NULL(it);
-        return carbon_array_it_drop(it);
+        return carbon_array_drop(it);
 }
 
 fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, carbon_revise *context)
@@ -231,7 +231,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
                         switch (eval.result.container_type) {
                                 case CARBON_ARRAY: {
                                         struct carbon_array *it = &eval.result.containers.array.it;
-                                        result = carbon_array_it_remove(it);
+                                        result = carbon_array_remove(it);
                                 }
                                         break;
                                 case CARBON_COLUMN: {
@@ -315,7 +315,7 @@ static bool internal_pack_array(struct carbon_array *it)
                 struct carbon_array this_array_it;
                 bool is_empty_slot, is_array_end;
 
-                carbon_array_it_copy(&this_array_it, it);
+                carbon_int_array_cpy(&this_array_it, it);
                 carbon_int_array_skip_contents(&is_empty_slot, &is_array_end, &this_array_it);
 
                 if (!is_array_end) {
@@ -336,12 +336,12 @@ static bool internal_pack_array(struct carbon_array *it)
                         JAK_ASSERT(final == CARBON_MARRAY_END);
                 }
 
-                carbon_array_it_drop(&this_array_it);
+                carbon_array_drop(&this_array_it);
         }
 
         /** shrink contained containers */
         {
-                while (carbon_array_it_next(it)) {
+                while (carbon_array_next(it)) {
                         carbon_field_type_e type;
                         carbon_array_it_field_type(&type, it);
                         switch (type) {
@@ -367,14 +367,14 @@ static bool internal_pack_array(struct carbon_array *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         struct carbon_array nested_array_it;
-                                        carbon_array_it_create(&nested_array_it, &it->file, &it->err,
+                                        carbon_int_array_create(&nested_array_it, &it->file, &it->err,
                                                                it->field_access.nested_array_it->begin);
                                         internal_pack_array(&nested_array_it);
                                         JAK_ASSERT(*memfile_peek(&nested_array_it.file, sizeof(char)) ==
                                                    CARBON_MARRAY_END);
                                         memfile_skip(&nested_array_it.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&nested_array_it.file));
-                                        carbon_array_it_drop(&nested_array_it);
+                                        carbon_array_drop(&nested_array_it);
                                 }
                                         break;
                                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -510,14 +510,14 @@ static bool internal_pack_object(carbon_object_it *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         struct carbon_array nested_array_it;
-                                        carbon_array_it_create(&nested_array_it, &it->memfile, &it->err,
+                                        carbon_int_array_create(&nested_array_it, &it->memfile, &it->err,
                                                                it->field.value.data.nested_array_it->begin);
                                         internal_pack_array(&nested_array_it);
                                         JAK_ASSERT(*memfile_peek(&nested_array_it.file, sizeof(char)) ==
                                                    CARBON_MARRAY_END);
                                         memfile_skip(&nested_array_it.file, sizeof(char));
                                         memfile_seek(&it->memfile, memfile_tell(&nested_array_it.file));
-                                        carbon_array_it_drop(&nested_array_it);
+                                        carbon_array_drop(&nested_array_it);
                                 }
                                         break;
                                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:

@@ -146,11 +146,11 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
         carbon_binary binary;
         carbon_u64 string_len;
 
-        if (UNLIKELY(!carbon_array_it_has_next(it))) {
+        if (UNLIKELY(!carbon_array_has_next(it))) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
                 extra->capture.print_json.convert = CARBON_PRINT_JSON_CONVERT_TO_NULL;
                 return;
-        } else if (LIKELY(!carbon_array_it_is_unit(it))) {
+        } else if (LIKELY(!carbon_array_is_unit(it))) {
                 extra->capture.print_json.convert = CARBON_PRINT_JSON_CONVERT_REMAIN;
                 string_buffer_add(str_buf, "[");
         } else {
@@ -159,7 +159,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 
         char sep = '\0';
 
-        while (carbon_array_it_next(it)) {
+        while (carbon_array_next(it)) {
 
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';

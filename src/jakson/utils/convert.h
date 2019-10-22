@@ -27,7 +27,7 @@
 
 BEGIN_DECL
 
-i64 convert_atoi64(const char *string);
+carbon_i64 convert_atoi64(const char *string);
 u64 convert_atoiu64(const char *string);
 
 END_DECL

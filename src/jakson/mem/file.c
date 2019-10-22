@@ -167,9 +167,9 @@ u64 memfile_read_u64(struct carbon_memfile *file)
         return *MEMFILE_READ_TYPE(file, u64);
 }
 
-i64 memfile_read_i64(struct carbon_memfile *file)
+carbon_i64 memfile_read_i64(struct carbon_memfile *file)
 {
-        return *MEMFILE_READ_TYPE(file, i64);
+        return *MEMFILE_READ_TYPE(file, carbon_i64);
 }
 
 bool memfile_skip(struct carbon_memfile *file, signed_offset_t nbytes)

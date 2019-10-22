@@ -54,7 +54,7 @@ typedef struct carbon_object_it {
         carbon_map_derivable_e abstract_type;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
-        i64 mod_size;
+        carbon_i64 mod_size;
 } carbon_object_it;
 
 bool carbon_object_it_create(carbon_object_it *it, struct carbon_memfile *memfile, err *err, offset_t payload_start);
@@ -93,10 +93,10 @@ bool carbon_object_it_u64_value(u64 *value, carbon_object_it *it);
 bool carbon_object_it_i8_value(i8 *value, carbon_object_it *it);
 bool carbon_object_it_i16_value(i16 *value, carbon_object_it *it);
 bool carbon_object_it_i32_value(i32 *value, carbon_object_it *it);
-bool carbon_object_it_i64_value(i64 *value, carbon_object_it *it);
+bool carbon_object_it_i64_value(carbon_i64 *value, carbon_object_it *it);
 bool carbon_object_it_float_value(float *value, carbon_object_it *it);
 bool carbon_object_it_float_value_nullable(bool *is_null_in, float *value, carbon_object_it *it);
-bool carbon_object_it_signed_value(bool *is_null_in, i64 *value, carbon_object_it *it);
+bool carbon_object_it_signed_value(bool *is_null_in, carbon_i64 *value, carbon_object_it *it);
 bool carbon_object_it_unsigned_value(bool *is_null_in, u64 *value, carbon_object_it *it);
 const char *carbon_object_it_string_value(u64 *strlen, carbon_object_it *it);
 bool carbon_object_it_binary_value(carbon_binary *out, carbon_object_it *it);

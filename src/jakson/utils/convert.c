@@ -19,9 +19,9 @@
 
 #include <jakson/utils/convert.h>
 
-i64 convert_atoi64(const char *string)
+carbon_i64 convert_atoi64(const char *string)
 {
-        i64 number;
+        carbon_i64 number;
         char character;
         int status = sscanf(string, "%" SCNd64 "%c", &number, &character);
         if (status == 1) {

@@ -33,7 +33,7 @@ bool carbon_key_create(struct carbon_memfile *file, carbon_key_e type, err *err)
 bool carbon_key_skip(carbon_key_e *out, struct carbon_memfile *file);
 bool carbon_key_read_type(carbon_key_e *out, struct carbon_memfile *file);
 bool carbon_key_write_unsigned(struct carbon_memfile *file, u64 key);
-bool carbon_key_write_signed(struct carbon_memfile *file, i64 key);
+bool carbon_key_write_signed(struct carbon_memfile *file, carbon_i64 key);
 bool carbon_key_write_string(struct carbon_memfile *file, const char *key);
 bool carbon_key_update_string(struct carbon_memfile *file, const char *key);
 bool carbon_key_update_string_wnchar(struct carbon_memfile *file, const char *key, size_t length);

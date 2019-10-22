@@ -44,35 +44,35 @@
         status;                                                                                                        \
 })
 
-#define DEFINE_ARRAY_UPDATE_FUNCTION(type_name, type_match, in_place_update_fn, insert_fn)                             \
-static bool array_update_##type_name(struct carbon_array *it, type_name value)                                       \
+#define DEFINE_ARRAY_UPDATE_FUNCTION(type_name, built_in_type, type_match, in_place_update_fn, insert_fn)                             \
+static bool array_update_##type_name(struct carbon_array *it, built_in_type value)                                       \
 {                                                                                                                      \
         return try_array_update(type_match, in_place_update_fn, insert_fn);                                            \
 }
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u8, CARBON_FIELD_NUMBER_U8, carbon_int_array_update_u8, carbon_insert_u8)
+DEFINE_ARRAY_UPDATE_FUNCTION(u8, u8, CARBON_FIELD_NUMBER_U8, carbon_int_array_update_u8, carbon_insert_u8)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u16, CARBON_FIELD_NUMBER_U16, carbon_int_array_update_u16,
+DEFINE_ARRAY_UPDATE_FUNCTION(u16, u16, CARBON_FIELD_NUMBER_U16, carbon_int_array_update_u16,
                              carbon_insert_u16)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u32, CARBON_FIELD_NUMBER_U32, carbon_int_array_update_u32,
+DEFINE_ARRAY_UPDATE_FUNCTION(u32, u32, CARBON_FIELD_NUMBER_U32, carbon_int_array_update_u32,
                              carbon_insert_u32)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u64, CARBON_FIELD_NUMBER_U64, carbon_int_array_update_u64,
+DEFINE_ARRAY_UPDATE_FUNCTION(u64, u64, CARBON_FIELD_NUMBER_U64, carbon_int_array_update_u64,
                              carbon_insert_u64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i8, CARBON_FIELD_NUMBER_I8, carbon_int_array_update_i8, carbon_insert_i8)
+DEFINE_ARRAY_UPDATE_FUNCTION(i8, i8, CARBON_FIELD_NUMBER_I8, carbon_int_array_update_i8, carbon_insert_i8)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i16, CARBON_FIELD_NUMBER_I16, carbon_int_array_update_i16,
+DEFINE_ARRAY_UPDATE_FUNCTION(i16, i16, CARBON_FIELD_NUMBER_I16, carbon_int_array_update_i16,
                              carbon_insert_i16)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i32, CARBON_FIELD_NUMBER_I32, carbon_int_array_update_i32,
+DEFINE_ARRAY_UPDATE_FUNCTION(i32, i32, CARBON_FIELD_NUMBER_I32, carbon_int_array_update_i32,
                              carbon_insert_i32)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i64, CARBON_FIELD_NUMBER_I64, carbon_int_array_update_i64,
+DEFINE_ARRAY_UPDATE_FUNCTION(i64, carbon_i64, CARBON_FIELD_NUMBER_I64, carbon_int_array_update_i64,
                              carbon_insert_i64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, carbon_int_array_update_float,
+DEFINE_ARRAY_UPDATE_FUNCTION(float, float, CARBON_FIELD_NUMBER_FLOAT, carbon_int_array_update_float,
                              carbon_insert_float)
 
 #define try_update_generic(context, path, array_exec, column_exec)                                                     \
@@ -200,7 +200,7 @@ static bool column_update_i32(carbon_column_it *it, u32 pos, i32 value)
         return false;
 }
 
-static bool column_update_i64(carbon_column_it *it, u32 pos, i64 value)
+static bool column_update_i64(carbon_column_it *it, u32 pos, carbon_i64 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -310,7 +310,7 @@ fn_result carbon_update_set_i32(carbon_revise *context, const char *path, i32 va
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_i32_compiled, value);
 }
 
-fn_result carbon_update_set_i64(carbon_revise *context, const char *path, i64 value)
+fn_result carbon_update_set_i64(carbon_revise *context, const char *path, carbon_i64 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_i64_compiled, value);
 }
@@ -336,7 +336,7 @@ fn_result carbon_update_set_unsigned(carbon_revise *context, const char *path, u
         }
 }
 
-fn_result carbon_update_set_signed(carbon_revise *context, const char *path, i64 value)
+fn_result carbon_update_set_signed(carbon_revise *context, const char *path, carbon_i64 value)
 {
         switch (number_min_type_signed(value)) {
                 case NUMBER_I8:
@@ -346,7 +346,7 @@ fn_result carbon_update_set_signed(carbon_revise *context, const char *path, i64
                 case NUMBER_I32:
                         return carbon_update_set_i32(context, path, (i32) value);
                 case NUMBER_I64:
-                        return carbon_update_set_i64(context, path, (i64) value);
+                        return carbon_update_set_i64(context, path, (carbon_i64) value);
                 default:
                         return FN_FAIL(ERR_INTERNALERR, "update signed value failed: limit exeeded");
         }
@@ -478,7 +478,7 @@ fn_result carbon_update_set_i32_compiled(carbon_revise *context, const carbon_do
 }
 
 fn_result carbon_update_set_i64_compiled(carbon_revise *context, const carbon_dot_path *path,
-                                    i64 value)
+                                    carbon_i64 value)
 {
         return try_update_value(context, path, value, array_update_i64, column_update_i64);
 }
@@ -507,7 +507,7 @@ fn_result carbon_update_set_unsigned_compiled(carbon_revise *context, const carb
 }
 
 fn_result carbon_update_set_signed_compiled(carbon_revise *context, const carbon_dot_path *path,
-                                       i64 value)
+                                       carbon_i64 value)
 {
         switch (number_min_type_signed(value)) {
                 case NUMBER_I8:
@@ -517,7 +517,7 @@ fn_result carbon_update_set_signed_compiled(carbon_revise *context, const carbon
                 case NUMBER_I32:
                         return carbon_update_set_i32_compiled(context, path, (i32) value);
                 case NUMBER_I64:
-                        return carbon_update_set_i64_compiled(context, path, (i64) value);
+                        return carbon_update_set_i64_compiled(context, path, (carbon_i64) value);
                 default:
                         return FN_FAIL(ERR_INTERNALERR, "unknown type for container update operation");
         }
@@ -655,7 +655,7 @@ fn_result carbon_update_one_set_i32(const char *dot_path, carbon *rev_doc, carbo
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i32, dot_path, value);
 }
 
-fn_result carbon_update_one_set_i64(const char *dot_path, carbon *rev_doc, carbon *doc, i64 value)
+fn_result carbon_update_one_set_i64(const char *dot_path, carbon *rev_doc, carbon *doc, carbon_i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i64, dot_path, value);
 }
@@ -672,7 +672,7 @@ fn_result carbon_update_one_set_unsigned(const char *dot_path, carbon *rev_doc, 
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_unsigned, dot_path, value);
 }
 
-fn_result carbon_update_one_set_signed(const char *dot_path, carbon *rev_doc, carbon *doc, i64 value)
+fn_result carbon_update_one_set_signed(const char *dot_path, carbon *rev_doc, carbon *doc, carbon_i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_signed, dot_path, value);
 }
@@ -791,7 +791,7 @@ fn_result carbon_update_one_set_i32_compiled(const carbon_dot_path *path, carbon
 }
 
 fn_result carbon_update_one_set_i64_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, i64 value)
+                                        carbon *doc, carbon_i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i64_compiled, path, value);
 }
@@ -809,7 +809,7 @@ fn_result carbon_update_one_set_unsigned_compiled(const carbon_dot_path *path, c
 }
 
 fn_result carbon_update_one_set_signed_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                           carbon *doc, i64 value)
+                                           carbon *doc, carbon_i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_signed_compiled, path, value);
 }

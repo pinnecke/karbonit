@@ -37,6 +37,6 @@ typedef enum number_min_type_e {
 } number_min_type_e;
 
 number_min_type_e number_min_type_unsigned(u64 value);
-number_min_type_e number_min_type_signed(i64 value);
+number_min_type_e number_min_type_signed(carbon_i64 value);
 
 #endif

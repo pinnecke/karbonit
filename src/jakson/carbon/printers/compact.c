@@ -120,7 +120,7 @@ static void _json_printer_compact_const_false(carbon_printer *self, bool is_null
         string_buffer_add(builder, is_null ? "null" : "false");
 }
 
-static void _json_printer_compact_val_signed(carbon_printer *self, string_buffer *builder, const i64 *value)
+static void _json_printer_compact_val_signed(carbon_printer *self, string_buffer *builder, const carbon_i64 *value)
 {
         UNUSED(self);
         if (LIKELY(value != NULL)) {
@@ -246,7 +246,7 @@ static void _json_printer_compact_prop_false(carbon_printer *self, string_buffer
 }
 
 static void _json_printer_compact_prop_signed(carbon_printer *self, string_buffer *builder,
-                        const char *key_name, u64 key_len, const i64 *value)
+                        const char *key_name, u64 key_len, const carbon_i64 *value)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);

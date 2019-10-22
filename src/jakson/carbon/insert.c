@@ -160,7 +160,7 @@ bool carbon_insert_null(carbon_insert *inserter)
                                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                                        i64 value = I64_NULL;
+                                        carbon_i64 value = I64_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
@@ -328,12 +328,12 @@ bool carbon_insert_i32(carbon_insert *inserter, i32 value)
         return true;
 }
 
-bool carbon_insert_i64(carbon_insert *inserter, i64 value)
+bool carbon_insert_i64(carbon_insert *inserter, carbon_i64 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_i64_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_I64, &value, sizeof(i64));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_I64, &value, sizeof(carbon_i64));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET);
@@ -362,7 +362,7 @@ bool carbon_insert_unsigned(carbon_insert *inserter, u64 value)
         }
 }
 
-bool carbon_insert_signed(carbon_insert *inserter, i64 value)
+bool carbon_insert_signed(carbon_insert *inserter, carbon_i64 value)
 {
         ERROR_IF(inserter->context_type == CARBON_COLUMN, &inserter->err, ERR_INSERT_TOO_DANGEROUS)
 
@@ -374,7 +374,7 @@ bool carbon_insert_signed(carbon_insert *inserter, i64 value)
                 case NUMBER_I32:
                         return carbon_insert_i32(inserter, (i32) value);
                 case NUMBER_I64:
-                        return carbon_insert_i64(inserter, (i64) value);
+                        return carbon_insert_i64(inserter, (carbon_i64) value);
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
                         return false;
         }
@@ -661,11 +661,11 @@ bool carbon_insert_column_list_end(carbon_insert_column_state *state_in)
         return carbon_insert_column_end(state_in);
 }
 
-static void inserter_refresh_mod_size(carbon_insert *inserter, i64 mod_size)
+static void inserter_refresh_mod_size(carbon_insert *inserter, carbon_i64 mod_size)
 {
         JAK_ASSERT(mod_size > 0);
 
-        i64 *target = NULL;
+        carbon_i64 *target = NULL;
         switch (inserter->context_type) {
                 case CARBON_OBJECT:
                         target = &inserter->context.object->mod_size;
@@ -791,12 +791,12 @@ bool carbon_insert_prop_i32(carbon_insert *inserter, const char *key, i32 value)
         return true;
 }
 
-bool carbon_insert_prop_i64(carbon_insert *inserter, const char *key, i64 value)
+bool carbon_insert_prop_i64(carbon_insert *inserter, const char *key, carbon_i64 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_I64, &value, sizeof(i64));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_I64, &value, sizeof(carbon_i64));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
@@ -820,7 +820,7 @@ bool carbon_insert_prop_unsigned(carbon_insert *inserter, const char *key, u64 v
         }
 }
 
-bool carbon_insert_prop_signed(carbon_insert *inserter, const char *key, i64 value)
+bool carbon_insert_prop_signed(carbon_insert *inserter, const char *key, carbon_i64 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER)
 
@@ -832,7 +832,7 @@ bool carbon_insert_prop_signed(carbon_insert *inserter, const char *key, i64 val
                 case NUMBER_I32:
                         return carbon_insert_prop_i32(inserter, key, (i32) value);
                 case NUMBER_I64:
-                        return carbon_insert_prop_i64(inserter, key, (i64) value);
+                        return carbon_insert_prop_i64(inserter, key, (carbon_i64) value);
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
                         return false;
         }

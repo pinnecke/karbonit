@@ -174,7 +174,7 @@ bool carbon_printer_comma(carbon_printer *printer, string_buffer *str)
         return true;
 }
 
-bool carbon_printer_signed_nonull(carbon_printer *printer, string_buffer *str, const i64 *value)
+bool carbon_printer_signed_nonull(carbon_printer *printer, string_buffer *str, const carbon_i64 *value)
 {
         DEBUG_ERROR_IF_NULL(printer->val_signed);
         printer->val_signed(printer, str, value);
@@ -224,22 +224,22 @@ bool carbon_printer_u64_or_null(carbon_printer *printer, string_buffer *str, u64
 
 bool carbon_printer_i8_or_null(carbon_printer *printer, string_buffer *str, i8 value)
 {
-        return delegate_print_call(printer, str, value, IS_NULL_I8, carbon_printer_signed_nonull, i64);
+        return delegate_print_call(printer, str, value, IS_NULL_I8, carbon_printer_signed_nonull, carbon_i64);
 }
 
 bool carbon_printer_i16_or_null(carbon_printer *printer, string_buffer *str, i16 value)
 {
-        return delegate_print_call(printer, str, value, IS_NULL_I16, carbon_printer_signed_nonull, i64);
+        return delegate_print_call(printer, str, value, IS_NULL_I16, carbon_printer_signed_nonull, carbon_i64);
 }
 
 bool carbon_printer_i32_or_null(carbon_printer *printer, string_buffer *str, i32 value)
 {
-        return delegate_print_call(printer, str, value, IS_NULL_I32, carbon_printer_signed_nonull, i64);
+        return delegate_print_call(printer, str, value, IS_NULL_I32, carbon_printer_signed_nonull, carbon_i64);
 }
 
-bool carbon_printer_i64_or_null(carbon_printer *printer, string_buffer *str, i64 value)
+bool carbon_printer_i64_or_null(carbon_printer *printer, string_buffer *str, carbon_i64 value)
 {
-        return delegate_print_call(printer, str, value, IS_NULL_I64, carbon_printer_signed_nonull, i64);
+        return delegate_print_call(printer, str, value, IS_NULL_I64, carbon_printer_signed_nonull, carbon_i64);
 }
 
 bool carbon_printer_float(carbon_printer *printer, string_buffer *str, const float *value)
@@ -288,7 +288,7 @@ bool carbon_printer_prop_false(carbon_printer *printer, string_buffer *str,
 }
 
 bool carbon_printer_prop_signed(carbon_printer *printer, string_buffer *str,
-                                const char *key_name, u64 key_len, const i64 *value)
+                                const char *key_name, u64 key_len, const carbon_i64 *value)
 {
         DEBUG_ERROR_IF_NULL(printer->prop_signed);
         printer->prop_signed(printer, str, key_name, key_len, value);
@@ -397,7 +397,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_NUMBER_I16:
                         case CARBON_FIELD_NUMBER_I32:
                         case CARBON_FIELD_NUMBER_I64: {
-                                i64 value;
+                                carbon_i64 value;
                                 carbon_object_it_signed_value(&is_null_value, &value, it);
                                 carbon_printer_prop_signed(printer, builder, key_name, key_len,
                                                            is_null_value ? NULL : &value);
@@ -553,7 +553,7 @@ bool carbon_printer_print_array(struct carbon_array *it, carbon_printer *printer
                         case CARBON_FIELD_NUMBER_I16:
                         case CARBON_FIELD_NUMBER_I32:
                         case CARBON_FIELD_NUMBER_I64: {
-                                i64 value;
+                                carbon_i64 value;
                                 carbon_array_it_signed_value(&is_null_value, &value, it);
                                 carbon_printer_signed_nonull(printer, builder, is_null_value ? NULL : &value);
                         }
@@ -728,7 +728,7 @@ bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
-                                i64 number = ((i8 *) values)[i];
+                                carbon_i64 number = ((i8 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I8(number) ? NULL : &number);
                         }
                                 break;
@@ -736,7 +736,7 @@ bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
-                                i64 number = ((i16 *) values)[i];
+                                carbon_i64 number = ((i16 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I16(number) ? NULL : &number);
                         }
                                 break;
@@ -744,7 +744,7 @@ bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
-                                i64 number = ((i32 *) values)[i];
+                                carbon_i64 number = ((i32 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I32(number) ? NULL : &number);
                         }
                                 break;
@@ -752,7 +752,7 @@ bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                                i64 number = ((i64 *) values)[i];
+                                carbon_i64 number = ((carbon_i64 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I64(number) ? NULL : &number);
                         }
                                 break;

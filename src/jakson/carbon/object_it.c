@@ -169,9 +169,9 @@ const char *carbon_object_it_prop_name(u64 *key_len, carbon_object_it *it)
         return it->field.key.name;
 }
 
-static i64 prop_remove(carbon_object_it *it, carbon_field_type_e type)
+static carbon_i64 prop_remove(carbon_object_it *it, carbon_field_type_e type)
 {
-        i64 prop_size = carbon_prop_size(&it->memfile);
+        carbon_i64 prop_size = carbon_prop_size(&it->memfile);
         carbon_string_nomarker_remove(&it->memfile);
         if (carbon_int_field_remove(&it->memfile, &it->err, type)) {
                 carbon_int_object_it_refresh(NULL, NULL, it);
@@ -278,7 +278,7 @@ bool carbon_object_it_i32_value(i32 *value, carbon_object_it *it)
         return carbon_int_field_access_i32_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_i64_value(i64 *value, carbon_object_it *it)
+bool carbon_object_it_i64_value(carbon_i64 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_i64_value(value, &it->field.value.data, &it->err);
 }
@@ -293,7 +293,7 @@ bool carbon_object_it_float_value_nullable(bool *is_null_in, float *value, carbo
         return carbon_int_field_access_float_value_nullable(is_null_in, value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_signed_value(bool *is_null_in, i64 *value, carbon_object_it *it)
+bool carbon_object_it_signed_value(bool *is_null_in, carbon_i64 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_signed_value(is_null_in, value, &it->field.value.data, &it->err);
 }

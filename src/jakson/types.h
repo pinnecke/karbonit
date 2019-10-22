@@ -33,7 +33,7 @@ typedef uint64_t u64;
 typedef int8_t i8;
 typedef int16_t i16;
 typedef int32_t i32;
-typedef int64_t i64;
+typedef int64_t carbon_i64;
 typedef u8 boolean;
 
 #define U8_NULL         UINT8_MAX
@@ -84,7 +84,7 @@ typedef i8 archive_field_boolean_t;
 typedef i8 archive_field_i8_t;
 typedef i16 archive_field_i16_t;
 typedef i32 archive_field_i32_t;
-typedef i64 archive_field_i64_t;
+typedef carbon_i64 archive_field_i64_t;
 typedef u8 archive_field_u8_t;
 typedef u16 archive_field_u16_t;
 typedef u32 archive_field_u32_t;

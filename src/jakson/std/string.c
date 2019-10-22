@@ -125,7 +125,7 @@ bool string_buffer_add_i32(string_buffer *builder, i32 value)
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_i64(string_buffer *builder, i64 value)
+bool string_buffer_add_i64(string_buffer *builder, carbon_i64 value)
 {
         char buffer[21];
         sprintf(buffer, "%" PRIi64, value);

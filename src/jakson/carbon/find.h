@@ -48,7 +48,7 @@ typedef struct carbon_find {
                 carbon_object_it *object_it;
                 bool boolean;
                 u64 unsigned_number;
-                i64 signed_number;
+                carbon_i64 signed_number;
                 float float_number;
 
                 struct {
@@ -93,7 +93,7 @@ fn_result ofType(carbon_object_it *) carbon_find_result_object(carbon_find *find
 fn_result ofType(carbon_column_it *) carbon_find_result_column(carbon_find *find);
 fn_result ofType(bool) carbon_find_result_boolean(carbon_find *find);
 fn_result carbon_find_result_unsigned(u64 *out, carbon_find *find);
-fn_result carbon_find_result_signed(i64 *out, carbon_find *find);
+fn_result carbon_find_result_signed(carbon_i64 *out, carbon_find *find);
 fn_result carbon_find_result_float(float *out, carbon_find *find);
 fn_result ofType(const char *) carbon_find_result_string(u64 *str_len, carbon_find *find);
 fn_result ofType(carbon_binary *) carbon_find_result_binary(carbon_find *find);

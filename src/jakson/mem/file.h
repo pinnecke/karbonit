@@ -84,7 +84,7 @@ const char *memfile_read(struct carbon_memfile *file, offset_t nbytes);
 u8 memfile_read_byte(struct carbon_memfile *file);
 u8 memfile_peek_byte(struct carbon_memfile *file);
 u64 memfile_read_u64(struct carbon_memfile *file);
-i64 memfile_read_i64(struct carbon_memfile *file);
+carbon_i64 memfile_read_i64(struct carbon_memfile *file);
 bool memfile_skip(struct carbon_memfile *file, signed_offset_t nbytes);
 #define MEMFILE_SKIP_BYTE(file) memfile_skip(file, sizeof(u8))
 const char *memfile_peek(struct carbon_memfile *file, offset_t nbytes);

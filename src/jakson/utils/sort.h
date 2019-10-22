@@ -47,9 +47,9 @@ typedef bool (*less_func_t)(const void *lhs, const void *rhs);
 #define QSORT_INDICIES_PARTITION(indices, base, width, comp, l, h)                                                 \
 ({                                                                                                                     \
     const void   *x       = base + indices[h] * width;                                                                 \
-    i64        i       = (l - 1);                                                                                  \
+    carbon_i64        i       = (l - 1);                                                                                  \
                                                                                                                        \
-    for (i64 j = l; j <= h - 1; j++)                                                                               \
+    for (carbon_i64 j = l; j <= h - 1; j++)                                                                               \
     {                                                                                                                  \
         if (comp(base + indices[j] * width, x))                                                                        \
         {                                                                                                              \
@@ -64,9 +64,9 @@ typedef bool (*less_func_t)(const void *lhs, const void *rhs);
 #define QSORT_INDICIES_PARTITION_WARGS(indices, base, width, comp, l, h, args)                                     \
 ({                                                                                                                     \
     const void   *x       = base + indices[h] * width;                                                                 \
-    i64        i       = (l - 1);                                                                                  \
+    carbon_i64        i       = (l - 1);                                                                                  \
                                                                                                                        \
-    for (i64 j = l; j <= h - 1; j++)                                                                               \
+    for (carbon_i64 j = l; j <= h - 1; j++)                                                                               \
     {                                                                                                                  \
         if (comp(base + indices[j] * width, x, args))                                                                  \
         {                                                                                                              \

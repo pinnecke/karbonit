@@ -285,7 +285,7 @@ value_type_for_json_number(bool *success, err *err, const json_number *number)
                         }
                 }
                 case JSON_NUMBER_SIGNED: {
-                        i64 test = number->value.signed_integer;
+                        carbon_i64 test = number->value.signed_integer;
                         if (test >= LIMITS_INT8_MIN && test <= LIMITS_INT8_MAX) {
                                 return FIELD_INT8;
                         } else if (test >= LIMITS_INT16_MIN && test <= LIMITS_INT16_MAX) {

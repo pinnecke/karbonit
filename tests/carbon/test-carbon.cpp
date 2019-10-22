@@ -411,7 +411,7 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
                         u64 rand_value = random();
                         carbon_insert_unsigned(&inserter, rand_value);
                 } else if (i % 6 == 4) {
-                        i64 rand_value = random();
+                        carbon_i64 rand_value = random();
                         carbon_insert_signed(&inserter, rand_value);
                 } else {
                         float rand_value = (float)rand()/(float)(RAND_MAX/INT32_MAX);
@@ -2214,7 +2214,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         carbon_find find;
         carbon_field_type_e result_type;
         u64 result;
-        i64 resulti64;
+        carbon_i64 resulti64;
         float resultfloat;
 
         carbon_find_begin(&find, "0", &rev_doc2);
@@ -4134,7 +4134,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
 
         string_buffer_create(&sb);
 
-        i64 id_read;
+        carbon_i64 id_read;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_IKEY, CARBON_OPTIMIZE);

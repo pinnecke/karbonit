@@ -48,7 +48,7 @@ bool string_buffer_add_u64(string_buffer *builder, u64 value);
 bool string_buffer_add_i8(string_buffer *builder, i8 value);
 bool string_buffer_add_i16(string_buffer *builder, i16 value);
 bool string_buffer_add_i32(string_buffer *builder, i32 value);
-bool string_buffer_add_i64(string_buffer *builder, i64 value);
+bool string_buffer_add_i64(string_buffer *builder, carbon_i64 value);
 bool string_buffer_add_u64_as_hex(string_buffer *builder, u64 value);
 bool string_buffer_add_u64_as_hex_0x_prefix_compact(string_buffer *builder, u64 value);
 bool string_buffer_add_float(string_buffer *builder, float value);

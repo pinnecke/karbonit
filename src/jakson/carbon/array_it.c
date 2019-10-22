@@ -30,8 +30,8 @@
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/internal.h>
 
-#define DEFINE_IN_PLACE_UPDATE_FUNCTION(type_name, field_type)                                                         \
-bool carbon_int_array_update_##type_name(struct carbon_array *it, type_name value)                \
+#define DEFINE_IN_PLACE_UPDATE_FUNCTION(type_name, built_in_type, field_type)                                                         \
+bool carbon_int_array_update_##type_name(struct carbon_array *it, built_in_type value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
         DEBUG_ERROR_IF_NULL(it);                                                                                             \
@@ -39,7 +39,7 @@ bool carbon_int_array_update_##type_name(struct carbon_array *it, type_name valu
                 memfile_save_position(&it->file);                                                                   \
                 carbon_int_array_it_offset(&datum, it);                                                                 \
                 memfile_seek(&it->file, datum + sizeof(u8));                                                        \
-                memfile_write(&it->file, &value, sizeof(type_name));                                                \
+                memfile_write(&it->file, &value, sizeof(built_in_type));                                                \
                 memfile_restore_position(&it->file);                                                                \
                 return true;                                                                                           \
         } else {                                                                                                       \
@@ -48,23 +48,23 @@ bool carbon_int_array_update_##type_name(struct carbon_array *it, type_name valu
         }                                                                                                              \
 }
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u8, CARBON_FIELD_NUMBER_U8)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u8, u8, CARBON_FIELD_NUMBER_U8)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u16, CARBON_FIELD_NUMBER_U16)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u16, u16, CARBON_FIELD_NUMBER_U16)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u32, CARBON_FIELD_NUMBER_U32)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u32, u32, CARBON_FIELD_NUMBER_U32)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u64, CARBON_FIELD_NUMBER_U64)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u64, u64, CARBON_FIELD_NUMBER_U64)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i8, CARBON_FIELD_NUMBER_I8)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i8, i8, CARBON_FIELD_NUMBER_I8)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i16, CARBON_FIELD_NUMBER_I16)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i16, i16, CARBON_FIELD_NUMBER_I16)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i32, CARBON_FIELD_NUMBER_I32)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i32, i32, CARBON_FIELD_NUMBER_I32)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i64, CARBON_FIELD_NUMBER_I64)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i64, carbon_i64, CARBON_FIELD_NUMBER_I64)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(float, float, CARBON_FIELD_NUMBER_FLOAT)
 
 static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e constant)
 {
@@ -398,7 +398,7 @@ bool carbon_array_it_i32_value(i32 *value, struct carbon_array *it)
         return carbon_int_field_access_i32_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_i64_value(i64 *value, struct carbon_array *it)
+bool carbon_array_it_i64_value(carbon_i64 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_i64_value(value, &it->field_access, &it->err);
 }
@@ -413,7 +413,7 @@ bool carbon_array_it_float_value_nullable(bool *is_null_in, float *value, struct
         return carbon_int_field_access_float_value_nullable(is_null_in, value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_signed_value(bool *is_null_in, i64 *value, struct carbon_array *it)
+bool carbon_array_it_signed_value(bool *is_null_in, carbon_i64 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_signed_value(is_null_in, value, &it->field_access, &it->err);
 }

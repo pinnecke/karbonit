@@ -32,7 +32,7 @@ number_min_type_e number_min_type_unsigned(u64 value)
         }
 }
 
-number_min_type_e number_min_type_signed(i64 value)
+number_min_type_e number_min_type_signed(carbon_i64 value)
 {
         if (value >= CARBON_I8_MIN && value <= CARBON_I8_MAX) {
                 return NUMBER_I8;

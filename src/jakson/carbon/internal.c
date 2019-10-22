@@ -735,12 +735,12 @@ bool carbon_int_field_access_i32_value(i32 *value, struct carbon_int_field_acces
         return true;
 }
 
-bool carbon_int_field_access_i64_value(i64 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_i64_value(carbon_i64 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I64, err, ERR_TYPEMISMATCH);
-        *value = *(i64 *) field->it_field_data;
+        *value = *(carbon_i64 *) field->it_field_data;
         return true;
 }
 
@@ -765,7 +765,7 @@ carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, str
         return true;
 }
 
-bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, struct carbon_int_field_access *field,
+bool carbon_int_field_access_signed_value(bool *is_null_in, carbon_i64 *value, struct carbon_int_field_access *field,
                                           err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
@@ -792,7 +792,7 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, struct c
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I64: {
-                        i64 read_value;
+                        carbon_i64 read_value;
                         carbon_int_field_access_i64_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I64(read_value));
@@ -1170,7 +1170,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
         carbon_insert_column_end(&state);                                                                              \
 })
 
-#define prop_insert_into_column(ins, prop, key, field_type, column_type, ctype, accessor)                                   \
+#define prop_insert_into_column(ins, prop, key, field_type, column_type, type_name, ctype, accessor)                                   \
 ({                                                                                                                     \
         carbon_insert_column_state state;                                                                       \
         u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems *                                 \
@@ -1183,7 +1183,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
                         carbon_insert_null(cins);                                                                      \
                 } else {                                                                                               \
-                        carbon_insert_##ctype(cins, (ctype) array_elem->value.value.number->value.accessor);           \
+                        carbon_insert_##type_name(cins, (ctype) array_elem->value.value.number->value.accessor);           \
                 }                                                                                                      \
         }                                                                                                              \
         carbon_insert_prop_column_end(&state);                                                                              \
@@ -1230,55 +1230,55 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U8,
                                                                         CARBON_COLUMN_TYPE_U8,
-                                                                        u8, unsigned_integer);
+                                                                        u8, u8, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U16:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U16,
                                                                         CARBON_COLUMN_TYPE_U16,
-                                                                        u16, unsigned_integer);
+                                                                        u16, u16, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U32:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U32,
                                                                         CARBON_COLUMN_TYPE_U32,
-                                                                        u32, unsigned_integer);
+                                                                        u32, u32, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U64:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U64,
                                                                         CARBON_COLUMN_TYPE_U64,
-                                                                        u64, unsigned_integer);
+                                                                        u64, u64, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I8:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I8,
                                                                         CARBON_COLUMN_TYPE_I8,
-                                                                        i8, signed_integer);
+                                                                        i8, i8, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I16:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I16,
                                                                         CARBON_COLUMN_TYPE_I16,
-                                                                        i16, signed_integer);
+                                                                        i16, i16, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I32:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I32,
                                                                         CARBON_COLUMN_TYPE_I32,
-                                                                        i32, signed_integer);
+                                                                        i32, i32, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I64:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I64,
                                                                         CARBON_COLUMN_TYPE_I64,
-                                                                        i64, signed_integer);
+                                                                        i64, carbon_i64, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_FLOAT:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_FLOAT,
                                                                         CARBON_COLUMN_TYPE_FLOAT,
-                                                                        float, float_number);
+                                                                        float, float, float_number);
                                                 break;
                                         case JSON_LIST_FIXED_NULL: {
                                                 carbon_insert_array_state state;

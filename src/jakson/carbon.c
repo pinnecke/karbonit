@@ -229,7 +229,7 @@ const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, carbon *doc)
         return result;
 }
 
-bool carbon_key_signed_value(i64 *key, carbon *doc)
+bool carbon_key_signed_value(carbon_i64 *key, carbon *doc)
 {
         carbon_key_e type;
         memfile_save_position(&doc->memfile);
@@ -237,7 +237,7 @@ bool carbon_key_signed_value(i64 *key, carbon *doc)
         const void *result = carbon_key_read(NULL, &type, &doc->memfile);
         memfile_restore_position(&doc->memfile);
         if (LIKELY(carbon_key_is_signed(type))) {
-                *key = *((const i64 *) result);
+                *key = *((const carbon_i64 *) result);
                 return true;
         } else {
                 ERROR(&doc->err, ERR_TYPEMISMATCH);

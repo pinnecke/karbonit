@@ -76,7 +76,7 @@ static void key_unsigned_set(carbon *doc, u64 key)
         memfile_restore_position(&doc->memfile);
 }
 
-static void key_signed_set(carbon *doc, i64 key)
+static void key_signed_set(carbon *doc, carbon_i64 key)
 {
         JAK_ASSERT(doc);
         memfile_save_position(&doc->memfile);
@@ -129,7 +129,7 @@ bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value)
         }
 }
 
-bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value)
+bool carbon_revise_key_set_signed(carbon_revise *context, carbon_i64 key_value)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;

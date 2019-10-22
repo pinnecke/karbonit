@@ -47,7 +47,7 @@ fn_result ofType(const carbon *) carbon_revise_end(carbon_revise *context);
 bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context);
 
 bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value);
-bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value);
+bool carbon_revise_key_set_signed(carbon_revise *context, carbon_i64 key_value);
 bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value);
 
 fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_derivable_e derivation);

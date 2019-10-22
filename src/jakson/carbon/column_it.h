@@ -42,7 +42,7 @@ typedef struct carbon_column_it {
         carbon_list_derivable_e abstract_type;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
-        i64 mod_size;
+        carbon_i64 mod_size;
 
         u32 column_capacity;
         u32 column_num_elements;
@@ -70,7 +70,7 @@ const u64 *carbon_column_it_u64_values(u32 *nvalues, carbon_column_it *it);
 const i8 *carbon_column_it_i8_values(u32 *nvalues, carbon_column_it *it);
 const i16 *carbon_column_it_i16_values(u32 *nvalues, carbon_column_it *it);
 const i32 *carbon_column_it_i32_values(u32 *nvalues, carbon_column_it *it);
-const i64 *carbon_column_it_i64_values(u32 *nvalues, carbon_column_it *it);
+const carbon_i64 *carbon_column_it_i64_values(u32 *nvalues, carbon_column_it *it);
 const float *carbon_column_it_float_values(u32 *nvalues, carbon_column_it *it);
 
 bool carbon_column_it_remove(carbon_column_it *it, u32 pos);
@@ -89,7 +89,7 @@ bool carbon_column_it_update_set_u64(carbon_column_it *it, u32 pos, u64 value);
 bool carbon_column_it_update_set_i8(carbon_column_it *it, u32 pos, i8 value);
 bool carbon_column_it_update_set_i16(carbon_column_it *it, u32 pos, i16 value);
 bool carbon_column_it_update_set_i32(carbon_column_it *it, u32 pos, i32 value);
-bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, i64 value);
+bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, carbon_i64 value);
 bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float value);
 
 /**

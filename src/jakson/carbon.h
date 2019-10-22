@@ -213,7 +213,7 @@ const void *carbon_raw_data(u64 *len, carbon *doc);
 bool carbon_is_up_to_date(carbon *doc);
 bool carbon_key_type(carbon_key_e *out, carbon *doc);
 const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, carbon *doc);
-bool carbon_key_signed_value(i64 *key, carbon *doc);
+bool carbon_key_signed_value(carbon_i64 *key, carbon *doc);
 bool carbon_key_unsigned_value(u64 *key, carbon *doc);
 const char *carbon_key_string_value(u64 *len, carbon *doc);
 bool carbon_has_key(carbon_key_e type);

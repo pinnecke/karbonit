@@ -434,7 +434,7 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
 
-        /* abstract types for column-i64 containers */
+        /* abstract types for column-carbon_i64 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I64, CARBON_CONTAINER_COLUMN_I64);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_I64, CARBON_CONTAINER_COLUMN_I64);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_I64, CARBON_CONTAINER_COLUMN_I64);

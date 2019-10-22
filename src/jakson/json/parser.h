@@ -166,7 +166,7 @@ typedef struct json_number {
         json_number_type_e value_type;
         union {
                 float float_number;
-                i64 signed_integer;
+                carbon_i64 signed_integer;
                 u64 unsigned_integer;
         } value;
 } json_number;

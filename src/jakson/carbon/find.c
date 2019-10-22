@@ -257,27 +257,27 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I8: {
-                                i64 val = 0;
+                                carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
                                 carbon_printer_i8_or_null(&printer, dst_str, (i8) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I16: {
-                                i64 val = 0;
+                                carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
                                 carbon_printer_i16_or_null(&printer, dst_str, (i16) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I32: {
-                                i64 val = 0;
+                                carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
                                 carbon_printer_i32_or_null(&printer, dst_str, (i32) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I64: {
-                                i64 val = 0;
+                                carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
-                                carbon_printer_i64_or_null(&printer, dst_str, (i64) val);
+                                carbon_printer_i64_or_null(&printer, dst_str, (carbon_i64) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_FLOAT: {
@@ -585,7 +585,7 @@ fn_result carbon_find_result_unsigned(u64 *out, carbon_find *find)
         return FN_OK();
 }
 
-fn_result carbon_find_result_signed(i64 *out, carbon_find *find)
+fn_result carbon_find_result_signed(carbon_i64 *out, carbon_find *find)
 {
         FN_FAIL_IF_NULL(out, find)
         FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
@@ -947,7 +947,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        i64 field_value = carbon_column_it_i64_values(NULL, it)[requested_idx];
+                        carbon_i64 field_value = carbon_column_it_i64_values(NULL, it)[requested_idx];
                         if (IS_NULL_I64(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {

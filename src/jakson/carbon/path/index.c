@@ -233,7 +233,7 @@ static void record_ref_create(struct carbon_memfile *memfile, carbon *doc)
                 }
                         break;
                 case CARBON_KEY_IKEY: {
-                        DECLARE_AND_INIT(i64, key)
+                        DECLARE_AND_INIT(carbon_i64, key)
                         carbon_key_signed_value(&key, doc);
                         memfile_seek(memfile, 0);
                         carbon_key_write_signed(memfile, key);
@@ -1088,7 +1088,7 @@ static void record_ref_to_str(string_buffer *str, carbon_path_index *index)
                 }
                         break;
                 case CARBON_KEY_IKEY: {
-                        i64 key = memfile_read_i64(&index->memfile);
+                        carbon_i64 key = memfile_read_i64(&index->memfile);
                         string_buffer_add_char(str, '[');;
                         string_buffer_add_i64(str, key);
                         string_buffer_add_char(str, ']');
@@ -1126,7 +1126,7 @@ static void record_ref_to_carbon(carbon_insert *roins, carbon_path_index *index)
                 }
                         break;
                 case CARBON_KEY_IKEY: {
-                        i64 key = memfile_read_i64(&index->memfile);
+                        carbon_i64 key = memfile_read_i64(&index->memfile);
                         carbon_insert_prop_signed(roins, "key-value", key);
                 }
                         break;
@@ -1210,12 +1210,12 @@ bool carbon_path_index_key_unsigned_value(u64 *key, carbon_path_index *index)
         return true;
 }
 
-bool carbon_path_index_key_signed_value(i64 *key, carbon_path_index *index)
+bool carbon_path_index_key_signed_value(carbon_i64 *key, carbon_path_index *index)
 {
         DEBUG_ERROR_IF_NULL(key)
         DEBUG_ERROR_IF_NULL(index)
         carbon_key_e key_type;
-        i64 ret = *(i64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
+        carbon_i64 ret = *(carbon_i64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
         ERROR_IF(key_type != CARBON_KEY_IKEY, &index->err, ERR_TYPEMISMATCH);
         *key = ret;
         return true;
@@ -1257,7 +1257,7 @@ bool carbon_path_index_indexes_doc(carbon_path_index *index, carbon *doc)
                                         return index_key == doc_key;
                                 }
                                 case CARBON_KEY_IKEY: {
-                                        i64 index_key, doc_key;
+                                        carbon_i64 index_key, doc_key;
                                         carbon_path_index_key_signed_value(&index_key, index);
                                         carbon_key_signed_value(&doc_key, doc);
                                         return index_key == doc_key;
@@ -1410,7 +1410,7 @@ bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *inde
 //
 //}
 //
-//bool carbon_path_index_it_field_i64_value(i64 *value, carbon_path_index_it *it)
+//bool carbon_path_index_it_field_i64_value(carbon_i64 *value, carbon_path_index_it *it)
 //{
 //
 //}
@@ -1420,7 +1420,7 @@ bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *inde
 //
 //}
 //
-//bool carbon_path_index_it_field_signed_value(bool *is_null_in, i64 *value, carbon_path_index_it *it)
+//bool carbon_path_index_it_field_signed_value(bool *is_null_in, carbon_i64 *value, carbon_path_index_it *it)
 //{
 //
 //}

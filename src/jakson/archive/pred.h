@@ -30,7 +30,7 @@ typedef bool (*string_pred_func_t)(size_t *idxs_matching, size_t *num_matching, 
 
 typedef struct string_pred {
         string_pred_func_t func;
-        i64 limit;
+        carbon_i64 limit;
 } string_pred;
 
 BUILT_IN(static bool) string_pred_validate(err *err, const string_pred *pred)
@@ -51,7 +51,7 @@ BUILT_IN(static bool) string_pred_eval(const string_pred *pred, size_t *idxs_mat
         return pred->func(idxs_matching, num_matching, strings, num_strings, capture);
 }
 
-BUILT_IN(static bool) string_pred_get_limit(i64 *limit, const string_pred *pred)
+BUILT_IN(static bool) string_pred_get_limit(carbon_i64 *limit, const string_pred *pred)
 {
         DEBUG_ERROR_IF_NULL(limit);
         DEBUG_ERROR_IF_NULL(pred);

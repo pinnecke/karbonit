@@ -30,7 +30,7 @@ CARBON_ITEM_UPDATE_FUNCTION(u64)
 CARBON_ITEM_UPDATE_FUNCTION(i8)
 CARBON_ITEM_UPDATE_FUNCTION(i16)
 CARBON_ITEM_UPDATE_FUNCTION(i32)
-CARBON_ITEM_UPDATE_FUNCTION(i64)
+CARBON_ITEM_UPDATE_FUNCTION(carbon_i64)
 CARBON_ITEM_UPDATE_FUNCTION(float)
 
 bool carbon_item_update_in_place_true(struct carbon_item *item);
@@ -47,10 +47,10 @@ bool carbon_item_u64_value(u64 *value, struct carbon_item *item);
 bool carbon_item_i8_value(i8 *value, struct carbon_item *item);
 bool carbon_item_i16_value(i16 *value, struct carbon_item *item);
 bool carbon_item_i32_value(i32 *value, struct carbon_item *item);
-bool carbon_item_i64_value(i64 *value, struct carbon_item *item);
+bool carbon_item_i64_value(carbon_i64 *value, struct carbon_item *item);
 bool carbon_item_float_value(float *value, struct carbon_item *item);
 bool carbon_item_float_value_nullable(bool *is_null_in, float *value, struct carbon_item *item);
-bool carbon_item_signed_value(bool *is_null_in, i64 *value, struct carbon_item *item);
+bool carbon_item_signed_value(bool *is_null_in, carbon_i64 *value, struct carbon_item *item);
 bool carbon_item_unsigned_value(bool *is_null_in, u64 *value, struct carbon_item *item);
 const char *carbon_item_string_value(u64 *strlen, struct carbon_item *item);
 bool carbon_item_binary_value(carbon_binary *out, struct carbon_item *item);

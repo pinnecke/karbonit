@@ -381,12 +381,12 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
 }
 
 archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
-                                            const string_pred *pred, void *capture, i64 limit)
+                                            const string_pred *pred, void *capture, carbon_i64 limit)
 {
         if (UNLIKELY(string_pred_validate(&query->err, pred) == false)) {
                 return NULL;
         }
-        i64 pred_limit;
+        carbon_i64 pred_limit;
         string_pred_get_limit(&pred_limit, pred);
         pred_limit = pred_limit < 0 ? limit : JAK_MIN(pred_limit, limit);
 

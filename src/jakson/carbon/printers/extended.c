@@ -83,7 +83,7 @@ static void meta_data(carbon_printer *self, string_buffer *builder,
                         break;
                 case CARBON_KEY_IKEY:
                         string_buffer_add(builder, "\"type\": \"ikey\", \"value\": ");
-                        string_buffer_add_u64(builder, *(i64 *) key);
+                        string_buffer_add_u64(builder, *(carbon_i64 *) key);
                         break;
                 case CARBON_KEY_SKEY:
                         string_buffer_add(builder, "\"type\": \"skey\", \"value\": ");
@@ -163,7 +163,7 @@ static void _json_printer_extended_const_false(carbon_printer *self, bool is_nul
         string_buffer_add(builder, is_null ? "null" : "false");
 }
 
-static void _json_printer_extended_val_signed(carbon_printer *self, string_buffer *builder, const i64 *value)
+static void _json_printer_extended_val_signed(carbon_printer *self, string_buffer *builder, const carbon_i64 *value)
 {
         UNUSED(self);
         if (LIKELY(value != NULL)) {
@@ -289,7 +289,7 @@ static void _json_printer_extended_prop_false(carbon_printer *self, string_buffe
 }
 
 static void _json_printer_extended_prop_signed(carbon_printer *self, string_buffer *builder,
-                        const char *key_name, u64 key_len, const i64 *value)
+                        const char *key_name, u64 key_len, const carbon_i64 *value)
 {
         UNUSED(self);
         _json_printer_extended_print_key(builder, key_name, key_len);

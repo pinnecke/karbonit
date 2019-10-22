@@ -576,7 +576,7 @@ static void parse_number(json_number *number, vector ofType(json_token) *token_s
         value[token.length] = '\0';
 
         if (token.type == LITERAL_INT) {
-                i64 assumeSigned = convert_atoi64(value);
+                carbon_i64 assumeSigned = convert_atoi64(value);
                 if (value[0] == '-') {
                         number->value_type = JSON_NUMBER_SIGNED;
                         number->value.signed_integer = assumeSigned;

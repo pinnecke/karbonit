@@ -45,7 +45,7 @@ static void write_ukey(struct carbon_memfile *file)
 static void write_ikey(struct carbon_memfile *file)
 {
         u8 marker = CARBON_MIKEY;
-        i64 key = 0;
+        carbon_i64 key = 0;
         memfile_write(file, &marker, sizeof(u8));
         memfile_write(file, &key, sizeof(u64));
 }
@@ -108,7 +108,7 @@ bool carbon_key_write_unsigned(struct carbon_memfile *file, u64 key)
         }
 }
 
-bool carbon_key_write_signed(struct carbon_memfile *file, i64 key)
+bool carbon_key_write_signed(struct carbon_memfile *file, carbon_i64 key)
 {
         DEBUG_ERROR_IF_NULL(file)
 
@@ -116,7 +116,7 @@ bool carbon_key_write_signed(struct carbon_memfile *file, i64 key)
 
         carbon_key_read_type(&key_type, file);
         if (carbon_key_is_signed(key_type)) {
-                memfile_write(file, &key, sizeof(i64));
+                memfile_write(file, &key, sizeof(carbon_i64));
                 return true;
         } else {
                 ERROR(&file->err, ERR_TYPEMISMATCH)
@@ -207,8 +207,8 @@ const void *carbon_key_read(u64 *len, carbon_key_e *out, struct carbon_memfile *
                         OPTIONAL_SET(len, sizeof(u64))
                         return MEMFILE_READ_TYPE(file, u64);
                 case CARBON_KEY_IKEY:
-                        OPTIONAL_SET(len, sizeof(i64))
-                        return MEMFILE_READ_TYPE(file, i64);
+                        OPTIONAL_SET(len, sizeof(carbon_i64))
+                        return MEMFILE_READ_TYPE(file, carbon_i64);
                 case CARBON_KEY_SKEY:
                         return carbon_string_read(len, file);
                 default: ERROR(&file->err, ERR_INTERNALERR)

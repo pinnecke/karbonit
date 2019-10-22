@@ -507,7 +507,7 @@ bool carbon_field_skip_64(struct carbon_memfile *file)
 
         ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I64 && type_marker != CARBON_FIELD_NUMBER_U64,
                  &file->err, ERR_TYPEMISMATCH);
-        JAK_ASSERT(sizeof(u64) == sizeof(i64));
+        JAK_ASSERT(sizeof(u64) == sizeof(carbon_i64));
         memfile_skip(file, sizeof(u64));
         return true;
 }

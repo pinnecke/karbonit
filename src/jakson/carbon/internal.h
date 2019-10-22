@@ -125,10 +125,10 @@ bool carbon_int_field_access_u64_value(u64 *value, struct carbon_int_field_acces
 bool carbon_int_field_access_i8_value(i8 *value, struct carbon_int_field_access *field, err *err);
 bool carbon_int_field_access_i16_value(i16 *value, struct carbon_int_field_access *field, err *err);
 bool carbon_int_field_access_i32_value(i32 *value, struct carbon_int_field_access *field, err *err);
-bool carbon_int_field_access_i64_value(i64 *value, struct carbon_int_field_access *field, err *err);
+bool carbon_int_field_access_i64_value(carbon_i64 *value, struct carbon_int_field_access *field, err *err);
 bool carbon_int_field_access_float_value(float *value, struct carbon_int_field_access *field, err *err);
 bool carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, struct carbon_int_field_access *field, err *err);
-bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, struct carbon_int_field_access *field, err *err);
+bool carbon_int_field_access_signed_value(bool *is_null_in, carbon_i64 *value, struct carbon_int_field_access *field, err *err);
 bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, struct carbon_int_field_access *field, err *err);
 const char *carbon_int_field_access_string_value(u64 *strlen, struct carbon_int_field_access *field, err *err);
 bool carbon_int_field_access_binary_value(carbon_binary *out, struct carbon_int_field_access *field, err *err);

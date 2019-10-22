@@ -52,10 +52,10 @@ fn_result carbon_update_set_u64(carbon_revise *context, const char *path, u64 va
 fn_result carbon_update_set_i8(carbon_revise *context, const char *path, i8 value);
 fn_result carbon_update_set_i16(carbon_revise *context, const char *path, i16 value);
 fn_result carbon_update_set_i32(carbon_revise *context, const char *path, i32 value);
-fn_result carbon_update_set_i64(carbon_revise *context, const char *path, i64 value);
+fn_result carbon_update_set_i64(carbon_revise *context, const char *path, carbon_i64 value);
 fn_result carbon_update_set_float(carbon_revise *context, const char *path, float value);
 fn_result carbon_update_set_unsigned(carbon_revise *context, const char *path, u64 value);
-fn_result carbon_update_set_signed(carbon_revise *context, const char *path, i64 value);
+fn_result carbon_update_set_signed(carbon_revise *context, const char *path, carbon_i64 value);
 fn_result carbon_update_set_string(carbon_revise *context, const char *path, const char *value);
 fn_result carbon_update_set_binary(carbon_revise *context, const char *path, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 
@@ -76,10 +76,10 @@ fn_result carbon_update_set_u64_compiled(carbon_revise *context, const carbon_do
 fn_result carbon_update_set_i8_compiled(carbon_revise *context, const carbon_dot_path *path, i8 value);
 fn_result carbon_update_set_i16_compiled(carbon_revise *context, const carbon_dot_path *path, i16 value);
 fn_result carbon_update_set_i32_compiled(carbon_revise *context, const carbon_dot_path *path, i32 value);
-fn_result carbon_update_set_i64_compiled(carbon_revise *context, const carbon_dot_path *path, i64 value);
+fn_result carbon_update_set_i64_compiled(carbon_revise *context, const carbon_dot_path *path, carbon_i64 value);
 fn_result carbon_update_set_float_compiled(carbon_revise *context, const carbon_dot_path *path, float value);
 fn_result carbon_update_set_unsigned_compiled(carbon_revise *context, const carbon_dot_path *path, u64 value);
-fn_result carbon_update_set_signed_compiled(carbon_revise *context, const carbon_dot_path *path, i64 value);
+fn_result carbon_update_set_signed_compiled(carbon_revise *context, const carbon_dot_path *path, carbon_i64 value);
 fn_result carbon_update_set_string_compiled(carbon_revise *context, const carbon_dot_path *path, const char *value);
 fn_result carbon_update_set_binary_compiled(carbon_revise *context, const carbon_dot_path *path, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 carbon_insert * carbon_update_set_array_begin_compiled(carbon_revise *context, const carbon_dot_path *path, carbon_insert_array_state *state_out, u64 array_capacity);
@@ -97,10 +97,10 @@ fn_result carbon_update_one_set_u64(const char *dot_path, carbon *rev_doc, carbo
 fn_result carbon_update_one_set_i8(const char *dot_path, carbon *rev_doc, carbon *doc, i8 value);
 fn_result carbon_update_one_set_i16(const char *dot_path, carbon *rev_doc, carbon *doc, i16 value);
 fn_result carbon_update_one_set_i32(const char *dot_path, carbon *rev_doc, carbon *doc, i32 value);
-fn_result carbon_update_one_set_i64(const char *dot_path, carbon *rev_doc, carbon *doc, i64 value);
+fn_result carbon_update_one_set_i64(const char *dot_path, carbon *rev_doc, carbon *doc, carbon_i64 value);
 fn_result carbon_update_one_set_float(const char *dot_path, carbon *rev_doc, carbon *doc, float value);
 fn_result carbon_update_one_set_unsigned(const char *dot_path, carbon *rev_doc, carbon *doc, u64 value);
-fn_result carbon_update_one_set_signed(const char *dot_path, carbon *rev_doc, carbon *doc, i64 value);
+fn_result carbon_update_one_set_signed(const char *dot_path, carbon *rev_doc, carbon *doc, carbon_i64 value);
 fn_result carbon_update_one_set_string(const char *dot_path, carbon *rev_doc, carbon *doc, const char *value);
 fn_result carbon_update_one_set_binary(const char *dot_path, carbon *rev_doc, carbon *doc, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 carbon_insert *carbon_update_one_set_array_begin(carbon_insert_array_state *state_out, const char *dot_path, carbon *rev_doc, carbon *doc, u64 array_capacity);
@@ -119,10 +119,10 @@ fn_result carbon_update_one_set_u64_compiled(const carbon_dot_path *path, carbon
 fn_result carbon_update_one_set_i8_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, i8 value);
 fn_result carbon_update_one_set_i16_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, i16 value);
 fn_result carbon_update_one_set_i32_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, i32 value);
-fn_result carbon_update_one_set_i64_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, i64 value);
+fn_result carbon_update_one_set_i64_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, carbon_i64 value);
 fn_result carbon_update_one_set_float_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, float value);
 fn_result carbon_update_one_set_unsigned_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, u64 value);
-fn_result carbon_update_one_set_signed_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, i64 value);
+fn_result carbon_update_one_set_signed_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, carbon_i64 value);
 fn_result carbon_update_one_set_string_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, const char *value);
 fn_result carbon_update_one_set_binary_compiled(const carbon_dot_path *path, carbon *rev_doc, carbon *doc, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 carbon_insert *carbon_update_one_set_array_begin_compiled(carbon_insert_array_state *state_out, const carbon_dot_path *path, carbon *rev_doc, carbon *doc, u64 array_capacity);

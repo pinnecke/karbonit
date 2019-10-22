@@ -267,9 +267,9 @@ const i32 *carbon_column_it_i32_values(u32 *nvalues, carbon_column_it *it)
         return safe_cast(i32, nvalues, it, carbon_field_type_is_column_i32_or_subtype(type));
 }
 
-const i64 *carbon_column_it_i64_values(u32 *nvalues, carbon_column_it *it)
+const carbon_i64 *carbon_column_it_i64_values(u32 *nvalues, carbon_column_it *it)
 {
-        return safe_cast(i64, nvalues, it, carbon_field_type_is_column_i64_or_subtype(type));
+        return safe_cast(carbon_i64, nvalues, it, carbon_field_type_is_column_i64_or_subtype(type));
 }
 
 const float *carbon_column_it_float_values(u32 *nvalues, carbon_column_it *it)
@@ -426,8 +426,8 @@ bool carbon_column_it_update_set_null(carbon_column_it *it, u32 pos)
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        i64 null_value = I64_NULL;
-                        memfile_write(&it->memfile, &null_value, sizeof(i64));
+                        carbon_i64 null_value = I64_NULL;
+                        memfile_write(&it->memfile, &null_value, sizeof(carbon_i64));
                 }
                         break;
                 case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
@@ -554,7 +554,7 @@ static bool rewrite_column_to_array(carbon_column_it *it)
                         push_array_element_wvalue(num_values, data, i32, IS_NULL_I32, carbon_insert_i32);
                         break;
                 case CARBON_FIELD_NUMBER_I64:
-                        push_array_element_wvalue(num_values, data, i64, IS_NULL_I64, carbon_insert_i64);
+                        push_array_element_wvalue(num_values, data, carbon_i64, IS_NULL_I64, carbon_insert_i64);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
                         push_array_element_wvalue(num_values, data, float, IS_NULL_FLOAT, carbon_insert_float);
@@ -653,8 +653,8 @@ bool carbon_column_it_update_set_true(carbon_column_it *it, u32 pos)
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        i64 null_value = I64_NULL;
-                        memfile_write(&it->memfile, &null_value, sizeof(i64));
+                        carbon_i64 null_value = I64_NULL;
+                        memfile_write(&it->memfile, &null_value, sizeof(carbon_i64));
                 }
                         break;
                 case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
@@ -773,7 +773,7 @@ bool carbon_column_it_update_set_i32(carbon_column_it *it, u32 pos, i32 value)
         return false;
 }
 
-bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, i64 value)
+bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, carbon_i64 value)
 {
         UNUSED(it)
         UNUSED(pos)

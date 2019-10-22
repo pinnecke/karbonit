@@ -51,7 +51,7 @@ typedef struct carbon_printer
         void (*const_true)(carbon_printer *self, bool is_null, string_buffer *builder);
         void (*const_false)(carbon_printer *self, bool is_null, string_buffer *builder);
         /** if <code>value</code> is NULL, <code>value</code> is interpreted as null-value'd entry */
-        void (*val_signed)(carbon_printer *self, string_buffer *builder, const i64 *value);
+        void (*val_signed)(carbon_printer *self, string_buffer *builder, const carbon_i64 *value);
         /** if <code>value</code> is NULL, <code>value</code> is interpreted as null-value'd entry */
         void (*val_unsigned)(carbon_printer *self, string_buffer *builder, const u64 *value);
         /** if <code>value</code> is NULL, <code>value</code> is interpreted as null-value'd entry */
@@ -64,7 +64,7 @@ typedef struct carbon_printer
         void (*prop_null)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len);
         void (*prop_true)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len);
         void (*prop_false)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len);
-        void (*prop_signed)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const i64 *value);
+        void (*prop_signed)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const carbon_i64 *value);
         void (*prop_unsigned)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const u64 *value);
         void (*prop_float)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const float *value);
         void (*prop_string)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const char *value, u64 strlen);
@@ -97,7 +97,7 @@ bool carbon_printer_null(carbon_printer *printer, string_buffer *str);
 bool carbon_printer_true(carbon_printer *printer, bool is_null, string_buffer *str);
 bool carbon_printer_false(carbon_printer *printer, bool is_null, string_buffer *str);
 bool carbon_printer_comma(carbon_printer *printer, string_buffer *str);
-bool carbon_printer_signed_nonull(carbon_printer *printer, string_buffer *str, const i64 *value);
+bool carbon_printer_signed_nonull(carbon_printer *printer, string_buffer *str, const carbon_i64 *value);
 bool carbon_printer_unsigned_nonull(carbon_printer *printer, string_buffer *str, const u64 *value);
 bool carbon_printer_u8_or_null(carbon_printer *printer, string_buffer *str, u8 value);
 bool carbon_printer_u16_or_null(carbon_printer *printer, string_buffer *str, u16 value);
@@ -106,14 +106,14 @@ bool carbon_printer_u64_or_null(carbon_printer *printer, string_buffer *str, u64
 bool carbon_printer_i8_or_null(carbon_printer *printer, string_buffer *str, i8 value);
 bool carbon_printer_i16_or_null(carbon_printer *printer, string_buffer *str, i16 value);
 bool carbon_printer_i32_or_null(carbon_printer *printer, string_buffer *str, i32 value);
-bool carbon_printer_i64_or_null(carbon_printer *printer, string_buffer *str, i64 value);
+bool carbon_printer_i64_or_null(carbon_printer *printer, string_buffer *str, carbon_i64 value);
 bool carbon_printer_float(carbon_printer *printer, string_buffer *str, const float *value);
 bool carbon_printer_string(carbon_printer *printer, string_buffer *str, const char *value, u64 strlen);
 bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const carbon_binary *binary);
 bool carbon_printer_prop_null(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_prop_true(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_prop_false(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
-bool carbon_printer_prop_signed(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const i64 *value);
+bool carbon_printer_prop_signed(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const carbon_i64 *value);
 bool carbon_printer_prop_unsigned(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const u64 *value);
 bool carbon_printer_prop_float(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const float *value);
 bool carbon_printer_prop_string(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const char *value, u64 strlen);

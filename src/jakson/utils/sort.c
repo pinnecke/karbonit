@@ -27,10 +27,10 @@ bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_e
                 return true;
         }
 
-        i64 h = nelemns - 1;
-        i64 *stack = (i64 *) alloc_malloc(alloc, (h + 1) * sizeof(i64));
-        i64 top = -1;
-        i64 l = 0;
+        carbon_i64 h = nelemns - 1;
+        carbon_i64 *stack = (carbon_i64 *) alloc_malloc(alloc, (h + 1) * sizeof(carbon_i64));
+        carbon_i64 top = -1;
+        carbon_i64 l = 0;
 
         stack[++top] = l;
         stack[++top] = h;
@@ -39,7 +39,7 @@ bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_e
                 h = stack[top--];
                 l = stack[top--];
 
-                i64 p = QSORT_INDICIES_PARTITION(indices, base, width, comp, l, h);
+                carbon_i64 p = QSORT_INDICIES_PARTITION(indices, base, width, comp, l, h);
 
                 if (p - 1 > l) {
                         stack[++top] = l;
@@ -66,12 +66,12 @@ int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, l
                 return true;
         }
 
-        i64 h = nelemens - 1;
-        i64 *stack = alloc_malloc(alloc, (h + 1) * sizeof(i64));
+        carbon_i64 h = nelemens - 1;
+        carbon_i64 *stack = alloc_malloc(alloc, (h + 1) * sizeof(carbon_i64));
         JAK_ASSERT (stack);
 
-        i64 top = -1;
-        i64 l = 0;
+        carbon_i64 top = -1;
+        carbon_i64 l = 0;
 
         stack[++top] = l;
         stack[++top] = h;
@@ -80,7 +80,7 @@ int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, l
                 h = stack[top--];
                 l = stack[top--];
 
-                i64 p = QSORT_INDICIES_PARTITION_WARGS(indices, base, width, comp, l, h, args);
+                carbon_i64 p = QSORT_INDICIES_PARTITION_WARGS(indices, base, width, comp, l, h, args);
 
                 if (p - 1 > l) {
                         stack[++top] = l;

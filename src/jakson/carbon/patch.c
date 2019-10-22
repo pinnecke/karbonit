@@ -20,7 +20,7 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/find.h>
 
-fn_result carbon_patch_begin(carbon_array_it *it, carbon *doc)
+fn_result carbon_patch_begin(struct carbon_array *it, carbon *doc)
 {
         FN_FAIL_IF_NULL(it, doc);
         offset_t payload_start = carbon_int_payload_after_header(doc);
@@ -29,7 +29,7 @@ fn_result carbon_patch_begin(carbon_array_it *it, carbon *doc)
         return FN_OK();
 }
 
-fn_result carbon_patch_end(carbon_array_it *it)
+fn_result carbon_patch_end(struct carbon_array *it)
 {
         FN_FAIL_IF_NULL(it);
         return carbon_array_it_drop(it);

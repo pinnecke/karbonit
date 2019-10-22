@@ -118,8 +118,8 @@ bool carbon_path_index_it_field_float_value(bool *is_null_in, float *value, carb
 bool carbon_path_index_it_field_signed_value(bool *is_null_in, i64 *value, carbon_path_index_it *it);
 bool carbon_path_index_it_field_unsigned_value(bool *is_null_in, u64 *value, carbon_path_index_it *it);
 const char *carbon_path_index_it_field_string_value(u64 *strlen, carbon_path_index_it *it);
-bool carbon_path_index_it_field_binary_value(carbon_binary *out, carbon_array_it *it);
-bool carbon_path_index_it_field_array_value(carbon_array_it *it_out, carbon_path_index_it *it_in);
+bool carbon_path_index_it_field_binary_value(carbon_binary *out, struct carbon_array *it);
+bool carbon_path_index_it_field_array_value(struct carbon_array *it_out, carbon_path_index_it *it_in);
 bool carbon_path_index_it_field_object_value(carbon_object_it *it_out, carbon_path_index_it *it_in);
 bool carbon_path_index_it_field_column_value(carbon_column_it *it_out, carbon_path_index_it *it_in);
 

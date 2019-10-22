@@ -118,7 +118,7 @@ typedef struct carbon_new {
         err err;
         carbon original;
         carbon_revise revision_context;
-        carbon_array_it *content_it;
+        struct carbon_array *content_it;
         carbon_insert *inserter;
         /** options shrink or compact (or both) documents, see
          * CARBON_KEEP, CARBON_SHRINK, CARBON_COMPACT, and CARBON_OPTIMIZE  */
@@ -250,10 +250,10 @@ char *carbon_to_json_compact_dup(carbon *doc);
  *
  * An opened iterator must be closed by calling 'carbon_read_end'. Not closing an iterator leads to undefined
  * behavior. */
-fn_result carbon_read_begin(carbon_array_it *it, carbon *doc);
+fn_result carbon_read_begin(struct carbon_array *it, carbon *doc);
 
 /* Closes a read-only iterator, which was previously opened via 'carbon_read_begin' */
-fn_result carbon_read_end(carbon_array_it *it);
+fn_result carbon_read_end(struct carbon_array *it);
 
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, carbon *doc);
 bool carbon_hexdump_print(FILE *file, carbon *doc);

@@ -7,7 +7,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         carbon doc;
         struct err err;
         u64 hash_original, hash_patch_1, hash_patch_2;
-        carbon_array_it it, *arr;
+        struct carbon_array it, *arr;
         carbon_object_it *obj;
         carbon_field_type_e type;
 
@@ -31,10 +31,10 @@ TEST(TestCarbonPatch, CreatePatch) {
                                 arr = carbon_object_it_array_value(obj);
                                 {
                                         carbon_array_it_next(arr); /* { ...: [1,...] } */
-                                        carbon_array_it_update_in_place_u8(arr, 42);
+                                        carbon_int_array_update_u8(arr, 42);
                                         carbon_array_it_next(arr); /* { ...: [..., "y",...] } */
                                         carbon_array_it_next(arr); /* { ...: [..., ..., 3] } */
-                                        carbon_array_it_update_in_place_u8(arr, 23);
+                                        carbon_int_array_update_u8(arr, 23);
                                 }
                         }
                 }
@@ -48,9 +48,9 @@ TEST(TestCarbonPatch, CreatePatch) {
         {
                 carbon_find find;
                 carbon_patch_find_begin(&find, "x", &doc);
-                carbon_array_it *sub_it = FN_GET_PTR(carbon_array_it, carbon_find_result_array(&find));
+                struct carbon_array *sub_it = FN_GET_PTR(struct carbon_array, carbon_find_result_array(&find));
                 carbon_array_it_next(sub_it); /* { ...: [42,...] } */
-                carbon_array_it_update_in_place_u8(sub_it, 102);
+                carbon_int_array_update_u8(sub_it, 102);
                 carbon_patch_find_end(&find);
         }
 

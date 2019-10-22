@@ -100,7 +100,7 @@ bool carbon_object_it_signed_value(bool *is_null_in, i64 *value, carbon_object_i
 bool carbon_object_it_unsigned_value(bool *is_null_in, u64 *value, carbon_object_it *it);
 const char *carbon_object_it_string_value(u64 *strlen, carbon_object_it *it);
 bool carbon_object_it_binary_value(carbon_binary *out, carbon_object_it *it);
-carbon_array_it *carbon_object_it_array_value(carbon_object_it *it_in);
+struct carbon_array *carbon_object_it_array_value(carbon_object_it *it_in);
 carbon_object_it *carbon_object_it_object_value(carbon_object_it *it_in);
 carbon_column_it *carbon_object_it_column_value(carbon_object_it *it_in);
 

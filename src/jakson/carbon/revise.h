@@ -52,8 +52,8 @@ bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value)
 
 fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_derivable_e derivation);
 
-fn_result carbon_revise_iterator_open(carbon_array_it *it, carbon_revise *context);
-fn_result carbon_revise_iterator_close(carbon_array_it *it);
+fn_result carbon_revise_iterator_open(struct carbon_array *it, carbon_revise *context);
+fn_result carbon_revise_iterator_close(struct carbon_array *it);
 
 fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, carbon_revise *context);
 fn_result carbon_revise_find_end(carbon_find *find);

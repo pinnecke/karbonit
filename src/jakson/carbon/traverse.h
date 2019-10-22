@@ -19,17 +19,9 @@
 #define HAD_CARBON_TRAVERSE_H
 
 #include <jakson/stdinc.h>
+#include <jakson/forwdecl.h>
 
 BEGIN_DECL
-
-struct carbon_array_it;
-struct carbon_column_it;
-struct carbon_object_it;
-
-struct carbon_traverse;
-struct carbon_traverse_extra;
-
-struct carbon_json_from_opts;
 
 /* called before traversing is started; used to allocate 'extra' allocated memory */
 typedef void (*carbon_traverse_setup_t)(struct carbon_traverse_extra *extra);
@@ -41,10 +33,10 @@ typedef void (*carbon_traverse_clean_t)(struct carbon_traverse_extra *extra);
 typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struct carbon *record);
 
 /* called when an array (iterator) was found */
-typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, struct carbon_array_it *it);
+typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, struct carbon_array *it);
 
 /* called when an array (iterator) was was passed */
-typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, struct carbon_array_it *it);
+typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, struct carbon_array *it);
 
 /* called when an column (iterator) was found */
 typedef void (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column_it *it);
@@ -110,11 +102,11 @@ void carbon_traverse_create(struct carbon_traverse *traverse, carbon_traverse_se
 void carbon_traverse_drop(struct carbon_traverse *traverse);
 
 void carbon_traverse_carbon(struct carbon *rev_out, struct carbon_traverse *traverse, struct carbon *record);
-void carbon_traverse_array(struct carbon_traverse *traverse, struct carbon_array_it *it);
+void carbon_traverse_array(struct carbon_traverse *traverse, struct carbon_array *it);
 void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column_it *it);
 void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object_it *it);
 
-void carbon_traverse_continue_array(struct carbon_traverse_extra *context, struct carbon_array_it *it);
+void carbon_traverse_continue_array(struct carbon_traverse_extra *context, struct carbon_array *it);
 void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column_it *it);
 void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object_it *it);
 

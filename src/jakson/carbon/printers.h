@@ -122,7 +122,7 @@ bool carbon_printer_array_prop_name(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_column_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_object_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, string_buffer *builder);
-bool carbon_printer_print_array(carbon_array_it *it, carbon_printer *printer, string_buffer *builder, bool is_record_container);
+bool carbon_printer_print_array(struct carbon_array *it, carbon_printer *printer, string_buffer *builder, bool is_record_container);
 bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, string_buffer *builder);
 
 END_DECL

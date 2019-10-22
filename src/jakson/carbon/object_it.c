@@ -313,7 +313,7 @@ bool carbon_object_it_binary_value(carbon_binary *out, carbon_object_it *it)
         return carbon_int_field_access_binary_value(out, &it->field.value.data, &it->err);
 }
 
-carbon_array_it *carbon_object_it_array_value(carbon_object_it *it_in)
+struct carbon_array *carbon_object_it_array_value(carbon_object_it *it_in)
 {
         return carbon_int_field_access_array_value(&it_in->field.value.data, &it_in->err);
 }

@@ -30,14 +30,14 @@ BEGIN_DECL
 
 typedef struct carbon_path_evaluator {
         carbon *doc;
-        carbon_array_it root_it;
+        struct carbon_array root_it;
         carbon_path_status_e status;
         err err;
         struct {
                 carbon_container_e container_type;
                 union {
                         struct {
-                                carbon_array_it it;
+                                struct carbon_array it;
                         } array;
 
                         struct {

@@ -78,7 +78,7 @@ static void column_into_carbon(carbon_insert *ins, carbon_path_index *index);
 
 static void object_build_index(struct path_index_node *parent, carbon_object_it *elem_it);
 
-static void array_build_index(struct path_index_node *parent, carbon_array_it *elem_it);
+static void array_build_index(struct path_index_node *parent, struct carbon_array *elem_it);
 
 static void node_flat(memfile *file, struct path_index_node *node);
 
@@ -253,7 +253,7 @@ static void record_ref_create(memfile *memfile, carbon *doc)
         memfile_write(memfile, &commit_hash, sizeof(u64));
 }
 
-static void array_traverse(struct path_index_node *parent, carbon_array_it *it)
+static void array_traverse(struct path_index_node *parent, struct carbon_array *it)
 {
         u64 sub_elem_pos = 0;
         while (carbon_array_it_next(it)) {
@@ -373,7 +373,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object_it 
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        carbon_array_it *it = carbon_object_it_array_value(elem_it);
+                        struct carbon_array *it = carbon_object_it_array_value(elem_it);
                         array_traverse(parent, it);
                         carbon_array_it_drop(it);
                 }
@@ -391,7 +391,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object_it 
         }
 }
 
-static void array_build_index(struct path_index_node *parent, carbon_array_it *elem_it)
+static void array_build_index(struct path_index_node *parent, struct carbon_array *elem_it)
 {
         carbon_field_type_e field_type;
         carbon_array_it_field_type(&field_type, elem_it);
@@ -464,7 +464,7 @@ static void array_build_index(struct path_index_node *parent, carbon_array_it *e
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        carbon_array_it *it = carbon_array_it_array_value(elem_it);
+                        struct carbon_array *it = carbon_array_it_array_value(elem_it);
                         array_traverse(parent, it);
                         carbon_array_it_drop(it);
                 }
@@ -1045,7 +1045,7 @@ static void index_build(memfile *file, carbon *doc)
         /** init */
         path_index_node_init(&root_array);
 
-        carbon_array_it it;
+        struct carbon_array it;
         u64 array_pos = 0;
         carbon_read_begin(&it, doc);
 
@@ -1435,12 +1435,12 @@ bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *inde
 //
 //}
 //
-//bool carbon_path_index_it_field_binary_value(carbon_binary *out, carbon_array_it *it)
+//bool carbon_path_index_it_field_binary_value(carbon_binary *out, struct carbon_array *it)
 //{
 //
 //}
 //
-//bool carbon_path_index_it_field_array_value(carbon_array_it *it_out, carbon_path_index_it *it_in)
+//bool carbon_path_index_it_field_array_value(struct carbon_array *it_out, carbon_path_index_it *it_in)
 //{
 //
 //}

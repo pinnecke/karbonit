@@ -22,7 +22,7 @@
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/find.h>
 
-static void result_from_array(carbon_find *find, carbon_array_it *it);
+static void result_from_array(carbon_find *find, struct carbon_array *it);
 
 static void result_from_object(carbon_find *find, carbon_object_it *it);
 
@@ -178,7 +178,7 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                carbon_array_it *sub_it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
+                                struct carbon_array *sub_it = FN_PTR(struct carbon_array, carbon_find_result_array(find));
                                 carbon_printer_print_array(sub_it, &printer, dst_str, false);
                         }
                                 break;
@@ -333,7 +333,7 @@ fn_result carbon_find_update_array_type(carbon_find *find, carbon_list_derivable
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 memfile mod;
-                carbon_array_it *it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
+                struct carbon_array *it = FN_PTR(struct carbon_array, carbon_find_result_array(find));
                 memfile_clone(&mod, &it->memfile);
                 memfile_seek_from_here(&mod, -sizeof(u8));
                 carbon_derived_e derive_marker;
@@ -353,7 +353,7 @@ fn_result ofType(bool) carbon_find_array_is_multiset(carbon_find *find)
         carbon_field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
-                carbon_array_it *it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
+                struct carbon_array *it = FN_PTR(struct carbon_array, carbon_find_result_array(find));
                 return carbon_array_it_is_multiset(it);
         } else {
                 return FN_FAIL(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
@@ -366,7 +366,7 @@ fn_result ofType(bool) carbon_find_array_is_sorted(carbon_find *find)
         carbon_field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
-                carbon_array_it *it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
+                struct carbon_array *it = FN_PTR(struct carbon_array, carbon_find_result_array(find));
                 return carbon_array_it_is_sorted(it);
         } else {
                 return FN_FAIL(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
@@ -524,7 +524,7 @@ fn_result __check_path_evaluator_has_result(carbon_find *find)
         }
 }
 
-fn_result ofType(carbon_array_it *) carbon_find_result_array(carbon_find *find)
+fn_result ofType(struct carbon_array *) carbon_find_result_array(carbon_find *find)
 {
         FN_FAIL_IF_NULL(find)
         FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
@@ -642,7 +642,7 @@ fn_result carbon_find_drop(carbon_find *find)
         return FN_OK();
 }
 
-static void result_from_array(carbon_find *find, carbon_array_it *it)
+static void result_from_array(carbon_find *find, struct carbon_array *it)
 {
         find->type = it->field_access.it_field_type;
         switch (find->type) {

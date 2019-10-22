@@ -45,34 +45,34 @@
 })
 
 #define DEFINE_ARRAY_UPDATE_FUNCTION(type_name, type_match, in_place_update_fn, insert_fn)                             \
-static bool array_update_##type_name(carbon_array_it *it, type_name value)                                       \
+static bool array_update_##type_name(struct carbon_array *it, type_name value)                                       \
 {                                                                                                                      \
         return try_array_update(type_match, in_place_update_fn, insert_fn);                                            \
 }
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u8, CARBON_FIELD_NUMBER_U8, carbon_array_it_update_in_place_u8, carbon_insert_u8)
+DEFINE_ARRAY_UPDATE_FUNCTION(u8, CARBON_FIELD_NUMBER_U8, carbon_int_array_update_u8, carbon_insert_u8)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u16, CARBON_FIELD_NUMBER_U16, carbon_array_it_update_in_place_u16,
+DEFINE_ARRAY_UPDATE_FUNCTION(u16, CARBON_FIELD_NUMBER_U16, carbon_int_array_update_u16,
                              carbon_insert_u16)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u32, CARBON_FIELD_NUMBER_U32, carbon_array_it_update_in_place_u32,
+DEFINE_ARRAY_UPDATE_FUNCTION(u32, CARBON_FIELD_NUMBER_U32, carbon_int_array_update_u32,
                              carbon_insert_u32)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u64, CARBON_FIELD_NUMBER_U64, carbon_array_it_update_in_place_u64,
+DEFINE_ARRAY_UPDATE_FUNCTION(u64, CARBON_FIELD_NUMBER_U64, carbon_int_array_update_u64,
                              carbon_insert_u64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i8, CARBON_FIELD_NUMBER_I8, carbon_array_it_update_in_place_i8, carbon_insert_i8)
+DEFINE_ARRAY_UPDATE_FUNCTION(i8, CARBON_FIELD_NUMBER_I8, carbon_int_array_update_i8, carbon_insert_i8)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i16, CARBON_FIELD_NUMBER_I16, carbon_array_it_update_in_place_i16,
+DEFINE_ARRAY_UPDATE_FUNCTION(i16, CARBON_FIELD_NUMBER_I16, carbon_int_array_update_i16,
                              carbon_insert_i16)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i32, CARBON_FIELD_NUMBER_I32, carbon_array_it_update_in_place_i32,
+DEFINE_ARRAY_UPDATE_FUNCTION(i32, CARBON_FIELD_NUMBER_I32, carbon_int_array_update_i32,
                              carbon_insert_i32)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i64, CARBON_FIELD_NUMBER_I64, carbon_array_it_update_in_place_i64,
+DEFINE_ARRAY_UPDATE_FUNCTION(i64, CARBON_FIELD_NUMBER_I64, carbon_int_array_update_i64,
                              carbon_insert_i64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, carbon_array_it_update_in_place_float,
+DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, carbon_int_array_update_float,
                              carbon_insert_float)
 
 #define try_update_generic(context, path, array_exec, column_exec)                                                     \
@@ -219,7 +219,7 @@ static bool column_update_float(carbon_column_it *it, u32 pos, float value)
 }
 
 
-static inline carbon_array_it *array_iterator(carbon_update *updater)
+static inline struct carbon_array *array_iterator(carbon_update *updater)
 {
         return &updater->path_evaluater.result.containers.array.it;
 }
@@ -422,17 +422,17 @@ bool carbon_update_set_column_end(carbon_insert_column_state *state_in)
 
 fn_result carbon_update_set_null_compiled(carbon_revise *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, carbon_array_it_update_in_place_null, carbon_column_it_update_set_null);
+        return try_update(context, path, carbon_int_array_update_null, carbon_column_it_update_set_null);
 }
 
 fn_result carbon_update_set_true_compiled(carbon_revise *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, carbon_array_it_update_in_place_true, carbon_column_it_update_set_true);
+        return try_update(context, path, carbon_int_array_update_true, carbon_column_it_update_set_true);
 }
 
 fn_result carbon_update_set_false_compiled(carbon_revise *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, carbon_array_it_update_in_place_false, carbon_column_it_update_set_false);
+        return try_update(context, path, carbon_int_array_update_false, carbon_column_it_update_set_false);
 }
 
 fn_result carbon_update_set_u8_compiled(carbon_revise *context, const carbon_dot_path *path,

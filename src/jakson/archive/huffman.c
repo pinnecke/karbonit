@@ -77,7 +77,7 @@ bool huffman_dump_dictionary(FILE *file, struct carbon_memfile *memfile)
                         entry_info.nbytes_prefix);
 
                 if (entry_info.nbytes_prefix > 0) {
-                        for (u16 i = 0; i < entry_info.nbytes_prefix; i++) {
+                        for (carbon_u16 i = 0; i < entry_info.nbytes_prefix; i++) {
                                 bitmap_print_bits_in_char(file, entry_info.prefix_code[i]);
                                 fprintf(file, "%s", i + 1 < entry_info.nbytes_prefix ? ", " : "");
                         }
@@ -145,7 +145,7 @@ bool pack_huffman_print_extra(packer *self, FILE *file, struct carbon_memfile *s
 }
 
 bool pack_huffman_print_encoded(packer *self, FILE *file, struct carbon_memfile *src,
-                                u32 decompressed_strlen)
+                                carbon_u32 decompressed_strlen)
 {
         UNUSED(self);
         UNUSED(file);

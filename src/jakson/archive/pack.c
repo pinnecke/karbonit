@@ -42,7 +42,7 @@ bool pack_by_type(err *err, packer *strategy, packer_e type)
         return false;
 }
 
-u8 pack_flagbit_by_type(packer_e type)
+carbon_u8 pack_flagbit_by_type(packer_e type)
 {
         for (size_t i = 0; i < ARRAY_LENGTH(global_pack_strategy_register); i++) {
                 if (global_pack_strategy_register[i].type == type) {
@@ -52,7 +52,7 @@ u8 pack_flagbit_by_type(packer_e type)
         return 0;
 }
 
-bool pack_by_flags(packer *strategy, u8 flags)
+bool pack_by_flags(packer *strategy, carbon_u8 flags)
 {
         for (size_t i = 0; i < ARRAY_LENGTH(global_pack_strategy_register); i++) {
                 if (global_pack_strategy_register[i].flag_bit & flags) {
@@ -125,7 +125,7 @@ bool pack_print_extra(err *err, packer *self, FILE *file, struct carbon_memfile 
 }
 
 bool pack_print_encoded(err *err, packer *self, FILE *file, struct carbon_memfile *src,
-                        u32 decompressed_strlen)
+                        carbon_u32 decompressed_strlen)
 {
         DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, print_encoded)

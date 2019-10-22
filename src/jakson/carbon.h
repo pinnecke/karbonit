@@ -109,9 +109,9 @@ typedef struct carbon_revise {
 
 typedef struct carbon_binary {
         const char *mime_type;
-        u64 mime_type_strlen;
+        carbon_u64 mime_type_strlen;
         const void *blob;
-        u64 blob_len;
+        carbon_u64 blob_len;
 } carbon_binary;
 
 typedef struct carbon_new {
@@ -201,27 +201,27 @@ typedef enum carbon_key_type {
 carbon_insert * carbon_create_begin(carbon_new *context, carbon *doc, carbon_key_e type, int options);
 fn_result carbon_create_end(carbon_new *context);
 fn_result carbon_create_empty(carbon *doc, carbon_list_derivable_e derivation, carbon_key_e type);
-fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation, carbon_key_e type, u64 doc_cap, u64 array_cap);
+fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation, carbon_key_e type, carbon_u64 doc_cap, carbon_u64 array_cap);
 
 bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type, const void *key, err *err);
-bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len);
+bool carbon_from_raw_data(carbon *doc, err *err, const void *data, carbon_u64 len);
 
 bool carbon_drop(carbon *doc);
 
-const void *carbon_raw_data(u64 *len, carbon *doc);
+const void *carbon_raw_data(carbon_u64 *len, carbon *doc);
 
 bool carbon_is_up_to_date(carbon *doc);
 bool carbon_key_type(carbon_key_e *out, carbon *doc);
-const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, carbon *doc);
+const void *carbon_key_raw_value(carbon_u64 *len, carbon_key_e *type, carbon *doc);
 bool carbon_key_signed_value(carbon_i64 *key, carbon *doc);
-bool carbon_key_unsigned_value(u64 *key, carbon *doc);
-const char *carbon_key_string_value(u64 *len, carbon *doc);
+bool carbon_key_unsigned_value(carbon_u64 *key, carbon *doc);
+const char *carbon_key_string_value(carbon_u64 *len, carbon *doc);
 bool carbon_has_key(carbon_key_e type);
 bool carbon_key_is_unsigned(carbon_key_e type);
 bool carbon_key_is_signed(carbon_key_e type);
 bool carbon_key_is_string(carbon_key_e type);
 bool carbon_clone(carbon *clone, carbon *doc);
-bool carbon_commit_hash(u64 *hash, carbon *doc);
+bool carbon_commit_hash(carbon_u64 *hash, carbon *doc);
 
 /** Checks if the records most-outer array is annotated as a multi set abstract type. Returns true if the record
  * is a multi set, and false if the record is a set. In case of any error, a failure is returned. */

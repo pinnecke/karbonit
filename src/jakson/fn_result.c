@@ -23,7 +23,7 @@ void __fn_result_ok(fn_result *result)
         __fn_result_create(result, ERR_NOERR, NULL, 0);
 }
 
-void __fn_result_fail(fn_result *result, error_code code, const char *file, u32 line, const char *msg)
+void __fn_result_fail(fn_result *result, error_code code, const char *file, carbon_u32 line, const char *msg)
 {
         assert(code != ERR_NOERR && code != ERR_NOERR_RESULT_BOOLEAN &&
                        code != ERR_NOERR_RESULT_INT && code != ERR_NOERR_RESULT_UINT &&
@@ -37,14 +37,14 @@ void __fn_result_fail_forward(fn_result *result)
         __fn_result_create(result, global_error.code, NULL, 0);
 }
 
-void __fn_result_ok_uint32(fn_result *result, u32 value)
+void __fn_result_ok_uint32(fn_result *result, carbon_u32 value)
 {
-        __fn_result_create(result, ERR_NOERR_RESULT_UINT, &value, sizeof(u32));
+        __fn_result_create(result, ERR_NOERR_RESULT_UINT, &value, sizeof(carbon_u32));
 }
 
-void __fn_result_ok_int32(fn_result *result, i32 value)
+void __fn_result_ok_int32(fn_result *result, carbon_i32 value)
 {
-        __fn_result_create(result, ERR_NOERR_RESULT_INT, &value, sizeof(i32));
+        __fn_result_create(result, ERR_NOERR_RESULT_INT, &value, sizeof(carbon_i32));
 }
 
 void __fn_result_ok_bool(fn_result *result, bool value)
@@ -112,14 +112,14 @@ bool __fn_result_is_ptr(fn_result result)
         return result.error_code == ERR_NOERR_RESULT_PTR;
 }
 
-i32 __fn_result_int(fn_result result)
+carbon_i32 __fn_result_int(fn_result result)
 {
-        return __fn_result_is_int(result) ? *(i32*) &result.result : 0;
+        return __fn_result_is_int(result) ? *(carbon_i32*) &result.result : 0;
 }
 
-u32 __fn_result_uint(fn_result result)
+carbon_u32 __fn_result_uint(fn_result result)
 {
-        return __fn_result_is_uint(result) ? *(u32*) &result.result : 0;
+        return __fn_result_is_uint(result) ? *(carbon_u32*) &result.result : 0;
 }
 
 bool __fn_result_bool(fn_result result)

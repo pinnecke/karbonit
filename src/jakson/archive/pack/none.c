@@ -79,7 +79,7 @@ bool pack_none_print_extra(packer *self, FILE *file, struct carbon_memfile *src)
 }
 
 bool pack_none_print_encoded_string(packer *self, FILE *file, struct carbon_memfile *src,
-                                    u32 decompressed_strlen)
+                                    carbon_u32 decompressed_strlen)
 {
         CHECK_TAG(self->tag, PACK_NONE);
 
@@ -105,7 +105,7 @@ bool pack_none_encode_string(packer *self, struct carbon_memfile *dst, err *err,
 
         UNUSED(self);
 
-        u32 string_length = strlen(string);
+        carbon_u32 string_length = strlen(string);
 
         SUCCESS_OR_JUMP(memfile_write(dst, string, string_length), error_handling)
 

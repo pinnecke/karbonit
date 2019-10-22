@@ -30,7 +30,7 @@ BEGIN_DECL
 
 typedef struct strid_info {
         archive_field_sid_t id;
-        u32 strlen;
+        carbon_u32 strlen;
         offset_t offset;
 } strid_info;
 

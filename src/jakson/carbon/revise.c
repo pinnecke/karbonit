@@ -65,7 +65,7 @@ fn_result carbon_revise_begin(carbon_revise *context, carbon *revised_doc, carbo
 }
 
 
-static void key_unsigned_set(carbon *doc, u64 key)
+static void key_unsigned_set(carbon *doc, carbon_u64 key)
 {
         JAK_ASSERT(doc);
         memfile_save_position(&doc->memfile);
@@ -115,7 +115,7 @@ bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context)
         }
 }
 
-bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value)
+bool carbon_revise_key_set_unsigned(carbon_revise *context, carbon_u64 key_value)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
@@ -163,7 +163,7 @@ fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_deriva
         struct carbon_array it;
         carbon_revise_iterator_open(&it, context);
 
-        memfile_seek_from_here(&it.file, -sizeof(u8));
+        memfile_seek_from_here(&it.file, -sizeof(carbon_u8));
         carbon_derived_e derive_marker;
         carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
         carbon_abstract_write_derived_type(&it.file, derive_marker);
@@ -236,7 +236,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
                                         break;
                                 case CARBON_COLUMN: {
                                         carbon_column_it *it = &eval.result.containers.column.it;
-                                        u32 elem_pos = eval.result.containers.column.elem_pos;
+                                        carbon_u32 elem_pos = eval.result.containers.column.elem_pos;
                                         result = carbon_column_it_remove(it, elem_pos);
                                 }
                                         break;
@@ -429,7 +429,7 @@ static bool internal_pack_array(struct carbon_array *it)
                                         carbon_object_it nested_object_it;
                                         carbon_object_it_create(&nested_object_it, &it->file, &it->err,
                                                                 it->field_access.nested_object_it->object_contents_off -
-                                                                sizeof(u8));
+                                                                sizeof(carbon_u8));
                                         internal_pack_object(&nested_object_it);
                                         JAK_ASSERT(*memfile_peek(&nested_object_it.memfile, sizeof(char)) ==
                                                    CARBON_MOBJECT_END);
@@ -572,7 +572,7 @@ static bool internal_pack_object(carbon_object_it *it)
                                         carbon_object_it nested_object_it;
                                         carbon_object_it_create(&nested_object_it, &it->memfile, &it->err,
                                                                 it->field.value.data.nested_object_it->object_contents_off -
-                                                                sizeof(u8));
+                                                                sizeof(carbon_u8));
                                         internal_pack_object(&nested_object_it);
                                         JAK_ASSERT(*memfile_peek(&nested_object_it.memfile, sizeof(char)) ==
                                                    CARBON_MOBJECT_END);
@@ -596,9 +596,9 @@ static bool internal_pack_column(carbon_column_it *it)
 {
         JAK_ASSERT(it);
 
-        u32 free_space = (it->column_capacity - it->column_num_elements) * carbon_int_get_type_value_size(it->type);
+        carbon_u32 free_space = (it->column_capacity - it->column_num_elements) * carbon_int_get_type_value_size(it->type);
         offset_t payload_start = carbon_int_column_get_payload_off(it);
-        u64 payload_size = it->column_num_elements * carbon_int_get_type_value_size(it->type);
+        carbon_u64 payload_size = it->column_num_elements * carbon_int_get_type_value_size(it->type);
         memfile_seek(&it->memfile, payload_start);
         memfile_skip(&it->memfile, payload_size);
 
@@ -633,7 +633,7 @@ static bool carbon_header_rev_inc(carbon *doc)
         memfile_seek(&doc->memfile, 0);
         carbon_key_read(NULL, &key_type, &doc->memfile);
         if (carbon_has_key(key_type)) {
-                u64 raw_data_len = 0;
+                carbon_u64 raw_data_len = 0;
                 const void *raw_data = carbon_raw_data(&raw_data_len, doc);
                 carbon_commit_hash_update(&doc->memfile, raw_data, raw_data_len);
         }

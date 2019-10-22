@@ -581,8 +581,8 @@ static void parse_number(json_number *number, vector ofType(json_token) *token_s
                         number->value_type = JSON_NUMBER_SIGNED;
                         number->value.signed_integer = assumeSigned;
                 } else {
-                        u64 assumeUnsigned = convert_atoiu64(value);
-                        if (assumeUnsigned >= (u64) assumeSigned) {
+                        carbon_u64 assumeUnsigned = convert_atoiu64(value);
+                        if (assumeUnsigned >= (carbon_u64) assumeSigned) {
                                 number->value_type = JSON_NUMBER_UNSIGNED;
                                 number->value.unsigned_integer = assumeUnsigned;
                         } else {
@@ -1103,7 +1103,7 @@ bool json_list_is_empty(const json_elements *elements)
         return elements->elements.num_elems == 0;
 }
 
-bool json_list_length(u32 *len, const json_elements *elements)
+bool json_list_length(carbon_u32 *len, const json_elements *elements)
 {
         DEBUG_ERROR_IF_NULL(len)
         DEBUG_ERROR_IF_NULL(elements)
@@ -1367,7 +1367,7 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
         DEBUG_ERROR_IF_NULL(type)
         DEBUG_ERROR_IF_NULL(array)
         json_list_type_e list_type = JSON_LIST_EMPTY;
-        for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
+        for (carbon_u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
                 switch (elem->value.value_type) {
                         case JSON_VALUE_OBJECT:

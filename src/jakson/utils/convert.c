@@ -33,9 +33,9 @@ carbon_i64 convert_atoi64(const char *string)
         }
 }
 
-u64 convert_atoiu64(const char *string)
+carbon_u64 convert_atoiu64(const char *string)
 {
-        u64 number;
+        carbon_u64 number;
         char character;
         int status = sscanf(string, "%" SCNu64 "%c", &number, &character);
         if (status == 1) {

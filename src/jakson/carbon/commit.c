@@ -27,11 +27,11 @@ bool carbon_commit_hash_create(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
 
-        u64 init_rev = 0;
+        carbon_u64 init_rev = 0;
         unique_id_create(&init_rev);
 
-        memfile_ensure_space(file, sizeof(u64));
-        memfile_write(file, &init_rev, sizeof(u64));
+        memfile_ensure_space(file, sizeof(carbon_u64));
+        memfile_write(file, &init_rev, sizeof(carbon_u64));
 
         return true;
 }
@@ -39,38 +39,38 @@ bool carbon_commit_hash_create(struct carbon_memfile *file)
 bool carbon_commit_hash_skip(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
-        memfile_skip(file, sizeof(u64));
+        memfile_skip(file, sizeof(carbon_u64));
         return true;
 }
 
-bool carbon_commit_hash_read(u64 *commit_hash, struct carbon_memfile *file)
+bool carbon_commit_hash_read(carbon_u64 *commit_hash, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(commit_hash)
-        *commit_hash = *MEMFILE_READ_TYPE(file, u64);
+        *commit_hash = *MEMFILE_READ_TYPE(file, carbon_u64);
         return true;
 }
 
-bool carbon_commit_hash_peek(u64 *commit_hash, struct carbon_memfile *file)
+bool carbon_commit_hash_peek(carbon_u64 *commit_hash, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(commit_hash)
-        *commit_hash = *MEMFILE_PEEK(file, u64);
+        *commit_hash = *MEMFILE_PEEK(file, carbon_u64);
         return true;
 }
 
-bool carbon_commit_hash_update(struct carbon_memfile *file, const char *base, u64 len)
+bool carbon_commit_hash_update(struct carbon_memfile *file, const char *base, carbon_u64 len)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(base)
         DEBUG_ERROR_IF_NULL(len)
-        u64 commit_hash;
+        carbon_u64 commit_hash;
         carbon_commit_hash_compute(&commit_hash, base, len);
-        memfile_write(file, &commit_hash, sizeof(u64));
+        memfile_write(file, &commit_hash, sizeof(carbon_u64));
         return true;
 }
 
-bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len)
+bool carbon_commit_hash_compute(carbon_u64 *commit_hash, const void *base, carbon_u64 len)
 {
         DEBUG_ERROR_IF_NULL(commit_hash)
         DEBUG_ERROR_IF_NULL(base)
@@ -79,7 +79,7 @@ bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len)
         return true;
 }
 
-const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash)
+const char *carbon_commit_hash_to_str(string_buffer *dst, carbon_u64 commit_hash)
 {
         if (dst) {
                 string_buffer_clear(dst);
@@ -90,19 +90,19 @@ const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash)
         }
 }
 
-bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash)
+bool carbon_commit_hash_append_to_str(string_buffer *dst, carbon_u64 commit_hash)
 {
         DEBUG_ERROR_IF_NULL(dst)
         string_buffer_add_u64_as_hex(dst, commit_hash);
         return true;
 }
 
-u64 carbon_commit_hash_from_str(const char *commit_str, err *err)
+carbon_u64 carbon_commit_hash_from_str(const char *commit_str, err *err)
 {
         if (commit_str && strlen(commit_str) == 16) {
                 char *illegal_char;
                 errno = 0;
-                u64 ret = strtoull(commit_str, &illegal_char, 16);
+                carbon_u64 ret = strtoull(commit_str, &illegal_char, 16);
                 if (ret == 0 && commit_str == illegal_char) {
                         OPTIONAL(err, ERROR(err, ERR_NONUMBER))
                         return 0;

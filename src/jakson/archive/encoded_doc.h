@@ -43,7 +43,7 @@ typedef union encoded_doc_value {
         archive_field_boolean_t boolean;
         archive_field_sid_t string;
         unique_id_t object;
-        u32 null;
+        carbon_u32 null;
 } encoded_doc_value_u;
 
 typedef enum encoded_doc_string {
@@ -174,10 +174,10 @@ DEFINE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(null)
 DEFINE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(object)
 
 #define DEFINE_ENCODED_DOC_ARRAY_PUSH_TYPE(name, built_in_type)                                                    \
-bool encoded_doc_array_push_##name(encoded_doc *doc, archive_field_sid_t key, const built_in_type *array, u32 array_length);
+bool encoded_doc_array_push_##name(encoded_doc *doc, archive_field_sid_t key, const built_in_type *array, carbon_u32 array_length);
 
 #define DEFINE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(name, built_in_type)                                            \
-bool encoded_doc_array_push_##name##_decoded(encoded_doc *doc, const char *key, const built_in_type *array, u32 array_length);
+bool encoded_doc_array_push_##name##_decoded(encoded_doc *doc, const char *key, const built_in_type *array, carbon_u32 array_length);
 
 DEFINE_ENCODED_DOC_ARRAY_PUSH_TYPE(int8, archive_field_i8_t)
 DEFINE_ENCODED_DOC_ARRAY_PUSH_TYPE(int16, archive_field_i16_t)

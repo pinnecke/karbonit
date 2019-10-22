@@ -392,43 +392,43 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_ARRAY, CARBON_CONTAINER_ARRAY);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_ARRAY, CARBON_CONTAINER_ARRAY);
 
-        /* abstract types for column-u8 containers */
+        /* abstract types for column-carbon_u8 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
 
-        /* abstract types for column-u16 containers */
+        /* abstract types for column-carbon_u16 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
 
-        /* abstract types for column-u32 containers */
+        /* abstract types for column-carbon_u32 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
 
-        /* abstract types for column-u64 containers */
+        /* abstract types for column-carbon_u64 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
 
-        /* abstract types for column-i8 containers */
+        /* abstract types for column-carbon_i8 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
 
-        /* abstract types for column-i16 containers */
+        /* abstract types for column-carbon_i16 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_SET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
 
-        /* abstract types for column-i32 containers */
+        /* abstract types for column-carbon_i32 containers */
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
         test_get_container_for_derived_type(&memfile, CARBON_SORTED_MULTISET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
         test_get_container_for_derived_type(&memfile, CARBON_UNSORTED_SET_COL_I32, CARBON_CONTAINER_COLUMN_I32);

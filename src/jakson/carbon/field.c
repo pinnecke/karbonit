@@ -258,7 +258,7 @@ bool carbon_field_type_is_constant(carbon_field_type_e type)
 bool carbon_field_skip(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
-        u8 type_marker = *MEMFILE_PEEK(file, u8);
+        carbon_u8 type_marker = *MEMFILE_PEEK(file, carbon_u8);
 
         switch (type_marker) {
                 case CARBON_FIELD_NULL:
@@ -388,13 +388,13 @@ fn_result carbon_field_skip_array(struct carbon_memfile *file)
 
 bool carbon_field_skip_column(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(!carbon_field_type_is_column_or_subtype(type_marker), &file->err, ERR_TYPEMISMATCH);
 
         carbon_column_it skip_it;
         carbon_column_it_create(&skip_it, file, &file->err,
-                                memfile_tell(file) - sizeof(u8));
+                                memfile_tell(file) - sizeof(carbon_u8));
         carbon_column_it_fast_forward(&skip_it);
         memfile_seek(file, memfile_tell(&skip_it.memfile));
         return true;
@@ -402,15 +402,15 @@ bool carbon_field_skip_column(struct carbon_memfile *file)
 
 bool carbon_field_skip_binary(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_BINARY, &file->err, ERR_TYPEMISMATCH);
         /** read and skip mime type with variable-length integer type */
-        u64 mime_type = memfile_read_uintvar_stream(NULL, file);
+        carbon_u64 mime_type = memfile_read_uintvar_stream(NULL, file);
         UNUSED(mime_type);
 
         /** read blob length */
-        u64 blob_len = memfile_read_uintvar_stream(NULL, file);
+        carbon_u64 blob_len = memfile_read_uintvar_stream(NULL, file);
 
         /** skip blob */
         memfile_skip(file, blob_len);
@@ -419,32 +419,32 @@ bool carbon_field_skip_binary(struct carbon_memfile *file)
 
 bool carbon_field_skip_custom_binary(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_BINARY_CUSTOM, &file->err, ERR_TYPEMISMATCH);
         /** read custom type string_buffer length, and skip the type string_buffer */
-        u64 custom_type_str_len = memfile_read_uintvar_stream(NULL, file);
+        carbon_u64 custom_type_str_len = memfile_read_uintvar_stream(NULL, file);
         memfile_skip(file, custom_type_str_len);
 
         /** read blob length, and skip blob data */
-        u64 blob_len = memfile_read_uintvar_stream(NULL, file);
+        carbon_u64 blob_len = memfile_read_uintvar_stream(NULL, file);
         memfile_skip(file, blob_len);
         return true;
 }
 
 bool carbon_field_skip_string(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_STRING, &file->err, ERR_TYPEMISMATCH);
-        u64 strlen = memfile_read_uintvar_stream(NULL, file);
+        carbon_u64 strlen = memfile_read_uintvar_stream(NULL, file);
         memfile_skip(file, strlen);
         return true;
 }
 
 bool carbon_field_skip_float(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_NUMBER_FLOAT, &file->err, ERR_TYPEMISMATCH);
         memfile_skip(file, sizeof(float));
@@ -453,7 +453,7 @@ bool carbon_field_skip_float(struct carbon_memfile *file)
 
 bool carbon_field_skip_boolean(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_TRUE && type_marker != CARBON_FIELD_FALSE, &file->err,
                  ERR_TYPEMISMATCH);
@@ -462,7 +462,7 @@ bool carbon_field_skip_boolean(struct carbon_memfile *file)
 
 bool carbon_field_skip_null(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_NULL, &file->err, ERR_TYPEMISMATCH);
         return true;
@@ -470,45 +470,45 @@ bool carbon_field_skip_null(struct carbon_memfile *file)
 
 bool carbon_field_skip_8(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I8 && type_marker != CARBON_FIELD_NUMBER_U8,
                  &file->err, ERR_TYPEMISMATCH);
-        JAK_ASSERT(sizeof(u8) == sizeof(i8));
-        memfile_skip(file, sizeof(u8));
+        JAK_ASSERT(sizeof(carbon_u8) == sizeof(carbon_i8));
+        memfile_skip(file, sizeof(carbon_u8));
         return true;
 }
 
 bool carbon_field_skip_16(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I16 && type_marker != CARBON_FIELD_NUMBER_U16,
                  &file->err, ERR_TYPEMISMATCH);
-        JAK_ASSERT(sizeof(u16) == sizeof(i16));
-        memfile_skip(file, sizeof(u16));
+        JAK_ASSERT(sizeof(carbon_u16) == sizeof(carbon_i16));
+        memfile_skip(file, sizeof(carbon_u16));
         return true;
 }
 
 bool carbon_field_skip_32(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I32 && type_marker != CARBON_FIELD_NUMBER_U32,
                  &file->err, ERR_TYPEMISMATCH);
-        JAK_ASSERT(sizeof(u32) == sizeof(i32));
-        memfile_skip(file, sizeof(u32));
+        JAK_ASSERT(sizeof(carbon_u32) == sizeof(carbon_i32));
+        memfile_skip(file, sizeof(carbon_u32));
         return true;
 }
 
 bool carbon_field_skip_64(struct carbon_memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 type_marker = *MEMFILE_READ_TYPE(file, carbon_u8);
 
         ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I64 && type_marker != CARBON_FIELD_NUMBER_U64,
                  &file->err, ERR_TYPEMISMATCH);
-        JAK_ASSERT(sizeof(u64) == sizeof(carbon_i64));
-        memfile_skip(file, sizeof(u64));
+        JAK_ASSERT(sizeof(carbon_u64) == sizeof(carbon_i64));
+        memfile_skip(file, sizeof(carbon_u64));
         return true;
 }
 

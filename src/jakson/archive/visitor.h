@@ -26,7 +26,7 @@
 
 typedef struct path_entry {
         archive_field_sid_t key;
-        u32 idx;
+        carbon_u32 idx;
 } path_entry;
 
 typedef struct archive_visitor_desc {
@@ -41,25 +41,25 @@ typedef const vector ofType(path_entry) *path_stack_t;
 
 #define DEFINE_VISIT_BASIC_TYPE_PAIRS(name, built_in_type)                                                             \
 void (*visit_##name##_pairs) (archive *archive, path_stack_t path, unique_id_t id,                              \
-                              const archive_field_sid_t *keys, const built_in_type *values, u32 num_pairs,                     \
+                              const archive_field_sid_t *keys, const built_in_type *values, carbon_u32 num_pairs,                     \
                               void *capture);
 
 #define DEFINE_VISIT_ARRAY_TYPE_PAIRS(name, built_in_type)                                                             \
 visit_policy_e (*visit_enter_##name##_array_pairs)(archive *archive, path_stack_t path,                      \
                                                         unique_id_t id, const archive_field_sid_t *keys,                       \
-                                                        u32 num_pairs,                                                 \
+                                                        carbon_u32 num_pairs,                                                 \
                                                         void *capture);                                                \
                                                                                                                        \
 void (*visit_enter_##name##_array_pair)(archive *archive, path_stack_t path, unique_id_t id,                    \
-                                        archive_field_sid_t key, u32 entry_idx, u32 num_elems,                                 \
+                                        archive_field_sid_t key, carbon_u32 entry_idx, carbon_u32 num_elems,                                 \
                                         void *capture);                                                                \
                                                                                                                        \
 void (*visit_##name##_array_pair) (archive *archive, path_stack_t path, unique_id_t id,                         \
-                                   archive_field_sid_t key, u32 entry_idx, u32 max_entries,                                    \
-                                   const built_in_type *array, u32 array_length, void *capture);                       \
+                                   archive_field_sid_t key, carbon_u32 entry_idx, carbon_u32 max_entries,                                    \
+                                   const built_in_type *array, carbon_u32 array_length, void *capture);                       \
                                                                                                                        \
 void (*visit_leave_##name##_array_pair)(archive *archive, path_stack_t path, unique_id_t id,                    \
-                                        u32 pair_idx, u32 num_pairs, void *capture);                                   \
+                                        carbon_u32 pair_idx, carbon_u32 num_pairs, void *capture);                                   \
                                                                                                                        \
 void (*visit_leave_##name##_array_pairs)(archive *archive, path_stack_t path, unique_id_t id,                   \
                                          void *capture);
@@ -71,17 +71,17 @@ void (*visit_leave_##name##_array_pairs)(archive *archive, path_stack_t path, un
                                                unique_id_t nested_object_id,                                           \
                                                archive_field_sid_t nested_key,                                                 \
                                                const built_in_type *nested_values,                                     \
-                                               u32 num_nested_values, void *capture);
+                                               carbon_u32 num_nested_values, void *capture);
 
 typedef struct visitor {
         void (*visit_root_object)(archive *archive, unique_id_t id, void *capture);
         void (*before_visit_starts)(archive *archive, void *capture);
         void (*after_visit_ends)(archive *archive, void *capture);
-        visit_policy_e (*before_object_visit)(archive *archive, path_stack_t path, unique_id_t parent_id, unique_id_t value_id, u32 object_idx, u32 num_objects, archive_field_sid_t key, void *capture);
-        void (*after_object_visit)(archive *archive, path_stack_t path, unique_id_t id, u32 object_idx, u32 num_objects, void *capture);
-        void (*first_prop_type_group)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, enum archive_field_type type, bool is_array, u32 num_pairs, void *capture);
-        void (*next_prop_type_group)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, enum archive_field_type type, bool is_array, u32 num_pairs, void *capture);
-        void (*visit_null_pairs)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, u32 num_pairs, void *capture);
+        visit_policy_e (*before_object_visit)(archive *archive, path_stack_t path, unique_id_t parent_id, unique_id_t value_id, carbon_u32 object_idx, carbon_u32 num_objects, archive_field_sid_t key, void *capture);
+        void (*after_object_visit)(archive *archive, path_stack_t path, unique_id_t id, carbon_u32 object_idx, carbon_u32 num_objects, void *capture);
+        void (*first_prop_type_group)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, enum archive_field_type type, bool is_array, carbon_u32 num_pairs, void *capture);
+        void (*next_prop_type_group)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, enum archive_field_type type, bool is_array, carbon_u32 num_pairs, void *capture);
+        void (*visit_null_pairs)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, carbon_u32 num_pairs, void *capture);
 
         DEFINE_VISIT_BASIC_TYPE_PAIRS(int8, archive_field_i8_t);
         DEFINE_VISIT_BASIC_TYPE_PAIRS(int16, archive_field_i16_t);
@@ -106,13 +106,13 @@ typedef struct visitor {
         DEFINE_VISIT_ARRAY_TYPE_PAIRS(string, archive_field_sid_t);
         DEFINE_VISIT_ARRAY_TYPE_PAIRS(boolean, archive_field_boolean_t);
 
-        visit_policy_e (*visit_enter_null_array_pairs)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, u32 num_pairs, void *capture);
-        void (*visit_enter_null_array_pair)(archive *archive, path_stack_t path, unique_id_t id, archive_field_sid_t key, u32 entry_idx, u32 num_elems, void *capture);
-        void (*visit_null_array_pair)(archive *archive, path_stack_t path, unique_id_t id, archive_field_sid_t key, u32 entry_idx, u32 max_entries, archive_field_u32_t num_nulls, void *capture);
-        void (*visit_leave_null_array_pair)(archive *archive, path_stack_t path, unique_id_t id, u32 pair_idx, u32 num_pairs, void *capture);
+        visit_policy_e (*visit_enter_null_array_pairs)(archive *archive, path_stack_t path, unique_id_t id, const archive_field_sid_t *keys, carbon_u32 num_pairs, void *capture);
+        void (*visit_enter_null_array_pair)(archive *archive, path_stack_t path, unique_id_t id, archive_field_sid_t key, carbon_u32 entry_idx, carbon_u32 num_elems, void *capture);
+        void (*visit_null_array_pair)(archive *archive, path_stack_t path, unique_id_t id, archive_field_sid_t key, carbon_u32 entry_idx, carbon_u32 max_entries, archive_field_u32_t num_nulls, void *capture);
+        void (*visit_leave_null_array_pair)(archive *archive, path_stack_t path, unique_id_t id, carbon_u32 pair_idx, carbon_u32 num_pairs, void *capture);
         void (*visit_leave_null_array_pairs)(archive *archive, path_stack_t path, unique_id_t id, void *capture);
         visit_policy_e (*before_visit_object_array)(archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, void *capture);
-        void (*before_visit_object_array_objects)(bool *skip_group_object_ids, archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, const unique_id_t *group_object_ids, u32 num_group_object_ids, void *capture);
+        void (*before_visit_object_array_objects)(bool *skip_group_object_ids, archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, const unique_id_t *group_object_ids, carbon_u32 num_group_object_ids, void *capture);
         visit_policy_e (*before_visit_object_array_object_property)(archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, archive_field_sid_t nested_key, enum archive_field_type nested_value_type, void *capture);
 
         DEFINE_VISIT_OBJECT_ARRAY_OBJECT_PROP(int8s, archive_field_i8_t);
@@ -128,10 +128,10 @@ typedef struct visitor {
         DEFINE_VISIT_OBJECT_ARRAY_OBJECT_PROP(booleans, archive_field_boolean_t);
         DEFINE_VISIT_OBJECT_ARRAY_OBJECT_PROP(nulls, archive_field_u32_t);
 
-        visit_policy_e (*before_object_array_object_property_object)(archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, unique_id_t nested_object_id, archive_field_sid_t nested_key, u32 nested_value_object_id, void *capture);
+        visit_policy_e (*before_object_array_object_property_object)(archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, unique_id_t nested_object_id, archive_field_sid_t nested_key, carbon_u32 nested_value_object_id, void *capture);
         void (*visit_object_property)(archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, enum archive_field_type type, bool is_array_type, void *capture);
         void (*visit_object_array_prop)(archive *archive, path_stack_t path, unique_id_t parent_id, archive_field_sid_t key, enum archive_field_type type, void *capture);
-        bool (*get_column_entry_count)(archive *archive, path_stack_t path, archive_field_sid_t key, enum archive_field_type type, u32 count, void *capture);
+        bool (*get_column_entry_count)(archive *archive, path_stack_t path, archive_field_sid_t key, enum archive_field_type type, carbon_u32 count, void *capture);
 } archive_visitor;
 
 bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc, visitor *visitor, void *capture);

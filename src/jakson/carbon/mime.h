@@ -30,7 +30,7 @@
 
 BEGIN_DECL
 
-typedef u8 media_type; /** byte to determine type at hand (e.g., JSON array, string_buffer, null, ...) */
+typedef carbon_u8 media_type; /** byte to determine type at hand (e.g., JSON array, string_buffer, null, ...) */
 
 static struct mime_type {
         const char *type;
@@ -722,7 +722,7 @@ static struct mime_type {
         {"application/vnd.handheld-entertainment+xml",                                "zmm"},
 };
 
-static const u32 _global_mime_type_register = (u32) ARRAY_LENGTH(global_mime_type_register);
+static const carbon_u32 _global_mime_type_register = (carbon_u32) ARRAY_LENGTH(global_mime_type_register);
 
 bool carbon_media_write(struct carbon_memfile *dst, carbon_field_type_e type);
 
@@ -730,19 +730,19 @@ bool carbon_media_write(struct carbon_memfile *dst, carbon_field_type_e type);
  * Returns the mime type identifier for a file extension <code>ext</code>. If <code>ext</code> is not known,
  * the mime type application/octet-stream (.bin) is returned.
  */
-u32 carbon_media_mime_type_by_ext(const char *ext);
+carbon_u32 carbon_media_mime_type_by_ext(const char *ext);
 
 /**
  * Returns a human readable string representing the mime type for the mime type identifier <code>id</code>.
  * In case <code>id</code> is invalid, the mime type application/octet-stream is returned.
  */
-const char *carbon_media_mime_type_by_id(u32 id);
+const char *carbon_media_mime_type_by_id(carbon_u32 id);
 
 /**
  * Returns the file extension for the mime type identifier <code>id</code>.
  * In case <code>id</code> is invalid, the file extension "bin" is returned.
  */
-const char *carbon_media_mime_ext_by_id(u32 id);
+const char *carbon_media_mime_ext_by_id(carbon_u32 id);
 
 END_DECL
 

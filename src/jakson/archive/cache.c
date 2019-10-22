@@ -60,7 +60,7 @@ bool string_id_cache_create_lru(struct string_cache **cache, archive *archive)
 {
         DECLARE_AND_INIT(archive_info, archive_info)
         archive_get_info(&archive_info, archive);
-        u32 capacity = archive_info.num_embeddded_strings * 0.25f;
+        carbon_u32 capacity = archive_info.num_embeddded_strings * 0.25f;
         return string_id_cache_create_lru_ex(cache, archive, capacity);
 }
 

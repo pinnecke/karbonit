@@ -113,12 +113,12 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, struct carb
         JAK_ASSERT(state->current_column_group.current_column.current_entry.idx
                    < state->current_column_group.current_column.num_elem);
 
-        u32 current_idx = state->current_column_group.current_column.current_entry.idx;
+        carbon_u32 current_idx = state->current_column_group.current_column.current_entry.idx;
         offset_t entry_off = state->current_column_group.current_column.elem_offsets[current_idx];
         memfile_seek(memfile, entry_off);
 
         state->current_column_group.current_column.current_entry.array_length = *MEMFILE_READ_TYPE(memfile,
-                                                                                                       u32);
+                                                                                                   carbon_u32);
         state->current_column_group.current_column.current_entry.array_base = MEMFILE_PEEK(memfile, void);
 
         return (++state->current_column_group.current_column.current_entry.idx)
@@ -129,7 +129,7 @@ static bool prop_iter_read_column(collection_iter_state *state, struct carbon_me
 {
         JAK_ASSERT(state->current_column_group.current_column.idx < state->current_column_group.num_columns);
 
-        u32 current_idx = state->current_column_group.current_column.idx;
+        carbon_u32 current_idx = state->current_column_group.current_column.idx;
         offset_t column_off = state->current_column_group.column_offs[current_idx];
         memfile_seek(memfile, column_off);
         const column_header *header = MEMFILE_READ_TYPE(memfile, column_header);
@@ -142,7 +142,7 @@ static bool prop_iter_read_column(collection_iter_state *state, struct carbon_me
         state->current_column_group.current_column.elem_offsets =
                 MEMFILE_READ_TYPE_LIST(memfile, offset_t, header->num_entries);
         state->current_column_group.current_column.elem_positions =
-                MEMFILE_READ_TYPE_LIST(memfile, u32, header->num_entries);
+                MEMFILE_READ_TYPE_LIST(memfile, carbon_u32, header->num_entries);
         state->current_column_group.current_column.current_entry.idx = 0;
 
         return (++state->current_column_group.current_column.idx) < state->current_column_group.num_columns;
@@ -389,7 +389,7 @@ static void prop_iter_state_init(prop_iter *iter)
         iter->mode = PROP_ITER_MODE_OBJECT;
 }
 
-static bool archive_prop_iter_from_memblock(prop_iter *iter, err *err, u16 mask,
+static bool archive_prop_iter_from_memblock(prop_iter *iter, err *err, carbon_u16 mask,
                                             memblock *memblock, offset_t object_offset)
 {
         DEBUG_ERROR_IF_NULL(iter)
@@ -417,13 +417,13 @@ static bool archive_prop_iter_from_memblock(prop_iter *iter, err *err, u16 mask,
         return true;
 }
 
-bool archive_prop_iter_from_archive(prop_iter *iter, err *err, u16 mask,
+bool archive_prop_iter_from_archive(prop_iter *iter, err *err, carbon_u16 mask,
                                         archive *archive)
 {
         return archive_prop_iter_from_memblock(iter, err, mask, archive->record_table.record_db, 0);
 }
 
-bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, err *err,
+bool archive_prop_iter_from_object(prop_iter *iter, carbon_u16 mask, err *err,
                                        const archive_object *obj)
 {
         return archive_prop_iter_from_memblock(iter, err, mask, obj->memfile.memblock, obj->offset);
@@ -556,7 +556,7 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
 }
 
 const archive_field_sid_t *
-archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter)
+archive_collection_iter_get_keys(carbon_u32 *num_keys, independent_iter_state *iter)
 {
         if (num_keys && iter) {
                 *num_keys = iter->state.num_column_groups;
@@ -585,7 +585,7 @@ bool archive_collection_next_column_group(independent_iter_state *group_iter,
 }
 
 const unique_id_t *
-archive_column_group_get_object_ids(u32 *num_objects, independent_iter_state *iter)
+archive_column_group_get_object_ids(carbon_u32 *num_objects, independent_iter_state *iter)
 {
         if (num_objects && iter) {
                 *num_objects = iter->state.current_column_group.num_objects;
@@ -622,8 +622,8 @@ bool archive_column_get_name(archive_field_sid_t *name, enum archive_field_type 
         return true;
 }
 
-const u32 *
-archive_column_get_entry_positions(u32 *num_entry, independent_iter_state *column_iter)
+const carbon_u32 *
+archive_column_get_entry_positions(carbon_u32 *num_entry, independent_iter_state *column_iter)
 {
         if (num_entry && column_iter) {
                 *num_entry = column_iter->state.current_column_group.current_column.num_elem;
@@ -662,7 +662,7 @@ bool archive_column_entry_get_type(enum archive_field_type *type, independent_it
 
 #define DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(built_in_type, name, basic_type)                            \
 const built_in_type *                                                                                   \
-archive_column_entry_get_##name(u32 *array_length, independent_iter_state *entry)              \
+archive_column_entry_get_##name(carbon_u32 *array_length, independent_iter_state *entry)              \
 {                                                                                                                      \
     if (array_length && entry) {                                                                                       \
         if (entry->state.current_column_group.current_column.type == basic_type)                                       \
@@ -712,7 +712,7 @@ bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter
         memfile_open(&iter->memfile, entry->record_table_memfile.memblock, READ_ONLY);
         memfile_seek(&iter->memfile,
                      entry->state.current_column_group.current_column.elem_offsets[
-                             entry->state.current_column_group.current_column.current_entry.idx - 1] + sizeof(u32));
+                             entry->state.current_column_group.current_column.current_entry.idx - 1] + sizeof(carbon_u32));
         iter->next_obj_off = memfile_tell(&iter->memfile);
         error_init(&iter->err);
 
@@ -765,7 +765,7 @@ bool archive_value_vector_get_object_id(unique_id_t *id, const archive_value_vec
 }
 
 const archive_field_sid_t *
-archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
+archive_value_vector_get_keys(carbon_u32 *num_keys, archive_value_vector *iter)
 {
         if (num_keys && iter) {
                 *num_keys = iter->value_max_idx;
@@ -840,7 +840,7 @@ static void value_vector_init_fixed_length_types_null_arrays(archive_value_vecto
         JAK_ASSERT(value->is_array);
         JAK_ASSERT(value->prop_type == FIELD_NULL);
         value->data.arrays.meta.num_nulls_contained =
-                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
+                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, carbon_u32, value->value_max_idx);
 }
 
 static void value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
@@ -848,7 +848,7 @@ static void value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
         JAK_ASSERT (value->is_array);
 
         value->data.arrays.meta.array_lengths =
-                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
+                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, carbon_u32, value->value_max_idx);
 
         switch (value->prop_type) {
                 case FIELD_INT8:
@@ -992,7 +992,7 @@ bool archive_value_vector_is_array_type(bool *is_array, const archive_value_vect
         return true;
 }
 
-bool archive_value_vector_get_length(u32 *length, const archive_value_vector *value)
+bool archive_value_vector_get_length(carbon_u32 *length, const archive_value_vector *value)
 {
         DEBUG_ERROR_IF_NULL(length)
         DEBUG_ERROR_IF_NULL(value)
@@ -1010,7 +1010,7 @@ bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *v
         return true;
 }
 
-bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
+bool archive_value_vector_get_object_at(archive_object *object, carbon_u32 idx,
                                                 archive_value_vector *value)
 {
         DEBUG_ERROR_IF_NULL(object)
@@ -1074,7 +1074,7 @@ DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null, FIELD_NULL)
 
 #define DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(names, name, built_in_type, err_code)                       \
 const built_in_type *                                                                                   \
-archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)                    \
+archive_value_vector_get_##names(carbon_u32 *num_values, archive_value_vector *value)                    \
 {                                                                                                                      \
     DEBUG_ERROR_IF_NULL(value)                                                                                    \
                                                                                                                        \
@@ -1116,7 +1116,7 @@ DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(numbers, number, archive_field_numbe
 DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(booleans, boolean, archive_field_boolean_t, ERR_ITER_NOBOOL)
 
 const archive_field_u32_t *
-archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *value)
+archive_value_vector_get_null_arrays(carbon_u32 *num_values, archive_value_vector *value)
 {
         DEBUG_ERROR_IF_NULL(value)
 
@@ -1135,7 +1135,7 @@ archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *valu
 
 #define DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(name, built_in_type, base)                               \
 const built_in_type *                                                                                   \
-archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,                               \
+archive_value_vector_get_##name##_arrays_at(carbon_u32 *array_length, carbon_u32 idx,                               \
                                                archive_value_vector *value)                                   \
 {                                                                                                                      \
     DEBUG_ERROR_IF_NULL(value)                                                                                    \
@@ -1146,8 +1146,8 @@ archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,         
     if (idx < value->value_max_idx && archive_value_vector_is_array_type(&is_array, value) &&                   \
         archive_value_vector_is_##name(&type_match, value) && is_array)                                         \
     {                                                                                                                  \
-        u32 skip_length = 0;                                                                                      \
-        for (u32 i = 0; i < idx; i++) {                                                                           \
+        carbon_u32 skip_length = 0;                                                                                      \
+        for (carbon_u32 i = 0; i < idx; i++) {                                                                           \
             skip_length += value->data.arrays.meta.array_lengths[i];                                                   \
         }                                                                                                              \
         *array_length = value->data.arrays.meta.array_lengths[idx];                                                    \

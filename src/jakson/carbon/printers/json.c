@@ -79,18 +79,18 @@ static inline void __carbon_print_json_constant(struct string_buffer *restrict b
         string_buffer_add(buf, literal);
 }
 
-static inline void __carbon_print_json_string(struct string_buffer *restrict buf, const char *restrict string, u64 len)
+static inline void __carbon_print_json_string(struct string_buffer *restrict buf, const char *restrict string, carbon_u64 len)
 {
         string_buffer_add_char(buf, '"');
         string_buffer_add_nchar(buf, string, len);
         string_buffer_add_char(buf, '"');
 }
 
-static inline void __carbon_print_json_binary(struct string_buffer *restrict buf, const void *restrict data, u64 nbyte)
+static inline void __carbon_print_json_binary(struct string_buffer *restrict buf, const void *restrict data, carbon_u64 nbyte)
 {
         string_buffer_add_char(buf, '[');
         for (register uint_fast64_t i = 0; i < nbyte; i++) {
-                const u8 byte = *(const u8 *)(data + nbyte);
+                const carbon_u8 byte = *(const carbon_u8 *)(data + nbyte);
                 string_buffer_add_u8(buf, byte);
                 if (LIKELY(i + 1 < nbyte)) {
                         string_buffer_add_char(buf, ',');
@@ -108,13 +108,13 @@ static inline void __carbon_print_json_##type##_from_array(struct string_buffer 
         string_buffer_add_##type(buf, val);                                                                            \
 }
 
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u8, u8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u16, u16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u32, u32)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u64, u64)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i8, i8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i16, i16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i32, i32)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u8, carbon_u8)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u16, carbon_u16)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u32, carbon_u32)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u64, carbon_u64)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i8, carbon_i8)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i16, carbon_i16)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i32, carbon_i32)
 DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i64, carbon_i64)
 DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(float, float)
 
@@ -127,13 +127,13 @@ static inline void __carbon_print_json_##type##_from_prop_value(struct string_bu
         string_buffer_add_##type(buf, val);                                                                            \
 }
 
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u8, u8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u16, u16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u32, u32)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u64, u64)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i8, i8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i16, i16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i32, i32)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u8, carbon_u8)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u16, carbon_u16)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u32, carbon_u32)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u64, carbon_u64)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i8, carbon_i8)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i16, carbon_i16)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i32, carbon_i32)
 DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i64, carbon_i64)
 DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(float, float)
 
@@ -144,7 +144,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
         carbon_field_type_e type;
         const char *string;
         carbon_binary binary;
-        u64 string_len;
+        carbon_u64 string_len;
 
         if (UNLIKELY(!carbon_array_it_has_next(it))) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
@@ -277,25 +277,25 @@ static inline void __carbon_print_json_column_fast(struct carbon_traverse_extra 
 
         switch (container_type) {
                 case CARBON_LIST_CONTAINER_COLUMN_U8:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u8, u8, base, num_elems, sep, IS_NULL_U8)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u8, carbon_u8, base, num_elems, sep, IS_NULL_U8)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_U16:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u16, u16, base, num_elems, sep, IS_NULL_U16)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u16, carbon_u16, base, num_elems, sep, IS_NULL_U16)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_U32:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u32, u32, base, num_elems, sep, IS_NULL_U32)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u32, carbon_u32, base, num_elems, sep, IS_NULL_U32)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_U64:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u64, u64, base, num_elems, sep, IS_NULL_U64)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u64, carbon_u64, base, num_elems, sep, IS_NULL_U64)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_I8:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i8, i8, base, num_elems, sep, IS_NULL_I8)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i8, carbon_i8, base, num_elems, sep, IS_NULL_I8)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_I16:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i16, i16, base, num_elems, sep, IS_NULL_I16)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i16, carbon_i16, base, num_elems, sep, IS_NULL_I16)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_I32:
-                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i32, i32, base, num_elems, sep, IS_NULL_I32)
+                        CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i32, carbon_i32, base, num_elems, sep, IS_NULL_I32)
                         break;
                 case CARBON_LIST_CONTAINER_COLUMN_I64:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i64, carbon_i64, base, num_elems, sep, IS_NULL_I64)
@@ -324,10 +324,10 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
 
         string_buffer_add(str_buf, "{");
         char sep = '\0';
-        u64 key_len;
+        carbon_u64 key_len;
         const char *string;
         carbon_binary binary;
-        u64 string_len;
+        carbon_u64 string_len;
 
         while (carbon_object_it_next(it)) {
                 carbon_object_it_prop_type(&type, it);

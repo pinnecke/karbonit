@@ -157,10 +157,10 @@ struct carbon_int_field_access {
     carbon_field_type_e it_field_type;
 
     const void *it_field_data;
-    u64 it_field_len;
+    carbon_u64 it_field_len;
 
     const char *it_mime_type;
-    u64 it_mime_type_strlen;
+    carbon_u64 it_mime_type_strlen;
 
     bool nested_array_it_is_created;
     bool nested_array_it_accessed;

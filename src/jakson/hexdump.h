@@ -27,8 +27,8 @@
 
 BEGIN_DECL
 
-bool hexdump(string_buffer *dst, const void *base, u64 nbytes);
-bool hexdump_print(FILE *file, const void *base, u64 nbytes);
+bool hexdump(string_buffer *dst, const void *base, carbon_u64 nbytes);
+bool hexdump_print(FILE *file, const void *base, carbon_u64 nbytes);
 
 END_DECL
 

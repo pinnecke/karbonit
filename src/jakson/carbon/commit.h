@@ -31,13 +31,13 @@ BEGIN_DECL
 
 bool carbon_commit_hash_create(struct carbon_memfile *file);
 bool carbon_commit_hash_skip(struct carbon_memfile *file);
-bool carbon_commit_hash_read(u64 *commit_hash, struct carbon_memfile *file);
-bool carbon_commit_hash_peek(u64 *commit_hash, struct carbon_memfile *file);
-bool carbon_commit_hash_update(struct carbon_memfile *file, const char *base, u64 len);
-bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len);
-const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash);
-bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash);
-u64 carbon_commit_hash_from_str(const char *commit_str, err *err);
+bool carbon_commit_hash_read(carbon_u64 *commit_hash, struct carbon_memfile *file);
+bool carbon_commit_hash_peek(carbon_u64 *commit_hash, struct carbon_memfile *file);
+bool carbon_commit_hash_update(struct carbon_memfile *file, const char *base, carbon_u64 len);
+bool carbon_commit_hash_compute(carbon_u64 *commit_hash, const void *base, carbon_u64 len);
+const char *carbon_commit_hash_to_str(string_buffer *dst, carbon_u64 commit_hash);
+bool carbon_commit_hash_append_to_str(string_buffer *dst, carbon_u64 commit_hash);
+carbon_u64 carbon_commit_hash_from_str(const char *commit_str, err *err);
 
 END_DECL
 

@@ -6,7 +6,7 @@ TEST(TestCarbonPatch, CreatePatch) {
 
         carbon doc;
         struct err err;
-        u64 hash_original, hash_patch_1, hash_patch_2;
+        carbon_u64 hash_original, hash_patch_1, hash_patch_2;
         struct carbon_array it, *arr;
         carbon_object_it *obj;
         carbon_field_type_e type;

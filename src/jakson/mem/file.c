@@ -101,7 +101,7 @@ size_t memfile_size(struct carbon_memfile *file)
         if (!file || !file->memblock) {
                 return 0;
         } else {
-                u64 size;
+                carbon_u64 size;
                 memblock_size(&size, file->memblock);
                 return size;
         }
@@ -135,7 +135,7 @@ bool memfile_shrink(struct carbon_memfile *file)
         DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
                 int status = memblock_shrink(file->memblock);
-                u64 size;
+                carbon_u64 size;
                 memblock_size(&size, file->memblock);
                 JAK_ASSERT(size == file->pos);
                 return status;
@@ -152,19 +152,19 @@ const char *memfile_read(struct carbon_memfile *file, offset_t nbytes)
         return result;
 }
 
-u8 memfile_read_byte(struct carbon_memfile *file)
+carbon_u8 memfile_read_byte(struct carbon_memfile *file)
 {
-        return *MEMFILE_READ_TYPE(file, u8);
+        return *MEMFILE_READ_TYPE(file, carbon_u8);
 }
 
-u8 memfile_peek_byte(struct carbon_memfile *file)
+carbon_u8 memfile_peek_byte(struct carbon_memfile *file)
 {
-        return *MEMFILE_PEEK(file, u8);
+        return *MEMFILE_PEEK(file, carbon_u8);
 }
 
-u64 memfile_read_u64(struct carbon_memfile *file)
+carbon_u64 memfile_read_u64(struct carbon_memfile *file)
 {
-        return *MEMFILE_READ_TYPE(file, u64);
+        return *MEMFILE_READ_TYPE(file, carbon_u64);
 }
 
 carbon_i64 memfile_read_i64(struct carbon_memfile *file)
@@ -205,9 +205,9 @@ const char *memfile_peek(struct carbon_memfile *file, offset_t nbytes)
         }
 }
 
-bool memfile_write_byte(struct carbon_memfile *file, u8 data)
+bool memfile_write_byte(struct carbon_memfile *file, carbon_u8 data)
 {
-        return memfile_write(file, &data, sizeof(u8));
+        return memfile_write(file, &data, sizeof(carbon_u8));
 }
 
 bool memfile_write(struct carbon_memfile *file, const void *data, offset_t nbytes)
@@ -339,7 +339,7 @@ offset_t memfile_save_position(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
         offset_t pos = memfile_tell(file);
-        if (LIKELY(file->saved_pos_ptr < (i8) (ARRAY_LENGTH(file->saved_pos)))) {
+        if (LIKELY(file->saved_pos_ptr < (carbon_i8) (ARRAY_LENGTH(file->saved_pos)))) {
                 file->saved_pos[file->saved_pos_ptr++] = pos;
         } else {
                 ERROR(&file->err, ERR_STACK_OVERFLOW)
@@ -360,7 +360,7 @@ bool memfile_restore_position(struct carbon_memfile *file)
         }
 }
 
-signed_offset_t memfile_ensure_space(struct carbon_memfile *memfile, u64 nbytes)
+signed_offset_t memfile_ensure_space(struct carbon_memfile *memfile, carbon_u64 nbytes)
 {
         DEBUG_ERROR_IF_NULL(memfile)
 
@@ -376,7 +376,7 @@ signed_offset_t memfile_ensure_space(struct carbon_memfile *memfile, u64 nbytes)
         memfile_save_position(memfile);
         offset_t current_off = memfile_tell(memfile);
         signed_offset_t shift = 0;
-        for (u32 i = 0; i < nbytes; i++) {
+        for (carbon_u32 i = 0; i < nbytes; i++) {
                 char c = *memfile_read(memfile, 1);
                 if (UNLIKELY(c != 0)) {
                         /** not enough space; enlarge container */
@@ -391,10 +391,10 @@ signed_offset_t memfile_ensure_space(struct carbon_memfile *memfile, u64 nbytes)
         return shift;
 }
 
-u64 memfile_read_uintvar_stream(u8 *nbytes, struct carbon_memfile *memfile)
+carbon_u64 memfile_read_uintvar_stream(carbon_u8 *nbytes, struct carbon_memfile *memfile)
 {
-        u8 nbytes_read;
-        u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) memfile_peek(memfile, sizeof(char)));
+        carbon_u8 nbytes_read;
+        carbon_u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) memfile_peek(memfile, sizeof(char)));
         memfile_skip(memfile, nbytes_read);
         OPTIONAL_SET(nbytes, nbytes_read);
         return result;
@@ -407,17 +407,17 @@ bool memfile_skip_uintvar_stream(struct carbon_memfile *memfile)
         return true;
 }
 
-u64 memfile_peek_uintvar_stream(u8 *nbytes, struct carbon_memfile *memfile)
+carbon_u64 memfile_peek_uintvar_stream(carbon_u8 *nbytes, struct carbon_memfile *memfile)
 {
         memfile_save_position(memfile);
-        u64 result = memfile_read_uintvar_stream(nbytes, memfile);
+        carbon_u64 result = memfile_read_uintvar_stream(nbytes, memfile);
         memfile_restore_position(memfile);
         return result;
 }
 
-u64 memfile_write_uintvar_stream(u64 *nbytes_moved, struct carbon_memfile *memfile, u64 value)
+carbon_u64 memfile_write_uintvar_stream(carbon_u64 *nbytes_moved, struct carbon_memfile *memfile, carbon_u64 value)
 {
-        u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS(value);
+        carbon_u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS(value);
         signed_offset_t shift = memfile_ensure_space(memfile, required_blocks);
         uintvar_stream_t dst = (uintvar_stream_t) memfile_peek(memfile, sizeof(char));
         uintvar_stream_write(dst, value);
@@ -426,25 +426,25 @@ u64 memfile_write_uintvar_stream(u64 *nbytes_moved, struct carbon_memfile *memfi
         return required_blocks;
 }
 
-signed_offset_t memfile_update_uintvar_stream(struct carbon_memfile *memfile, u64 value)
+signed_offset_t memfile_update_uintvar_stream(struct carbon_memfile *memfile, carbon_u64 value)
 {
         DEBUG_ERROR_IF_NULL(memfile);
 
-        u8 bytes_used_now, bytes_used_then;
+        carbon_u8 bytes_used_now, bytes_used_then;
 
         memfile_peek_uintvar_stream(&bytes_used_now, memfile);
         bytes_used_then = UINTVAR_STREAM_REQUIRED_BLOCKS(value);
 
         if (bytes_used_now < bytes_used_then) {
-                u8 inc = bytes_used_then - bytes_used_now;
+                carbon_u8 inc = bytes_used_then - bytes_used_now;
                 memfile_inplace_insert(memfile, inc);
         } else if (bytes_used_now > bytes_used_then) {
-                u8 dec = bytes_used_now - bytes_used_then;
+                carbon_u8 dec = bytes_used_now - bytes_used_then;
                 memfile_inplace_remove(memfile, dec);
         }
 
         uintvar_stream_t dst = (uintvar_stream_t) memfile_peek(memfile, sizeof(char));
-        u8 required_blocks = uintvar_stream_write(dst, value);
+        carbon_u8 required_blocks = uintvar_stream_write(dst, value);
         memfile_skip(memfile, required_blocks);
 
         return bytes_used_then - bytes_used_now;

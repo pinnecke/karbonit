@@ -134,14 +134,14 @@ void int_embedded_array_props_read(array_prop *prop, struct carbon_memfile *memf
         prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
-        prop->lengths = (u32 *) MEMFILE_READ(memfile, prop->header->num_entries * sizeof(u32));
+        prop->lengths = (carbon_u32 *) MEMFILE_READ(memfile, prop->header->num_entries * sizeof(carbon_u32));
         prop->values_begin = memfile_tell(memfile);
 }
 
 void int_embedded_table_props_read(table_prop *prop, struct carbon_memfile *memfile)
 {
         prop->header->marker = *MEMFILE_READ_TYPE(memfile, char);
-        prop->header->num_entries = *MEMFILE_READ_TYPE(memfile, u8);
+        prop->header->num_entries = *MEMFILE_READ_TYPE(memfile, carbon_u8);
         prop->keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->group_offs = (offset_t *) MEMFILE_READ(memfile, prop->header->num_entries * sizeof(offset_t));

@@ -27,7 +27,7 @@ static void result_from_array(carbon_find *find, struct carbon_array *it);
 static void result_from_object(carbon_find *find, carbon_object_it *it);
 
 static inline bool
-result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it);
+result_from_column(carbon_find *find, carbon_u32 requested_idx, carbon_column_it *it);
 
 bool carbon_find_begin(carbon_find *out, const char *dot_path, carbon *doc)
 {
@@ -227,51 +227,51 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                         }
                                 break;
                         case CARBON_FIELD_STRING: {
-                                u64 str_len = 0;
+                                carbon_u64 str_len = 0;
                                 const char *str = FN_PTR(const char, carbon_find_result_string(&str_len, find));
                                 carbon_printer_string(&printer, dst_str, str, str_len);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_U8: {
-                                u64 val = 0;
+                                carbon_u64 val = 0;
                                 carbon_find_result_unsigned(&val, find);
-                                carbon_printer_u8_or_null(&printer, dst_str, (u8) val);
+                                carbon_printer_u8_or_null(&printer, dst_str, (carbon_u8) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_U16: {
-                                u64 val = 0;
+                                carbon_u64 val = 0;
                                 carbon_find_result_unsigned(&val, find);
-                                carbon_printer_u16_or_null(&printer, dst_str, (u16) val);
+                                carbon_printer_u16_or_null(&printer, dst_str, (carbon_u16) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_U32: {
-                                u64 val = 0;
+                                carbon_u64 val = 0;
                                 carbon_find_result_unsigned(&val, find);
-                                carbon_printer_u32_or_null(&printer, dst_str, (u32) val);
+                                carbon_printer_u32_or_null(&printer, dst_str, (carbon_u32) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_U64: {
-                                u64 val = 0;
+                                carbon_u64 val = 0;
                                 carbon_find_result_unsigned(&val, find);
-                                carbon_printer_u64_or_null(&printer, dst_str, (u64) val);
+                                carbon_printer_u64_or_null(&printer, dst_str, (carbon_u64) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I8: {
                                 carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
-                                carbon_printer_i8_or_null(&printer, dst_str, (i8) val);
+                                carbon_printer_i8_or_null(&printer, dst_str, (carbon_i8) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I16: {
                                 carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
-                                carbon_printer_i16_or_null(&printer, dst_str, (i16) val);
+                                carbon_printer_i16_or_null(&printer, dst_str, (carbon_i16) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I32: {
                                 carbon_i64 val = 0;
                                 carbon_find_result_signed(&val, find);
-                                carbon_printer_i32_or_null(&printer, dst_str, (i32) val);
+                                carbon_printer_i32_or_null(&printer, dst_str, (carbon_i32) val);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_I64: {
@@ -335,7 +335,7 @@ fn_result carbon_find_update_array_type(carbon_find *find, carbon_list_derivable
                 struct carbon_memfile mod;
                 struct carbon_array *it = FN_PTR(struct carbon_array, carbon_find_result_array(find));
                 memfile_clone(&mod, &it->file);
-                memfile_seek_from_here(&mod, -sizeof(u8));
+                memfile_seek_from_here(&mod, -sizeof(carbon_u8));
                 carbon_derived_e derive_marker;
                 carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
                 carbon_abstract_write_derived_type(&mod, derive_marker);
@@ -572,7 +572,7 @@ fn_result ofType(bool) carbon_find_result_boolean(carbon_find *find)
         return FN_OK_BOOL(find->value.boolean);
 }
 
-fn_result carbon_find_result_unsigned(u64 *out, carbon_find *find)
+fn_result carbon_find_result_unsigned(carbon_u64 *out, carbon_find *find)
 {
         FN_FAIL_IF_NULL(out, find)
         FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
@@ -611,7 +611,7 @@ fn_result carbon_find_result_float(float *out, carbon_find *find)
         return FN_OK();
 }
 
-fn_result ofType(const char *) carbon_find_result_string(u64 *str_len, carbon_find *find)
+fn_result ofType(const char *) carbon_find_result_string(carbon_u64 *str_len, carbon_find *find)
 {
         FN_FAIL_IF_NULL(str_len, find)
         FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
@@ -829,9 +829,9 @@ static void result_from_object(carbon_find *find, carbon_object_it *it)
 }
 
 static inline bool
-result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
+result_from_column(carbon_find *find, carbon_u32 requested_idx, carbon_column_it *it)
 {
-        u32 num_contained_values;
+        carbon_u32 num_contained_values;
         carbon_column_it_values_info(&find->type, &num_contained_values, it);
         JAK_ASSERT(requested_idx < num_contained_values);
 
@@ -840,7 +840,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        u8 field_value = carbon_column_it_boolean_values(NULL, it)[requested_idx];
+                        carbon_u8 field_value = carbon_column_it_boolean_values(NULL, it)[requested_idx];
                         if (IS_NULL_BOOLEAN(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else if (field_value == CARBON_BOOLEAN_COLUMN_TRUE) {
@@ -856,7 +856,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
-                        u8 field_value = carbon_column_it_u8_values(NULL, it)[requested_idx];
+                        carbon_u8 field_value = carbon_column_it_u8_values(NULL, it)[requested_idx];
                         if (IS_NULL_U8(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {
@@ -869,7 +869,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
-                        u16 field_value = carbon_column_it_u16_values(NULL, it)[requested_idx];
+                        carbon_u16 field_value = carbon_column_it_u16_values(NULL, it)[requested_idx];
                         if (IS_NULL_U16(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {
@@ -882,7 +882,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
-                        u32 field_value = carbon_column_it_u32_values(NULL, it)[requested_idx];
+                        carbon_u32 field_value = carbon_column_it_u32_values(NULL, it)[requested_idx];
                         if (IS_NULL_U32(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {
@@ -895,7 +895,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
-                        u64 field_value = carbon_column_it_u64_values(NULL, it)[requested_idx];
+                        carbon_u64 field_value = carbon_column_it_u64_values(NULL, it)[requested_idx];
                         if (IS_NULL_U64(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {
@@ -908,7 +908,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
-                        i8 field_value = carbon_column_it_i8_values(NULL, it)[requested_idx];
+                        carbon_i8 field_value = carbon_column_it_i8_values(NULL, it)[requested_idx];
                         if (IS_NULL_I8(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {
@@ -921,7 +921,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
-                        i16 field_value = carbon_column_it_i16_values(NULL, it)[requested_idx];
+                        carbon_i16 field_value = carbon_column_it_i16_values(NULL, it)[requested_idx];
                         if (IS_NULL_I16(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {
@@ -934,7 +934,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
-                        i32 field_value = carbon_column_it_i32_values(NULL, it)[requested_idx];
+                        carbon_i32 field_value = carbon_column_it_i32_values(NULL, it)[requested_idx];
                         if (IS_NULL_I32(field_value)) {
                                 find->type = CARBON_FIELD_NULL;
                         } else {

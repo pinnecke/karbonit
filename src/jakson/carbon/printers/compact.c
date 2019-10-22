@@ -73,7 +73,7 @@ static void _json_printer_compact_obj_end(carbon_printer *self, string_buffer *b
 }
 
 static void meta_data_nop(carbon_printer *self, string_buffer *builder, int key_type, const void *key,
-                          u64 key_length, u64 rev)
+                          carbon_u64 key_length, carbon_u64 rev)
 {
         UNUSED(self)
         UNUSED(builder)
@@ -131,7 +131,7 @@ static void _json_printer_compact_val_signed(carbon_printer *self, string_buffer
 
 }
 
-static void _json_printer_compact_val_unsigned(carbon_printer *self, string_buffer *builder, const u64 *value)
+static void _json_printer_compact_val_unsigned(carbon_printer *self, string_buffer *builder, const carbon_u64 *value)
 {
         UNUSED(self);
         if (LIKELY(value != NULL)) {
@@ -151,7 +151,7 @@ static void _json_printer_compact_val_float(carbon_printer *self, string_buffer 
         }
 }
 
-static void _json_printer_compact_val_string(carbon_printer *self, string_buffer *builder, const char *value, u64 strlen)
+static void _json_printer_compact_val_string(carbon_printer *self, string_buffer *builder, const char *value, carbon_u64 strlen)
 {
         UNUSED(self);
         string_buffer_add_char(builder, '"');
@@ -194,7 +194,7 @@ static void _json_printer_compact_print_binary(carbon_printer *self, string_buff
         base64_encodestate state;
         base64_init_encodestate(&state);
 
-        u64 code_len = base64_encode_block(data_of(extra->buffer), binary->blob_len + 2,
+        carbon_u64 code_len = base64_encode_block(data_of(extra->buffer), binary->blob_len + 2,
                                                code_of(extra->buffer, binary->blob_len), &state);
         base64_encode_blockend(code_of(extra->buffer, binary->blob_len), &state);
         string_buffer_add_nchar(builder, code_of(extra->buffer, binary->blob_len), code_len);
@@ -214,7 +214,7 @@ static void _json_printer_compact_comma(carbon_printer *self, string_buffer *bui
         string_buffer_add(builder, ", ");
 }
 
-static void print_key(string_buffer *builder, const char *key_name, u64 key_len)
+static void print_key(string_buffer *builder, const char *key_name, carbon_u64 key_len)
 {
         string_buffer_add_char(builder, '"');
         string_buffer_add_nchar(builder, key_name, key_len);
@@ -222,7 +222,7 @@ static void print_key(string_buffer *builder, const char *key_name, u64 key_len)
 }
 
 static void _json_printer_compact_prop_null(carbon_printer *self, string_buffer *builder,
-                      const char *key_name, u64 key_len)
+                      const char *key_name, carbon_u64 key_len)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -230,7 +230,7 @@ static void _json_printer_compact_prop_null(carbon_printer *self, string_buffer 
 }
 
 static void _json_printer_compact_prop_true(carbon_printer *self, string_buffer *builder,
-                      const char *key_name, u64 key_len)
+                      const char *key_name, carbon_u64 key_len)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -238,7 +238,7 @@ static void _json_printer_compact_prop_true(carbon_printer *self, string_buffer 
 }
 
 static void _json_printer_compact_prop_false(carbon_printer *self, string_buffer *builder,
-                       const char *key_name, u64 key_len)
+                       const char *key_name, carbon_u64 key_len)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -246,7 +246,7 @@ static void _json_printer_compact_prop_false(carbon_printer *self, string_buffer
 }
 
 static void _json_printer_compact_prop_signed(carbon_printer *self, string_buffer *builder,
-                        const char *key_name, u64 key_len, const carbon_i64 *value)
+                        const char *key_name, carbon_u64 key_len, const carbon_i64 *value)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -254,7 +254,7 @@ static void _json_printer_compact_prop_signed(carbon_printer *self, string_buffe
 }
 
 static void _json_printer_compact_prop_unsigned(carbon_printer *self, string_buffer *builder,
-                          const char *key_name, u64 key_len, const u64 *value)
+                          const char *key_name, carbon_u64 key_len, const carbon_u64 *value)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -262,7 +262,7 @@ static void _json_printer_compact_prop_unsigned(carbon_printer *self, string_buf
 }
 
 static void _json_printer_compact_prop_float(carbon_printer *self, string_buffer *builder,
-                       const char *key_name, u64 key_len, const float *value)
+                       const char *key_name, carbon_u64 key_len, const float *value)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -270,7 +270,7 @@ static void _json_printer_compact_prop_float(carbon_printer *self, string_buffer
 }
 
 static void _json_printer_compact_prop_string(carbon_printer *self, string_buffer *builder,
-                        const char *key_name, u64 key_len, const char *value, u64 strlen)
+                        const char *key_name, carbon_u64 key_len, const char *value, carbon_u64 strlen)
 {
         UNUSED(self);
         print_key(builder, key_name, key_len);
@@ -280,21 +280,21 @@ static void _json_printer_compact_prop_string(carbon_printer *self, string_buffe
 }
 
 static void _json_printer_compact_prop_binary(carbon_printer *self, string_buffer *builder,
-                        const char *key_name, u64 key_len, const carbon_binary *binary)
+                        const char *key_name, carbon_u64 key_len, const carbon_binary *binary)
 {
         print_key(builder, key_name, key_len);
         _json_printer_compact_print_binary(self, builder, binary);
 }
 
 static void _json_printer_compact_array_prop_name(carbon_printer *self, string_buffer *builder,
-                            const char *key_name, u64 key_len)
+                            const char *key_name, carbon_u64 key_len)
 {
         UNUSED(self)
         print_key(builder, key_name, key_len);
 }
 
 static void _json_printer_compact_obj_prop_name(carbon_printer *self, string_buffer *builder,
-                          const char *key_name, u64 key_len)
+                          const char *key_name, carbon_u64 key_len)
 {
         UNUSED(self)
         print_key(builder, key_name, key_len);

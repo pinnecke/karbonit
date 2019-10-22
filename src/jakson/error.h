@@ -30,7 +30,7 @@
 
 BEGIN_DECL
 
-typedef u16 error_code;
+typedef carbon_u16 error_code;
 
 extern _Thread_local err global_error;
 
@@ -185,7 +185,7 @@ static const char *const global_err_str[] =
          "the integer value. Since you push integers with this function into an column container that is bound "
          "to a specific type, any insertion function call will fail once the integer value requires a larger "
          "(or smaller) type than the fist value added to the container. Use '*_insert_X' instead, where X is "
-         "u8, u16,..., u32 resp. i8, i16,..., i32. ", "parsing ERROR dot ('.') expected",
+         "carbon_u8, carbon_u16,..., carbon_u32 resp. carbon_i8, carbon_i16,..., carbon_i32. ", "parsing ERROR dot ('.') expected",
          "parsing ERROR key name or array index expected", "parsing ERROR: unknown token",
          "dot-notated path could not be parsed", "Illegal state", "Unsupported data type", "Operation failed",
          "Cleanup operation failed; potentially a memory leak occurred", "dot-notated path could not be compiled",
@@ -201,7 +201,7 @@ static const int global_nerr_str = ARRAY_LENGTH(global_err_str);
 typedef struct err {
         int code;
         const char *file;
-        u32 line;
+        carbon_u32 line;
         char *details;
 } err;
 
@@ -211,15 +211,15 @@ bool error_cpy(err *dst, const err *src);
 
 bool error_drop(err *err);
 
-bool error_set(err *err, int code, const char *file, u32 line);
+bool error_set(err *err, int code, const char *file, carbon_u32 line);
 
-bool error_set_wdetails(err *err, int code, const char *file, u32 line, const char *details);
+bool error_set_wdetails(err *err, int code, const char *file, carbon_u32 line, const char *details);
 
-bool error_set_no_abort(err *err, int code, const char *file, u32 line);
+bool error_set_no_abort(err *err, int code, const char *file, carbon_u32 line);
 
-bool error_set_wdetails_no_abort(err *err, int code, const char *file, u32 line, const char *details);
+bool error_set_wdetails_no_abort(err *err, int code, const char *file, carbon_u32 line, const char *details);
 
-bool error_str(const char **errstr, const char **file, u32 *line, bool *details, const char **detailsstr,
+bool error_str(const char **errstr, const char **file, carbon_u32 *line, bool *details, const char **detailsstr,
                const err *err);
 
 bool error_print_to_stderr(const err *err);

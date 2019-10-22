@@ -9,7 +9,7 @@ TEST(FixMapTest, CreationAndDrop)
     err     err;
     bool             status;
 
-    status = hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 100);
+    status = hashtable_create(&map, &err, sizeof(carbon_u32), sizeof(carbon_u64), 100);
     ASSERT_TRUE(status);
     status = hashtable_drop(&map);
     ASSERT_TRUE(status);
@@ -21,18 +21,18 @@ TEST(FixMapTest, MapAndGetWithoutRehash)
     err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 100);
+    hashtable_create(&map, &err, sizeof(carbon_u32), sizeof(carbon_u64), 100);
 
-    for (u32 key = 0; key < 10; key++) {
-        u64 value = key << 2;
+    for (carbon_u32 key = 0; key < 10; key++) {
+        carbon_u64 value = key << 2;
         status = hashtable_insert_or_update(&map, &key, &value, 1);
         ASSERT_TRUE(status);
     }
 
-    for (u32 key = 0; key < 10; key++) {
+    for (carbon_u32 key = 0; key < 10; key++) {
         const void *value = hashtable_get_value(&map, &key);
         ASSERT_TRUE(value != NULL);
-        ASSERT_TRUE(*(u64 *) value == key << 2);
+        ASSERT_TRUE(*(carbon_u64 *) value == key << 2);
     }
 
     hashtable_drop(&map);
@@ -45,18 +45,18 @@ TEST(FixMapTest, MapAndGetWitRehash)
     err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 10);
+    hashtable_create(&map, &err, sizeof(carbon_u32), sizeof(carbon_u64), 10);
 
-    for (u32 key = 0; key < 10000; key++) {
-        u64 value = key << 2;
+    for (carbon_u32 key = 0; key < 10000; key++) {
+        carbon_u64 value = key << 2;
         status = hashtable_insert_or_update(&map, &key, &value, 1);
         ASSERT_TRUE(status);
     }
 
-    for (u32 key = 0; key < 10000; key++) {
+    for (carbon_u32 key = 0; key < 10000; key++) {
         const void *value = hashtable_get_value(&map, &key);
         ASSERT_TRUE(value != NULL);
-        ASSERT_TRUE(*(u64 *) value == key << 2);
+        ASSERT_TRUE(*(carbon_u64 *) value == key << 2);
     }
 
     hashtable_drop(&map);
@@ -68,18 +68,18 @@ TEST(FixMapTest, DisplaceTest)
     err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 10700);
+    hashtable_create(&map, &err, sizeof(carbon_u32), sizeof(carbon_u64), 10700);
 
-    for (u32 key = 0; key < 10000; key++) {
-        u64 value = key << 2;
+    for (carbon_u32 key = 0; key < 10000; key++) {
+        carbon_u64 value = key << 2;
         status = hashtable_insert_or_update(&map, &key, &value, 1);
         ASSERT_TRUE(status);
     }
 
-    for (u32 key = 0; key < 10000; key++) {
+    for (carbon_u32 key = 0; key < 10000; key++) {
         const void *value = hashtable_get_value(&map, &key);
         ASSERT_TRUE(value != NULL);
-        ASSERT_TRUE(*(u64 *) value == key << 2);
+        ASSERT_TRUE(*(carbon_u64 *) value == key << 2);
     }
 
     float dis;
@@ -98,16 +98,16 @@ TEST(FixMapTest, MapAndGetNotContainedWithoutRehash)
     err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 100);
+    hashtable_create(&map, &err, sizeof(carbon_u32), sizeof(carbon_u64), 100);
 
-    for (u32 key = 0; key < 10; key++) {
-        u64 value = key << 2;
+    for (carbon_u32 key = 0; key < 10; key++) {
+        carbon_u64 value = key << 2;
         status = hashtable_insert_or_update(&map, &key, &value, 1);
         ASSERT_TRUE(status);
     }
 
-    for (u32 key = 0; key < 10; key++) {
-        u32 unknown_key = 10 + key;
+    for (carbon_u32 key = 0; key < 10; key++) {
+        carbon_u32 unknown_key = 10 + key;
         const void *value = hashtable_get_value(&map, &unknown_key);
         ASSERT_TRUE(value == NULL);
     }
@@ -121,16 +121,16 @@ TEST(FixMapTest, MapAndGetNotContainedWitRehash)
     err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 10);
+    hashtable_create(&map, &err, sizeof(carbon_u32), sizeof(carbon_u64), 10);
 
-    for (u32 key = 0; key < 10000; key++) {
-        u64 value = key << 2;
+    for (carbon_u32 key = 0; key < 10000; key++) {
+        carbon_u64 value = key << 2;
         status = hashtable_insert_or_update(&map, &key, &value, 1);
         ASSERT_TRUE(status);
     }
 
-    for (u32 key = 0; key < 10000; key++) {
-        u32 unknown_key = 10000 + key;
+    for (carbon_u32 key = 0; key < 10000; key++) {
+        carbon_u32 unknown_key = 10000 + key;
         const void *value = hashtable_get_value(&map, &unknown_key);
         ASSERT_TRUE(value == NULL);
     }

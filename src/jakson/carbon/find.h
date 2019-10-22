@@ -47,13 +47,13 @@ typedef struct carbon_find {
                 carbon_column_it *column_it;
                 carbon_object_it *object_it;
                 bool boolean;
-                u64 unsigned_number;
+                carbon_u64 unsigned_number;
                 carbon_i64 signed_number;
                 float float_number;
 
                 struct {
                         const char *base;
-                        u64 len;
+                        carbon_u64 len;
                 } string;
 
                 carbon_binary binary;
@@ -92,10 +92,10 @@ fn_result ofType(struct carbon_array *) carbon_find_result_array(carbon_find *fi
 fn_result ofType(carbon_object_it *) carbon_find_result_object(carbon_find *find);
 fn_result ofType(carbon_column_it *) carbon_find_result_column(carbon_find *find);
 fn_result ofType(bool) carbon_find_result_boolean(carbon_find *find);
-fn_result carbon_find_result_unsigned(u64 *out, carbon_find *find);
+fn_result carbon_find_result_unsigned(carbon_u64 *out, carbon_find *find);
 fn_result carbon_find_result_signed(carbon_i64 *out, carbon_find *find);
 fn_result carbon_find_result_float(float *out, carbon_find *find);
-fn_result ofType(const char *) carbon_find_result_string(u64 *str_len, carbon_find *find);
+fn_result ofType(const char *) carbon_find_result_string(carbon_u64 *str_len, carbon_find *find);
 fn_result ofType(carbon_binary *) carbon_find_result_binary(carbon_find *find);
 
 END_DECL

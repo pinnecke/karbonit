@@ -43,7 +43,7 @@ static column_doc_column *object_array_key_columns_find_or_new(
 
 static bool object_array_key_column_push(column_doc_column *col, err *err,
                                          const doc_entries *entry,
-                                         u32 array_idx, string_dict *dic,
+                                         carbon_u32 array_idx, string_dict *dic,
                                          column_doc_obj *model);
 
 bool columndoc_create(column_doc *columndoc, err *err, const doc *doc,
@@ -452,7 +452,7 @@ print_array_null(FILE *file, const char *type_name, const vector ofType(archive_
                 fprintf(file, "],");
                 fprintf(file, "\"Values\": [ ");
                 for (size_t i = 0; i < (value_vector)->num_elems; i++) {
-                        u16 amount = *VECTOR_GET(value_vector, i, u16);
+                        carbon_u16 amount = *VECTOR_GET(value_vector, i, carbon_u16);
                         fprintf(file, "%d%s", amount, i + 1 < value_vector->num_elems ? ", " : "");
                 }
                 fprintf(file, "]");
@@ -702,7 +702,7 @@ static bool print_array_objects(FILE *file, err *err, const char *type_name,
                              positionIdx++) {
                                 fprintf(file,
                                         "%d%s",
-                                        *VECTOR_GET(&columnTable->array_positions, positionIdx, i16),
+                                        *VECTOR_GET(&columnTable->array_positions, positionIdx, carbon_i16),
                                         (positionIdx + 1 < columnTable->array_positions.num_elems ? ", " : ""));
                         }
                         fprintf(file, "]");
@@ -1004,26 +1004,26 @@ static column_doc_column *object_array_key_columns_find_or_new(
         new_column->key_name = nested_object_entry_key;
         new_column->type = nested_object_entry_type;
         vector_create(&new_column->values, NULL, sizeof(vector), 10);
-        vector_create(&new_column->array_positions, NULL, sizeof(u32), 10);
+        vector_create(&new_column->array_positions, NULL, sizeof(carbon_u32), 10);
 
         return new_column;
 }
 
 static bool object_array_key_column_push(column_doc_column *col, err *err,
                                          const doc_entries *entry,
-                                         u32 array_idx, string_dict *dic,
+                                         carbon_u32 array_idx, string_dict *dic,
                                          column_doc_obj *model)
 {
         JAK_ASSERT(col->type == entry->type);
 
-        u32 *entry_array_idx = VECTOR_NEW_AND_GET(&col->array_positions, u32);
+        carbon_u32 *entry_array_idx = VECTOR_NEW_AND_GET(&col->array_positions, carbon_u32);
         *entry_array_idx = array_idx;
 
         vector ofType(<T>) *values_for_entry = VECTOR_NEW_AND_GET(&col->values, vector);
         vector_create(values_for_entry, NULL, GET_TYPE_SIZE(entry->type), entry->values.num_elems);
 
         bool is_null_by_def = entry->values.num_elems == 0;
-        u32 num_elements = (u32) entry->values.num_elems;
+        carbon_u32 num_elements = (carbon_u32) entry->values.num_elems;
 
         archive_field_e entryType = is_null_by_def ? FIELD_NULL : entry->type;
         num_elements = is_null_by_def ? 1 : num_elements;
@@ -1138,19 +1138,19 @@ setup_object(column_doc_obj *model, column_doc *parent, archive_field_sid_t key,
         vector_create(&model->ui64_array_prop_vals, NULL, sizeof(vector), 10);
         vector_create(&model->float_array_prop_vals, NULL, sizeof(vector), 10);
         vector_create(&model->string_array_prop_vals, NULL, sizeof(vector), 50);
-        vector_create(&model->null_array_prop_vals, NULL, sizeof(u16), 10);
+        vector_create(&model->null_array_prop_vals, NULL, sizeof(carbon_u16), 10);
 
-        vector_create(&model->bool_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int8_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int16_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int32_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int64_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint8_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint16_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint32_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint64_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->float_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->string_val_idxs, NULL, sizeof(u32), 50);
+        vector_create(&model->bool_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->int8_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->int16_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->int32_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->int64_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->uint8_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->uint16_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->uint32_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->uint64_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->float_val_idxs, NULL, sizeof(carbon_u32), 10);
+        vector_create(&model->string_val_idxs, NULL, sizeof(carbon_u32), 50);
 
         vector_create(&model->bool_array_idxs, NULL, sizeof(vector), 10);
         vector_create(&model->int8_array_idxs, NULL, sizeof(vector), 10);
@@ -1245,7 +1245,7 @@ object_put_primitive(column_doc_obj *columndoc, err *err, const doc_entries *ent
 
 static void object_push_array(vector ofType(Vector
                                                                ofType( < T >)) *values, size_t TSize,
-                              u32 num_elements,
+                              carbon_u32 num_elements,
                               const void *data, archive_field_sid_t key_id,
                               vector ofType(archive_field_sid_t) *key_vector)
 {
@@ -1263,7 +1263,7 @@ object_put_array(column_doc_obj *model, err *err, const doc_entries *entry,
                  string_dict *dic, const archive_field_sid_t *key_id)
 {
         UNUSED(dic);
-        u32 num_elements = (u32) vector_length(&entry->values);
+        carbon_u32 num_elements = (carbon_u32) vector_length(&entry->values);
 
         switch (entry->type) {
                 case FIELD_NULL: {
@@ -1366,7 +1366,7 @@ object_put_array(column_doc_obj *model, err *err, const doc_entries *entry,
                         break;
                 case FIELD_OBJECT: {
                         archive_field_sid_t *nested_object_key_name;
-                        for (u32 array_idx = 0; array_idx < num_elements; array_idx++) {
+                        for (carbon_u32 array_idx = 0; array_idx < num_elements; array_idx++) {
                                 const doc_obj *object = VECTOR_GET(&entry->values, array_idx,
                                                                            doc_obj);
                                 for (size_t pair_idx = 0; pair_idx < object->entries.num_elems; pair_idx++) {

@@ -110,7 +110,7 @@ fn_result carbon_create_empty(carbon *doc, carbon_list_derivable_e derivation, c
 }
 
 fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation, carbon_key_e type,
-                                u64 doc_cap, u64 array_cap)
+                                carbon_u64 doc_cap, carbon_u64 array_cap)
 {
         FN_FAIL_IF_NULL(doc);
 
@@ -169,7 +169,7 @@ bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type,
         }
 }
 
-bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len)
+bool carbon_from_raw_data(carbon *doc, err *err, const void *data, carbon_u64 len)
 {
         DEBUG_ERROR_IF_NULL(doc);
         DEBUG_ERROR_IF_NULL(err);
@@ -194,7 +194,7 @@ bool carbon_drop(carbon *doc)
         return internal_drop(doc);
 }
 
-const void *carbon_raw_data(u64 *len, carbon *doc)
+const void *carbon_raw_data(carbon_u64 *len, carbon *doc)
 {
         if (len && doc) {
                 memblock_size(len, doc->memfile.memblock);
@@ -220,7 +220,7 @@ bool carbon_key_type(carbon_key_e *out, carbon *doc)
         return true;
 }
 
-const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, carbon *doc)
+const void *carbon_key_raw_value(carbon_u64 *len, carbon_key_e *type, carbon *doc)
 {
         memfile_save_position(&doc->memfile);
         memfile_seek(&doc->memfile, 0);
@@ -245,7 +245,7 @@ bool carbon_key_signed_value(carbon_i64 *key, carbon *doc)
         }
 }
 
-bool carbon_key_unsigned_value(u64 *key, carbon *doc)
+bool carbon_key_unsigned_value(carbon_u64 *key, carbon *doc)
 {
         carbon_key_e type;
         memfile_save_position(&doc->memfile);
@@ -253,7 +253,7 @@ bool carbon_key_unsigned_value(u64 *key, carbon *doc)
         const void *result = carbon_key_read(NULL, &type, &doc->memfile);
         memfile_restore_position(&doc->memfile);
         if (LIKELY(carbon_key_is_unsigned(type))) {
-                *key = *((const u64 *) result);
+                *key = *((const carbon_u64 *) result);
                 return true;
         } else {
                 ERROR(&doc->err, ERR_TYPEMISMATCH);
@@ -261,7 +261,7 @@ bool carbon_key_unsigned_value(u64 *key, carbon *doc)
         }
 }
 
-const char *carbon_key_string_value(u64 *len, carbon *doc)
+const char *carbon_key_string_value(carbon_u64 *len, carbon *doc)
 {
         carbon_key_e type;
         memfile_save_position(&doc->memfile);
@@ -311,7 +311,7 @@ bool carbon_clone(carbon *clone, carbon *doc)
         return true;
 }
 
-bool carbon_commit_hash(u64 *hash, carbon *doc)
+bool carbon_commit_hash(carbon_u64 *hash, carbon *doc)
 {
         DEBUG_ERROR_IF_NULL(doc);
         *hash = carbon_int_header_get_commit_hash(doc);
@@ -359,8 +359,8 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
         carbon_printer p;
         string_buffer b;
         carbon_key_e key_type;
-        u64 key_len;
-        u64 rev;
+        carbon_u64 key_len;
+        carbon_u64 rev;
 
         string_buffer_clear(dst);
         string_buffer_ensure_capacity(dst, 2 * memfile_size(&doc->memfile));

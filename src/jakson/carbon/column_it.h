@@ -44,8 +44,8 @@ typedef struct carbon_column_it {
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         carbon_i64 mod_size;
 
-        u32 column_capacity;
-        u32 column_num_elements;
+        carbon_u32 column_capacity;
+        carbon_u32 column_num_elements;
 
 } carbon_column_it;
 
@@ -55,42 +55,42 @@ bool carbon_column_it_clone(carbon_column_it *dst, carbon_column_it *src);
 bool carbon_column_it_insert(carbon_insert *inserter, carbon_column_it *it);
 bool carbon_column_it_fast_forward(carbon_column_it *it);
 offset_t carbon_column_it_memfilepos(carbon_column_it *it);
-offset_t carbon_column_it_tell(carbon_column_it *it, u32 elem_idx);
+offset_t carbon_column_it_tell(carbon_column_it *it, carbon_u32 elem_idx);
 
-const void *carbon_column_it_values(carbon_field_type_e *type, u32 *nvalues, carbon_column_it *it);
-bool carbon_column_it_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_column_it *it);
+const void *carbon_column_it_values(carbon_field_type_e *type, carbon_u32 *nvalues, carbon_column_it *it);
+bool carbon_column_it_values_info(carbon_field_type_e *type, carbon_u32 *nvalues, carbon_column_it *it);
 
-bool carbon_column_it_value_is_null(carbon_column_it *it, u32 pos);
+bool carbon_column_it_value_is_null(carbon_column_it *it, carbon_u32 pos);
 
-const boolean *carbon_column_it_boolean_values(u32 *nvalues, carbon_column_it *it);
-const u8 *carbon_column_it_u8_values(u32 *nvalues, carbon_column_it *it);
-const u16 *carbon_column_it_u16_values(u32 *nvalues, carbon_column_it *it);
-const u32 *carbon_column_it_u32_values(u32 *nvalues, carbon_column_it *it);
-const u64 *carbon_column_it_u64_values(u32 *nvalues, carbon_column_it *it);
-const i8 *carbon_column_it_i8_values(u32 *nvalues, carbon_column_it *it);
-const i16 *carbon_column_it_i16_values(u32 *nvalues, carbon_column_it *it);
-const i32 *carbon_column_it_i32_values(u32 *nvalues, carbon_column_it *it);
-const carbon_i64 *carbon_column_it_i64_values(u32 *nvalues, carbon_column_it *it);
-const float *carbon_column_it_float_values(u32 *nvalues, carbon_column_it *it);
+const boolean *carbon_column_it_boolean_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_u8 *carbon_column_it_u8_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_u16 *carbon_column_it_u16_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_u32 *carbon_column_it_u32_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_u64 *carbon_column_it_u64_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_i8 *carbon_column_it_i8_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_i16 *carbon_column_it_i16_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_i32 *carbon_column_it_i32_values(carbon_u32 *nvalues, carbon_column_it *it);
+const carbon_i64 *carbon_column_it_i64_values(carbon_u32 *nvalues, carbon_column_it *it);
+const float *carbon_column_it_float_values(carbon_u32 *nvalues, carbon_column_it *it);
 
-bool carbon_column_it_remove(carbon_column_it *it, u32 pos);
+bool carbon_column_it_remove(carbon_column_it *it, carbon_u32 pos);
 
 fn_result ofType(bool) carbon_column_it_is_multiset(carbon_column_it *it);
 fn_result ofType(bool) carbon_column_it_is_sorted(carbon_column_it *it);
 fn_result carbon_column_it_update_type(carbon_column_it *it, carbon_list_derivable_e derivation);
 
-bool carbon_column_it_update_set_null(carbon_column_it *it, u32 pos);
-bool carbon_column_it_update_set_true(carbon_column_it *it, u32 pos);
-bool carbon_column_it_update_set_false(carbon_column_it *it, u32 pos);
-bool carbon_column_it_update_set_u8(carbon_column_it *it, u32 pos, u8 value);
-bool carbon_column_it_update_set_u16(carbon_column_it *it, u32 pos, u16 value);
-bool carbon_column_it_update_set_u32(carbon_column_it *it, u32 pos, u32 value);
-bool carbon_column_it_update_set_u64(carbon_column_it *it, u32 pos, u64 value);
-bool carbon_column_it_update_set_i8(carbon_column_it *it, u32 pos, i8 value);
-bool carbon_column_it_update_set_i16(carbon_column_it *it, u32 pos, i16 value);
-bool carbon_column_it_update_set_i32(carbon_column_it *it, u32 pos, i32 value);
-bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, carbon_i64 value);
-bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float value);
+bool carbon_column_it_update_set_null(carbon_column_it *it, carbon_u32 pos);
+bool carbon_column_it_update_set_true(carbon_column_it *it, carbon_u32 pos);
+bool carbon_column_it_update_set_false(carbon_column_it *it, carbon_u32 pos);
+bool carbon_column_it_update_set_u8(carbon_column_it *it, carbon_u32 pos, carbon_u8 value);
+bool carbon_column_it_update_set_u16(carbon_column_it *it, carbon_u32 pos, carbon_u16 value);
+bool carbon_column_it_update_set_u32(carbon_column_it *it, carbon_u32 pos, carbon_u32 value);
+bool carbon_column_it_update_set_u64(carbon_column_it *it, carbon_u32 pos, carbon_u64 value);
+bool carbon_column_it_update_set_i8(carbon_column_it *it, carbon_u32 pos, carbon_i8 value);
+bool carbon_column_it_update_set_i16(carbon_column_it *it, carbon_u32 pos, carbon_i16 value);
+bool carbon_column_it_update_set_i32(carbon_column_it *it, carbon_u32 pos, carbon_i32 value);
+bool carbon_column_it_update_set_i64(carbon_column_it *it, carbon_u32 pos, carbon_i64 value);
+bool carbon_column_it_update_set_float(carbon_column_it *it, carbon_u32 pos, float value);
 
 /**
  * Positions the iterator at the beginning of this array.

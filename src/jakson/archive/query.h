@@ -45,7 +45,7 @@ bool query_index_id_to_offset_serialize(FILE *file, err *err, struct sid_to_offs
 bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, err *err, const char *file_path, offset_t offset);
 char *query_fetch_string_by_id(query *query, archive_field_sid_t id);
 char *query_fetch_string_by_id_nocache(query *query, archive_field_sid_t id);
-char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens, size_t num_offs);
+char **query_fetch_strings_by_offset(query *query, offset_t *offs, carbon_u32 *strlens, size_t num_offs);
 archive_field_sid_t *query_find_ids(size_t *num_found, query *query, const string_pred *pred, void *capture, carbon_i64 limit);
 
 END_DECL

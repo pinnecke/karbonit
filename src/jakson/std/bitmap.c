@@ -21,15 +21,15 @@
 
 #include <jakson/std/bitmap.h>
 
-bool bitmap_create(bitmap *bitmap, u16 num_bits)
+bool bitmap_create(bitmap *bitmap, carbon_u16 num_bits)
 {
         DEBUG_ERROR_IF_NULL(bitmap);
 
         allocator alloc;
         alloc_create_std(&alloc);
-        vector_create(&bitmap->data, &alloc, sizeof(u32), ceil(num_bits / (double) BIT_NUM_OF(u32)));
+        vector_create(&bitmap->data, &alloc, sizeof(carbon_u32), ceil(num_bits / (double) BIT_NUM_OF(carbon_u32)));
         size_t cap = vector_capacity(&bitmap->data);
-        u32 zero = 0;
+        carbon_u32 zero = 0;
         vector_repeated_push(&bitmap->data, &zero, cap);
         bitmap->num_bits = num_bits;
 
@@ -57,17 +57,17 @@ bool bitmap_clear(bitmap *bitset)
 {
         DEBUG_ERROR_IF_NULL(bitset);
         void *data = (void *) vector_data(&bitset->data);
-        memset(data, 0, sizeof(u32) * vector_capacity(&bitset->data));
+        memset(data, 0, sizeof(carbon_u32) * vector_capacity(&bitset->data));
         return true;
 }
 
-bool bitmap_set(bitmap *bitset, u16 bit_position, bool on)
+bool bitmap_set(bitmap *bitset, carbon_u16 bit_position, bool on)
 {
         DEBUG_ERROR_IF_NULL(bitset)
-        size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(u32));
-        size_t block_bit = bit_position % BIT_NUM_OF(u32);
-        u32 block = *VECTOR_GET(&bitset->data, block_pos, u32);
-        u32 mask = SET_BIT(block_bit);
+        size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(carbon_u32));
+        size_t block_bit = bit_position % BIT_NUM_OF(carbon_u32);
+        carbon_u32 block = *VECTOR_GET(&bitset->data, block_pos, carbon_u32);
+        carbon_u32 mask = SET_BIT(block_bit);
         if (on) {
                 SET_BITS(block, mask);
         } else {
@@ -77,13 +77,13 @@ bool bitmap_set(bitmap *bitset, u16 bit_position, bool on)
         return true;
 }
 
-bool bitmap_get(bitmap *bitset, u16 bit_position)
+bool bitmap_get(bitmap *bitset, carbon_u16 bit_position)
 {
         DEBUG_ERROR_IF_NULL(bitset)
-        size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(u32));
-        size_t block_bit = bit_position % BIT_NUM_OF(u32);
-        u32 block = *VECTOR_GET(&bitset->data, block_pos, u32);
-        u32 mask = SET_BIT(block_bit);
+        size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(carbon_u32));
+        size_t block_bit = bit_position % BIT_NUM_OF(carbon_u32);
+        carbon_u32 block = *VECTOR_GET(&bitset->data, block_pos, carbon_u32);
+        carbon_u32 mask = SET_BIT(block_bit);
         return ((mask & block) >> bit_position) == true;
 }
 
@@ -97,11 +97,11 @@ bool bitmap_lshift(bitmap *map)
         return true;
 }
 
-void bitmap_print_bits(FILE *file, u32 n)
+void bitmap_print_bits(FILE *file, carbon_u32 n)
 {
         for (int i = 31; i >= 0; i--) {
-                u32 mask = 1 << i;
-                u32 k = n & mask;
+                carbon_u32 mask = 1 << i;
+                carbon_u32 k = n & mask;
                 fprintf(file, "%s", k == 0 ? "0" : "1");
         }
 }
@@ -116,16 +116,16 @@ void bitmap_print_bits_in_char(FILE *file, char n)
         }
 }
 
-bool bitmap_blocks(u32 **blocks, u32 *num_blocks, const bitmap *map)
+bool bitmap_blocks(carbon_u32 **blocks, carbon_u32 *num_blocks, const bitmap *map)
 {
         DEBUG_ERROR_IF_NULL(blocks)
         DEBUG_ERROR_IF_NULL(num_blocks)
         DEBUG_ERROR_IF_NULL(map)
 
-        u32 *result = MALLOC(map->data.num_elems * sizeof(u32));
-        i32 k = 0;
-        for (i32 i = map->data.num_elems - 1; i >= 0; i--) {
-                result[k++] = *VECTOR_GET(&map->data, i, u32);
+        carbon_u32 *result = MALLOC(map->data.num_elems * sizeof(carbon_u32));
+        carbon_i32 k = 0;
+        for (carbon_i32 i = map->data.num_elems - 1; i >= 0; i--) {
+                result[k++] = *VECTOR_GET(&map->data, i, carbon_u32);
         }
         *blocks = result;
         *num_blocks = map->data.num_elems;
@@ -137,18 +137,18 @@ bool bitmap_print(FILE *file, const bitmap *map)
 {
         DEBUG_ERROR_IF_NULL(map)
 
-        u32 *blocks, num_blocks;
+        carbon_u32 *blocks, num_blocks;
 
         bitmap_blocks(&blocks, &num_blocks, map);
 
-        for (u32 i = 0; i < num_blocks; i++) {
+        for (carbon_u32 i = 0; i < num_blocks; i++) {
                 fprintf(file, " %"PRIu32 " |", blocks[i]);
         }
 
         free(blocks);
 
-        for (i32 i = map->data.num_elems - 1; i >= 0; i--) {
-                u32 block = *VECTOR_GET(&map->data, i, u32);
+        for (carbon_i32 i = map->data.num_elems - 1; i >= 0; i--) {
+                carbon_u32 block = *VECTOR_GET(&map->data, i, carbon_u32);
                 bitmap_print_bits(stdout, block);
                 fprintf(file, " |");
         }

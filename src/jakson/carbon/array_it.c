@@ -38,7 +38,7 @@ bool carbon_int_array_update_##type_name(struct carbon_array *it, built_in_type 
         if (LIKELY(it->field_access.it_field_type == field_type)) {                                                    \
                 memfile_save_position(&it->file);                                                                   \
                 carbon_int_array_it_offset(&datum, it);                                                                 \
-                memfile_seek(&it->file, datum + sizeof(u8));                                                        \
+                memfile_seek(&it->file, datum + sizeof(carbon_u8));                                                        \
                 memfile_write(&it->file, &value, sizeof(built_in_type));                                                \
                 memfile_restore_position(&it->file);                                                                \
                 return true;                                                                                           \
@@ -48,19 +48,19 @@ bool carbon_int_array_update_##type_name(struct carbon_array *it, built_in_type 
         }                                                                                                              \
 }
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u8, u8, CARBON_FIELD_NUMBER_U8)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u8, carbon_u8, CARBON_FIELD_NUMBER_U8)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u16, u16, CARBON_FIELD_NUMBER_U16)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u16, carbon_u16, CARBON_FIELD_NUMBER_U16)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u32, u32, CARBON_FIELD_NUMBER_U32)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u32, carbon_u32, CARBON_FIELD_NUMBER_U32)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(u64, u64, CARBON_FIELD_NUMBER_U64)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(u64, carbon_u64, CARBON_FIELD_NUMBER_U64)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i8, i8, CARBON_FIELD_NUMBER_I8)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i8, carbon_i8, CARBON_FIELD_NUMBER_I8)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i16, i16, CARBON_FIELD_NUMBER_I16)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i16, carbon_i16, CARBON_FIELD_NUMBER_I16)
 
-DEFINE_IN_PLACE_UPDATE_FUNCTION(i32, i32, CARBON_FIELD_NUMBER_I32)
+DEFINE_IN_PLACE_UPDATE_FUNCTION(i32, carbon_i32, CARBON_FIELD_NUMBER_I32)
 
 DEFINE_IN_PLACE_UPDATE_FUNCTION(i64, carbon_i64, CARBON_FIELD_NUMBER_I64)
 
@@ -73,7 +73,7 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
         memfile_save_position(&it->file);
 
         if (carbon_field_type_is_constant(it->field_access.it_field_type)) {
-                u8 value;
+                carbon_u8 value;
                 switch (constant) {
                         case CARBON_CONSTANT_TRUE:
                                 value = CARBON_FIELD_TRUE;
@@ -90,7 +90,7 @@ static bool update_in_place_constant(struct carbon_array *it, carbon_constant_e 
                 offset_t datum = 0;
                 carbon_int_array_it_offset(&datum, it);
                 memfile_seek(&it->file, datum);
-                memfile_write(&it->file, &value, sizeof(u8));
+                memfile_write(&it->file, &value, sizeof(carbon_u8));
         } else {
                 carbon_insert ins;
                 carbon_array_it_remove(it);
@@ -156,7 +156,7 @@ fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile 
         memfile_open(&it->file, memfile->memblock, memfile->mode);
         memfile_seek(&it->file, payload_start);
 
-        ERROR_IF(memfile_remain_size(&it->file) < sizeof(u8), err, ERR_CORRUPTED);
+        ERROR_IF(memfile_remain_size(&it->file) < sizeof(carbon_u8), err, ERR_CORRUPTED);
 
         fn_result ofType(bool) instance = carbon_abstract_is_instanceof_array(&it->file);
         if (!FN_IS_OK(instance)) {
@@ -169,7 +169,7 @@ fn_result carbon_array_it_create(struct carbon_array *it, struct carbon_memfile 
 
         __carbon_array_it_load_abstract_type(it);
 
-        memfile_skip(&it->file, sizeof(u8));
+        memfile_skip(&it->file, sizeof(carbon_u8));
 
         carbon_int_field_access_create(&it->field_access);
 
@@ -207,12 +207,12 @@ bool carbon_int_array_set_mode(struct carbon_array *it, access_mode_e mode)
         return true;
 }
 
-bool carbon_array_it_length(u64 *len, struct carbon_array *it)
+bool carbon_array_it_length(carbon_u64 *len, struct carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(len)
         DEBUG_ERROR_IF_NULL(it)
 
-        u64 num_elem = 0;
+        carbon_u64 num_elem = 0;
         carbon_array_it_rewind(it);
         while (carbon_array_it_next(it)) {
                 num_elem++;
@@ -241,7 +241,7 @@ bool carbon_array_it_rewind(struct carbon_array *it)
         DEBUG_ERROR_IF_NULL(it);
         ERROR_IF(it->begin >= memfile_size(&it->file), &it->err, ERR_OUTOFBOUNDS);
         carbon_int_history_clear(&it->history);
-        return memfile_seek(&it->file, it->begin + sizeof(u8));
+        return memfile_seek(&it->file, it->begin + sizeof(carbon_u8));
 }
 
 static void auto_adjust_pos_after_mod(struct carbon_array *it)
@@ -363,37 +363,37 @@ bool carbon_array_it_is_null(bool *is_null, struct carbon_array *it)
         return carbon_int_field_access_is_null(is_null, &it->field_access);
 }
 
-bool carbon_array_it_u8_value(u8 *value, struct carbon_array *it)
+bool carbon_array_it_u8_value(carbon_u8 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_u8_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_u16_value(u16 *value, struct carbon_array *it)
+bool carbon_array_it_u16_value(carbon_u16 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_u16_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_u32_value(u32 *value, struct carbon_array *it)
+bool carbon_array_it_u32_value(carbon_u32 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_u32_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_u64_value(u64 *value, struct carbon_array *it)
+bool carbon_array_it_u64_value(carbon_u64 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_u64_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_i8_value(i8 *value, struct carbon_array *it)
+bool carbon_array_it_i8_value(carbon_i8 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_i8_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_i16_value(i16 *value, struct carbon_array *it)
+bool carbon_array_it_i16_value(carbon_i16 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_i16_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_i32_value(i32 *value, struct carbon_array *it)
+bool carbon_array_it_i32_value(carbon_i32 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_i32_value(value, &it->field_access, &it->err);
 }
@@ -418,12 +418,12 @@ bool carbon_array_it_signed_value(bool *is_null_in, carbon_i64 *value, struct ca
         return carbon_int_field_access_signed_value(is_null_in, value, &it->field_access, &it->err);
 }
 
-bool carbon_array_it_unsigned_value(bool *is_null_in, u64 *value, struct carbon_array *it)
+bool carbon_array_it_unsigned_value(bool *is_null_in, carbon_u64 *value, struct carbon_array *it)
 {
         return carbon_int_field_access_unsigned_value(is_null_in, value, &it->field_access, &it->err);
 }
 
-const char *carbon_array_it_string_value(u64 *strlen, struct carbon_array *it)
+const char *carbon_array_it_string_value(carbon_u64 *strlen, struct carbon_array *it)
 {
         return carbon_int_field_access_string_value(strlen, &it->field_access, &it->err);
 }

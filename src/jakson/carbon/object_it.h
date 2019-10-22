@@ -43,7 +43,7 @@ typedef struct carbon_object_it {
                 struct {
                         offset_t offset;
                         const char *name;
-                        u64 name_len;
+                        carbon_u64 name_len;
                 } key;
                 struct {
                         offset_t offset;
@@ -71,7 +71,7 @@ bool carbon_object_it_prev(carbon_object_it *it);
 offset_t carbon_object_it_memfile_pos(carbon_object_it *it);
 bool carbon_object_it_tell(offset_t *key_off, offset_t *value_off, carbon_object_it *it);
 
-const char *carbon_object_it_prop_name(u64 *key_len, carbon_object_it *it);
+const char *carbon_object_it_prop_name(carbon_u64 *key_len, carbon_object_it *it);
 bool carbon_object_it_remove(carbon_object_it *it);
 bool carbon_object_it_prop_type(carbon_field_type_e *type, carbon_object_it *it);
 
@@ -86,19 +86,19 @@ fn_result carbon_object_it_insert_end(carbon_insert *inserter);
 bool carbon_object_it_bool_value(bool *is_true, carbon_object_it *it);
 bool carbon_object_it_is_null(bool *is_null, carbon_object_it *it);
 
-bool carbon_object_it_u8_value(u8 *value, carbon_object_it *it);
-bool carbon_object_it_u16_value(u16 *value, carbon_object_it *it);
-bool carbon_object_it_u32_value(u32 *value, carbon_object_it *it);
-bool carbon_object_it_u64_value(u64 *value, carbon_object_it *it);
-bool carbon_object_it_i8_value(i8 *value, carbon_object_it *it);
-bool carbon_object_it_i16_value(i16 *value, carbon_object_it *it);
-bool carbon_object_it_i32_value(i32 *value, carbon_object_it *it);
+bool carbon_object_it_u8_value(carbon_u8 *value, carbon_object_it *it);
+bool carbon_object_it_u16_value(carbon_u16 *value, carbon_object_it *it);
+bool carbon_object_it_u32_value(carbon_u32 *value, carbon_object_it *it);
+bool carbon_object_it_u64_value(carbon_u64 *value, carbon_object_it *it);
+bool carbon_object_it_i8_value(carbon_i8 *value, carbon_object_it *it);
+bool carbon_object_it_i16_value(carbon_i16 *value, carbon_object_it *it);
+bool carbon_object_it_i32_value(carbon_i32 *value, carbon_object_it *it);
 bool carbon_object_it_i64_value(carbon_i64 *value, carbon_object_it *it);
 bool carbon_object_it_float_value(float *value, carbon_object_it *it);
 bool carbon_object_it_float_value_nullable(bool *is_null_in, float *value, carbon_object_it *it);
 bool carbon_object_it_signed_value(bool *is_null_in, carbon_i64 *value, carbon_object_it *it);
-bool carbon_object_it_unsigned_value(bool *is_null_in, u64 *value, carbon_object_it *it);
-const char *carbon_object_it_string_value(u64 *strlen, carbon_object_it *it);
+bool carbon_object_it_unsigned_value(bool *is_null_in, carbon_u64 *value, carbon_object_it *it);
+const char *carbon_object_it_string_value(carbon_u64 *strlen, carbon_object_it *it);
 bool carbon_object_it_binary_value(carbon_binary *out, carbon_object_it *it);
 struct carbon_array *carbon_object_it_array_value(carbon_object_it *it_in);
 carbon_object_it *carbon_object_it_object_value(carbon_object_it *it_in);

@@ -36,18 +36,18 @@ typedef struct huffman {
 
 typedef struct pack_huffman_entry {
         unsigned char letter;
-        u32 *blocks;
-        u16 nblocks;
+        carbon_u32 *blocks;
+        carbon_u16 nblocks;
 } pack_huffman_entry;
 
 typedef struct pack_huffman_info {
         unsigned char letter;
-        u8 nbytes_prefix;
+        carbon_u8 nbytes_prefix;
         char *prefix_code;
 } pack_huffman_info;
 
 typedef struct pack_huffman_str_info {
-        u32 nbytes_encoded;
+        carbon_u32 nbytes_encoded;
         const char *encoded_bytes;
 } pack_huffman_str_info;
 

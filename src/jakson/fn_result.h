@@ -271,10 +271,10 @@ typedef struct fn_result {
     (&global_error)
 
 void __fn_result_ok(fn_result *result);
-void __fn_result_fail(fn_result *result, error_code code, const char *file, u32 line, const char *msg);
+void __fn_result_fail(fn_result *result, error_code code, const char *file, carbon_u32 line, const char *msg);
 void __fn_result_fail_forward(fn_result *result);
-void __fn_result_ok_uint32(fn_result *result, u32 value);
-void __fn_result_ok_int32(fn_result *result, i32 value);
+void __fn_result_ok_uint32(fn_result *result, carbon_u32 value);
+void __fn_result_ok_int32(fn_result *result, carbon_i32 value);
 void __fn_result_ok_bool(fn_result *result, bool value);
 void __fn_result_ok_ptr(fn_result *result, const void *value);
 
@@ -290,8 +290,8 @@ bool __fn_result_is_uint(fn_result result);
 bool __fn_result_is_bool(fn_result result);
 bool __fn_result_is_ptr(fn_result result);
 
-i32 __fn_result_int(fn_result result);
-u32 __fn_result_uint(fn_result result);
+carbon_i32 __fn_result_int(fn_result result);
+carbon_u32 __fn_result_uint(fn_result result);
 bool __fn_result_bool(fn_result result);
 void *__fn_result_ptr(fn_result result);
 

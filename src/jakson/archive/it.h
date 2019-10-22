@@ -84,26 +84,26 @@ typedef struct object_iter_state {
 
 typedef struct collection_iter_state {
         offset_t collection_start_off;
-        u32 num_column_groups;
-        u32 current_column_group_idx;
+        carbon_u32 num_column_groups;
+        carbon_u32 current_column_group_idx;
         const archive_field_sid_t *column_group_keys;
         const offset_t *column_group_offsets;
 
         struct {
-                u32 num_columns;
-                u32 num_objects;
+                carbon_u32 num_columns;
+                carbon_u32 num_objects;
                 const unique_id_t *object_ids;
                 const offset_t *column_offs;
                 struct {
-                        u32 idx;
+                        carbon_u32 idx;
                         archive_field_sid_t name;
                         enum archive_field_type type;
-                        u32 num_elem;
+                        carbon_u32 num_elem;
                         const offset_t *elem_offsets;
-                        const u32 *elem_positions;
+                        const carbon_u32 *elem_positions;
                         struct {
-                                u32 idx;
-                                u32 array_length;
+                                carbon_u32 idx;
+                                carbon_u32 array_length;
                                 const void *array_base;
                         } current_entry;
                 } current_column;
@@ -116,7 +116,7 @@ typedef struct archive_value_vector {
         enum archive_field_type prop_type;              /** property basic value type (e.g., int8, or object) */
         bool is_array;                          /** flag indicating whether value type is an array or not */
         offset_t data_off;                      /** offset in mem where type-dependent data begins */
-        u32 value_max_idx;                      /** maximum index of a value callable by 'at' functions */
+        carbon_u32 value_max_idx;                      /** maximum index of a value callable by 'at' functions */
         err err;                         /** ERROR information */
         unique_id_t object_id;                  /** current object id */
         const archive_field_sid_t *keys;
@@ -142,8 +142,8 @@ typedef struct archive_value_vector {
                 } basic;
                 struct {
                         union {
-                                const u32 *array_lengths;
-                                const u32 *num_nulls_contained;
+                                const carbon_u32 *array_lengths;
+                                const carbon_u32 *num_nulls_contained;
                         } meta;
 
                         union {
@@ -166,7 +166,7 @@ typedef struct archive_value_vector {
 typedef struct prop_iter {
         archive_object object;                 /** current object */
         struct carbon_memfile record_table_memfile;          /** iterator-local read-only mem on archive record table */
-        u16 mask;                                     /** user-defined mask which properties to include */
+        carbon_u16 mask;                                     /** user-defined mask which properties to include */
         prop_iter_mode_e mode;                     /** determines whether to iterating over object or collection */
         err err;                               /** ERROR information */
         prop_iter_state_e prop_cursor;             /** current property type in iteration */
@@ -223,22 +223,22 @@ typedef struct column_object_iter {
                                                     ARCHIVE_ITER_MASK_NULL       |                                 \
                                                     ARCHIVE_ITER_MASK_OBJECT
 
-bool archive_prop_iter_from_archive(prop_iter *iter, err *err, u16 mask, archive *archive);
-bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, err *err, const archive_object *obj);
+bool archive_prop_iter_from_archive(prop_iter *iter, err *err, carbon_u16 mask, archive *archive);
+bool archive_prop_iter_from_object(prop_iter *iter, carbon_u16 mask, err *err, const archive_object *obj);
 bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err, prop_iter *prop_iter);
 bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_vector, independent_iter_state *collection_iter, prop_iter *prop_iter);
-const archive_field_sid_t *archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter);
+const archive_field_sid_t *archive_collection_iter_get_keys(carbon_u32 *num_keys, independent_iter_state *iter);
 bool archive_collection_next_column_group(independent_iter_state *group_iter, independent_iter_state *iter);
-const unique_id_t *archive_column_group_get_object_ids(u32 *num_objects, independent_iter_state *iter);
+const unique_id_t *archive_column_group_get_object_ids(carbon_u32 *num_objects, independent_iter_state *iter);
 bool archive_column_group_next_column(independent_iter_state *column_iter, independent_iter_state *iter);
 bool archive_column_get_name(archive_field_sid_t *name, enum archive_field_type *type, independent_iter_state *column_iter);
-const u32 * archive_column_get_entry_positions(u32 *num_entry, independent_iter_state *column_iter);
+const carbon_u32 * archive_column_get_entry_positions(carbon_u32 *num_entry, independent_iter_state *column_iter);
 bool archive_column_next_entry(independent_iter_state *entry_iter, independent_iter_state *iter);
 bool archive_column_entry_get_type(enum archive_field_type *type, independent_iter_state *entry);
 
 #define DEFINE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(built_in_type, name)                                            \
 const built_in_type *                                                                                      \
-archive_column_entry_get_##name(u32 *array_length, independent_iter_state *entry);
+archive_column_entry_get_##name(carbon_u32 *array_length, independent_iter_state *entry);
 
 DEFINE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i8_t, int8s);
 DEFINE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i16_t, int16s);
@@ -258,12 +258,12 @@ const archive_object *archive_column_entry_object_iter_next_object(column_object
 bool archive_object_get_object_id(unique_id_t *id, const archive_object *object);
 bool archive_object_get_prop_iter(prop_iter *iter, const archive_object *object);
 bool archive_value_vector_get_object_id(unique_id_t *id, const archive_value_vector *iter);
-const archive_field_sid_t *archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter);
+const archive_field_sid_t *archive_value_vector_get_keys(carbon_u32 *num_keys, archive_value_vector *iter);
 bool archive_value_vector_get_basic_type(enum archive_field_type *type, const archive_value_vector *value);
 bool archive_value_vector_is_array_type(bool *is_array, const archive_value_vector *value);
-bool archive_value_vector_get_length(u32 *length, const archive_value_vector *value);
+bool archive_value_vector_get_length(carbon_u32 *length, const archive_value_vector *value);
 bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *value);
-bool archive_value_vector_get_object_at(archive_object *object, u32 idx, archive_value_vector *value);
+bool archive_value_vector_get_object_at(archive_object *object, carbon_u32 idx, archive_value_vector *value);
 
 #define DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(name)                                                            \
 bool                                                                                                       \
@@ -284,7 +284,7 @@ DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null);
 
 #define DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(name, built_in_type)                                            \
 const built_in_type *                                                                                      \
-archive_value_vector_get_##name(u32 *num_values, archive_value_vector *value);
+archive_value_vector_get_##name(carbon_u32 *num_values, archive_value_vector *value);
 
 DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int8s, archive_field_i8_t)
 DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int16s, archive_field_i16_t)
@@ -298,11 +298,11 @@ DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(strings, archive_field_sid_t)
 DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(numbers, archive_field_number_t)
 DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(booleans, archive_field_boolean_t)
 
-const archive_field_u32_t *archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *value);
+const archive_field_u32_t *archive_value_vector_get_null_arrays(carbon_u32 *num_values, archive_value_vector *value);
 
 #define DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(name, built_in_type)                                         \
 const built_in_type *                                                                                      \
-archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,                                                \
+archive_value_vector_get_##name##_arrays_at(carbon_u32 *array_length, carbon_u32 idx,                                                \
                                                archive_value_vector *value);                                    \
 
 

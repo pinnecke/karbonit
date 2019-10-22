@@ -64,7 +64,7 @@ bool carbon_array_it_copy(struct carbon_array *dst, struct carbon_array *src);
 
 bool carbon_array_it_clone(struct carbon_array *dst, struct carbon_array *src);
 
-bool carbon_array_it_length(u64 *len, struct carbon_array *it);
+bool carbon_array_it_length(carbon_u64 *len, struct carbon_array *it);
 
 bool carbon_array_it_is_empty(struct carbon_array *it);
 
@@ -108,13 +108,13 @@ fn_result carbon_array_it_update_type(struct carbon_array *it, carbon_list_deriv
 #define DECLARE_IN_PLACE_UPDATE_FUNCTION(type_name, built_int_type)                                                                    \
 bool carbon_int_array_update_##type_name(struct carbon_array *it, built_int_type value);
 
-DECLARE_IN_PLACE_UPDATE_FUNCTION(u8, u8)
-DECLARE_IN_PLACE_UPDATE_FUNCTION(u16, u16)
-DECLARE_IN_PLACE_UPDATE_FUNCTION(u32, u32)
-DECLARE_IN_PLACE_UPDATE_FUNCTION(u64, u64)
-DECLARE_IN_PLACE_UPDATE_FUNCTION(i8, i8)
-DECLARE_IN_PLACE_UPDATE_FUNCTION(i16, i16)
-DECLARE_IN_PLACE_UPDATE_FUNCTION(i32, i32)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(u8, carbon_u8)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(u16, carbon_u16)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(u32, carbon_u32)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(u64, carbon_u64)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(i8, carbon_i8)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(i16, carbon_i16)
+DECLARE_IN_PLACE_UPDATE_FUNCTION(i32, carbon_i32)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(i64, carbon_i64)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(float, float)
 
@@ -130,19 +130,19 @@ bool carbon_array_it_fast_forward(struct carbon_array *it);
 bool carbon_array_it_field_type(carbon_field_type_e *type, struct carbon_array *it);
 bool carbon_array_it_bool_value(bool *value, struct carbon_array *it);
 bool carbon_array_it_is_null(bool *is_null, struct carbon_array *it);
-bool carbon_array_it_u8_value(u8 *value, struct carbon_array *it);
-bool carbon_array_it_u16_value(u16 *value, struct carbon_array *it);
-bool carbon_array_it_u32_value(u32 *value, struct carbon_array *it);
-bool carbon_array_it_u64_value(u64 *value, struct carbon_array *it);
-bool carbon_array_it_i8_value(i8 *value, struct carbon_array *it);
-bool carbon_array_it_i16_value(i16 *value, struct carbon_array *it);
-bool carbon_array_it_i32_value(i32 *value, struct carbon_array *it);
+bool carbon_array_it_u8_value(carbon_u8 *value, struct carbon_array *it);
+bool carbon_array_it_u16_value(carbon_u16 *value, struct carbon_array *it);
+bool carbon_array_it_u32_value(carbon_u32 *value, struct carbon_array *it);
+bool carbon_array_it_u64_value(carbon_u64 *value, struct carbon_array *it);
+bool carbon_array_it_i8_value(carbon_i8 *value, struct carbon_array *it);
+bool carbon_array_it_i16_value(carbon_i16 *value, struct carbon_array *it);
+bool carbon_array_it_i32_value(carbon_i32 *value, struct carbon_array *it);
 bool carbon_array_it_i64_value(carbon_i64 *value, struct carbon_array *it);
 bool carbon_array_it_float_value(float *value, struct carbon_array *it);
 bool carbon_array_it_float_value_nullable(bool *is_null_in, float *value, struct carbon_array *it);
 bool carbon_array_it_signed_value(bool *is_null_in, carbon_i64 *value, struct carbon_array *it);
-bool carbon_array_it_unsigned_value(bool *is_null_in, u64 *value, struct carbon_array *it);
-const char *carbon_array_it_string_value(u64 *strlen, struct carbon_array *it);
+bool carbon_array_it_unsigned_value(bool *is_null_in, carbon_u64 *value, struct carbon_array *it);
+const char *carbon_array_it_string_value(carbon_u64 *strlen, struct carbon_array *it);
 bool carbon_array_it_binary_value(carbon_binary *out, struct carbon_array *it);
 struct carbon_array *carbon_array_it_array_value(struct carbon_array *it_in);
 carbon_object_it *carbon_array_it_object_value(struct carbon_array *it_in);

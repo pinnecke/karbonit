@@ -41,11 +41,11 @@ bool string_buffer_add(string_buffer *builder, const char *str)
 {
         DEBUG_ERROR_IF_NULL(builder)
         DEBUG_ERROR_IF_NULL(str)
-        u64 len = strlen(str);
+        carbon_u64 len = strlen(str);
         return string_buffer_add_nchar(builder, str, len);
 }
 
-bool string_buffer_add_nchar(string_buffer *builder, const char *str, u64 strlen)
+bool string_buffer_add_nchar(string_buffer *builder, const char *str, carbon_u64 strlen)
 {
         DEBUG_ERROR_IF_NULL(builder)
         DEBUG_ERROR_IF_NULL(str)
@@ -75,7 +75,7 @@ bool string_buffer_add_char(string_buffer *builder, char c)
         return true;
 }
 
-bool string_buffer_add_u8(string_buffer *builder, u8 value)
+bool string_buffer_add_u8(string_buffer *builder, carbon_u8 value)
 {
         char buffer[21];
         ZERO_MEMORY(buffer, ARRAY_LENGTH(buffer));
@@ -83,42 +83,42 @@ bool string_buffer_add_u8(string_buffer *builder, u8 value)
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_u16(string_buffer *builder, u16 value)
+bool string_buffer_add_u16(string_buffer *builder, carbon_u16 value)
 {
         char buffer[21];
         sprintf(buffer, "%u", value);
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_u32(string_buffer *builder, u32 value)
+bool string_buffer_add_u32(string_buffer *builder, carbon_u32 value)
 {
         char buffer[21];
         sprintf(buffer, "%u", value);
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_u64(string_buffer *builder, u64 value)
+bool string_buffer_add_u64(string_buffer *builder, carbon_u64 value)
 {
         char buffer[21];
         sprintf(buffer, "%" PRIu64, value);
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_i8(string_buffer *builder, i8 value)
+bool string_buffer_add_i8(string_buffer *builder, carbon_i8 value)
 {
         char buffer[21];
         sprintf(buffer, "%d", value);
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_i16(string_buffer *builder, i16 value)
+bool string_buffer_add_i16(string_buffer *builder, carbon_i16 value)
 {
         char buffer[21];
         sprintf(buffer, "%d", value);
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_i32(string_buffer *builder, i32 value)
+bool string_buffer_add_i32(string_buffer *builder, carbon_i32 value)
 {
         char buffer[21];
         sprintf(buffer, "%d", value);
@@ -132,14 +132,14 @@ bool string_buffer_add_i64(string_buffer *builder, carbon_i64 value)
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_u64_as_hex(string_buffer *builder, u64 value)
+bool string_buffer_add_u64_as_hex(string_buffer *builder, carbon_u64 value)
 {
         char buffer[17];
         sprintf(buffer, "%016"PRIx64, value);
         return string_buffer_add(builder, buffer);
 }
 
-bool string_buffer_add_u64_as_hex_0x_prefix_compact(string_buffer *builder, u64 value)
+bool string_buffer_add_u64_as_hex_0x_prefix_compact(string_buffer *builder, carbon_u64 value)
 {
         char buffer[17];
         sprintf(buffer, "0x%"PRIx64, value);
@@ -180,7 +180,7 @@ bool string_buffer_clear(string_buffer *builder)
         return true;
 }
 
-bool string_buffer_ensure_capacity(string_buffer *builder, u64 cap)
+bool string_buffer_ensure_capacity(string_buffer *builder, carbon_u64 cap)
 {
         DEBUG_ERROR_IF_NULL(builder)
         /** resize if needed */

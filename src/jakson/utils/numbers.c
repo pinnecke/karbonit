@@ -17,7 +17,7 @@
 
 #include <jakson/utils/numbers.h>
 
-number_min_type_e number_min_type_unsigned(u64 value)
+number_min_type_e number_min_type_unsigned(carbon_u64 value)
 {
         if (value <= CARBON_U8_MAX) {
                 return NUMBER_U8;

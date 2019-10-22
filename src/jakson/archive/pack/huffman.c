@@ -23,7 +23,7 @@
 
 struct huff_node {
         struct huff_node *prev, *next, *left, *right;
-        u64 freq;
+        carbon_u64 freq;
         unsigned char letter;
 };
 
@@ -58,11 +58,11 @@ bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
         DEBUG_ERROR_IF_NULL(strings);
 
         vector ofType(u32) frequencies;
-        vector_create(&frequencies, NULL, sizeof(u32), UCHAR_MAX);
+        vector_create(&frequencies, NULL, sizeof(carbon_u32), UCHAR_MAX);
         vector_enlarge_size_to_capacity(&frequencies);
 
-        u32 *freq_data = VECTOR_ALL(&frequencies, u32);
-        ZERO_MEMORY(freq_data, UCHAR_MAX * sizeof(u32));
+        carbon_u32 *freq_data = VECTOR_ALL(&frequencies, carbon_u32);
+        ZERO_MEMORY(freq_data, UCHAR_MAX * sizeof(carbon_u32));
 
         for (size_t i = 0; i < strings->num_elems; i++) {
                 const char *string = *VECTOR_GET(strings, i, const char *);
@@ -117,13 +117,13 @@ bool coding_huffman_serialize(struct carbon_memfile *file, const huffman *dic, c
                 offset_t offset_meta, offset_continue;
                 memfile_get_offset(&offset_meta, file);
                 /** this will be the number of bytes used to encode the significant part of the prefix code */
-                memfile_skip(file, sizeof(u8));
+                memfile_skip(file, sizeof(carbon_u8));
 
                 memfile_begin_bit_mode(file);
                 bool first_bit_found = false;
                 for (int i = 31; entry->blocks && i >= 0; i--) {
-                        u32 mask = 1 << i;
-                        u32 k = entry->blocks[0] & mask;
+                        carbon_u32 mask = 1 << i;
+                        carbon_u32 k = entry->blocks[0] & mask;
                         bool bit_state = k != 0;
                         first_bit_found |= bit_state;
 
@@ -135,8 +135,8 @@ bool coding_huffman_serialize(struct carbon_memfile *file, const huffman *dic, c
                 memfile_end_bit_mode(&num_bytes_written, file);
                 memfile_get_offset(&offset_continue, file);
                 memfile_seek(file, offset_meta);
-                u8 num_bytes_written_uint8 = (u8) num_bytes_written;
-                memfile_write(file, &num_bytes_written_uint8, sizeof(u8));
+                carbon_u8 num_bytes_written_uint8 = (carbon_u8) num_bytes_written;
+                memfile_write(file, &num_bytes_written_uint8, sizeof(carbon_u8));
 
                 memfile_seek(file, offset_continue);
         }
@@ -170,12 +170,12 @@ static size_t encodeString(struct carbon_memfile *file, huffman *dic, const char
                         memfile_write_bit(file, false);
                 } else {
                         for (size_t j = 0; j < entry->nblocks; j++) {
-                                u32 block = entry->blocks[j];
+                                carbon_u32 block = entry->blocks[j];
 
                                 bool first_bit_found = false;
                                 for (int i = 31; i >= 0; i--) {
-                                        u32 mask = 1 << i;
-                                        u32 k = block & mask;
+                                        carbon_u32 mask = 1 << i;
+                                        carbon_u32 k = block & mask;
                                         bool bit_state = k != 0;
                                         first_bit_found |= bit_state;
 
@@ -198,18 +198,18 @@ bool coding_huffman_encode(struct carbon_memfile *file, huffman *dic, const char
         DEBUG_ERROR_IF_NULL(dic)
         DEBUG_ERROR_IF_NULL(string)
 
-        u32 num_bytes_encoded = 0;
+        carbon_u32 num_bytes_encoded = 0;
 
         offset_t num_bytes_encoded_off = memfile_tell(file);
-        memfile_skip(file, sizeof(u32));
+        memfile_skip(file, sizeof(carbon_u32));
 
-        if ((num_bytes_encoded = (u32) encodeString(file, dic, string)) == 0) {
+        if ((num_bytes_encoded = (carbon_u32) encodeString(file, dic, string)) == 0) {
                 return false;
         }
 
         offset_t continue_off = memfile_tell(file);
         memfile_seek(file, num_bytes_encoded_off);
-        memfile_write(file, &num_bytes_encoded, sizeof(u32));
+        memfile_write(file, &num_bytes_encoded, sizeof(carbon_u32));
         memfile_seek(file, continue_off);
 
         return true;
@@ -217,7 +217,7 @@ bool coding_huffman_encode(struct carbon_memfile *file, huffman *dic, const char
 
 bool coding_huffman_read_string(pack_huffman_str_info *info, struct carbon_memfile *src)
 {
-        info->nbytes_encoded = *MEMFILE_READ_TYPE(src, u32);
+        info->nbytes_encoded = *MEMFILE_READ_TYPE(src, carbon_u32);
         info->encoded_bytes = MEMFILE_READ(src, info->nbytes_encoded);
         return true;
 }
@@ -228,7 +228,7 @@ bool coding_huffman_read_entry(pack_huffman_info *info, struct carbon_memfile *f
         if (marker == marker_symbol) {
                 memfile_skip(file, sizeof(char));
                 info->letter = *MEMFILE_READ_TYPE(file, unsigned char);
-                info->nbytes_prefix = *MEMFILE_READ_TYPE(file, u8);
+                info->nbytes_prefix = *MEMFILE_READ_TYPE(file, carbon_u8);
                 info->prefix_code = MEMFILE_PEEK(file, char);
 
                 memfile_skip(file, info->nbytes_prefix);
@@ -239,11 +239,11 @@ bool coding_huffman_read_entry(pack_huffman_info *info, struct carbon_memfile *f
         }
 }
 
-static const u32 *get_num_used_blocks(u16 *numUsedBlocks, pack_huffman_entry *entry, u16 num_blocks,
-                                          const u32 *blocks)
+static const carbon_u32 *get_num_used_blocks(carbon_u16 *numUsedBlocks, pack_huffman_entry *entry, carbon_u16 num_blocks,
+                                          const carbon_u32 *blocks)
 {
         for (entry->nblocks = 0; entry->nblocks < num_blocks; entry->nblocks++) {
-                const u32 *block = blocks + entry->nblocks;
+                const carbon_u32 *block = blocks + entry->nblocks;
                 if (*block != 0) {
                         *numUsedBlocks = (num_blocks - entry->nblocks);
                         return block;
@@ -256,13 +256,13 @@ static void
 import_into_entry(pack_huffman_entry *entry, const struct huff_node *node, const bitmap *map)
 {
         entry->letter = node->letter;
-        u32 *blocks, num_blocks;
-        const u32 *used_blocks;
+        carbon_u32 *blocks, num_blocks;
+        const carbon_u32 *used_blocks;
         bitmap_blocks(&blocks, &num_blocks, map);
         used_blocks = get_num_used_blocks(&entry->nblocks, entry, num_blocks, blocks);
-        entry->blocks = MALLOC(entry->nblocks * sizeof(u32));
+        entry->blocks = MALLOC(entry->nblocks * sizeof(carbon_u32));
         if (num_blocks > 0) {
-                memcpy(entry->blocks, used_blocks, entry->nblocks * sizeof(u32));
+                memcpy(entry->blocks, used_blocks, entry->nblocks * sizeof(carbon_u32));
         } else {
                 entry->blocks = NULL;
         }
@@ -311,9 +311,9 @@ static void __diag_dump_remaining_candidates(struct huff_node *n)
         }
 }
 
-static struct huff_node *find_smallest(struct huff_node *begin, u64 lowerBound, struct huff_node *skip)
+static struct huff_node *find_smallest(struct huff_node *begin, carbon_u64 lowerBound, struct huff_node *skip)
 {
-        u64 smallest = UINT64_MAX;
+        carbon_u64 smallest = UINT64_MAX;
         struct huff_node *result = NULL;
         for (struct huff_node *it = begin; it != NULL; it = it->next) {
                 if (it != skip && it->freq >= lowerBound && it->freq <= smallest) {
@@ -385,7 +385,7 @@ static void huff_tree_create(vector ofType(pack_huffman_entry) *table,
         for (unsigned char i = 0; i < UCHAR_MAX; i++) {
                 struct huff_node *node = VECTOR_NEW_AND_GET(&candidates, struct huff_node);
                 node->letter = i;
-                node->freq = *VECTOR_GET(frequencies, i, u32);
+                node->freq = *VECTOR_GET(frequencies, i, carbon_u32);
         }
 
         for (unsigned char i = 0; i < UCHAR_MAX; i++) {

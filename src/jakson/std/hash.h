@@ -27,10 +27,10 @@
 
 BEGIN_DECL
 
-typedef u8 hash8_t;
-typedef u16 hash16_t;
-typedef u32 hash32_t;
-typedef u64 hash64_t;
+typedef carbon_u8 hash8_t;
+typedef carbon_u16 hash16_t;
+typedef carbon_u32 hash32_t;
+typedef carbon_u64 hash64_t;
 
 #define HASH_ADDITIVE(key_size, key)                                                                               \
 ({                                                                                                                     \

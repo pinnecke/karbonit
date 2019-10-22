@@ -341,7 +341,7 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 #define FORWARD_STRUCT_DECL(x) struct x;
 
 #define BIT_NUM_OF(x)             (sizeof(x) * 8)
-#define SET_BIT(n)                ( ((u32) 1) << (n) )
+#define SET_BIT(n)                ( ((carbon_u32) 1) << (n) )
 #define SET_BITS(x, mask)         ( x |=  (mask) )
 #define UNSET_BITS(x, mask)       ( x &= ~(mask) )
 #define ARE_BITS_SET(mask, bit)   (((bit) & mask ) == (bit))

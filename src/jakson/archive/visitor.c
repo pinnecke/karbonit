@@ -30,16 +30,16 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                           vector ofType(path_entry) *path_stack,
                           visitor *visitor,
                           int mask, void *capture,
-                          bool is_root_object, archive_field_sid_t parent_key, u32 parent_key_array_idx);
+                          bool is_root_object, archive_field_sid_t parent_key, carbon_u32 parent_key_array_idx);
 
-static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u32 num_pairs,
+static void iterate_objects(archive *archive, const archive_field_sid_t *keys, carbon_u32 num_pairs,
                             archive_value_vector *value_iter,
                             vector ofType(path_entry) *path_stack,
                             visitor *visitor, int mask, void *capture, bool is_root_object)
 {
         UNUSED(num_pairs);
 
-        DECLARE_AND_INIT(u32, vector_length)
+        DECLARE_AND_INIT(carbon_u32, vector_length)
         DECLARE_AND_INIT(archive_object, object)
         DECLARE_AND_INIT(unique_id_t, parent_object_id)
         DECLARE_AND_INIT(unique_id_t, object_id)
@@ -50,9 +50,9 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
         archive_value_vector_get_length(&vector_length, value_iter);
         JAK_ASSERT(num_pairs == vector_length);
 
-        for (u32 i = 0; i < vector_length; i++) {
+        for (carbon_u32 i = 0; i < vector_length; i++) {
                 archive_field_sid_t parent_key = keys[i];
-                u32 parent_key_array_idx = i;
+                carbon_u32 parent_key_array_idx = i;
 
 //        path_entry  e = { .key = parent_key, .idx = 0 };
 //        vector_push(path_stack, &e, 1);
@@ -121,9 +121,9 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
             visit = visitor->visit_enter_##name##_array_pairs(archive, path_stack, this_object_oid, keys, num_pairs, capture);     \
         }                                                                                                              \
         if (visit == VISIT_INCLUDE) {                                                                  \
-            for (u32 prop_idx = 0; prop_idx < num_pairs; prop_idx++)                                              \
+            for (carbon_u32 prop_idx = 0; prop_idx < num_pairs; prop_idx++)                                              \
             {                                                                                                          \
-                u32 array_length;                                                                                 \
+                carbon_u32 array_length;                                                                                 \
                 const built_in_type *values = archive_value_vector_get_##name##_arrays_at(&array_length,        \
                                                                                              prop_idx,                 \
                                                                                              &value_iter);             \
@@ -157,14 +157,14 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                           vector ofType(path_entry) *path_stack,
                           visitor *visitor,
                           int mask, void *capture,
-                          bool is_root_object, archive_field_sid_t parent_key, u32 parent_key_array_idx)
+                          bool is_root_object, archive_field_sid_t parent_key, carbon_u32 parent_key_array_idx)
 {
         DECLARE_AND_INIT(unique_id_t, this_object_oid)
         DECLARE_AND_INIT(archive_value_vector, value_iter)
         DECLARE_AND_INIT(enum archive_field_type, type);
         DECLARE_AND_INIT(bool, is_array)
         DECLARE_AND_INIT(const archive_field_sid_t *, keys);
-        DECLARE_AND_INIT(u32, num_pairs);
+        DECLARE_AND_INIT(carbon_u32, num_pairs);
         DECLARE_AND_INIT(prop_iter_mode_e, iter_type)
         DECLARE_AND_INIT(independent_iter_state, collection_iter)
         bool first_type_group = true;
@@ -186,7 +186,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                         archive_value_vector_get_basic_type(&type, &value_iter);
                         archive_value_vector_get_object_id(&this_object_oid, &value_iter);
 
-                        for (u32 i = 0; i < num_pairs; i++) {
+                        for (carbon_u32 i = 0; i < num_pairs; i++) {
                                 OPTIONAL_CALL(visitor,
                                                   visit_object_property,
                                                   archive,
@@ -266,7 +266,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                         const archive_field_u32_t *num_values =
                                                                 archive_value_vector_get_null_arrays(NULL,
                                                                                                          &value_iter);
-                                                        for (u32 prop_idx = 0; prop_idx < num_pairs; prop_idx++) {
+                                                        for (carbon_u32 prop_idx = 0; prop_idx < num_pairs; prop_idx++) {
                                                                 OPTIONAL_CALL(visitor,
                                                                                   visit_enter_null_array_pair,
                                                                                   archive,
@@ -342,14 +342,14 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                         first_type_group = false;
                 } else {
                         independent_iter_state group_iter;
-                        u32 num_column_groups;
+                        carbon_u32 num_column_groups;
                         keys = archive_collection_iter_get_keys(&num_column_groups, &collection_iter);
 
                         bool *skip_groups_by_key = MALLOC(num_column_groups * sizeof(bool));
                         ZERO_MEMORY(skip_groups_by_key, num_column_groups * sizeof(bool));
 
                         if (visitor->before_visit_object_array) {
-                                for (u32 i = 0; i < num_column_groups; i++) {
+                                for (carbon_u32 i = 0; i < num_column_groups; i++) {
 
                                         //     path_entry  e = { .key = parent_key, .idx = i };
                                         //vector_push(path_stack, &e, 1);
@@ -367,12 +367,12 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                 }
                         }
 
-                        u32 current_group_idx = 0;
+                        carbon_u32 current_group_idx = 0;
 
                         while (archive_collection_next_column_group(&group_iter, &collection_iter)) {
                                 if (!skip_groups_by_key[current_group_idx]) {
 
-                                        u32 num_column_group_objs;
+                                        carbon_u32 num_column_group_objs;
                                         independent_iter_state column_iter;
                                         archive_field_sid_t group_key = keys[current_group_idx];
                                         const unique_id_t *column_group_object_ids =
@@ -392,7 +392,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                                            capture);
                                         }
 
-                                        u32 current_column_group_obj_idx = 0;
+                                        carbon_u32 current_column_group_obj_idx = 0;
 
                                         while (archive_column_group_next_column(&column_iter, &group_iter)) {
 
@@ -443,8 +443,8 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                         }
 
                                                         if (!skip_column) {
-                                                                u32 num_positions;
-                                                                const u32 *entry_positions =
+                                                                carbon_u32 num_positions;
+                                                                const carbon_u32 *entry_positions =
                                                                         archive_column_get_entry_positions(
                                                                                 &num_positions,
                                                                                 &column_iter);
@@ -453,7 +453,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                 unique_id_t *entry_object_containments =
                                                                         MALLOC(num_positions *
                                                                                    sizeof(unique_id_t));
-                                                                for (u32 m = 0; m < num_positions; m++) {
+                                                                for (carbon_u32 m = 0; m < num_positions; m++) {
                                                                         entry_object_containments[m] =
                                                                                 column_group_object_ids[entry_positions[m]];
                                                                 }
@@ -471,13 +471,13 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                         }
                                                                 }
 
-                                                                u32 current_entry_idx = 0;
+                                                                carbon_u32 current_entry_idx = 0;
                                                                 while (archive_column_next_entry(&entry_iter,
                                                                                                      &column_iter)) {
 
                                                                         unique_id_t current_nested_object_id =
                                                                                 entry_object_containments[current_entry_idx];
-                                                                        DECLARE_AND_INIT(u32, entry_length)
+                                                                        DECLARE_AND_INIT(carbon_u32, entry_length)
 
                                                                         switch (current_column_entry_type) {
                                                                                 case FIELD_INT8: {
@@ -686,7 +686,7 @@ void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
 
         query *query = archive_query_default(archive);
 
-        for (u32 i = 0; i < path_stack->num_elems; i++) {
+        for (carbon_u32 i = 0; i < path_stack->num_elems; i++) {
                 const path_entry *entry = VECTOR_GET(path_stack, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
@@ -708,7 +708,7 @@ bool archive_visitor_print_path(FILE *file, archive *archive,
 
         query *query = archive_query_default(archive);
 
-        for (u32 i = 0; i < path_stack->num_elems; i++) {
+        for (carbon_u32 i = 0; i < path_stack->num_elems; i++) {
                 const path_entry *entry = VECTOR_GET(path_stack, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
@@ -738,7 +738,7 @@ bool archive_visitor_path_compare(const vector ofType(path_entry) *path,
 
         query *query = archive_query_default(archive);
 
-        for (u32 i = 1; i < path->num_elems; i++) {
+        for (carbon_u32 i = 1; i < path->num_elems; i++) {
                 const path_entry *entry = VECTOR_GET(path, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);

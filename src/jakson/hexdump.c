@@ -18,7 +18,7 @@
 #include <ctype.h>
 #include <jakson/hexdump.h>
 
-bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
+bool hexdump(string_buffer *dst, const void *base, carbon_u64 nbytes)
 {
         DEBUG_ERROR_IF_NULL(dst);
         DEBUG_ERROR_IF_NULL(base);
@@ -27,11 +27,11 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
         sprintf(buffer, "%08x  ", 0);
         string_buffer_add(dst, buffer);
 
-        for (u64 hex_block_id = 0; hex_block_id < nbytes;) {
+        for (carbon_u64 hex_block_id = 0; hex_block_id < nbytes;) {
 
-                u8 step = JAK_MIN(16, nbytes - hex_block_id);
+                carbon_u8 step = JAK_MIN(16, nbytes - hex_block_id);
 
-                for (u64 i = 0; i < step; i++) {
+                for (carbon_u64 i = 0; i < step; i++) {
                         char c = *((const char *) (base + hex_block_id + i));
                         sprintf(buffer, "%02x ", (unsigned char) c);
                         string_buffer_add(dst, buffer);
@@ -45,7 +45,7 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
                 }
 
                 if (UNLIKELY(step < 16)) {
-                        for (u8 pad = 0; pad < 16 - step; pad++) {
+                        for (carbon_u8 pad = 0; pad < 16 - step; pad++) {
                                 sprintf(buffer, "   ");
                                 string_buffer_add(dst, buffer);
                         }
@@ -53,7 +53,7 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
 
                 string_buffer_add(dst, " | ");
 
-                for (u64 i = 0; i < step; i++) {
+                for (carbon_u64 i = 0; i < step; i++) {
                         char c = *((const char *) (base + hex_block_id + i));
                         if (isgraph(c)) {
                                 sprintf(buffer, "%c", c);
@@ -65,7 +65,7 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
                 }
 
                 if (UNLIKELY(step < 16)) {
-                        for (u8 pad = 0; pad < 16 - step; pad++) {
+                        for (carbon_u8 pad = 0; pad < 16 - step; pad++) {
                                 sprintf(buffer, " ");
                                 string_buffer_add(dst, buffer);
                         }
@@ -76,7 +76,7 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
 
                 if (LIKELY(hex_block_id + step < nbytes)) {
                         string_buffer_add(dst, "\n");
-                        sprintf(buffer, "%08x  ", ((u32) hex_block_id + 16));
+                        sprintf(buffer, "%08x  ", ((carbon_u32) hex_block_id + 16));
                         string_buffer_add(dst, buffer);
                 }
 
@@ -89,7 +89,7 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
         return true;
 }
 
-bool hexdump_print(FILE *file, const void *base, u64 nbytes)
+bool hexdump_print(FILE *file, const void *base, carbon_u64 nbytes)
 {
         bool status;
         string_buffer sb;

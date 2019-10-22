@@ -32,132 +32,132 @@ BEGIN_DECL
 
 typedef struct __attribute__((packed)) archive_header {
         char magic[9];
-        u8 version;
+        carbon_u8 version;
         offset_t root_object_header_offset;
         offset_t string_id_to_offset_index_offset;
 } archive_header;
 
 typedef struct __attribute__((packed)) record_header {
         char marker;
-        u8 flags;
-        u64 record_size;
+        carbon_u8 flags;
+        carbon_u64 record_size;
 } record_header;
 
 typedef struct __attribute__((packed)) object_header {
         char marker;
         unique_id_t oid;
-        u32 flags;
+        carbon_u32 flags;
 } object_header;
 
 typedef struct __attribute__((packed)) prop_header {
         char marker;
-        u32 num_entries;
+        carbon_u32 num_entries;
 } prop_header;
 
 typedef union __attribute__((packed)) string_tab_flags {
         struct {
-                u8 compressor_none
+                carbon_u8 compressor_none
                         : 1;
-                u8 compressed_huffman
+                carbon_u8 compressed_huffman
                         : 1;
         } bits;
-        u8 value;
+        carbon_u8 value;
 } string_tab_flags_u;
 
 typedef struct __attribute__((packed)) string_table_header {
         char marker;
-        u32 num_entries;
-        u8 flags;
+        carbon_u32 num_entries;
+        carbon_u8 flags;
         offset_t first_entry;
         offset_t compressor_extra_size;
 } string_table_header;
 
 typedef struct __attribute__((packed)) object_array_header {
         char marker;
-        u8 num_entries;
+        carbon_u8 num_entries;
 } object_array_header;
 
 typedef struct __attribute__((packed)) column_group_header {
         char marker;
-        u32 num_columns;
-        u32 num_objects;
+        carbon_u32 num_columns;
+        carbon_u32 num_objects;
 } column_group_header;
 
 typedef struct __attribute__((packed)) column_header {
         char marker;
         archive_field_sid_t column_name;
         char value_type;
-        u32 num_entries;
+        carbon_u32 num_entries;
 } column_header;
 
 typedef union object_flags {
         struct {
-                u32 has_null_props
+                carbon_u32 has_null_props
                         : 1;
-                u32 has_bool_props
+                carbon_u32 has_bool_props
                         : 1;
-                u32 has_int8_props
+                carbon_u32 has_int8_props
                         : 1;
-                u32 has_int16_props
+                carbon_u32 has_int16_props
                         : 1;
-                u32 has_int32_props
+                carbon_u32 has_int32_props
                         : 1;
-                u32 has_int64_props
+                carbon_u32 has_int64_props
                         : 1;
-                u32 has_uint8_props
+                carbon_u32 has_uint8_props
                         : 1;
-                u32 has_uint16_props
+                carbon_u32 has_uint16_props
                         : 1;
-                u32 has_uint32_props
+                carbon_u32 has_uint32_props
                         : 1;
-                u32 has_uint64_props
+                carbon_u32 has_uint64_props
                         : 1;
-                u32 has_float_props
+                carbon_u32 has_float_props
                         : 1;
-                u32 has_string_props
+                carbon_u32 has_string_props
                         : 1;
-                u32 has_object_props
+                carbon_u32 has_object_props
                         : 1;
-                u32 has_null_array_props
+                carbon_u32 has_null_array_props
                         : 1;
-                u32 has_bool_array_props
+                carbon_u32 has_bool_array_props
                         : 1;
-                u32 has_int8_array_props
+                carbon_u32 has_int8_array_props
                         : 1;
-                u32 has_int16_array_props
+                carbon_u32 has_int16_array_props
                         : 1;
-                u32 has_int32_array_props
+                carbon_u32 has_int32_array_props
                         : 1;
-                u32 has_int64_array_props
+                carbon_u32 has_int64_array_props
                         : 1;
-                u32 has_uint8_array_props
+                carbon_u32 has_uint8_array_props
                         : 1;
-                u32 has_uint16_array_props
+                carbon_u32 has_uint16_array_props
                         : 1;
-                u32 has_uint32_array_props
+                carbon_u32 has_uint32_array_props
                         : 1;
-                u32 has_uint64_array_props
+                carbon_u32 has_uint64_array_props
                         : 1;
-                u32 has_float_array_props
+                carbon_u32 has_float_array_props
                         : 1;
-                u32 has_string_array_props
+                carbon_u32 has_string_array_props
                         : 1;
-                u32 has_object_array_props
+                carbon_u32 has_object_array_props
                         : 1;
-                u32 RESERVED_27
+                carbon_u32 RESERVED_27
                         : 1;
-                u32 RESERVED_28
+                carbon_u32 RESERVED_28
                         : 1;
-                u32 RESERVED_29
+                carbon_u32 RESERVED_29
                         : 1;
-                u32 RESERVED_30
+                carbon_u32 RESERVED_30
                         : 1;
-                u32 RESERVED_31
+                carbon_u32 RESERVED_31
                         : 1;
-                u32 RESERVED_32
+                carbon_u32 RESERVED_32
                         : 1;
         } bits;
-        u32 value;
+        carbon_u32 value;
 } object_flags_u;
 
 typedef struct archive_prop_offs {
@@ -211,7 +211,7 @@ typedef struct var_prop {
 typedef struct array_prop {
         prop_header *header;
         const archive_field_sid_t *keys;
-        const u32 *lengths;
+        const carbon_u32 *lengths;
         offset_t values_begin;
 } array_prop;
 
@@ -336,30 +336,30 @@ static struct {
 
 typedef struct record_flags {
         struct {
-                u8 is_sorted
+                carbon_u8 is_sorted
                         : 1;
-                u8 RESERVED_2
+                carbon_u8 RESERVED_2
                         : 1;
-                u8 RESERVED_3
+                carbon_u8 RESERVED_3
                         : 1;
-                u8 RESERVED_4
+                carbon_u8 RESERVED_4
                         : 1;
-                u8 RESERVED_5
+                carbon_u8 RESERVED_5
                         : 1;
-                u8 RESERVED_6
+                carbon_u8 RESERVED_6
                         : 1;
-                u8 RESERVED_7
+                carbon_u8 RESERVED_7
                         : 1;
-                u8 RESERVED_8
+                carbon_u8 RESERVED_8
                         : 1;
         } bits;
-        u8 value;
+        carbon_u8 value;
 } record_flags;
 
 typedef struct string_table {
         packer compressor;
         offset_t first_entry_off;
-        u32 num_embeddded_strings;
+        carbon_u32 num_embeddded_strings;
 } string_table;
 
 typedef struct record_table {
@@ -371,14 +371,14 @@ typedef struct archive_info {
         size_t string_table_size;
         size_t record_table_size;
         size_t string_id_index_size;
-        u32 num_embeddded_strings;
+        carbon_u32 num_embeddded_strings;
 } archive_info;
 
 typedef struct __attribute__((packed)) string_entry_header {
         char marker;
         offset_t next_entry_off;
         archive_field_sid_t string_id;
-        u32 string_len;
+        carbon_u32 string_len;
 } string_entry_header;
 
 void int_read_prop_offsets(archive_prop_offs *prop_offsets, struct carbon_memfile *memfile, const object_flags_u *flags);

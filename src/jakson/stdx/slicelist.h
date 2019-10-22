@@ -48,7 +48,7 @@ FORWARD_STRUCT_DECL(slice)
 #define SLICE_LIST_TARGET_MEMORY_SIZE_IN_BYTE (32768/10)
 #endif
 
-#define SLICE_DATA_SIZE (SLICE_LIST_TARGET_MEMORY_SIZE_IN_BYTE - sizeof(slice_lookup_strat_e) - sizeof(u32))
+#define SLICE_DATA_SIZE (SLICE_LIST_TARGET_MEMORY_SIZE_IN_BYTE - sizeof(slice_lookup_strat_e) - sizeof(carbon_u32))
 
 #define SLICE_KEY_COLUMN_MAX_ELEMS (SLICE_DATA_SIZE / 8 / 3) /** one array with elements of 64 bits each, 3 of them */
 
@@ -74,9 +74,9 @@ typedef struct slice {
         archive_field_sid_t string_id_column[SLICE_KEY_COLUMN_MAX_ELEMS];
 
         /** The number of elements stored in 'key_colum', 'key_hash_column', and 'string_id_column' */
-        u32 num_elems;
+        carbon_u32 num_elems;
 
-        u32 cache_idx;
+        carbon_u32 cache_idx;
 } slice;
 
 typedef struct hash_bounds {
@@ -103,7 +103,7 @@ typedef struct slice_list {
         vector ofType(bloomfilter) filters;
         vector ofType(hash_bounds) bounds;
 
-        u32 appender_idx;
+        carbon_u32 appender_idx;
         err err;
 } slice_list_t;
 

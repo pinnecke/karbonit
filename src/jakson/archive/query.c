@@ -26,7 +26,7 @@
 
 struct sid_to_offset_arg {
         offset_t offset;
-        u32 strlen;
+        carbon_u32 strlen;
 };
 
 struct sid_to_offset {
@@ -104,7 +104,7 @@ bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query 
         size_t vector_len;
         bool status;
         bool success;
-        u32 capacity;
+        carbon_u32 capacity;
         archive_info archive_info;
         archive_get_info(&archive_info, query->archive);
         capacity = archive_info.num_embeddded_strings;
@@ -319,7 +319,7 @@ char *query_fetch_string_by_id_nocache(query *query, archive_field_sid_t id)
         }
 }
 
-char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
+char **query_fetch_strings_by_offset(query *query, offset_t *offs, carbon_u32 *strlens,
                                          size_t num_offs)
 {
         JAK_ASSERT(query);
@@ -395,7 +395,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         size_t info_len = 0;
         size_t step_len = 0;
         offset_t *str_offs = NULL;
-        u32 *str_lens = NULL;
+        carbon_u32 *str_lens = NULL;
         size_t *idxs_matching = NULL;
         size_t num_matching = 0;
         void *tmp = NULL;
@@ -427,7 +427,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                 return NULL;
         }
 
-        if (UNLIKELY((str_lens = MALLOC(str_cap * sizeof(u32))) == NULL)) {
+        if (UNLIKELY((str_lens = MALLOC(str_cap * sizeof(carbon_u32))) == NULL)) {
                 ERROR(&query->err, ERR_MALLOCERR);
                 free(str_offs);
                 goto cleanup_result_and_error;
@@ -467,7 +467,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                         } else {
                                 str_offs = tmp;
                         }
-                        if (UNLIKELY((tmp = realloc(str_lens, str_cap * sizeof(u32))) == NULL)) {
+                        if (UNLIKELY((tmp = realloc(str_lens, str_cap * sizeof(carbon_u32))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 str_lens = tmp;

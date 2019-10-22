@@ -20,11 +20,11 @@
 #include <jakson/carbon/revise.h>
 
 static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
-                                                      const carbon_dot_path *path, u32 current_path_pos,
+                                                      const carbon_dot_path *path, carbon_u32 current_path_pos,
                                                       carbon_column_it *it);
 
 static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
-                                                     const carbon_dot_path *path, u32 current_path_pos,
+                                                     const carbon_dot_path *path, carbon_u32 current_path_pos,
                                                      struct carbon_array *it, bool is_record);
 
 fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path,
@@ -205,11 +205,11 @@ bool carbon_path_is_string(carbon *doc, const char *path)
 }
 
 static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
-                                                      const carbon_dot_path *path, u32 current_path_pos,
+                                                      const carbon_dot_path *path, carbon_u32 current_path_pos,
                                                       carbon_object_it *it)
 {
         DECLARE_AND_INIT(carbon_dot_node_type_e, node_type)
-        DECLARE_AND_INIT(u32, path_length)
+        DECLARE_AND_INIT(carbon_u32, path_length)
         DECLARE_AND_INIT(bool, status)
 
         carbon_dot_path_type_at(&node_type, current_path_pos, path);
@@ -218,14 +218,14 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
         status = carbon_object_it_next(it);
         carbon_dot_path_len(&path_length, path);
         const char *needle = carbon_dot_path_key_at(current_path_pos, path);
-        u64 needle_len = strlen(needle);
-        u32 next_path_pos = current_path_pos + 1;
+        carbon_u64 needle_len = strlen(needle);
+        carbon_u32 next_path_pos = current_path_pos + 1;
 
         if (!status) {
                 /** empty document */
                 return CARBON_PATH_EMPTY_DOC;
         } else {
-                DECLARE_AND_INIT(u64, key_len)
+                DECLARE_AND_INIT(carbon_u64, key_len)
                 do {
                         const char *key_name = carbon_object_it_prop_name(&key_len, it);
                         if (key_len == needle_len && strncmp(key_name, needle, needle_len) == 0) {
@@ -379,7 +379,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
 }
 
 static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
-                                                     const carbon_dot_path *path, u32 current_path_pos,
+                                                     const carbon_dot_path *path, carbon_u32 current_path_pos,
                                                      struct carbon_array *it, bool is_record)
 {
         JAK_ASSERT(state);
@@ -389,10 +389,10 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
 
         DECLARE_AND_INIT(carbon_field_type_e, elem_type)
         DECLARE_AND_INIT(carbon_dot_node_type_e, node_type)
-        DECLARE_AND_INIT(u32, path_length)
+        DECLARE_AND_INIT(carbon_u32, path_length)
         DECLARE_AND_INIT(carbon_path_status_e, status)
-        DECLARE_AND_INIT(u32, requested_array_idx)
-        DECLARE_AND_INIT(u32, current_array_idx)
+        DECLARE_AND_INIT(carbon_u32, requested_array_idx)
+        DECLARE_AND_INIT(carbon_u32, current_array_idx)
         bool is_unit_array = carbon_array_it_is_unit(it);
 
         carbon_dot_path_type_at(&node_type, current_path_pos, path);
@@ -415,7 +415,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                 } else {
                                         /** requested index is reached; depending on the subsequent path, lookup may stops */
                                         carbon_array_it_field_type(&elem_type, it);
-                                        u32 next_path_pos = current_path_pos + 1;
+                                        carbon_u32 next_path_pos = current_path_pos + 1;
                                         if (is_unit_array && is_record &&
                                                 carbon_field_type_is_column_or_subtype(elem_type)) {
                                                 carbon_column_it *sub_it = carbon_array_it_column_value(
@@ -527,12 +527,12 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
 }
 
 static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
-                                                      const carbon_dot_path *path, u32 current_path_pos,
+                                                      const carbon_dot_path *path, carbon_u32 current_path_pos,
                                                       carbon_column_it *it)
 {
-        DECLARE_AND_INIT(u32, total_path_len)
-        DECLARE_AND_INIT(u32, requested_idx)
-        DECLARE_AND_INIT(u32, nun_values_contained)
+        DECLARE_AND_INIT(carbon_u32, total_path_len)
+        DECLARE_AND_INIT(carbon_u32, requested_idx)
+        DECLARE_AND_INIT(carbon_u32, nun_values_contained)
         DECLARE_AND_INIT(carbon_dot_node_type_e, node_type)
         DECLARE_AND_INIT(carbon_field_type_e, column_type)
         carbon_dot_path_len(&total_path_len, path);

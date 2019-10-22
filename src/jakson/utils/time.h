@@ -27,7 +27,7 @@
 
 BEGIN_DECL
 
-typedef u64 timestamp;
+typedef carbon_u64 timestamp;
 
 timestamp wallclock();
 

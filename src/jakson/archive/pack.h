@@ -182,7 +182,7 @@ typedef struct packer {
          * @since 0.1.00.05
          */
         bool
-        (*print_encoded)(packer *self, FILE *file, struct carbon_memfile *src, u32 decompressed_strlen);
+        (*print_encoded)(packer *self, FILE *file, struct carbon_memfile *src, carbon_u32 decompressed_strlen);
 } packer;
 
 static void pack_none_create(packer *strategy)
@@ -220,7 +220,7 @@ static struct {
         packer_e type;
         const char *name;
         void (*create)(packer *strategy);
-        u8 flag_bit;
+        carbon_u8 flag_bit;
 } global_pack_strategy_register[] =
         {{.type = PACK_NONE, .name = "none", .create = pack_none_create, .flag_bit = 1 << 0},
          {.type = PACK_HUFFMAN, .name = "huffman", .create = pack_huffman_create, .flag_bit = 1 << 1}};
@@ -231,8 +231,8 @@ bool pack_cpy(err *err, packer *dst, const packer *src);
 bool pack_drop(err *err, packer *self);
 
 bool pack_by_type(err *err, packer *strategy, packer_e type);
-u8 pack_flagbit_by_type(packer_e type);
-bool pack_by_flags(packer *strategy, u8 flags);
+carbon_u8 pack_flagbit_by_type(packer_e type);
+bool pack_by_flags(packer *strategy, carbon_u8 flags);
 bool pack_by_name(packer_e *type, const char *name);
 
 bool pack_write_extra(err *err, packer *self, struct carbon_memfile *dst, const vector ofType (const char *) *strings);
@@ -240,7 +240,7 @@ bool pack_read_extra(err *err, packer *self, FILE *src, size_t nbytes);
 bool pack_encode(err *err, packer *self, struct carbon_memfile *dst, const char *string);
 bool pack_decode(err *err, packer *self, char *dst, size_t strlen, FILE *src);
 bool pack_print_extra(err *err, packer *self, FILE *file, struct carbon_memfile *src);
-bool pack_print_encoded(err *err, packer *self, FILE *file, struct carbon_memfile *src, u32 decompressed_strlen);
+bool pack_print_encoded(err *err, packer *self, FILE *file, struct carbon_memfile *src, carbon_u32 decompressed_strlen);
 
 END_DECL
 

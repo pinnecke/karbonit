@@ -30,8 +30,8 @@ BEGIN_DECL
 
 typedef struct hashset_bucket {
         bool in_use_flag;  /** flag indicating if bucket is in use */
-        i32 displacement; /** difference between intended position during insert, and actual position in table */
-        u64 key_idx;      /** position of key element in owning hashset structure */
+        carbon_i32 displacement; /** difference between intended position during insert, and actual position in table */
+        carbon_u64 key_idx;      /** position of key element in owning hashset structure */
 } hashset_bucket;
 
 /**
@@ -49,7 +49,7 @@ typedef struct hashset {
         vector key_data;
         vector ofType(hashset_bucket) table;
         spinlock lock;
-        u32 size;
+        carbon_u32 size;
         err err;
 } hashset;
 

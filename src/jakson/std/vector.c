@@ -43,24 +43,24 @@ void vector_##type##_printer_func(struct carbon_memfile *dst, void ofType(T) *va
 #define DEFINE_PRINTER_FUNCTION(type, format_string)                                                                   \
     DEFINE_PRINTER_FUNCTION_WCAST(type, type, format_string)
 
-DEFINE_PRINTER_FUNCTION_WCAST(u_char, i8, "%d")
+DEFINE_PRINTER_FUNCTION_WCAST(u_char, carbon_i8, "%d")
 
-DEFINE_PRINTER_FUNCTION(i8, "%d")
+DEFINE_PRINTER_FUNCTION(carbon_i8, "%d")
 
-DEFINE_PRINTER_FUNCTION(i16, "%d")
+DEFINE_PRINTER_FUNCTION(carbon_i16, "%d")
 
-DEFINE_PRINTER_FUNCTION(i32, "%d")
+DEFINE_PRINTER_FUNCTION(carbon_i32, "%d")
 
 DEFINE_PRINTER_FUNCTION(carbon_i64, "%"
         PRIi64)
 
-DEFINE_PRINTER_FUNCTION(u8, "%d")
+DEFINE_PRINTER_FUNCTION(carbon_u8, "%d")
 
-DEFINE_PRINTER_FUNCTION(u16, "%d")
+DEFINE_PRINTER_FUNCTION(carbon_u16, "%d")
 
-DEFINE_PRINTER_FUNCTION(u32, "%d")
+DEFINE_PRINTER_FUNCTION(carbon_u32, "%d")
 
-DEFINE_PRINTER_FUNCTION(u64, "%"
+DEFINE_PRINTER_FUNCTION(carbon_u64, "%"
         PRIu64)
 
 DEFINE_PRINTER_FUNCTION(size_t, "%zu")
@@ -81,9 +81,9 @@ bool vector_create(vector *out, const allocator *alloc, size_t elem_size, size_t
 
 typedef struct vector_serialize_header {
         char marker;
-        u32 elem_size;
-        u32 num_elems;
-        u32 cap_elems;
+        carbon_u32 elem_size;
+        carbon_u32 num_elems;
+        carbon_u32 cap_elems;
         float grow_factor;
 } vector_serialize_header;
 

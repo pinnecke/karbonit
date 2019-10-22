@@ -45,7 +45,7 @@
 
 #define WRITE_ARRAY_VALUES(memfile, values_vec, type)                                                                  \
 {                                                                                                                      \
-    for (u32 i = 0; i < values_vec->num_elems; i++) {                                                             \
+    for (carbon_u32 i = 0; i < values_vec->num_elems; i++) {                                                             \
         vector ofType(type) *nested_values = VECTOR_GET(values_vec, i, vector);                     \
         WRITE_PRIMITIVE_VALUES(memfile, nested_values, type);                                                          \
     }                                                                                                                  \
@@ -60,11 +60,11 @@
     fprintf(file, "0x%04x ", (unsigned) offset);                                                                       \
     INTENT_LINE(nesting_level)                                                                                         \
     fprintf(file, "[marker: %c (" type_string ")] [num_entries: %d] [", entryMarker, prop_header->num_entries);        \
-    for (u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
+    for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
         fprintf(file, "key: %"PRIu64"%s", keys[i], i + 1 < prop_header->num_entries ? ", " : "");                      \
     }                                                                                                                  \
     fprintf(file, "] [");                                                                                              \
-    for (u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
+    for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
       fprintf(file, "value: "format_string"%s", values[i], i + 1 < prop_header->num_entries ? ", " : "");              \
     }                                                                                                                  \
     fprintf(file, "]\n");                                                                                              \
@@ -76,29 +76,29 @@
                                                                                                                        \
     archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop_header->num_entries *          \
                                         sizeof(archive_field_sid_t));                                                   \
-    u32 *array_lengths;                                                                                           \
+    carbon_u32 *array_lengths;                                                                                           \
                                                                                                                        \
     fprintf(file, "0x%04x ", (unsigned) offset);                                                                       \
     INTENT_LINE(nesting_level)                                                                                         \
     fprintf(file, "[marker: %c ("type_string")] [num_entries: %d] [", entryMarker, prop_header->num_entries);          \
                                                                                                                        \
-    for (u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
+    for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
         fprintf(file, "key: %"PRIu64"%s", keys[i], i + 1 < prop_header->num_entries ? ", " : "");                      \
     }                                                                                                                  \
     fprintf(file, "] [");                                                                                              \
                                                                                                                        \
-    array_lengths = (u32 *) MEMFILE_READ(memfile, prop_header->num_entries * sizeof(u32));            \
+    array_lengths = (carbon_u32 *) MEMFILE_READ(memfile, prop_header->num_entries * sizeof(carbon_u32));            \
                                                                                                                        \
-    for (u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
+    for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
         fprintf(file, "num_entries: %d%s", array_lengths[i], i + 1 < prop_header->num_entries ? ", " : "");            \
     }                                                                                                                  \
                                                                                                                        \
     fprintf(file, "] [");                                                                                              \
                                                                                                                        \
-    for (u32 array_idx = 0; array_idx < prop_header->num_entries; array_idx++) {                                  \
+    for (carbon_u32 array_idx = 0; array_idx < prop_header->num_entries; array_idx++) {                                  \
         type *values = (type *) MEMFILE_READ(memfile, array_lengths[array_idx] * sizeof(type));                 \
         fprintf(file, "[");                                                                                            \
-        for (u32 i = 0; i < array_lengths[array_idx]; i++) {                                                      \
+        for (carbon_u32 i = 0; i < array_lengths[array_idx]; i++) {                                                      \
             fprintf(file, "value: "format_string"%s", values[i], i + 1 < array_lengths[array_idx] ? ", " : "");        \
         }                                                                                                              \
         fprintf(file, "]%s", array_idx + 1 < prop_header->num_entries ? ", " : "");                                    \
@@ -116,7 +116,7 @@
 
 #define PRINT_VALUE_ARRAY(type, memfile, header, format_string)                                                        \
 {                                                                                                                      \
-    u32 num_elements = *MEMFILE_READ_TYPE(memfile, u32);                                              \
+    carbon_u32 num_elements = *MEMFILE_READ_TYPE(memfile, carbon_u32);                                              \
     const type *values = (const type *) MEMFILE_READ(memfile, num_elements * sizeof(type));                     \
     fprintf(file, "0x%04x ", (unsigned) offset);                                                                       \
     INTENT_LINE(nesting_level);                                                                                        \
@@ -131,7 +131,7 @@ static offset_t skip_record_header(struct carbon_memfile *memfile);
 
 static void
 update_record_header(struct carbon_memfile *memfile, offset_t root_object_header_offset, column_doc *model,
-                     u64 record_size);
+                     carbon_u64 record_size);
 
 static bool __serialize(offset_t *offset, err *err, struct carbon_memfile *memfile,
                         column_doc_obj *columndoc,
@@ -406,7 +406,7 @@ bool archive_from_model(memblock **stream, err *err, column_doc *model,
         if (!__serialize(NULL, err, &memfile, &model->columndoc, root_object_header_offset)) {
                 return false;
         }
-        u64 record_size = memfile_tell(&memfile) - (record_header_offset + sizeof(record_header));
+        carbon_u64 record_size = memfile_tell(&memfile) - (record_header_offset + sizeof(record_header));
         update_record_header(&memfile, record_header_offset, model, record_size);
         OPTIONAL_CALL(callback, end_write_record_table);
 
@@ -472,9 +472,9 @@ bool archive_print(FILE *file, err *err, memblock *stream)
 
 bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile, unsigned nesting_level);
 
-static u32 flags_to_int32(object_flags_u *flags)
+static carbon_u32 flags_to_int32(object_flags_u *flags)
 {
-        return *((i32 *) flags);
+        return *((carbon_i32 *) flags);
 }
 
 static const char *array_value_type_to_string(err *err, archive_field_e type)
@@ -579,7 +579,7 @@ static offset_t *__write_primitive_column(struct carbon_memfile *memfile, err *e
 {
         offset_t *result = MALLOC(values_vec->num_elems * sizeof(offset_t));
         column_doc_obj *mapped = VECTOR_ALL(values_vec, column_doc_obj);
-        for (u32 i = 0; i < values_vec->num_elems; i++) {
+        for (carbon_u32 i = 0; i < values_vec->num_elems; i++) {
                 column_doc_obj *obj = mapped + i;
                 result[i] = memfile_tell(memfile) - root_offset;
                 if (!__serialize(NULL, err, memfile, obj, root_offset)) {
@@ -606,9 +606,9 @@ static bool __write_array_len_column(err *err, struct carbon_memfile *memfile, a
                 case FIELD_UINT64:
                 case FIELD_FLOAT:
                 case FIELD_STRING:
-                        for (u32 i = 0; i < values->num_elems; i++) {
+                        for (carbon_u32 i = 0; i < values->num_elems; i++) {
                                 vector *arrays = VECTOR_GET(values, i, vector);
-                                memfile_write(memfile, &arrays->num_elems, sizeof(u32));
+                                memfile_write(memfile, &arrays->num_elems, sizeof(carbon_u32));
                         }
                         break;
                 case FIELD_OBJECT: ERROR_PRINT_AND_DIE(ERR_ILLEGALIMPL)
@@ -625,7 +625,7 @@ static bool write_array_value_column(struct carbon_memfile *memfile, err *err, a
 {
 
         switch (type) {
-                case FIELD_NULL: WRITE_PRIMITIVE_VALUES(memfile, values_vec, u32);
+                case FIELD_NULL: WRITE_PRIMITIVE_VALUES(memfile, values_vec, carbon_u32);
                         break;
                 case FIELD_BOOLEAN: WRITE_ARRAY_VALUES(memfile, values_vec, archive_field_boolean_t);
                         break;
@@ -986,10 +986,10 @@ write_primitive_props(struct carbon_memfile *memfile, err *err, column_doc_obj *
 static bool write_column_entry(struct carbon_memfile *memfile, err *err, archive_field_e type,
                                vector ofType(<T>) *column, offset_t root_object_header_offset)
 {
-        memfile_write(memfile, &column->num_elems, sizeof(u32));
+        memfile_write(memfile, &column->num_elems, sizeof(carbon_u32));
         switch (type) {
                 case FIELD_NULL:
-                        memfile_write(memfile, column->base, column->num_elems * sizeof(u32));
+                        memfile_write(memfile, column->base, column->num_elems * sizeof(carbon_u32));
                         break;
                 case FIELD_BOOLEAN:
                 case FIELD_INT8:
@@ -1042,7 +1042,7 @@ static bool write_column(struct carbon_memfile *memfile, err *err, column_doc_co
         offset_t value_entry_offsets = memfile_tell(memfile);
         memfile_skip(memfile, column->values.num_elems * sizeof(offset_t));
 
-        memfile_write(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
+        memfile_write(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(carbon_u32));
 
         for (size_t i = 0; i < column->values.num_elems; i++) {
                 vector ofType(<T>) *column_data = VECTOR_GET(&column->values, i, vector);
@@ -1090,7 +1090,7 @@ static bool write_object_array_props(struct carbon_memfile *memfile, err *err,
                         for (size_t k = 0; k < column_group->columns.num_elems; k++) {
                                 column_doc_column
                                         *column = VECTOR_GET(&column_group->columns, k, column_doc_column);
-                                const u32 *array_pos = VECTOR_ALL(&column->array_positions, u32);
+                                const carbon_u32 *array_pos = VECTOR_ALL(&column->array_positions, carbon_u32);
                                 for (size_t m = 0; m < column->array_positions.num_elems; m++) {
                                         max_pos = JAK_MAX(max_pos, array_pos[m]);
                                 }
@@ -1147,7 +1147,7 @@ static offset_t skip_record_header(struct carbon_memfile *memfile)
 
 static void
 update_record_header(struct carbon_memfile *memfile, offset_t root_object_header_offset, column_doc *model,
-                     u64 record_size)
+                     carbon_u64 record_size)
 {
         record_flags flags = {.bits.is_sorted = model->read_optimized};
         record_header
@@ -1447,7 +1447,7 @@ static bool serialize_string_dic(struct carbon_memfile *memfile, err *err, const
         if (!pack_by_type(err, &strategy, compressor)) {
                 return false;
         }
-        u8 flag_bit = pack_flagbit_by_type(compressor);
+        carbon_u8 flag_bit = pack_flagbit_by_type(compressor);
         SET_BITS(flags.value, flag_bit);
 
         offset_t header_pos = memfile_tell(memfile);
@@ -1545,7 +1545,7 @@ print_column_form_memfile(FILE *file, err *err, struct carbon_memfile *memfile, 
                 fprintf(file, "offset: 0x%04x%s", (unsigned) entry_off, i + 1 < header->num_entries ? ", " : "");
         }
 
-        u32 *positions = (u32 *) MEMFILE_READ(memfile, header->num_entries * sizeof(u32));
+        carbon_u32 *positions = (carbon_u32 *) MEMFILE_READ(memfile, header->num_entries * sizeof(carbon_u32));
         fprintf(file, "] [positions: [");
         for (size_t i = 0; i < header->num_entries; i++) {
                 fprintf(file, "%d%s", positions[i], i + 1 < header->num_entries ? ", " : "");
@@ -1559,7 +1559,7 @@ print_column_form_memfile(FILE *file, err *err, struct carbon_memfile *memfile, 
         for (size_t i = 0; i < header->num_entries; i++) {
                 switch (data_type) {
                         case FIELD_NULL: {
-                                PRINT_VALUE_ARRAY(u32, memfile, header, "%d");
+                                PRINT_VALUE_ARRAY(carbon_u32, memfile, header, "%d");
                         }
                                 break;
                         case FIELD_BOOLEAN: {
@@ -1611,7 +1611,7 @@ print_column_form_memfile(FILE *file, err *err, struct carbon_memfile *memfile, 
                         }
                                 break;
                         case FIELD_OBJECT: {
-                                u32 num_elements = *MEMFILE_READ_TYPE(memfile, u32);
+                                carbon_u32 num_elements = *MEMFILE_READ_TYPE(memfile, carbon_u32);
                                 INTENT_LINE(nesting_level);
                                 fprintf(file, "   [num_elements: %d] [values: [\n", num_elements);
                                 for (size_t i = 0; i < num_elements; i++) {
@@ -1842,7 +1842,7 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                 fprintf(file, "[marker: %c (null)] [nentries: %d] [", entryMarker,
                                         prop_header->num_entries);
 
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file, "%"PRIu64"%s", keys[i],
                                                 i + 1 < prop_header->num_entries ? ", " : "");
                                 }
@@ -1862,12 +1862,12 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                 INTENT_LINE(nesting_level)
                                 fprintf(file, "[marker: %c (boolean)] [nentries: %d] [", entryMarker,
                                         prop_header->num_entries);
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file, "%"PRIu64"%s", keys[i],
                                                 i + 1 < prop_header->num_entries ? ", " : "");
                                 }
                                 fprintf(file, "] [");
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file,
                                                 "%s%s",
                                                 values[i] ? "true" : "false",
@@ -1967,14 +1967,14 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                 INTENT_LINE(nesting_level)
                                 fprintf(file, "[marker: %c (Object)] [nentries: %d] [", entryMarker,
                                         prop.header->num_entries);
-                                for (u32 i = 0; i < prop.header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop.header->num_entries; i++) {
                                         fprintf(file,
                                                 "key: %"PRIu64"%s",
                                                 prop.keys[i],
                                                 i + 1 < prop.header->num_entries ? ", " : "");
                                 }
                                 fprintf(file, "] [");
-                                for (u32 i = 0; i < prop.header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop.header->num_entries; i++) {
                                         fprintf(file,
                                                 "offsets: 0x%04x%s",
                                                 (unsigned) prop.offsets[i],
@@ -1998,7 +1998,7 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                 archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
-                                u32 *nullArrayLengths;
+                                carbon_u32 *nullArrayLengths;
 
                                 fprintf(file, "0x%04x ", offset);
                                 INTENT_LINE(nesting_level)
@@ -2007,17 +2007,17 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                         entryMarker,
                                         prop_header->num_entries);
 
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file, "%"PRIu64"%s", keys[i],
                                                 i + 1 < prop_header->num_entries ? ", " : "");
                                 }
                                 fprintf(file, "] [");
 
-                                nullArrayLengths = (u32 *) MEMFILE_READ(memfile,
+                                nullArrayLengths = (carbon_u32 *) MEMFILE_READ(memfile,
                                                                                 prop_header->num_entries *
-                                                                                sizeof(u32));
+                                                                                sizeof(carbon_u32));
 
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file,
                                                 "nentries: %d%s",
                                                 nullArrayLengths[i],
@@ -2033,7 +2033,7 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                 archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
-                                u32 *array_lengths;
+                                carbon_u32 *array_lengths;
 
                                 fprintf(file, "0x%04x ", offset);
                                 INTENT_LINE(nesting_level)
@@ -2042,17 +2042,17 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
                                         entryMarker,
                                         prop_header->num_entries);
 
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file, "%"PRIu64"%s", keys[i],
                                                 i + 1 < prop_header->num_entries ? ", " : "");
                                 }
                                 fprintf(file, "] [");
 
-                                array_lengths = (u32 *) MEMFILE_READ(memfile,
+                                array_lengths = (carbon_u32 *) MEMFILE_READ(memfile,
                                                                              prop_header->num_entries *
-                                                                             sizeof(u32));
+                                                                             sizeof(carbon_u32));
 
-                                for (u32 i = 0; i < prop_header->num_entries; i++) {
+                                for (carbon_u32 i = 0; i < prop_header->num_entries; i++) {
                                         fprintf(file,
                                                 "arrayLength: %d%s",
                                                 array_lengths[i],
@@ -2061,13 +2061,13 @@ bool _archive_print_object(FILE *file, err *err, struct carbon_memfile *memfile,
 
                                 fprintf(file, "] [");
 
-                                for (u32 array_idx = 0; array_idx < prop_header->num_entries; array_idx++) {
+                                for (carbon_u32 array_idx = 0; array_idx < prop_header->num_entries; array_idx++) {
                                         archive_field_boolean_t *values = (archive_field_boolean_t *) MEMFILE_READ(
                                                 memfile,
                                                 array_lengths[array_idx] *
                                                 sizeof(archive_field_boolean_t));
                                         fprintf(file, "[");
-                                        for (u32 i = 0; i < array_lengths[array_idx]; i++) {
+                                        for (carbon_u32 i = 0; i < array_lengths[array_idx]; i++) {
                                                 fprintf(file,
                                                         "value: %s%s",
                                                         values[i] ? "true" : "false",
@@ -2353,7 +2353,7 @@ static object_flags_u *get_flags(object_flags_u *flags, column_doc_obj *columndo
         return flags;
 }
 
-static bool init_decompressor(packer *strategy, u8 flags);
+static bool init_decompressor(packer *strategy, carbon_u8 flags);
 
 static bool read_stringtable(string_table *table, err *err, FILE *disk_file);
 
@@ -2533,7 +2533,7 @@ query *archive_query_default(archive *archive)
         return archive ? archive->default_query : NULL;
 }
 
-static bool init_decompressor(packer *strategy, u8 flags)
+static bool init_decompressor(packer *strategy, carbon_u8 flags)
 {
         if (pack_by_flags(strategy, flags) != true) {
                 return false;

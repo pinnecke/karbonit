@@ -26,15 +26,15 @@
 
 BEGIN_DECL
 
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef int8_t i8;
-typedef int16_t i16;
-typedef int32_t i32;
+typedef uint8_t carbon_u8;
+typedef uint16_t carbon_u16;
+typedef uint32_t carbon_u32;
+typedef uint64_t carbon_u64;
+typedef int8_t carbon_i8;
+typedef int16_t carbon_i16;
+typedef int32_t carbon_i32;
 typedef int64_t carbon_i64;
-typedef u8 boolean;
+typedef carbon_u8 boolean;
 
 #define U8_NULL         UINT8_MAX
 #define U16_NULL        UINT16_MAX
@@ -78,17 +78,17 @@ typedef u8 boolean;
 #define IS_NULL_I64(x)          (x == I64_NULL)
 #define IS_NULL_FLOAT(x)        (isnan(x))
 
-typedef u64 archive_field_sid_t;  /** string_buffer identifier, resolvable by a string_buffer dictionary */
+typedef carbon_u64 archive_field_sid_t;  /** string_buffer identifier, resolvable by a string_buffer dictionary */
 typedef char field_null_t;
-typedef i8 archive_field_boolean_t;
-typedef i8 archive_field_i8_t;
-typedef i16 archive_field_i16_t;
-typedef i32 archive_field_i32_t;
+typedef carbon_i8 archive_field_boolean_t;
+typedef carbon_i8 archive_field_i8_t;
+typedef carbon_i16 archive_field_i16_t;
+typedef carbon_i32 archive_field_i32_t;
 typedef carbon_i64 archive_field_i64_t;
-typedef u8 archive_field_u8_t;
-typedef u16 archive_field_u16_t;
-typedef u32 archive_field_u32_t;
-typedef u64 archive_field_u64_t;
+typedef carbon_u8 archive_field_u8_t;
+typedef carbon_u16 archive_field_u16_t;
+typedef carbon_u32 archive_field_u32_t;
+typedef carbon_u64 archive_field_u64_t;
 typedef float archive_field_number_t;
 typedef const char *field_string_t;
 
@@ -145,7 +145,7 @@ typedef const char *field_string_t;
     size_t value_size;                                                                                                 \
     switch (value_type) {                                                                                              \
         case FIELD_NULL:                                                                                           \
-            value_size = sizeof(u16);                                                                              \
+            value_size = sizeof(carbon_u16);                                                                              \
             break;                                                                                                     \
         case FIELD_BOOLEAN:                                                                                        \
             value_size = sizeof(archive_field_boolean_t);                                                          \

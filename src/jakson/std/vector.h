@@ -81,12 +81,12 @@ typedef struct vector {
         /**
          *  The number of elements currently stored in the vector
          */
-        u32 num_elems;
+        carbon_u32 num_elems;
 
         /**
          *  The number of elements for which currently memory is reserved
          */
-        u32 cap_elems;
+        carbon_u32 cap_elems;
 
         /**
         * The grow factor considered for resize operations

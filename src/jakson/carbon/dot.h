@@ -42,13 +42,13 @@ typedef struct carbon_dot_node {
     carbon_dot_node_type_e type;
         union {
                 char *string;
-                u32 idx;
+                carbon_u32 idx;
         } identifier;
 } carbon_dot_node;
 
 typedef struct carbon_dot_path {
         carbon_dot_node nodes[256];
-        u32 path_len;
+        carbon_u32 path_len;
         err err;
 } carbon_dot_path;
 
@@ -70,12 +70,12 @@ bool carbon_dot_path_drop(carbon_dot_path *path);
 
 bool carbon_dot_path_add_key(carbon_dot_path *dst, const char *key);
 bool carbon_dot_path_add_nkey(carbon_dot_path *dst, const char *key, size_t len);
-bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx);
-bool carbon_dot_path_len(u32 *len, const carbon_dot_path *path);
+bool carbon_dot_path_add_idx(carbon_dot_path *dst, carbon_u32 idx);
+bool carbon_dot_path_len(carbon_u32 *len, const carbon_dot_path *path);
 bool carbon_dot_path_is_empty(const carbon_dot_path *path);
-bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const carbon_dot_path *path);
-bool carbon_dot_path_idx_at(u32 *idx, u32 pos, const carbon_dot_path *path);
-const char *carbon_dot_path_key_at(u32 pos, const carbon_dot_path *path);
+bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, carbon_u32 pos, const carbon_dot_path *path);
+bool carbon_dot_path_idx_at(carbon_u32 *idx, carbon_u32 pos, const carbon_dot_path *path);
+const char *carbon_dot_path_key_at(carbon_u32 pos, const carbon_dot_path *path);
 
 bool carbon_dot_path_to_str(string_buffer *sb, carbon_dot_path *path);
 bool carbon_dot_path_fprint(FILE *file, carbon_dot_path *path);

@@ -167,7 +167,7 @@ typedef struct json_number {
         union {
                 float float_number;
                 carbon_i64 signed_integer;
-                u64 unsigned_integer;
+                carbon_u64 unsigned_integer;
         } value;
 } json_number;
 
@@ -181,7 +181,7 @@ bool json_test(err *err, json *json);
 bool json_drop(json *json);
 bool json_print(FILE *file, json *json);
 bool json_list_is_empty(const json_elements *elements);
-bool json_list_length(u32 *len, const json_elements *elements);
+bool json_list_length(carbon_u32 *len, const json_elements *elements);
 json_list_type_e json_fitting_type(json_list_type_e current, json_list_type_e to_add);
 bool json_array_get_type(json_list_type_e *type, const json_array *array);
 

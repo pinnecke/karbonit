@@ -36,7 +36,7 @@ enum dot_token_type {
 struct dot_token {
         enum dot_token_type type;
         const char *str;
-        u32 len;
+        carbon_u32 len;
 };
 
 static const char *next_token(struct dot_token *token, const char *str)
@@ -51,7 +51,7 @@ static const char *next_token(struct dot_token *token, const char *str)
                         token->type = TOKEN_STRING;
                         token->str = str;
                         bool skip_esc = false;
-                        u32 strlen = 0;
+                        carbon_u32 strlen = 0;
                         while (c && (isalpha(c) && (c != '\n') && (c != '\t') && (c != '\r') && (c != ' '))) {
                                 if (!skip_esc) {
                                         if (c == '\\') {
@@ -70,7 +70,7 @@ static const char *next_token(struct dot_token *token, const char *str)
                         c = *(++str);
                         bool skip_esc = false;
                         bool end_found = false;
-                        u32 strlen = 1;
+                        carbon_u32 strlen = 1;
                         while (c && !end_found) {
                                 if (!skip_esc) {
                                         if (c == '\\') {
@@ -94,7 +94,7 @@ static const char *next_token(struct dot_token *token, const char *str)
                 } else if (isdigit(c)) {
                         token->type = TOKEN_NUMBER;
                         token->str = str;
-                        u32 strlen = 0;
+                        carbon_u32 strlen = 0;
                         while (c && isdigit(c)) {
                                 c = *(++str);
                                 strlen++;
@@ -155,7 +155,7 @@ bool carbon_dot_path_from_string(carbon_dot_path *path, const char *path_string)
                                         status = ERR_PARSE_ENTRY_EXPECTED;
                                         goto cleanup_and_error;
                                 } else {
-                                        u64 num = convert_atoiu64(token.str);
+                                        carbon_u64 num = convert_atoiu64(token.str);
                                         carbon_dot_path_add_idx(path, num);
                                 }
                                 break;
@@ -203,7 +203,7 @@ bool carbon_dot_path_add_nkey(carbon_dot_path *dst, const char *key, size_t len)
         }
 }
 
-bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx)
+bool carbon_dot_path_add_idx(carbon_dot_path *dst, carbon_u32 idx)
 {
         DEBUG_ERROR_IF_NULL(dst)
         if (LIKELY(dst->path_len < ARRAY_LENGTH(dst->nodes))) {
@@ -217,7 +217,7 @@ bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx)
         }
 }
 
-bool carbon_dot_path_len(u32 *len, const carbon_dot_path *path)
+bool carbon_dot_path_len(carbon_u32 *len, const carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(len)
         DEBUG_ERROR_IF_NULL(path)
@@ -231,7 +231,7 @@ bool carbon_dot_path_is_empty(const carbon_dot_path *path)
         return (path->path_len == 0);
 }
 
-bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const carbon_dot_path *path)
+bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, carbon_u32 pos, const carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(type_out)
         DEBUG_ERROR_IF_NULL(path)
@@ -244,7 +244,7 @@ bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const ca
         return true;
 }
 
-bool carbon_dot_path_idx_at(u32 *idx, u32 pos, const carbon_dot_path *path)
+bool carbon_dot_path_idx_at(carbon_u32 *idx, carbon_u32 pos, const carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(idx)
         DEBUG_ERROR_IF_NULL(path)
@@ -257,7 +257,7 @@ bool carbon_dot_path_idx_at(u32 *idx, u32 pos, const carbon_dot_path *path)
         return true;
 }
 
-const char *carbon_dot_path_key_at(u32 pos, const carbon_dot_path *path)
+const char *carbon_dot_path_key_at(carbon_u32 pos, const carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(path)
         ERROR_IF_AND_RETURN(pos >= ARRAY_LENGTH(path->nodes), &((carbon_dot_path *) path)->err,
@@ -271,7 +271,7 @@ const char *carbon_dot_path_key_at(u32 pos, const carbon_dot_path *path)
 bool carbon_dot_path_drop(carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(path)
-        for (u32 i = 0; i < path->path_len; i++) {
+        for (carbon_u32 i = 0; i < path->path_len; i++) {
                 carbon_dot_node *node = path->nodes + i;
                 if (node->type == DOT_NODE_KEY_NAME) {
                         free(node->identifier.string);
@@ -284,7 +284,7 @@ bool carbon_dot_path_drop(carbon_dot_path *path)
 bool carbon_dot_path_to_str(string_buffer *sb, carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(path)
-        for (u32 i = 0; i < path->path_len; i++) {
+        for (carbon_u32 i = 0; i < path->path_len; i++) {
                 carbon_dot_node *node = path->nodes + i;
                 switch (node->type) {
                         case DOT_NODE_KEY_NAME: {

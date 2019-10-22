@@ -48,12 +48,12 @@ bool error_drop(err *err)
         return true;
 }
 
-bool error_set(err *err, int code, const char *file, u32 line)
+bool error_set(err *err, int code, const char *file, carbon_u32 line)
 {
         return error_set_wdetails(err, code, file, line, NULL);
 }
 
-bool error_set_wdetails(err *err, int code, const char *file, u32 line, const char *details)
+bool error_set_wdetails(err *err, int code, const char *file, carbon_u32 line, const char *details)
 {
         if (err) {
                 err->code = code;
@@ -67,12 +67,12 @@ bool error_set_wdetails(err *err, int code, const char *file, u32 line, const ch
         return (err != NULL);
 }
 
-bool error_set_no_abort(err *err, int code, const char *file, u32 line)
+bool error_set_no_abort(err *err, int code, const char *file, carbon_u32 line)
 {
         return error_set_wdetails_no_abort(err, code, file, line, NULL);
 }
 
-bool error_set_wdetails_no_abort(err *err, int code, const char *file, u32 line, const char *details)
+bool error_set_wdetails_no_abort(err *err, int code, const char *file, carbon_u32 line, const char *details)
 {
         if (err) {
                 err->code = code;
@@ -86,7 +86,7 @@ bool error_set_wdetails_no_abort(err *err, int code, const char *file, u32 line,
         return (err != NULL);
 }
 
-bool error_str(const char **errstr, const char **file, u32 *line, bool *details, const char **detailsstr,
+bool error_str(const char **errstr, const char **file, carbon_u32 *line, bool *details, const char **detailsstr,
                const err *err)
 {
         if (err) {
@@ -109,7 +109,7 @@ bool error_print_to_stderr(const err *err)
         if (err) {
                 const char *errstr;
                 const char *file;
-                u32 line;
+                carbon_u32 line;
                 bool has_details;
                 const char *details;
                 if (error_str(&errstr, &file, &line, &has_details, &details, err)) {

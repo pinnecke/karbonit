@@ -29,20 +29,20 @@ BEGIN_DECL
 
 typedef struct bitmap {
         vector ofType(u64) data;
-        u16 num_bits;
+        carbon_u16 num_bits;
 } bitmap;
 
-bool bitmap_create(bitmap *bitmap, u16 num_bits);
+bool bitmap_create(bitmap *bitmap, carbon_u16 num_bits);
 bool bitmap_cpy(bitmap *dst, const bitmap *src);
 bool bitmap_drop(bitmap *map);
 size_t bitmap_nbits(const bitmap *map);
 bool bitmap_clear(bitmap *map);
-bool bitmap_set(bitmap *map, u16 bit_position, bool on);
-bool bitmap_get(bitmap *map, u16 bit_position);
+bool bitmap_set(bitmap *map, carbon_u16 bit_position, bool on);
+bool bitmap_get(bitmap *map, carbon_u16 bit_position);
 bool bitmap_lshift(bitmap *map);
 bool bitmap_print(FILE *file, const bitmap *map);
-bool bitmap_blocks(u32 **blocks, u32 *num_blocks, const bitmap *map);
-void bitmap_print_bits(FILE *file, u32 n);
+bool bitmap_blocks(carbon_u32 **blocks, carbon_u32 *num_blocks, const bitmap *map);
+void bitmap_print_bits(FILE *file, carbon_u32 n);
 void bitmap_print_bits_in_char(FILE *file, char n);
 
 END_DECL

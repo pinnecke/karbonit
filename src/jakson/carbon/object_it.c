@@ -42,7 +42,7 @@ bool carbon_object_it_create(carbon_object_it *it, struct carbon_memfile *memfil
         memfile_open(&it->memfile, memfile->memblock, memfile->mode);
         memfile_seek(&it->memfile, payload_start);
 
-        ERROR_IF(memfile_remain_size(&it->memfile) < sizeof(u8), err, ERR_CORRUPTED);
+        ERROR_IF(memfile_remain_size(&it->memfile) < sizeof(carbon_u8), err, ERR_CORRUPTED);
 
         carbon_container_sub_type_e sub_type;
         carbon_abstract_get_container_subtype(&sub_type, &it->memfile);
@@ -51,7 +51,7 @@ bool carbon_object_it_create(carbon_object_it *it, struct carbon_memfile *memfil
         char marker = memfile_read_byte(&it->memfile);
         it->abstract_type = (carbon_map_derivable_e) marker;
 
-        it->object_contents_off += sizeof(u8);
+        it->object_contents_off += sizeof(carbon_u8);
 
         carbon_int_field_access_create(&it->field.value.data);
 
@@ -161,7 +161,7 @@ bool carbon_object_it_tell(offset_t *key_off, offset_t *value_off, carbon_object
         return true;
 }
 
-const char *carbon_object_it_prop_name(u64 *key_len, carbon_object_it *it)
+const char *carbon_object_it_prop_name(carbon_u64 *key_len, carbon_object_it *it)
 {
         DEBUG_ERROR_IF_NULL(it)
         DEBUG_ERROR_IF_NULL(key_len)
@@ -243,37 +243,37 @@ bool carbon_object_it_is_null(bool *is_null, carbon_object_it *it)
         return carbon_int_field_access_is_null(is_null, &it->field.value.data);
 }
 
-bool carbon_object_it_u8_value(u8 *value, carbon_object_it *it)
+bool carbon_object_it_u8_value(carbon_u8 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_u8_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_u16_value(u16 *value, carbon_object_it *it)
+bool carbon_object_it_u16_value(carbon_u16 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_u16_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_u32_value(u32 *value, carbon_object_it *it)
+bool carbon_object_it_u32_value(carbon_u32 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_u32_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_u64_value(u64 *value, carbon_object_it *it)
+bool carbon_object_it_u64_value(carbon_u64 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_u64_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_i8_value(i8 *value, carbon_object_it *it)
+bool carbon_object_it_i8_value(carbon_i8 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_i8_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_i16_value(i16 *value, carbon_object_it *it)
+bool carbon_object_it_i16_value(carbon_i16 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_i16_value(value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_i32_value(i32 *value, carbon_object_it *it)
+bool carbon_object_it_i32_value(carbon_i32 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_i32_value(value, &it->field.value.data, &it->err);
 }
@@ -298,12 +298,12 @@ bool carbon_object_it_signed_value(bool *is_null_in, carbon_i64 *value, carbon_o
         return carbon_int_field_access_signed_value(is_null_in, value, &it->field.value.data, &it->err);
 }
 
-bool carbon_object_it_unsigned_value(bool *is_null_in, u64 *value, carbon_object_it *it)
+bool carbon_object_it_unsigned_value(bool *is_null_in, carbon_u64 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_unsigned_value(is_null_in, value, &it->field.value.data, &it->err);
 }
 
-const char *carbon_object_it_string_value(u64 *strlen, carbon_object_it *it)
+const char *carbon_object_it_string_value(carbon_u64 *strlen, carbon_object_it *it)
 {
         return carbon_int_field_access_string_value(strlen, &it->field.value.data, &it->err);
 }
@@ -346,7 +346,7 @@ bool carbon_object_it_fast_forward(carbon_object_it *it)
         DEBUG_ERROR_IF_NULL(it);
         while (carbon_object_it_next(it)) {}
 
-        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(u8)) == CARBON_MOBJECT_END);
-        memfile_skip(&it->memfile, sizeof(u8));
+        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(carbon_u8)) == CARBON_MOBJECT_END);
+        memfile_skip(&it->memfile, sizeof(carbon_u8));
         return true;
 }

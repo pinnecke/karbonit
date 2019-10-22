@@ -273,7 +273,7 @@ value_type_for_json_number(bool *success, err *err, const json_number *number)
                 case JSON_NUMBER_FLOAT:
                         return FIELD_FLOAT;
                 case JSON_NUMBER_UNSIGNED: {
-                        u64 test = number->value.unsigned_integer;
+                        carbon_u64 test = number->value.unsigned_integer;
                         if (test <= LIMITS_UINT8_MAX) {
                                 return FIELD_UINT8;
                         } else if (test <= LIMITS_UINT16_MAX) {

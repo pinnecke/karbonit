@@ -39,7 +39,7 @@ if (UNLIKELY(inserter->context_type == CARBON_COLUMN && inserter->context.column
 }
 
 static bool
-write_field_data(carbon_insert *inserter, u8 field_type_marker, const void *base, u64 nbytes);
+write_field_data(carbon_insert *inserter, carbon_u8 field_type_marker, const void *base, carbon_u64 nbytes);
 
 static bool push_in_column(carbon_insert *inserter, const void *base, carbon_field_type_e type);
 
@@ -111,49 +111,49 @@ bool carbon_insert_null(carbon_insert *inserter)
                                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
-                                        u8 value = U8_NULL;
+                                        carbon_u8 value = U8_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
-                                        u16 value = U16_NULL;
+                                        carbon_u16 value = U16_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
-                                        u32 value = U32_NULL;
+                                        carbon_u32 value = U32_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
-                                        u64 value = U64_NULL;
+                                        carbon_u64 value = U64_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
-                                        i8 value = I8_NULL;
+                                        carbon_i8 value = I8_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
-                                        i16 value = I16_NULL;
+                                        carbon_i16 value = I16_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
-                                        i32 value = I32_NULL;
+                                        carbon_i32 value = I32_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
@@ -174,7 +174,7 @@ bool carbon_insert_null(carbon_insert *inserter)
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                        u8 value = CARBON_BOOLEAN_COLUMN_NULL;
+                                        carbon_u8 value = CARBON_BOOLEAN_COLUMN_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 default: ERROR(&inserter->err, ERR_INTERNALERR)
@@ -193,7 +193,7 @@ bool carbon_insert_true(carbon_insert *inserter)
                 case CARBON_ARRAY:
                         return push_media_type_for_array(inserter, CARBON_FIELD_TRUE);
                 case CARBON_COLUMN: {
-                        u8 value = CARBON_BOOLEAN_COLUMN_TRUE;
+                        carbon_u8 value = CARBON_BOOLEAN_COLUMN_TRUE;
                         return push_in_column(inserter, &value, CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
                 }
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
@@ -208,7 +208,7 @@ bool carbon_insert_false(carbon_insert *inserter)
                 case CARBON_ARRAY:
                         return push_media_type_for_array(inserter, CARBON_FIELD_FALSE);
                 case CARBON_COLUMN: {
-                        u8 value = CARBON_BOOLEAN_COLUMN_FALSE;
+                        carbon_u8 value = CARBON_BOOLEAN_COLUMN_FALSE;
                         return push_in_column(inserter, &value, CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
                 }
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
@@ -216,12 +216,12 @@ bool carbon_insert_false(carbon_insert *inserter)
         }
 }
 
-bool carbon_insert_u8(carbon_insert *inserter, u8 value)
+bool carbon_insert_u8(carbon_insert *inserter, carbon_u8 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_u8_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_U8, &value, sizeof(u8));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_U8, &value, sizeof(carbon_u8));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET);
@@ -232,12 +232,12 @@ bool carbon_insert_u8(carbon_insert *inserter, u8 value)
         return true;
 }
 
-bool carbon_insert_u16(carbon_insert *inserter, u16 value)
+bool carbon_insert_u16(carbon_insert *inserter, carbon_u16 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_u16_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_U16, &value, sizeof(u16));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_U16, &value, sizeof(carbon_u16));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
@@ -248,12 +248,12 @@ bool carbon_insert_u16(carbon_insert *inserter, u16 value)
         return true;
 }
 
-bool carbon_insert_u32(carbon_insert *inserter, u32 value)
+bool carbon_insert_u32(carbon_insert *inserter, carbon_u32 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_u32_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_U32, &value, sizeof(u32));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_U32, &value, sizeof(carbon_u32));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET);
@@ -264,12 +264,12 @@ bool carbon_insert_u32(carbon_insert *inserter, u32 value)
         return true;
 }
 
-bool carbon_insert_u64(carbon_insert *inserter, u64 value)
+bool carbon_insert_u64(carbon_insert *inserter, carbon_u64 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_u64_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_U64, &value, sizeof(u64));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_U64, &value, sizeof(carbon_u64));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET);
@@ -280,12 +280,12 @@ bool carbon_insert_u64(carbon_insert *inserter, u64 value)
         return true;
 }
 
-bool carbon_insert_i8(carbon_insert *inserter, i8 value)
+bool carbon_insert_i8(carbon_insert *inserter, carbon_i8 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_i8_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_I8, &value, sizeof(i8));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_I8, &value, sizeof(carbon_i8));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET);
@@ -296,12 +296,12 @@ bool carbon_insert_i8(carbon_insert *inserter, i8 value)
         return true;
 }
 
-bool carbon_insert_i16(carbon_insert *inserter, i16 value)
+bool carbon_insert_i16(carbon_insert *inserter, carbon_i16 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_i16_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_I16, &value, sizeof(i16));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_I16, &value, sizeof(carbon_i16));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET);
@@ -312,12 +312,12 @@ bool carbon_insert_i16(carbon_insert *inserter, i16 value)
         return true;
 }
 
-bool carbon_insert_i32(carbon_insert *inserter, i32 value)
+bool carbon_insert_i32(carbon_insert *inserter, carbon_i32 value)
 {
         check_type_if_container_is_column(inserter, carbon_field_type_is_column_i32_or_subtype(inserter->context.column->type));
         switch (inserter->context_type) {
                 case CARBON_ARRAY:
-                        write_field_data(inserter, CARBON_FIELD_NUMBER_I32, &value, sizeof(i32));
+                        write_field_data(inserter, CARBON_FIELD_NUMBER_I32, &value, sizeof(carbon_i32));
                         break;
                 case CARBON_COLUMN:
                         push_in_column(inserter, &value, CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET);
@@ -344,19 +344,19 @@ bool carbon_insert_i64(carbon_insert *inserter, carbon_i64 value)
         return true;
 }
 
-bool carbon_insert_unsigned(carbon_insert *inserter, u64 value)
+bool carbon_insert_unsigned(carbon_insert *inserter, carbon_u64 value)
 {
         ERROR_IF(inserter->context_type == CARBON_COLUMN, &inserter->err, ERR_INSERT_TOO_DANGEROUS)
 
         switch (number_min_type_signed(value)) {
                 case NUMBER_I8:
-                        return carbon_insert_u8(inserter, (u8) value);
+                        return carbon_insert_u8(inserter, (carbon_u8) value);
                 case NUMBER_I16:
-                        return carbon_insert_u16(inserter, (u16) value);
+                        return carbon_insert_u16(inserter, (carbon_u16) value);
                 case NUMBER_I32:
-                        return carbon_insert_u32(inserter, (u32) value);
+                        return carbon_insert_u32(inserter, (carbon_u32) value);
                 case NUMBER_I64:
-                        return carbon_insert_u64(inserter, (u64) value);
+                        return carbon_insert_u64(inserter, (carbon_u64) value);
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
                         return false;
         }
@@ -368,11 +368,11 @@ bool carbon_insert_signed(carbon_insert *inserter, carbon_i64 value)
 
         switch (number_min_type_signed(value)) {
                 case NUMBER_I8:
-                        return carbon_insert_i8(inserter, (i8) value);
+                        return carbon_insert_i8(inserter, (carbon_i8) value);
                 case NUMBER_I16:
-                        return carbon_insert_i16(inserter, (i16) value);
+                        return carbon_insert_i16(inserter, (carbon_i16) value);
                 case NUMBER_I32:
-                        return carbon_insert_i32(inserter, (i32) value);
+                        return carbon_insert_i32(inserter, (carbon_i32) value);
                 case NUMBER_I64:
                         return carbon_insert_i64(inserter, (carbon_i64) value);
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
@@ -402,7 +402,7 @@ bool carbon_insert_string(carbon_insert *inserter, const char *value)
         return carbon_insert_nchar(inserter, value, strlen(value));
 }
 
-bool carbon_insert_nchar(carbon_insert *inserter, const char *value, u64 value_len)
+bool carbon_insert_nchar(carbon_insert *inserter, const char *value, carbon_u64 value_len)
 {
         UNUSED(inserter);
         UNUSED(value);
@@ -419,7 +419,7 @@ static void insert_binary(carbon_insert *inserter, const void *value, size_t nby
                 push_media_type_for_array(inserter, CARBON_FIELD_BINARY_CUSTOM);
 
                 /** write length of 'user_type' string_buffer with variable-length integer type */
-                u64 user_type_strlen = strlen(user_type);
+                carbon_u64 user_type_strlen = strlen(user_type);
 
                 memfile_write_uintvar_stream(NULL, &inserter->memfile, user_type_strlen);
 
@@ -435,7 +435,7 @@ static void insert_binary(carbon_insert *inserter, const void *value, size_t nby
                 push_media_type_for_array(inserter, CARBON_FIELD_BINARY);
 
                 /** write mime type with variable-length integer type */
-                u64 mime_type_id = carbon_media_mime_type_by_ext(file_ext);
+                carbon_u64 mime_type_id = carbon_media_mime_type_by_ext(file_ext);
 
                 /** write mime type id */
                 memfile_write_uintvar_stream(NULL, &inserter->memfile, mime_type_id);
@@ -459,7 +459,7 @@ bool carbon_insert_binary(carbon_insert *inserter, const void *value, size_t nby
 
 carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
                                                   carbon_insert *inserter, carbon_map_derivable_e derivation,
-                                                  u64 object_capacity)
+                                                  carbon_u64 object_capacity)
 {
         DEBUG_ERROR_IF_NULL(out)
         DEBUG_ERROR_IF_NULL(inserter)
@@ -479,7 +479,7 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
 
 
         carbon_int_insert_object(&inserter->memfile, derivation, object_capacity);
-        u64 payload_start = memfile_tell(&inserter->memfile) - 1;
+        carbon_u64 payload_start = memfile_tell(&inserter->memfile) - 1;
 
         carbon_object_it_create(out->it, &inserter->memfile, &inserter->err, payload_start);
         carbon_object_it_insert_begin(&out->inserter, out->it);
@@ -489,7 +489,7 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
 
 carbon_insert *carbon_insert_object_begin(carbon_insert_object_state *out,
                                                   carbon_insert *inserter,
-                                                  u64 object_capacity)
+                                                  carbon_u64 object_capacity)
 {
         return __carbon_insert_map_begin(out, inserter, CARBON_MAP_UNSORTED_MULTIMAP, object_capacity);
 }
@@ -519,7 +519,7 @@ bool carbon_insert_object_end(carbon_insert_object_state *state)
 }
 
 carbon_insert *carbon_insert_object_map_begin(carbon_insert_object_state *out, carbon_insert *inserter,
-                                              carbon_map_derivable_e derivation, u64 object_capacity)
+                                              carbon_map_derivable_e derivation, carbon_u64 object_capacity)
 {
         return __carbon_insert_map_begin(out, inserter, derivation, object_capacity);
 }
@@ -530,7 +530,7 @@ bool carbon_insert_object_map_end(carbon_insert_object_state *state)
 }
 
 carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state_out,
-                                                 carbon_insert *inserter_in, carbon_list_derivable_e derivation, u64 array_capacity)
+                                                 carbon_insert *inserter_in, carbon_list_derivable_e derivation, carbon_u64 array_capacity)
 {
         ERROR_IF_AND_RETURN(!state_out, &inserter_in->err, ERR_NULLPTR, NULL);
         if (!inserter_in) {
@@ -549,7 +549,7 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
         };
 
         carbon_int_insert_array(&inserter_in->memfile, derivation, array_capacity);
-        u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
+        carbon_u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
 
         carbon_array_it_create(state_out->nested_array, &inserter_in->memfile, &inserter_in->err, payload_start);
         carbon_array_it_insert_begin(&state_out->nested_inserter, state_out->nested_array);
@@ -558,7 +558,7 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
 }
 
 carbon_insert *carbon_insert_array_begin(carbon_insert_array_state *state_out,
-                                                    carbon_insert *inserter_in, u64 array_capacity)
+                                                    carbon_insert *inserter_in, carbon_u64 array_capacity)
 {
         return __carbon_insert_array_list_begin(state_out, inserter_in, CARBON_LIST_UNSORTED_MULTISET, array_capacity);
 }
@@ -584,7 +584,7 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
         return true;
 }
 
-carbon_insert *carbon_insert_array_list_begin(carbon_insert_array_state *state_out, carbon_insert *inserter_in, carbon_list_derivable_e derivation, u64 array_capacity)
+carbon_insert *carbon_insert_array_list_begin(carbon_insert_array_state *state_out, carbon_insert *inserter_in, carbon_list_derivable_e derivation, carbon_u64 array_capacity)
 {
         return __carbon_insert_array_list_begin(state_out, inserter_in, derivation, array_capacity);
 }
@@ -599,7 +599,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
                                                      carbon_insert *inserter_in,
                                                      carbon_list_derivable_e derivation,
                                                      carbon_column_type_e type,
-                                                     u64 column_capacity)
+                                                     carbon_u64 column_capacity)
 {
         ERROR_IF_AND_RETURN(!state_out, &inserter_in->err, ERR_NULLPTR, NULL);
         ERROR_IF_AND_RETURN(!inserter_in, &inserter_in->err, ERR_NULLPTR, NULL);
@@ -616,7 +616,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
                 .column_end = 0
         };
 
-        u64 container_start_off = memfile_tell(&inserter_in->memfile);
+        carbon_u64 container_start_off = memfile_tell(&inserter_in->memfile);
         carbon_int_insert_column(&inserter_in->memfile, &inserter_in->err, derivation, type, column_capacity);
 
         carbon_column_it_create(state_out->nested_column, &inserter_in->memfile, &inserter_in->err,
@@ -629,7 +629,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
 carbon_insert *carbon_insert_column_begin(carbon_insert_column_state *state_out,
                                                      carbon_insert *inserter_in,
                                                      carbon_column_type_e type,
-                                                     u64 column_capacity)
+                                                     carbon_u64 column_capacity)
 {
         return __carbon_insert_column_list_begin(state_out, inserter_in, CARBON_LIST_UNSORTED_MULTISET, type, column_capacity);
 }
@@ -651,7 +651,7 @@ bool carbon_insert_column_end(carbon_insert_column_state *state_in)
         return true;
 }
 
-carbon_insert *carbon_insert_column_list_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, carbon_list_derivable_e derivation, carbon_column_type_e type, u64 column_capacity)
+carbon_insert *carbon_insert_column_list_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, carbon_list_derivable_e derivation, carbon_column_type_e type, carbon_u64 column_capacity)
 {
         return __carbon_insert_column_list_begin(state_out, inserter_in, derivation, type, column_capacity);
 }
@@ -714,78 +714,78 @@ bool carbon_insert_prop_false(carbon_insert *inserter, const char *key)
         return true;
 }
 
-bool carbon_insert_prop_u8(carbon_insert *inserter, const char *key, u8 value)
+bool carbon_insert_prop_u8(carbon_insert *inserter, const char *key, carbon_u8 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_U8, &value, sizeof(u8));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_U8, &value, sizeof(carbon_u8));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
 }
 
-bool carbon_insert_prop_u16(carbon_insert *inserter, const char *key, u16 value)
+bool carbon_insert_prop_u16(carbon_insert *inserter, const char *key, carbon_u16 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_U16, &value, sizeof(u16));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_U16, &value, sizeof(carbon_u16));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
 }
 
-bool carbon_insert_prop_u32(carbon_insert *inserter, const char *key, u32 value)
+bool carbon_insert_prop_u32(carbon_insert *inserter, const char *key, carbon_u32 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_U32, &value, sizeof(u32));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_U32, &value, sizeof(carbon_u32));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
 }
 
-bool carbon_insert_prop_u64(carbon_insert *inserter, const char *key, u64 value)
+bool carbon_insert_prop_u64(carbon_insert *inserter, const char *key, carbon_u64 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_U64, &value, sizeof(u64));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_U64, &value, sizeof(carbon_u64));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
 }
 
-bool carbon_insert_prop_i8(carbon_insert *inserter, const char *key, i8 value)
+bool carbon_insert_prop_i8(carbon_insert *inserter, const char *key, carbon_i8 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_I8, &value, sizeof(i8));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_I8, &value, sizeof(carbon_i8));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
 }
 
-bool carbon_insert_prop_i16(carbon_insert *inserter, const char *key, i16 value)
+bool carbon_insert_prop_i16(carbon_insert *inserter, const char *key, carbon_i16 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_I16, &value, sizeof(i16));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_I16, &value, sizeof(carbon_i16));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
 }
 
-bool carbon_insert_prop_i32(carbon_insert *inserter, const char *key, i32 value)
+bool carbon_insert_prop_i32(carbon_insert *inserter, const char *key, carbon_i32 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
         carbon_string_nomarker_write(&inserter->memfile, key);
-        write_field_data(inserter, CARBON_FIELD_NUMBER_I32, &value, sizeof(i32));
+        write_field_data(inserter, CARBON_FIELD_NUMBER_I32, &value, sizeof(carbon_i32));
         offset_t prop_end = memfile_tell(&inserter->memfile);
         inserter_refresh_mod_size(inserter, prop_end - prop_start);
         return true;
@@ -802,19 +802,19 @@ bool carbon_insert_prop_i64(carbon_insert *inserter, const char *key, carbon_i64
         return true;
 }
 
-bool carbon_insert_prop_unsigned(carbon_insert *inserter, const char *key, u64 value)
+bool carbon_insert_prop_unsigned(carbon_insert *inserter, const char *key, carbon_u64 value)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER)
 
         switch (number_min_type_unsigned(value)) {
                 case NUMBER_U8:
-                        return carbon_insert_prop_u8(inserter, key, (u8) value);
+                        return carbon_insert_prop_u8(inserter, key, (carbon_u8) value);
                 case NUMBER_U16:
-                        return carbon_insert_prop_u16(inserter, key, (u16) value);
+                        return carbon_insert_prop_u16(inserter, key, (carbon_u16) value);
                 case NUMBER_U32:
-                        return carbon_insert_prop_u32(inserter, key, (u32) value);
+                        return carbon_insert_prop_u32(inserter, key, (carbon_u32) value);
                 case NUMBER_U64:
-                        return carbon_insert_prop_u64(inserter, key, (u64) value);
+                        return carbon_insert_prop_u64(inserter, key, (carbon_u64) value);
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
                         return false;
         }
@@ -826,11 +826,11 @@ bool carbon_insert_prop_signed(carbon_insert *inserter, const char *key, carbon_
 
         switch (number_min_type_signed(value)) {
                 case NUMBER_I8:
-                        return carbon_insert_prop_i8(inserter, key, (i8) value);
+                        return carbon_insert_prop_i8(inserter, key, (carbon_i8) value);
                 case NUMBER_I16:
-                        return carbon_insert_prop_i16(inserter, key, (i16) value);
+                        return carbon_insert_prop_i16(inserter, key, (carbon_i16) value);
                 case NUMBER_I32:
-                        return carbon_insert_prop_i32(inserter, key, (i32) value);
+                        return carbon_insert_prop_i32(inserter, key, (carbon_i32) value);
                 case NUMBER_I64:
                         return carbon_insert_prop_i64(inserter, key, (carbon_i64) value);
                 default: ERROR(&inserter->err, ERR_INTERNALERR);
@@ -854,7 +854,7 @@ bool carbon_insert_prop_string(carbon_insert *inserter, const char *key, const c
         return carbon_insert_prop_nchar(inserter, key, value, strlen(value));
 }
 
-bool carbon_insert_prop_nchar(carbon_insert *inserter, const char *key, const char *value, u64 value_len)
+bool carbon_insert_prop_nchar(carbon_insert *inserter, const char *key, const char *value, carbon_u64 value_len)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         offset_t prop_start = memfile_tell(&inserter->memfile);
@@ -879,7 +879,7 @@ bool carbon_insert_prop_binary(carbon_insert *inserter, const char *key, const v
 
 static carbon_insert *__carbon_insert_prop_object_container_begin(carbon_insert_object_state *out,
                                                        carbon_insert *inserter, carbon_map_derivable_e derivation, const char *key,
-                                                       u64 object_capacity)
+                                                       carbon_u64 object_capacity)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         carbon_string_nomarker_write(&inserter->memfile, key);
@@ -888,39 +888,39 @@ static carbon_insert *__carbon_insert_prop_object_container_begin(carbon_insert_
 
 carbon_insert *carbon_insert_prop_object_begin(carbon_insert_object_state *out,
                                                           carbon_insert *inserter, const char *key,
-                                                          u64 object_capacity)
+                                                          carbon_u64 object_capacity)
 {
         return __carbon_insert_prop_object_container_begin(out, inserter, CARBON_MAP_UNSORTED_MULTIMAP,
                                                            key, object_capacity);
 }
 
-u64 carbon_insert_prop_object_end(carbon_insert_object_state *state)
+carbon_u64 carbon_insert_prop_object_end(carbon_insert_object_state *state)
 {
         carbon_insert_object_end(state);
         return state->object_end - state->object_begin;
 }
 
-carbon_insert *carbon_insert_prop_map_begin(carbon_insert_object_state *out, carbon_insert *inserter, carbon_map_derivable_e derivation, const char *key, u64 object_capacity)
+carbon_insert *carbon_insert_prop_map_begin(carbon_insert_object_state *out, carbon_insert *inserter, carbon_map_derivable_e derivation, const char *key, carbon_u64 object_capacity)
 {
         return __carbon_insert_prop_object_container_begin(out, inserter, derivation,
                                                            key, object_capacity);
 }
 
-u64 carbon_insert_prop_map_end(carbon_insert_object_state *state)
+carbon_u64 carbon_insert_prop_map_end(carbon_insert_object_state *state)
 {
         return carbon_insert_prop_object_end(state);
 }
 
 carbon_insert *carbon_insert_prop_array_begin(carbon_insert_array_state *state,
                                                          carbon_insert *inserter, const char *key,
-                                                         u64 array_capacity)
+                                                         carbon_u64 array_capacity)
 {
         ERROR_IF(inserter->context_type != CARBON_OBJECT, &inserter->err, ERR_UNSUPPCONTAINER);
         carbon_string_nomarker_write(&inserter->memfile, key);
         return carbon_insert_array_begin(state, inserter, array_capacity);
 }
 
-u64 carbon_insert_prop_array_end(carbon_insert_array_state *state)
+carbon_u64 carbon_insert_prop_array_end(carbon_insert_array_state *state)
 {
         carbon_insert_array_end(state);
         return state->array_end - state->array_begin;
@@ -928,14 +928,14 @@ u64 carbon_insert_prop_array_end(carbon_insert_array_state *state)
 
 carbon_insert *carbon_insert_prop_column_begin(carbon_insert_column_state *state_out,
                                                           carbon_insert *inserter_in, const char *key,
-                                                          carbon_column_type_e type, u64 column_capacity)
+                                                          carbon_column_type_e type, carbon_u64 column_capacity)
 {
         ERROR_IF(inserter_in->context_type != CARBON_OBJECT, &inserter_in->err, ERR_UNSUPPCONTAINER);
         carbon_string_nomarker_write(&inserter_in->memfile, key);
         return carbon_insert_column_begin(state_out, inserter_in, type, column_capacity);
 }
 
-u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in)
+carbon_u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in)
 {
         carbon_insert_column_end(state_in);
         return state_in->column_end - state_in->column_begin;
@@ -948,12 +948,12 @@ fn_result carbon_insert_drop(carbon_insert *inserter)
 }
 
 static bool
-write_field_data(carbon_insert *inserter, u8 field_type_marker, const void *base, u64 nbytes)
+write_field_data(carbon_insert *inserter, carbon_u8 field_type_marker, const void *base, carbon_u64 nbytes)
 {
         JAK_ASSERT(inserter->context_type == CARBON_ARRAY || inserter->context_type == CARBON_OBJECT);
 
-        memfile_ensure_space(&inserter->memfile, sizeof(u8) + nbytes);
-        memfile_write(&inserter->memfile, &field_type_marker, sizeof(u8));
+        memfile_ensure_space(&inserter->memfile, sizeof(carbon_u8) + nbytes);
+        memfile_write(&inserter->memfile, &field_type_marker, sizeof(carbon_u8));
         return memfile_write(&inserter->memfile, base, nbytes);
 }
 
@@ -967,17 +967,17 @@ static bool push_in_column(carbon_insert *inserter, const void *base, carbon_fie
 
         // Increase element counter
         memfile_seek(&inserter->memfile, inserter->context.column->num_and_capacity_start_offset);
-        u32 num_elems = memfile_peek_uintvar_stream(NULL, &inserter->memfile);
+        carbon_u32 num_elems = memfile_peek_uintvar_stream(NULL, &inserter->memfile);
         num_elems++;
         memfile_update_uintvar_stream(&inserter->memfile, num_elems);
         inserter->context.column->column_num_elements = num_elems;
 
-        u32 capacity = memfile_read_uintvar_stream(NULL, &inserter->memfile);
+        carbon_u32 capacity = memfile_read_uintvar_stream(NULL, &inserter->memfile);
 
         if (UNLIKELY(num_elems > capacity)) {
                 memfile_save_position(&inserter->memfile);
 
-                u32 new_capacity = (capacity + 1) * 1.7f;
+                carbon_u32 new_capacity = (capacity + 1) * 1.7f;
 
                 // Update capacity counter
                 memfile_seek(&inserter->memfile, inserter->context.column->num_and_capacity_start_offset);

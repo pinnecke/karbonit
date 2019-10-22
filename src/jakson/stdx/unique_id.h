@@ -27,7 +27,7 @@
 
 BEGIN_DECL
 
-typedef u64 unique_id_t;
+typedef carbon_u64 unique_id_t;
 
 bool unique_id_create(unique_id_t *out);
 

@@ -35,7 +35,7 @@ struct converter_capture {
                                                                                                                        \
     struct converter_capture *extra = (struct converter_capture *) capture;                                                                          \
     encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, oid);                          \
-    for (u32 i = 0; i < num_pairs; i++) {                                                                         \
+    for (carbon_u32 i = 0; i < num_pairs; i++) {                                                                         \
         encoded_doc_add_prop_##name(doc, keys[i], values[i]);                                                   \
     }                                                                                                                  \
 }
@@ -43,7 +43,7 @@ struct converter_capture {
 #define DECLARE_VISIT_BASIC_TYPE_PAIR(name, built_in_type)                                                             \
 static void                                                                                                            \
 visit_##name##_pairs (archive *archive, path_stack_t path_stack, unique_id_t oid,                      \
-                  const archive_field_sid_t *keys, const built_in_type *values, u32 num_pairs, void *capture)      \
+                  const archive_field_sid_t *keys, const built_in_type *values, carbon_u32 num_pairs, void *capture)      \
 {                                                                                                                      \
     IMPORT_BASIC_PAIR(name)                                                                                            \
 }
@@ -51,7 +51,7 @@ visit_##name##_pairs (archive *archive, path_stack_t path_stack, unique_id_t oid
 #define DECLARE_VISIT_ARRAY_TYPE(name, built_in_type)                                                                  \
 static visit_policy_e                                                                                         \
 visit_enter_##name##_array_pairs(archive *archive, path_stack_t path, unique_id_t id,                  \
-                                 const archive_field_sid_t *keys, u32 num_pairs, void *capture)                    \
+                                 const archive_field_sid_t *keys, carbon_u32 num_pairs, void *capture)                    \
 {                                                                                                                      \
     UNUSED(archive);                                                                                            \
     UNUSED(path);                                                                                               \
@@ -64,7 +64,7 @@ visit_enter_##name##_array_pairs(archive *archive, path_stack_t path, unique_id_
                                                                                                                        \
     struct converter_capture *extra = (struct converter_capture *) capture;                                                                          \
     encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, id);                           \
-    for (u32 i = 0; i < num_pairs; i++)                                                                           \
+    for (carbon_u32 i = 0; i < num_pairs; i++)                                                                           \
     {                                                                                                                  \
         encoded_doc_add_prop_array_##name(doc, keys[i]);                                                        \
     }                                                                                                                  \
@@ -74,8 +74,8 @@ visit_enter_##name##_array_pairs(archive *archive, path_stack_t path, unique_id_
                                                                                                                        \
 static void                                                                                                            \
 visit_##name##_array_pair(archive *archive, path_stack_t path, unique_id_t id,                         \
-                          const archive_field_sid_t key, u32 entry_idx, u32 max_entries,                      \
-                          const built_in_type *array, u32 array_length, void *capture)                            \
+                          const archive_field_sid_t key, carbon_u32 entry_idx, carbon_u32 max_entries,                      \
+                          const built_in_type *array, carbon_u32 array_length, void *capture)                            \
 {                                                                                                                      \
     UNUSED(archive);                                                                                            \
     UNUSED(path);                                                                                               \
@@ -126,7 +126,7 @@ DECLARE_VISIT_BASIC_TYPE_PAIR(string, archive_field_sid_t)
 
 static void visit_null_pairs(archive *archive, path_stack_t path, unique_id_t oid,
                              const archive_field_sid_t *keys,
-                             u32 num_pairs, void *capture)
+                             carbon_u32 num_pairs, void *capture)
 {
         UNUSED(archive);
         UNUSED(path);
@@ -134,14 +134,14 @@ static void visit_null_pairs(archive *archive, path_stack_t path, unique_id_t oi
 
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, oid);
-        for (u32 i = 0; i < num_pairs; i++) {
+        for (carbon_u32 i = 0; i < num_pairs; i++) {
                 encoded_doc_add_prop_null(doc, keys[i]);
         }
 }
 
 static visit_policy_e
 before_object_visit(archive *archive, path_stack_t path_stack, unique_id_t parent_id,
-                    unique_id_t value_id, u32 object_idx, u32 num_objects, archive_field_sid_t key,
+                    unique_id_t value_id, carbon_u32 object_idx, carbon_u32 num_objects, archive_field_sid_t key,
                     void *capture)
 {
         UNUSED(archive);
@@ -183,7 +183,7 @@ DECLARE_VISIT_ARRAY_TYPE(string, archive_field_sid_t)
 
 static visit_policy_e
 visit_enter_null_array_pairs(archive *archive, path_stack_t path, unique_id_t id,
-                             const archive_field_sid_t *keys, u32 num_pairs, void *capture)
+                             const archive_field_sid_t *keys, carbon_u32 num_pairs, void *capture)
 {
         UNUSED(archive);
         UNUSED(path);
@@ -196,7 +196,7 @@ visit_enter_null_array_pairs(archive *archive, path_stack_t path, unique_id_t id
 
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, id);
-        for (u32 i = 0; i < num_pairs; i++) {
+        for (carbon_u32 i = 0; i < num_pairs; i++) {
                 encoded_doc_add_prop_array_null(doc, keys[i]);
         }
 
@@ -205,7 +205,7 @@ visit_enter_null_array_pairs(archive *archive, path_stack_t path, unique_id_t id
 
 static void visit_null_array_pair(archive *archive, path_stack_t path, unique_id_t id,
                                   const archive_field_sid_t key,
-                                  u32 entry_idx, u32 max_entries, u32 num_nulls, void *capture)
+                                  carbon_u32 entry_idx, carbon_u32 max_entries, carbon_u32 num_nulls, void *capture)
 {
         UNUSED(archive);
         UNUSED(path);
@@ -226,7 +226,7 @@ static void visit_null_array_pair(archive *archive, path_stack_t path, unique_id
 static void
 before_visit_object_array_objects(bool *skip_group_object_ids, archive *archive, path_stack_t path,
                                   unique_id_t parent_id, archive_field_sid_t key,
-                                  const unique_id_t *group_object_ids, u32 num_group_object_ids,
+                                  const unique_id_t *group_object_ids, carbon_u32 num_group_object_ids,
                                   void *capture)
 {
         UNUSED(archive);
@@ -240,7 +240,7 @@ before_visit_object_array_objects(bool *skip_group_object_ids, archive *archive,
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, parent_id);
         encoded_doc_add_prop_array_object(doc, key);
-        for (u32 i = 0; i < num_group_object_ids; i++) {
+        for (carbon_u32 i = 0; i < num_group_object_ids; i++) {
                 encoded_doc_array_push_object(doc, key, group_object_ids[i]);
         }
 }
@@ -253,7 +253,7 @@ visit_object_array_object_property_##name(archive *archive, path_stack_t path,  
                                            unique_id_t nested_object_id,                                        \
                                            archive_field_sid_t nested_key,                                              \
                                            const built_in_type *nested_values,                                         \
-                                           u32 num_nested_values, void *capture)                                  \
+                                           carbon_u32 num_nested_values, void *capture)                                  \
 {                                                                                                                      \
     UNUSED(archive);                                                                                            \
     UNUSED(path);                                                                                               \

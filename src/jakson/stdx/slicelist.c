@@ -33,7 +33,7 @@
     JAK_ASSERT(needle_str);                                                                                                \
                                                                                                                        \
     register bool continueScan, keysMatch, keyHashsNoMatch, endReached;                                                \
-    register bool cacheAvailable = (slice->cache_idx != (u32) -1);                                                 \
+    register bool cacheAvailable = (slice->cache_idx != (carbon_u32) -1);                                                 \
     register bool hashsEq = cacheAvailable && (slice->key_hash_column[slice->cache_idx] == needle_hash);                  \
     register bool cacheHit = hashsEq && (strcmp(slice->key_column[slice->cache_idx], needle_str) == 0);                 \
     register uint_fast32_t i = 0;                                                                                      \
@@ -168,7 +168,7 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
         UNUSED(needle);
 
         hash32_t keyHash = get_hashcode(needle);
-        u32 numSlices = vector_length(&list->slices);
+        carbon_u32 numSlices = vector_length(&list->slices);
 
         /** check whether the keys-values pair is already contained in one slice */
         hash_bounds *restrict bounds = VECTOR_ALL(&list->bounds, hash_bounds);
@@ -176,7 +176,7 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
         slice *restrict slices = VECTOR_ALL(&list->slices, slice);
         slice_descriptor *restrict descs = VECTOR_ALL(&list->descriptors, slice_descriptor);
 
-        for (register u32 i = 0; i < numSlices; i++) {
+        for (register carbon_u32 i = 0; i < numSlices; i++) {
                 slice_descriptor *restrict desc = descs + i;
                 hash_bounds *restrict bound = bounds + i;
                 slice *restrict slice = slices + i;
@@ -192,7 +192,7 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
                                         DEBUG(SLICE_LIST_TAG,
                                                   "slice_list_lookup_by_key keys(%s) -> ?",
                                                   needle);
-                                        u32 pairPosition;
+                                        carbon_u32 pairPosition;
 
                                         switch (slice->strat) {
                                                 case SLICE_LOOKUP_SCAN:
@@ -249,9 +249,9 @@ static void appenderNew(slice_list_t *list)
         /** ANTI-OPTIMIZATION: madvising sequential access to columns in slice decrease performance */
 
         /** the slice itself */
-        slice slice = {.strat     = SLICE_LOOKUP_SCAN, .num_elems = 0, .cache_idx = (u32) -1};
+        slice slice = {.strat     = SLICE_LOOKUP_SCAN, .num_elems = 0, .cache_idx = (carbon_u32) -1};
 
-        u32 numSlices = vector_length(&list->slices);
+        carbon_u32 numSlices = vector_length(&list->slices);
         vector_push(&list->slices, &slice, 1);
 
         JAK_ASSERT(SLICE_KEY_COLUMN_MAX_ELEMS > 0);
@@ -300,7 +300,7 @@ static void appenderNew(slice_list_t *list)
                  sizeof(slice),
                  (sizeof(slice_list_t) + list->slices.num_elems
                                          * (sizeof(slice) + sizeof(slice_descriptor) +
-                                            (sizeof(u32) * list->descriptors.num_elems)
+                                            (sizeof(carbon_u32) * list->descriptors.num_elems)
                                             + sizeof(bitmap) + bitmap_nbits(&filter) / 8 +
                                             sizeof(hash_bounds))) /
                  1024.0 / 1024.0);

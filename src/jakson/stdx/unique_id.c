@@ -22,13 +22,13 @@
 
 _Thread_local bool thread_local_init;
 
-_Thread_local u64 thread_local_id;
+_Thread_local carbon_u64 thread_local_id;
 
-_Thread_local u8 thread_local_magic;
+_Thread_local carbon_u8 thread_local_magic;
 
-_Thread_local u32 thread_local_counter;
+_Thread_local carbon_u32 thread_local_counter;
 
-_Thread_local u32 thread_local_counter_limit;
+_Thread_local carbon_u32 thread_local_counter_limit;
 
 /**
  * Below is the best effort to create a world-unique, fast and scalable to compute identifier.
@@ -41,35 +41,35 @@ _Thread_local u32 thread_local_counter_limit;
 union global_id {
         struct {
                 /** global */
-                u64 global_wallclock
+                carbon_u64 global_wallclock
                         : 5;   /** increasing wall clock time (ms) */
-                u64 global_build_date
+                carbon_u64 global_build_date
                         : 1;   /** fix bit dependent on compilation time */
-                u64 global_build_path
+                carbon_u64 global_build_path
                         : 1;   /** fix bit dependent on compilation path */
 
                 /** per-process */
-                u64 process_id
+                carbon_u64 process_id
                         : 7;   /** fix id */
-                u64 process_magic
+                carbon_u64 process_magic
                         : 2;   /** random fix value */
-                u64 process_counter
+                carbon_u64 process_counter
                         : 8;   /** increasing counter */
 
                 /** per-thread  */
-                u64 thread_id
+                carbon_u64 thread_id
                         : 7;   /** fix id */
-                u64 thread_magic
+                carbon_u64 thread_magic
                         : 2;   /** random fix value */
-                u64 thread_counter
+                carbon_u64 thread_counter
                         : 29;  /** increasing counter (< 536mio ids per thread) */
 
                 /** per-call */
-                u64 call_random
+                carbon_u64 call_random
                         :  2;  /** random value */
         };
 
-        u64 value;
+        carbon_u64 value;
 };
 
 bool unique_id_create(unique_id_t *out)
@@ -77,12 +77,12 @@ bool unique_id_create(unique_id_t *out)
         JAK_ASSERT(out);
 
         static bool process_init;
-        static u64 process_local_id;
-        static u8 process_magic;
-        static u64 process_counter;
+        static carbon_u64 process_local_id;
+        static carbon_u8 process_magic;
+        static carbon_u64 process_counter;
 
-        static u8 global_build_date_bit;
-        static u8 global_build_path_bit;
+        static carbon_u8 global_build_date_bit;
+        static carbon_u8 global_build_path_bit;
 
         if (!process_init) {
                 srand(time(NULL));
@@ -100,7 +100,7 @@ bool unique_id_create(unique_id_t *out)
         if (!thread_local_init) {
                 thread_local_counter = rand();
                 thread_local_counter_limit = thread_local_counter++;
-                thread_local_id = (u64) pthread_self();
+                thread_local_id = (carbon_u64) pthread_self();
                 process_local_id = getpid();
                 thread_local_magic = rand();
                 thread_local_init = true;
@@ -116,7 +116,7 @@ bool unique_id_create(unique_id_t *out)
                                 .process_id        = process_local_id,
                                 .process_magic     = process_magic,
                                 .process_counter   = process_counter++,
-                                .thread_id         = (u64) thread_local_id,
+                                .thread_id         = (carbon_u64) thread_local_id,
                                 .thread_magic      = thread_local_magic,
                                 .thread_counter    = thread_local_counter++,
                                 .call_random       = rand()};

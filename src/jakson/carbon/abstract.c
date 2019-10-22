@@ -322,21 +322,21 @@ fn_result carbon_abstract_map_derivable_to_class(carbon_abstract_type_class_e *o
 fn_result carbon_abstract_write_base_type(struct carbon_memfile *memfile, carbon_container_sub_type_e type)
 {
         FN_FAIL_IF_NULL(memfile)
-        memfile_write(memfile, &type, sizeof(u8));
+        memfile_write(memfile, &type, sizeof(carbon_u8));
         return FN_OK();
 }
 
 fn_result carbon_abstract_write_derived_type(struct carbon_memfile *memfile, carbon_derived_e type)
 {
         FN_FAIL_IF_NULL(type, memfile)
-        memfile_write(memfile, &type, sizeof(u8));
+        memfile_write(memfile, &type, sizeof(carbon_u8));
         return FN_OK();
 }
 
 fn_result carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, struct carbon_memfile *memfile)
 {
         FN_FAIL_IF_NULL(type, memfile)
-        u8 marker = memfile_peek_byte(memfile);
+        carbon_u8 marker = memfile_peek_byte(memfile);
         switch (marker) {
                 /** abstract types for object containers */
                 case CARBON_UNSORTED_MULTIMAP:
@@ -749,7 +749,7 @@ fn_result carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_d
 fn_result carbon_abstract_get_derived_type(carbon_derived_e *type, struct carbon_memfile *memfile)
 {
         FN_FAIL_IF_NULL(type, memfile)
-        u8 c = memfile_peek_byte(memfile);
+        carbon_u8 c = memfile_peek_byte(memfile);
         if (!(c == CARBON_MUNSORTED_MULTIMAP || c == CARBON_MSORTED_MULTIMAP || c == CARBON_MUNSORTED_MAP ||
                        c == CARBON_MSORTED_MAP || c == CARBON_MUNSORTED_MULTISET_ARR ||
                        c == CARBON_MSORTED_MULTISET_ARR || c == CARBON_MUNSORTED_SET_ARR ||

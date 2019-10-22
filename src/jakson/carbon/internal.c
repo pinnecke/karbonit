@@ -29,13 +29,13 @@
 #include <jakson/json/parser.h>
 #include <jakson/carbon/object_it.h>
 
-static void marker_insert(struct carbon_memfile *memfile, u8 marker);
+static void marker_insert(struct carbon_memfile *memfile, carbon_u8 marker);
 
 static bool array_it_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
 
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
 
-static bool is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_memfile *file, u8 end_marker);
+static bool is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_memfile *file, carbon_u8 end_marker);
 
 static bool array_it_next_no_load(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
 
@@ -46,12 +46,12 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
 static void int_insert_prop_object(carbon_insert *oins, json_object *obj);
 
 static void
-insert_embedded_container(struct carbon_memfile *memfile, u8 begin_marker, u8 end_marker, u8 capacity)
+insert_embedded_container(struct carbon_memfile *memfile, carbon_u8 begin_marker, carbon_u8 end_marker, carbon_u8 capacity)
 {
-        memfile_ensure_space(memfile, sizeof(u8));
+        memfile_ensure_space(memfile, sizeof(carbon_u8));
         marker_insert(memfile, begin_marker);
 
-        memfile_ensure_space(memfile, capacity + sizeof(u8));
+        memfile_ensure_space(memfile, capacity + sizeof(carbon_u8));
 
         offset_t payload_begin = memfile_tell(memfile);
         memfile_seek(memfile, payload_begin + capacity);
@@ -94,11 +94,11 @@ bool carbon_int_insert_column(struct carbon_memfile *memfile_in, err *err_in, ca
 
         carbon_field_type_e column_type = carbon_field_type_for_column(derivation, type);
 
-        memfile_ensure_space(memfile_in, sizeof(u8));
+        memfile_ensure_space(memfile_in, sizeof(carbon_u8));
         marker_insert(memfile_in, column_type);
 
-        u32 num_elements = 0;
-        u32 cap_elements = capactity;
+        carbon_u32 num_elements = 0;
+        carbon_u32 cap_elements = capactity;
 
         memfile_write_uintvar_stream(NULL, memfile_in, num_elements);
         memfile_write_uintvar_stream(NULL, memfile_in, cap_elements);
@@ -108,7 +108,7 @@ bool carbon_int_insert_column(struct carbon_memfile *memfile_in, err *err_in, ca
         size_t type_size = carbon_int_get_type_value_size(column_type);
 
         size_t nbytes = capactity * type_size;
-        memfile_ensure_space(memfile_in, nbytes + sizeof(u8) + 2 * sizeof(u32));
+        memfile_ensure_space(memfile_in, nbytes + sizeof(carbon_u8) + 2 * sizeof(carbon_u32));
 
         /** seek to first entry in column */
         memfile_seek(memfile_in, payload_begin);
@@ -127,19 +127,19 @@ size_t carbon_int_get_type_size_encoded(carbon_field_type_e type)
                         break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_I8:
-                        type_size += sizeof(u8);
+                        type_size += sizeof(carbon_u8);
                         break;
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_I16:
-                        type_size += sizeof(u16);
+                        type_size += sizeof(carbon_u16);
                         break;
                 case CARBON_FIELD_NUMBER_U32:
                 case CARBON_FIELD_NUMBER_I32:
-                        type_size += sizeof(u32);
+                        type_size += sizeof(carbon_u32);
                         break;
                 case CARBON_FIELD_NUMBER_U64:
                 case CARBON_FIELD_NUMBER_I64:
-                        type_size += sizeof(u64);
+                        type_size += sizeof(carbon_u64);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
                         type_size += sizeof(float);
@@ -171,7 +171,7 @@ size_t carbon_int_get_type_value_size(carbon_field_type_e type)
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        return sizeof(u8);
+                        return sizeof(carbon_u8);
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_I16:
                 case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
@@ -182,7 +182,7 @@ size_t carbon_int_get_type_value_size(carbon_field_type_e type)
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        return sizeof(u16);
+                        return sizeof(carbon_u16);
                 case CARBON_FIELD_NUMBER_U32:
                 case CARBON_FIELD_NUMBER_I32:
                 case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
@@ -193,7 +193,7 @@ size_t carbon_int_get_type_value_size(carbon_field_type_e type)
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        return sizeof(u32);
+                        return sizeof(carbon_u32);
                 case CARBON_FIELD_NUMBER_U64:
                 case CARBON_FIELD_NUMBER_I64:
                 case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
@@ -204,7 +204,7 @@ size_t carbon_int_get_type_value_size(carbon_field_type_e type)
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        return sizeof(u64);
+                        return sizeof(carbon_u64);
                 case CARBON_FIELD_NUMBER_FLOAT:
                 case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
@@ -258,7 +258,7 @@ bool carbon_int_object_it_prop_key_access(carbon_object_it *it)
         it->field.key.name = memfile_peek(&it->memfile, it->field.key.name_len);
         memfile_skip(&it->memfile, it->field.key.name_len);
         it->field.value.offset = memfile_tell(&it->memfile);
-        it->field.value.data.it_field_type = *MEMFILE_PEEK(&it->memfile, u8);
+        it->field.value.data.it_field_type = *MEMFILE_PEEK(&it->memfile, carbon_u8);
 
         return true;
 }
@@ -311,7 +311,7 @@ bool carbon_int_array_it_field_type_read(struct carbon_array *it)
         ERROR_IF(memfile_remain_size(&it->file) < 1, &it->err, ERR_ILLEGALOP);
         memfile_save_position(&it->file);
         it->field_offset = memfile_tell(&it->file);
-        u8 media_type = *memfile_read(&it->file, 1);
+        carbon_u8 media_type = *memfile_read(&it->file, 1);
         ERROR_IF(media_type == 0, &it->err, ERR_NOTFOUND)
         ERROR_IF(media_type == CARBON_MARRAY_END, &it->err, ERR_OUTOFBOUNDS)
         it->field_access.it_field_type = media_type;
@@ -339,7 +339,7 @@ bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct 
                 case CARBON_FIELD_NUMBER_FLOAT:
                         break;
                 case CARBON_FIELD_STRING: {
-                        u8 nbytes;
+                        carbon_u8 nbytes;
                         uintvar_stream_t len = (uintvar_stream_t) memfile_peek(file, 1);
                         field_access->it_field_len = uintvar_stream_read(&nbytes, len);
 
@@ -348,7 +348,7 @@ bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct 
                         break;
                 case CARBON_FIELD_BINARY: {
                         /** read mime type with variable-length integer type */
-                        u64 mime_type_id = memfile_read_uintvar_stream(NULL, file);
+                        carbon_u64 mime_type_id = memfile_read_uintvar_stream(NULL, file);
 
                         field_access->it_mime_type = carbon_media_mime_type_by_id(mime_type_id);
                         field_access->it_mime_type_strlen = strlen(field_access->it_mime_type);
@@ -377,7 +377,7 @@ bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct 
                         carbon_int_field_access_create(field_access);
                         field_access->nested_array_it_is_created = true;
                         carbon_array_it_create(field_access->nested_array_it, file, err,
-                                               memfile_tell(file) - sizeof(u8));
+                                               memfile_tell(file) - sizeof(carbon_u8));
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -422,7 +422,7 @@ bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct 
                         carbon_int_field_access_create(field_access);
                         field_access->nested_column_it_is_created = true;
                         carbon_column_it_create(field_access->nested_column_it, file, err,
-                                                memfile_tell(file) - sizeof(u8));
+                                                memfile_tell(file) - sizeof(carbon_u8));
                 }
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -432,7 +432,7 @@ bool carbon_int_field_data_access(struct carbon_memfile *file, err *err, struct 
                         carbon_int_field_access_create(field_access);
                         field_access->nested_object_it_is_created = true;
                         carbon_object_it_create(field_access->nested_object_it, file, err,
-                                                memfile_tell(file) - sizeof(u8));
+                                                memfile_tell(file) - sizeof(carbon_u8));
                         break;
                 default: ERROR(err, ERR_CORRUPTED)
                         return false;
@@ -474,10 +474,10 @@ offset_t carbon_int_payload_after_header(carbon *doc)
         return result;
 }
 
-u64 carbon_int_header_get_commit_hash(carbon *doc)
+carbon_u64 carbon_int_header_get_commit_hash(carbon *doc)
 {
         JAK_ASSERT(doc);
-        u64 rev = 0;
+        carbon_u64 rev = 0;
         carbon_key_e key_type;
 
         memfile_save_position(&doc->memfile);
@@ -672,66 +672,66 @@ bool carbon_int_field_access_is_null(bool *is_null, struct carbon_int_field_acce
         return true;
 }
 
-bool carbon_int_field_access_u8_value(u8 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_u8_value(carbon_u8 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U8, err, ERR_TYPEMISMATCH);
-        *value = *(u8 *) field->it_field_data;
+        *value = *(carbon_u8 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_u16_value(u16 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_u16_value(carbon_u16 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U16, err, ERR_TYPEMISMATCH);
-        *value = *(u16 *) field->it_field_data;
+        *value = *(carbon_u16 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_u32_value(u32 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_u32_value(carbon_u32 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U32, err, ERR_TYPEMISMATCH);
-        *value = *(u32 *) field->it_field_data;
+        *value = *(carbon_u32 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_u64_value(u64 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_u64_value(carbon_u64 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U64, err, ERR_TYPEMISMATCH);
-        *value = *(u64 *) field->it_field_data;
+        *value = *(carbon_u64 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i8_value(i8 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_i8_value(carbon_i8 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I8, err, ERR_TYPEMISMATCH);
-        *value = *(i8 *) field->it_field_data;
+        *value = *(carbon_i8 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i16_value(i16 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_i16_value(carbon_i16 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I16, err, ERR_TYPEMISMATCH);
-        *value = *(i16 *) field->it_field_data;
+        *value = *(carbon_i16 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i32_value(i32 *value, struct carbon_int_field_access *field, err *err)
+bool carbon_int_field_access_i32_value(carbon_i32 *value, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(value)
         DEBUG_ERROR_IF_NULL(field)
         ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I32, err, ERR_TYPEMISMATCH);
-        *value = *(i32 *) field->it_field_data;
+        *value = *(carbon_i32 *) field->it_field_data;
         return true;
 }
 
@@ -771,21 +771,21 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, carbon_i64 *value, s
         DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_I8: {
-                        i8 read_value;
+                        carbon_i8 read_value;
                         carbon_int_field_access_i8_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I8(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I16: {
-                        i16 read_value;
+                        carbon_i16 read_value;
                         carbon_int_field_access_i16_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I16(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I32: {
-                        i32 read_value;
+                        carbon_i32 read_value;
                         carbon_int_field_access_i32_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I32(read_value));
@@ -804,34 +804,34 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, carbon_i64 *value, s
         return true;
 }
 
-bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, struct carbon_int_field_access *field,
+bool carbon_int_field_access_unsigned_value(bool *is_null_in, carbon_u64 *value, struct carbon_int_field_access *field,
                                             err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_U8: {
-                        u8 read_value;
+                        carbon_u8 read_value;
                         carbon_int_field_access_u8_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U8(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U16: {
-                        u16 read_value;
+                        carbon_u16 read_value;
                         carbon_int_field_access_u16_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U16(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U32: {
-                        u32 read_value;
+                        carbon_u32 read_value;
                         carbon_int_field_access_u32_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U32(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U64: {
-                        u64 read_value;
+                        carbon_u64 read_value;
                         carbon_int_field_access_u64_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U64(read_value));
@@ -843,7 +843,7 @@ bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, struct
         return true;
 }
 
-const char *carbon_int_field_access_string_value(u64 *strlen, struct carbon_int_field_access *field, err *err)
+const char *carbon_int_field_access_string_value(carbon_u64 *strlen, struct carbon_int_field_access *field, err *err)
 {
         DEBUG_ERROR_IF_NULL(strlen);
         ERROR_IF_AND_RETURN(field == NULL, err, ERR_NULLPTR, NULL);
@@ -892,10 +892,10 @@ carbon_column_it *carbon_int_field_access_column_value(struct carbon_int_field_a
 
 bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_field_type_e type)
 {
-        JAK_ASSERT((carbon_field_type_e) *memfile_peek(memfile, sizeof(u8)) == type);
+        JAK_ASSERT((carbon_field_type_e) *memfile_peek(memfile, sizeof(carbon_u8)) == type);
         offset_t start_off = memfile_tell(memfile);
-        memfile_skip(memfile, sizeof(u8));
-        size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
+        memfile_skip(memfile, sizeof(carbon_u8));
+        size_t rm_nbytes = sizeof(carbon_u8); /** at least the type marker must be removed */
         switch (type) {
                 case CARBON_FIELD_NULL:
                 case CARBON_FIELD_TRUE:
@@ -904,26 +904,26 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                         break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_I8:
-                        rm_nbytes += sizeof(u8);
+                        rm_nbytes += sizeof(carbon_u8);
                         break;
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_I16:
-                        rm_nbytes += sizeof(u16);
+                        rm_nbytes += sizeof(carbon_u16);
                         break;
                 case CARBON_FIELD_NUMBER_U32:
                 case CARBON_FIELD_NUMBER_I32:
-                        rm_nbytes += sizeof(u32);
+                        rm_nbytes += sizeof(carbon_u32);
                         break;
                 case CARBON_FIELD_NUMBER_U64:
                 case CARBON_FIELD_NUMBER_I64:
-                        rm_nbytes += sizeof(u64);
+                        rm_nbytes += sizeof(carbon_u64);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
                         rm_nbytes += sizeof(float);
                         break;
                 case CARBON_FIELD_STRING: {
-                        u8 len_nbytes;  /** number of bytes used to store string_buffer length */
-                        u64 str_len; /** the number of characters of the string_buffer field */
+                        carbon_u8 len_nbytes;  /** number of bytes used to store string_buffer length */
+                        carbon_u64 str_len; /** the number of characters of the string_buffer field */
 
                         str_len = memfile_read_uintvar_stream(&len_nbytes, memfile);
 
@@ -931,9 +931,9 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                 }
                         break;
                 case CARBON_FIELD_BINARY: {
-                        u8 mime_type_nbytes; /** number of bytes for mime type */
-                        u8 blob_length_nbytes; /** number of bytes to store blob length */
-                        u64 blob_nbytes; /** number of bytes to store actual blob data */
+                        carbon_u8 mime_type_nbytes; /** number of bytes for mime type */
+                        carbon_u8 blob_length_nbytes; /** number of bytes to store blob length */
+                        carbon_u64 blob_nbytes; /** number of bytes to store actual blob data */
 
                         /** get bytes used for mime type id */
                         memfile_read_uintvar_stream(&mime_type_nbytes, memfile);
@@ -945,10 +945,10 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                 }
                         break;
                 case CARBON_FIELD_BINARY_CUSTOM: {
-                        u8 custom_type_strlen_nbytes; /** number of bytes for type name string_buffer length info */
-                        u8 custom_type_strlen; /** number of characters to encode type name string_buffer */
-                        u8 blob_length_nbytes; /** number of bytes to store blob length */
-                        u64 blob_nbytes; /** number of bytes to store actual blob data */
+                        carbon_u8 custom_type_strlen_nbytes; /** number of bytes for type name string_buffer length info */
+                        carbon_u8 custom_type_strlen; /** number of characters to encode type name string_buffer */
+                        carbon_u8 blob_length_nbytes; /** number of bytes to store blob length */
+                        carbon_u64 blob_nbytes; /** number of bytes to store actual blob data */
 
                         /** get bytes for custom type string_buffer len, and the actual length */
                         custom_type_strlen = memfile_read_uintvar_stream(&custom_type_strlen_nbytes, memfile);
@@ -967,7 +967,7 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                         struct carbon_array it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_array_it_create(&it, memfile, err, begin_off - sizeof(u8));
+                        carbon_array_it_create(&it, memfile, err, begin_off - sizeof(carbon_u8));
                         carbon_array_it_fast_forward(&it);
                         offset_t end_off = carbon_array_it_memfilepos(&it);
                         carbon_array_it_drop(&it);
@@ -1019,7 +1019,7 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                         carbon_column_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_column_it_create(&it, memfile, err, begin_off - sizeof(u8));
+                        carbon_column_it_create(&it, memfile, err, begin_off - sizeof(carbon_u8));
                         carbon_column_it_fast_forward(&it);
                         offset_t end_off = carbon_column_it_memfilepos(&it);
 
@@ -1034,7 +1034,7 @@ bool carbon_int_field_remove(struct carbon_memfile *memfile, err *err, carbon_fi
                         carbon_object_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_object_it_create(&it, memfile, err, begin_off - sizeof(u8));
+                        carbon_object_it_create(&it, memfile, err, begin_off - sizeof(carbon_u8));
                         carbon_object_it_fast_forward(&it);
                         offset_t end_off = carbon_object_it_memfile_pos(&it);
                         carbon_object_it_drop(&it);
@@ -1057,7 +1057,7 @@ static void int_insert_array_array(carbon_insert *array_ins, json_array *array)
         carbon_insert_array_state state;
         carbon_insert *sub_ins = carbon_insert_array_begin(&state, array_ins,
                                                                       array->elements.elements.num_elems * 256);
-        for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
+        for (carbon_u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
                 int_carbon_from_json_elem(sub_ins, elem, false);
         }
@@ -1102,7 +1102,7 @@ static void int_insert_array_null(carbon_insert *array_ins)
 
 static void int_insert_array_elements(carbon_insert *array_ins, json_array *array)
 {
-        for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
+        for (carbon_u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
                 switch (elem->value.value_type) {
                         case JSON_VALUE_OBJECT: {
@@ -1140,7 +1140,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
 
 #define insert_into_array(ins, elem, ctype, accessor)                                                                  \
 {                                                                                                                      \
-        for (u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
+        for (carbon_u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
                 json_element *array_elem = VECTOR_GET(                                                             \
                         &elem->value.value.array->elements.elements, k, json_element);                          \
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
@@ -1151,20 +1151,20 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
         }                                                                                                              \
 }
 
-#define insert_into_column(ins, elem, field_type, column_type, ctype, accessor)                                        \
+#define insert_into_column(ins, elem, field_type, column_type, type_name, ctype, accessor)                                        \
 ({                                                                                                                     \
         carbon_insert_column_state state;                                                                       \
-        u64 approx_cap_nbytes = elem->value.value.array->elements.elements.num_elems *                                 \
+        carbon_u64 approx_cap_nbytes = elem->value.value.array->elements.elements.num_elems *                                 \
                                 carbon_int_get_type_value_size(field_type);                                            \
         carbon_insert *cins = carbon_insert_column_begin(&state, ins,                                           \
                                                                 column_type, approx_cap_nbytes);                       \
-        for (u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
+        for (carbon_u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
                 json_element *array_elem = VECTOR_GET(&elem->value.value.array->elements.elements,                 \
                                                           k, json_element);                                     \
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
                         carbon_insert_null(cins);                                                                      \
                 } else {                                                                                               \
-                        carbon_insert_##ctype(cins, (ctype) array_elem->value.value.number->value.accessor);           \
+                        carbon_insert_##type_name(cins, (ctype) array_elem->value.value.number->value.accessor);           \
                 }                                                                                                      \
         }                                                                                                              \
         carbon_insert_column_end(&state);                                                                              \
@@ -1173,11 +1173,11 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
 #define prop_insert_into_column(ins, prop, key, field_type, column_type, type_name, ctype, accessor)                                   \
 ({                                                                                                                     \
         carbon_insert_column_state state;                                                                       \
-        u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems *                                 \
+        carbon_u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems *                                 \
                                 carbon_int_get_type_value_size(field_type);                                            \
         carbon_insert *cins = carbon_insert_prop_column_begin(&state, ins, key,                                          \
                                                                 column_type, approx_cap_nbytes);                       \
-        for (u32 k = 0; k < prop->value.value.value.array->elements.elements.num_elems; k++) {                               \
+        for (carbon_u32 k = 0; k < prop->value.value.value.array->elements.elements.num_elems; k++) {                               \
                 json_element *array_elem = VECTOR_GET(&prop->value.value.value.array->elements.elements,                 \
                                                           k, json_element);                                     \
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
@@ -1191,7 +1191,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
 
 static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
 {
-        for (u32 i = 0; i < obj->value->members.num_elems; i++) {
+        for (carbon_u32 i = 0; i < obj->value->members.num_elems; i++) {
                 json_prop *prop = VECTOR_GET(&obj->value->members, i, json_prop);
                 switch (prop->value.value.value_type) {
                         case JSON_VALUE_OBJECT: {
@@ -1216,7 +1216,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 break;
                                         case JSON_LIST_VARIABLE_OR_NESTED: {
                                                 carbon_insert_array_state state;
-                                                u64 approx_cap_nbytes =
+                                                carbon_u64 approx_cap_nbytes =
                                                         prop->value.value.value.array->elements.elements.num_elems *
                                                         256;
                                                 carbon_insert *array_ins = carbon_insert_prop_array_begin(
@@ -1230,43 +1230,43 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U8,
                                                                         CARBON_COLUMN_TYPE_U8,
-                                                                        u8, u8, unsigned_integer);
+                                                                        u8, carbon_u8, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U16:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U16,
                                                                         CARBON_COLUMN_TYPE_U16,
-                                                                        u16, u16, unsigned_integer);
+                                                                        u16, carbon_u16, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U32:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U32,
                                                                         CARBON_COLUMN_TYPE_U32,
-                                                                        u32, u32, unsigned_integer);
+                                                                        u32, carbon_u32, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U64:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_U64,
                                                                         CARBON_COLUMN_TYPE_U64,
-                                                                        u64, u64, unsigned_integer);
+                                                                        u64, carbon_u64, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I8:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I8,
                                                                         CARBON_COLUMN_TYPE_I8,
-                                                                        i8, i8, signed_integer);
+                                                                        i8, carbon_i8, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I16:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I16,
                                                                         CARBON_COLUMN_TYPE_I16,
-                                                                        i16, i16, signed_integer);
+                                                                        i16, carbon_i16, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I32:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
                                                                         CARBON_FIELD_NUMBER_I32,
                                                                         CARBON_COLUMN_TYPE_I32,
-                                                                        i32, i32, signed_integer);
+                                                                        i32, carbon_i32, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I64:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
@@ -1282,11 +1282,11 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 break;
                                         case JSON_LIST_FIXED_NULL: {
                                                 carbon_insert_array_state state;
-                                                u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems;
+                                                carbon_u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems;
                                                 carbon_insert *array_ins = carbon_insert_prop_array_begin(
                                                         &state, oins, prop->key.value,
                                                         approx_cap_nbytes);
-                                                for (u32 k = 0; k <
+                                                for (carbon_u32 k = 0; k <
                                                                     prop->value.value.value.array->elements.elements.num_elems; k++) {
                                                         carbon_insert_null(array_ins);
                                                 }
@@ -1295,12 +1295,12 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 break;
                                         case JSON_LIST_FIXED_BOOLEAN: {
                                                 carbon_insert_column_state state;
-                                                u64 cap_nbytes = prop->value.value.value.array->elements.elements.num_elems;
+                                                carbon_u64 cap_nbytes = prop->value.value.value.array->elements.elements.num_elems;
                                                 carbon_insert *array_ins = carbon_insert_prop_column_begin(
                                                         &state, oins,
                                                         prop->key.value,
                                                         CARBON_COLUMN_TYPE_BOOLEAN, cap_nbytes);
-                                                for (u32 k = 0; k <
+                                                for (carbon_u32 k = 0; k <
                                                                     prop->value.value.value.array->elements.elements.num_elems; k++) {
                                                         json_element *array_elem = VECTOR_GET(
                                                                 &prop->value.value.value.array->elements.elements, k,
@@ -1386,7 +1386,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                 }
                                         break;
                                 case JSON_LIST_VARIABLE_OR_NESTED: {
-                                        u64 approx_cap_nbytes =
+                                        carbon_u64 approx_cap_nbytes =
                                                 elem->value.value.array->elements.elements.num_elems * 256;
                                         if (is_root) {
                                                 int_insert_array_elements(ins, elem->value.value.array);
@@ -1406,7 +1406,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U8,
                                                                    CARBON_COLUMN_TYPE_U8,
-                                                                   u8, unsigned_integer);
+                                                                   u8, carbon_u8, unsigned_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_U16:
@@ -1415,7 +1415,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U16,
                                                                    CARBON_COLUMN_TYPE_U16,
-                                                                   u16, unsigned_integer);
+                                                                   u16, carbon_u16, unsigned_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_U32:
@@ -1424,7 +1424,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U32,
                                                                    CARBON_COLUMN_TYPE_U32,
-                                                                   u32, unsigned_integer);
+                                                                   u32, carbon_u32, unsigned_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_U64:
@@ -1433,7 +1433,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U64,
                                                                    CARBON_COLUMN_TYPE_U64,
-                                                                   u64, unsigned_integer);
+                                                                   u64, carbon_u64, unsigned_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_I8:
@@ -1442,7 +1442,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I8,
                                                                    CARBON_COLUMN_TYPE_I8,
-                                                                   i8, signed_integer);
+                                                                   i8, carbon_i8, signed_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_I16:
@@ -1451,7 +1451,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I16,
                                                                    CARBON_COLUMN_TYPE_I16,
-                                                                   u16, signed_integer);
+                                                                   i16, carbon_i16, signed_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_I32:
@@ -1460,7 +1460,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I32,
                                                                    CARBON_COLUMN_TYPE_I32,
-                                                                   u32, signed_integer);
+                                                                   i32, carbon_i32, signed_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_I64:
@@ -1469,7 +1469,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I64,
                                                                    CARBON_COLUMN_TYPE_I64,
-                                                                   u64, signed_integer);
+                                                                   i64, carbon_i64, signed_integer);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_FLOAT:
@@ -1478,13 +1478,13 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_into_column(ins, elem, CARBON_FIELD_NUMBER_FLOAT,
                                                                    CARBON_COLUMN_TYPE_FLOAT,
-                                                                   float, float_number);
+                                                                   float, float, float_number);
                                         }
                                         break;
                                 case JSON_LIST_FIXED_NULL: {
-                                        u64 approx_cap_nbytes = elem->value.value.array->elements.elements.num_elems;
+                                        carbon_u64 approx_cap_nbytes = elem->value.value.array->elements.elements.num_elems;
                                         if (is_root) {
-                                                for (u32 i = 0;
+                                                for (carbon_u32 i = 0;
                                                      i < elem->value.value.array->elements.elements.num_elems; i++) {
                                                         carbon_insert_null(ins);
                                                 }
@@ -1493,7 +1493,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                                 carbon_insert *array_ins = carbon_insert_array_begin(&state,
                                                                                                                 ins,
                                                                                                                 approx_cap_nbytes);
-                                                for (u32 i = 0;
+                                                for (carbon_u32 i = 0;
                                                      i < elem->value.value.array->elements.elements.num_elems; i++) {
                                                         carbon_insert_null(array_ins);
                                                 }
@@ -1503,7 +1503,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         break;
                                 case JSON_LIST_FIXED_BOOLEAN: {
                                         if (is_root) {
-                                                for (u32 i = 0;
+                                                for (carbon_u32 i = 0;
                                                      i < elem->value.value.array->elements.elements.num_elems; i++) {
                                                         json_element *array_elem = VECTOR_GET(
                                                                 &elem->value.value.array->elements.elements, i,
@@ -1520,12 +1520,12 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                                 }
                                         } else {
                                                 carbon_insert_column_state state;
-                                                u64 cap_nbytes = elem->value.value.array->elements.elements.num_elems;
+                                                carbon_u64 cap_nbytes = elem->value.value.array->elements.elements.num_elems;
                                                 carbon_insert *array_ins = carbon_insert_column_begin(&state,
                                                                                                                  ins,
                                                                                                                  CARBON_COLUMN_TYPE_BOOLEAN,
                                                                                                                  cap_nbytes);
-                                                for (u32 i = 0;
+                                                for (carbon_u32 i = 0;
                                                      i < elem->value.value.array->elements.elements.num_elems; i++) {
                                                         json_element *array_elem = VECTOR_GET(
                                                                 &elem->value.value.array->elements.elements, i,
@@ -1596,14 +1596,14 @@ fn_result carbon_int_from_json(carbon *doc, const json *data,
         return FN_OK();
 }
 
-static void marker_insert(struct carbon_memfile *memfile, u8 marker)
+static void marker_insert(struct carbon_memfile *memfile, carbon_u8 marker)
 {
         /** check whether marker can be written, otherwise make space for it */
-        char c = *memfile_peek(memfile, sizeof(u8));
+        char c = *memfile_peek(memfile, sizeof(carbon_u8));
         if (c != 0) {
-                memfile_inplace_insert(memfile, sizeof(u8));
+                memfile_inplace_insert(memfile, sizeof(carbon_u8));
         }
-        memfile_write(memfile, &marker, sizeof(u8));
+        memfile_write(memfile, &marker, sizeof(carbon_u8));
 }
 
 static bool array_it_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it)
@@ -1618,7 +1618,7 @@ static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end,
         return is_slot_occupied(is_empty_slot, is_object_end, &it->memfile, CARBON_MOBJECT_END);
 }
 
-static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, struct carbon_memfile *file, u8 end_marker)
+static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, struct carbon_memfile *file, carbon_u8 end_marker)
 {
         DEBUG_ERROR_IF_NULL(file);
         char c = *memfile_peek(file, 1);

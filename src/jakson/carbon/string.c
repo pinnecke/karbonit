@@ -32,7 +32,7 @@ bool carbon_string_nomarker_write(struct carbon_memfile *file, const char *strin
         return carbon_string_nomarker_nchar_write(file, string, strlen(string));
 }
 
-bool carbon_string_nomarker_nchar_write(struct carbon_memfile *file, const char *string, u64 str_len)
+bool carbon_string_nomarker_nchar_write(struct carbon_memfile *file, const char *string, carbon_u64 str_len)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(string)
@@ -44,8 +44,8 @@ bool carbon_string_nomarker_nchar_write(struct carbon_memfile *file, const char 
 bool carbon_string_nomarker_remove(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
-        u8 len_nbytes;
-        u64 str_len = memfile_read_uintvar_stream(&len_nbytes, file);
+        carbon_u8 len_nbytes;
+        carbon_u64 str_len = memfile_read_uintvar_stream(&len_nbytes, file);
         memfile_skip(file, -len_nbytes);
         memfile_inplace_remove(file, len_nbytes + str_len);
         return true;
@@ -54,9 +54,9 @@ bool carbon_string_nomarker_remove(struct carbon_memfile *file)
 bool carbon_string_remove(struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file);
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 marker = *MEMFILE_READ_TYPE(file, carbon_u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
-                memfile_inplace_remove(file, sizeof(u8));
+                memfile_inplace_remove(file, sizeof(carbon_u8));
                 return carbon_string_nomarker_remove(file);
         } else {
                 ERROR(&file->err, ERR_MARKERMAPPING)
@@ -69,7 +69,7 @@ bool carbon_string_write(struct carbon_memfile *file, const char *string)
         return carbon_string_nchar_write(file, string, strlen(string));
 }
 
-bool carbon_string_nchar_write(struct carbon_memfile *file, const char *string, u64 str_len)
+bool carbon_string_nchar_write(struct carbon_memfile *file, const char *string, carbon_u64 str_len)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(string)
@@ -88,10 +88,10 @@ bool carbon_string_update(struct carbon_memfile *file, const char *string)
 
 bool carbon_string_update_wnchar(struct carbon_memfile *file, const char *string, size_t str_len)
 {
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 marker = *MEMFILE_READ_TYPE(file, carbon_u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 offset_t payload_start = memfile_tell(file);
-                u32 old_len = memfile_read_uintvar_stream(NULL, file);
+                carbon_u32 old_len = memfile_read_uintvar_stream(NULL, file);
                 memfile_skip(file, old_len);
                 offset_t diff = memfile_tell(file) - payload_start;
                 memfile_seek(file, payload_start);
@@ -115,10 +115,10 @@ bool carbon_string_nomarker_skip(struct carbon_memfile *file)
         return carbon_string_nomarker_read(NULL, file);
 }
 
-const char *carbon_string_read(u64 *len, struct carbon_memfile *file)
+const char *carbon_string_read(carbon_u64 *len, struct carbon_memfile *file)
 {
         DEBUG_ERROR_IF_NULL(file)
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        carbon_u8 marker = *MEMFILE_READ_TYPE(file, carbon_u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 return carbon_string_nomarker_read(len, file);
         } else {
@@ -127,9 +127,9 @@ const char *carbon_string_read(u64 *len, struct carbon_memfile *file)
         }
 }
 
-const char *carbon_string_nomarker_read(u64 *len, struct carbon_memfile *file)
+const char *carbon_string_nomarker_read(carbon_u64 *len, struct carbon_memfile *file)
 {
-        u64 str_len = memfile_read_uintvar_stream(NULL, file);
+        carbon_u64 str_len = memfile_read_uintvar_stream(NULL, file);
         const char *result = memfile_read(file, str_len);
         OPTIONAL_SET(len, str_len);
         return result;

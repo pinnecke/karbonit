@@ -9,10 +9,6 @@ set(MAKE_DIRECTORY "${CMAKE_HOME_DIRECTORY}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MAKE_DIRECTORY})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MAKE_DIRECTORY})
 
-include_directories("${CMAKE_SOURCE_DIR}/src")
-include_directories("${CMAKE_SOURCE_DIR}/include")
-include_directories("${CMAKE_SOURCE_DIR}")
-
 include_directories("/usr/include")
 include_directories("/usr/local/include")
 
@@ -69,6 +65,8 @@ foreach(OLD_AMAL_FILE ${AMALGAMATION_ROOT})
 endforeach()
 
 if (USE_AMALGAMATION)
+    include_directories("${CMAKE_SOURCE_DIR}/include")
+
     message("-- *** source amalgamation is turned on ***")
     message("     - concat '${SRC_IN}/*.h' to '${SRC_AMALGAMATION}/carbon.h'")
     message("     - concat '${SRC_IN}/*.c' to '${SRC_AMALGAMATION}/carbon.c'")
@@ -108,6 +106,9 @@ if (USE_AMALGAMATION)
         message("     - '${LIB_SOURCE_FILE}'")
     endforeach()
 else()
+    include_directories("${CMAKE_SOURCE_DIR}/src")
+    include_directories("${CMAKE_SOURCE_DIR}/include")
+
     message("-- *** source amalgamation is turned off ***")
 
     message("-- Generating inclusion header '${HDR_AMALGAMATION}")

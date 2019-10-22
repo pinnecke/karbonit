@@ -20,7 +20,7 @@
 #ifndef TOOLS_MODULES
 #define TOOLS_MODULES
 
-#include <jakson/std/opt.h>
+#include <carbon/std/opt.h>
 
 bool moduleCheckJsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
 bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);

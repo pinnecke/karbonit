@@ -3,9 +3,7 @@
 #include <cmath>
 #include <fstream>
 
-#include <jakson/utils/priority_queue.h>
-#include <jakson/std/thread_pool.h>
-#include <jakson/std/thread_pool/monitor.h>
+#include <carbon.h>
 
 // Test if push and isEmpty works correkt
 TEST(PriorityQueue, IsEmpty)

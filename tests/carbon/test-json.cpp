@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <jakson/jakson.h>
+#include <carbon.h>
 
 TEST(CarbonTest, InvalidObject) {
         carbon carbon;

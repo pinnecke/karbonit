@@ -1,9 +1,9 @@
 
 #include <inttypes.h>
-#include <jakson/archive/pack.h>
-#include <jakson/archive/query.h>
-#include <jakson/archive/internal.h>
-#include <jakson/carbon.h>
+#include <carbon/archive/pack.h>
+#include <carbon/archive/query.h>
+#include <carbon/archive/internal.h>
+#include <carbon/carbon.h>
 
 #include "modules.h"
 

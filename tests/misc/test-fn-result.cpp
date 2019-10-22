@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include <jakson/jakson.h>
+
+#include <carbon.h>
 
 TEST(CarbonResultTest, CreateOK) {
         fn_result result = RESULT_OK();

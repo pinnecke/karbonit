@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <printf.h>
 
-#include <jakson/jakson.h>
+#include <carbon.h>
 
 #define DEFINE_UINTVAR_STREAM_POINT_TEST(test_name, value, expected_bytes)     \
 TEST(VarUintTest, ReadWrite##test_name) {                               \

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include <jakson/jakson.h>
+
+#include <carbon.h>
 
 static void make_memfile(struct carbon_memfile *memfile) {
         memblock *memblock;

@@ -1,4 +1,4 @@
-#include <jakson/jakson.h>
+#include <carbon.h>
 #include "modules.h"
 
 #define DESC_CHECK_JS "Test if JSON files are suitable for CARBON."

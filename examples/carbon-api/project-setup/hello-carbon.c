@@ -1,7 +1,7 @@
 // bin/examples-hello-carbon
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <carbon.h>
 
 int main (void)
 {

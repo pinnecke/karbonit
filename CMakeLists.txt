@@ -18,39 +18,36 @@ include_directories("/usr/local/include")
 
 set(LIBS ${LIBS} pthread m)
 
-file(GLOB_RECURSE LIB_LIBS_HEADER_FILES libs/*.h )
-file(GLOB_RECURSE LIB_LIBS_SOURCE_FILES libs/*.c )
-
 #
 # Source Amalgamation
 #
 # In order to allow the C compiler to optimize across translation unit boundaries, the optimized release version of
-# Jakson combines all source files (in 'src/') by a pre-building process into one translation unit, `jakson.h` and
-# `jakson.c` located in `include`. This technique, called amalgamation, is inspired by SQLite and others Duktape, which
+# Carbon combines all source files (in 'src/') by a pre-building process into one translation unit, `carbon.h` and
+# `carbon.c` located in `include`. This technique, called amalgamation, is inspired by SQLite and others Duktape, which
 # do similar. Amalgamation in its simplest form is realy just that: source concatenation. In order to let this
 # concatenation runs smoothly, implemenations files must make use of static functions and must avoid naming conflicts
 # (typically by the use of `__` prefix in implementation files).
 #
 # The implementation of amalgamation for Jakson is done as follows. Independent of the build type, amalgamation can
-# turned off or on. If it is turned off, a header file 'jakson.h' is generated in `include/jakson` that includes all
+# turned off or on. If it is turned off, a header file 'carbon.h' is generated in `include/carbon` that includes all
 # header files in 'src/', and each source file in 'src/' is compiled as a single translation unit when compiled.
-# If amalgamation is turned on, all header files in 'src/' are concatenated as a single file 'jakson.h' in
-# `include/jakson`, and all implementation files in 'src/' are concatenated as a single file 'jakson.c'. The original
+# If amalgamation is turned on, all header files in 'src/' are concatenated as a single file 'carbon.h' in
+# `include/carbon`, and all implementation files in 'src/' are concatenated as a single file 'carbon.c'. The original
 # `src/` directory is ignored when compilation is done, leading to one large compilation unit stored in
-# `include/jakson`.
+# `include/carbon`.
 #
-# By including `include/jakson` instead of indivudal header files, the transition between builds with and without
+# By including `include/carbon` instead of indivudal header files, the transition between builds with and without
 # amalgamation is smoothly.
 #
 
 set(SRC_IN "${CMAKE_SOURCE_DIR}/src")
 set(SRC_TEMP "${CMAKE_SOURCE_DIR}/src-tmp")
-set(SRC_AMALGAMATION "${CMAKE_SOURCE_DIR}/include/jakson")
+set(AMALGAMATION_ROOT ${CMAKE_SOURCE_DIR}/include)
+set(HDR_AMALGAMATION "${AMALGAMATION_ROOT}/carbon.h")
+set(SRC_AMALGAMATION "${AMALGAMATION_ROOT}/carbon")
 
 file(GLOB_RECURSE LIB_HEADER_FILES ${SRC_IN}/*.h )
 file(GLOB_RECURSE LIB_SOURCE_FILES ${SRC_IN}/*.c )
-
-set(LIB_SOURCES ${LIB_LIBS_HEADER_FILES} ${LIB_LIBS_SOURCE_FILES})
 
 function(cat IN_FILE OUT_FILE)
     file(READ ${IN_FILE} CONTENTS)
@@ -67,29 +64,45 @@ endif()
 
 OPTION(USE_AMALGAMATION "Turns source amalgamation (source code concatenation) on or off" ON)
 
+foreach(OLD_AMAL_FILE ${AMALGAMATION_ROOT})
+    file(REMOVE ${OLD_AMAL_FILE})
+endforeach()
+
 if (USE_AMALGAMATION)
     message("-- *** source amalgamation is turned on ***")
-    message("     - concat '${SRC_IN}/*.h' to '${SRC_AMALGAMATION}/jakson.h'")
-    message("     - concat '${SRC_IN}/*.c' to '${SRC_AMALGAMATION}/jakson.c'")
+    message("     - concat '${SRC_IN}/*.h' to '${SRC_AMALGAMATION}/carbon.h'")
+    message("     - concat '${SRC_IN}/*.c' to '${SRC_AMALGAMATION}/carbon.c'")
 
-    message("-- Building header file 'jakson.h'")
-    file(WRITE ${SRC_AMALGAMATION}/jakson.h "")
+    message("-- Copy header files to '${SRC_AMALGAMATION}'")
     foreach(LIB_HEADER_FILE ${LIB_HEADER_FILES})
-        cat(${LIB_HEADER_FILE} ${SRC_AMALGAMATION}/jakson.h)
-        message("     - append ${LIB_HEADER_FILE}")
+
+        file(RELATIVE_PATH
+                RELATIVE_FILE_PATH
+                ${SRC_IN}
+                ${LIB_HEADER_FILE}
+                )
+        set(HEADER_FILE_PATH ${SRC_AMALGAMATION}/${RELATIVE_FILE_PATH})
+        file(WRITE ${HEADER_FILE_PATH} "")
+        cat(${LIB_HEADER_FILE} ${HEADER_FILE_PATH})
+        set(AMAL_HEADER_FILES ${AMAL_HEADER_FILES} ${HEADER_FILE_PATH})
+
+        message("     - copied ${LIB_HEADER_FILE}")
     endforeach()
 
-    message("-- Building implementation file 'jakson.c'")
-    file(WRITE ${SRC_AMALGAMATION}/jakson.c "")
+    set(AMAL_FILE ${SRC_AMALGAMATION}/amalgamation.c)
+    message("-- Building implementation file '${AMAL_FILE}'")
+
+    file(WRITE ${AMAL_FILE} "")
     foreach(LIB_SOURCE_FILE ${LIB_SOURCE_FILES})
-        cat(${LIB_SOURCE_FILE} ${SRC_AMALGAMATION}/jakson.c)
+        cat(${LIB_SOURCE_FILE} ${AMAL_FILE})
         message("     - append ${LIB_SOURCE_FILE}")
     endforeach()
 
-    message("-- Inclusion header 'jakson.h' has been successfully built")
-    message("-- Implementation file 'jakson.c' has been successfully built")
+    message("-- Inclusion headers has been successfully built")
+    message("-- Implementation file has been successfully built")
 
-    set(LIB_SOURCES ${SRC_AMALGAMATION}/jakson.h ${SRC_AMALGAMATION}/jakson.c ${LIB_SOURCES})
+    set(LIB_SOURCES ${AMAL_HEADER_FILES} ${AMAL_FILE} ${AMAL_LIB_FILES} )
+
     message("-- Source files are: ")
     foreach(LIB_SOURCE_FILE ${LIB_SOURCES})
         message("     - '${LIB_SOURCE_FILE}'")
@@ -97,20 +110,20 @@ if (USE_AMALGAMATION)
 else()
     message("-- *** source amalgamation is turned off ***")
 
-    message("-- Generating inclusion header 'jakson.h' in ${SRC_AMALGAMATION}/")
+    message("-- Generating inclusion header '${HDR_AMALGAMATION}")
 
-    file(WRITE ${SRC_AMALGAMATION}/jakson.h "/* This is the generated inclusion file of Jakson. Do not modify the contents. */\n#ifndef JAKSON\n#define JAKSON\n")
+    file(WRITE ${HDR_AMALGAMATION} "/* This is the generated inclusion file of Libcarbon. Do not modify the contents. */\n#ifndef HAD_LIBCARBON_H\n#define HAD_LIBCARBON_H\n")
 
     foreach(LIB_HEADER_FILE ${LIB_HEADER_FILES})
-        file(APPEND ${SRC_AMALGAMATION}/jakson.h "#include \"${LIB_HEADER_FILE}\"\n")
+        file(APPEND ${HDR_AMALGAMATION} "#include \"${LIB_HEADER_FILE}\"\n")
         message("     - include ${LIB_HEADER_FILE}")
     endforeach()
 
-    file(APPEND ${SRC_AMALGAMATION}/jakson.h "#endif")
+    file(APPEND ${HDR_AMALGAMATION} "#endif")
 
-    message("-- Inclusion header 'jakson.h' has been successfully built")
+    message("-- Inclusion header 'carbon.h' has been successfully built")
 
-    set(LIB_SOURCES ${SRC_AMALGAMATION}/jakson.h ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${LIB_SOURCES})
+    set(LIB_SOURCES ${HDR_AMALGAMATION} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES})
 
     message("-- Source files are: ")
     foreach(LIB_SOURCE_FILE ${LIB_SOURCES})
@@ -170,8 +183,8 @@ set (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 set (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
-add_library(jakson-sources STATIC ${LIB_SOURCES}) # used to share object files across different dependent targets
-link_libraries(jakson-sources ${LIBS})
+add_library(carbon-sources STATIC ${LIB_SOURCES}) # used to share object files across different dependent targets
+link_libraries(carbon-sources ${LIBS})
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/tools")
 add_subdirectory("${CMAKE_SOURCE_DIR}/examples")

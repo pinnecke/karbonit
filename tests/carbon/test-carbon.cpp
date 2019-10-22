@@ -2,7 +2,7 @@
 
 #include <fcntl.h>
 
-#include <jakson/jakson.h>
+#include <carbon.h>
 
 TEST(CarbonTest, CreateCarbon) {
         carbon doc;
@@ -2927,10 +2927,7 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
         string_buffer_drop(&sb);
@@ -2983,11 +2980,8 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-
-        //printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"application/json\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/json\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -3038,11 +3032,8 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"application/json\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -3101,10 +3092,8 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"application/json\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }, { \"type\": \"text/html\", \"encoding\": \"byte-stream\", \"binary\": [60, 104, 116, 109, 108, 62, 60, 98, 111, 100, 121, 62, 60, 112, 62, 84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120, 32, 106, 117, 109, 112, 115, 32, 111, 118, 101, 114, 32, 116, 104, 101, 32, 108, 97, 122, 121, 32, 100, 111, 103, 60, 47, 112, 62, 60, 47, 98, 111, 100, 121, 62, 60, 47, 104, 116, 109, 108, 62] }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"text/html\", \"encoding\": \"byte-stream\", \"binary\": [60, 104, 116, 109, 108, 62, 60, 98, 111, 100, 121, 62, 60, 112, 62, 84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120, 32, 106, 117, 109, 112, 115, 32, 111, 118, 101, 114, 32, 116, 104, 101, 32, 108, 97, 122, 121, 32, 100, 111, 103, 60, 47, 112, 62, 60, 47, 98, 111, 100, 121, 62, 60, 47, 104, 116, 109, 108, 62] }]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -3162,10 +3151,7 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"123\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A=JDAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"123\", \"encoding\": \"byte-stream\", \"binary\": [65, 66, 67] }]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
         string_buffer_drop(&sb);
@@ -3218,11 +3204,8 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"application/something-json-like\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/something-json-like\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -3273,11 +3256,8 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"application/something-json-like\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -3336,10 +3316,8 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
-
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"application/something-json-like\", \"encoding\": \"byte-stream\", \"binary\": [123, 34, 107, 101, 121, 34, 58, 32, 34, 118, 97, 108, 117, 101, 34, 125] }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"byte-stream\", \"binary\": [60, 104, 116, 109, 108, 62, 60, 98, 111, 100, 121, 62, 60, 112, 62, 84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120, 32, 106, 117, 109, 112, 115, 32, 111, 118, 101, 114, 32, 116, 104, 101, 32, 108, 97, 122, 121, 32, 100, 111, 103, 60, 47, 112, 62, 60, 47, 98, 111, 100, 121, 62, 60, 47, 104, 116, 109, 108, 62] }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"byte-stream\", \"binary\": [84, 104, 105, 115, 32, 114, 101, 112, 111, 114, 116, 44, 32, 98, 121, 32, 105, 116, 115, 32, 118, 101, 114, 121, 32, 108, 101, 110, 103, 116, 104, 44, 32, 100, 101, 102, 101, 110, 100, 115, 32, 105, 116, 115, 101, 108, 102, 32, 97, 103, 97, 105, 110, 115, 116, 32, 116, 104, 101, 32, 114, 105, 115, 107, 32, 111, 102, 32, 98, 101, 105, 110, 103, 32, 114, 101, 97, 100, 46] }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"byte-stream\", \"binary\": [60, 104, 116, 109, 108, 62, 60, 98, 111, 100, 121, 62, 60, 112, 62, 84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120, 32, 106, 117, 109, 112, 115, 32, 111, 118, 101, 114, 32, 116, 104, 101, 32, 108, 97, 122, 121, 32, 100, 111, 103, 60, 47, 112, 62, 60, 47, 98, 111, 100, 121, 62, 60, 47, 104, 116, 109, 108, 62] }]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -3347,15 +3325,6 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         free(json_1);
         free(json_2);
 }
-
-
-
-
-
-
-
-
-
 
 TEST(CarbonTest, CarbonRemoveArrayToEmpty)
 {
@@ -5196,8 +5165,8 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
         string_buffer sb;
         string_buffer_create(&sb);
 
-        // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }}]}") == 0);
+        //carbon_print(stdout, JSON_EXTENDED, &doc);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [77, 121, 32, 80, 108, 97, 105, 110, 45, 84, 101, 120, 116] }}]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -5243,8 +5212,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
         string_buffer sb;
         string_buffer_create(&sb);
 
-        // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"LAAA\" }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==ybGQAA\" }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
+        //carbon_print(stdout, JSON_EXTENDED, &doc);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [72, 101, 108, 108, 111] }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [44] }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [87, 111, 114, 108, 100] }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -5275,8 +5244,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
         string_buffer sb;
         string_buffer_create(&sb);
 
-        // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"LAAA\" }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==ybGQAA\" }}]}") == 0);
+        //carbon_print(stdout, JSON_EXTENDED, &doc);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [72, 101, 108, 108, 111] }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [44] }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [87, 111, 114, 108, 100] }}]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);
@@ -5360,8 +5329,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
         string_buffer sb;
         string_buffer_create(&sb);
 
-        // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==sbG8AA\" }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"LAAA\" }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==ybGQAA\" }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [72, 101, 108, 108, 111] }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [44] }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"byte-stream\", \"binary\": [87, 111, 114, 108, 100] }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
 
         string_buffer_drop(&sb);
         carbon_drop(&doc);

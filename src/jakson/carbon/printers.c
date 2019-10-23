@@ -351,7 +351,7 @@ bool carbon_printer_object_prop_name(carbon_printer *printer, string_buffer *str
         return true;
 }
 
-bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, string_buffer *builder)
+bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, string_buffer *builder)
 {
         JAK_ASSERT(it);
         JAK_ASSERT(printer);
@@ -360,15 +360,15 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
         bool first_entry = true;
         carbon_printer_object_begin(printer, builder);
 
-        while (carbon_object_it_next(it)) {
+        while (carbon_object_next(it)) {
                 if (LIKELY(!first_entry)) {
                         carbon_printer_comma(printer, builder);
                 }
                 DECLARE_AND_INIT(carbon_field_type_e, type)
                 DECLARE_AND_INIT(u64, key_len)
-                const char *key_name = carbon_object_it_prop_name(&key_len, it);
+                const char *key_name = carbon_object_prop_name(&key_len, it);
 
-                carbon_object_it_prop_type(&type, it);
+                carbon_object_prop_type(&type, it);
                 switch (type) {
                         case CARBON_FIELD_NULL:
                                 carbon_printer_prop_null(printer, builder, key_name, key_len);
@@ -388,7 +388,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_NUMBER_U32:
                         case CARBON_FIELD_NUMBER_U64: {
                                 u64 value;
-                                carbon_object_it_unsigned_value(&is_null_value, &value, it);
+                                carbon_object_unsigned_value(&is_null_value, &value, it);
                                 carbon_printer_prop_unsigned(printer, builder, key_name, key_len,
                                                              is_null_value ? NULL : &value);
                         }
@@ -398,28 +398,28 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_NUMBER_I32:
                         case CARBON_FIELD_NUMBER_I64: {
                                 i64 value;
-                                carbon_object_it_signed_value(&is_null_value, &value, it);
+                                carbon_object_signed_value(&is_null_value, &value, it);
                                 carbon_printer_prop_signed(printer, builder, key_name, key_len,
                                                            is_null_value ? NULL : &value);
                         }
                                 break;
                         case CARBON_FIELD_NUMBER_FLOAT: {
                                 float value;
-                                carbon_object_it_float_value_nullable(&is_null_value, &value, it);
+                                carbon_object_float_value_nullable(&is_null_value, &value, it);
                                 carbon_printer_prop_float(printer, builder, key_name, key_len,
                                                           is_null_value ? NULL : &value);
                         }
                                 break;
                         case CARBON_FIELD_STRING: {
                                 u64 strlen;
-                                const char *value = carbon_object_it_string_value(&strlen, it);
+                                const char *value = carbon_object_string_value(&strlen, it);
                                 carbon_printer_prop_string(printer, builder, key_name, key_len, value, strlen);
                         }
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM: {
                                 carbon_binary binary;
-                                carbon_object_it_binary_value(&binary, it);
+                                carbon_object_binary_value(&binary, it);
                                 carbon_printer_prop_binary(printer, builder, key_name, key_len, &binary);
                         }
                                 break;
@@ -427,7 +427,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                carbon_array *array = carbon_object_it_array_value(it);
+                                carbon_array *array = carbon_object_array_value(it);
                                 carbon_printer_array_prop_name(printer, builder, key_name, key_len);
                                 carbon_printer_print_array(array, printer, builder, false);
                                 carbon_array_drop(array);
@@ -473,7 +473,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column *column = carbon_object_it_column_value(it);
+                                carbon_column *column = carbon_object_column_value(it);
                                 carbon_printer_column_prop_name(printer, builder, key_name, key_len);
                                 carbon_printer_print_column(column, printer, builder);
                         }
@@ -482,10 +482,10 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                carbon_object_it *object = carbon_object_it_object_value(it);
+                                carbon_object *object = carbon_object_object_value(it);
                                 carbon_printer_object_prop_name(printer, builder, key_name, key_len);
                                 carbon_printer_print_object(object, printer, builder);
-                                carbon_object_it_drop(object);
+                                carbon_object_drop(object);
                         }
                                 break;
                         default:
@@ -634,9 +634,9 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                carbon_object_it *object = carbon_array_object_value(it);
+                                carbon_object *object = carbon_array_object_value(it);
                                 carbon_printer_print_object(object, printer, builder);
-                                carbon_object_it_drop(object);
+                                carbon_object_drop(object);
                         }
                                 break;
                         default:

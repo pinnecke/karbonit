@@ -27,7 +27,7 @@
 
 static bool internal_pack_array(carbon_array *it);
 
-static bool internal_pack_object(carbon_object_it *it);
+static bool internal_pack_object(carbon_object *it);
 
 static bool internal_pack_column(carbon_column *it);
 
@@ -426,8 +426,8 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                        carbon_object_it nested_object_it;
-                                        carbon_object_it_create(&nested_object_it, &it->memfile, &it->err,
+                                        carbon_object nested_object_it;
+                                        carbon_object_create(&nested_object_it, &it->memfile, &it->err,
                                                                 it->field_access.nested_object_it->object_contents_off -
                                                                 sizeof(u8));
                                         internal_pack_object(&nested_object_it);
@@ -435,7 +435,7 @@ static bool internal_pack_array(carbon_array *it)
                                                    CARBON_MOBJECT_END);
                                         memfile_skip(&nested_object_it.memfile, sizeof(char));
                                         memfile_seek(&it->memfile, memfile_tell(&nested_object_it.memfile));
-                                        carbon_object_it_drop(&nested_object_it);
+                                        carbon_object_drop(&nested_object_it);
                                 }
                                         break;
                                 default: ERROR(&it->err, ERR_INTERNALERR);
@@ -449,16 +449,16 @@ static bool internal_pack_array(carbon_array *it)
         return true;
 }
 
-static bool internal_pack_object(carbon_object_it *it)
+static bool internal_pack_object(carbon_object *it)
 {
         JAK_ASSERT(it);
 
         /** shrink this object */
         {
-                carbon_object_it this_object_it;
+                carbon_object this_object_it;
                 bool is_empty_slot, is_object_end;
 
-                carbon_object_it_copy(&this_object_it, it);
+                carbon_object_copy(&this_object_it, it);
                 carbon_int_object_skip_contents(&is_empty_slot, &is_object_end, &this_object_it);
 
                 if (!is_object_end) {
@@ -479,14 +479,14 @@ static bool internal_pack_object(carbon_object_it *it)
                         JAK_ASSERT(final == CARBON_MOBJECT_END);
                 }
 
-                carbon_object_it_drop(&this_object_it);
+                carbon_object_drop(&this_object_it);
         }
 
         /** shrink contained containers */
         {
-                while (carbon_object_it_next(it)) {
+                while (carbon_object_next(it)) {
                         carbon_field_type_e type;
-                        carbon_object_it_prop_type(&type, it);
+                        carbon_object_prop_type(&type, it);
                         switch (type) {
                                 case CARBON_FIELD_NULL:
                                 case CARBON_FIELD_TRUE:
@@ -569,8 +569,8 @@ static bool internal_pack_object(carbon_object_it *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                        carbon_object_it nested_object_it;
-                                        carbon_object_it_create(&nested_object_it, &it->memfile, &it->err,
+                                        carbon_object nested_object_it;
+                                        carbon_object_create(&nested_object_it, &it->memfile, &it->err,
                                                                 it->field.value.data.nested_object_it->object_contents_off -
                                                                 sizeof(u8));
                                         internal_pack_object(&nested_object_it);
@@ -578,7 +578,7 @@ static bool internal_pack_object(carbon_object_it *it)
                                                    CARBON_MOBJECT_END);
                                         memfile_skip(&nested_object_it.memfile, sizeof(char));
                                         memfile_seek(&it->memfile, memfile_tell(&nested_object_it.memfile));
-                                        carbon_object_it_drop(&nested_object_it);
+                                        carbon_object_drop(&nested_object_it);
                                 }
                                         break;
                                 default: ERROR(&it->err, ERR_INTERNALERR);

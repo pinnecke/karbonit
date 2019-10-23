@@ -54,7 +54,7 @@ typedef struct field_access {
 
         carbon_array *nested_array;
         carbon_column *nested_column_it;
-        carbon_object_it *nested_object_it;
+        carbon_object *nested_object_it;
 } field_access;
 
 typedef struct carbon_array {
@@ -170,7 +170,7 @@ bool carbon_array_unsigned_value(bool *is_null_in, u64 *value, carbon_array *it)
 const char *carbon_array_string_value(u64 *strlen, carbon_array *it);
 bool carbon_array_binary_value(carbon_binary *out, carbon_array *it);
 carbon_array *carbon_array_array_value(carbon_array *it_in);
-carbon_object_it *carbon_array_object_value(carbon_array *it_in);
+carbon_object *carbon_array_object_value(carbon_array *it_in);
 carbon_column *carbon_array_column_value(carbon_array *it_in);
 
 END_DECL

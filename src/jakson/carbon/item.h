@@ -55,7 +55,7 @@ bool carbon_item_unsigned_value(bool *is_null_in, u64 *value, struct carbon_item
 const char *carbon_item_string_value(u64 *strlen, struct carbon_item *item);
 bool carbon_item_binary_value(carbon_binary *out, struct carbon_item *item);
 carbon_array *carbon_item_array_value(struct carbon_item *item);
-carbon_object_it *carbon_item_object_value(struct carbon_item *item);
+carbon_object *carbon_item_object_value(struct carbon_item *item);
 carbon_column *carbon_item_column_value(struct carbon_item *item);
 
 /**

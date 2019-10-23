@@ -120,7 +120,7 @@ bool carbon_path_index_it_field_unsigned_value(bool *is_null_in, u64 *value, car
 const char *carbon_path_index_it_field_string_value(u64 *strlen, carbon_path_index_it *it);
 bool carbon_path_index_it_field_binary_value(carbon_binary *out, carbon_array *it);
 bool carbon_path_index_it_field_array_value(carbon_array *it_out, carbon_path_index_it *it_in);
-bool carbon_path_index_it_field_object_value(carbon_object_it *it_out, carbon_path_index_it *it_in);
+bool carbon_path_index_it_field_object_value(carbon_object *it_out, carbon_path_index_it *it_in);
 bool carbon_path_index_it_field_column_value(carbon_column *it_out, carbon_path_index_it *it_in);
 
 // ---------------------------------------------------------------------------------------------------------------------

@@ -33,13 +33,13 @@ static void marker_insert(memfile *memfile, u8 marker);
 
 static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
 
-static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
+static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object *it);
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_array_end, memfile *file, u8 end_marker);
 
 static bool array_next_no_load(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
 
-static bool object_it_next_no_load(bool *is_empty_slot, bool *is_array_end, carbon_object_it *it);
+static bool object_it_next_no_load(bool *is_empty_slot, bool *is_array_end, carbon_object *it);
 
 static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *elem, bool is_root);
 
@@ -226,7 +226,7 @@ bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, carbon_array
         }
 }
 
-bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it)
+bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object *it)
 {
         if (carbon_int_object_it_refresh(is_empty_slot, is_object_end, it)) {
                 carbon_int_object_it_prop_value_skip(it);
@@ -236,7 +236,7 @@ bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_
         }
 }
 
-bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it)
+bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         if (object_it_is_slot_occupied(is_empty_slot, is_object_end, it)) {
@@ -248,7 +248,7 @@ bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carb
         }
 }
 
-bool carbon_int_object_it_prop_key_access(carbon_object_it *it)
+bool carbon_int_object_it_prop_key_access(carbon_object *it)
 {
         DEBUG_ERROR_IF_NULL(it)
         //memfile_skip(&it->mem, sizeof(media_type));
@@ -263,14 +263,14 @@ bool carbon_int_object_it_prop_key_access(carbon_object_it *it)
         return true;
 }
 
-bool carbon_int_object_it_prop_value_skip(carbon_object_it *it)
+bool carbon_int_object_it_prop_value_skip(carbon_object *it)
 {
         DEBUG_ERROR_IF_NULL(it)
         memfile_seek(&it->memfile, it->field.value.offset);
         return carbon_field_skip(&it->memfile);
 }
 
-bool carbon_int_object_it_prop_skip(carbon_object_it *it)
+bool carbon_int_object_it_prop_skip(carbon_object *it)
 {
         DEBUG_ERROR_IF_NULL(it)
 
@@ -280,7 +280,7 @@ bool carbon_int_object_it_prop_skip(carbon_object_it *it)
         return carbon_field_skip(&it->memfile);
 }
 
-bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_object_it *it)
+bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_object *it)
 {
         while (object_it_next_no_load(is_empty_slot, is_array_end, it)) {}
         return true;
@@ -431,7 +431,7 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         carbon_int_field_access_create(field_access);
                         field_access->nested_object_it_is_created = true;
-                        carbon_object_it_create(field_access->nested_object_it, file, err,
+                        carbon_object_create(field_access->nested_object_it, file, err,
                                                 memfile_tell(file) - sizeof(u8));
                         break;
                 default: ERROR(err, ERR_CORRUPTED)
@@ -532,7 +532,7 @@ bool carbon_int_field_access_create(field_access *field)
         field->nested_object_it_accessed = false;
         field->nested_column_it_is_created = false;
         field->nested_array = MALLOC(sizeof(carbon_array));
-        field->nested_object_it = MALLOC(sizeof(carbon_object_it));
+        field->nested_object_it = MALLOC(sizeof(carbon_object));
         field->nested_column_it = MALLOC(sizeof(carbon_column));
         return true;
 }
@@ -553,11 +553,11 @@ bool carbon_int_field_access_clone(field_access *dst, field_access *src)
         dst->nested_object_it_accessed = src->nested_object_it_accessed;
         dst->nested_column_it_is_created = src->nested_column_it_is_created;
         dst->nested_array = MALLOC(sizeof(carbon_array));
-        dst->nested_object_it = MALLOC(sizeof(carbon_object_it));
+        dst->nested_object_it = MALLOC(sizeof(carbon_object));
         dst->nested_column_it = MALLOC(sizeof(carbon_column));
 
         if (carbon_int_field_access_object_it_opened(src)) {
-                carbon_object_it_clone(dst->nested_object_it, src->nested_object_it);
+                carbon_object_clone(dst->nested_object_it, src->nested_object_it);
         } else if (carbon_int_field_access_column_it_opened(src)) {
                 carbon_column_clone(dst->nested_column_it, src->nested_column_it);
         } else if (carbon_int_field_access_array_opened(src)) {
@@ -607,8 +607,8 @@ void carbon_int_auto_close_nested_array(field_access *field)
 void carbon_int_auto_close_nested_object_it(field_access *field)
 {
         if (carbon_int_field_access_object_it_opened(field)) {
-                carbon_object_it_drop(field->nested_object_it);
-                ZERO_MEMORY(field->nested_object_it, sizeof(carbon_object_it));
+                carbon_object_drop(field->nested_object_it);
+                ZERO_MEMORY(field->nested_object_it, sizeof(carbon_object));
         }
 }
 
@@ -875,7 +875,7 @@ carbon_array *carbon_int_field_access_array_value(field_access *field, err *err)
         return field->nested_array;
 }
 
-carbon_object_it *carbon_int_field_access_object_value(field_access *field, err *err)
+carbon_object *carbon_int_field_access_object_value(field_access *field, err *err)
 {
         ERROR_PRINT_IF(!field, ERR_NULLPTR);
         ERROR_IF(!carbon_field_type_is_object_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
@@ -1031,13 +1031,13 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                        carbon_object_it it;
+                        carbon_object it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_object_it_create(&it, memfile, err, begin_off - sizeof(u8));
-                        carbon_object_it_fast_forward(&it);
-                        offset_t end_off = carbon_object_it_memfile_pos(&it);
-                        carbon_object_it_drop(&it);
+                        carbon_object_create(&it, memfile, err, begin_off - sizeof(u8));
+                        carbon_object_fast_forward(&it);
+                        offset_t end_off = carbon_object_memfile_pos(&it);
+                        carbon_object_drop(&it);
 
                         JAK_ASSERT(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);
@@ -1612,7 +1612,7 @@ static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, carb
         return is_slot_occupied(is_empty_slot, is_array_end, &it->memfile, CARBON_MARRAY_END);
 }
 
-static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it)
+static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object *it)
 {
         carbon_int_field_auto_close(&it->field.value.data);
         return is_slot_occupied(is_empty_slot, is_object_end, &it->memfile, CARBON_MOBJECT_END);
@@ -1632,7 +1632,7 @@ static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile 
         }
 }
 
-static bool object_it_next_no_load(bool *is_empty_slot, bool *is_array_end, carbon_object_it *it)
+static bool object_it_next_no_load(bool *is_empty_slot, bool *is_array_end, carbon_object *it)
 {
         if (object_it_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_object_it_prop_skip(it);

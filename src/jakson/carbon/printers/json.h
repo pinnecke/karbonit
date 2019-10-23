@@ -152,7 +152,7 @@ void carbon_json_from_array(struct string_buffer *str, carbon_array *it,
 void carbon_json_from_column(struct string_buffer *str, struct carbon_column *it,
                              struct carbon_json_from_opts *config);
 
-void carbon_json_from_object(struct string_buffer *str, struct carbon_object_it *it,
+void carbon_json_from_object(struct string_buffer *str, struct carbon_object *it,
                              struct carbon_json_from_opts *config);
 
 END_DECL

@@ -77,7 +77,7 @@ bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column 
         return true;
 }
 
-bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object_it *context)
+bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object *context)
 {
         DEBUG_ERROR_IF_NULL(inserter)
         DEBUG_ERROR_IF_NULL(context)
@@ -472,7 +472,7 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
 
         *out = (carbon_insert_object_state) {
                 .parent_inserter = inserter,
-                .it = MALLOC(sizeof(carbon_object_it)),
+                .it = MALLOC(sizeof(carbon_object)),
                 .object_begin = memfile_tell(&inserter->memfile),
                 .object_end = 0
         };
@@ -481,8 +481,8 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
         carbon_int_insert_object(&inserter->memfile, derivation, object_capacity);
         u64 payload_start = memfile_tell(&inserter->memfile) - 1;
 
-        carbon_object_it_create(out->it, &inserter->memfile, &inserter->err, payload_start);
-        carbon_object_it_insert_begin(&out->inserter, out->it);
+        carbon_object_create(out->it, &inserter->memfile, &inserter->err, payload_start);
+        carbon_object_insert_begin(&out->inserter, out->it);
 
         return &out->inserter;
 }
@@ -498,10 +498,10 @@ bool carbon_insert_object_end(carbon_insert_object_state *state)
 {
         DEBUG_ERROR_IF_NULL(state);
 
-        carbon_object_it scan;
-        carbon_object_it_create(&scan, &state->parent_inserter->memfile, &state->parent_inserter->err,
+        carbon_object scan;
+        carbon_object_create(&scan, &state->parent_inserter->memfile, &state->parent_inserter->err,
                                 memfile_tell(&state->parent_inserter->memfile) - 1);
-        while (carbon_object_it_next(&scan)) {}
+        while (carbon_object_next(&scan)) {}
 
         JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == CARBON_MOBJECT_END);
         memfile_read(&scan.memfile, sizeof(char));
@@ -511,9 +511,9 @@ bool carbon_insert_object_end(carbon_insert_object_state *state)
         memfile_skip(&scan.memfile, 1);
 
         memfile_seek(&state->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
-        carbon_object_it_drop(&scan);
+        carbon_object_drop(&scan);
         carbon_insert_drop(&state->inserter);
-        carbon_object_it_drop(state->it);
+        carbon_object_drop(state->it);
         free(state->it);
         return true;
 }

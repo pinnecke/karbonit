@@ -73,7 +73,7 @@ bool carbon_path_evaluator_end(carbon_path_evaluator *state)
         DEBUG_ERROR_IF_NULL(state)
         switch (state->result.container_type) {
                 case CARBON_OBJECT:
-                        carbon_object_it_drop(&state->result.containers.object.it);
+                        carbon_object_drop(&state->result.containers.object.it);
                         break;
                 case CARBON_ARRAY:
                         carbon_array_drop(&state->result.containers.array.it);
@@ -206,7 +206,7 @@ bool carbon_path_is_string(carbon *doc, const char *path)
 
 static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                       const carbon_dot_path *path, u32 current_path_pos,
-                                                      carbon_object_it *it)
+                                                      carbon_object *it)
 {
         DECLARE_AND_INIT(carbon_dot_node_type_e, node_type)
         DECLARE_AND_INIT(u32, path_length)
@@ -215,7 +215,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
         carbon_dot_path_type_at(&node_type, current_path_pos, path);
         JAK_ASSERT(node_type == DOT_NODE_KEY_NAME);
 
-        status = carbon_object_it_next(it);
+        status = carbon_object_next(it);
         carbon_dot_path_len(&path_length, path);
         const char *needle = carbon_dot_path_key_at(current_path_pos, path);
         u64 needle_len = strlen(needle);
@@ -227,18 +227,18 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
         } else {
                 DECLARE_AND_INIT(u64, key_len)
                 do {
-                        const char *key_name = carbon_object_it_prop_name(&key_len, it);
+                        const char *key_name = carbon_object_prop_name(&key_len, it);
                         if (key_len == needle_len && strncmp(key_name, needle, needle_len) == 0) {
                                 if (next_path_pos == path_length) {
                                         state->result.container_type = CARBON_OBJECT;
-                                        carbon_object_it_clone(&state->result.containers.object.it, it);
+                                        carbon_object_clone(&state->result.containers.object.it, it);
                                         return CARBON_PATH_RESOLVED;
                                 } else {
                                         /** path end not reached, traverse further if possible */
                                         JAK_ASSERT(next_path_pos < path_length);
 
                                         carbon_field_type_e prop_type;
-                                        carbon_object_it_prop_type(&prop_type, it);
+                                        carbon_object_prop_type(&prop_type, it);
 
                                         if (!carbon_field_type_is_traversable(prop_type)) {
                                                 return CARBON_PATH_NOTTRAVERSABLE;
@@ -296,20 +296,20 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                                                carbon_object_it *sub_it = carbon_object_it_object_value(
+                                                                carbon_object *sub_it = carbon_object_object_value(
                                                                         it);
                                                                 carbon_path_status_e ret = traverse_object(state,
                                                                                                               path,
                                                                                                               next_path_pos,
                                                                                                               sub_it);
-                                                                carbon_object_it_drop(sub_it);
+                                                                carbon_object_drop(sub_it);
                                                                 return ret;
                                                         }
                                                         case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                                                carbon_array *sub_it = carbon_object_it_array_value(
+                                                                carbon_array *sub_it = carbon_object_array_value(
                                                                         it);
                                                                 carbon_path_status_e ret = traverse_array(state,
                                                                                                              path,
@@ -359,7 +359,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                                                carbon_column *sub_it = carbon_object_it_column_value(
+                                                                carbon_column *sub_it = carbon_object_column_value(
                                                                         it);
                                                                 return traverse_column(state,
                                                                                        path,
@@ -372,7 +372,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                         }
                                 }
                         }
-                } while (carbon_object_it_next(it));
+                } while (carbon_object_next(it));
         }
 
         return CARBON_PATH_NOSUCHKEY;
@@ -471,13 +471,13 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                         elem_type)) {
                                                                                         return CARBON_PATH_NOTANOBJECT;
                                                                                 } else {
-                                                                                        carbon_object_it *sub_it = carbon_array_object_value(
+                                                                                        carbon_object *sub_it = carbon_array_object_value(
                                                                                                 it);
                                                                                         status = traverse_object(state,
                                                                                                                  path,
                                                                                                                  next_path_pos,
                                                                                                                  sub_it);
-                                                                                        carbon_object_it_drop(sub_it);
+                                                                                        carbon_object_drop(sub_it);
                                                                                         return status;
                                                                                 }
                                                                         default: ERROR_PRINT(ERR_INTERNALERR);
@@ -506,13 +506,13 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                 return CARBON_PATH_NOTANOBJECT;
                                         } else {
                                                 if (is_unit_array && is_record) {
-                                                        carbon_object_it *sub_it = carbon_array_object_value(
+                                                        carbon_object *sub_it = carbon_array_object_value(
                                                                 it);
                                                         status = traverse_object(state,
                                                                                  path,
                                                                                  current_path_pos,
                                                                                  sub_it);
-                                                        carbon_object_it_drop(sub_it);
+                                                        carbon_object_drop(sub_it);
                                                         return status;
                                                 } else {
                                                         return CARBON_PATH_NOSUCHKEY;

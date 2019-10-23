@@ -98,7 +98,7 @@ typedef struct carbon_find carbon_find;
 typedef struct carbon_insert_array_state carbon_insert_array_state;
 typedef struct carbon_insert_object_state carbon_insert_object_state;
 typedef struct carbon_insert_column_state carbon_insert_column_state;
-typedef struct carbon_object_it carbon_object_it;
+typedef struct carbon_object carbon_object;
 typedef struct carbon_path_evaluator carbon_path_evaluator;
 typedef struct carbon_path_index carbon_path_index;
 typedef struct carbon_path_index_it carbon_path_index_it;

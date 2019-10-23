@@ -42,10 +42,10 @@ typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, c
 typedef void (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column *it);
 
 /* called when an object (iterator) was found */
-typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct carbon_object_it *it);
+typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
 
 /* called when an object (iterator) was passed */
-typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct carbon_object_it *it);
+typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
 
 
 /* built-in or user-defined extra data for operation */
@@ -104,11 +104,11 @@ void carbon_traverse_drop(struct carbon_traverse *traverse);
 void carbon_traverse_carbon(struct carbon *rev_out, struct carbon_traverse *traverse, struct carbon *record);
 void carbon_traverse_array(struct carbon_traverse *traverse, carbon_array *it);
 void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column *it);
-void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object_it *it);
+void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object *it);
 
 void carbon_traverse_continue_array(struct carbon_traverse_extra *context, carbon_array *it);
 void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column *it);
-void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object_it *it);
+void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object *it);
 
 END_DECL
 

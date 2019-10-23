@@ -30,7 +30,7 @@
 
 BEGIN_DECL
 
-typedef struct carbon_object_it {
+typedef struct carbon_object {
         memfile memfile;
         err err;
 
@@ -55,54 +55,54 @@ typedef struct carbon_object_it {
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
-} carbon_object_it;
+} carbon_object;
 
-bool carbon_object_it_create(carbon_object_it *it, memfile *memfile, err *err, offset_t payload_start);
-bool carbon_object_it_copy(carbon_object_it *dst, carbon_object_it *src);
-bool carbon_object_it_clone(carbon_object_it *dst, carbon_object_it *src);
-bool carbon_object_it_drop(carbon_object_it *it);
+bool carbon_object_create(carbon_object *it, memfile *memfile, err *err, offset_t payload_start);
+bool carbon_object_copy(carbon_object *dst, carbon_object *src);
+bool carbon_object_clone(carbon_object *dst, carbon_object *src);
+bool carbon_object_drop(carbon_object *it);
 
-bool carbon_object_it_rewind(carbon_object_it *it);
-bool carbon_object_it_next(carbon_object_it *it);
-bool carbon_object_it_has_next(carbon_object_it *it);
-bool carbon_object_it_fast_forward(carbon_object_it *it);
-bool carbon_object_it_prev(carbon_object_it *it);
+bool carbon_object_rewind(carbon_object *it);
+bool carbon_object_next(carbon_object *it);
+bool carbon_object_has_next(carbon_object *it);
+bool carbon_object_fast_forward(carbon_object *it);
+bool carbon_object_prev(carbon_object *it);
 
-offset_t carbon_object_it_memfile_pos(carbon_object_it *it);
-bool carbon_object_it_tell(offset_t *key_off, offset_t *value_off, carbon_object_it *it);
+offset_t carbon_object_memfile_pos(carbon_object *it);
+bool carbon_object_tell(offset_t *key_off, offset_t *value_off, carbon_object *it);
 
-const char *carbon_object_it_prop_name(u64 *key_len, carbon_object_it *it);
-bool carbon_object_it_remove(carbon_object_it *it);
-bool carbon_object_it_prop_type(carbon_field_type_e *type, carbon_object_it *it);
+const char *carbon_object_prop_name(u64 *key_len, carbon_object *it);
+bool carbon_object_remove(carbon_object *it);
+bool carbon_object_prop_type(carbon_field_type_e *type, carbon_object *it);
 
-fn_result ofType(bool) carbon_object_it_is_multimap(carbon_object_it *it);
-fn_result ofType(bool) carbon_object_it_is_sorted(carbon_object_it *it);
-fn_result carbon_object_it_update_type(carbon_object_it *it, carbon_map_derivable_e derivation);
+fn_result ofType(bool) carbon_object_is_multimap(carbon_object *it);
+fn_result ofType(bool) carbon_object_is_sorted(carbon_object *it);
+fn_result carbon_object_update_type(carbon_object *it, carbon_map_derivable_e derivation);
 
 
-bool carbon_object_it_insert_begin(carbon_insert *inserter, carbon_object_it *it);
-fn_result carbon_object_it_insert_end(carbon_insert *inserter);
+bool carbon_object_insert_begin(carbon_insert *inserter, carbon_object *it);
+fn_result carbon_object_insert_end(carbon_insert *inserter);
 
-bool carbon_object_it_bool_value(bool *is_true, carbon_object_it *it);
-bool carbon_object_it_is_null(bool *is_null, carbon_object_it *it);
+bool carbon_object_bool_value(bool *is_true, carbon_object *it);
+bool carbon_object_is_null(bool *is_null, carbon_object *it);
 
-bool carbon_object_it_u8_value(u8 *value, carbon_object_it *it);
-bool carbon_object_it_u16_value(u16 *value, carbon_object_it *it);
-bool carbon_object_it_u32_value(u32 *value, carbon_object_it *it);
-bool carbon_object_it_u64_value(u64 *value, carbon_object_it *it);
-bool carbon_object_it_i8_value(i8 *value, carbon_object_it *it);
-bool carbon_object_it_i16_value(i16 *value, carbon_object_it *it);
-bool carbon_object_it_i32_value(i32 *value, carbon_object_it *it);
-bool carbon_object_it_i64_value(i64 *value, carbon_object_it *it);
-bool carbon_object_it_float_value(float *value, carbon_object_it *it);
-bool carbon_object_it_float_value_nullable(bool *is_null_in, float *value, carbon_object_it *it);
-bool carbon_object_it_signed_value(bool *is_null_in, i64 *value, carbon_object_it *it);
-bool carbon_object_it_unsigned_value(bool *is_null_in, u64 *value, carbon_object_it *it);
-const char *carbon_object_it_string_value(u64 *strlen, carbon_object_it *it);
-bool carbon_object_it_binary_value(carbon_binary *out, carbon_object_it *it);
-carbon_array *carbon_object_it_array_value(carbon_object_it *it_in);
-carbon_object_it *carbon_object_it_object_value(carbon_object_it *it_in);
-carbon_column *carbon_object_it_column_value(carbon_object_it *it_in);
+bool carbon_object_u8_value(u8 *value, carbon_object *it);
+bool carbon_object_u16_value(u16 *value, carbon_object *it);
+bool carbon_object_u32_value(u32 *value, carbon_object *it);
+bool carbon_object_u64_value(u64 *value, carbon_object *it);
+bool carbon_object_i8_value(i8 *value, carbon_object *it);
+bool carbon_object_i16_value(i16 *value, carbon_object *it);
+bool carbon_object_i32_value(i32 *value, carbon_object *it);
+bool carbon_object_i64_value(i64 *value, carbon_object *it);
+bool carbon_object_float_value(float *value, carbon_object *it);
+bool carbon_object_float_value_nullable(bool *is_null_in, float *value, carbon_object *it);
+bool carbon_object_signed_value(bool *is_null_in, i64 *value, carbon_object *it);
+bool carbon_object_unsigned_value(bool *is_null_in, u64 *value, carbon_object *it);
+const char *carbon_object_string_value(u64 *strlen, carbon_object *it);
+bool carbon_object_binary_value(carbon_binary *out, carbon_object *it);
+carbon_array *carbon_object_array_value(carbon_object *it_in);
+carbon_object *carbon_object_object_value(carbon_object *it_in);
+carbon_column *carbon_object_column_value(carbon_object *it_in);
 
 END_DECL
 

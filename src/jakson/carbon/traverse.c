@@ -103,7 +103,7 @@ void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_colu
         }
 }
 
-void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object_it *it)
+void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object *it)
 {
         if (LIKELY(traverse->visit_object_begin != NULL)) {
                 traverse->visit_object_begin(&traverse->extra, it);
@@ -123,7 +123,7 @@ void carbon_traverse_continue_column(struct carbon_traverse_extra *context, stru
         carbon_traverse_column(context->parent, it);
 }
 
-void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object_it *it)
+void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object *it)
 {
         carbon_traverse_object(context->parent, it);
 }

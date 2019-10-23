@@ -10,7 +10,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         carbon doc, doc2;
         carbon_insert_object_state s1;
         carbon_array it;
-        carbon_object_it *obj_it;
+        carbon_object *obj_it;
         carbon_field_type_e ft;
         carbon_revise rev_context;
 
@@ -40,36 +40,36 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_read_end(&it);
         }
@@ -80,19 +80,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 carbon_array_next(&it);
                 obj_it = carbon_array_object_value(&it);
-                carbon_object_it_update_type(obj_it, CARBON_MAP_SORTED_MULTIMAP);
+                carbon_object_update_type(obj_it, CARBON_MAP_SORTED_MULTIMAP);
 
                 carbon_array_next(&it);
                 obj_it = carbon_array_object_value(&it);
-                carbon_object_it_update_type(obj_it, CARBON_MAP_UNSORTED_MAP);
+                carbon_object_update_type(obj_it, CARBON_MAP_UNSORTED_MAP);
 
                 carbon_array_next(&it);
                 obj_it = carbon_array_object_value(&it);
-                carbon_object_it_update_type(obj_it, CARBON_MAP_SORTED_MAP);
+                carbon_object_update_type(obj_it, CARBON_MAP_SORTED_MAP);
 
                 carbon_array_next(&it);
                 obj_it = carbon_array_object_value(&it);
-                carbon_object_it_update_type(obj_it, CARBON_MAP_UNSORTED_MULTIMAP);
+                carbon_object_update_type(obj_it, CARBON_MAP_UNSORTED_MULTIMAP);
 
                 carbon_revise_iterator_close(&it);
                 carbon_revise_end(&rev_context);
@@ -105,29 +105,29 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = carbon_array_object_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_object_it_is_multimap(obj_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_object_it_is_sorted(obj_it)));
+                ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
+                ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
                 carbon_read_end(&it);
         }
@@ -152,7 +152,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                fn_result ofType(carbon_object_it *) find_result = carbon_find_result_object(&find);
+                fn_result ofType(carbon_object *) find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_object_type(&find, CARBON_MAP_SORTED_MAP);
                 carbon_revise_find_end(&find);
@@ -169,7 +169,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                fn_result ofType(carbon_object_it *) find_result = carbon_find_result_object(&find);
+                fn_result ofType(carbon_object *) find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_object_type(&find, CARBON_MAP_SORTED_MULTIMAP);
                 carbon_revise_find_end(&find);
@@ -186,7 +186,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                fn_result ofType(carbon_object_it *) find_result = carbon_find_result_object(&find);
+                fn_result ofType(carbon_object *) find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_object_type(&find, CARBON_MAP_UNSORTED_MULTIMAP);
                 carbon_revise_find_end(&find);
@@ -203,7 +203,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                fn_result ofType(carbon_object_it *) find_result = carbon_find_result_object(&find);
+                fn_result ofType(carbon_object *) find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_object_type(&find, CARBON_MAP_UNSORTED_MAP);
                 carbon_revise_find_end(&find);

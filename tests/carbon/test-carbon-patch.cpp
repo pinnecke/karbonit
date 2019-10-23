@@ -8,7 +8,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         struct err err;
         u64 hash_original, hash_patch_1, hash_patch_2;
         carbon_array it, *arr;
-        carbon_object_it *obj;
+        carbon_object *obj;
         carbon_field_type_e type;
 
         carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", CARBON_KEY_AUTOKEY, NULL, &err);
@@ -25,10 +25,10 @@ TEST(TestCarbonPatch, CreatePatch) {
                         EXPECT_TRUE(type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
                         obj = carbon_array_object_value(&it);
                         {
-                                carbon_object_it_next(obj);
-                                carbon_object_it_prop_type(&type, obj);
+                                carbon_object_next(obj);
+                                carbon_object_prop_type(&type, obj);
                                 EXPECT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
-                                arr = carbon_object_it_array_value(obj);
+                                arr = carbon_object_array_value(obj);
                                 {
                                         carbon_array_next(arr); /* { ...: [1,...] } */
                                         carbon_int_array_update_u8(arr, 42);

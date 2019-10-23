@@ -41,7 +41,7 @@ typedef struct carbon_path_evaluator {
                         } array;
 
                         struct {
-                                carbon_object_it it;
+                                carbon_object it;
                         } object;
 
                         struct {

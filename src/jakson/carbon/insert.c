@@ -167,7 +167,7 @@ bool carbon_insert_null(carbon_insert *inserter)
                                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
-                                        float value = FLOAT_NULL;
+                                        float value = CARBON_NULL_FLOAT;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
                                 case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:

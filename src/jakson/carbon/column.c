@@ -434,7 +434,7 @@ bool carbon_column_update_set_null(carbon_column *it, u32 pos)
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
-                        float null_value = FLOAT_NULL;
+                        float null_value = CARBON_NULL_FLOAT;
                         memfile_write(&it->memfile, &null_value, sizeof(float));
                 }
                         break;
@@ -661,7 +661,7 @@ bool carbon_column_update_set_true(carbon_column *it, u32 pos)
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
-                        float null_value = FLOAT_NULL;
+                        float null_value = CARBON_NULL_FLOAT;
                         memfile_write(&it->memfile, &null_value, sizeof(float));
                 }
                         break;

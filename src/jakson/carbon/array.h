@@ -29,6 +29,7 @@
 #include <jakson/std/vector.h>
 #include <jakson/carbon.h>
 #include <jakson/carbon/field.h>
+#include <jakson/carbon/item.h>
 
 BEGIN_DECL
 
@@ -64,6 +65,9 @@ typedef struct carbon_array {
         err err;
 
         carbon_list_derivable_e abstract_type;
+        u64 pos;
+
+        carbon_item item;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
@@ -104,7 +108,7 @@ bool internal_carbon_array_rewind(carbon_array *it);
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
-bool carbon_array_next(carbon_item* item, carbon_array *it);
+carbon_item *carbon_array_next(carbon_array *it);
 bool internal_carbon_array_next(carbon_array *it);
 bool carbon_array_has_next(carbon_array *it);
 bool carbon_array_is_unit(carbon_array *it);

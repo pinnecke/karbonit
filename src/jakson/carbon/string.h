@@ -28,6 +28,17 @@
 
 BEGIN_DECL
 
+typedef struct carbon_string_field
+{
+        const char *string;
+        u64 length;
+} carbon_string_field;
+
+static carbon_string_field CARBON_NULL_STRING = {
+        .string = NULL,
+        .length = 0
+};
+
 bool carbon_string_write(memfile *file, const char *string);
 bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len);
 bool carbon_string_nomarker_write(memfile *file, const char *string);

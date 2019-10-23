@@ -151,6 +151,7 @@ fn_result carbon_array_create(carbon_array *it, memfile *memfile, err *err,
         it->mod_size = 0;
         it->array_end_reached = false;
         it->field_offset = 0;
+        it->pos = (u64) -1;
 
         error_init(&it->err);
         vector_create(&it->history, NULL, sizeof(offset_t), 40);
@@ -198,6 +199,7 @@ bool carbon_array_clone(carbon_array *dst, carbon_array *src)
         vector_cpy(&dst->history, &src->history);
         carbon_int_field_access_clone(&dst->field_access, &src->field_access);
         dst->field_offset = src->field_offset;
+        dst->pos = src->pos;
         return true;
 }
 
@@ -242,6 +244,7 @@ bool internal_carbon_array_rewind(carbon_array *it)
         DEBUG_ERROR_IF_NULL(it);
         ERROR_IF(it->array_begin_off >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
         carbon_int_history_clear(&it->history);
+        it->pos = (u64) -1;
         return memfile_seek(&it->memfile, it->array_begin_off + sizeof(u8));
 }
 
@@ -275,13 +278,14 @@ bool carbon_array_is_unit(carbon_array *it)
         return false;
 }
 
-bool carbon_array_next(carbon_item* item, carbon_array *it)
+carbon_item *carbon_array_next(carbon_array *it)
 {
-        bool ret = internal_carbon_array_next(it);
-        if (ret) {
-                internal_carbon_item_create(item, it);
+        if (internal_carbon_array_next(it)) {
+                internal_carbon_item_create(&it->item, it);
+                return &it->item;
+        } else {
+                return NULL;
         }
-        return ret;
 }
 
 bool internal_carbon_array_next(carbon_array *it)
@@ -293,6 +297,7 @@ bool internal_carbon_array_next(carbon_array *it)
         offset_t last_off = memfile_tell(&it->memfile);
 
         if (carbon_int_array_next(&is_empty_slot, &it->array_end_reached, it)) {
+                it->pos++;
                 carbon_int_history_push(&it->history, last_off);
                 return true;
         } else {
@@ -316,6 +321,7 @@ bool carbon_array_prev(carbon_array *it)
         if (carbon_int_history_has(&it->history)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
                 memfile_seek(&it->memfile, prev_off);
+                it->pos--;
                 return carbon_int_array_refresh(NULL, NULL, it);
         } else {
                 return false;

@@ -1251,7 +1251,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
 
         ins = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_FLOAT, 10);
         carbon_insert_float(ins, 42.0f);
-        carbon_insert_float(ins, FLOAT_NULL);
+        carbon_insert_float(ins, CARBON_NULL_FLOAT);
         carbon_insert_float(ins, 23.4221f);
         carbon_insert_column_end(&column_state);
 

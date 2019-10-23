@@ -74,6 +74,7 @@
 #include <jakson/carbon/markers.h>
 #include <jakson/carbon/abstract.h>
 #include <jakson/fn_result.h>
+#include <jakson/carbon/binary.h>
 
 BEGIN_DECL
 
@@ -106,13 +107,6 @@ typedef struct carbon_revise {
         carbon *revised_doc;
         err err;
 } carbon_revise;
-
-typedef struct carbon_binary {
-        const char *mime_type;
-        u64 mime_type_strlen;
-        const void *blob;
-        u64 blob_len;
-} carbon_binary;
 
 typedef struct carbon_new {
         err err;

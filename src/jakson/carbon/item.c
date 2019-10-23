@@ -16,57 +16,9 @@
  */
 
 #include <jakson/carbon/item.h>
+#include <jakson/carbon/array.h>
 
 bool carbon_item_remove(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-i64 carbon_item_get_number_signed(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-u64 carbon_item_get_number_unsigned(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-float carbon_item_get_number_float(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-const char *carbon_item_get_string(u64 *str_len, const carbon_item *item)
-{
-        UNUSED(item);
-        UNUSED(str_len);
-        return 0;
-}
-
-const carbon_binary *carbon_item_get_binary(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-carbon_array *carbon_item_get_array(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-carbon_column *carbon_item_get_column(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-carbon_object *carbon_item_get_object(const carbon_item *item)
 {
         UNUSED(item);
         return 0;
@@ -139,6 +91,7 @@ carbon_object *carbon_item_set_object(const carbon_item *item)
 bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
 {
         item->parent = parent;
+        item->idx = parent->pos;
         carbon_field_type_e field_type = parent->field_access.it_field_type;
 
         if (carbon_field_type_is_signed(field_type)) {
@@ -167,10 +120,10 @@ bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
         } else if (carbon_field_type_is_null(field_type)) {
                 item->value_type = CARBON_ITEM_NULL;
         } else if (carbon_field_type_is_string(field_type)) {
-                item->value.string.base = internal_carbon_array_string_value(&item->value.string.len, parent);
+                item->value.string.string = internal_carbon_array_string_value(&item->value.string.length, parent);
                 item->value_type = CARBON_ITEM_STRING;
         } else {
-                item->value_type = CARBON_ITEM_UNKNOWN;
+                item->value_type = CARBON_ITEM_UNDEF;
                 return false;
         }
         return true;

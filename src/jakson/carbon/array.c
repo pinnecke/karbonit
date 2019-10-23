@@ -217,7 +217,7 @@ bool carbon_array_length(u64 *len, carbon_array *it)
 
         u64 num_elem = 0;
         internal_carbon_array_rewind(it);
-        while (internal_carbon_array_next(it)) {
+        while (carbon_array_next(it)) {
                 num_elem++;
         }
         *len = num_elem;
@@ -228,7 +228,7 @@ bool carbon_array_length(u64 *len, carbon_array *it)
 bool carbon_array_is_empty(carbon_array *it)
 {
         internal_carbon_array_rewind(it);
-        return internal_carbon_array_next(it);
+        return carbon_array_next(it);
 }
 
 fn_result carbon_array_drop(carbon_array *it)
@@ -260,16 +260,16 @@ static void auto_adjust_pos_after_mod(carbon_array *it)
 
 bool carbon_array_has_next(carbon_array *it)
 {
-        bool has_next = internal_carbon_array_next(it);
+        bool has_next = carbon_array_next(it);
         carbon_array_prev(it);
         return has_next;
 }
 
 bool carbon_array_is_unit(carbon_array *it)
 {
-        bool has_next = internal_carbon_array_next(it);
+        bool has_next = carbon_array_next(it);
         if (has_next) {
-                has_next = internal_carbon_array_next(it);
+                has_next = carbon_array_next(it);
                 carbon_array_prev(it);
                 carbon_array_prev(it);
                 return !has_next;
@@ -278,17 +278,7 @@ bool carbon_array_is_unit(carbon_array *it)
         return false;
 }
 
-carbon_item *carbon_array_next(carbon_array *it)
-{
-        if (internal_carbon_array_next(it)) {
-                internal_carbon_item_create(&it->item, it);
-                return &it->item;
-        } else {
-                return NULL;
-        }
-}
-
-bool internal_carbon_array_next(carbon_array *it)
+static bool internal_array_next(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         bool is_empty_slot = true;
@@ -312,6 +302,16 @@ bool internal_carbon_array_next(carbon_array *it)
                 JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
                 carbon_int_field_auto_close(&it->field_access);
                 return false;
+        }
+}
+
+carbon_item *carbon_array_next(carbon_array *it)
+{
+        if (internal_array_next(it)) {
+                internal_carbon_item_create(&it->item, it);
+                return &it->item;
+        } else {
+                return NULL;
         }
 }
 
@@ -357,7 +357,7 @@ bool carbon_int_array_offset(offset_t *off, carbon_array *it)
 bool carbon_array_fast_forward(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
-        while (internal_carbon_array_next(it)) {}
+        while (carbon_array_next(it)) {}
 
         JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
         memfile_skip(&it->memfile, sizeof(char));

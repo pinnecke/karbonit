@@ -109,7 +109,6 @@ bool internal_carbon_array_rewind(carbon_array *it);
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
 carbon_item *carbon_array_next(carbon_array *it);
-bool internal_carbon_array_next(carbon_array *it);
 bool carbon_array_has_next(carbon_array *it);
 bool carbon_array_is_unit(carbon_array *it);
 bool carbon_array_prev(carbon_array *it);

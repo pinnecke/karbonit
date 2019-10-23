@@ -399,7 +399,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
 
         carbon_dot_path_len(&path_length, path);
 
-        if (!internal_carbon_array_next(it)) {
+        if (!carbon_array_next(it)) {
                 /** empty document */
                 return CARBON_PATH_EMPTY_DOC;
         } else {
@@ -407,7 +407,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                         case DOT_NODE_ARRAY_IDX:
                                 carbon_dot_path_idx_at(&requested_array_idx, current_path_pos, path);
                                 while (current_array_idx < requested_array_idx &&
-                                        internal_carbon_array_next(it)) { current_array_idx++; }
+                                        carbon_array_next(it)) { current_array_idx++; }
                                 JAK_ASSERT(current_array_idx <= requested_array_idx);
                                 if (current_array_idx != requested_array_idx) {
                                         /** root array has too less elements to reach the requested index */

@@ -36,35 +36,35 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         {
                 carbon_read_begin(&it, &doc);
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
@@ -78,19 +78,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 carbon_revise_begin(&rev_context, &doc2, &doc);
                 carbon_revise_iterator_open(&it, &rev_context);
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 obj_it = internal_carbon_array_object_value(&it);
                 carbon_object_update_type(obj_it, CARBON_MAP_SORTED_MULTIMAP);
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 obj_it = internal_carbon_array_object_value(&it);
                 carbon_object_update_type(obj_it, CARBON_MAP_UNSORTED_MAP);
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 obj_it = internal_carbon_array_object_value(&it);
                 carbon_object_update_type(obj_it, CARBON_MAP_SORTED_MAP);
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 obj_it = internal_carbon_array_object_value(&it);
                 carbon_object_update_type(obj_it, CARBON_MAP_UNSORTED_MULTIMAP);
 
@@ -101,28 +101,28 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         {
                 carbon_read_begin(&it, &doc2);
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);
                 ASSERT_FALSE(FN_STATUS(carbon_object_is_multimap(obj_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_object_is_sorted(obj_it)));
 
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 obj_it = internal_carbon_array_object_value(&it);

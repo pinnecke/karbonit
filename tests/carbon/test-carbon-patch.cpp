@@ -19,7 +19,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         /* patching via patch iterators */
         {
                 carbon_patch_begin(&it, &doc);
-                internal_carbon_array_next(&it);
+                carbon_array_next(&it);
                 {
                         carbon_array_field_type(&type, &it);
                         EXPECT_TRUE(type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
@@ -30,10 +30,10 @@ TEST(TestCarbonPatch, CreatePatch) {
                                 EXPECT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
                                 arr = carbon_object_array_value(obj);
                                 {
-                                        internal_carbon_array_next(arr); /* { ...: [1,...] } */
+                                        carbon_array_next(arr); /* { ...: [1,...] } */
                                         carbon_int_array_update_u8(arr, 42);
-                                        internal_carbon_array_next(arr); /* { ...: [..., "y",...] } */
-                                        internal_carbon_array_next(arr); /* { ...: [..., ..., 3] } */
+                                        carbon_array_next(arr); /* { ...: [..., "y",...] } */
+                                        carbon_array_next(arr); /* { ...: [..., ..., 3] } */
                                         carbon_int_array_update_u8(arr, 23);
                                 }
                         }
@@ -49,7 +49,7 @@ TEST(TestCarbonPatch, CreatePatch) {
                 carbon_find find;
                 carbon_patch_find_begin(&find, "x", &doc);
                 carbon_array *sub_it = FN_GET_PTR(carbon_array, carbon_find_result_array(&find));
-                internal_carbon_array_next(sub_it); /* { ...: [42,...] } */
+                carbon_array_next(sub_it); /* { ...: [42,...] } */
                 carbon_int_array_update_u8(sub_it, 102);
                 carbon_patch_find_end(&find);
         }

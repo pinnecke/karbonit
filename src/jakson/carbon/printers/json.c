@@ -161,7 +161,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 
         char sep = '\0';
 
-        while (internal_carbon_array_next(it)) {
+        while (carbon_array_next(it)) {
 
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';

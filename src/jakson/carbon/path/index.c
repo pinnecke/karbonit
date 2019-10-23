@@ -256,7 +256,7 @@ static void record_ref_create(memfile *memfile, carbon *doc)
 static void array_traverse(struct path_index_node *parent, carbon_array *it)
 {
         u64 sub_elem_pos = 0;
-        while (internal_carbon_array_next(it)) {
+        while (carbon_array_next(it)) {
                 offset_t sub_elem_off = carbon_array_tell(it);
                 struct path_index_node *elem_node = path_index_node_add_array_elem(parent, sub_elem_pos, sub_elem_off);
                 array_build_index(elem_node, it);
@@ -1050,7 +1050,7 @@ static void index_build(memfile *file, carbon *doc)
         carbon_read_begin(&it, doc);
 
         /** build index as tree structure */
-        while (internal_carbon_array_next(&it)) {
+        while (carbon_array_next(&it)) {
                 offset_t entry_offset = carbon_array_tell(&it);
                 struct path_index_node *node = path_index_node_add_array_elem(&root_array, array_pos, entry_offset);
                 array_build_index(node, &it);

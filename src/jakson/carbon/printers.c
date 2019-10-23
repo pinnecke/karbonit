@@ -511,7 +511,7 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
         bool has_entries = false;
         bool is_single_entry_array = carbon_array_is_unit(it);
 
-        while (internal_carbon_array_next(it)) {
+        while (carbon_array_next(it)) {
                 bool is_null_value;
 
                 if (LIKELY(!first_entry)) {

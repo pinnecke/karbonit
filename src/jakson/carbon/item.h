@@ -21,7 +21,7 @@ struct carbon_item
 };
 
 #define CARBON_ITEM_UPDATE_FUNCTION(type_name)                                                                    \
-bool carbon_item_update_in_place_##type_name(struct carbon_array *it, type_name value);
+bool carbon_item_update_in_place_##type_name(carbon_array *it, type_name value);
 
 CARBON_ITEM_UPDATE_FUNCTION(u8)
 CARBON_ITEM_UPDATE_FUNCTION(u16)
@@ -54,7 +54,7 @@ bool carbon_item_signed_value(bool *is_null_in, i64 *value, struct carbon_item *
 bool carbon_item_unsigned_value(bool *is_null_in, u64 *value, struct carbon_item *item);
 const char *carbon_item_string_value(u64 *strlen, struct carbon_item *item);
 bool carbon_item_binary_value(carbon_binary *out, struct carbon_item *item);
-struct carbon_array *carbon_item_array_value(struct carbon_item *item);
+carbon_array *carbon_item_array_value(struct carbon_item *item);
 carbon_object_it *carbon_item_object_value(struct carbon_item *item);
 carbon_column_it *carbon_item_column_value(struct carbon_item *item);
 

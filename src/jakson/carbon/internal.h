@@ -38,7 +38,7 @@ BEGIN_DECL
 typedef struct carbon_insert {
         carbon_container_e context_type;
         union {
-                struct carbon_array *array;
+                carbon_array *array;
                 carbon_column_it *column;
                 carbon_object_it *object;
         } context;
@@ -50,7 +50,7 @@ typedef struct carbon_insert {
 
 typedef struct carbon_insert_array_state {
         carbon_insert *parent_inserter;
-        struct carbon_array *nested_array;
+        carbon_array *nested_array;
         carbon_insert nested_inserter;
         offset_t array_begin, array_end;
 } carbon_insert_array_state;
@@ -84,10 +84,10 @@ size_t carbon_int_get_type_size_encoded(carbon_field_type_e type);
  */
 size_t carbon_int_get_type_value_size(carbon_field_type_e type);
 
-bool carbon_int_array_it_next(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
-bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
-bool carbon_int_array_it_field_type_read(struct carbon_array *it);
-bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, struct carbon_array *it);
+bool carbon_int_array_it_next(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_it_field_type_read(carbon_array *it);
+bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
 
 bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
 bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
@@ -132,7 +132,7 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_ac
 bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_access *field, err *err);
 const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field, err *err);
 bool carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err);
-struct carbon_array *carbon_int_field_access_array_value(field_access *field, err *err);
+carbon_array *carbon_int_field_access_array_value(field_access *field, err *err);
 carbon_object_it *carbon_int_field_access_object_value(field_access *field, err *err);
 carbon_column_it *carbon_int_field_access_column_value(field_access *field, err *err);
 

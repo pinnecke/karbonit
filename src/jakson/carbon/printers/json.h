@@ -146,7 +146,7 @@ static struct carbon_json_from_opts
 void carbon_json_from_carbon(struct string_buffer *str, struct carbon *record,
                              struct carbon_json_from_opts *config);
 
-void carbon_json_from_array(struct string_buffer *str, struct carbon_array *it,
+void carbon_json_from_array(struct string_buffer *str, carbon_array *it,
                             struct carbon_json_from_opts *config);
 
 void carbon_json_from_column(struct string_buffer *str, struct carbon_column_it *it,

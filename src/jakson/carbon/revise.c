@@ -25,7 +25,7 @@
 #include <jakson/carbon/commit.h>
 #include <jakson/carbon/object_it.h>
 
-static bool internal_pack_array(struct carbon_array *it);
+static bool internal_pack_array(carbon_array *it);
 
 static bool internal_pack_object(carbon_object_it *it);
 
@@ -160,7 +160,7 @@ bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value)
 fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_derivable_e derivation)
 {
         FN_FAIL_IF_NULL(context)
-        struct carbon_array it;
+        carbon_array it;
         carbon_revise_iterator_open(&it, context);
 
         memfile_seek_from_here(&it.memfile, -sizeof(u8));
@@ -172,7 +172,7 @@ fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_deriva
         return FN_OK();
 }
 
-fn_result carbon_revise_iterator_open(struct carbon_array *it, carbon_revise *context)
+fn_result carbon_revise_iterator_open(carbon_array *it, carbon_revise *context)
 {
         FN_FAIL_IF_NULL(it, context);
         offset_t payload_start = carbon_int_payload_after_header(context->revised_doc);
@@ -182,7 +182,7 @@ fn_result carbon_revise_iterator_open(struct carbon_array *it, carbon_revise *co
         return carbon_array_it_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
 }
 
-fn_result carbon_revise_iterator_close(struct carbon_array *it)
+fn_result carbon_revise_iterator_close(carbon_array *it)
 {
         FN_FAIL_IF_NULL(it);
         return carbon_array_it_drop(it);
@@ -230,7 +230,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
                 } else {
                         switch (eval.result.container_type) {
                                 case CARBON_ARRAY: {
-                                        struct carbon_array *it = &eval.result.containers.array.it;
+                                        carbon_array *it = &eval.result.containers.array.it;
                                         result = carbon_array_it_remove(it);
                                 }
                                         break;
@@ -255,7 +255,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
 bool carbon_revise_pack(carbon_revise *context)
 {
         DEBUG_ERROR_IF_NULL(context);
-        struct carbon_array it;
+        carbon_array it;
         carbon_revise_iterator_open(&it, context);
         internal_pack_array(&it);
         carbon_revise_iterator_close(&it);
@@ -264,7 +264,7 @@ bool carbon_revise_pack(carbon_revise *context)
 
 bool carbon_revise_shrink(carbon_revise *context)
 {
-        struct carbon_array it;
+        carbon_array it;
         carbon_revise_iterator_open(&it, context);
         carbon_array_it_fast_forward(&it);
         if (memfile_remain_size(&it.memfile) > 0) {
@@ -306,13 +306,13 @@ bool carbon_revise_abort(carbon_revise *context)
         return true;
 }
 
-static bool internal_pack_array(struct carbon_array *it)
+static bool internal_pack_array(carbon_array *it)
 {
         JAK_ASSERT(it);
 
         /** shrink this array */
         {
-                struct carbon_array this_array_it;
+                carbon_array this_array_it;
                 bool is_empty_slot, is_array_end;
 
                 carbon_array_it_copy(&this_array_it, it);
@@ -366,7 +366,7 @@ static bool internal_pack_array(struct carbon_array *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                        struct carbon_array nested_array_it;
+                                        carbon_array nested_array_it;
                                         carbon_array_it_create(&nested_array_it, &it->memfile, &it->err,
                                                                it->field_access.nested_array_it->array_begin_off);
                                         internal_pack_array(&nested_array_it);
@@ -509,7 +509,7 @@ static bool internal_pack_object(carbon_object_it *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                        struct carbon_array nested_array_it;
+                                        carbon_array nested_array_it;
                                         carbon_array_it_create(&nested_array_it, &it->memfile, &it->err,
                                                                it->field.value.data.nested_array_it->array_begin_off);
                                         internal_pack_array(&nested_array_it);

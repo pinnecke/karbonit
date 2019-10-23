@@ -24,10 +24,10 @@
 BEGIN_DECL
 
 /* Opens a read-write enabled iterator for patching a record revision without creating a new one. */
-fn_result carbon_patch_begin(struct carbon_array *it, carbon *doc);
+fn_result carbon_patch_begin(carbon_array *it, carbon *doc);
 
 /* Closes a read-write ennabled iterator , which was previously opened via 'carbon_patch_end' */
-fn_result carbon_patch_end(struct carbon_array *it);
+fn_result carbon_patch_end(carbon_array *it);
 
 bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, carbon *doc);
 

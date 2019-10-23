@@ -45,7 +45,7 @@
 })
 
 #define DEFINE_ARRAY_UPDATE_FUNCTION(type_name, type_match, in_place_update_fn, insert_fn)                             \
-static bool array_update_##type_name(struct carbon_array *it, type_name value)                                       \
+static bool array_update_##type_name(carbon_array *it, type_name value)                                       \
 {                                                                                                                      \
         return try_array_update(type_match, in_place_update_fn, insert_fn);                                            \
 }
@@ -219,7 +219,7 @@ static bool column_update_float(carbon_column_it *it, u32 pos, float value)
 }
 
 
-static inline struct carbon_array *array_iterator(carbon_update *updater)
+static inline carbon_array *array_iterator(carbon_update *updater)
 {
         return &updater->path_evaluater.result.containers.array.it;
 }

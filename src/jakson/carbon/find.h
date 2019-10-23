@@ -43,7 +43,7 @@ typedef struct carbon_find {
         bool value_is_nulled;
 
         union {
-                struct carbon_array *array_it;
+                carbon_array *array_it;
                 carbon_column_it *column_it;
                 carbon_object_it *object_it;
                 bool boolean;
@@ -88,7 +88,7 @@ fn_result ofType(bool) carbon_find_multimap(carbon_find *find);
 fn_result ofType(bool) carbon_find_multiset(carbon_find *find);
 fn_result ofType(bool) carbon_find_sorted(carbon_find *find);
 
-fn_result ofType(struct carbon_array *) carbon_find_result_array(carbon_find *find);
+fn_result ofType(carbon_array *) carbon_find_result_array(carbon_find *find);
 fn_result ofType(carbon_object_it *) carbon_find_result_object(carbon_find *find);
 fn_result ofType(carbon_column_it *) carbon_find_result_column(carbon_find *find);
 fn_result ofType(bool) carbon_find_result_boolean(carbon_find *find);

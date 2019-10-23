@@ -9,7 +9,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         carbon_insert *ins;
         carbon doc, doc2;
         carbon_insert_column_state s1;
-        struct carbon_array it;
+        carbon_array it;
         carbon_column_it *col_it;
         carbon_field_type_e ft;
         carbon_revise rev_context;

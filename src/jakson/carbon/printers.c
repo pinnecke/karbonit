@@ -427,7 +427,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                struct carbon_array *array = carbon_object_it_array_value(it);
+                                carbon_array *array = carbon_object_it_array_value(it);
                                 carbon_printer_array_prop_name(printer, builder, key_name, key_len);
                                 carbon_printer_print_array(array, printer, builder, false);
                                 carbon_array_it_drop(array);
@@ -500,7 +500,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
         return true;
 }
 
-bool carbon_printer_print_array(struct carbon_array *it, carbon_printer *printer, string_buffer *builder,
+bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, string_buffer *builder,
                                 bool is_record_container)
 {
         JAK_ASSERT(it);
@@ -581,7 +581,7 @@ bool carbon_printer_print_array(struct carbon_array *it, carbon_printer *printer
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                struct carbon_array *array = carbon_array_it_array_value(it);
+                                carbon_array *array = carbon_array_it_array_value(it);
                                 carbon_printer_print_array(array, printer, builder, false);
                                 carbon_array_it_drop(array);
                         }

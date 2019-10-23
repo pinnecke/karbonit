@@ -499,7 +499,7 @@ static bool rewrite_column_to_array(carbon_column_it *it)
 {
         carbon_abstract_type_class_e type_class;
         carbon_list_derivable_e list_type;
-        struct carbon_array array_it;
+        carbon_array array_it;
         carbon_insert array_ins;
 
         memfile_save_position(&it->memfile);

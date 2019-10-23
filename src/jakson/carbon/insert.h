@@ -33,7 +33,7 @@
 
 BEGIN_DECL
 
-fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, struct carbon_array *context);
+fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context);
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_it *context);
 bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object_it *context);
 

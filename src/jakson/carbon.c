@@ -54,7 +54,7 @@ carbon_insert * carbon_create_begin(carbon_new *context, carbon *doc,
 {
         if (context && doc) {
                 error_init(&context->err);
-                context->content_it = MALLOC(sizeof(struct carbon_array));
+                context->content_it = MALLOC(sizeof(carbon_array));
                 context->inserter = MALLOC(sizeof(carbon_insert));
                 context->mode = options;
 
@@ -322,7 +322,7 @@ fn_result ofType(bool) carbon_is_multiset(carbon *doc)
 {
         FN_FAIL_IF_NULL(doc)
 
-        struct carbon_array it;
+        carbon_array it;
         carbon_read_begin(&it, doc);
         fn_result ofType(bool) ret = carbon_array_it_is_multiset(&it);
         carbon_read_end(&it);
@@ -334,7 +334,7 @@ fn_result ofType(bool) carbon_is_sorted(carbon *doc)
 {
         FN_FAIL_IF_NULL(doc)
 
-        struct carbon_array it;
+        carbon_array it;
         carbon_read_begin(&it, doc);
         fn_result ofType(bool) ret = carbon_array_it_is_sorted(&it);
         carbon_read_end(&it);
@@ -383,7 +383,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
         carbon_printer_header_end(&p, &b);
         carbon_printer_payload_begin(&p, &b);
 
-        struct carbon_array it;
+        carbon_array it;
         carbon_read_begin(&it, doc);
 
         carbon_printer_print_array(&it, &p, &b, true);
@@ -434,14 +434,14 @@ char *carbon_to_json_compact_dup(carbon *doc)
         return result;
 }
 
-fn_result carbon_read_begin(struct carbon_array *it, carbon *doc)
+fn_result carbon_read_begin(carbon_array *it, carbon *doc)
 {
         fn_result ret = carbon_patch_begin(it, doc);
         carbon_array_it_set_mode(it, READ_ONLY);
         return ret;
 }
 
-fn_result carbon_read_end(struct carbon_array *it)
+fn_result carbon_read_end(carbon_array *it)
 {
         return carbon_patch_end(it);
 }

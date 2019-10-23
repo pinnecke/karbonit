@@ -49,7 +49,7 @@ static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos)
 
 static void write_binary_blob(carbon_insert *inserter, const void *value, size_t nbytes);
 
-fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, struct carbon_array *context)
+fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context)
 {
         FN_FAIL_IF_NULL(inserter, context)
         inserter->context_type = CARBON_ARRAY;
@@ -543,7 +543,7 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
 
         *state_out = (carbon_insert_array_state) {
                 .parent_inserter = inserter_in,
-                .nested_array = MALLOC(sizeof(struct carbon_array)),
+                .nested_array = MALLOC(sizeof(carbon_array)),
                 .array_begin = memfile_tell(&inserter_in->memfile),
                 .array_end = 0
         };
@@ -567,7 +567,7 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 {
         DEBUG_ERROR_IF_NULL(state_in);
 
-        struct carbon_array scan;
+        carbon_array scan;
         carbon_array_it_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
                                memfile_tell(&state_in->parent_inserter->memfile) - 1);
 

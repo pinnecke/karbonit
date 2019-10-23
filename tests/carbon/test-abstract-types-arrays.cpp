@@ -118,7 +118,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         carbon_insert *ins;
         carbon doc, doc2;
         carbon_insert_array_state s1;
-        struct carbon_array it, *sub_it;
+        carbon_array it, *sub_it;
         carbon_field_type_e ft;
         carbon_revise rev_context;
 
@@ -259,7 +259,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(struct carbon_array *) find_result = carbon_find_result_array(&find);
+                fn_result ofType(carbon_array *) find_result = carbon_find_result_array(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_array_type(&find, CARBON_LIST_SORTED_SET);
                 carbon_revise_find_end(&find);
@@ -276,7 +276,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(struct carbon_array *) find_result = carbon_find_result_array(&find);
+                fn_result ofType(carbon_array *) find_result = carbon_find_result_array(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_array_type(&find, CARBON_LIST_SORTED_MULTISET);
                 carbon_revise_find_end(&find);
@@ -293,7 +293,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(struct carbon_array *) find_result = carbon_find_result_array(&find);
+                fn_result ofType(carbon_array *) find_result = carbon_find_result_array(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_array_type(&find, CARBON_LIST_UNSORTED_MULTISET);
                 carbon_revise_find_end(&find);
@@ -310,7 +310,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(struct carbon_array *) find_result = carbon_find_result_array(&find);
+                fn_result ofType(carbon_array *) find_result = carbon_find_result_array(&find);
                 ASSERT_TRUE(FN_STATUS(find_result));
                 carbon_find_update_array_type(&find, CARBON_LIST_UNSORTED_SET);
                 carbon_revise_find_end(&find);

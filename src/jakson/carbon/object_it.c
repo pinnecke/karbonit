@@ -17,7 +17,7 @@
 
 #include <jakson/carbon.h>
 #include <jakson/carbon/object_it.h>
-#include <jakson/carbon/column_it.h>
+#include <jakson/carbon/column.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/prop.h>

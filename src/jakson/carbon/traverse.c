@@ -18,7 +18,7 @@
 #include <jakson/carbon/traverse.h>
 #include <jakson/carbon/revise.h>
 #include <jakson/carbon/array.h>
-#include <jakson/carbon/column_it.h>
+#include <jakson/carbon/column.h>
 #include <jakson/carbon/object_it.h>
 
 void carbon_traverse_create(struct carbon_traverse *traverse, carbon_traverse_setup_t begin, carbon_traverse_clean_t end,

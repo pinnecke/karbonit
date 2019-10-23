@@ -16,8 +16,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CARBON_ARRAY_IT_H
-#define CARBON_ARRAY_IT_H
+#ifndef CARBON_ARRAY_H
+#define CARBON_ARRAY_H
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
@@ -44,15 +44,15 @@ typedef struct field_access {
         const char *it_mime_type;
         u64 it_mime_type_strlen;
 
-        bool nested_array_it_is_created;
-        bool nested_array_it_accessed;
+        bool nested_array_is_created;
+        bool nested_array_accessed;
 
         bool nested_object_it_is_created;
         bool nested_object_it_accessed;
 
         bool nested_column_it_is_created;
 
-        carbon_array *nested_array_it;
+        carbon_array *nested_array;
         carbon_column_it *nested_column_it;
         carbon_object_it *nested_object_it;
 } field_access;
@@ -82,49 +82,49 @@ typedef struct carbon_array {
  * that starts with the first (potentially empty) array entry. If there is some data before the array contents
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
-fn_result carbon_array_it_create(carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
-bool carbon_array_it_copy(carbon_array *dst, carbon_array *src);
-bool carbon_array_it_clone(carbon_array *dst, carbon_array *src);
-bool carbon_array_it_set_mode(carbon_array *it, access_mode_e mode);
-bool carbon_array_it_length(u64 *len, carbon_array *it);
-bool carbon_array_it_is_empty(carbon_array *it);
+fn_result carbon_array_create(carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
+bool carbon_array_copy(carbon_array *dst, carbon_array *src);
+bool carbon_array_clone(carbon_array *dst, carbon_array *src);
+bool carbon_array_set_mode(carbon_array *it, access_mode_e mode);
+bool carbon_array_length(u64 *len, carbon_array *it);
+bool carbon_array_is_empty(carbon_array *it);
 
 /**
  * Drops the iterator.
  */
-fn_result carbon_array_it_drop(carbon_array *it);
+fn_result carbon_array_drop(carbon_array *it);
 
 /**
  * Positions the iterator at the beginning of this array.
  */
-bool carbon_array_it_rewind(carbon_array *it);
+bool carbon_array_rewind(carbon_array *it);
 
 /**
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
-bool carbon_array_it_next(carbon_array *it);
-bool carbon_array_it_has_next(carbon_array *it);
-bool carbon_array_it_is_unit(carbon_array *it);
-bool carbon_array_it_prev(carbon_array *it);
+bool carbon_array_next(carbon_array *it);
+bool carbon_array_has_next(carbon_array *it);
+bool carbon_array_is_unit(carbon_array *it);
+bool carbon_array_prev(carbon_array *it);
 
 /**
  * Inserts a new element at the current position of the iterator.
  */
-fn_result carbon_array_it_insert_begin(carbon_insert *inserter, carbon_array *it);
-fn_result carbon_array_it_insert_end(carbon_insert *inserter);
-bool carbon_array_it_remove(carbon_array *it);
+fn_result carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it);
+fn_result carbon_array_insert_end(carbon_insert *inserter);
+bool carbon_array_remove(carbon_array *it);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_multiset(carbon_array *it);
+fn_result ofType(bool) carbon_array_is_multiset(carbon_array *it);
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
  * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_sorted(carbon_array *it);
+fn_result ofType(bool) carbon_array_is_sorted(carbon_array *it);
 
 /** Updates this arrays abstract type to the given abstract type */
-fn_result carbon_array_it_update_type(carbon_array *it, carbon_list_derivable_e derivation);
+fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage
@@ -147,31 +147,31 @@ bool carbon_int_array_update_true(carbon_array *it);
 bool carbon_int_array_update_false(carbon_array *it);
 bool carbon_int_array_update_null(carbon_array *it);
 
-offset_t carbon_array_it_memfilepos(carbon_array *it);
-offset_t carbon_array_it_tell(carbon_array *it);
-bool carbon_int_array_it_offset(offset_t *off, carbon_array *it);
-bool carbon_array_it_fast_forward(carbon_array *it);
+offset_t carbon_array_memfilepos(carbon_array *it);
+offset_t carbon_array_tell(carbon_array *it);
+bool carbon_int_array_offset(offset_t *off, carbon_array *it);
+bool carbon_array_fast_forward(carbon_array *it);
 
-bool carbon_array_it_field_type(carbon_field_type_e *type, carbon_array *it);
-bool carbon_array_it_bool_value(bool *value, carbon_array *it);
-bool carbon_array_it_is_null(bool *is_null, carbon_array *it);
-bool carbon_array_it_u8_value(u8 *value, carbon_array *it);
-bool carbon_array_it_u16_value(u16 *value, carbon_array *it);
-bool carbon_array_it_u32_value(u32 *value, carbon_array *it);
-bool carbon_array_it_u64_value(u64 *value, carbon_array *it);
-bool carbon_array_it_i8_value(i8 *value, carbon_array *it);
-bool carbon_array_it_i16_value(i16 *value, carbon_array *it);
-bool carbon_array_it_i32_value(i32 *value, carbon_array *it);
-bool carbon_array_it_i64_value(i64 *value, carbon_array *it);
-bool carbon_array_it_float_value(float *value, carbon_array *it);
-bool carbon_array_it_float_value_nullable(bool *is_null_in, float *value, carbon_array *it);
-bool carbon_array_it_signed_value(bool *is_null_in, i64 *value, carbon_array *it);
-bool carbon_array_it_unsigned_value(bool *is_null_in, u64 *value, carbon_array *it);
-const char *carbon_array_it_string_value(u64 *strlen, carbon_array *it);
-bool carbon_array_it_binary_value(carbon_binary *out, carbon_array *it);
-carbon_array *carbon_array_it_array_value(carbon_array *it_in);
-carbon_object_it *carbon_array_it_object_value(carbon_array *it_in);
-carbon_column_it *carbon_array_it_column_value(carbon_array *it_in);
+bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it);
+bool carbon_array_bool_value(bool *value, carbon_array *it);
+bool carbon_array_is_null(bool *is_null, carbon_array *it);
+bool carbon_array_u8_value(u8 *value, carbon_array *it);
+bool carbon_array_u16_value(u16 *value, carbon_array *it);
+bool carbon_array_u32_value(u32 *value, carbon_array *it);
+bool carbon_array_u64_value(u64 *value, carbon_array *it);
+bool carbon_array_i8_value(i8 *value, carbon_array *it);
+bool carbon_array_i16_value(i16 *value, carbon_array *it);
+bool carbon_array_i32_value(i32 *value, carbon_array *it);
+bool carbon_array_i64_value(i64 *value, carbon_array *it);
+bool carbon_array_float_value(float *value, carbon_array *it);
+bool carbon_array_float_value_nullable(bool *is_null_in, float *value, carbon_array *it);
+bool carbon_array_signed_value(bool *is_null_in, i64 *value, carbon_array *it);
+bool carbon_array_unsigned_value(bool *is_null_in, u64 *value, carbon_array *it);
+const char *carbon_array_string_value(u64 *strlen, carbon_array *it);
+bool carbon_array_binary_value(carbon_binary *out, carbon_array *it);
+carbon_array *carbon_array_array_value(carbon_array *it_in);
+carbon_object_it *carbon_array_object_value(carbon_array *it_in);
+carbon_column_it *carbon_array_column_value(carbon_array *it_in);
 
 END_DECL
 

@@ -25,7 +25,7 @@
 #define try_array_update(type_match, in_place_update_fn, insert_fn)                                                    \
 ({                                                                                                                     \
         carbon_field_type_e type_is = 0;                                                                            \
-        carbon_array_it_field_type(&type_is, it);                                                                      \
+        carbon_array_field_type(&type_is, it);                                                                      \
         bool status = false;                                                                                           \
         switch (type_is) {                                                                                             \
                 case type_match:                                                                                       \
@@ -33,11 +33,11 @@
                 break;                                                                                                 \
                 default: {                                                                                             \
                         carbon_insert inserter;                                                                 \
-                        carbon_array_it_remove(it);                                                                    \
-                        carbon_array_it_next(it);                                                                      \
-                        carbon_array_it_insert_begin(&inserter, it);                                                   \
+                        carbon_array_remove(it);                                                                    \
+                        carbon_array_next(it);                                                                      \
+                        carbon_array_insert_begin(&inserter, it);                                                   \
                         status = insert_fn(&inserter, value);                                                          \
-                        carbon_array_it_insert_end(&inserter);                                                         \
+                        carbon_array_insert_end(&inserter);                                                         \
                 break;                                                                                                 \
                 }                                                                                                      \
         }                                                                                                              \
@@ -101,11 +101,11 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, carbon_int_array_
 })
 
 #define try_update_value(context, path, value, array_update_fn, column_update_fn)                                      \
-        try_update_generic(context, path, (array_update_fn(array_iterator(&updater), value)),                          \
+        try_update_generic(context, path, (array_update_fn(arrayerator(&updater), value)),                          \
                            (column_update_fn(it, elem_pos, value)) )
 
 #define try_update(context, path, array_update_fn, column_update_fn)                                                   \
-        try_update_generic(context, path, (array_update_fn(array_iterator(&updater))), (column_update_fn(it, elem_pos)))
+        try_update_generic(context, path, (array_update_fn(arrayerator(&updater))), (column_update_fn(it, elem_pos)))
 
 
 static bool
@@ -219,7 +219,7 @@ static bool column_update_float(carbon_column_it *it, u32 pos, float value)
 }
 
 
-static inline carbon_array *array_iterator(carbon_update *updater)
+static inline carbon_array *arrayerator(carbon_update *updater)
 {
         return &updater->path_evaluater.result.containers.array.it;
 }

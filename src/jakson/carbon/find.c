@@ -58,7 +58,7 @@ fn_result carbon_find_end(carbon_find *find)
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                                carbon_array_it_drop(find->value.array_it);
+                                carbon_array_drop(find->value.array);
                                 break;
                         case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -354,7 +354,7 @@ fn_result ofType(bool) carbon_find_array_is_multiset(carbon_find *find)
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 carbon_array *it = FN_PTR(carbon_array, carbon_find_result_array(find));
-                return carbon_array_it_is_multiset(it);
+                return carbon_array_is_multiset(it);
         } else {
                 return FN_FAIL(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
@@ -367,7 +367,7 @@ fn_result ofType(bool) carbon_find_array_is_sorted(carbon_find *find)
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 carbon_array *it = FN_PTR(carbon_array, carbon_find_result_array(find));
-                return carbon_array_it_is_sorted(it);
+                return carbon_array_is_sorted(it);
         } else {
                 return FN_FAIL(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
@@ -533,7 +533,7 @@ fn_result ofType(carbon_array *) carbon_find_result_array(carbon_find *find)
                 return FN_FAIL(ERR_TYPEMISMATCH, "container must be array or sub type");
         }
 
-        return FN_OK_PTR(find->value.array_it);
+        return FN_OK_PTR(find->value.array);
 }
 
 fn_result ofType(carbon_object_it *) carbon_find_result_object(carbon_find *find)
@@ -655,8 +655,8 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array_it = carbon_array_it_array_value(it);
-                        find->value.array_it->memfile.mode = find->doc->memfile.mode;
+                        find->value.array = carbon_array_array_value(it);
+                        find->value.array->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -698,37 +698,37 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column_it = carbon_array_it_column_value(it);
+                        find->value.column_it = carbon_array_column_value(it);
                         find->value.column_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
-                        find->value.object_it = carbon_array_it_object_value(it);
+                        find->value.object_it = carbon_array_object_value(it);
                         find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_STRING:
-                        find->value.string.base = carbon_array_it_string_value(&find->value.string.len, it);
+                        find->value.string.base = carbon_array_string_value(&find->value.string.len, it);
                         break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_U32:
                 case CARBON_FIELD_NUMBER_U64:
-                        carbon_array_it_unsigned_value(&find->value_is_nulled, &find->value.unsigned_number, it);
+                        carbon_array_unsigned_value(&find->value_is_nulled, &find->value.unsigned_number, it);
                         break;
                 case CARBON_FIELD_NUMBER_I8:
                 case CARBON_FIELD_NUMBER_I16:
                 case CARBON_FIELD_NUMBER_I32:
                 case CARBON_FIELD_NUMBER_I64:
-                        carbon_array_it_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
+                        carbon_array_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
-                        carbon_array_it_float_value_nullable(&find->value_is_nulled, &find->value.float_number, it);
+                        carbon_array_float_value_nullable(&find->value_is_nulled, &find->value.float_number, it);
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
-                        carbon_array_it_binary_value(&find->value.binary, it);
+                        carbon_array_binary_value(&find->value.binary, it);
                         break;
                 default: ERROR(&find->err, ERR_INTERNALERR);
                         break;
@@ -748,8 +748,8 @@ static void result_from_object(carbon_find *find, carbon_object_it *it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array_it = carbon_object_it_array_value(it);
-                        find->value.array_it->memfile.mode = find->doc->memfile.mode;
+                        find->value.array = carbon_object_it_array_value(it);
+                        find->value.array->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:

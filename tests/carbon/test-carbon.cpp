@@ -229,10 +229,10 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_key_generate(NULL, &revise);
         carbon_revise_iterator_open(&it, &revise);
-        bool has_next = carbon_array_it_next(&it);
+        bool has_next = carbon_array_next(&it);
         EXPECT_EQ(has_next, false);
         carbon_revise_end(&revise);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
 
         // carbon_print(stdout, &rev_doc);
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -252,11 +252,11 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
         carbon_revise_key_generate(NULL, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         carbon_insert_null(&inserter);
         carbon_insert_drop(&inserter);
         carbon_revise_end(&revise);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
 
         // carbon_print(stdout, &rev_doc);
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -275,7 +275,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 10; i++) {
                 // fprintf(stdout, "before:\n");
                 //carbon_hexdump_print(stdout, &rev_doc);
@@ -293,7 +293,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
                 // fprintf(stdout, "\n\n");
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -313,7 +313,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 3; i++) {
                 if (i % 3 == 0) {
                         carbon_insert_null(&inserter);
@@ -324,17 +324,17 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
                 }
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         carbon_revise_begin(&revise, &rev_doc2, &rev_doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 2; i++) {
                 carbon_insert_true(&inserter);
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc2);
@@ -354,7 +354,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 22; i++) {
                 if (i % 3 == 0) {
                         carbon_insert_null(&inserter);
@@ -367,12 +367,12 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
                // //carbon_hexdump_print(stdout, &rev_doc);
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         carbon_revise_begin(&revise, &rev_doc2, &rev_doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 2; i++) {
                 // fprintf(stdout, "before:\n");
                 //carbon_hexdump_print(stdout, &rev_doc2);
@@ -381,7 +381,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
                 //carbon_hexdump_print(stdout, &rev_doc2);
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
         // carbon_print(stdout, &rev_doc2);
         carbon_drop(&doc);
@@ -399,7 +399,7 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 500; i++) {
                 if (i % 6 == 0) {
                         carbon_insert_null(&inserter);
@@ -421,7 +421,7 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
                 ////carbon_hexdump_print(stdout, &rev_doc);
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -440,7 +440,7 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         for (i32 i = 0; i < 10; i++) {
                 u64 strlen = rand() % (100 + 1 - 4) + 4;
                 char buffer[strlen];
@@ -455,7 +455,7 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
                 ////carbon_hexdump_print(stdout, &rev_doc);
         }
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -474,13 +474,13 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         const char *data = "{ \"Message\": \"Hello World\" }";
         bool status = carbon_insert_binary(&inserter, data, strlen(data), "json", NULL);
         ASSERT_TRUE(status);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -499,13 +499,13 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         const char *data = "{ \"Message\": \"Hello World\" }";
         bool status = carbon_insert_binary(&inserter, data, strlen(data), NULL, "my data");
         ASSERT_TRUE(status);
         ////carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -524,7 +524,7 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         const char *data1 = "{ \"Message\": \"Hello World\" }";
         const char *data2 = "{ \"Blog-Header\": \"My Fancy Blog\" }";
         bool status = carbon_insert_binary(&inserter, data1, strlen(data1), "json", NULL);
@@ -533,7 +533,7 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
         ASSERT_TRUE(status);
         ////carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -552,7 +552,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         const char *data1 = "{ \"Message\": \"Hello World\" }";
         const char *data2 = "{ \"Blog-Header\": \"My Fancy Blog\" }";
         for (u32 i = 0; i < 100; i++) {
@@ -563,7 +563,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -582,7 +582,7 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         const char *data1 = "{ \"Message\": \"Hello World\" }";
         const char *data2 = "{ \"Blog-Header\": \"My Fancy Blog\" }";
         for (u32 i = 0; i < 100; i++) {
@@ -592,7 +592,7 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
         }
         ////carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_print(stdout, &rev_doc);
@@ -612,7 +612,7 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
         //carbon_hexdump_print(stdout, &rev_doc);
 
         carbon_insert *nested_inserter = carbon_insert_array_begin(&array_state, &inserter, 10);
@@ -621,7 +621,7 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
 
         //carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -642,7 +642,7 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_null(&inserter);
         carbon_insert_null(&inserter);
@@ -662,7 +662,7 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
 
         //carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -682,7 +682,7 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_null(&inserter);
         carbon_insert_null(&inserter);
@@ -710,7 +710,7 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
 
         //carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -730,7 +730,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_null(&inserter);
         carbon_insert_null(&inserter);
@@ -751,7 +751,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
 
         //carbon_hexdump_print(stdout, &rev_doc);
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_print(stdout, &rev_doc);
@@ -776,7 +776,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         //carbon_hexdump_print(stdout, &rev_doc);
         // printf("\n");
@@ -807,7 +807,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         carbon_insert_false(&inserter);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
@@ -832,7 +832,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert *nested_inserter_l1 = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 10);
 
@@ -845,7 +845,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -872,7 +872,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert *nested_inserter_l1 = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 10);
 
@@ -883,7 +883,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -910,7 +910,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert *nested_inserter_l1 = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 10);
 
@@ -921,7 +921,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -949,7 +949,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         ins = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 10);
         carbon_insert_u8(ins, 1);
@@ -1024,7 +1024,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1052,7 +1052,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert *nested_inserter_l1 = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 1);
 
@@ -1063,7 +1063,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1092,7 +1092,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert *nested_inserter_l1 = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U32, 1);
 
@@ -1106,7 +1106,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1135,7 +1135,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         for (u32 k = 0; k < 3; k++) {
                 carbon_insert *nested_inserter_l1 = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U32, 1);
@@ -1151,7 +1151,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         }
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         ////carbon_hexdump_print(stdout, &rev_doc);
@@ -1181,7 +1181,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         ins = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 10);
         carbon_insert_u8(ins, 1);
@@ -1256,7 +1256,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         carbon_insert_column_end(&column_state);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1284,7 +1284,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         ins = carbon_insert_column_begin(&column_state, &inserter, CARBON_COLUMN_TYPE_U8, 10);
         carbon_insert_u8(ins, 1);
@@ -1357,7 +1357,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1385,7 +1385,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         ins = carbon_insert_array_begin(&array_state, &inserter, 10);
         carbon_insert_u8(ins, 1);
@@ -1410,7 +1410,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1438,7 +1438,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         ins = carbon_insert_array_begin(&array_state, &inserter, 10);
         nested_ins = carbon_insert_array_begin(&nested_array_state, ins, 10);
@@ -1485,7 +1485,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1514,7 +1514,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_u64(&inserter, 4223);
         ins = carbon_insert_array_begin(&array_state, &inserter, 10);
@@ -1547,7 +1547,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -1688,11 +1688,11 @@ TEST(CarbonTest, CarbonFind) {
         carbon_revise_begin(&revise, &rev_doc, &doc);
 
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&ins, &it);
+        carbon_array_insert_begin(&ins, &it);
         carbon_insert_u8(&ins, 'a');
         carbon_insert_u8(&ins, 'b');
         carbon_insert_u8(&ins, 'c');
-        carbon_array_it_insert_end(&ins);
+        carbon_array_insert_end(&ins);
         carbon_revise_iterator_close(&it);
 
         carbon_revise_end(&revise);
@@ -1766,7 +1766,7 @@ TEST(CarbonTest, CarbonFindTypes) {
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_u64(&inserter, 4223);
         ins = carbon_insert_array_begin(&array_state, &inserter, 10);
@@ -2058,7 +2058,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         carbon_insert_drop(&inserter);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
         carbon_revise_end(&revise);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -2083,11 +2083,11 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_u8(&inserter, 'X');
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -2099,11 +2099,11 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         carbon_revise_begin(&revise, &rev_doc2, &rev_doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_update_set_u8(&revise, "0", 'Y');
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -2116,13 +2116,13 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         carbon_revise_begin(&revise, &rev_doc3, &rev_doc2);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_u8(&inserter, 'A');
         carbon_insert_u8(&inserter, 'B');
         carbon_update_set_u8(&revise, "2", 'C');
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -2135,13 +2135,13 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         carbon_revise_begin(&revise, &rev_doc4, &rev_doc3);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_update_set_u8(&revise, "0", 1);
         carbon_update_set_u8(&revise, "1", 2);
         carbon_update_set_u8(&revise, "2", 3);
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -2177,13 +2177,13 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_u8(&inserter, 1);
         carbon_insert_i64(&inserter, -42);
         carbon_insert_float(&inserter, 23);
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -2196,11 +2196,11 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 
         carbon_revise_begin(&revise, &rev_doc2, &rev_doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_update_set_i64(&revise, "1", 1024);
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -2275,10 +2275,10 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2325,13 +2325,13 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e next_type;
-        carbon_array_it_field_type(&next_type, &rev_it);
+        carbon_array_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, CARBON_FIELD_FALSE);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2378,12 +2378,12 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2431,17 +2431,17 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e type;
-        carbon_array_it_field_type(&type, &rev_it);
+        carbon_array_field_type(&type, &rev_it);
         ASSERT_EQ(type, CARBON_FIELD_FALSE);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2486,10 +2486,10 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2536,13 +2536,13 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e next_type;
-        carbon_array_it_field_type(&next_type, &rev_it);
+        carbon_array_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, CARBON_FIELD_NUMBER_U32);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2589,12 +2589,12 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2642,17 +2642,17 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e type;
-        carbon_array_it_field_type(&type, &rev_it);
+        carbon_array_field_type(&type, &rev_it);
         ASSERT_EQ(type, CARBON_FIELD_NUMBER_U32);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2698,10 +2698,10 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2748,13 +2748,13 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e next_type;
-        carbon_array_it_field_type(&next_type, &rev_it);
+        carbon_array_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, CARBON_FIELD_STRING);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2801,12 +2801,12 @@ TEST(CarbonTest, CarbonRemoveLastString)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2854,17 +2854,17 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e type;
-        carbon_array_it_field_type(&type, &rev_it);
+        carbon_array_field_type(&type, &rev_it);
         ASSERT_EQ(type, CARBON_FIELD_STRING);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2914,10 +2914,10 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -2967,13 +2967,13 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e next_type;
-        carbon_array_it_field_type(&next_type, &rev_it);
+        carbon_array_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, CARBON_FIELD_BINARY);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3023,12 +3023,12 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3081,17 +3081,17 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e type;
-        carbon_array_it_field_type(&type, &rev_it);
+        carbon_array_field_type(&type, &rev_it);
         ASSERT_EQ(type, CARBON_FIELD_BINARY);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3149,10 +3149,10 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3202,13 +3202,13 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e next_type;
-        carbon_array_it_field_type(&next_type, &rev_it);
+        carbon_array_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, CARBON_FIELD_BINARY_CUSTOM);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3258,12 +3258,12 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3316,17 +3316,17 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e type;
-        carbon_array_it_field_type(&type, &rev_it);
+        carbon_array_field_type(&type, &rev_it);
         ASSERT_EQ(type, CARBON_FIELD_BINARY_CUSTOM);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3388,10 +3388,10 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3450,13 +3450,13 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e next_type;
-        carbon_array_it_field_type(&next_type, &rev_it);
+        carbon_array_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3515,12 +3515,12 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3585,17 +3585,17 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         // -------------------------------------------------------------------------------------------------------------
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
         carbon_field_type_e type;
-        carbon_array_it_field_type(&type, &rev_it);
+        carbon_array_field_type(&type, &rev_it);
         ASSERT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
         carbon_revise_iterator_close(&rev_it);
         carbon_revise_end(&revise);
@@ -3650,9 +3650,9 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_column_it *cit = carbon_array_it_column_value(&rev_it);
+        carbon_column_it *cit = carbon_array_column_value(&rev_it);
         carbon_field_type_e type;
         u32 num_elems;
         carbon_column_it_values_info(&type, &num_elems, cit);
@@ -3890,13 +3890,13 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&inserter, &it);
+        carbon_array_insert_begin(&inserter, &it);
 
         carbon_insert_u8(&inserter, 1);
         carbon_insert_i64(&inserter, -42);
         carbon_insert_float(&inserter, 23);
 
-        carbon_array_it_insert_end(&inserter);
+        carbon_array_insert_end(&inserter);
         carbon_revise_iterator_close(&it);
         carbon_revise_end(&revise);
 
@@ -5504,7 +5504,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 //        carbon_revise_begin(&revise, rev_doc, &doc);
 //        carbon_revise_iterator_open(&it, &revise);
 //
-//        carbon_array_it_insert_begin(&nested_ins, &it);
+//        carbon_array_insert_begin(&nested_ins, &it);
 //
 //        array_ins = carbon_insert_array_begin(&array_state, &nested_ins, 10);
 //
@@ -5596,7 +5596,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 //
 //        carbon_insert_array_end(&array_state);
 //
-//        carbon_array_it_insert_end(&nested_ins);
+//        carbon_array_insert_end(&nested_ins);
 //
 //        carbon_revise_iterator_close(&it);
 //        carbon_revise_end(&revise);
@@ -5656,23 +5656,23 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
 
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -5746,22 +5746,22 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
-        carbon_array_it_remove(&rev_it);
-        has_next = carbon_array_it_next(&rev_it);
+        carbon_array_remove(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -5817,15 +5817,15 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -5839,7 +5839,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -5895,15 +5895,15 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
 
@@ -5915,7 +5915,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -5970,15 +5970,15 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
@@ -5990,7 +5990,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6045,15 +6045,15 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
@@ -6066,7 +6066,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6121,15 +6121,15 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
@@ -6143,7 +6143,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6198,15 +6198,15 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
         ASSERT_TRUE(carbon_object_it_next(obj_it));
@@ -6221,7 +6221,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6276,15 +6276,15 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -6295,7 +6295,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6357,15 +6357,15 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -6376,7 +6376,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6435,15 +6435,15 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -6454,7 +6454,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6518,15 +6518,15 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -6537,7 +6537,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6596,15 +6596,15 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -6615,7 +6615,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -6673,15 +6673,15 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&rev_it, &revise);
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
 
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_field_type_e field_type;
-        carbon_array_it_field_type(&field_type, &rev_it);
+        carbon_array_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *obj_it = carbon_array_it_object_value(&rev_it);
+        carbon_object_it *obj_it = carbon_array_object_value(&rev_it);
         has_next = carbon_object_it_next(obj_it);
         ASSERT_TRUE(has_next);
         const char *prop_name = carbon_object_it_prop_name(&key_len, obj_it);
@@ -6692,7 +6692,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = carbon_array_it_next(&rev_it);
+        has_next = carbon_array_next(&rev_it);
         ASSERT_FALSE(has_next);
 
         carbon_revise_iterator_close(&rev_it);
@@ -7715,10 +7715,10 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         carbon_array it;
         carbon_field_type_e field_type;
         carbon_read_begin(&it, &doc);
-        ASSERT_TRUE(carbon_array_it_next(&it));
-        carbon_array_it_field_type(&field_type, &it);
+        ASSERT_TRUE(carbon_array_next(&it));
+        carbon_array_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *oit = carbon_array_it_object_value(&it);
+        carbon_object_it *oit = carbon_array_object_value(&it);
         ASSERT_TRUE(carbon_object_it_next(oit));
         carbon_object_it_prop_type(&field_type, oit);
         ASSERT_TRUE(carbon_field_type_is_column_or_subtype(field_type));
@@ -7756,10 +7756,10 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         carbon_array it;
         carbon_field_type_e field_type;
         carbon_read_begin(&it, &doc);
-        ASSERT_TRUE(carbon_array_it_next(&it));
-        carbon_array_it_field_type(&field_type, &it);
+        ASSERT_TRUE(carbon_array_next(&it));
+        carbon_array_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-        carbon_object_it *oit = carbon_array_it_object_value(&it);
+        carbon_object_it *oit = carbon_array_object_value(&it);
         ASSERT_TRUE(carbon_object_it_next(oit));
         carbon_object_it_prop_type(&field_type, oit);
         ASSERT_TRUE(carbon_field_type_is_column_or_subtype(field_type));
@@ -7798,8 +7798,8 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         carbon_array it;
         carbon_field_type_e field_type;
         carbon_read_begin(&it, &doc);
-        ASSERT_TRUE(carbon_array_it_next(&it));
-        carbon_array_it_field_type(&field_type, &it);
+        ASSERT_TRUE(carbon_array_next(&it));
+        carbon_array_field_type(&field_type, &it);
         ASSERT_TRUE(carbon_field_type_is_number(field_type));
         carbon_read_end(&it);
 

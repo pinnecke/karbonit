@@ -26,7 +26,7 @@
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/carbon.h>
 #include <jakson/carbon/array.h>
-#include <jakson/carbon/column_it.h>
+#include <jakson/carbon/column.h>
 #include <jakson/carbon/object_it.h>
 #include <jakson/carbon/printers.h>
 #include <jakson/carbon/internal.h>
@@ -74,7 +74,7 @@ carbon_insert * carbon_create_begin(carbon_new *context, carbon *doc,
                 FN_IF_NOT_OK_RETURN(carbon_create_empty(&context->original, derivation, type), NULL);
                 FN_IF_NOT_OK_RETURN(carbon_revise_begin(&context->revision_context, doc, &context->original), NULL);
                 FN_IF_NOT_OK_RETURN(carbon_revise_iterator_open(context->content_it, &context->revision_context), NULL);
-                FN_IF_NOT_OK_RETURN(carbon_array_it_insert_begin(context->inserter, context->content_it), NULL);
+                FN_IF_NOT_OK_RETURN(carbon_array_insert_begin(context->inserter, context->content_it), NULL);
                 return context->inserter;
         } else {
                 return NULL;
@@ -85,7 +85,7 @@ fn_result carbon_create_end(carbon_new *context)
 {
         FN_FAIL_IF_NULL(context);
 
-        fn_result ins_end = carbon_array_it_insert_end(context->inserter);
+        fn_result ins_end = carbon_array_insert_end(context->inserter);
         fn_result it_close = carbon_revise_iterator_close(context->content_it);
         if (context->mode & CARBON_COMPACT) {
                 carbon_revise_pack(&context->revision_context);
@@ -324,7 +324,7 @@ fn_result ofType(bool) carbon_is_multiset(carbon *doc)
 
         carbon_array it;
         carbon_read_begin(&it, doc);
-        fn_result ofType(bool) ret = carbon_array_it_is_multiset(&it);
+        fn_result ofType(bool) ret = carbon_array_is_multiset(&it);
         carbon_read_end(&it);
 
         return FN_IS_OK(ret) ? ret : FN_FAIL_FORWARD();
@@ -336,7 +336,7 @@ fn_result ofType(bool) carbon_is_sorted(carbon *doc)
 
         carbon_array it;
         carbon_read_begin(&it, doc);
-        fn_result ofType(bool) ret = carbon_array_it_is_sorted(&it);
+        fn_result ofType(bool) ret = carbon_array_is_sorted(&it);
         carbon_read_end(&it);
 
         return FN_IS_OK(ret) ? ret : FN_FAIL_FORWARD();
@@ -387,7 +387,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
         carbon_read_begin(&it, doc);
 
         carbon_printer_print_array(&it, &p, &b, true);
-        carbon_array_it_drop(&it);
+        carbon_array_drop(&it);
 
         carbon_printer_payload_end(&p, &b);
         carbon_printer_end(&p, &b);
@@ -437,7 +437,7 @@ char *carbon_to_json_compact_dup(carbon *doc)
 fn_result carbon_read_begin(carbon_array *it, carbon *doc)
 {
         fn_result ret = carbon_patch_begin(it, doc);
-        carbon_array_it_set_mode(it, READ_ONLY);
+        carbon_array_set_mode(it, READ_ONLY);
         return ret;
 }
 

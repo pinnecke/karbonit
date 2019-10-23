@@ -20,7 +20,7 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 
-#include <jakson/carbon/column_it.h>
+#include <jakson/carbon/column.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/insert.h>
@@ -499,7 +499,7 @@ static bool rewrite_column_to_array(carbon_column_it *it)
 {
         carbon_abstract_type_class_e type_class;
         carbon_list_derivable_e list_type;
-        carbon_array array_it;
+        carbon_array array;
         carbon_insert array_ins;
 
         memfile_save_position(&it->memfile);
@@ -514,8 +514,8 @@ static bool rewrite_column_to_array(carbon_column_it *it)
 
         size_t capacity = it->column_num_elements * carbon_int_get_type_value_size(it->type);
         carbon_int_insert_array(&it->memfile, list_type, capacity);
-        carbon_array_it_create(&array_it, &it->memfile, &it->err, array_marker_begin);
-        carbon_array_it_insert_begin(&array_ins, &array_it);
+        carbon_array_create(&array, &it->memfile, &it->err, array_marker_begin);
+        carbon_array_insert_begin(&array_ins, &array);
 
         carbon_field_type_e type;
         u32 num_values;
@@ -563,9 +563,9 @@ static bool rewrite_column_to_array(carbon_column_it *it)
                         return false;
         }
 
-        carbon_array_it_insert_end(&array_ins);
-        JAK_ASSERT(array_marker_begin < carbon_array_it_memfilepos(&array_it));
-        carbon_array_it_drop(&array_it);
+        carbon_array_insert_end(&array_ins);
+        JAK_ASSERT(array_marker_begin < carbon_array_memfilepos(&array));
+        carbon_array_drop(&array);
 
         memfile_restore_position(&it->memfile);
         return true;

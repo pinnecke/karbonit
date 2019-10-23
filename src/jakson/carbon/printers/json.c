@@ -18,7 +18,7 @@
 #include <jakson/carbon/printers/json.h>
 #include <jakson/carbon/traverse.h>
 #include <jakson/carbon/array.h>
-#include <jakson/carbon/column_it.h>
+#include <jakson/carbon/column.h>
 #include <jakson/carbon/object_it.h>
 #include <jakson/jakson.h>
 
@@ -104,7 +104,7 @@ static inline void __carbon_print_json_##type##_from_array(struct string_buffer 
                                                            carbon_array *restrict it)                        \
 {                                                                                                                      \
         type val;                                                                                                      \
-        carbon_array_it_##type##_value(&val, it);                                                                      \
+        carbon_array_##type##_value(&val, it);                                                                      \
         string_buffer_add_##type(buf, val);                                                                            \
 }
 
@@ -146,11 +146,11 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
         carbon_binary binary;
         u64 string_len;
 
-        if (UNLIKELY(!carbon_array_it_has_next(it))) {
+        if (UNLIKELY(!carbon_array_has_next(it))) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
                 extra->capture.print_json.convert = CARBON_PRINT_JSON_CONVERT_TO_NULL;
                 return;
-        } else if (LIKELY(!carbon_array_it_is_unit(it))) {
+        } else if (LIKELY(!carbon_array_is_unit(it))) {
                 extra->capture.print_json.convert = CARBON_PRINT_JSON_CONVERT_REMAIN;
                 string_buffer_add(str_buf, "[");
         } else {
@@ -159,12 +159,12 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 
         char sep = '\0';
 
-        while (carbon_array_it_next(it)) {
+        while (carbon_array_next(it)) {
 
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';
 
-                carbon_array_it_field_type(&type, it);
+                carbon_array_field_type(&type, it);
 
                 switch (type) {
                         case CARBON_FIELD_NULL:
@@ -177,7 +177,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
                         case CARBON_FIELD_STRING:
-                                string = carbon_array_it_string_value(&string_len, it);
+                                string = carbon_array_string_value(&string_len, it);
                                 __carbon_print_json_string(str_buf, string, string_len);
                                 break;
                         case CARBON_FIELD_NUMBER_U8:
@@ -209,7 +209,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM:
-                                carbon_array_it_binary_value(&binary, it);
+                                carbon_array_binary_value(&binary, it);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
                                 break;
                         default:
@@ -217,13 +217,13 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                 }
 
                 if (carbon_field_type_is_object_or_subtype(type)) {
-                        carbon_object_it *sub = carbon_array_it_object_value(it);
+                        carbon_object_it *sub = carbon_array_object_value(it);
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column_it *sub = carbon_array_it_column_value(it);
+                        carbon_column_it *sub = carbon_array_column_value(it);
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
-                        carbon_array *sub = carbon_array_it_array_value(it);
+                        carbon_array *sub = carbon_array_array_value(it);
                         carbon_traverse_continue_array(extra, sub);
                 }
         }

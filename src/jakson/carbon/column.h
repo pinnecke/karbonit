@@ -16,8 +16,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CARBON_COLUMN_IT_H
-#define CARBON_COLUMN_IT_H
+#ifndef CARBON_COLUMN_H
+#define CARBON_COLUMN_H
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes

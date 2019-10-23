@@ -24,15 +24,15 @@ fn_result carbon_patch_begin(carbon_array *it, carbon *doc)
 {
         FN_FAIL_IF_NULL(it, doc);
         offset_t payload_start = carbon_int_payload_after_header(doc);
-        carbon_array_it_create(it, &doc->memfile, &doc->err, payload_start);
-        carbon_array_it_set_mode(it, READ_WRITE);
+        carbon_array_create(it, &doc->memfile, &doc->err, payload_start);
+        carbon_array_set_mode(it, READ_WRITE);
         return FN_OK();
 }
 
 fn_result carbon_patch_end(carbon_array *it)
 {
         FN_FAIL_IF_NULL(it);
-        return carbon_array_it_drop(it);
+        return carbon_array_drop(it);
 }
 
 bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, carbon *doc)

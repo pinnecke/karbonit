@@ -1847,7 +1847,7 @@ typedef struct carbon_new {
         err err;
         carbon original;
         carbon_revise revision_context;
-        carbon_array_it *content_it;
+        carbon_array *content_it;
         carbon_insert *inserter;
         /* options shrink or compact (or both) documents, see
          * CARBON_KEEP, CARBON_SHRINK, CARBON_COMPACT, and CARBON_OPTIMIZE  */
@@ -1975,8 +1975,8 @@ const char *carbon_to_json_extended(string_buffer *dst, carbon *doc);
 const char *carbon_to_json_compact(string_buffer *dst, carbon *doc);
 char *carbon_to_json_extended_dup(carbon *doc);
 char *carbon_to_json_compact_dup(carbon *doc);
-bool carbon_read_begin(carbon_array_it *it, carbon *doc);
-bool carbon_read_end(carbon_array_it *it);
+bool carbon_read_begin(carbon_array *it, carbon *doc);
+bool carbon_read_end(carbon_array *it);
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, carbon *doc);
 bool carbon_hexdump_print(FILE *file, carbon *doc);
 
@@ -2026,20 +2026,20 @@ typedef struct field_access {
         const char *it_mime_type;
         u64 it_mime_type_strlen;
 
-        bool nested_array_it_is_created;
-        bool nested_array_it_accessed;
+        bool nested_array_is_created;
+        bool nested_array_accessed;
 
         bool nested_object_it_is_created;
         bool nested_object_it_accessed;
 
         bool nested_column_it_is_created;
 
-        carbon_array_it *nested_array_it;
+        carbon_array *nested_array;
         carbon_column_it *nested_column_it;
         carbon_object_it *nested_object_it;
 } field_access;
 
-typedef struct carbon_array_it {
+typedef struct carbon_array {
         memfile memfile;
         offset_t payload_start;
         spinlock lock;
@@ -2052,12 +2052,12 @@ typedef struct carbon_array_it {
         vector ofType(offset_t) history;
         field_access field_access;
         offset_t field_offset;
-} carbon_array_it;
+} carbon_array;
 
-DEFINE_ERROR_GETTER(carbon_array_it);
+DEFINE_ERROR_GETTER(carbon_array);
 
 #define DECLARE_IN_PLACE_UPDATE_FUNCTION(type_name)                                                                    \
-bool carbon_array_it_update_in_place_##type_name(carbon_array_it *it, ##type_name value);
+bool carbon_array_update_in_place_##type_name(carbon_array *it, ##type_name value);
 
 DECLARE_IN_PLACE_UPDATE_FUNCTION(u8)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(u16)
@@ -2069,80 +2069,80 @@ DECLARE_IN_PLACE_UPDATE_FUNCTION(i32)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(i64)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(float)
 
-bool carbon_array_it_update_in_place_true(carbon_array_it *it);
-bool carbon_array_it_update_in_place_false(carbon_array_it *it);
-bool carbon_array_it_update_in_place_null(carbon_array_it *it);
+bool carbon_array_update_in_place_true(carbon_array *it);
+bool carbon_array_update_in_place_false(carbon_array *it);
+bool carbon_array_update_in_place_null(carbon_array *it);
 
 /**
  * Constructs a new array iterator in a carbon document, where <code>payload_start</code> is a memory offset
  * that starts with the first (potentially empty) array entry. If there is some data before the array contents
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
-bool carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err, offset_t payload_start);
-bool carbon_array_it_copy(carbon_array_it *dst, carbon_array_it *src);
-bool carbon_array_it_clone(carbon_array_it *dst, carbon_array_it *src);
-bool carbon_array_it_set_mode(carbon_array_it *it);
-bool carbon_array_it_length(u64 *len, carbon_array_it *it);
-bool carbon_array_it_is_empty(carbon_array_it *it);
+bool carbon_array_create(carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
+bool carbon_array_copy(carbon_array *dst, carbon_array *src);
+bool carbon_array_clone(carbon_array *dst, carbon_array *src);
+bool carbon_array_set_mode(carbon_array *it);
+bool carbon_array_length(u64 *len, carbon_array *it);
+bool carbon_array_is_empty(carbon_array *it);
 
 /**
  * Drops the iterator.
  */
-bool carbon_array_it_drop(carbon_array_it *it);
+bool carbon_array_drop(carbon_array *it);
 
 /**
- * Locks the iterator with a spinlock. A call to <code>carbon_array_it_unlock</code> is required for unlocking.
+ * Locks the iterator with a spinlock. A call to <code>carbon_array_unlock</code> is required for unlocking.
  */
-bool carbon_array_it_lock(carbon_array_it *it);
+bool carbon_array_lock(carbon_array *it);
 
 /**
  * Unlocks the iterator
  */
-bool carbon_array_it_unlock(carbon_array_it *it);
+bool carbon_array_unlock(carbon_array *it);
 
 /**
  * Positions the iterator at the beginning of this array.
  */
-bool carbon_array_it_rewind(carbon_array_it *it);
+bool carbon_array_rewind(carbon_array *it);
 
 /**
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
-bool carbon_array_it_next(carbon_array_it *it);
-bool carbon_array_it_has_next(carbon_array_it *it);
-bool carbon_array_it_is_unit(carbon_array_it *it);
-bool carbon_array_it_prev(carbon_array_it *it);
+bool carbon_array_next(carbon_array *it);
+bool carbon_array_has_next(carbon_array *it);
+bool carbon_array_is_unit(carbon_array *it);
+bool carbon_array_prev(carbon_array *it);
 
-offset_t carbon_array_it_memfilepos(carbon_array_it *it);
-offset_t carbon_array_it_tell(carbon_array_it *it);
-bool carbon_int_array_it_offset(offset_t *off, carbon_array_it *it);
-bool carbon_array_it_fast_forward(carbon_array_it *it);
+offset_t carbon_array_memfilepos(carbon_array *it);
+offset_t carbon_array_tell(carbon_array *it);
+bool carbon_int_array_offset(offset_t *off, carbon_array *it);
+bool carbon_array_fast_forward(carbon_array *it);
 
-bool carbon_array_it_field_type(carbon_field_type_e *type, carbon_array_it *it);
-bool carbon_array_it_u8_value(u8 *value, carbon_array_it *it);
-bool carbon_array_it_u16_value(u16 *value, carbon_array_it *it);
-bool carbon_array_it_u32_value(u32 *value, carbon_array_it *it);
-bool carbon_array_it_u64_value(u64 *value, carbon_array_it *it);
-bool carbon_array_it_i8_value(i8 *value, carbon_array_it *it);
-bool carbon_array_it_i16_value(i16 *value, carbon_array_it *it);
-bool carbon_array_it_i32_value(i32 *value, carbon_array_it *it);
-bool carbon_array_it_i64_value(i64 *value, carbon_array_it *it);
-bool carbon_array_it_float_value_nullable(bool *is_null_in, float *value, carbon_array_it *it);
-bool carbon_array_it_signed_value(bool *is_null_in, i64 *value, carbon_array_it *it);
-bool carbon_array_it_unsigned_value(bool *is_null_in, u64 *value, carbon_array_it *it);
-const char *carbon_array_it_string_value(u64 *strlen, carbon_array_it *it);
-bool carbon_array_it_binary_value(carbon_binary *out, carbon_array_it *it);
-carbon_array_it *carbon_array_it_array_value(carbon_array_it *it_in);
-carbon_object_it *carbon_array_it_object_value(carbon_array_it *it_in);
-carbon_column_it *carbon_array_it_column_value(carbon_array_it *it_in);
+bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it);
+bool carbon_array_u8_value(u8 *value, carbon_array *it);
+bool carbon_array_u16_value(u16 *value, carbon_array *it);
+bool carbon_array_u32_value(u32 *value, carbon_array *it);
+bool carbon_array_u64_value(u64 *value, carbon_array *it);
+bool carbon_array_i8_value(i8 *value, carbon_array *it);
+bool carbon_array_i16_value(i16 *value, carbon_array *it);
+bool carbon_array_i32_value(i32 *value, carbon_array *it);
+bool carbon_array_i64_value(i64 *value, carbon_array *it);
+bool carbon_array_float_value_nullable(bool *is_null_in, float *value, carbon_array *it);
+bool carbon_array_signed_value(bool *is_null_in, i64 *value, carbon_array *it);
+bool carbon_array_unsigned_value(bool *is_null_in, u64 *value, carbon_array *it);
+const char *carbon_array_string_value(u64 *strlen, carbon_array *it);
+bool carbon_array_binary_value(carbon_binary *out, carbon_array *it);
+carbon_array *carbon_array_array_value(carbon_array *it_in);
+carbon_object_it *carbon_array_object_value(carbon_array *it_in);
+carbon_column_it *carbon_array_column_value(carbon_array *it_in);
 
 /**
  * Inserts a new element at the current position of the iterator.
  */
-bool carbon_array_it_insert_begin(carbon_insert *inserter, carbon_array_it *it);
-bool carbon_array_it_insert_end(carbon_insert *inserter);
-bool carbon_array_it_remove(carbon_array_it *it);
+bool carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it);
+bool carbon_array_insert_end(carbon_insert *inserter);
+bool carbon_array_remove(carbon_array *it);
 
 END_DECL
 
@@ -2328,7 +2328,7 @@ END_DECL
 #include <jakson/error.h>
 #include <types.h>
 #include <string_buffer.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 #include <jakson/carbon/column_it.h>
 #include <jakson/carbon/object_it.h>
 
@@ -2578,7 +2578,7 @@ END_DECL
 #include <jakson/error.h>
 #include <jakson/carbon.h>
 #include <jakson/carbon/column_it.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 #include <jakson/carbon/object_it.h>
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/path.h>
@@ -2594,7 +2594,7 @@ typedef struct carbon_find {
         bool value_is_nulled;
 
         union {
-                carbon_array_it *array_it;
+                carbon_array *array;
                 carbon_column_it *column_it;
                 carbon_object_it *object_it;
                 bool boolean;
@@ -2625,7 +2625,7 @@ char *carbon_find_result_to_json_compact_dup(carbon_find *find);
 
 bool carbon_find_result_type(carbon_field_type_e *type, carbon_find *find);
 
-carbon_array_it *carbon_find_result_array(carbon_find *find);
+carbon_array *carbon_find_result_array(carbon_find *find);
 carbon_object_it *carbon_find_result_object(carbon_find *find);
 carbon_column_it *carbon_find_result_column(carbon_find *find);
 bool carbon_find_result_boolean(bool *out, carbon_find *find);
@@ -2674,7 +2674,7 @@ float carbon_get_or_default_float(carbon *doc, const char *path, float default_v
 bool carbon_get_or_default_boolean(carbon *doc, const char *path, bool default_val);
 const char *carbon_get_or_default_string(u64 *len_out, carbon *doc, const char *path, const char *default_val);
 carbon_binary *carbon_get_or_default_binary(carbon *doc, const char *path, carbon_binary *default_val);
-carbon_array_it *carbon_get_array_or_null(carbon *doc, const char *path);
+carbon_array *carbon_get_array_or_null(carbon *doc, const char *path);
 carbon_column_it *carbon_get_column_or_null(carbon *doc, const char *path);
 
 END_DECL
@@ -2715,7 +2715,7 @@ END_DECL
 
 BEGIN_DECL
 
-bool carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array_it *context);
+bool carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context);
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_it *context);
 bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object_it *context);
 
@@ -2816,14 +2816,14 @@ END_DECL
 #include <json.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 
 BEGIN_DECL
 
 typedef struct carbon_insert {
         carbon_container_e context_type;
         union {
-                carbon_array_it *array;
+                carbon_array *array;
                 carbon_column_it *column;
                 carbon_object_it *object;
         } context;
@@ -2835,7 +2835,7 @@ typedef struct carbon_insert {
 
 typedef struct carbon_insert_array_state {
         carbon_insert *parent_inserter;
-        carbon_array_it *nested_array;
+        carbon_array *nested_array;
         carbon_insert nested_inserter;
         offset_t array_begin, array_end;
 } carbon_insert_array_state;
@@ -2869,10 +2869,10 @@ size_t carbon_int_get_type_size_encoded(carbon_field_type_e type);
  */
 size_t carbon_int_get_type_value_size(carbon_field_type_e type);
 
-bool carbon_int_array_it_next(bool *is_empty_slot, bool *is_array_end, carbon_array_it *it);
-bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array_it *it);
-bool carbon_int_array_it_field_type_read(carbon_array_it *it);
-bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_array_it *it);
+bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_field_type_read(carbon_array *it);
+bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
 
 bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
 bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
@@ -2898,7 +2898,7 @@ bool carbon_int_field_access_clone(field_access *dst, field_access *src);
 bool carbon_int_field_access_drop(field_access *field);
 bool carbon_int_field_auto_close(field_access *it);
 bool carbon_int_field_access_object_it_opened(field_access *field);
-bool carbon_int_field_access_array_it_opened(field_access *field);
+bool carbon_int_field_access_array_opened(field_access *field);
 bool carbon_int_field_access_column_it_opened(field_access *field);
 bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field);
 bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err);
@@ -2914,11 +2914,11 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_ac
 bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_access *field, err *err);
 const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field, err *err);
 bool carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err);
-carbon_array_it *carbon_int_field_access_array_value(field_access *field, err *err);
+carbon_array *carbon_int_field_access_array_value(field_access *field, err *err);
 carbon_object_it *carbon_int_field_access_object_value(field_access *field, err *err);
 carbon_column_it *carbon_int_field_access_column_value(field_access *field, err *err);
 
-void carbon_int_auto_close_nested_array_it(field_access *field);
+void carbon_int_auto_close_nested_array(field_access *field);
 void carbon_int_auto_close_nested_object_it(field_access *field);
 void carbon_int_auto_close_nested_column_it(field_access *field);
 
@@ -3754,7 +3754,7 @@ END_DECL
 #include <jakson/error.h>
 #include <memfile.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 
 BEGIN_DECL
 
@@ -3821,7 +3821,7 @@ bool carbon_object_it_signed_value(bool *is_null_in, i64 *value, carbon_object_i
 bool carbon_object_it_unsigned_value(bool *is_null_in, u64 *value, carbon_object_it *it);
 const char *carbon_object_it_string_value(u64 *strlen, carbon_object_it *it);
 bool carbon_object_it_binary_value(carbon_binary *out, carbon_object_it *it);
-carbon_array_it *carbon_object_it_array_value(carbon_object_it *it_in);
+carbon_array *carbon_object_it_array_value(carbon_object_it *it_in);
 carbon_object_it *carbon_object_it_object_value(carbon_object_it *it_in);
 carbon_column_it *carbon_object_it_column_value(carbon_object_it *it_in);
 
@@ -3859,14 +3859,14 @@ BEGIN_DECL
 
 typedef struct carbon_path_evaluator {
         carbon *doc;
-        carbon_array_it root_it;
+        carbon_array root_it;
         carbon_path_status_e status;
         err err;
         struct {
                 carbon_container_e container_type;
                 union {
                         struct {
-                                carbon_array_it it;
+                                carbon_array it;
                         } array;
 
                         struct {
@@ -4024,8 +4024,8 @@ bool carbon_path_index_it_field_float_value(bool *is_null_in, float *value, carb
 bool carbon_path_index_it_field_signed_value(bool *is_null_in, i64 *value, carbon_path_index_it *it);
 bool carbon_path_index_it_field_unsigned_value(bool *is_null_in, u64 *value, carbon_path_index_it *it);
 const char *carbon_path_index_it_field_string_value(u64 *strlen, carbon_path_index_it *it);
-bool carbon_path_index_it_field_binary_value(carbon_binary *out, carbon_array_it *it);
-bool carbon_path_index_it_field_array_value(carbon_array_it *it_out, carbon_path_index_it *it_in);
+bool carbon_path_index_it_field_binary_value(carbon_binary *out, carbon_array *it);
+bool carbon_path_index_it_field_array_value(carbon_array *it_out, carbon_path_index_it *it_in);
 bool carbon_path_index_it_field_object_value(carbon_object_it *it_out, carbon_path_index_it *it_in);
 bool carbon_path_index_it_field_column_value(carbon_column_it *it_out, carbon_path_index_it *it_in);
 
@@ -4165,7 +4165,7 @@ bool carbon_printer_array_prop_name(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_column_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_object_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, string_buffer *builder);
-bool carbon_printer_print_array(carbon_array_it *it, carbon_printer *printer, string_buffer *builder, bool is_record_container);
+bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, string_buffer *builder, bool is_record_container);
 bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, string_buffer *builder);
 
 END_DECL
@@ -4259,8 +4259,8 @@ bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value);
 bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value);
 bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value);
 
-bool carbon_revise_iterator_open(carbon_array_it *it, carbon_revise *context);
-bool carbon_revise_iterator_close(carbon_array_it *it);
+bool carbon_revise_iterator_open(carbon_array *it, carbon_revise *context);
+bool carbon_revise_iterator_close(carbon_array *it);
 
 bool carbon_revise_find_begin(carbon_find *out, const char *dot_path, carbon_revise *context);
 bool carbon_revise_find_end(carbon_find *find);
@@ -5415,7 +5415,7 @@ typedef struct carbon carbon;
 typedef struct carbon_insert carbon_insert;
 typedef struct carbon_new carbon_new;
 typedef struct field_access field_access;
-typedef struct carbon_array_it carbon_array_it;
+typedef struct carbon_array carbon_array;
 typedef struct carbon_column_it carbon_column_it;
 typedef struct carbon_dot_node carbon_dot_node;
 typedef struct carbon_dot_path carbon_dot_path;

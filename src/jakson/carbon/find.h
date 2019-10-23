@@ -25,7 +25,7 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/carbon.h>
-#include <jakson/carbon/column_it.h>
+#include <jakson/carbon/column.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/object_it.h>
 #include <jakson/carbon/containers.h>
@@ -43,7 +43,7 @@ typedef struct carbon_find {
         bool value_is_nulled;
 
         union {
-                carbon_array *array_it;
+                carbon_array *array;
                 carbon_column_it *column_it;
                 carbon_object_it *object_it;
                 bool boolean;

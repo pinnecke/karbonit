@@ -13,8 +13,8 @@ int main (void)
         carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", CARBON_KEY_NOKEY, NULL, &err);
 
         carbon_read_begin(&it, &record);
-        while (carbon_array_it_next(&it)) {
-                //carbon_array_it_
+        while (carbon_array_next(&it)) {
+                //carbon_array_
         }
 
         carbon_drop(&record);

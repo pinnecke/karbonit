@@ -84,9 +84,9 @@ size_t carbon_int_get_type_size_encoded(carbon_field_type_e type);
  */
 size_t carbon_int_get_type_value_size(carbon_field_type_e type);
 
-bool carbon_int_array_it_next(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
-bool carbon_int_array_it_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
-bool carbon_int_array_it_field_type_read(carbon_array *it);
+bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_field_type_read(carbon_array *it);
 bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
 
 bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object_it *it);
@@ -113,7 +113,7 @@ bool carbon_int_field_access_clone(field_access *dst, field_access *src);
 bool carbon_int_field_access_drop(field_access *field);
 bool carbon_int_field_auto_close(field_access *it);
 bool carbon_int_field_access_object_it_opened(field_access *field);
-bool carbon_int_field_access_array_it_opened(field_access *field);
+bool carbon_int_field_access_array_opened(field_access *field);
 bool carbon_int_field_access_column_it_opened(field_access *field);
 bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field);
 bool carbon_int_field_access_bool_value(bool *value, field_access *field, err *err);
@@ -136,7 +136,7 @@ carbon_array *carbon_int_field_access_array_value(field_access *field, err *err)
 carbon_object_it *carbon_int_field_access_object_value(field_access *field, err *err);
 carbon_column_it *carbon_int_field_access_column_value(field_access *field, err *err);
 
-void carbon_int_auto_close_nested_array_it(field_access *field);
+void carbon_int_auto_close_nested_array(field_access *field);
 void carbon_int_auto_close_nested_object_it(field_access *field);
 void carbon_int_auto_close_nested_column_it(field_access *field);
 

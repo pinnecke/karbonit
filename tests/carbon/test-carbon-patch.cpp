@@ -19,21 +19,21 @@ TEST(TestCarbonPatch, CreatePatch) {
         /* patching via patch iterators */
         {
                 carbon_patch_begin(&it, &doc);
-                carbon_array_it_next(&it);
+                carbon_array_next(&it);
                 {
-                        carbon_array_it_field_type(&type, &it);
+                        carbon_array_field_type(&type, &it);
                         EXPECT_TRUE(type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-                        obj = carbon_array_it_object_value(&it);
+                        obj = carbon_array_object_value(&it);
                         {
                                 carbon_object_it_next(obj);
                                 carbon_object_it_prop_type(&type, obj);
                                 EXPECT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
                                 arr = carbon_object_it_array_value(obj);
                                 {
-                                        carbon_array_it_next(arr); /* { ...: [1,...] } */
+                                        carbon_array_next(arr); /* { ...: [1,...] } */
                                         carbon_int_array_update_u8(arr, 42);
-                                        carbon_array_it_next(arr); /* { ...: [..., "y",...] } */
-                                        carbon_array_it_next(arr); /* { ...: [..., ..., 3] } */
+                                        carbon_array_next(arr); /* { ...: [..., "y",...] } */
+                                        carbon_array_next(arr); /* { ...: [..., ..., 3] } */
                                         carbon_int_array_update_u8(arr, 23);
                                 }
                         }
@@ -49,7 +49,7 @@ TEST(TestCarbonPatch, CreatePatch) {
                 carbon_find find;
                 carbon_patch_find_begin(&find, "x", &doc);
                 carbon_array *sub_it = FN_GET_PTR(carbon_array, carbon_find_result_array(&find));
-                carbon_array_it_next(sub_it); /* { ...: [42,...] } */
+                carbon_array_next(sub_it); /* { ...: [42,...] } */
                 carbon_int_array_update_u8(sub_it, 102);
                 carbon_patch_find_end(&find);
         }

@@ -54907,7 +54907,7 @@ DUK_LOCAL_DECL duk_bool_t duk__get_propdesc(duk_hthread *thr, duk_hobject *obj, 
 DUK_LOCAL_DECL duk_bool_t duk__get_own_propdesc_raw(duk_hthread *thr, duk_hobject *obj, duk_hstring *key, duk_uint32_t arr_idx, duk_propdesc *out_desc, duk_small_uint_t flags);
 
 DUK_LOCAL_DECL void duk__abandon_array_part(duk_hthread *thr, duk_hobject *obj);
-DUK_LOCAL_DECL void duk__grow_props_for_array_item(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx);
+DUK_LOCAL_DECL void duk__grow_props_for_arrayem(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx);
 
 /*
  *  Misc helpers
@@ -55264,7 +55264,7 @@ DUK_LOCAL duk_tval *duk__obtain_arridx_slot_slowpath(duk_hthread *thr, duk_uint3
 	 * because abandoned arrays have a higher per-entry footprint.
 	 */
 
-	duk__grow_props_for_array_item(thr, obj, arr_idx);
+	duk__grow_props_for_arrayem(thr, obj, arr_idx);
 
 	DUK_ASSERT(DUK_HOBJECT_HAS_ARRAY_PART(obj));
 	DUK_ASSERT(arr_idx < DUK_HOBJECT_GET_ASIZE(obj));
@@ -55968,7 +55968,7 @@ DUK_LOCAL void duk__grow_props_for_new_entry_item(duk_hthread *thr, duk_hobject 
 }
 
 /* Grow array part for a new highest array index. */
-DUK_LOCAL void duk__grow_props_for_array_item(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx) {
+DUK_LOCAL void duk__grow_props_for_arrayem(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx) {
 	duk_uint32_t new_e_size;
 	duk_uint32_t new_a_size;
 	duk_uint32_t new_a_size_minimum;

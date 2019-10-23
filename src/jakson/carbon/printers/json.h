@@ -23,7 +23,7 @@
 
 BEGIN_DECL
 
-struct array_it;
+struct array;
 struct column_it;
 struct object_it;
 struct carbon_json_from_opts;

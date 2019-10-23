@@ -29,7 +29,7 @@ static bool internal_pack_array(carbon_array *it);
 
 static bool internal_pack_object(carbon_object_it *it);
 
-static bool internal_pack_column(carbon_column_it *it);
+static bool internal_pack_column(carbon_column *it);
 
 static bool internal_commit_update(carbon *doc);
 
@@ -235,9 +235,9 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
                                 }
                                         break;
                                 case CARBON_COLUMN: {
-                                        carbon_column_it *it = &eval.result.containers.column.it;
+                                        carbon_column *it = &eval.result.containers.column.it;
                                         u32 elem_pos = eval.result.containers.column.elem_pos;
-                                        result = carbon_column_it_remove(it, elem_pos);
+                                        result = carbon_column_remove(it, elem_pos);
                                 }
                                         break;
                                 default: ERROR(&context->original->err, ERR_INTERNALERR);
@@ -417,7 +417,7 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        carbon_column_it_rewind(it->field_access.nested_column_it);
+                                        carbon_column_rewind(it->field_access.nested_column_it);
                                         internal_pack_column(it->field_access.nested_column_it);
                                         memfile_seek(&it->memfile,
                                                      memfile_tell(&it->field_access.nested_column_it->memfile));
@@ -560,7 +560,7 @@ static bool internal_pack_object(carbon_object_it *it)
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        carbon_column_it_rewind(it->field.value.data.nested_column_it);
+                                        carbon_column_rewind(it->field.value.data.nested_column_it);
                                         internal_pack_column(it->field.value.data.nested_column_it);
                                         memfile_seek(&it->memfile,
                                                      memfile_tell(&it->field.value.data.nested_column_it->memfile));
@@ -592,7 +592,7 @@ static bool internal_pack_object(carbon_object_it *it)
         return true;
 }
 
-static bool internal_pack_column(carbon_column_it *it)
+static bool internal_pack_column(carbon_column *it)
 {
         JAK_ASSERT(it);
 

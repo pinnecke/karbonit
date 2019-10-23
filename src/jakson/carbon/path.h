@@ -45,7 +45,7 @@ typedef struct carbon_path_evaluator {
                         } object;
 
                         struct {
-                                carbon_column_it it;
+                                carbon_column it;
                                 u32 elem_pos;
                         } column;
 

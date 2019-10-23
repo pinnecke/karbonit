@@ -21,7 +21,7 @@
 
 static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
                                                       const carbon_dot_path *path, u32 current_path_pos,
-                                                      carbon_column_it *it);
+                                                      carbon_column *it);
 
 static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                      const carbon_dot_path *path, u32 current_path_pos,
@@ -359,7 +359,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                                                carbon_column_it *sub_it = carbon_object_it_column_value(
+                                                                carbon_column *sub_it = carbon_object_it_column_value(
                                                                         it);
                                                                 return traverse_column(state,
                                                                                        path,
@@ -418,7 +418,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                         u32 next_path_pos = current_path_pos + 1;
                                         if (is_unit_array && is_record &&
                                                 carbon_field_type_is_column_or_subtype(elem_type)) {
-                                                carbon_column_it *sub_it = carbon_array_column_value(
+                                                carbon_column *sub_it = carbon_array_column_value(
                                                         it);
                                                 return traverse_column(state,
                                                                        path,
@@ -455,7 +455,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                                 return status;
                                                                                         } else {
                                                                                                 JAK_ASSERT(carbon_field_type_is_column_or_subtype(elem_type));
-                                                                                                carbon_column_it *sub_it = carbon_array_column_value(
+                                                                                                carbon_column *sub_it = carbon_array_column_value(
                                                                                                         it);
                                                                                                 return traverse_column(
                                                                                                         state,
@@ -528,7 +528,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
 
 static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
                                                       const carbon_dot_path *path, u32 current_path_pos,
-                                                      carbon_column_it *it)
+                                                      carbon_column *it)
 {
         DECLARE_AND_INIT(u32, total_path_len)
         DECLARE_AND_INIT(u32, requested_idx)
@@ -544,13 +544,13 @@ static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
                 carbon_dot_path_type_at(&node_type, current_path_pos, path);
                 JAK_ASSERT(node_type == DOT_NODE_ARRAY_IDX);
                 carbon_dot_path_idx_at(&requested_idx, current_path_pos, path);
-                carbon_column_it_values_info(&column_type, &nun_values_contained, it);
+                carbon_column_values_info(&column_type, &nun_values_contained, it);
                 if (requested_idx >= nun_values_contained) {
                         /** requested index does not exists in this column */
                         return CARBON_PATH_NOSUCHINDEX;
                 } else {
                         state->result.container_type = CARBON_COLUMN;
-                        carbon_column_it_clone(&state->result.containers.column.it, it);
+                        carbon_column_clone(&state->result.containers.column.it, it);
                         state->result.containers.column.elem_pos = requested_idx;
                         return CARBON_PATH_RESOLVED;
                 }

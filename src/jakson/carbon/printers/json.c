@@ -50,7 +50,7 @@ static void __carbon_print_json_exit_array(struct carbon_traverse_extra *extra, 
         UNUSED(it)
 }
 
-static void __carbon_print_json_column(struct carbon_traverse_extra *extra, struct carbon_column_it *it)
+static void __carbon_print_json_column(struct carbon_traverse_extra *extra, struct carbon_column *it)
 {
         UNUSED(extra)
         UNUSED(it)
@@ -220,7 +220,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                         carbon_object_it *sub = carbon_array_object_value(it);
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column_it *sub = carbon_array_column_value(it);
+                        carbon_column *sub = carbon_array_column_value(it);
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
                         carbon_array *sub = carbon_array_array_value(it);
@@ -256,7 +256,7 @@ static inline void __carbon_print_json_exit_array_fast(struct carbon_traverse_ex
 }
 
 static inline void __carbon_print_json_column_fast(struct carbon_traverse_extra *restrict extra,
-                                                   struct carbon_column_it *restrict it)
+                                                   struct carbon_column *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
 
@@ -265,7 +265,7 @@ static inline void __carbon_print_json_column_fast(struct carbon_traverse_extra 
         carbon_list_container_e container_type;
 
         char sep = '\0';
-        const void *base = carbon_column_it_values(&type, &num_elems, it);
+        const void *base = carbon_column_values(&type, &num_elems, it);
         carbon_list_container_type_by_column_type(&container_type, type);
 
         if (UNLIKELY(num_elems == 0)) {
@@ -394,7 +394,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                         carbon_object_it *sub = carbon_object_it_object_value(it);
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column_it *sub = carbon_object_it_column_value(it);
+                        carbon_column *sub = carbon_object_it_column_value(it);
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
                         carbon_array *sub = carbon_object_it_array_value(it);
@@ -480,7 +480,7 @@ void carbon_json_from_array(struct string_buffer *str, carbon_array *it,
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_json_from_column(struct string_buffer *str, struct carbon_column_it *it,
+void carbon_json_from_column(struct string_buffer *str, struct carbon_column *it,
                              struct carbon_json_from_opts *config)
 {
         assert(str);

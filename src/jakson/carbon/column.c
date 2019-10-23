@@ -29,12 +29,12 @@
 #define safe_cast(builtin_type, nvalues, it, field_type_expr)                                                          \
 ({                                                                                                                     \
         carbon_field_type_e type;                                                                                  \
-        const void *raw = carbon_column_it_values(&type, nvalues, it);                                             \
+        const void *raw = carbon_column_values(&type, nvalues, it);                                             \
         ERROR_IF(!(field_type_expr), &it->err, ERR_TYPEMISMATCH);                                              \
         (const builtin_type *) raw;                                                                                    \
 })
 
-bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err,
+bool carbon_column_create(carbon_column *it, memfile *memfile, err *err,
                              offset_t column_start_offset)
 {
         DEBUG_ERROR_IF_NULL(it);
@@ -69,12 +69,12 @@ bool carbon_column_it_create(carbon_column_it *it, memfile *memfile, err *err,
         it->column_num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->memfile);
         it->column_capacity = (u32) memfile_read_uintvar_stream(NULL, &it->memfile);
 
-        carbon_column_it_rewind(it);
+        carbon_column_rewind(it);
 
         return true;
 }
 
-bool carbon_column_it_clone(carbon_column_it *dst, carbon_column_it *src)
+bool carbon_column_clone(carbon_column *dst, carbon_column *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
         dst->num_and_capacity_start_offset = src->num_and_capacity_start_offset;
@@ -88,21 +88,21 @@ bool carbon_column_it_clone(carbon_column_it *dst, carbon_column_it *src)
         return true;
 }
 
-bool carbon_column_it_insert(carbon_insert *inserter, carbon_column_it *it)
+bool carbon_column_insert(carbon_insert *inserter, carbon_column *it)
 {
         DEBUG_ERROR_IF_NULL(inserter)
         DEBUG_ERROR_IF_NULL(it)
         return carbon_int_insert_create_for_column(inserter, it);
 }
 
-bool carbon_column_it_fast_forward(carbon_column_it *it)
+bool carbon_column_fast_forward(carbon_column *it)
 {
         DEBUG_ERROR_IF_NULL(it);
-        carbon_column_it_values(NULL, NULL, it);
+        carbon_column_values(NULL, NULL, it);
         return true;
 }
 
-offset_t carbon_column_it_memfilepos(carbon_column_it *it)
+offset_t carbon_column_memfilepos(carbon_column *it)
 {
         if (LIKELY(it != NULL)) {
                 return memfile_tell(&it->memfile);
@@ -112,7 +112,7 @@ offset_t carbon_column_it_memfilepos(carbon_column_it *it)
         }
 }
 
-offset_t carbon_column_it_tell(carbon_column_it *it, u32 elem_idx)
+offset_t carbon_column_tell(carbon_column *it, u32 elem_idx)
 {
         if (it) {
                 memfile_save_position(&it->memfile);
@@ -130,7 +130,7 @@ offset_t carbon_column_it_tell(carbon_column_it *it, u32 elem_idx)
         }
 }
 
-bool carbon_column_it_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_column_it *it)
+bool carbon_column_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_column *it)
 {
         DEBUG_ERROR_IF_NULL(it);
 
@@ -145,70 +145,70 @@ bool carbon_column_it_values_info(carbon_field_type_e *type, u32 *nvalues, carbo
         return true;
 }
 
-bool carbon_column_it_value_is_null(carbon_column_it *it, u32 pos)
+bool carbon_column_value_is_null(carbon_column *it, u32 pos)
 {
         DEBUG_ERROR_IF_NULL(it);
         carbon_field_type_e type;
         u32 nvalues = 0;
-        carbon_column_it_values_info(&type, &nvalues, it);
+        carbon_column_values_info(&type, &nvalues, it);
         ERROR_IF(pos >= nvalues, &it->err, ERR_OUTOFBOUNDS);
         switch (type) {
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        return IS_NULL_U8(carbon_column_it_u8_values(NULL, it)[pos]);
+                        return IS_NULL_U8(carbon_column_u8_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        return IS_NULL_U16(carbon_column_it_u16_values(NULL, it)[pos]);
+                        return IS_NULL_U16(carbon_column_u16_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        return IS_NULL_U32(carbon_column_it_u32_values(NULL, it)[pos]);
+                        return IS_NULL_U32(carbon_column_u32_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        return IS_NULL_U64(carbon_column_it_u64_values(NULL, it)[pos]);
+                        return IS_NULL_U64(carbon_column_u64_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        return IS_NULL_I8(carbon_column_it_i8_values(NULL, it)[pos]);
+                        return IS_NULL_I8(carbon_column_i8_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        return IS_NULL_I16(carbon_column_it_i16_values(NULL, it)[pos]);
+                        return IS_NULL_I16(carbon_column_i16_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        return IS_NULL_I32(carbon_column_it_i32_values(NULL, it)[pos]);
+                        return IS_NULL_I32(carbon_column_i32_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        return IS_NULL_I64(carbon_column_it_i64_values(NULL, it)[pos]);
+                        return IS_NULL_I64(carbon_column_i64_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        return IS_NULL_FLOAT(carbon_column_it_float_values(NULL, it)[pos]);
+                        return IS_NULL_FLOAT(carbon_column_float_values(NULL, it)[pos]);
                 case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        return IS_NULL_BOOLEAN(carbon_column_it_boolean_values(NULL, it)[pos]);
+                        return IS_NULL_BOOLEAN(carbon_column_boolean_values(NULL, it)[pos]);
                 default: ERROR(&it->err, ERR_UNSUPPCONTAINER)
                         return false;
         }
 }
 
-const void *carbon_column_it_values(carbon_field_type_e *type, u32 *nvalues, carbon_column_it *it)
+const void *carbon_column_values(carbon_field_type_e *type, u32 *nvalues, carbon_column *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
@@ -227,57 +227,57 @@ const void *carbon_column_it_values(carbon_field_type_e *type, u32 *nvalues, car
         return result;
 }
 
-const boolean *carbon_column_it_boolean_values(u32 *nvalues, carbon_column_it *it)
+const boolean *carbon_column_boolean_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(boolean, nvalues, it, carbon_field_type_is_column_bool_or_subtype(type));
 }
 
-const u8 *carbon_column_it_u8_values(u32 *nvalues, carbon_column_it *it)
+const u8 *carbon_column_u8_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(u8, nvalues, it, carbon_field_type_is_column_u8_or_subtype(type));
 }
 
-const u16 *carbon_column_it_u16_values(u32 *nvalues, carbon_column_it *it)
+const u16 *carbon_column_u16_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(u16, nvalues, it, carbon_field_type_is_column_u16_or_subtype(type));
 }
 
-const u32 *carbon_column_it_u32_values(u32 *nvalues, carbon_column_it *it)
+const u32 *carbon_column_u32_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(u32, nvalues, it, carbon_field_type_is_column_u32_or_subtype(type));
 }
 
-const u64 *carbon_column_it_u64_values(u32 *nvalues, carbon_column_it *it)
+const u64 *carbon_column_u64_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(u64, nvalues, it, carbon_field_type_is_column_u64_or_subtype(type));
 }
 
-const i8 *carbon_column_it_i8_values(u32 *nvalues, carbon_column_it *it)
+const i8 *carbon_column_i8_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(i8, nvalues, it, carbon_field_type_is_column_i8_or_subtype(type));
 }
 
-const i16 *carbon_column_it_i16_values(u32 *nvalues, carbon_column_it *it)
+const i16 *carbon_column_i16_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(i16, nvalues, it, carbon_field_type_is_column_i16_or_subtype(type));
 }
 
-const i32 *carbon_column_it_i32_values(u32 *nvalues, carbon_column_it *it)
+const i32 *carbon_column_i32_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(i32, nvalues, it, carbon_field_type_is_column_i32_or_subtype(type));
 }
 
-const i64 *carbon_column_it_i64_values(u32 *nvalues, carbon_column_it *it)
+const i64 *carbon_column_i64_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(i64, nvalues, it, carbon_field_type_is_column_i64_or_subtype(type));
 }
 
-const float *carbon_column_it_float_values(u32 *nvalues, carbon_column_it *it)
+const float *carbon_column_float_values(u32 *nvalues, carbon_column *it)
 {
         return safe_cast(float, nvalues, it, carbon_field_type_is_column_float_or_subtype(type));
 }
 
-bool carbon_column_it_remove(carbon_column_it *it, u32 pos)
+bool carbon_column_remove(carbon_column *it, u32 pos)
 {
         DEBUG_ERROR_IF_NULL(it);
 
@@ -309,7 +309,7 @@ bool carbon_column_it_remove(carbon_column_it *it, u32 pos)
         return true;
 }
 
-fn_result ofType(bool) carbon_column_it_is_multiset(carbon_column_it *it)
+fn_result ofType(bool) carbon_column_is_multiset(carbon_column *it)
 {
         FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
@@ -317,7 +317,7 @@ fn_result ofType(bool) carbon_column_it_is_multiset(carbon_column_it *it)
         return carbon_abstract_is_multiset(type_class);
 }
 
-fn_result ofType(bool) carbon_column_it_is_sorted(carbon_column_it *it)
+fn_result ofType(bool) carbon_column_is_sorted(carbon_column *it)
 {
         FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
@@ -325,7 +325,7 @@ fn_result ofType(bool) carbon_column_it_is_sorted(carbon_column_it *it)
         return carbon_abstract_is_sorted(type_class);
 }
 
-fn_result carbon_column_it_update_type(carbon_column_it *it, carbon_list_derivable_e derivation)
+fn_result carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation)
 {
         FN_FAIL_IF_NULL(it)
 
@@ -347,7 +347,7 @@ fn_result carbon_column_it_update_type(carbon_column_it *it, carbon_list_derivab
         return FN_OK();
 }
 
-bool carbon_column_it_update_set_null(carbon_column_it *it, u32 pos)
+bool carbon_column_update_set_null(carbon_column *it, u32 pos)
 {
         DEBUG_ERROR_IF_NULL(it)
         ERROR_IF(pos >= it->column_num_elements, &it->err, ERR_OUTOFBOUNDS)
@@ -495,7 +495,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
         }                                                                                                              \
 }
 
-static bool rewrite_column_to_array(carbon_column_it *it)
+static bool rewrite_column_to_array(carbon_column *it)
 {
         carbon_abstract_type_class_e type_class;
         carbon_list_derivable_e list_type;
@@ -519,7 +519,7 @@ static bool rewrite_column_to_array(carbon_column_it *it)
 
         carbon_field_type_e type;
         u32 num_values;
-        const void *data = carbon_column_it_values(&type, &num_values, it);
+        const void *data = carbon_column_values(&type, &num_values, it);
         switch (type) {
                 case CARBON_FIELD_NULL:
                         while (num_values--) {
@@ -571,7 +571,7 @@ static bool rewrite_column_to_array(carbon_column_it *it)
         return true;
 }
 
-bool carbon_column_it_update_set_true(carbon_column_it *it, u32 pos)
+bool carbon_column_update_set_true(carbon_column *it, u32 pos)
 {
         DEBUG_ERROR_IF_NULL(it)
         ERROR_IF(pos >= it->column_num_elements, &it->err, ERR_OUTOFBOUNDS)
@@ -702,7 +702,7 @@ bool carbon_column_it_update_set_true(carbon_column_it *it, u32 pos)
         return true;
 }
 
-bool carbon_column_it_update_set_false(carbon_column_it *it, u32 pos)
+bool carbon_column_update_set_false(carbon_column *it, u32 pos)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -710,16 +710,7 @@ bool carbon_column_it_update_set_false(carbon_column_it *it, u32 pos)
         return false;
 }
 
-bool carbon_column_it_update_set_u8(carbon_column_it *it, u32 pos, u8 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED); // TODO: implement
-        return false;
-}
-
-bool carbon_column_it_update_set_u16(carbon_column_it *it, u32 pos, u16 value)
+bool carbon_column_update_set_u8(carbon_column *it, u32 pos, u8 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -728,7 +719,7 @@ bool carbon_column_it_update_set_u16(carbon_column_it *it, u32 pos, u16 value)
         return false;
 }
 
-bool carbon_column_it_update_set_u32(carbon_column_it *it, u32 pos, u32 value)
+bool carbon_column_update_set_u16(carbon_column *it, u32 pos, u16 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -737,7 +728,7 @@ bool carbon_column_it_update_set_u32(carbon_column_it *it, u32 pos, u32 value)
         return false;
 }
 
-bool carbon_column_it_update_set_u64(carbon_column_it *it, u32 pos, u64 value)
+bool carbon_column_update_set_u32(carbon_column *it, u32 pos, u32 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -746,7 +737,7 @@ bool carbon_column_it_update_set_u64(carbon_column_it *it, u32 pos, u64 value)
         return false;
 }
 
-bool carbon_column_it_update_set_i8(carbon_column_it *it, u32 pos, i8 value)
+bool carbon_column_update_set_u64(carbon_column *it, u32 pos, u64 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -755,7 +746,7 @@ bool carbon_column_it_update_set_i8(carbon_column_it *it, u32 pos, i8 value)
         return false;
 }
 
-bool carbon_column_it_update_set_i16(carbon_column_it *it, u32 pos, i16 value)
+bool carbon_column_update_set_i8(carbon_column *it, u32 pos, i8 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -764,7 +755,7 @@ bool carbon_column_it_update_set_i16(carbon_column_it *it, u32 pos, i16 value)
         return false;
 }
 
-bool carbon_column_it_update_set_i32(carbon_column_it *it, u32 pos, i32 value)
+bool carbon_column_update_set_i16(carbon_column *it, u32 pos, i16 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -773,7 +764,7 @@ bool carbon_column_it_update_set_i32(carbon_column_it *it, u32 pos, i32 value)
         return false;
 }
 
-bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, i64 value)
+bool carbon_column_update_set_i32(carbon_column *it, u32 pos, i32 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -782,7 +773,7 @@ bool carbon_column_it_update_set_i64(carbon_column_it *it, u32 pos, i64 value)
         return false;
 }
 
-bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float value)
+bool carbon_column_update_set_i64(carbon_column *it, u32 pos, i64 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -791,7 +782,16 @@ bool carbon_column_it_update_set_float(carbon_column_it *it, u32 pos, float valu
         return false;
 }
 
-bool carbon_column_it_rewind(carbon_column_it *it)
+bool carbon_column_update_set_float(carbon_column *it, u32 pos, float value)
+{
+        UNUSED(it)
+        UNUSED(pos)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED); // TODO: implement
+        return false;
+}
+
+bool carbon_column_rewind(carbon_column *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         offset_t playload_start = carbon_int_column_get_payload_off(it);

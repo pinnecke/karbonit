@@ -1833,7 +1833,7 @@ TEST(CarbonTest, CarbonFindTypes) {
                         type == CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET ||
                         type == CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                         type == CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
-                carbon_column_it *retval = FN_GET_PTR(carbon_column_it, carbon_find_result_column(&finder));
+                carbon_column *retval = FN_GET_PTR(carbon_column, carbon_find_result_column(&finder));
                 ASSERT_TRUE(retval != NULL);
                 carbon_find_end(&finder);
         }
@@ -1909,7 +1909,7 @@ TEST(CarbonTest, CarbonFindTypes) {
                         type == CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET ||
                         type == CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                         type == CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
-                carbon_column_it *retval = FN_GET_PTR(carbon_column_it, carbon_find_result_column(&finder));
+                carbon_column *retval = FN_GET_PTR(carbon_column, carbon_find_result_column(&finder));
                 ASSERT_TRUE(retval != NULL);
                 carbon_find_end(&finder);
         }
@@ -2000,7 +2000,7 @@ TEST(CarbonTest, CarbonFindTypes) {
                         type == CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET ||
                         type == CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                         type == CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
-                carbon_column_it *retval = FN_GET_PTR(carbon_column_it, carbon_find_result_column(&finder));
+                carbon_column *retval = FN_GET_PTR(carbon_column, carbon_find_result_column(&finder));
                 ASSERT_TRUE(retval != NULL);
                 carbon_find_end(&finder);
         }
@@ -3652,37 +3652,37 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         carbon_revise_iterator_open(&rev_it, &revise);
         has_next = carbon_array_next(&rev_it);
         ASSERT_TRUE(has_next);
-        carbon_column_it *cit = carbon_array_column_value(&rev_it);
+        carbon_column *cit = carbon_array_column_value(&rev_it);
         carbon_field_type_e type;
         u32 num_elems;
-        carbon_column_it_values_info(&type, &num_elems, cit);
+        carbon_column_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 3u);
 
-        status = carbon_column_it_remove(cit, 1);
+        status = carbon_column_remove(cit, 1);
         ASSERT_TRUE(status);
-        carbon_column_it_values_info(&type, &num_elems, cit);
+        carbon_column_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 2u);
-        values = carbon_column_it_u16_values(&num_elems, cit);
+        values = carbon_column_u16_values(&num_elems, cit);
         ASSERT_EQ(values[0], 1);
         ASSERT_EQ(values[1], 3);
 
         char *json_2 = strdup(carbon_to_json_extended(&sb, &rev_doc));
 
-        status = carbon_column_it_remove(cit, 0);
+        status = carbon_column_remove(cit, 0);
         ASSERT_TRUE(status);
-        carbon_column_it_values_info(&type, &num_elems, cit);
+        carbon_column_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 1u);
-        values = carbon_column_it_u16_values(&num_elems, cit);
+        values = carbon_column_u16_values(&num_elems, cit);
         ASSERT_EQ(values[0], 3);
 
         char *json_3 = strdup(carbon_to_json_extended(&sb, &rev_doc));
 
-        status = carbon_column_it_remove(cit, 0);
+        status = carbon_column_remove(cit, 0);
         ASSERT_TRUE(status);
-        carbon_column_it_values_info(&type, &num_elems, cit);
+        carbon_column_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 0u);
 

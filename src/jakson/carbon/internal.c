@@ -421,7 +421,7 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         carbon_int_field_access_create(field_access);
                         field_access->nested_column_it_is_created = true;
-                        carbon_column_it_create(field_access->nested_column_it, file, err,
+                        carbon_column_create(field_access->nested_column_it, file, err,
                                                 memfile_tell(file) - sizeof(u8));
                 }
                         break;
@@ -443,7 +443,7 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
         return true;
 }
 
-offset_t carbon_int_column_get_payload_off(carbon_column_it *it)
+offset_t carbon_int_column_get_payload_off(carbon_column *it)
 {
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
@@ -533,7 +533,7 @@ bool carbon_int_field_access_create(field_access *field)
         field->nested_column_it_is_created = false;
         field->nested_array = MALLOC(sizeof(carbon_array));
         field->nested_object_it = MALLOC(sizeof(carbon_object_it));
-        field->nested_column_it = MALLOC(sizeof(carbon_column_it));
+        field->nested_column_it = MALLOC(sizeof(carbon_column));
         return true;
 }
 
@@ -554,12 +554,12 @@ bool carbon_int_field_access_clone(field_access *dst, field_access *src)
         dst->nested_column_it_is_created = src->nested_column_it_is_created;
         dst->nested_array = MALLOC(sizeof(carbon_array));
         dst->nested_object_it = MALLOC(sizeof(carbon_object_it));
-        dst->nested_column_it = MALLOC(sizeof(carbon_column_it));
+        dst->nested_column_it = MALLOC(sizeof(carbon_column));
 
         if (carbon_int_field_access_object_it_opened(src)) {
                 carbon_object_it_clone(dst->nested_object_it, src->nested_object_it);
         } else if (carbon_int_field_access_column_it_opened(src)) {
-                carbon_column_it_clone(dst->nested_column_it, src->nested_column_it);
+                carbon_column_clone(dst->nested_column_it, src->nested_column_it);
         } else if (carbon_int_field_access_array_opened(src)) {
                 carbon_array_clone(dst->nested_array, src->nested_array);
         }
@@ -615,7 +615,7 @@ void carbon_int_auto_close_nested_object_it(field_access *field)
 void carbon_int_auto_close_nested_column_it(field_access *field)
 {
         if (carbon_int_field_access_column_it_opened(field)) {
-                ZERO_MEMORY(field->nested_column_it, sizeof(carbon_column_it));
+                ZERO_MEMORY(field->nested_column_it, sizeof(carbon_column));
         }
 }
 
@@ -883,7 +883,7 @@ carbon_object_it *carbon_int_field_access_object_value(field_access *field, err 
         return field->nested_object_it;
 }
 
-carbon_column_it *carbon_int_field_access_column_value(field_access *field, err *err)
+carbon_column *carbon_int_field_access_column_value(field_access *field, err *err)
 {
         ERROR_PRINT_IF(!field, ERR_NULLPTR);
         ERROR_IF(!carbon_field_type_is_column_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
@@ -1016,12 +1016,12 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        carbon_column_it it;
+                        carbon_column it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_column_it_create(&it, memfile, err, begin_off - sizeof(u8));
-                        carbon_column_it_fast_forward(&it);
-                        offset_t end_off = carbon_column_it_memfilepos(&it);
+                        carbon_column_create(&it, memfile, err, begin_off - sizeof(u8));
+                        carbon_column_fast_forward(&it);
+                        offset_t end_off = carbon_column_memfilepos(&it);
 
                         JAK_ASSERT(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);

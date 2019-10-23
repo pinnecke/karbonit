@@ -265,22 +265,22 @@ static void array_traverse(struct path_index_node *parent, carbon_array *it)
         }
 }
 
-static void column_traverse(struct path_index_node *parent, carbon_column_it *it)
+static void column_traverse(struct path_index_node *parent, carbon_column *it)
 {
         carbon_field_type_e column_type;
         carbon_field_type_e entry_type;
         u32 nvalues = 0;
 
-        carbon_column_it_values_info(&column_type, &nvalues, it);
+        carbon_column_values_info(&column_type, &nvalues, it);
 
         for (u32 i = 0; i < nvalues; i++) {
-                bool is_null = carbon_column_it_value_is_null(it, i);
+                bool is_null = carbon_column_value_is_null(it, i);
                 bool is_true = false;
                 if (carbon_field_type_is_column_bool_or_subtype(column_type)) {
-                        is_true = carbon_column_it_boolean_values(NULL, it)[i];
+                        is_true = carbon_column_boolean_values(NULL, it)[i];
                 }
                 entry_type = carbon_field_type_column_entry_to_regular_type(column_type, is_null, is_true);
-                offset_t sub_elem_off = carbon_column_it_tell(it, i);
+                offset_t sub_elem_off = carbon_column_tell(it, i);
 
                 struct path_index_node *node = path_index_node_add_column_elem(parent, i, sub_elem_off);
                 path_index_node_set_field_type(node, entry_type);
@@ -364,7 +364,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object_it 
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        carbon_column_it *it = carbon_object_it_column_value(elem_it);
+                        carbon_column *it = carbon_object_it_column_value(elem_it);
                         column_traverse(parent, it);
 
                 }
@@ -455,7 +455,7 @@ static void array_build_index(struct path_index_node *parent, carbon_array *elem
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        carbon_column_it *it = carbon_array_column_value(elem_it);
+                        carbon_column *it = carbon_array_column_value(elem_it);
                         column_traverse(parent, it);
 
                 }
@@ -1450,7 +1450,7 @@ bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *inde
 //
 //}
 //
-//bool carbon_path_index_it_field_column_value(carbon_column_it *it_out, carbon_path_index_it *it_in)
+//bool carbon_path_index_it_field_column_value(carbon_column *it_out, carbon_path_index_it *it_in)
 //{
 //
 //}

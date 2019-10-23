@@ -88,7 +88,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, carbon_int_array_
                                 break;                                                                                 \
                         case CARBON_COLUMN: {                                                                           \
                                 u32 elem_pos;                                                                          \
-                                carbon_column_it *it = column_iterator(&elem_pos, &updater);                     \
+                                carbon_column *it = column_iterator(&elem_pos, &updater);                     \
                                 column_exec;                                                                           \
                         } break;                                                                                       \
                         default:                                                                                       \
@@ -137,7 +137,7 @@ static fn_result ofType(bool) path_resolved(carbon_update *updater)
         return carbon_path_evaluator_has_result(&updater->path_evaluater);
 }
 
-static bool column_update_u8(carbon_column_it *it, u32 pos, u8 value)
+static bool column_update_u8(carbon_column *it, u32 pos, u8 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -146,7 +146,7 @@ static bool column_update_u8(carbon_column_it *it, u32 pos, u8 value)
         return false;
 }
 
-static bool column_update_u16(carbon_column_it *it, u32 pos, u16 value)
+static bool column_update_u16(carbon_column *it, u32 pos, u16 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -155,7 +155,7 @@ static bool column_update_u16(carbon_column_it *it, u32 pos, u16 value)
         return false;
 }
 
-static bool column_update_u32(carbon_column_it *it, u32 pos, u32 value)
+static bool column_update_u32(carbon_column *it, u32 pos, u32 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -164,7 +164,7 @@ static bool column_update_u32(carbon_column_it *it, u32 pos, u32 value)
         return false;
 }
 
-static bool column_update_u64(carbon_column_it *it, u32 pos, u64 value)
+static bool column_update_u64(carbon_column *it, u32 pos, u64 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -173,7 +173,7 @@ static bool column_update_u64(carbon_column_it *it, u32 pos, u64 value)
         return false;
 }
 
-static bool column_update_i8(carbon_column_it *it, u32 pos, i8 value)
+static bool column_update_i8(carbon_column *it, u32 pos, i8 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -182,7 +182,7 @@ static bool column_update_i8(carbon_column_it *it, u32 pos, i8 value)
         return false;
 }
 
-static bool column_update_i16(carbon_column_it *it, u32 pos, i16 value)
+static bool column_update_i16(carbon_column *it, u32 pos, i16 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -191,7 +191,7 @@ static bool column_update_i16(carbon_column_it *it, u32 pos, i16 value)
         return false;
 }
 
-static bool column_update_i32(carbon_column_it *it, u32 pos, i32 value)
+static bool column_update_i32(carbon_column *it, u32 pos, i32 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -200,7 +200,7 @@ static bool column_update_i32(carbon_column_it *it, u32 pos, i32 value)
         return false;
 }
 
-static bool column_update_i64(carbon_column_it *it, u32 pos, i64 value)
+static bool column_update_i64(carbon_column *it, u32 pos, i64 value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -209,7 +209,7 @@ static bool column_update_i64(carbon_column_it *it, u32 pos, i64 value)
         return false;
 }
 
-static bool column_update_float(carbon_column_it *it, u32 pos, float value)
+static bool column_update_float(carbon_column *it, u32 pos, float value)
 {
         UNUSED(it);
         UNUSED(pos);
@@ -224,7 +224,7 @@ static inline carbon_array *arrayerator(carbon_update *updater)
         return &updater->path_evaluater.result.containers.array.it;
 }
 
-static inline carbon_column_it *column_iterator(u32 *elem_pos, carbon_update *updater)
+static inline carbon_column *column_iterator(u32 *elem_pos, carbon_update *updater)
 {
         *elem_pos = updater->path_evaluater.result.containers.column.elem_pos;
         return &updater->path_evaluater.result.containers.column.it;
@@ -422,17 +422,17 @@ bool carbon_update_set_column_end(carbon_insert_column_state *state_in)
 
 fn_result carbon_update_set_null_compiled(carbon_revise *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, carbon_int_array_update_null, carbon_column_it_update_set_null);
+        return try_update(context, path, carbon_int_array_update_null, carbon_column_update_set_null);
 }
 
 fn_result carbon_update_set_true_compiled(carbon_revise *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, carbon_int_array_update_true, carbon_column_it_update_set_true);
+        return try_update(context, path, carbon_int_array_update_true, carbon_column_update_set_true);
 }
 
 fn_result carbon_update_set_false_compiled(carbon_revise *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, carbon_int_array_update_false, carbon_column_it_update_set_false);
+        return try_update(context, path, carbon_int_array_update_false, carbon_column_update_set_false);
 }
 
 fn_result carbon_update_set_u8_compiled(carbon_revise *context, const carbon_dot_path *path,

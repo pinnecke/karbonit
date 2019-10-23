@@ -56,7 +56,7 @@ const char *carbon_item_string_value(u64 *strlen, struct carbon_item *item);
 bool carbon_item_binary_value(carbon_binary *out, struct carbon_item *item);
 carbon_array *carbon_item_array_value(struct carbon_item *item);
 carbon_object_it *carbon_item_object_value(struct carbon_item *item);
-carbon_column_it *carbon_item_column_value(struct carbon_item *item);
+carbon_column *carbon_item_column_value(struct carbon_item *item);
 
 /**
  * Inserts a new element at the current position of the iterator.

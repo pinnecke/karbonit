@@ -323,7 +323,7 @@ carbon_object_it *carbon_object_it_object_value(carbon_object_it *it_in)
         return carbon_int_field_access_object_value(&it_in->field.value.data, &it_in->err);
 }
 
-carbon_column_it *carbon_object_it_column_value(carbon_object_it *it_in)
+carbon_column *carbon_object_it_column_value(carbon_object_it *it_in)
 {
         return carbon_int_field_access_column_value(&it_in->field.value.data, &it_in->err);
 }

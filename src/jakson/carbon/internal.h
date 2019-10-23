@@ -39,7 +39,7 @@ typedef struct carbon_insert {
         carbon_container_e context_type;
         union {
                 carbon_array *array;
-                carbon_column_it *column;
+                carbon_column *column;
                 carbon_object_it *object;
         } context;
 
@@ -65,7 +65,7 @@ typedef struct carbon_insert_object_state {
 typedef struct carbon_insert_column_state {
         carbon_insert *parent_inserter;
         carbon_field_type_e type;
-        carbon_column_it *nested_column;
+        carbon_column *nested_column;
         carbon_insert nested_inserter;
         offset_t column_begin, column_end;
 } carbon_insert_column_state;
@@ -97,7 +97,7 @@ bool carbon_int_object_it_prop_skip(carbon_object_it *it);
 bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_object_it *it);
 bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_access);
 
-offset_t carbon_int_column_get_payload_off(carbon_column_it *it);
+offset_t carbon_int_column_get_payload_off(carbon_column *it);
 offset_t carbon_int_payload_after_header(carbon *doc);
 
 u64 carbon_int_header_get_commit_hash(carbon *doc);
@@ -134,7 +134,7 @@ const char *carbon_int_field_access_string_value(u64 *strlen, field_access *fiel
 bool carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err);
 carbon_array *carbon_int_field_access_array_value(field_access *field, err *err);
 carbon_object_it *carbon_int_field_access_object_value(field_access *field, err *err);
-carbon_column_it *carbon_int_field_access_column_value(field_access *field, err *err);
+carbon_column *carbon_int_field_access_column_value(field_access *field, err *err);
 
 void carbon_int_auto_close_nested_array(field_access *field);
 void carbon_int_auto_close_nested_object_it(field_access *field);

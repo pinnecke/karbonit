@@ -443,7 +443,7 @@ carbon_object_it *carbon_array_object_value(carbon_array *it_in)
         return carbon_int_field_access_object_value(&it_in->field_access, &it_in->err);
 }
 
-carbon_column_it *carbon_array_column_value(carbon_array *it_in)
+carbon_column *carbon_array_column_value(carbon_array *it_in)
 {
         return carbon_int_field_access_column_value(&it_in->field_access, &it_in->err);
 }

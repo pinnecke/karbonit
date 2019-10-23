@@ -96,7 +96,7 @@ void carbon_traverse_array(struct carbon_traverse *traverse, carbon_array *it)
         }
 }
 
-void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column_it *it)
+void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column *it)
 {
         if (LIKELY(traverse->visit_column != NULL)) {
                 traverse->visit_column(&traverse->extra, it);
@@ -118,7 +118,7 @@ void carbon_traverse_continue_array(struct carbon_traverse_extra *context, carbo
         carbon_traverse_array(context->parent, it);
 }
 
-void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column_it *it)
+void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column *it)
 {
         carbon_traverse_column(context->parent, it);
 }

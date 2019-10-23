@@ -392,10 +392,10 @@ bool carbon_field_skip_column(memfile *file)
 
         ERROR_IF(!carbon_field_type_is_column_or_subtype(type_marker), &file->err, ERR_TYPEMISMATCH);
 
-        carbon_column_it skip_it;
-        carbon_column_it_create(&skip_it, file, &file->err,
+        carbon_column skip_it;
+        carbon_column_create(&skip_it, file, &file->err,
                                 memfile_tell(file) - sizeof(u8));
-        carbon_column_it_fast_forward(&skip_it);
+        carbon_column_fast_forward(&skip_it);
         memfile_seek(file, memfile_tell(&skip_it.memfile));
         return true;
 }

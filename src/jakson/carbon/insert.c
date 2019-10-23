@@ -67,7 +67,7 @@ fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_arr
         return FN_OK();
 }
 
-bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column_it *context)
+bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context)
 {
         DEBUG_ERROR_IF_NULL(inserter)
         DEBUG_ERROR_IF_NULL(context)
@@ -610,7 +610,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
 
         *state_out = (carbon_insert_column_state) {
                 .parent_inserter = inserter_in,
-                .nested_column = MALLOC(sizeof(carbon_column_it)),
+                .nested_column = MALLOC(sizeof(carbon_column)),
                 .type = field_type,
                 .column_begin = memfile_tell(&inserter_in->memfile),
                 .column_end = 0
@@ -619,9 +619,9 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
         u64 container_start_off = memfile_tell(&inserter_in->memfile);
         carbon_int_insert_column(&inserter_in->memfile, &inserter_in->err, derivation, type, column_capacity);
 
-        carbon_column_it_create(state_out->nested_column, &inserter_in->memfile, &inserter_in->err,
+        carbon_column_create(state_out->nested_column, &inserter_in->memfile, &inserter_in->err,
                                     container_start_off);
-        carbon_column_it_insert(&state_out->nested_inserter, state_out->nested_column);
+        carbon_column_insert(&state_out->nested_inserter, state_out->nested_column);
 
         return &state_out->nested_inserter;
 }
@@ -638,10 +638,10 @@ bool carbon_insert_column_end(carbon_insert_column_state *state_in)
 {
         DEBUG_ERROR_IF_NULL(state_in);
 
-        carbon_column_it scan;
-        carbon_column_it_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
+        carbon_column scan;
+        carbon_column_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
                                 state_in->nested_column->column_start_offset);
-        carbon_column_it_fast_forward(&scan);
+        carbon_column_fast_forward(&scan);
 
         state_in->column_end = memfile_tell(&scan.memfile);
         memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.memfile));

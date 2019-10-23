@@ -473,7 +473,7 @@ bool carbon_printer_print_object(carbon_object_it *it, carbon_printer *printer, 
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column_it *column = carbon_object_it_column_value(it);
+                                carbon_column *column = carbon_object_it_column_value(it);
                                 carbon_printer_column_prop_name(printer, builder, key_name, key_len);
                                 carbon_printer_print_column(column, printer, builder);
                         }
@@ -626,7 +626,7 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column_it *column = carbon_array_column_value(it);
+                                carbon_column *column = carbon_array_column_value(it);
                                 carbon_printer_print_column(column, printer, builder);
                         }
                                 break;
@@ -665,7 +665,7 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
         return true;
 }
 
-bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, string_buffer *builder)
+bool carbon_printer_print_column(carbon_column *it, carbon_printer *printer, string_buffer *builder)
 {
         DEBUG_ERROR_IF_NULL(it)
         DEBUG_ERROR_IF_NULL(printer)
@@ -673,7 +673,7 @@ bool carbon_printer_print_column(carbon_column_it *it, carbon_printer *printer, 
 
         carbon_field_type_e type;
         u32 nvalues;
-        const void *values = carbon_column_it_values(&type, &nvalues, it);
+        const void *values = carbon_column_values(&type, &nvalues, it);
 
         carbon_printer_array_begin(printer, builder);
         for (u32 i = 0; i < nvalues; i++) {

@@ -91,7 +91,7 @@ typedef struct field_access field_access;
 typedef struct carbon_array carbon_array;
 struct carbon_traverse_extra;
 
-typedef struct carbon_column_it carbon_column_it;
+typedef struct carbon_column carbon_column;
 typedef struct carbon_dot_node carbon_dot_node;
 typedef struct carbon_dot_path carbon_dot_path;
 typedef struct carbon_find carbon_find;

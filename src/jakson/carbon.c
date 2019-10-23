@@ -25,7 +25,7 @@
 #include <jakson/forwdecl.h>
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/carbon.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 #include <jakson/carbon/column_it.h>
 #include <jakson/carbon/object_it.h>
 #include <jakson/carbon/printers.h>

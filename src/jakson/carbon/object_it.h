@@ -26,7 +26,7 @@
 #include <jakson/error.h>
 #include <jakson/mem/file.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 
 BEGIN_DECL
 

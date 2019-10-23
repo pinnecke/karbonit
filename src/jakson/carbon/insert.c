@@ -16,7 +16,7 @@
  */
 
 #include <jakson/std/uintvar/stream.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 #include <jakson/carbon/column_it.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/mime.h>

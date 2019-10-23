@@ -17,7 +17,7 @@
 
 #include <jakson/carbon.h>
 #include <jakson/carbon/revise.h>
-#include <jakson/carbon/array_it.h>
+#include <jakson/carbon/array.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/find.h>

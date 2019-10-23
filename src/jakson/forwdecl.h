@@ -89,6 +89,7 @@ typedef struct carbon_new carbon_new;
 typedef struct field_access field_access;
 
 typedef struct carbon_array carbon_array;
+typedef struct carbon_item carbon_item;
 struct carbon_traverse_extra;
 
 typedef struct carbon_column carbon_column;

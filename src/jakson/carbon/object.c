@@ -16,12 +16,12 @@
  */
 
 #include <jakson/carbon.h>
-#include <jakson/carbon/object_it.h>
+#include <jakson/carbon/object.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/prop.h>
-#include <jakson/carbon/object_it.h>
+#include <jakson/carbon/object.h>
 
 bool carbon_object_create(carbon_object *it, memfile *memfile, err *err,
                              offset_t payload_start)

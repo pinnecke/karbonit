@@ -19,7 +19,7 @@
 #include <jakson/carbon/traverse.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/column.h>
-#include <jakson/carbon/object_it.h>
+#include <jakson/carbon/object.h>
 #include <jakson/jakson.h>
 
 #define CARBON_PRINT_JSON_NULL "null"

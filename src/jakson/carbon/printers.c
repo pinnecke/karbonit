@@ -18,7 +18,7 @@
 #include <jakson/carbon/printers.h>
 #include <jakson/carbon/printers/compact.h>
 #include <jakson/carbon/printers/extended.h>
-#include <jakson/carbon/object_it.h>
+#include <jakson/carbon/object.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/column.h>
 

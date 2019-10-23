@@ -14,3 +14,133 @@
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+#include <jakson/carbon/item.h>
+
+carbon_item_type_e carbon_item_get_type(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+bool carbon_item_remove(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+bool carbon_item_is_null(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+i64 carbon_item_get_number_signed(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+u64 carbon_item_get_number_unsigned(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+float carbon_item_get_number_float(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+const char *carbon_item_get_string(u64 *str_len, const carbon_item *item)
+{
+        UNUSED(item);
+        UNUSED(str_len);
+        return 0;
+}
+
+const carbon_binary *carbon_item_get_binary(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+carbon_array *carbon_item_get_array(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+carbon_column *carbon_item_get_column(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+carbon_object *carbon_item_get_object(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+void carbon_item_set_null(const carbon_item *item)
+{
+        UNUSED(item);
+}
+
+i64 carbon_item_set_number_signed(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+u64 carbon_item_set_number_unsigned(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+float carbon_item_set_number_float(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+const char *carbon_item_set_string(u64 *str_len, const carbon_item *item)
+{
+        UNUSED(item);
+        UNUSED(str_len);
+        return 0;
+}
+
+const carbon_binary *carbon_item_set_binary(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+carbon_array *carbon_item_set_array(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+carbon_column *carbon_item_set_column(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+carbon_object *carbon_item_set_object(const carbon_item *item)
+{
+        UNUSED(item);
+        return 0;
+}
+
+bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
+{
+        UNUSED(item);
+        UNUSED(parent);
+        return 0;
+}

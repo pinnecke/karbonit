@@ -27,7 +27,7 @@
 #include <jakson/carbon.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/array.h>
-#include <jakson/carbon/object_it.h>
+#include <jakson/carbon/object.h>
 #include <jakson/carbon/containers.h>
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/path.h>

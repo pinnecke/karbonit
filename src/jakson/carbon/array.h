@@ -136,7 +136,7 @@ fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e der
 // ---------------------------------------------------------------------------------------------------------------------
 
 #define DECLARE_IN_PLACE_UPDATE_FUNCTION(type_name)                                                                    \
-bool carbon_int_array_update_##type_name(carbon_array *it, type_name value);
+bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value);
 
 DECLARE_IN_PLACE_UPDATE_FUNCTION(u8)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(u16)
@@ -148,9 +148,9 @@ DECLARE_IN_PLACE_UPDATE_FUNCTION(i32)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(i64)
 DECLARE_IN_PLACE_UPDATE_FUNCTION(float)
 
-bool carbon_int_array_update_true(carbon_array *it);
-bool carbon_int_array_update_false(carbon_array *it);
-bool carbon_int_array_update_null(carbon_array *it);
+bool internal_carbon_array_update_true(carbon_array *it);
+bool internal_carbon_array_update_false(carbon_array *it);
+bool internal_carbon_array_update_null(carbon_array *it);
 
 offset_t carbon_array_memfilepos(carbon_array *it);
 offset_t carbon_array_tell(carbon_array *it);

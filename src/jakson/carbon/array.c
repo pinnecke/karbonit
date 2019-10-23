@@ -32,7 +32,7 @@
 #include <jakson/carbon/item.h>
 
 #define DEFINE_IN_PLACE_UPDATE_FUNCTION(type_name, field_type)                                                         \
-bool carbon_int_array_update_##type_name(carbon_array *it, type_name value)                \
+bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
         DEBUG_ERROR_IF_NULL(it);                                                                                             \
@@ -118,17 +118,17 @@ static bool update_in_place_constant(carbon_array *it, carbon_constant_e constan
         return true;
 }
 
-bool carbon_int_array_update_true(carbon_array *it)
+bool internal_carbon_array_update_true(carbon_array *it)
 {
         return update_in_place_constant(it, CARBON_CONSTANT_TRUE);
 }
 
-bool carbon_int_array_update_false(carbon_array *it)
+bool internal_carbon_array_update_false(carbon_array *it)
 {
         return update_in_place_constant(it, CARBON_CONSTANT_FALSE);
 }
 
-bool carbon_int_array_update_null(carbon_array *it)
+bool internal_carbon_array_update_null(carbon_array *it)
 {
         return update_in_place_constant(it, CARBON_CONSTANT_NULL);
 }

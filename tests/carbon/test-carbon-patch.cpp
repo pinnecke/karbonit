@@ -31,10 +31,10 @@ TEST(TestCarbonPatch, CreatePatch) {
                                 arr = carbon_object_array_value(obj);
                                 {
                                         carbon_array_next(arr); /* { ...: [1,...] } */
-                                        carbon_int_array_update_u8(arr, 42);
+                                        internal_carbon_array_update_u8(arr, 42);
                                         carbon_array_next(arr); /* { ...: [..., "y",...] } */
                                         carbon_array_next(arr); /* { ...: [..., ..., 3] } */
-                                        carbon_int_array_update_u8(arr, 23);
+                                        internal_carbon_array_update_u8(arr, 23);
                                 }
                         }
                 }
@@ -50,7 +50,7 @@ TEST(TestCarbonPatch, CreatePatch) {
                 carbon_patch_find_begin(&find, "x", &doc);
                 carbon_array *sub_it = FN_GET_PTR(carbon_array, carbon_find_result_array(&find));
                 carbon_array_next(sub_it); /* { ...: [42,...] } */
-                carbon_int_array_update_u8(sub_it, 102);
+                internal_carbon_array_update_u8(sub_it, 102);
                 carbon_patch_find_end(&find);
         }
 

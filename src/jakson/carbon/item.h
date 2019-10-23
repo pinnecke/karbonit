@@ -108,7 +108,7 @@ typedef struct carbon_item
 #define carbon_item_get_number_float(item, default_value)                                                              \
         INTERNAL_CARBON_ITEM_GET_VALUE(item, number_float, default_value)
 
-#define carbon_item_get_number_string(item, default_value)                                                             \
+#define carbon_item_get_string(item, default_value)                                                                    \
         INTERNAL_CARBON_ITEM_GET_VALUE(item, string, default_value)
 
 #define carbon_item_get_binary(item, default_value)                                                                    \

@@ -48,11 +48,53 @@ typedef struct carbon_item
     } value;
 } carbon_item;
 
-carbon_item_type_e carbon_item_get_type(const carbon_item *item);
+#define INTERNAL_CARBON_ITEM_IS_TYPE(item, type)                                                                       \
+        (carbon_item_get_type(item) == type)
+
+#define carbon_item_get_type(item)                                                                                     \
+        (item ? item->value_type : CARBON_ITEM_UNKNOWN)
+
+#define carbon_item_is_unknown(item)                                                                                   \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_UNKNOWN)
+
+#define carbon_item_is_null(item)                                                                                      \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_NULL)
+
+#define carbon_item_is_true(item)                                                                                      \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_TRUE)
+
+#define carbon_item_is_false(item)                                                                                     \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_FALSE)
+
+#define carbon_item_is_string(item)                                                                                    \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_STRING)
+
+#define carbon_item_is_signed(item)                                                                                    \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_NUMBER_SIGNED)
+
+#define carbon_item_is_unsigned(item)                                                                                  \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_NUMBER_UNSIGNED)
+
+#define carbon_item_is_float(item)                                                                                     \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_NUMBER_UNSIGNED)
+
+#define carbon_item_is_number(item)                                                                                    \
+        (carbon_item_is_signed(item) || carbon_item_is_unsigned(item) || carbon_item_is_float(item))
+
+#define carbon_item_is_binary(item)                                                                                    \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_BINARY)
+
+#define carbon_item_is_array(item)                                                                                     \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_ARRAY)
+
+#define carbon_item_is_column(item)                                                                                    \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_COLUMN)
+
+#define carbon_item_is_object(item)                                                                                    \
+        INTERNAL_CARBON_ITEM_IS_TYPE(item, CARBON_ITEM_OBJECT)
 
 bool carbon_item_remove(const carbon_item *item);
 
-bool carbon_item_is_null(const carbon_item *item);
 i64 carbon_item_get_number_signed(const carbon_item *item);
 u64 carbon_item_get_number_unsigned(const carbon_item *item);
 float carbon_item_get_number_float(const carbon_item *item);
@@ -63,6 +105,8 @@ carbon_column *carbon_item_get_column(const carbon_item *item);
 carbon_object *carbon_item_get_object(const carbon_item *item);
 
 void carbon_item_set_null(const carbon_item *item);
+void carbon_item_set_true(const carbon_item *item);
+void carbon_item_set_false(const carbon_item *item);
 i64 carbon_item_set_number_signed(const carbon_item *item);
 u64 carbon_item_set_number_unsigned(const carbon_item *item);
 float carbon_item_set_number_float(const carbon_item *item);

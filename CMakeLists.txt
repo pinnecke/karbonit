@@ -67,6 +67,15 @@ endif()
 
 OPTION(USE_AMALGAMATION "Turns source amalgamation (source code concatenation) on or off" ON)
 
+# cleanup old amalgamation files
+file(GLOB_RECURSE SRC_AMALGAMATION_FILES ${SRC_AMALGAMATION}/*)
+message("-- *** cleanup amalgamation output ***")
+foreach(FILE ${SRC_AMALGAMATION_FILES})
+    file(REMOVE FILE)
+    message("     - removed ${FILE}")
+endforeach()
+
+
 if (USE_AMALGAMATION)
     message("-- *** source amalgamation is turned on ***")
     message("     - concat '${SRC_IN}/*.h' to '${SRC_AMALGAMATION}/jakson.h'")

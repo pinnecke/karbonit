@@ -765,8 +765,8 @@ carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, fie
         return true;
 }
 
-bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_access *field,
-                                          err *err)
+bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value, field_access *field,
+                                                   err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
@@ -804,8 +804,8 @@ bool carbon_int_field_access_signed_value(bool *is_null_in, i64 *value, field_ac
         return true;
 }
 
-bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_access *field,
-                                            err *err)
+bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *value, field_access *field,
+                                                     err *err)
 {
         DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
@@ -835,6 +835,76 @@ bool carbon_int_field_access_unsigned_value(bool *is_null_in, u64 *value, field_
                         carbon_int_field_access_u64_value(&read_value, field, err);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U64(read_value));
+                }
+                        break;
+                default: ERROR(err, ERR_TYPEMISMATCH);
+                        return false;
+        }
+        return true;
+}
+
+bool carbon_int_field_access_signed_value(i64 *value, field_access *field, err *err)
+{
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
+        switch (field->it_field_type) {
+                case CARBON_FIELD_NUMBER_I8: {
+                        i8 read_value;
+                        carbon_int_field_access_i8_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                case CARBON_FIELD_NUMBER_I16: {
+                        i16 read_value;
+                        carbon_int_field_access_i16_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                case CARBON_FIELD_NUMBER_I32: {
+                        i32 read_value;
+                        carbon_int_field_access_i32_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                case CARBON_FIELD_NUMBER_I64: {
+                        i64 read_value;
+                        carbon_int_field_access_i64_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                default: ERROR(err, ERR_TYPEMISMATCH);
+                        return false;
+        }
+        return true;
+}
+
+bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field, err *err)
+{
+        DEBUG_ERROR_IF_NULL(value)
+        DEBUG_ERROR_IF_NULL(field)
+        switch (field->it_field_type) {
+                case CARBON_FIELD_NUMBER_U8: {
+                        u8 read_value;
+                        carbon_int_field_access_u8_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                case CARBON_FIELD_NUMBER_U16: {
+                        u16 read_value;
+                        carbon_int_field_access_u16_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                case CARBON_FIELD_NUMBER_U32: {
+                        u32 read_value;
+                        carbon_int_field_access_u32_value(&read_value, field, err);
+                        *value = read_value;
+                }
+                        break;
+                case CARBON_FIELD_NUMBER_U64: {
+                        u64 read_value;
+                        carbon_int_field_access_u64_value(&read_value, field, err);
+                        *value = read_value;
                 }
                         break;
                 default: ERROR(err, ERR_TYPEMISMATCH);

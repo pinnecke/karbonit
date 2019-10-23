@@ -341,7 +341,7 @@ static bool internal_pack_array(carbon_array *it)
 
         /** shrink contained containers */
         {
-                while (carbon_array_next(it)) {
+                while (internal_carbon_array_next(it)) {
                         carbon_field_type_e type;
                         carbon_array_field_type(&type, it);
                         switch (type) {

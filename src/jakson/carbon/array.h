@@ -24,6 +24,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
+#include <jakson/forwdecl.h>
 #include <jakson/error.h>
 #include <jakson/std/vector.h>
 #include <jakson/carbon.h>
@@ -97,13 +98,14 @@ fn_result carbon_array_drop(carbon_array *it);
 /**
  * Positions the iterator at the beginning of this array.
  */
-bool carbon_array_rewind(carbon_array *it);
+bool internal_carbon_array_rewind(carbon_array *it);
 
 /**
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
-bool carbon_array_next(carbon_array *it);
+bool carbon_array_next(carbon_item* item, carbon_array *it);
+bool internal_carbon_array_next(carbon_array *it);
 bool carbon_array_has_next(carbon_array *it);
 bool carbon_array_is_unit(carbon_array *it);
 bool carbon_array_prev(carbon_array *it);
@@ -153,25 +155,27 @@ bool carbon_int_array_offset(offset_t *off, carbon_array *it);
 bool carbon_array_fast_forward(carbon_array *it);
 
 bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it);
-bool carbon_array_bool_value(bool *value, carbon_array *it);
-bool carbon_array_is_null(bool *is_null, carbon_array *it);
-bool carbon_array_u8_value(u8 *value, carbon_array *it);
-bool carbon_array_u16_value(u16 *value, carbon_array *it);
-bool carbon_array_u32_value(u32 *value, carbon_array *it);
-bool carbon_array_u64_value(u64 *value, carbon_array *it);
-bool carbon_array_i8_value(i8 *value, carbon_array *it);
-bool carbon_array_i16_value(i16 *value, carbon_array *it);
-bool carbon_array_i32_value(i32 *value, carbon_array *it);
-bool carbon_array_i64_value(i64 *value, carbon_array *it);
-bool carbon_array_float_value(float *value, carbon_array *it);
-bool carbon_array_float_value_nullable(bool *is_null_in, float *value, carbon_array *it);
-bool carbon_array_signed_value(bool *is_null_in, i64 *value, carbon_array *it);
-bool carbon_array_unsigned_value(bool *is_null_in, u64 *value, carbon_array *it);
-const char *carbon_array_string_value(u64 *strlen, carbon_array *it);
-bool carbon_array_binary_value(carbon_binary *out, carbon_array *it);
-carbon_array *carbon_array_array_value(carbon_array *it_in);
-carbon_object *carbon_array_object_value(carbon_array *it_in);
-carbon_column *carbon_array_column_value(carbon_array *it_in);
+bool internal_carbon_array_bool_value(bool *value, carbon_array *it);
+bool internal_carbon_array_is_null(bool *is_null, carbon_array *it);
+bool internal_carbon_array_u8_value(u8 *value, carbon_array *it);
+bool internal_carbon_array_u16_value(u16 *value, carbon_array *it);
+bool internal_carbon_array_u32_value(u32 *value, carbon_array *it);
+bool internal_carbon_array_u64_value(u64 *value, carbon_array *it);
+bool internal_carbon_array_i8_value(i8 *value, carbon_array *it);
+bool internal_carbon_array_i16_value(i16 *value, carbon_array *it);
+bool internal_carbon_array_i32_value(i32 *value, carbon_array *it);
+bool internal_carbon_array_i64_value(i64 *value, carbon_array *it);
+bool internal_carbon_array_float_value(float *value, carbon_array *it);
+bool internal_carbon_array_float_value_nullable(bool *is_null_in, float *value, carbon_array *it);
+bool internal_carbon_array_signed_value_nullable(bool *is_null_in, i64 *value, carbon_array *it);
+bool internal_carbon_array_unsigned_value_nullable(bool *is_null_in, u64 *value, carbon_array *it);
+bool internal_carbon_array_signed_value(i64 *value, carbon_array *it);
+bool internal_carbon_array_unsigned_value(u64 *value, carbon_array *it);
+const char *internal_carbon_array_string_value(u64 *strlen, carbon_array *it);
+bool internal_carbon_array_binary_value(carbon_binary *out, carbon_array *it);
+carbon_array *internal_carbon_array_array_value(carbon_array *it_in);
+carbon_object *internal_carbon_array_object_value(carbon_array *it_in);
+carbon_column *internal_carbon_array_column_value(carbon_array *it_in);
 
 END_DECL
 

@@ -29,6 +29,7 @@
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/internal.h>
+#include <jakson/carbon/item.h>
 
 #define DEFINE_IN_PLACE_UPDATE_FUNCTION(type_name, field_type)                                                         \
 bool carbon_int_array_update_##type_name(carbon_array *it, type_name value)                \
@@ -173,7 +174,7 @@ fn_result carbon_array_create(carbon_array *it, memfile *memfile, err *err,
 
         carbon_int_field_access_create(&it->field_access);
 
-        carbon_array_rewind(it);
+        internal_carbon_array_rewind(it);
 
         return FN_OK();
 }
@@ -213,8 +214,8 @@ bool carbon_array_length(u64 *len, carbon_array *it)
         DEBUG_ERROR_IF_NULL(it)
 
         u64 num_elem = 0;
-        carbon_array_rewind(it);
-        while (carbon_array_next(it)) {
+        internal_carbon_array_rewind(it);
+        while (internal_carbon_array_next(it)) {
                 num_elem++;
         }
         *len = num_elem;
@@ -224,8 +225,8 @@ bool carbon_array_length(u64 *len, carbon_array *it)
 
 bool carbon_array_is_empty(carbon_array *it)
 {
-        carbon_array_rewind(it);
-        return carbon_array_next(it);
+        internal_carbon_array_rewind(it);
+        return internal_carbon_array_next(it);
 }
 
 fn_result carbon_array_drop(carbon_array *it)
@@ -236,7 +237,7 @@ fn_result carbon_array_drop(carbon_array *it)
         return FN_OK();
 }
 
-bool carbon_array_rewind(carbon_array *it)
+bool internal_carbon_array_rewind(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         ERROR_IF(it->array_begin_off >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
@@ -256,16 +257,16 @@ static void auto_adjust_pos_after_mod(carbon_array *it)
 
 bool carbon_array_has_next(carbon_array *it)
 {
-        bool has_next = carbon_array_next(it);
+        bool has_next = internal_carbon_array_next(it);
         carbon_array_prev(it);
         return has_next;
 }
 
 bool carbon_array_is_unit(carbon_array *it)
 {
-        bool has_next = carbon_array_next(it);
+        bool has_next = internal_carbon_array_next(it);
         if (has_next) {
-                has_next = carbon_array_next(it);
+                has_next = internal_carbon_array_next(it);
                 carbon_array_prev(it);
                 carbon_array_prev(it);
                 return !has_next;
@@ -274,7 +275,16 @@ bool carbon_array_is_unit(carbon_array *it)
         return false;
 }
 
-bool carbon_array_next(carbon_array *it)
+bool carbon_array_next(carbon_item* item, carbon_array *it)
+{
+        bool ret = internal_carbon_array_next(it);
+        if (ret) {
+                internal_carbon_item_create(item, it);
+        }
+        return ret;
+}
+
+bool internal_carbon_array_next(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         bool is_empty_slot = true;
@@ -341,7 +351,7 @@ bool carbon_int_array_offset(offset_t *off, carbon_array *it)
 bool carbon_array_fast_forward(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
-        while (carbon_array_next(it)) {}
+        while (internal_carbon_array_next(it)) {}
 
         JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
         memfile_skip(&it->memfile, sizeof(char));
@@ -353,97 +363,107 @@ bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it)
         return carbon_int_field_access_field_type(type, &it->field_access);
 }
 
-bool carbon_array_bool_value(bool *value, carbon_array *it)
+bool internal_carbon_array_bool_value(bool *value, carbon_array *it)
 {
         return carbon_int_field_access_bool_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_is_null(bool *is_null, carbon_array *it)
+bool internal_carbon_array_is_null(bool *is_null, carbon_array *it)
 {
         return carbon_int_field_access_is_null(is_null, &it->field_access);
 }
 
-bool carbon_array_u8_value(u8 *value, carbon_array *it)
+bool internal_carbon_array_u8_value(u8 *value, carbon_array *it)
 {
         return carbon_int_field_access_u8_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_u16_value(u16 *value, carbon_array *it)
+bool internal_carbon_array_u16_value(u16 *value, carbon_array *it)
 {
         return carbon_int_field_access_u16_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_u32_value(u32 *value, carbon_array *it)
+bool internal_carbon_array_u32_value(u32 *value, carbon_array *it)
 {
         return carbon_int_field_access_u32_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_u64_value(u64 *value, carbon_array *it)
+bool internal_carbon_array_u64_value(u64 *value, carbon_array *it)
 {
         return carbon_int_field_access_u64_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_i8_value(i8 *value, carbon_array *it)
+bool internal_carbon_array_i8_value(i8 *value, carbon_array *it)
 {
         return carbon_int_field_access_i8_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_i16_value(i16 *value, carbon_array *it)
+bool internal_carbon_array_i16_value(i16 *value, carbon_array *it)
 {
         return carbon_int_field_access_i16_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_i32_value(i32 *value, carbon_array *it)
+bool internal_carbon_array_i32_value(i32 *value, carbon_array *it)
 {
         return carbon_int_field_access_i32_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_i64_value(i64 *value, carbon_array *it)
+bool internal_carbon_array_i64_value(i64 *value, carbon_array *it)
 {
         return carbon_int_field_access_i64_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_float_value(float *value, carbon_array *it)
+bool internal_carbon_array_float_value(float *value, carbon_array *it)
 {
         return carbon_int_field_access_float_value(value, &it->field_access, &it->err);
 }
 
-bool carbon_array_float_value_nullable(bool *is_null_in, float *value, carbon_array *it)
+bool internal_carbon_array_float_value_nullable(bool *is_null_in, float *value, carbon_array *it)
 {
         return carbon_int_field_access_float_value_nullable(is_null_in, value, &it->field_access, &it->err);
 }
 
-bool carbon_array_signed_value(bool *is_null_in, i64 *value, carbon_array *it)
+bool internal_carbon_array_signed_value_nullable(bool *is_null_in, i64 *value, carbon_array *it)
 {
-        return carbon_int_field_access_signed_value(is_null_in, value, &it->field_access, &it->err);
+        return carbon_int_field_access_signed_value_nullable(is_null_in, value, &it->field_access, &it->err);
 }
 
-bool carbon_array_unsigned_value(bool *is_null_in, u64 *value, carbon_array *it)
+bool internal_carbon_array_unsigned_value_nullable(bool *is_null_in, u64 *value, carbon_array *it)
 {
-        return carbon_int_field_access_unsigned_value(is_null_in, value, &it->field_access, &it->err);
+        return carbon_int_field_access_unsigned_value_nullable(is_null_in, value, &it->field_access, &it->err);
 }
 
-const char *carbon_array_string_value(u64 *strlen, carbon_array *it)
+bool internal_carbon_array_signed_value(i64 *value, carbon_array *it)
+{
+        return carbon_int_field_access_signed_value(value, &it->field_access, &it->err);
+}
+
+bool internal_carbon_array_unsigned_value(u64 *value, carbon_array *it)
+{
+        return carbon_int_field_access_unsigned_value(value, &it->field_access, &it->err);
+}
+
+const char *internal_carbon_array_string_value(u64 *strlen, carbon_array *it)
 {
         return carbon_int_field_access_string_value(strlen, &it->field_access, &it->err);
 }
 
-bool carbon_array_binary_value(carbon_binary *out, carbon_array *it)
+bool internal_carbon_array_binary_value(carbon_binary *out, carbon_array *it)
 {
         return carbon_int_field_access_binary_value(out, &it->field_access, &it->err);
 }
 
-carbon_array *carbon_array_array_value(carbon_array *it_in)
+carbon_array *internal_carbon_array_array_value(carbon_array *it_in)
 {
         return carbon_int_field_access_array_value(&it_in->field_access, &it_in->err);
 }
 
-carbon_object *carbon_array_object_value(carbon_array *it_in)
+carbon_object *internal_carbon_array_object_value(carbon_array *it_in)
 {
         return carbon_int_field_access_object_value(&it_in->field_access, &it_in->err);
 }
 
-carbon_column *carbon_array_column_value(carbon_array *it_in)
+carbon_column *internal_carbon_array_column_value(carbon_array *it_in)
 {
         return carbon_int_field_access_column_value(&it_in->field_access, &it_in->err);
 }

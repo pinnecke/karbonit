@@ -17,19 +17,7 @@
 
 #include <jakson/carbon/item.h>
 
-carbon_item_type_e carbon_item_get_type(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
 bool carbon_item_remove(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-bool carbon_item_is_null(const carbon_item *item)
 {
         UNUSED(item);
         return 0;
@@ -89,6 +77,16 @@ void carbon_item_set_null(const carbon_item *item)
         UNUSED(item);
 }
 
+void carbon_item_set_true(const carbon_item *item)
+{
+        UNUSED(item);
+}
+
+void carbon_item_set_false(const carbon_item *item)
+{
+        UNUSED(item);
+}
+
 i64 carbon_item_set_number_signed(const carbon_item *item)
 {
         UNUSED(item);
@@ -140,7 +138,40 @@ carbon_object *carbon_item_set_object(const carbon_item *item)
 
 bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
 {
-        UNUSED(item);
-        UNUSED(parent);
-        return 0;
+        item->parent = parent;
+        carbon_field_type_e field_type = parent->field_access.it_field_type;
+
+        if (carbon_field_type_is_signed(field_type)) {
+                internal_carbon_array_signed_value(&item->value.number_signed, parent);
+                item->value_type = CARBON_ITEM_NUMBER_SIGNED;
+        } else if (carbon_field_type_is_unsigned(field_type)) {
+                internal_carbon_array_unsigned_value(&item->value.number_unsigned, parent);
+                item->value_type = CARBON_ITEM_NUMBER_UNSIGNED;
+        } else if (carbon_field_type_is_floating(field_type)) {
+                internal_carbon_array_float_value(&item->value.number_float, parent);
+                item->value_type = CARBON_ITEM_NUMBER_FLOAT;
+        } else if (carbon_field_type_is_binary(field_type)) {
+                internal_carbon_array_binary_value(&item->value.binary, parent);
+                item->value_type = CARBON_ITEM_BINARY;
+        } else if (carbon_field_type_is_boolean(field_type)) {
+                item->value_type = field_type == CARBON_FIELD_TRUE ? CARBON_ITEM_TRUE : CARBON_ITEM_FALSE;
+        } else if (carbon_field_type_is_array_or_subtype(field_type)) {
+                item->value.array = internal_carbon_array_array_value(parent);
+                item->value_type = CARBON_ITEM_ARRAY;
+        } else if (carbon_field_type_is_column_or_subtype(field_type)) {
+                item->value.column = internal_carbon_array_column_value(parent);
+                item->value_type = CARBON_ITEM_COLUMN;
+        } else if (carbon_field_type_is_object_or_subtype(field_type)) {
+                item->value.object = internal_carbon_array_object_value(parent);
+                item->value_type = CARBON_ITEM_OBJECT;
+        } else if (carbon_field_type_is_null(field_type)) {
+                item->value_type = CARBON_ITEM_NULL;
+        } else if (carbon_field_type_is_string(field_type)) {
+                item->value.string.base = internal_carbon_array_string_value(&item->value.string.len, parent);
+                item->value_type = CARBON_ITEM_STRING;
+        } else {
+                item->value_type = CARBON_ITEM_UNKNOWN;
+                return false;
+        }
+        return true;
 }

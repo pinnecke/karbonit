@@ -15,6 +15,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdint.h>
+
 #include <jakson/carbon/printers/json.h>
 #include <jakson/carbon/traverse.h>
 #include <jakson/carbon/array.h>
@@ -104,7 +106,7 @@ static inline void __carbon_print_json_##type##_from_array(struct string_buffer 
                                                            carbon_array *restrict it)                        \
 {                                                                                                                      \
         type val;                                                                                                      \
-        carbon_array_##type##_value(&val, it);                                                                      \
+        internal_carbon_array_##type##_value(&val, it);                                                                      \
         string_buffer_add_##type(buf, val);                                                                            \
 }
 
@@ -159,7 +161,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 
         char sep = '\0';
 
-        while (carbon_array_next(it)) {
+        while (internal_carbon_array_next(it)) {
 
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';
@@ -177,7 +179,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
                         case CARBON_FIELD_STRING:
-                                string = carbon_array_string_value(&string_len, it);
+                                string = internal_carbon_array_string_value(&string_len, it);
                                 __carbon_print_json_string(str_buf, string, string_len);
                                 break;
                         case CARBON_FIELD_NUMBER_U8:
@@ -209,7 +211,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM:
-                                carbon_array_binary_value(&binary, it);
+                                internal_carbon_array_binary_value(&binary, it);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
                                 break;
                         default:
@@ -217,13 +219,13 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                 }
 
                 if (carbon_field_type_is_object_or_subtype(type)) {
-                        carbon_object *sub = carbon_array_object_value(it);
+                        carbon_object *sub = internal_carbon_array_object_value(it);
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column *sub = carbon_array_column_value(it);
+                        carbon_column *sub = internal_carbon_array_column_value(it);
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
-                        carbon_array *sub = carbon_array_array_value(it);
+                        carbon_array *sub = internal_carbon_array_array_value(it);
                         carbon_traverse_continue_array(extra, sub);
                 }
         }

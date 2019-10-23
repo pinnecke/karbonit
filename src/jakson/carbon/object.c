@@ -295,12 +295,12 @@ bool carbon_object_float_value_nullable(bool *is_null_in, float *value, carbon_o
 
 bool carbon_object_signed_value(bool *is_null_in, i64 *value, carbon_object *it)
 {
-        return carbon_int_field_access_signed_value(is_null_in, value, &it->field.value.data, &it->err);
+        return carbon_int_field_access_signed_value_nullable(is_null_in, value, &it->field.value.data, &it->err);
 }
 
 bool carbon_object_unsigned_value(bool *is_null_in, u64 *value, carbon_object *it)
 {
-        return carbon_int_field_access_unsigned_value(is_null_in, value, &it->field.value.data, &it->err);
+        return carbon_int_field_access_unsigned_value_nullable(is_null_in, value, &it->field.value.data, &it->err);
 }
 
 const char *carbon_object_string_value(u64 *strlen, carbon_object *it)

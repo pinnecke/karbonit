@@ -7,7 +7,7 @@ int main (void)
 {
         carbon record;
         err err;
-        carbon_array_it it;
+        struct carbon_array it;
         //string_buffer str;
 
         carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", CARBON_KEY_NOKEY, NULL, &err);

@@ -27,6 +27,8 @@
 
 #include "bench_fwd.h"
 
+#define BENCH_CARBON_ERROR_WRITE(error, msg, docOffset) bench_carbon_error_write(error, msg, __FILE__, __LINE__, docOffset);
+
 typedef struct bench_carbon_error {
     bench_error *benchErr;
     err *err;
@@ -39,7 +41,7 @@ typedef struct bench_carbon_mgr {
 
 bool bench_carbon_error_create(bench_carbon_error *carbonError, bench_error *benchError);
 bool bench_carbon_error_destroy(bench_carbon_error *error);
-bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, size_t docOffset);
+bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, const char *file, u32 line, size_t docOffset);
 bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError, const char *filePath);
 bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError);
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);

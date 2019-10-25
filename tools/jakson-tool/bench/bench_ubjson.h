@@ -60,7 +60,7 @@ typedef struct bench_ubjson_mgr {
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_error_destroy(bench_ubjson_error *error);
-bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t docOffset);
+bool bench_ubjson_error_write(bench_ubjson_error *error, const char *msg, const char *file, u32 line, size_t docOffset);
 bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError, const char *filePath);
 bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager);

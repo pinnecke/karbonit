@@ -23,7 +23,9 @@
 #include <libs/bson/bson.h>
 #include <jakson/error.h>
 
-#include "bench_fwd.h"
+#include"bench_fwd.h"
+
+#define BENCH_BSON_ERROR_WRITE(error, msg, docOffset) bench_bson_error_write(error, msg, __FILE__, __LINE__, docOffset);
 
 typedef struct bench_bson_error {
     bench_error *benchErr;
@@ -38,7 +40,7 @@ typedef struct bench_bson_mgr {
 
 bool bench_bson_error_create(bench_bson_error *bsonError, bench_error *benchError);
 bool bench_bson_error_destroy(bench_bson_error *error);
-bool bench_bson_error_write(bench_bson_error *error, const char *msg, size_t docOffset);
+bool bench_bson_error_write(bench_bson_error *error, const char *msg, const char *file, u32 line, size_t docOffset);
 bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *bsonError, bench_error *benchError, const char *filePath);
 bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error, bench_error *benchError);
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager);

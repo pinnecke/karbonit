@@ -25,15 +25,15 @@ bool bench_bson_error_destroy(bench_bson_error *error)
 }
 
 // TODO : Use error write function implicitly by handling error messages in-function as additional parameter
-bool bench_bson_error_write(bench_bson_error *error, const char *msg, size_t docOffset) {
+bool bench_bson_error_write(bench_bson_error *error, const char *msg, const char *file, u32 line, size_t docOffset) {
     ERROR_IF_NULL(error)
     ERROR_IF_NULL(msg)
 
-    error_set_wdetails(error->err, ERR_FAILED, __FILE__, __LINE__, msg);
+    error_set_wdetails(error->err, ERR_FAILED, file, line, msg);
 
     error->benchErr->msg = strdup(msg);
-    error->benchErr->file = __FILE__;
-    error->benchErr->line = __LINE__;
+    error->benchErr->file = strdup(file);
+    error->benchErr->line = line;
     error->benchErr->offset = docOffset;
 
     error_print_to_stderr(error->err);
@@ -56,7 +56,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
 
     if(!(jReader = bson_json_reader_new_from_file (filePath, &bError))) {
         snprintf(msg, sizeof(msg), "BSON reader failed to open: %s : %s", filePath, bError.message);
-        bench_bson_error_write(bsonError, msg, 0);
+        BENCH_BSON_ERROR_WRITE(bsonError, msg, 0);
         return false;
     }
 
@@ -64,7 +64,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
     while((readResult = bson_json_reader_read (jReader, &b, &bError))) {
         if(readResult < 0) {
             snprintf(msg, sizeof(msg), "Error in JSON parsing: %s", bError.message);
-            bench_bson_error_write(bsonError, msg, 0);
+            BENCH_BSON_ERROR_WRITE(bsonError, msg, 0);
             return false;
         }
     }
@@ -72,14 +72,14 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
     size_t errOffset;
     if(!bson_validate(&b, BSON_VALIDATE_NONE, &errOffset)) {
         snprintf(msg, sizeof(msg), "BSON document failed to validate at offset: %s", (char*) errOffset);
-        bench_bson_error_write(bsonError, "BSON Document failed to validate.", errOffset);
+        BENCH_BSON_ERROR_WRITE(bsonError, "BSON Document failed to validate.", errOffset);
         return false;
     }
     bson_json_reader_destroy(jReader);
 
     bson_iter_t *it = malloc(sizeof(bson_iter_t));
     if (!bson_iter_init(it, manager->b)) {
-        bench_bson_error_write(bsonError, "Failed to initialize BSON iterator.", 0);
+        BENCH_BSON_ERROR_WRITE(bsonError, "Failed to initialize BSON iterator.", 0);
         return false;
     }
 
@@ -118,7 +118,7 @@ bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
     size_t errOffset;
     bson_iter_t it;
     if (!bson_validate(manager->b, BSON_VALIDATE_NONE, &errOffset)) {
-        bench_bson_error_write(manager->error, "The document failed to validate at offset: %u\n", errOffset);
+        BENCH_BSON_ERROR_WRITE(manager->error, "The document failed to validate at offset: %u\n", errOffset);
         return false;
     }
     if (bson_iter_init(&it, manager->b)) {
@@ -126,7 +126,7 @@ bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
             str = strcat(str, bson_iter_key(&it));
         }
     } else {
-        bench_bson_error_write(manager->error, "Failed to initialize Iterator. Aborting...", 0);
+        BENCH_BSON_ERROR_WRITE(manager->error, "Failed to initialize Iterator. Aborting...", 0);
         return false;
     }
     return str;
@@ -240,21 +240,21 @@ bool bench_bson_execute_benchmark(bench_bson_mgr *manager, const char *benchType
 
     bson_iter_t it;
     bson_iter_init(&it, manager->b);
-
+/*
     if(!bench_bson_find_int32(manager, &it, "Test3", 0))
-        return bench_bson_error_write(manager->error, "Failed to find int32 value.", 0);
+        return BENCH_BSON_ERROR_WRITE(manager->error, "Failed to find int32 value.", 0);
 
     if(!bench_bson_change_val_int32(manager, &it, 0, 21))
-        return bench_bson_error_write(manager->error, "Failed to change int32 value.", 0);
+        return BENCH_BSON_ERROR_WRITE(manager->error, "Failed to change int32 value.", 0);
 
     if(!bench_bson_convert_entry_int64(manager, &it, "Test4"))
-        return bench_bson_error_write(manager->error, "Failed to convert to int64 entry.", 0);
+        return BENCH_BSON_ERROR_WRITE(manager->error, "Failed to convert to int64 value.", 0);
 
     if(!bench_bson_convert_entry_int32(manager, &it, "Test4"))
         return bench_bson_error_write(manager->error, "Failed to convert to int32 entry.", 0);
 
     if(!bench_bson_delete_int32(manager, &it, "Test4"))
         return bench_bson_error_write(manager->error, "Failed to delete int32 entry.", 0);
-
+*/
     return true;
 }

@@ -26,7 +26,7 @@ bool bench_carbon_error_destroy(bench_carbon_error *error)
     return true;
 }
 
-bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, size_t docOffset)
+bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, const char *file, u32 line, size_t docOffset)
 {
     ERROR_IF_NULL(error)
     ERROR_IF_NULL(msg)
@@ -34,8 +34,8 @@ bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, size_t
     error_set_wdetails(error->err, ERR_FAILED, __FILE__, __LINE__, msg);
 
     error->benchErr->msg = strdup(msg);
-    error->benchErr->file = __FILE__;
-    error->benchErr->line = __LINE__;
+    error->benchErr->file = strdup(file);
+    error->benchErr->line = line;
     error->benchErr->offset = docOffset;
 
     error_print_to_stderr(error->err);
@@ -81,7 +81,7 @@ bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error
     bench_carbon_error_create(carbonError, benchError);
 
     if(!FN_IS_OK(carbon_create_empty(doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY)))
-        bench_carbon_error_write(carbonError, "Failed to create CARBON doc", 0);
+        BENCH_CARBON_ERROR_WRITE(carbonError, "Failed to create CARBON doc", 0);
 
     manager->doc = doc;
     manager->error = carbonError;
@@ -138,7 +138,7 @@ bool bench_carbon_find_int32(bench_carbon_mgr *manager, carbon_object_it *it, ch
     carbon_find_result_type(&type, &find);
 
     if(type != CARBON_FIELD_NUMBER_I32) {
-        bench_carbon_error_write(manager->error, strcat("Could not find int32 key ", _key), 0);
+        BENCH_CARBON_ERROR_WRITE(manager->error, strcat("Could not find int32 key ", _key), 0);
         return false;
     }
 
@@ -211,12 +211,12 @@ bool bench_carbon_execute_benchmark(bench_carbon_mgr *manager, const char *bench
     assert(bench_carbon_insert_int32(manager, 0, &obj_ins, "Test4", 44));
     assert(bench_carbon_insert_int32(manager, 0, &obj_ins, "Test5", 45));
     assert(bench_carbon_insert_int32(manager, 0, &obj_ins, "Test6", 46));
-
+/*
     if(!bench_carbon_find_int32(manager, 0, "Test3", 0))
         bench_carbon_error_write(manager->error, "Failed to find int32 value.", 0);
     if(!bench_carbon_change_val_int32(manager, 0, "Test3", 21))
         bench_carbon_error_write(manager->error, "Failed to change int32 value.", 0);
-/*
+
     if(!bench_carbon_convert_entry_int64(manager, 0, "Test4"))
         return bench_carbon_error_write(manager->error, "Failed to convert to int64 entry.", 0);
     if(!bench_carbon_convert_entry_int32(manager, 0, "Test4"))

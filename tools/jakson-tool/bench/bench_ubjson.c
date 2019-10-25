@@ -151,7 +151,7 @@ bool bench_ubjson_error_destroy(bench_ubjson_error *error) {
     return true;
 }
 
-bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t docOffset)
+bool bench_ubjson_error_write(bench_ubjson_error *error, const char *msg, const char *file, u32 line, size_t docOffset)
 {
     ERROR_IF_NULL(error)
     ERROR_IF_NULL(msg)
@@ -159,8 +159,8 @@ bool bench_ubjson_error_write(bench_ubjson_error *error, char *msg, size_t docOf
     error_set_wdetails(error->err, ERR_FAILED, __FILE__, __LINE__, msg);
 
     error->benchErr->msg = strdup(msg);
-    error->benchErr->file = __FILE__;
-    error->benchErr->line = __LINE__;
+    error->benchErr->file = strdup(file);
+    error->benchErr->line = line;
     error->benchErr->offset = docOffset;
 
     error_print_to_stderr(error->err);
@@ -394,7 +394,7 @@ bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *bench
     assert(bench_ubjson_insert_int32(manager, "Test5", 45));
     assert(bench_ubjson_insert_int32(manager, "Test6", 46));
 
-
+/*
     if(!bench_ubjson_find_int32(manager, 0, "Test3", 0))
         return bench_ubjson_error_write(manager->error, "Failed to find int32 value.", 0);
 
@@ -409,6 +409,6 @@ bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *bench
 
     if(!bench_ubjson_delete_int32(manager, 0, "Test4"))
         return bench_ubjson_error_write(manager->error, "Failed to delete int32 entry.", 0);
-
+*/
     return true;
 }

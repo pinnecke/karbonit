@@ -31,7 +31,7 @@ BEGIN_DECL
 // TODO: fix memory leaks!!
 // TODO: deduplicate functions
 
-static inline fn_result schema_keyword_handle_properties(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_properties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -49,7 +49,7 @@ static inline fn_result schema_keyword_handle_properties(schema *s, carbon_objec
 }
 
 
-static inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_type(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -111,7 +111,7 @@ static inline fn_result schema_keyword_handle_type(schema *s, carbon_object_it *
     return FN_OK();
 }
 
-static inline fn_result schema_keyword_handle_minimum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_minimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     bool isnull;
@@ -130,7 +130,7 @@ static inline fn_result schema_keyword_handle_minimum(schema *s, carbon_object_i
 }
 
 
-static inline fn_result schema_keyword_handle_maximum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_maximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     bool isnull;
@@ -149,7 +149,7 @@ static inline fn_result schema_keyword_handle_maximum(schema *s, carbon_object_i
 }
 
 
-static inline fn_result schema_keyword_handle_exclusiveMinimum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_exclusiveMinimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     bool isnull;
@@ -168,7 +168,7 @@ static inline fn_result schema_keyword_handle_exclusiveMinimum(schema *s, carbon
 }
 
 
-static inline fn_result schema_keyword_handle_exclusiveMaximum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_exclusiveMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     bool isnull;
@@ -187,7 +187,7 @@ static inline fn_result schema_keyword_handle_exclusiveMaximum(schema *s, carbon
 }
 
 
-static inline fn_result schema_keyword_handle_multipleOf(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_multipleOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     bool isnull;
@@ -206,7 +206,7 @@ static inline fn_result schema_keyword_handle_multipleOf(schema *s, carbon_objec
 }
 
 
-static inline fn_result schema_keyword_handle_minLength(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_minLength(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -227,7 +227,7 @@ static inline fn_result schema_keyword_handle_minLength(schema *s, carbon_object
 }
 
 
-static inline fn_result schema_keyword_handle_maxLength(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_maxLength(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -248,7 +248,7 @@ static inline fn_result schema_keyword_handle_maxLength(schema *s, carbon_object
 }
 
 
-static inline fn_result schema_keyword_handle_pattern(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_pattern(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -265,7 +265,7 @@ static inline fn_result schema_keyword_handle_pattern(schema *s, carbon_object_i
 }
 
 
-static inline fn_result schema_keyword_handle_format(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_format(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -275,14 +275,43 @@ static inline fn_result schema_keyword_handle_format(schema *s, carbon_object_it
     }
     u64 strlen;
     const char* _str = carbon_object_it_string_value(&strlen, oit);
+    const char *str = strndup(_str, strlen);
+    
+    if (strcmp(str, "date") == 0) {
+        format = DATE;
+    }
+    else if (strcmp(str, "date-time") == 0) {
+        format = DATETIME;
+    }
+    else if (strcmp(str, "uri") == 0) {
+        format = URI;
+    }
+    else if (strcmp(str, "email") == 0) {
+        format = EMAIL;
+    }
+    else if (strcmp(str, "hostname") == 0) {
+        format = HOSTNAME;
+    }
+    else if (strcmp(str, "ipv4") == 0) {
+        format = IPV4;
+    }
+    else if (strcmp(str, "ipv6") == 0) {
+        format = IPV6;
+    }
+    else if (strcmp(str, "regex") == 0) {
+        format = REGEX;
+    }
+    else {
+        return FN_FAIL(ERR_SCHEMA_UNDEF_KEYWORD, "keyword \"format\" defines unknown format"); 
+    }
     s->applies.has_format = true;
-    s->data.format = strndup(_str, strlen);
+    s->data.format = format;
 
     return FN_OK();
 }
 
 
-static inline fn_result schema_keyword_handle_formatMinimum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_formatMinimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -299,7 +328,7 @@ static inline fn_result schema_keyword_handle_formatMinimum(schema *s, carbon_ob
 }
 
 
-static inline fn_result schema_keyword_handle_formatMaximum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_formatMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -316,7 +345,7 @@ static inline fn_result schema_keyword_handle_formatMaximum(schema *s, carbon_ob
 }
 
 
-static inline fn_result schema_keyword_handle_formatExclusiveMinimum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_formatExclusiveMinimum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -333,7 +362,7 @@ static inline fn_result schema_keyword_handle_formatExclusiveMinimum(schema *s, 
 }
 
 
-static inline fn_result schema_keyword_handle_formatExclusiveMaximum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_formatExclusiveMaximum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -350,7 +379,7 @@ static inline fn_result schema_keyword_handle_formatExclusiveMaximum(schema *s, 
 }
 
 
-static inline fn_result schema_keyword_handle_minItems(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_minItems(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -371,7 +400,7 @@ static inline fn_result schema_keyword_handle_minItems(schema *s, carbon_object_
 }
 
 
-static inline fn_result schema_keyword_handle_maxItems(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_maxItems(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -392,7 +421,7 @@ static inline fn_result schema_keyword_handle_maxItems(schema *s, carbon_object_
 }
 
 
-static inline fn_result schema_keyword_handle_uniqueItems(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_uniqueItems(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -407,31 +436,60 @@ static inline fn_result schema_keyword_handle_uniqueItems(schema *s, carbon_obje
     return FN_OK();
 }
 
-static inline fn_result schema_keyword_handle_items(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_items(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
-    vector_create(&(s->data.items), NULL, sizeof(carbon_object_it), 5);
+    vector_create(&(s->data.items), NULL, sizeof(schema*), 5);
 
     if (carbon_field_type_is_object_or_subtype(field_type)) {
-        carbon_object_it *coit = (carbon_object_it*) malloc (sizeof(carbon_object_it));
-        carbon_object_it_clone(coit, oit);
-        vector_push(&(s->data.items), coit, 1);
+        s->applies.items_isObject = true;
+        carbon_object_it *soit = carbon_object_it_object_value(oit);
+        schema *items = (schema*) malloc(sizeof(schema));
+
+        if (!(FN_IS_OK(schema_init(items, NULL)))) {
+            carbon_object_it_drop(soit);
+            free(items);
+            return FN_FAIL_FORWARD();
+        }
+        if (!(FN_IS_OK(schema_generate(items, soit)))) {
+            carbon_object_it_drop(soit);
+            free(items);
+            return FN_FAIL_FORWARD();
+        }
+        vector_push(&(s->data.items), items, 1);
     }
 
     else if (carbon_field_type_is_array_or_subtype(field_type)) {
         carbon_array_it *ait = carbon_object_it_array_value(oit);
         while (carbon_array_it_next(ait)) {
+
             carbon_array_it_field_type(&field_type, ait);
+
             if (!(carbon_field_type_is_object_or_subtype(field_type))) {
                 carbon_array_it_drop(ait);
                 vector_drop(&(s->data.items));
                 return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
             }
-            carbon_object_it *coit = (carbon_object_it*) malloc(sizeof(carbon_object_it));
-            carbon_object_it_clone (coit, oit);
-            vector_push(&(s->data.items), coit, 1);
+
+            carbon_object_it *soit = carbon_array_it_object_value(ait);
+            schema *items = (schema*) malloc(sizeof(schema));
+
+            if (!(FN_IS_OK(schema_init(items, NULL)))) {
+                carbon_object_it_drop(soit);
+                carbon_array_it_drop(ait);
+                free(items);
+                return FN_FAIL_FORWARD();
+            }
+            if (!(FN_IS_OK(schema_generate(items, soit)))) {
+                carbon_object_it_drop(soit);
+                carbon_array_it_drop(ait);
+                free(items);
+                return FN_FAIL_FORWARD();
+            }
+            carbon_object_it_drop(soit);
+            vector_push(&(s->data.items), items, 1);
         }
         carbon_array_it_drop(ait);
     }
@@ -446,23 +504,49 @@ static inline fn_result schema_keyword_handle_items(schema *s, carbon_object_it 
 }
 
 
-static inline fn_result schema_keyword_handle_additionalItems(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_additionalItems(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
+    s->applies.has_additionalItems = true;
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
 
-    if (!(carbon_field_type_is_boolean(field_type))) {
-        return FN_FAIL(ERR_BADTYPE, "keyword \"additionalItems\" expects a boolean value");
+    if (carbon_field_type_is_boolean(field_type)) {
+        s->applies.additionalItemsIsBool = true;
+        bool is_true;
+        carbon_object_it_bool_value(&is_true, oit);
+        if (is_true) {
+            s->data.additionalItemsBool = true;
+        }
+        else {
+            s->data.additionalItemsBool = false;
+        }
+        return FN_OK();
     }
-    s->applies.has_additionalItems = true;
-    carbon_object_it_bool_value(&(s->data.additionalItems), oit);
 
-    return FN_OK();
+    if (carbon_field_type_is_object_or_subtype(field_type)) {
+
+        carbon_object_it *soit = carbon_object_it_object_value(oit);
+        schema *additionalItems = (schema*) malloc(sizeof(schema));
+        s->data.additionalItems = additionalItems;
+
+        if(!(FN_IS_OK(schema_init(s->data.additionalItems, NULL)))) {
+            free(additionalItems);
+            return FN_FAIL_FORWARD();
+        }
+        
+        if(!(FN_IS_OK(schema_generate(s->data.additionalItems, soit)))) {
+            carbon_object_it_drop(soit);
+            // TODO: delete schema!
+            return FN_FAIL_FORWARD();
+        }
+        return FN_OK();
+    }
+    return FN_FAIL(ERR_BADTYPE, "keyword \"additionalItems\" expects a boolean or an object value");
 }
 
 
-static inline fn_result schema_keyword_handle_contains(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_contains(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -493,7 +577,7 @@ static inline fn_result schema_keyword_handle_contains(schema *s, carbon_object_
 }
 
 
-static inline fn_result schema_keyword_handle_minProperties(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_minProperties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -514,7 +598,7 @@ static inline fn_result schema_keyword_handle_minProperties(schema *s, carbon_ob
 }
 
 
-static inline fn_result schema_keyword_handle_maxProperties(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_maxProperties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -535,7 +619,7 @@ static inline fn_result schema_keyword_handle_maxProperties(schema *s, carbon_ob
 }
 
 
-static inline fn_result schema_keyword_handle_required(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_required(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -568,7 +652,7 @@ static inline fn_result schema_keyword_handle_required(schema *s, carbon_object_
 }
 
 
-static inline fn_result schema_keyword_handle_patternProperties(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_patternProperties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     
     carbon_field_type_e field_type;
@@ -621,7 +705,7 @@ static inline fn_result schema_keyword_handle_patternProperties(schema *s, carbo
 }
 
 
-static inline fn_result schema_keyword_handle_additionalProperties(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_additionalProperties(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -638,7 +722,7 @@ static inline fn_result schema_keyword_handle_additionalProperties(schema *s, ca
 }
 
 
-static inline fn_result schema_keyword_handle_dependencies(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -691,7 +775,7 @@ static inline fn_result schema_keyword_handle_dependencies(schema *s, carbon_obj
 }
 
 
-static inline fn_result schema_keyword_handle_propertyNames(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_propertyNames(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -723,7 +807,7 @@ static inline fn_result schema_keyword_handle_propertyNames(schema *s, carbon_ob
 }
 
 
-static inline fn_result schema_keyword_handle_patternRequired(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_patternRequired(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
@@ -758,7 +842,7 @@ static inline fn_result schema_keyword_handle_patternRequired(schema *s, carbon_
 }
 
 // TODO: implement - a bit tricky!
-static inline fn_result schema_keyword_handle_enum(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_enum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -818,7 +902,7 @@ static inline fn_result schema_keyword_handle_enum(schema *s, carbon_object_it *
 }
 
 // TODO: implement - a bit tricky!
-static inline fn_result schema_keyword_handle_const(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_const(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
     UNUSED(s);
     UNUSED(oit);
@@ -827,7 +911,7 @@ static inline fn_result schema_keyword_handle_const(schema *s, carbon_object_it 
 }
 
 
-static inline fn_result schema_keyword_handle_not(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_not(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -859,7 +943,7 @@ static inline fn_result schema_keyword_handle_not(schema *s, carbon_object_it *o
 }
 
 
-static inline fn_result schema_keyword_handle_oneOf(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_oneOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -907,7 +991,7 @@ static inline fn_result schema_keyword_handle_oneOf(schema *s, carbon_object_it 
 }
 
 
-static inline fn_result schema_keyword_handle_anyOf(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_anyOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -955,7 +1039,7 @@ static inline fn_result schema_keyword_handle_anyOf(schema *s, carbon_object_it 
 }
 
 
-static inline fn_result schema_keyword_handle_allOf(schema *s, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword_allOf(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -1003,8 +1087,9 @@ static inline fn_result schema_keyword_handle_allOf(schema *s, carbon_object_it 
 
 }
 
-// TODO: implement
-static inline fn_result schema_keyword_handle_ifThenElse(schema *s, carbon_object_it *oit) {
+
+//TODO: not sure if this is correct
+static inline fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
     carbon_field_type_e field_type;
@@ -1015,7 +1100,7 @@ static inline fn_result schema_keyword_handle_ifThenElse(schema *s, carbon_objec
     }
 
     carbon_array_it *ait = carbon_object_it_array_value(oit);
-    vector_create(&(s->data.ifThenElse), NULL, sizeof(schema*), 5);
+    vector_create(&(s->data.ifThenElse), NULL, sizeof(schema*), 3);
 
     while (carbon_array_it_next(ait)) {
         
@@ -1052,185 +1137,185 @@ static inline fn_result schema_keyword_handle_ifThenElse(schema *s, carbon_objec
 }
 
 
-static inline fn_result schema_keyword_handle(schema *s, const char *keyword, carbon_object_it *oit) {
+static inline fn_result schema_generate_handleKeyword(schema *s, const char *keyword, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, keyword, oit);
     if (strcmp(keyword, "type") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_type(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_type(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "minimum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_minimum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_minimum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "maximum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_maximum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_maximum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "exclusiveMinimum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_exclusiveMinimum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_exclusiveMinimum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "exclusiveMaximum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_exclusiveMaximum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_exclusiveMaximum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "multipleOf") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_multipleOf(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_multipleOf(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "minLength") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_minLength(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_minLength(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "maxLength") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_maxLength(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_maxLength(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "pattern") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_pattern(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_pattern(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "format") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_format(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_format(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "formatMinimum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_formatMinimum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_formatMinimum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "formatMaximum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_formatMaximum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_formatMaximum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "formatExclusiveMinimum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_formatExclusiveMinimum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_formatExclusiveMinimum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "formatExclusiveMaximum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_formatExclusiveMaximum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_formatExclusiveMaximum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "minItems") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_minItems(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_minItems(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "maxItems") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_maxItems(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_maxItems(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "uniqueItems") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_uniqueItems(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_uniqueItems(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "items") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_items(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_items(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "additionalItems") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_additionalItems(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_additionalItems(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "contains") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_contains(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_contains(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "minProperties") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_minProperties(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_minProperties(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "maxProperties") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_maxProperties(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_maxProperties(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "required") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_required(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_required(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "properties") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_properties(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_properties(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "patternProperties") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_patternProperties(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_patternProperties(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "additionalProperties") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_additionalProperties(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_additionalProperties(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "dependencies") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_dependencies(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_dependencies(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "propertyNames") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_propertyNames(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_propertyNames(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "patternRequired") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_patternRequired(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_patternRequired(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "enum") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_enum(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_enum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "const") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_const(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_const(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "not") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_not(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_not(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "oneOf") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_oneOf(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_oneOf(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "anyOf") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_anyOf(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_anyOf(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "allOf") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_allOf(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_allOf(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
     else if (strcmp(keyword, "if") == 0) {
-        if (!(FN_IS_OK(schema_keyword_handle_ifThenElse(s, oit)))) {
+        if (!(FN_IS_OK(schema_generate_handleKeyword_ifThenElse(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }

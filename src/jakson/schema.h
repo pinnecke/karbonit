@@ -43,11 +43,18 @@ enum type {
 } type;
 
 
-//typedef struct schema_tuple {
-//    u8 type;
-//    void *value;
-//} schema_tuple;
-    
+enum format {
+    DATE,
+    DATETIME,
+    URI,
+    EMAIL,
+    HOSTNAME,
+    IPV4,
+    IPV6,
+    REGEX
+} format;
+
+
 typedef struct schema {
 
     const char *key_name;
@@ -76,7 +83,7 @@ typedef struct schema {
         u64 minProperties;
         u64 maxProperties;
         char *pattern;
-        char *format;
+        u8 format;
         char *formatMinimum;
         char *formatMaximum;
         char *formatExclusiveMinimum;
@@ -84,11 +91,12 @@ typedef struct schema {
         struct schema *propertyNames;
         struct schema *contains;
         struct schema *_not;
+        struct schema *additionalItems;
         carbon_object_it *properties;
         void *_const;
+        bool additionalItemsBool;
         bool additionalProperties;
         bool uniqueItems;
-        bool additionalItems;
     } data;
 
     struct {
@@ -114,7 +122,9 @@ typedef struct schema {
         u8 has_maxItems : 1;
         u8 has_uniqueItems : 1;
         u8 has_items : 1;
+        u8 items_isObject : 1;
         u8 has_additionalItems : 1;
+        u8 additionalItemsIsBool : 1;
         u8 has_contains : 1;
         // keywords for objects:
         u8 has_minProperties : 1;
@@ -135,6 +145,7 @@ typedef struct schema {
         u8 has_anyOf : 1;
         u8 has_allOf : 1;
         u8 has_ifThenElse : 1;
+
     } applies;
 
 } schema;
@@ -166,6 +177,8 @@ static inline fn_result schema_init(schema *s, const char* key_name) {
     s->applies.has_uniqueItems = false;
     s->applies.has_items = false;
     s->applies.has_additionalItems = false;
+    s->applies.additionalItemsIsBool = false;
+
     s->applies.has_contains = false;
     s->applies.has_minProperties = false;
     s->applies.has_maxProperties = false;
@@ -183,11 +196,13 @@ static inline fn_result schema_init(schema *s, const char* key_name) {
     s->applies.has_anyOf = false;
     s->applies.has_allOf = false;
     s->applies.has_ifThenElse = false;
+    
+    s->applies.items_isObject = false;
 
     return FN_OK();
 }
 
-static inline fn_result longDoubleFromAit (bool *is_null, long double *val, carbon_array_it *ait) {
+static inline fn_result longDoubleFromAit(bool *is_null, long double *val, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(is_null, val, ait);
 
     carbon_field_type_e field_type;
@@ -255,7 +270,8 @@ static inline fn_result longDoubleFromOit (bool *is_null, long double *val, carb
 
 fn_result schema_validate(carbon *schemaFile, carbon *fileToVal);
 fn_result schema_generate(schema *s, carbon_object_it *oit);
-fn_result schema_validate_run(schema *s, carbon *fileToVal);
+fn_result schema_validate_run_fromFile(schema *s, carbon *fileToVal);
+fn_result schema_validate_run(schema *s, carbon_array_it *ait);
 
 
 END_DECL

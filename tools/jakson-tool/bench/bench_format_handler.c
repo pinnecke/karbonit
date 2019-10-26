@@ -41,7 +41,6 @@ bool bench_format_handler_create_bson_handler(bench_format_handler *handler, ben
 {
     ERROR_IF_NULL(handler)
     ERROR_IF_NULL(error)
-    UNUSED(filePath)
 
     //error = malloc(sizeof(*error));
     bench_bson_error *bsonError = malloc(sizeof(*bsonError));
@@ -49,12 +48,12 @@ bool bench_format_handler_create_bson_handler(bench_format_handler *handler, ben
 
     bench_format_handler_create_error(error);
 
-    //if(filePath == NULL) {
-
+    if(filePath == NULL) {
         bench_bson_mgr_create_empty(manager, bsonError, error);
-    //} else {
-    //    bench_bson_mgr_create_from_file(&manager, filePath);
-    //}
+    } else {
+        bench_bson_mgr_create_from_file(manager, bsonError, error, filePath);
+    }
+
     handler->manager = manager;
     handler->error = error;
     handler->format_name = BENCH_FORMAT_BSON;
@@ -102,8 +101,8 @@ bool bench_format_handler_destroy(bench_format_handler *handler)
         return false;
     }
 
-    free(handler->manager);
-    free(handler->error);
+    //free(handler->manager);
+    //free(handler->error);
     return true;
 }
 
@@ -118,6 +117,33 @@ bool bench_format_handler_get_doc(char *str, bench_format_handler *handler) {
     } else {
         return false;
     }
+}
+
+size_t bench_format_handler_get_doc_size(bench_format_handler *handler)
+{
+    ERROR_IF_NULL(handler)
+
+    if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
+        //return bench_carbon_get_doc_size(str, (bench_carbon_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
+        return bench_bson_get_doc_size((bench_bson_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
+        //return bench_ubjson_get_doc_size(str, handler->manager);
+    }
+
+    return false;
+}
+bool bench_format_handler_get_process_status(char *buffer)
+{
+    FILE* status = fopen( "/proc/self/status", "r" );
+    char c;
+
+    while((c = fgetc(status)) != EOF)
+        strncat(buffer, &c, 1);
+
+    fclose(status);
+
+    return true;
 }
 
 bool bench_format_handler_insert_int32(bench_format_handler *handler, char *key, int32_t val)

@@ -48,13 +48,14 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
     ERROR_IF_NULL(benchError);
     ERROR_IF_NULL(filePath);
 
-    bson_t b = BSON_INITIALIZER;
-    bson_json_reader_t *jReader;
+    //bson_t b = BSON_INITIALIZER;
+    bson_t *b;
+    //bson_json_reader_t *jReader;
     bench_bson_error_create(bsonError, benchError);
     bson_error_t bError;
     char msg[ERROR_MSG_SIZE];
-
-    if(!(jReader = bson_json_reader_new_from_file (filePath, &bError))) {
+/*
+    if(!(jReader = bson_json_reader_new_from_file(filePath, &bError))) {
         snprintf(msg, sizeof(msg), "BSON reader failed to open: %s : %s", filePath, bError.message);
         BENCH_BSON_ERROR_WRITE(bsonError, msg, 0);
         return false;
@@ -76,6 +77,22 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
         return false;
     }
     bson_json_reader_destroy(jReader);
+*/
+    FILE *f = fopen(filePath, "rb");
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    unsigned char *jsonContent = MALLOC(fsize + 1);
+    size_t nread = fread(jsonContent, fsize, 1, f);
+    UNUSED(nread)
+    fclose(f);
+    jsonContent[fsize] = 0;
+
+    b = bson_new_from_json(jsonContent, -1, &bError);
+    if(!b) {
+        snprintf(msg, sizeof(msg), "Failed to create BSON document from JSON.\nError: %s", bError.message);
+        BENCH_BSON_ERROR_WRITE(bsonError, msg, 0);
+    }
 
     bson_iter_t *it = malloc(sizeof(bson_iter_t));
     if (!bson_iter_init(it, manager->b)) {
@@ -84,7 +101,8 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
     }
 
     manager->it = it;
-    manager->b = &b;
+    //manager->b = &b;
+    manager->b = b;
     manager->error = bsonError;
 
     return true;
@@ -115,12 +133,16 @@ bool bench_bson_mgr_destroy(bench_bson_mgr *manager)
 }
 
 bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
+    ERROR_IF_NULL(manager)
+    ERROR_IF_NULL(str)
+
     size_t errOffset;
-    bson_iter_t it;
+    //bson_iter_t it;
     if (!bson_validate(manager->b, BSON_VALIDATE_NONE, &errOffset)) {
         BENCH_BSON_ERROR_WRITE(manager->error, "The document failed to validate at offset: %u\n", errOffset);
         return false;
     }
+    /*
     if (bson_iter_init(&it, manager->b)) {
         while(bson_iter_next(&it)) {
             str = strcat(str, bson_iter_key(&it));
@@ -130,11 +152,25 @@ bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
         return false;
     }
     return str;
+    */
+    if(!(strcpy(str, bson_as_json(manager->b, 0)))) {
+        BENCH_BSON_ERROR_WRITE(manager->error, "Failed to copy BSON document into buffer.", 0);
+        return false;
+    }
+
+    return true;
+}
+
+size_t bench_bson_get_doc_size(bench_bson_mgr *manager)
+{
+    ERROR_IF_NULL(manager);
+    return manager->b->len;
 }
 
 bool bench_bson_insert_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key, int32_t val)
 {
     ERROR_IF_NULL(manager);
+
     if(!it) {
         return bson_append_int32(manager->b, key, strlen(key), val);
     } else {

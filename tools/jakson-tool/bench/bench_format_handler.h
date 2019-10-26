@@ -20,16 +20,22 @@
 #ifndef JAKSON_BENCH_FORMAT_HANDLER_H
 #define JAKSON_BENCH_FORMAT_HANDLER_H
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
+#include <jakson/carbon/find.h>
+#include <jakson/carbon/array_it.h>
+
+#include <libs/bson/bson.h>
 
 #include "bench_carbon.h"
 #include "bench_bson.h"
 #include "bench_ubjson.h"
-#include <libs/bson/bson.h>
 
-#include <jakson/carbon/find.h>
-#include <jakson/carbon/array_it.h>
+
+
 
 #define BENCH_FORMAT_BSON "BSON"
 #define BENCH_FORMAT_CARBON "CARBON"
@@ -70,9 +76,11 @@ bool bench_format_handler_create_bson_handler(bench_format_handler *handler, ben
 bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_destroy(bench_format_handler *handler);
 bool bench_format_handler_get_doc(char *str, bench_format_handler *handler);
-bool bench_format_handler_get_document_size(bench_format_handler *handler, size_t size);
+size_t bench_format_handler_get_doc_size(bench_format_handler *handler);
+bool bench_format_handler_get_process_status(char *buffer);
 bool bench_format_handler_write_error(bench_format_handler *handler);
 
+/*
 bool bench_format_handler_insert_int8(bench_format_handler *handler, char *key, int8_t val);
 bool bench_format_handler_insert_int16(bench_format_handler *handler, char *key, int16_t val);
 bool bench_format_handler_insert_int32(bench_format_handler *handler, char *key, int32_t val);
@@ -103,7 +111,7 @@ bool bench_format_handler_delete_int16(bench_format_handler *handler, char *key)
 bool bench_format_handler_delete_int32(bench_format_handler *handler, char *key);
 bool bench_format_handler_delete_int64(bench_format_handler *handler, char *key);
 bool bench_format_handler_delete_string(bench_format_handler *handler, char *key);
-
+*/
 // TODO : Write centralized benchmark access point
 bool bench_format_handler_execute_benchmark(bench_format_handler *handler, const char *benchType);
 

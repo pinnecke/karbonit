@@ -45,6 +45,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
 bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error, bench_error *benchError);
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager);
 bool bench_bson_get_doc(char *str, bench_bson_mgr *manager);
+size_t bench_bson_get_doc_size(bench_bson_mgr *manager);
 
 bool bench_bson_insert_int8(bench_bson_mgr *manager, const char *key, int8_t val);
 bool bench_bson_insert_int16(bench_bson_mgr *manager, const char *key, int16_t val);

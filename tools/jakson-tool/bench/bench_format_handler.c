@@ -83,6 +83,22 @@ bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, b
     return true;
 }
 
+bool bench_format_handler_append_doc(bench_format_handler *handler, const char *filePath)
+{
+    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(filePath);
+
+    if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
+        //return bench_carbon_get_doc(str, (bench_carbon_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
+        return bench_bson_append_doc((bench_bson_mgr*) handler->manager, filePath);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
+        //return bench_ubjson_get_doc(str, handler->manager);
+    }
+
+    return false;
+}
+
 bool bench_format_handler_destroy(bench_format_handler *handler)
 {
     if(handler == NULL)
@@ -142,6 +158,22 @@ bool bench_format_handler_get_process_status(char *buffer)
         strncat(buffer, &c, 1);
 
     fclose(status);
+
+    return true;
+}
+
+bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *file, long file_size) {
+    ERROR_IF_NULL(json_content);
+    ERROR_IF_NULL(file);
+    if(!file_size) {
+        fseek(file, 0, SEEK_END);
+        file_size = ftell(file);
+    }
+
+    fread(json_content, file_size, 1, file);
+    json_content[file_size] = 0;
+
+    fclose(file);
 
     return true;
 }

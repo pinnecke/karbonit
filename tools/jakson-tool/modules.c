@@ -1,5 +1,7 @@
 
 #include <inttypes.h>
+#include <dirent.h>
+
 #include <jakson/archive/pack.h>
 #include <jakson/archive/query.h>
 #include <jakson/archive/internal.h>
@@ -669,14 +671,20 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
     } else {
         const char *format = argv[0];
         const char *filePath = argv[1];
+        bool isDir = false;
+        DIR *d;
+        struct dirent *dir;
 
-        if(testFileExists(file, filePath, 1, 1, true) != true) {
+
+        struct stat s;
+        if(stat(filePath, &s) == 0 && (s.st_mode & S_IFDIR)) {
+            isDir = true;
+            d = opendir(filePath);
+        } else if (testFileExists(file, filePath, 1, 1, true) != true) {
             CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", filePath);
             return false;
         }
-
         if(strcmp(format, BENCH_FORMAT_CARBON) == 0) {
-            // TODO: Include CARBON file benchmarking
             bench_format_handler handler;
             bench_error err;
             char buffer[512];
@@ -688,44 +696,46 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
             bench_format_handler_get_doc(buffer, &handler);
             bench_format_handler_destroy(&handler);
         } else if(strcmp(format, BENCH_FORMAT_BSON) == 0) {
-            // TODO: Include BSON file benchmarking
-            /*
-            bson_reader_t *bReader;
-            const bson_t *b;
-            bson_error_t bError;
-
-            if(!(bReader = bson_reader_new_from_file(filePath, &bError))) {
-                JAK_CONSOLE_WRITE(file, "BSON reader Failed to open '%s': ", filePath);
-                JAK_CONSOLE_WRITE(file, "%s", bError.message);
-                JAK_CONSOLE_WRITE_ENDL(file);
-                return false;
-            }
-            b = bson_reader_read(bReader, NULL);
-            char *j = bson_as_canonical_extended_json (b, NULL);
-            JAK_CONSOLE_WRITE(file, "%s", j);
-
-            bson_reader_destroy(bReader);
-            */
             bench_format_handler handler;
             bench_error err;
-            if(!bench_format_handler_create_bson_handler(&handler, &err, filePath)) {
-                //JAK_CONSOLE_WRITELN(file, err.msg, "");
-                return false;
+            //char buffer_doc[4096*2];
+            char buffer_status[512];
+            if(isDir) {
+                if(!bench_format_handler_create_bson_handler(&handler, &err, NULL)) {
+                    CONSOLE_WRITELN(file, "Failed to create BSON handler for: %s", filePath);
+                    return false;
+                }
+                if(d) {
+                    while((dir = readdir(d)) != NULL) {
+                        if(strcmp(dir->d_name, ".") == 0) {
+                            break;
+                        }
+                        char dir_filePath[512];
+                        snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
+                        bench_format_handler_append_doc(&handler, dir_filePath);
+                    }
+                    closedir(d);
+                }
+            } else {
+                if (!bench_format_handler_create_bson_handler(&handler, &err, filePath)) {
+                    CONSOLE_WRITELN(file, "Failed to create BSON handler for: %s", filePath);
+                    return false;
+                }
             }
-            //bench_bson_mgr mgr;
-            //bench_bson_error error;
-            //bench_bson_mgr_create_empty(&mgr, &error);
-            //bench_bson_mgr_insert_int32(&mgr, "test", 42);
-            //bench_format_handler_insert_int32(&handler, "test", 42);
-            //char buffer[512];
-            //strcpy(buffer, "test");
+            //bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
             //bench_format_handler_get_doc(buffer, &handler);
-            //JAK_CONSOLE_WRITE(file, "The following keys were found:\n%s", buffer);
-            bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
+            /*FILE *fp;
+            fp = fopen("test", "w+");
+            fprintf(fp, "%s", buffer);
+            fclose(fp);*/
+            CONSOLE_WRITELN(file, "%zd", bench_format_handler_get_doc_size(&handler));
+            bench_format_handler_get_process_status(buffer_status);
+            //VmSize is the most important bit!
+            CONSOLE_WRITELN(file, "%s", buffer_status);
+
             bench_format_handler_destroy(&handler);
 
         } else if(strcmp(format, BENCH_FORMAT_UBJSON) == 0) {
-            // TODO: Include UBJSON file benchmarking
             bench_format_handler handler;
             bench_error err;
             char buffer[512];

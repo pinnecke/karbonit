@@ -175,6 +175,7 @@ link_libraries(jakson-sources ${LIBS})
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/tools")
 add_subdirectory("${CMAKE_SOURCE_DIR}/examples")
+add_subdirectory("${CMAKE_SOURCE_DIR}/bench")
 
 enable_testing()
 add_subdirectory("${CMAKE_SOURCE_DIR}/tests")

@@ -571,7 +571,7 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
         carbon_array_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
                                memfile_tell(&state_in->parent_inserter->memfile) - 1);
 
-        carbon_array_fast_forward(&scan);
+        internal_carbon_array_fast_forward(&scan);
 
         state_in->array_end = memfile_tell(&scan.memfile);
         memfile_skip(&scan.memfile, 1);

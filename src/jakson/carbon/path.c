@@ -418,8 +418,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                         u32 next_path_pos = current_path_pos + 1;
                                         if (is_unit_array && is_record &&
                                                 carbon_field_type_is_column_or_subtype(elem_type)) {
-                                                carbon_column *sub_it = internal_carbon_array_column_value(
-                                                        it);
+                                                carbon_column *sub_it = carbon_item_get_column(&(it->item));
                                                 return traverse_column(state,
                                                                        path,
                                                                        next_path_pos,
@@ -443,8 +442,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                         return CARBON_PATH_NOCONTAINER;
                                                                                 } else {
                                                                                         if (carbon_field_type_is_array_or_subtype(elem_type)) {
-                                                                                                carbon_array *sub_it = internal_carbon_array_array_value(
-                                                                                                        it);
+                                                                                                carbon_array *sub_it = carbon_item_get_array(&(it->item));
                                                                                                 status = traverse_array(
                                                                                                         state,
                                                                                                         path,
@@ -455,8 +453,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                                 return status;
                                                                                         } else {
                                                                                                 JAK_ASSERT(carbon_field_type_is_column_or_subtype(elem_type));
-                                                                                                carbon_column *sub_it = internal_carbon_array_column_value(
-                                                                                                        it);
+                                                                                                carbon_column *sub_it = carbon_item_get_column(&(it->item));
                                                                                                 return traverse_column(
                                                                                                         state,
                                                                                                         path,
@@ -471,8 +468,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                         elem_type)) {
                                                                                         return CARBON_PATH_NOTANOBJECT;
                                                                                 } else {
-                                                                                        carbon_object *sub_it = internal_carbon_array_object_value(
-                                                                                                it);
+                                                                                        carbon_object *sub_it = carbon_item_get_object(&(it->item));
                                                                                         status = traverse_object(state,
                                                                                                                  path,
                                                                                                                  next_path_pos,
@@ -506,8 +502,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                 return CARBON_PATH_NOTANOBJECT;
                                         } else {
                                                 if (is_unit_array && is_record) {
-                                                        carbon_object *sub_it = internal_carbon_array_object_value(
-                                                                it);
+                                                        carbon_object *sub_it = carbon_item_get_object(&(it->item));
                                                         status = traverse_object(state,
                                                                                  path,
                                                                                  current_path_pos,

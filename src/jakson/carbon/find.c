@@ -21,6 +21,7 @@
 
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/find.h>
+#include "find.h"
 
 static void result_from_array(carbon_find *find, carbon_array *it);
 
@@ -655,7 +656,7 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = internal_carbon_array_array_value(it);
+                        find->value.array = carbon_item_get_array(&(it->item));
                         find->value.array->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -698,19 +699,21 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column_it = internal_carbon_array_column_value(it);
+                        find->value.column_it = carbon_item_get_column(&(it->item));
                         find->value.column_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
-                        find->value.object_it = internal_carbon_array_object_value(it);
+                        find->value.object_it = carbon_item_get_object(&(it->item));
                         find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
-                case CARBON_FIELD_STRING:
-                        find->value.string.base = internal_carbon_array_string_value(&find->value.string.len, it);
-                        break;
+                case CARBON_FIELD_STRING: {
+                        carbon_string_field string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
+                        find->value.string.base = string.string;
+                        find->value.string.len = string.length;
+                } break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_U32:

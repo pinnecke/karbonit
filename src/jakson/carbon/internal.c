@@ -1038,8 +1038,8 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
 
                         offset_t begin_off = memfile_tell(memfile);
                         carbon_array_create(&it, memfile, err, begin_off - sizeof(u8));
-                        carbon_array_fast_forward(&it);
-                        offset_t end_off = carbon_array_memfilepos(&it);
+                        internal_carbon_array_fast_forward(&it);
+                        offset_t end_off = internal_carbon_array_memfilepos(&it);
                         carbon_array_drop(&it);
 
                         JAK_ASSERT(begin_off < end_off);

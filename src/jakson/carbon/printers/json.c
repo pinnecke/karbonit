@@ -101,24 +101,24 @@ static inline void __carbon_print_json_binary(struct string_buffer *restrict buf
         string_buffer_add_char(buf, ']');
 }
 
-#define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(type)                                                                 \
-static inline void __carbon_print_json_##type##_from_array(struct string_buffer *restrict buf,                         \
-                                                           carbon_array *restrict it)                        \
-{                                                                                                                      \
-        type val;                                                                                                      \
-        internal_carbon_array_##type##_value(&val, it);                                                                      \
-        string_buffer_add_##type(buf, val);                                                                            \
-}
-
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u32)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u64)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i32)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i64)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(float)
+//#define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(type)                                                                 \
+//static inline void __carbon_print_json_##type##_from_array(struct string_buffer *restrict buf,                         \
+//                                                           carbon_array *restrict it)                        \
+//{                                                                                                                      \
+//        type val;                                                                                                      \
+//        internal_carbon_array_##type##_value(&val, it);                                                                      \
+//        string_buffer_add_##type(buf, val);                                                                            \
+//}
+//
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u8)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u16)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u32)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u64)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i8)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i16)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i32)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i64)
+//DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(float)
 
 #define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(type)                                                            \
 static inline void __carbon_print_json_##type##_from_prop_value(struct string_buffer *restrict buf,                    \
@@ -144,9 +144,9 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
         carbon_field_type_e type;
-        const char *string;
-        carbon_binary binary;
-        u64 string_len;
+        //const char *string;
+        //carbon_binary binary;
+        //u64 string_len;
 
         if (UNLIKELY(!carbon_array_has_next(it))) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
@@ -168,64 +168,64 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 
                 carbon_array_field_type(&type, it);
 
-                switch (type) {
-                        case CARBON_FIELD_NULL:
-                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
-                                break;
-                        case CARBON_FIELD_TRUE:
-                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_TRUE);
-                                break;
-                        case CARBON_FIELD_FALSE:
-                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
-                                break;
-                        case CARBON_FIELD_STRING:
-                                string = internal_carbon_array_string_value(&string_len, it);
-                                __carbon_print_json_string(str_buf, string, string_len);
-                                break;
-                        case CARBON_FIELD_NUMBER_U8:
-                                __carbon_print_json_u8_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_U16:
-                                __carbon_print_json_u16_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_U32:
-                                __carbon_print_json_u32_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_U64:
-                                __carbon_print_json_u64_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_I8:
-                                __carbon_print_json_i8_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_I16:
-                                __carbon_print_json_i16_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_I32:
-                                __carbon_print_json_i32_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_I64:
-                                __carbon_print_json_i64_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_NUMBER_FLOAT:
-                                __carbon_print_json_float_from_array(str_buf, it);
-                                break;
-                        case CARBON_FIELD_BINARY:
-                        case CARBON_FIELD_BINARY_CUSTOM:
-                                internal_carbon_array_binary_value(&binary, it);
-                                __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
-                                break;
-                        default:
-                                break;
-                }
+//                switch (type) {
+//                        case CARBON_FIELD_NULL:
+//                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
+//                                break;
+//                        case CARBON_FIELD_TRUE:
+//                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_TRUE);
+//                                break;
+//                        case CARBON_FIELD_FALSE:
+//                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
+//                                break;
+//                        case CARBON_FIELD_STRING:
+//                                string = internal_carbon_array_string_value(&string_len, it);
+//                                __carbon_print_json_string(str_buf, string, string_len);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_U8:
+//                                __carbon_print_json_u8_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_U16:
+//                                __carbon_print_json_u16_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_U32:
+//                                __carbon_print_json_u32_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_U64:
+//                                __carbon_print_json_u64_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_I8:
+//                                __carbon_print_json_i8_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_I16:
+//                                __carbon_print_json_i16_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_I32:
+//                                __carbon_print_json_i32_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_I64:
+//                                __carbon_print_json_i64_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_NUMBER_FLOAT:
+//                                __carbon_print_json_float_from_array(str_buf, it);
+//                                break;
+//                        case CARBON_FIELD_BINARY:
+//                        case CARBON_FIELD_BINARY_CUSTOM:
+//                                internal_carbon_array_binary_value(&binary, it);
+//                                __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
+//                                break;
+//                        default:
+//                                break;
+//                }
 
                 if (carbon_field_type_is_object_or_subtype(type)) {
-                        carbon_object *sub = internal_carbon_array_object_value(it);
+                        carbon_object *sub = carbon_item_get_object(&(it->item));
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column *sub = internal_carbon_array_column_value(it);
+                        carbon_column *sub = carbon_item_get_column(&(it->item));
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
-                        carbon_array *sub = internal_carbon_array_array_value(it);
+                        carbon_array *sub = carbon_item_get_array(&(it->item));
                         carbon_traverse_continue_array(extra, sub);
                 }
         }

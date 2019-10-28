@@ -564,7 +564,7 @@ static bool rewrite_column_to_array(carbon_column *it)
         }
 
         carbon_array_insert_end(&array_ins);
-        JAK_ASSERT(array_marker_begin < carbon_array_memfilepos(&array));
+        JAK_ASSERT(array_marker_begin < internal_carbon_array_memfilepos(&array));
         carbon_array_drop(&array);
 
         memfile_restore_position(&it->memfile);

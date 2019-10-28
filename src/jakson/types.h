@@ -46,8 +46,8 @@ typedef u8 boolean;
 #define I64_NULL        INT64_MIN
 
 #define CARBON_NULL_FLOAT        NAN
-#define CABRON_NULL_UNSIGNED     U64_NULL
-#define CABRON_NULL_SIGNED       I64_NULL
+#define CARBON_NULL_UNSIGNED     U64_NULL
+#define CARBON_NULL_SIGNED       I64_NULL
 
 #define CARBON_U8_MIN    UINT8_MIN
 #define CARBON_U16_MIN   UINT16_MIN

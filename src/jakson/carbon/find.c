@@ -21,7 +21,9 @@
 
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/find.h>
-#include "find.h"
+#include <jakson/stdinc.h>
+#include <jakson/types.h>
+#include <stdint.h>
 
 static void result_from_array(carbon_find *find, carbon_array *it);
 
@@ -718,23 +720,23 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_U32:
                 case CARBON_FIELD_NUMBER_U64:
-                        internal_carbon_array_unsigned_value_nullable(&find->value_is_nulled,
-                                                                      &find->value.unsigned_number, it);
+                        find->value.unsigned_number = carbon_item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
+                        find->value_is_nulled = IS_NULL_UNSIGNED(find->value.unsigned_number);
                         break;
                 case CARBON_FIELD_NUMBER_I8:
                 case CARBON_FIELD_NUMBER_I16:
                 case CARBON_FIELD_NUMBER_I32:
                 case CARBON_FIELD_NUMBER_I64:
-                        internal_carbon_array_signed_value_nullable(&find->value_is_nulled, &find->value.signed_number,
-                                                                    it);
+                        find->value.signed_number = carbon_item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
+                        find->value_is_nulled = IS_NULL_SIGNED(find->value.signed_number);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
-                        internal_carbon_array_float_value_nullable(&find->value_is_nulled, &find->value.float_number,
-                                                                   it);
+                        find->value.float_number = carbon_item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
+                        find->value_is_nulled = IS_NULL_FLOAT(find->value.float_number);
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
-                        internal_carbon_array_binary_value(&find->value.binary, it);
+                        find->value.binary = carbon_item_get_binary(&(it->item), CARBON_NULL_BINARY);
                         break;
                 default: ERROR(&find->err, ERR_INTERNALERR);
                         break;

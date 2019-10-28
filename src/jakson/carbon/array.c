@@ -200,6 +200,7 @@ bool carbon_array_clone(carbon_array *dst, carbon_array *src)
         carbon_int_field_access_clone(&dst->field_access, &src->field_access);
         dst->field_offset = src->field_offset;
         dst->pos = src->pos;
+        internal_carbon_item_create(&dst->item, dst);
         return true;
 }
 
@@ -428,4 +429,9 @@ fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e der
 
         memfile_restore_position(&it->memfile);
         return FN_OK();
+}
+
+bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it)
+{
+        return carbon_int_field_access_field_type(type, &it->field_access);
 }

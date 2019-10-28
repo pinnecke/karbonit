@@ -95,19 +95,19 @@ bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
         item->idx = parent->pos;
         carbon_field_type_e field_type = parent->field_access.it_field_type;
 
-        if (carbon_field_type_is_signed(field_type)) {
+        if (carbon_field_type_is_signed(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_access_signed_value(&item->value.number_signed, &parent->field_access, &parent->err);
                 item->value_type = CARBON_ITEM_NUMBER_SIGNED;
-        } else if (carbon_field_type_is_unsigned(field_type)) {
+        } else if (carbon_field_type_is_unsigned(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_access_unsigned_value(&item->value.number_unsigned, &parent->field_access, &parent->err);
                 item->value_type = CARBON_ITEM_NUMBER_UNSIGNED;
-        } else if (carbon_field_type_is_floating(field_type)) {
+        } else if (carbon_field_type_is_floating(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_access_float_value(&item->value.number_float, &parent->field_access, &parent->err);
                 item->value_type = CARBON_ITEM_NUMBER_FLOAT;
         } else if (carbon_field_type_is_binary(field_type)) {
                 carbon_int_field_access_binary_value(&item->value.binary, &parent->field_access, &parent->err);
                 item->value_type = CARBON_ITEM_BINARY;
-        } else if (carbon_field_type_is_boolean(field_type)) {
+        } else if (carbon_field_type_is_boolean(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
                 item->value_type = field_type == CARBON_FIELD_TRUE ? CARBON_ITEM_TRUE : CARBON_ITEM_FALSE;
         } else if (carbon_field_type_is_array_or_subtype(field_type)) {
                 item->value.array = carbon_int_field_access_array_value(&parent->field_access, &parent->err);

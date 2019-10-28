@@ -147,35 +147,35 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
@@ -187,19 +187,19 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 carbon_revise_iterator_open(&it, &rev_context);
 
                 carbon_array_next(&it);
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 carbon_array_update_type(sub_it, CARBON_LIST_SORTED_MULTISET);
 
                 carbon_array_next(&it);
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 carbon_array_update_type(sub_it, CARBON_LIST_UNSORTED_SET);
 
                 carbon_array_next(&it);
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 carbon_array_update_type(sub_it, CARBON_LIST_SORTED_SET);
 
                 carbon_array_next(&it);
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 carbon_array_update_type(sub_it, CARBON_LIST_UNSORTED_MULTISET);
 
                 carbon_revise_iterator_close(&it);
@@ -212,28 +212,28 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 
                 carbon_array_next(&it);
                 carbon_array_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = internal_carbon_array_array_value(&it);
+                sub_it = carbon_item_get_array(&(it.item));
                 ASSERT_TRUE(FN_STATUS(carbon_array_is_multiset(sub_it)));
                 ASSERT_FALSE(FN_STATUS(carbon_array_is_sorted(sub_it)));
 

@@ -23,7 +23,7 @@ TEST(TestCarbonPatch, CreatePatch) {
                 {
                         carbon_array_field_type(&type, &it);
                         EXPECT_TRUE(type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
-                        obj = internal_carbon_array_object_value(&it);
+                        obj = carbon_item_get_object(&(it.item));
                         {
                                 carbon_object_next(obj);
                                 carbon_object_prop_type(&type, obj);

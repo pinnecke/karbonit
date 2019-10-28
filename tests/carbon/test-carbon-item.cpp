@@ -36,7 +36,7 @@ TEST(TestCarbonItem, CreateId) {
                         EXPECT_TRUE(carbon_item_is_number(item));
                         EXPECT_TRUE(carbon_item_is_unsigned(item));
                         {
-                                i64 value = carbon_item_get_number_unsigned(item, CABRON_NULL_UNSIGNED);
+                                i64 value = carbon_item_get_number_unsigned(item, CARBON_NULL_UNSIGNED);
                                 EXPECT_TRUE(value == 42);
                         }
                 break;
@@ -44,7 +44,7 @@ TEST(TestCarbonItem, CreateId) {
                         EXPECT_TRUE(carbon_item_is_number(item));
                         EXPECT_TRUE(carbon_item_is_signed(item));
                         {
-                                u64 value = carbon_item_get_number_signed(item, CABRON_NULL_SIGNED);
+                                u64 value = carbon_item_get_number_signed(item, CARBON_NULL_SIGNED);
                                 EXPECT_TRUE(value == (u64) -42);
                         }
                 break;

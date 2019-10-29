@@ -292,8 +292,8 @@ static void object_traverse(struct path_index_node *parent, carbon_object *it)
         while (carbon_object_next(it)) {
                 u64 prop_name_len = 0;
                 offset_t key_off = 0, value_off = 0;
-                carbon_object_tell(&key_off, &value_off, it);
-                const char *prop_name = carbon_object_prop_name(&prop_name_len, it);
+                internal_carbon_object_tell(&key_off, &value_off, it);
+                const char *prop_name = internal_carbon_object_prop_name(&prop_name_len, it);
                 struct path_index_node *elem_node = path_index_node_add_key_elem(parent, key_off,
                                                                                  prop_name, prop_name_len, value_off);
                 object_build_index(elem_node, it);
@@ -303,7 +303,7 @@ static void object_traverse(struct path_index_node *parent, carbon_object *it)
 static void object_build_index(struct path_index_node *parent, carbon_object *elem_it)
 {
         carbon_field_type_e field_type = 0;;
-        carbon_object_prop_type(&field_type, elem_it);
+        internal_carbon_object_prop_type(&field_type, elem_it);
         path_index_node_set_field_type(parent, field_type);
 
         switch (field_type) {
@@ -364,7 +364,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        carbon_column *it = carbon_object_column_value(elem_it);
+                        carbon_column *it = internal_carbon_object_column_value(elem_it);
                         column_traverse(parent, it);
 
                 }
@@ -373,7 +373,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        carbon_array *it = carbon_object_array_value(elem_it);
+                        carbon_array *it = internal_carbon_object_array_value(elem_it);
                         array_traverse(parent, it);
                         carbon_array_drop(it);
                 }
@@ -382,7 +382,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                        carbon_object *it = carbon_object_object_value(elem_it);
+                        carbon_object *it = internal_carbon_object_object_value(elem_it);
                         object_traverse(parent, it);
                         carbon_object_drop(it);
                 }

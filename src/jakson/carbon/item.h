@@ -30,19 +30,19 @@ typedef enum carbon_item_type
 
 typedef struct carbon_item
 {
-    carbon_array *parent;
-    u64 idx;
-    carbon_item_type_e value_type;
+    carbon_array            *parent;
+    u64                      idx;
+    carbon_item_type_e       value_type;
     union {
-        i64 number_signed;
-        u64 number_unsigned;
-        float number_float;
-        carbon_string_field string;
-        carbon_binary binary;
-        carbon_array *array;
-        carbon_column *column;
-        carbon_object *object;
-    } value;
+        i64                  number_signed;
+        u64                  number_unsigned;
+        float                number_float;
+        carbon_string_field  string;
+        carbon_binary        binary;
+        carbon_array        *array;
+        carbon_column       *column;
+        carbon_object       *object;
+    }                        value;
 } carbon_item;
 
 #define INTERNAL_CARBON_ITEM_IS_TYPE(item, type)                                                                       \

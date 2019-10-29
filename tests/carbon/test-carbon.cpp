@@ -5828,12 +5828,12 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_insert_begin(&nested_ins, obj_it);
+        internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
-        carbon_object_insert_end(&nested_ins);
+        internal_carbon_object_insert_end(&nested_ins);
 
         carbon_object_drop(obj_it);
 
@@ -5907,9 +5907,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         ASSERT_TRUE(carbon_object_next(obj_it));
         ASSERT_TRUE(carbon_object_next(obj_it));
 
-        carbon_object_insert_begin(&nested_ins, obj_it);
+        internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
-        carbon_object_insert_end(&nested_ins);
+        internal_carbon_object_insert_end(&nested_ins);
 
         carbon_object_drop(obj_it);
 
@@ -5983,9 +5983,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         ASSERT_TRUE(carbon_object_next(obj_it));
         ASSERT_TRUE(carbon_object_next(obj_it));
 
-        carbon_object_insert_begin(&nested_ins, obj_it);
+        internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
-        carbon_object_insert_end(&nested_ins);
+        internal_carbon_object_insert_end(&nested_ins);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6059,9 +6059,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         ASSERT_TRUE(carbon_object_next(obj_it));
         ASSERT_TRUE(carbon_object_next(obj_it));
 
-        carbon_object_insert_begin(&nested_ins, obj_it);
+        internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
-        carbon_object_insert_end(&nested_ins);
+        internal_carbon_object_insert_end(&nested_ins);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6136,9 +6136,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         ASSERT_TRUE(carbon_object_next(obj_it));
         ASSERT_TRUE(carbon_object_next(obj_it));
 
-        carbon_object_insert_begin(&nested_ins, obj_it);
+        internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
-        carbon_object_insert_end(&nested_ins);
+        internal_carbon_object_insert_end(&nested_ins);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6214,9 +6214,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         ASSERT_TRUE(carbon_object_next(obj_it));
         ASSERT_FALSE(carbon_object_next(obj_it));
 
-        carbon_object_insert_begin(&nested_ins, obj_it);
+        internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
-        carbon_object_insert_end(&nested_ins);
+        internal_carbon_object_insert_end(&nested_ins);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6287,10 +6287,10 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_remove(obj_it);
+        internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6368,10 +6368,10 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_remove(obj_it);
+        internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6446,10 +6446,10 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_remove(obj_it);
+        internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6529,10 +6529,10 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_remove(obj_it);
+        internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6607,10 +6607,10 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_remove(obj_it);
+        internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6684,10 +6684,10 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = carbon_object_prop_name(&key_len, obj_it);
+        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
         ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
 
-        carbon_object_remove(obj_it);
+        internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -7720,7 +7720,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         ASSERT_TRUE(field_type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
         carbon_object *oit = carbon_item_get_object(&(it.item));
         ASSERT_TRUE(carbon_object_next(oit));
-        carbon_object_prop_type(&field_type, oit);
+        internal_carbon_object_prop_type(&field_type, oit);
         ASSERT_TRUE(carbon_field_type_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET);
         carbon_object_drop(oit);
@@ -7761,7 +7761,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         ASSERT_TRUE(field_type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP);
         carbon_object *oit = carbon_item_get_object(&(it.item));
         ASSERT_TRUE(carbon_object_next(oit));
-        carbon_object_prop_type(&field_type, oit);
+        internal_carbon_object_prop_type(&field_type, oit);
         ASSERT_TRUE(carbon_field_type_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET);
         carbon_object_drop(oit);

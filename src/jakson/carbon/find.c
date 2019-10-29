@@ -745,7 +745,7 @@ static void result_from_array(carbon_find *find, carbon_array *it)
 
 static void result_from_object(carbon_find *find, carbon_object *it)
 {
-        carbon_object_prop_type(&find->type, it);
+        internal_carbon_object_prop_type(&find->type, it);
         switch (find->type) {
                 case CARBON_FIELD_NULL:
                 case CARBON_FIELD_TRUE:
@@ -756,7 +756,7 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = carbon_object_array_value(it);
+                        find->value.array = internal_carbon_object_array_value(it);
                         find->value.array->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -799,18 +799,18 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column_it = carbon_object_column_value(it);
+                        find->value.column_it = internal_carbon_object_column_value(it);
                         find->value.column_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
-                        find->value.object_it = carbon_object_object_value(it);
+                        find->value.object_it = internal_carbon_object_object_value(it);
                         find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_STRING:
-                        find->value.string.base = carbon_object_string_value(&find->value.string.len, it);
+                        find->value.string.base = internal_carbon_object_string_value(&find->value.string.len, it);
                         break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_U16:
@@ -822,14 +822,15 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_NUMBER_I16:
                 case CARBON_FIELD_NUMBER_I32:
                 case CARBON_FIELD_NUMBER_I64:
-                        carbon_object_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
+                        internal_carbon_object_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
-                        carbon_object_float_value_nullable(&find->value_is_nulled, &find->value.float_number, it);
+                        internal_carbon_object_float_value_nullable(&find->value_is_nulled, &find->value.float_number,
+                                                                    it);
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
-                        carbon_object_binary_value(&find->value.binary, it);
+                        internal_carbon_object_binary_value(&find->value.binary, it);
                         break;
                 default: ERROR(&find->err, ERR_INTERNALERR);
                         break;

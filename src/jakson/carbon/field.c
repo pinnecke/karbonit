@@ -361,8 +361,8 @@ fn_result carbon_field_skip_object(memfile *file)
         fn_result result = carbon_abstract_is_instanceof_object(file);
         if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
                 carbon_object skip_it;
-                carbon_object_create(&skip_it, file, &file->err, memfile_tell(file));
-                carbon_object_fast_forward(&skip_it);
+                internal_carbon_object_create(&skip_it, file, &file->err, memfile_tell(file));
+                internal_carbon_object_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
                 carbon_object_drop(&skip_it);
                 return FN_OK();

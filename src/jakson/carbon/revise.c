@@ -427,9 +427,9 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
                                         carbon_object nested_object_it;
-                                        carbon_object_create(&nested_object_it, &it->memfile, &it->err,
-                                                                it->field_access.nested_object_it->object_contents_off -
-                                                                sizeof(u8));
+                                        internal_carbon_object_create(&nested_object_it, &it->memfile, &it->err,
+                                                                      it->field_access.nested_object_it->object_contents_off -
+                                                                      sizeof(u8));
                                         internal_pack_object(&nested_object_it);
                                         JAK_ASSERT(*memfile_peek(&nested_object_it.memfile, sizeof(char)) ==
                                                    CARBON_MOBJECT_END);
@@ -458,7 +458,7 @@ static bool internal_pack_object(carbon_object *it)
                 carbon_object this_object_it;
                 bool is_empty_slot, is_object_end;
 
-                carbon_object_copy(&this_object_it, it);
+                internal_carbon_object_copy(&this_object_it, it);
                 carbon_int_object_skip_contents(&is_empty_slot, &is_object_end, &this_object_it);
 
                 if (!is_object_end) {
@@ -486,7 +486,7 @@ static bool internal_pack_object(carbon_object *it)
         {
                 while (carbon_object_next(it)) {
                         carbon_field_type_e type;
-                        carbon_object_prop_type(&type, it);
+                        internal_carbon_object_prop_type(&type, it);
                         switch (type) {
                                 case CARBON_FIELD_NULL:
                                 case CARBON_FIELD_TRUE:
@@ -570,9 +570,9 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
                                         carbon_object nested_object_it;
-                                        carbon_object_create(&nested_object_it, &it->memfile, &it->err,
-                                                                it->field.value.data.nested_object_it->object_contents_off -
-                                                                sizeof(u8));
+                                        internal_carbon_object_create(&nested_object_it, &it->memfile, &it->err,
+                                                                      it->field.value.data.nested_object_it->object_contents_off -
+                                                                      sizeof(u8));
                                         internal_pack_object(&nested_object_it);
                                         JAK_ASSERT(*memfile_peek(&nested_object_it.memfile, sizeof(char)) ==
                                                    CARBON_MOBJECT_END);

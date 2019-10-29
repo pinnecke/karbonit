@@ -309,7 +309,7 @@ bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src)
         carbon_int_field_access_clone(&dst->field_access, &src->field_access);
         dst->field_offset = src->field_offset;
         dst->pos = src->pos;
-        internal_carbon_item_create(&dst->item, dst);
+        internal_carbon_item_create_from_array(&dst->item, dst);
         return true;
 }
 
@@ -418,7 +418,7 @@ static bool internal_array_next(carbon_array *it)
 carbon_item *carbon_array_next(carbon_array *it)
 {
         if (internal_array_next(it)) {
-                internal_carbon_item_create(&(it->item), it);
+                internal_carbon_item_create_from_array(&(it->item), it);
                 return &(it->item);
         } else {
                 return NULL;

@@ -19,10 +19,12 @@
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/utils/numbers.h>
+#include "item.h"
 
-bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
+bool internal_carbon_item_create_from_array(carbon_item *item, carbon_array *parent)
 {
-        item->parent = parent;
+        item->parent_type = CARBON_PARENT_ARRAY;
+        item->parent.array = parent;
         item->idx = parent->pos;
         carbon_field_type_e field_type = parent->field_access.it_field_type;
 

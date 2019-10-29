@@ -376,7 +376,7 @@ fn_result carbon_field_skip_array(memfile *file)
         fn_result result = carbon_abstract_is_instanceof_array(file);
         if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
                 carbon_array skip_it;
-                carbon_array_create(&skip_it, file, &file->err, memfile_tell(file));
+                internal_carbon_array_create(&skip_it, file, &file->err, memfile_tell(file));
                 internal_carbon_array_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
                 carbon_array_drop(&skip_it);

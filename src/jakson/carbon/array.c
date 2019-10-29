@@ -94,7 +94,7 @@ static bool update_in_place_constant(carbon_array *it, carbon_constant_e constan
                 memfile_write(&it->memfile, &value, sizeof(u8));
         } else {
                 carbon_insert ins;
-                carbon_array_remove(it);
+                internal_carbon_array_remove(it);
                 carbon_array_insert_begin(&ins, it);
 
                 switch (constant) {
@@ -140,7 +140,7 @@ static void __carbon_array_load_abstract_type(carbon_array *it)
         carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
 }
 
-fn_result carbon_array_create(carbon_array *it, memfile *memfile, err *err,
+fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, err *err,
                             offset_t payload_start)
 {
         FN_FAIL_IF_NULL(it, memfile, err);
@@ -175,20 +175,20 @@ fn_result carbon_array_create(carbon_array *it, memfile *memfile, err *err,
 
         carbon_int_field_access_create(&it->field_access);
 
-        internal_carbon_array_rewind(it);
+        carbon_array_rewind(it);
 
         return FN_OK();
 }
 
-bool carbon_array_copy(carbon_array *dst, carbon_array *src)
+bool internal_carbon_array_copy(carbon_array *dst, carbon_array *src)
 {
         DEBUG_ERROR_IF_NULL(dst);
         DEBUG_ERROR_IF_NULL(src);
-        carbon_array_create(dst, &src->memfile, &src->err, src->array_begin_off);
+        internal_carbon_array_create(dst, &src->memfile, &src->err, src->array_begin_off);
         return true;
 }
 
-bool carbon_array_clone(carbon_array *dst, carbon_array *src)
+bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
         dst->array_begin_off = src->array_begin_off;
@@ -204,7 +204,7 @@ bool carbon_array_clone(carbon_array *dst, carbon_array *src)
         return true;
 }
 
-bool carbon_array_set_mode(carbon_array *it, access_mode_e mode)
+bool internal_carbon_array_set_mode(carbon_array *it, access_mode_e mode)
 {
         DEBUG_ERROR_IF_NULL(it);
         it->memfile.mode = mode;
@@ -217,7 +217,7 @@ bool carbon_array_length(u64 *len, carbon_array *it)
         DEBUG_ERROR_IF_NULL(it)
 
         u64 num_elem = 0;
-        internal_carbon_array_rewind(it);
+        carbon_array_rewind(it);
         while (carbon_array_next(it)) {
                 num_elem++;
         }
@@ -228,7 +228,7 @@ bool carbon_array_length(u64 *len, carbon_array *it)
 
 bool carbon_array_is_empty(carbon_array *it)
 {
-        internal_carbon_array_rewind(it);
+        carbon_array_rewind(it);
         return carbon_array_next(it);
 }
 
@@ -240,7 +240,7 @@ fn_result carbon_array_drop(carbon_array *it)
         return FN_OK();
 }
 
-bool internal_carbon_array_rewind(carbon_array *it)
+bool carbon_array_rewind(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         ERROR_IF(it->array_begin_off >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
@@ -377,7 +377,7 @@ fn_result carbon_array_insert_end(carbon_insert *inserter)
         return carbon_insert_drop(inserter);
 }
 
-bool carbon_array_remove(carbon_array *it)
+bool internal_carbon_array_remove(carbon_array *it)
 {
         DEBUG_ERROR_IF_NULL(it);
         carbon_field_type_e type;

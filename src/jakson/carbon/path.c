@@ -483,7 +483,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                 } else {
                                                         /** path end is reached */
                                                         state->result.container_type = CARBON_ARRAY;
-                                                        carbon_array_clone(&state->result.containers.array.it, it);
+                                                        internal_carbon_array_clone(&state->result.containers.array.it, it);
                                                         return CARBON_PATH_RESOLVED;
                                                 }
                                         }

@@ -551,7 +551,7 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
         carbon_int_insert_array(&inserter_in->memfile, derivation, array_capacity);
         u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
 
-        carbon_array_create(state_out->nested_array, &inserter_in->memfile, &inserter_in->err, payload_start);
+        internal_carbon_array_create(state_out->nested_array, &inserter_in->memfile, &inserter_in->err, payload_start);
         carbon_array_insert_begin(&state_out->nested_inserter, state_out->nested_array);
 
         return &state_out->nested_inserter;
@@ -568,7 +568,7 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
         DEBUG_ERROR_IF_NULL(state_in);
 
         carbon_array scan;
-        carbon_array_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
+        internal_carbon_array_create(&scan, &state_in->parent_inserter->memfile, &state_in->parent_inserter->err,
                                memfile_tell(&state_in->parent_inserter->memfile) - 1);
 
         internal_carbon_array_fast_forward(&scan);

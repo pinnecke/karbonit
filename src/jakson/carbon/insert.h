@@ -53,6 +53,12 @@ bool carbon_insert_signed(carbon_insert *inserter, i64 value);
 bool carbon_insert_float(carbon_insert *inserter, float value);
 bool carbon_insert_string(carbon_insert *inserter, const char *value);
 bool carbon_insert_nchar(carbon_insert *inserter, const char *value, u64 value_len);
+
+bool carbon_insert_from_carbon(); // TODO: Implement P2
+bool carbon_insert_from_array(); // TODO: Implement P2
+bool carbon_insert_from_object(); // TODO: Implement P2
+bool carbon_insert_from_column(); // TODO: Implement P2
+
 /**
  * Inserts a user-defined binary string <code>value</code> of <code>nbytes</code> bytes along with a (mime) type annotation.
  * The type annotation is automatically found if <code>file_ext</code> is non-null and known to the system. If it is
@@ -98,6 +104,11 @@ bool carbon_insert_prop_float(carbon_insert *inserter, const char *key, float va
 bool carbon_insert_prop_string(carbon_insert *inserter, const char *key, const char *value);
 bool carbon_insert_prop_nchar(carbon_insert *inserter, const char *key, const char *value, u64 value_len);
 bool carbon_insert_prop_binary(carbon_insert *inserter, const char *key, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
+
+bool carbon_insert_prop_from_carbon(); // TODO: Implement P2
+bool carbon_insert_prop_from_array(); // TODO: Implement P2
+bool carbon_insert_prop_from_object(); // TODO: Implement P2
+bool carbon_insert_prop_from_column(); // TODO: Implement P2
 
 carbon_insert *carbon_insert_prop_object_begin(carbon_insert_object_state *out, carbon_insert *inserter, const char *key, u64 object_capacity);
 u64 carbon_insert_prop_object_end(carbon_insert_object_state *state);

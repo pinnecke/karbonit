@@ -19,47 +19,23 @@
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/internal.h>
 
-bool carbon_item_remove(const carbon_item *item)
+void carbon_item_set_number_signed(const carbon_item *item, i64 value)
 {
+        // TODO: Implement P1
         UNUSED(item);
-        return 0;
+        UNUSED(value);
 }
 
-void carbon_item_set_null(const carbon_item *item)
+void carbon_item_set_number_unsigned(const carbon_item *item, u64 value)
 {
+        // TODO: Implement P1
         UNUSED(item);
-}
-
-void carbon_item_set_true(const carbon_item *item)
-{
-        UNUSED(item);
-}
-
-void carbon_item_set_false(const carbon_item *item)
-{
-        UNUSED(item);
-}
-
-i64 carbon_item_set_number_signed(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-u64 carbon_item_set_number_unsigned(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
-}
-
-float carbon_item_set_number_float(const carbon_item *item)
-{
-        UNUSED(item);
-        return 0;
+        UNUSED(value);
 }
 
 const char *carbon_item_set_string(u64 *str_len, const carbon_item *item)
 {
+        // TODO: Implement P1
         UNUSED(item);
         UNUSED(str_len);
         return 0;
@@ -67,24 +43,28 @@ const char *carbon_item_set_string(u64 *str_len, const carbon_item *item)
 
 const carbon_binary *carbon_item_set_binary(const carbon_item *item)
 {
+        // TODO: Implement P1
         UNUSED(item);
         return 0;
 }
 
 carbon_array *carbon_item_set_array(const carbon_item *item)
 {
+        // TODO: Implement P1
         UNUSED(item);
         return 0;
 }
 
 carbon_column *carbon_item_set_column(const carbon_item *item)
 {
+        // TODO: Implement P1
         UNUSED(item);
         return 0;
 }
 
 carbon_object *carbon_item_set_object(const carbon_item *item)
 {
+        // TODO: Implement P1
         UNUSED(item);
         return 0;
 }

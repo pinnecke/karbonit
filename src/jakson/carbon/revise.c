@@ -179,7 +179,7 @@ fn_result carbon_revise_iterator_open(carbon_array *it, carbon_revise *context)
         if (UNLIKELY(context->revised_doc->memfile.mode != READ_WRITE)) {
                 return FN_FAIL(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
-        return carbon_array_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
+        return internal_carbon_array_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
 }
 
 fn_result carbon_revise_iterator_close(carbon_array *it)
@@ -231,7 +231,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
                         switch (eval.result.container_type) {
                                 case CARBON_ARRAY: {
                                         carbon_array *it = &eval.result.containers.array.it;
-                                        result = carbon_array_remove(it);
+                                        result = internal_carbon_array_remove(it);
                                 }
                                         break;
                                 case CARBON_COLUMN: {
@@ -315,7 +315,7 @@ static bool internal_pack_array(carbon_array *it)
                 carbon_array this_array;
                 bool is_empty_slot, is_array_end;
 
-                carbon_array_copy(&this_array, it);
+                internal_carbon_array_copy(&this_array, it);
                 carbon_int_array_skip_contents(&is_empty_slot, &is_array_end, &this_array);
 
                 if (!is_array_end) {
@@ -367,7 +367,7 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array nested_array;
-                                        carbon_array_create(&nested_array, &it->memfile, &it->err,
+                                        internal_carbon_array_create(&nested_array, &it->memfile, &it->err,
                                                                it->field_access.nested_array->array_begin_off);
                                         internal_pack_array(&nested_array);
                                         JAK_ASSERT(*memfile_peek(&nested_array.memfile, sizeof(char)) ==
@@ -510,7 +510,7 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array nested_array;
-                                        carbon_array_create(&nested_array, &it->memfile, &it->err,
+                                        internal_carbon_array_create(&nested_array, &it->memfile, &it->err,
                                                                it->field.value.data.nested_array->array_begin_off);
                                         internal_pack_array(&nested_array);
                                         JAK_ASSERT(*memfile_peek(&nested_array.memfile, sizeof(char)) ==

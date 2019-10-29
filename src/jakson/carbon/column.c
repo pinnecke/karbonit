@@ -514,7 +514,7 @@ static bool rewrite_column_to_array(carbon_column *it)
 
         size_t capacity = it->column_num_elements * carbon_int_get_type_value_size(it->type);
         carbon_int_insert_array(&it->memfile, list_type, capacity);
-        carbon_array_create(&array, &it->memfile, &it->err, array_marker_begin);
+        internal_carbon_array_create(&array, &it->memfile, &it->err, array_marker_begin);
         carbon_array_insert_begin(&array_ins, &array);
 
         carbon_field_type_e type;

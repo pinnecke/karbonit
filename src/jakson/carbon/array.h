@@ -83,18 +83,6 @@ typedef struct carbon_array {
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Constructs a new array iterator in a carbon document, where <code>payload_start</code> is a memory offset
- * that starts with the first (potentially empty) array entry. If there is some data before the array contents
- * (e.g., a header), <code>payload_start</code> must not include this data.
- */
-fn_result carbon_array_create(carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
-bool carbon_array_copy(carbon_array *dst, carbon_array *src);
-bool carbon_array_clone(carbon_array *dst, carbon_array *src);
-bool carbon_array_set_mode(carbon_array *it, access_mode_e mode);
-bool carbon_array_length(u64 *len, carbon_array *it);
-bool carbon_array_is_empty(carbon_array *it);
-
-/**
  * Drops the iterator.
  */
 fn_result carbon_array_drop(carbon_array *it);
@@ -102,15 +90,22 @@ fn_result carbon_array_drop(carbon_array *it);
 /**
  * Positions the iterator at the beginning of this array.
  */
-bool internal_carbon_array_rewind(carbon_array *it);
+bool carbon_array_rewind(carbon_array *it);
+
+bool carbon_array_length(u64 *len, carbon_array *it);
+
+bool carbon_array_is_empty(carbon_array *it);
 
 /**
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
 carbon_item *carbon_array_next(carbon_array *it);
+
 bool carbon_array_has_next(carbon_array *it);
+
 bool carbon_array_is_unit(carbon_array *it);
+
 bool carbon_array_prev(carbon_array *it);
 
 /**
@@ -118,7 +113,6 @@ bool carbon_array_prev(carbon_array *it);
  */
 fn_result carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it);
 fn_result carbon_array_insert_end(carbon_insert *inserter);
-bool carbon_array_remove(carbon_array *it);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
@@ -134,6 +128,18 @@ fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e der
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Constructs a new array iterator in a carbon document, where <code>payload_start</code> is a memory offset
+ * that starts with the first (potentially empty) array entry. If there is some data before the array contents
+ * (e.g., a header), <code>payload_start</code> must not include this data.
+ */
+fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
+bool internal_carbon_array_copy(carbon_array *dst, carbon_array *src);
+bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src);
+bool internal_carbon_array_set_mode(carbon_array *it, access_mode_e mode);
+
+bool internal_carbon_array_remove(carbon_array *it);
 
 #define DECLARE_IN_PLACE_UPDATE_FUNCTION(type_name)                                                                    \
 bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value);
@@ -158,7 +164,6 @@ offset_t internal_carbon_array_memfilepos(carbon_array *it);
 offset_t internal_carbon_array_tell(carbon_array *it);
 bool internal_carbon_array_offset(offset_t *off, carbon_array *it);
 bool internal_carbon_array_fast_forward(carbon_array *it);
-
 
 END_DECL
 

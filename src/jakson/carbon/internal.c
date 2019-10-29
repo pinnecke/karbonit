@@ -376,7 +376,7 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         carbon_int_field_access_create(field_access);
                         field_access->nested_array_is_created = true;
-                        carbon_array_create(field_access->nested_array, file, err,
+                        internal_carbon_array_create(field_access->nested_array, file, err,
                                                memfile_tell(file) - sizeof(u8));
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -561,7 +561,7 @@ bool carbon_int_field_access_clone(field_access *dst, field_access *src)
         } else if (carbon_int_field_access_column_it_opened(src)) {
                 carbon_column_clone(dst->nested_column_it, src->nested_column_it);
         } else if (carbon_int_field_access_array_opened(src)) {
-                carbon_array_clone(dst->nested_array, src->nested_array);
+                internal_carbon_array_clone(dst->nested_array, src->nested_array);
         }
         return true;
 }
@@ -1037,7 +1037,7 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                         carbon_array it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_array_create(&it, memfile, err, begin_off - sizeof(u8));
+                        internal_carbon_array_create(&it, memfile, err, begin_off - sizeof(u8));
                         internal_carbon_array_fast_forward(&it);
                         offset_t end_off = internal_carbon_array_memfilepos(&it);
                         carbon_array_drop(&it);

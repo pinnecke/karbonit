@@ -123,19 +123,40 @@ typedef struct carbon_item
 #define carbon_item_get_object(item)                                                                                   \
         INTERNAL_CARBON_ITEM_GET_VALUE(item, object, NULL)
 
-bool carbon_item_remove(const carbon_item *item);
+#define carbon_item_remove(item)                                                                                       \
+        internal_carbon_array_remove((item)->parent)
 
-void carbon_item_set_null(const carbon_item *item);
-void carbon_item_set_true(const carbon_item *item);
-void carbon_item_set_false(const carbon_item *item);
-i64 carbon_item_set_number_signed(const carbon_item *item);
-u64 carbon_item_set_number_unsigned(const carbon_item *item);
-float carbon_item_set_number_float(const carbon_item *item);
+#define carbon_item_set_null(item)                                                                                     \
+        internal_carbon_array_update_null((item)->parent)
+
+#define carbon_item_set_true(item)                                                                                     \
+        internal_carbon_array_update_true((item)->parent)
+
+#define carbon_item_set_false(item)                                                                                    \
+        internal_carbon_array_update_false((item)->parent)
+
+#define carbon_item_set_number_float(item, float_value)                                                                \
+        internal_carbon_array_update_float((item)->parent, float_value)
+
+
+void carbon_item_set_number_signed(const carbon_item *item, i64 value);
+void carbon_item_set_number_unsigned(const carbon_item *item, u64 value);
 const char *carbon_item_set_string(u64 *str_len, const carbon_item *item);
 const carbon_binary *carbon_item_set_binary(const carbon_item *item);
-carbon_array *carbon_item_set_array(const carbon_item *item);
-carbon_column *carbon_item_set_column(const carbon_item *item);
-carbon_object *carbon_item_set_object(const carbon_item *item);
+carbon_array *carbon_item_set_array_begin(const carbon_item *item);
+carbon_array *carbon_item_set_array_end(const carbon_item *item);
+carbon_column *carbon_item_set_column_begin(const carbon_item *item);
+carbon_column *carbon_item_set_column_end(const carbon_item *item);
+carbon_object *carbon_item_set_object_begin(const carbon_item *item);
+carbon_object *carbon_item_set_object_end(const carbon_item *item);
+bool carbon_item_set_from_carbon(); // TODO: Implement P2
+bool carbon_item_set_from_array(); // TODO: Implement P2
+bool carbon_item_set_from_object(); // TODO: Implement P2
+bool carbon_item_set_from_column(); // TODO: Implement P2
+
+// ---------------------------------------------------------------------------------------------------------------------
+//  for internal usage
+// ---------------------------------------------------------------------------------------------------------------------
 
 bool internal_carbon_item_create(carbon_item *item, carbon_array *parent);
 

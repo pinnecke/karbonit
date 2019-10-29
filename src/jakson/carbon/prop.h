@@ -91,10 +91,66 @@ typedef struct carbon_prop
 #define carbon_prop_get_object(prop, default_value)                                                                    \
         ((prop) ? carbon_item_get_object((prop)->value) : default_value)
 
-#define carbon_prop_remove(prop)                                                                    \
-        ((prop) ? carbon_item_get_object((prop)->value) : default_value)
+#define carbon_prop_remove(prop)                                                                                       \
+        ((prop) ? internal_carbon_object_remove((prop)->value) : default_value)
 
+#define carbon_prop_set_null(prop)                                                                                     \
+        carbon_item_set_null((prop)->value)
 
+#define carbon_prop_set_true(prop)                                                                                     \
+        carbon_item_set_true((prop)->value)
+
+#define carbon_prop_set_false(prop)                                                                                    \
+        carbon_item_set_false((prop)->value)
+
+#define carbon_prop_set_number_float(prop, float_value)                                                                \
+        carbon_item_set_number_float((prop)->value, float_value)
+
+#define carbon_prop_set_number_signed(prop, i64_value)                                                                 \
+        carbon_item_set_number_signed((prop)->value, i64_value)
+
+#define carbon_prop_set_number_unsigned(prop, u64_value)                                                               \
+        carbon_item_set_number_unsigned((prop)->value, u64_value)
+
+#define carbon_prop_set_string(prop, const_char_str)                                                                   \
+        carbon_item_set_string((prop)->value, const_char_str)
+
+#define carbon_prop_set_binary(item, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type) \
+        carbon_item_set_binary((prop)->value, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type)
+
+#define carbon_prop_set_array_begin(state, item)                                                                       \
+        carbon_item_set_array_begin(state, (prop)->value)
+
+#define carbon_prop_set_array_end(state)                                                                               \
+        carbon_item_set_array_end
+
+#define carbon_prop_set_column_begin(state, item)                                                                      \
+        carbon_item_set_column_begin(state, (prop)->value)
+
+#define carbon_prop_set_column_end(state)                                                                              \
+        carbon_item_set_column_end(state)
+
+#define carbon_prop_set_object_begin(state, item)                                                                      \
+        carbon_item_set_object_begin(state, (prop)->value)
+
+#define carbon_prop_set_object_end(state)                                                                              \
+        carbon_item_set_object_end(state)
+
+#define carbon_prop_set_from_carbon(item, const_carbon_ptr_src)                                                        \
+        carbon_item_set_from_carbon((prop)->value, const_carbon_ptr_src)
+
+#define carbon_prop_set_from_array(item, const_carbon_array_ptr_src)                                                   \
+        carbon_item_set_from_array((prop)->value, const_carbon_array_ptr_src)
+
+#define carbon_prop_set_from_object(item, const_carbon_object_ptr_src)                                                 \
+        carbon_item_set_from_object((prop)->value, const_carbon_object_ptr_src)
+
+#define carbon_prop_set_from_column(item, const_carbon_column_ptr_src)                                                 \
+        carbon_item_set_from_column((prop)->value, const_carbon_column_ptr_src)
+
+// ---------------------------------------------------------------------------------------------------------------------
+//  for internal usage
+// ---------------------------------------------------------------------------------------------------------------------
 
 u64 internal_carbon_prop_size(memfile *file);
 

@@ -128,7 +128,7 @@ typedef struct carbon_prop
         carbon_item_set_array_begin(state, (prop)->value)
 
 #define carbon_prop_set_array_end(state)                                                                               \
-        carbon_item_set_array_end
+        carbon_item_set_array_end(state)
 
 #define carbon_prop_set_column_begin(state, prop)                                                                      \
         carbon_item_set_column_begin(state, (prop)->value)

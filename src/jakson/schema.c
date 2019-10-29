@@ -50,14 +50,14 @@ fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
     if (!(FN_IS_OK(schema_generate(&s, oit)))) {
         carbon_object_it_drop(oit);
         carbon_array_it_drop(&ait);
+        schema_drop(&s);
         return FN_FAIL_FORWARD();
     }
     carbon_object_it_drop(oit);
     carbon_array_it_drop(&ait);
 
     if (!(FN_IS_OK(schema_validate_run_fromFile(&s, fileToVal)))) {
-        //TODO: remove s' subobjects memleaks!
-        //free(s);
+        schema_drop(&s);
         return FN_FAIL_FORWARD();
     }
 
@@ -100,7 +100,7 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
             return FN_FAIL_FORWARD();
         }
     }
-        
+
     if (s->applies.has_maximum && carbon_field_type_is_number(field_type)) {
         if(!(FN_IS_OK(schema_validate_run_handleKeyword_maximum(s, ait)))) {
             return FN_FAIL_FORWARD();
@@ -126,7 +126,6 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
     }
 
     // -------------- keywords for strings --------------
-    if (s->applies.has_minimum && carbon_field_type_is_number(field_type)) {
     if (s->applies.has_minLength && carbon_field_type_is_string(field_type)) {
         if(!(FN_IS_OK(schema_validate_run_handleKeyword_minLength(s, ait)))) {
             return FN_FAIL_FORWARD();
@@ -167,6 +166,7 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
         if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatExclusiveMinimum(s, ait)))) {
             return FN_FAIL_FORWARD();
         }
+    }
 
     if (s->applies.has_formatExclusiveMaximum && carbon_field_type_is_string(field_type)) {
         if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatExclusiveMaximum(s, ait)))) {
@@ -199,8 +199,7 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
         }
     }
 
-
-    if (s->applies.has_contains && carbon_field_type_is_array_or_subtype(field_type)) {
+    if (s->applies.has_contains &&carbon_field_type_is_array_or_subtype(field_type)) {
         if (!(FN_IS_OK(schema_validate_run_handleKeyword_contains(s, ait)))) {
             return FN_FAIL_FORWARD();
         }
@@ -260,7 +259,7 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
             return FN_FAIL_FORWARD();
         }
     }
-    
+
     // -------------- keywords for all types --------------
     if (s->applies.has_enum) {
         if (!(FN_IS_OK(schema_validate_run_handleKeyword_enum(s, ait)))) {
@@ -273,7 +272,7 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
             return FN_FAIL_FORWARD();
         }
     }
-    
+
     // -------------- compound keywords --------------
     if (s->applies.has_not && carbon_field_type_is_object_or_subtype(field_type)) {
         if (!(FN_IS_OK(schema_validate_run_handleKeyword_not(s, ait)))) {
@@ -312,6 +311,7 @@ fn_result schema_validate_run_fromFile(schema *s, carbon *fileToVal) {
     FN_FAIL_IF_NULL(s, fileToVal);
 
     carbon_array_it ait;
+    // FIXME: can't handle JSON files like this: [1,2,3,4,5], need to differentiate between root and sub array
     carbon_iterator_open(&ait, fileToVal);
 
     if (!(FN_IS_OK(schema_validate_run(s, &ait)))) {
@@ -321,4 +321,4 @@ fn_result schema_validate_run_fromFile(schema *s, carbon *fileToVal) {
     return FN_OK();
 }
 
- 
+

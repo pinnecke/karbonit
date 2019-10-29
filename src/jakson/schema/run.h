@@ -23,11 +23,12 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 #include <regex.h>
+#include "jakson/carbon/insert.h"
 
 BEGIN_DECL
 
 
-fn_result schema_validate_run_handleKeyword_type(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_type(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     bool passed = false;
@@ -75,7 +76,7 @@ fn_result schema_validate_run_handleKeyword_type(schema *s, carbon_array_it *ait
 }
     
 
-fn_result schema_validate_run_handleKeyword_minimum(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_minimum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     bool isnull;
@@ -90,7 +91,7 @@ fn_result schema_validate_run_handleKeyword_minimum(schema *s, carbon_array_it *
 }
 
 
-fn_result schema_validate_run_handleKeyword_maximum(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_maximum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     bool isnull;
@@ -105,7 +106,7 @@ fn_result schema_validate_run_handleKeyword_maximum(schema *s, carbon_array_it *
 }
 
 
-fn_result schema_validate_run_handleKeyword_exclusiveMinimum(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_exclusiveMinimum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     bool isnull;
@@ -120,7 +121,7 @@ fn_result schema_validate_run_handleKeyword_exclusiveMinimum(schema *s, carbon_a
 }
 
 
-fn_result schema_validate_run_handleKeyword_exclusiveMaximum(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_exclusiveMaximum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
     
     bool isnull;
@@ -135,7 +136,7 @@ fn_result schema_validate_run_handleKeyword_exclusiveMaximum(schema *s, carbon_a
 }
 
 
-fn_result schema_validate_run_handleKeyword_multipleOf(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_multipleOf(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     bool isnull;
@@ -150,7 +151,7 @@ fn_result schema_validate_run_handleKeyword_multipleOf(schema *s, carbon_array_i
 }
 
 
-fn_result schema_validate_run_handleKeyword_minLength(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_minLength(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     u64 strlen;
@@ -164,7 +165,7 @@ fn_result schema_validate_run_handleKeyword_minLength(schema *s, carbon_array_it
 }
 
 
-fn_result schema_validate_run_handleKeyword_maxLength(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_maxLength(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     u64 strlen;
@@ -178,7 +179,7 @@ fn_result schema_validate_run_handleKeyword_maxLength(schema *s, carbon_array_it
 }
 
 
-fn_result schema_validate_run_handleKeyword_pattern(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_pattern(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     regex_t regex;
@@ -209,7 +210,7 @@ fn_result schema_validate_run_handleKeyword_pattern(schema *s, carbon_array_it *
 }
 
 
-fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *ait) {
+static inline fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     regex_t regex;
@@ -313,9 +314,10 @@ END_DECL
 
 static inline fn_result schema_validate_run_handleKeyword_minItems(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
-    
+
     u64 numItems;
-    carbon_array_it_length(&numItems, ait);
+    carbon_array_it *sait = carbon_array_it_array_value(ait);
+    carbon_array_it_length(&numItems, sait);
     
     if (numItems < s->data.minItems) {
         return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"minItems\" constraint not met");
@@ -328,7 +330,8 @@ static inline fn_result schema_validate_run_handleKeyword_maxItems(schema *s, ca
     FN_FAIL_IF_NULL(s, ait);
     
     u64 numItems;
-    carbon_array_it_length(&numItems, ait);
+    carbon_array_it *sait = carbon_array_it_array_value(ait);
+    carbon_array_it_length(&numItems, sait);
     
     if (numItems > s->data.maxItems) {
         return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"maxItems\" constraint not met");
@@ -343,7 +346,7 @@ static inline fn_result schema_validate_run_handleKeyword_uniqueItems(schema *s,
     UNUSED(s);
     UNUSED(ait);
     
-    return FN_FAIL(ERR_NOTIMPL, "function exclusiveMaximum not implemented yet");
+    return FN_FAIL(ERR_NOTIMPL, "function uniqueItems not implemented yet");
 
 //    carbon_field_type_e field_type;
 //
@@ -415,7 +418,6 @@ static inline fn_result schema_validate_run_handleKeyword_items(schema *s, carbo
         while (carbon_array_it_next(sait)) {
             if(!(FN_IS_OK(schema_validate_run(items, sait)))) {
                 carbon_array_it_drop(sait);
-                //TODO: free schema memory
                 return FN_FAIL_FORWARD();
             }
         }
@@ -434,14 +436,12 @@ static inline fn_result schema_validate_run_handleKeyword_items(schema *s, carbo
 
             if (!(FN_IS_OK(schema_validate_run(items, sait)))) {
                 carbon_array_it_drop(sait);
-                //TODO: free schema memory!
                 return FN_FAIL_FORWARD();
             }
         }
 
         if (carbon_array_it_has_next(sait) && (!(s->applies.has_additionalItems))) {
             carbon_array_it_drop(sait);
-            //TODO: free schema memory!
             return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "more items in array then defined in keyword \"items\" and no keyword \"additionalItems\" given");
         }
 
@@ -509,7 +509,239 @@ static inline fn_result schema_validate_run_handleKeyword_required(schema *s, ca
     FN_FAIL_IF_NULL(s, ait);
 
     carbon_object_it *oit = carbon_array_it_object_value(ait);
+    for (u64 i = 0; i < vector_length(&(s->data.required)); i++) {
+        carbon_object_it_rewind(oit);
+        const char *key = (const char*) vector_at(&(s->data.required), i);
+        if (!(carbon_object_it_has_key(key, oit))) {
+            carbon_object_it_drop(oit);
+            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"required\" failed");
+        }
+    }
+    carbon_object_it_drop(oit);
+    return FN_OK();
+}
+
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_properties(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"properties\" keyword not implemented yet");
+}
     
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_patternProperties(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"patternProperties\" keyword not implemented yet");
+}
+
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_additionalProperties(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"additionalProperties\" keyword not implemented yet");
+}
+
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_dependencies(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"dependencies\" keyword not implemented yet");
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_propertyNames(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    carbon_object_it *oit = carbon_array_it_object_value(ait);
+    carbon_new context;
+    carbon record;
+    carbon_insert *ins, *nested_ins;
+    carbon_insert_array_state state;
+    carbon_array_it sait;
+
+    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    nested_ins = carbon_insert_array_begin(&state, ins, 1024);
+
+    while (carbon_object_it_next(oit)) {
+        u64 keylen;
+        const char *_key = carbon_object_it_prop_name(&keylen, oit);
+        const char *key = strndup(_key, keylen);
+        carbon_insert_string(nested_ins, key);
+    }
+    carbon_insert_array_end(&state);
+    carbon_create_end(&context);
+
+    carbon_iterator_open(&sait, &record);
+    while (carbon_array_it_has_next(&sait)) {
+        if(!(FN_IS_OK(schema_validate_run(s->data.propertyNames, &sait)))) {
+            carbon_array_it_drop(&sait);
+            carbon_object_it_drop(oit);
+            carbon_drop(&record);
+            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"propertyNames\" was not met");
+        }
+    }
+    carbon_array_it_drop(&sait);
+    carbon_object_it_drop(oit);
+    carbon_drop(&record);
+
+    return FN_OK();
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_patternRequired(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    int reti;
+    u64 keylen;
+    carbon_object_it *oit = carbon_array_it_object_value(ait);
+
+    for (size_t i = 0; i < vector_length(&(s->data.patternRequired)); i++) {
+        carbon_object_it_rewind(oit);
+
+        bool exists = false;
+        regex_t regex;
+        reti = regcomp(&regex, (const char*) vector_at(&(s->data.patternRequired), i), 0);
+        if (reti) {
+            carbon_object_it_drop(oit);
+            return FN_FAIL(ERR_INITFAILED, "could not initiate \"patternRequired\" constraint. Not a POSIX regexp");
+        }
+
+        while (carbon_object_it_next(oit)) {
+            const char *_key = carbon_object_it_prop_name(&keylen, oit);
+            char *key = strndup(_key, keylen);
+
+            reti = regexec(&regex, key, 0, NULL, 0);
+            if (!reti) {
+                exists = true;
+                break;
+            }
+        }
+        regfree(&regex);
+        if (!exists) {
+            carbon_object_it_drop(oit);
+            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"patternRequired\" was not met");
+        }
+    }
+    carbon_object_it_drop(oit);
+    return FN_OK();
+}
+
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_enum(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"enum\" keyword not implemented yet");
+}
+
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_const(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"const\" keyword not implemented yet");
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_not(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+    
+    carbon_array_it_rewind(ait);
+    
+    // TODO: how to differentiate between return value 0 and failed function in FN_RESULT?
+    if(!(FN_IS_OK(schema_validate_run(s->data._not, ait)))) {
+        return FN_OK();
+    }
+
+    // TODO: better error message
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"not\" was not met");
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_oneOf(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    bool valid = false;
+    for (size_t i = 0; i < vector_length(&(s->data.oneOf)); i++) {
+        carbon_array_it_rewind(ait);
+        schema *oneOf = (schema*) vector_at(&(s->data.oneOf), i);
+
+        if (FN_IS_OK(schema_validate_run(oneOf, ait))) {
+            if (valid) {
+                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"oneOf\" was not met: mult. schema match");
+            }
+            valid = true;
+        }
+    }
+    if (valid) {
+        return FN_OK();
+    }
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"oneOf\" was not met: no schema match");
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_anyOf(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    for (size_t i = 0; i < vector_length(&(s->data.anyOf)); i++) {
+        carbon_array_it_rewind(ait);
+        schema *anyOf = (schema*) vector_at(&(s->data.oneOf), i);
+
+        if(FN_IS_OK(schema_validate_run(anyOf, ait))) {
+            return FN_OK();
+        }
+    }
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"anyOf\" was not met: no schema match");
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_allOf(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    for (size_t i = 0; i < vector_length(&(s->data.allOf)); i++) {
+        carbon_array_it_rewind(ait);
+        schema *allOf = (schema*) vector_at(&(s->data.allOf), i);
+
+        if(!(FN_IS_OK(schema_validate_run(allOf, ait)))) {
+            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"allOf\" was not met: at least one schema did not match");
+        }
+    }
+    return FN_OK();
+}
+
+
+// TODO: implement
+static inline fn_result schema_validate_run_handleKeyword_ifThenElse(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    UNUSED(s);
+    UNUSED(ait);
+
+    return FN_FAIL(ERR_NOTIMPL, "\"ifThenElse\" keyword not implemented yet");
+}
 
 
 #endif

@@ -69,8 +69,8 @@ typedef struct schema {
         vector allOf;
         vector patternProperties;
         vector dependencies;
-        vector _enum;
         vector ifThenElse;
+        carbon _enum;
         long double minimum;
         long double maximum;
         long double exclusiveMinimum;
@@ -82,8 +82,8 @@ typedef struct schema {
         u64 maxItems;
         u64 minProperties;
         u64 maxProperties;
-        char *pattern;
         u8 format;
+        char *pattern;
         char *formatMinimum;
         char *formatMaximum;
         char *formatExclusiveMinimum;
@@ -267,6 +267,110 @@ static inline fn_result longDoubleFromOit (bool *is_null, long double *val, carb
     }
     return FN_OK();
 }
+
+static inline void schema_drop(schema *s) {
+
+    if (s->applies.has_type) {
+        vector_drop(&(s->data.type));
+    }
+    if (s->applies.has_items) {
+        for (size_t i = 0; i < vector_length(&(s->data.items)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.items), i));
+            free((void*)vector_at(&(s->data.items), i));
+        }
+        vector_drop(&(s->data.items));
+    }
+    if (s->applies.has_required) {
+        for (size_t i = 0; i < vector_length(&(s->data.required)); i++) {
+            free((void*)vector_at(&(s->data.required), i));
+        }
+        vector_drop(&(s->data.required));
+    }
+    if (s->applies.has_patternRequired) {
+        for (size_t i = 0; i < vector_length(&(s->data.patternRequired)); i++) {
+            free((void*)vector_at(&(s->data.patternRequired), i));
+        }
+        vector_drop(&(s->data.patternRequired));
+    }
+    if (s->applies.has_oneOf) {
+        for (size_t i = 0; i < vector_length(&(s->data.oneOf)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.oneOf), i));
+            free((void*)vector_at(&(s->data.oneOf), i));
+        }
+        vector_drop(&(s->data.oneOf));
+    }
+    if (s->applies.has_anyOf) {
+        for (size_t i = 0; i < vector_length(&(s->data.anyOf)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.anyOf), i));
+            free((void*)vector_at(&(s->data.anyOf), i));
+        }
+        vector_drop(&(s->data.anyOf));
+    }
+    if (s->applies.has_allOf) {
+        for (size_t i = 0; i < vector_length(&(s->data.allOf)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.allOf), i));
+            free((void*)vector_at(&(s->data.allOf), i));
+        }
+        vector_drop(&(s->data.allOf));
+    }
+    if (s->applies.has_patternProperties) {
+        for (size_t i = 0; i < vector_length(&(s->data.patternProperties)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.patternProperties), i));
+            free((void*)vector_at(&(s->data.patternProperties), i));
+        }
+        vector_drop(&(s->data.patternProperties));
+    }
+    if (s->applies.has_dependencies) {
+        for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.dependencies), i));
+            free((void*)vector_at(&(s->data.dependencies), i));
+        }
+        vector_drop(&(s->data.dependencies));
+    }
+    // TODO: implement
+    if (s->applies.has_ifThenElse) {
+    }
+    //TODO: implement
+    if (s->applies.has_enum) {
+        carbon_drop(&(s->data._enum));
+    }
+    if (s->applies.has_pattern) {
+        free(s->data.pattern);
+    }
+    if (s->applies.has_formatMinimum) {
+        free(s->data.formatMinimum);
+    }
+    if (s->applies.has_formatMaximum) {
+        free(s->data.formatMaximum);
+    }
+    if (s->applies.has_formatExclusiveMinimum) {
+        free(s->data.formatExclusiveMinimum);
+    }
+    if (s->applies.has_formatExclusiveMaximum) {
+        free(s->data.formatExclusiveMaximum);
+    }
+    if (s->applies.has_propertyNames) {
+        free(s->data.propertyNames);
+    }
+    if (s->applies.has_contains) {
+        free(s->data.contains);
+    }
+    if (s->applies.has_not) {
+        free(s->data._not);
+    }
+    if (s->applies.has_additionalItems) {
+        free(s->data.additionalItems);
+    }
+    //TODO: implement
+    if (s->applies.has_properties) {
+    }
+    // TODO: implement
+    if (s->applies.has_const) {
+        free(s->data._const);
+    }
+
+}
+
 
 fn_result schema_validate(carbon *schemaFile, carbon *fileToVal);
 fn_result schema_generate(schema *s, carbon_object_it *oit);

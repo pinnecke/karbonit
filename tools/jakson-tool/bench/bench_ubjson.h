@@ -42,6 +42,7 @@
     }                                                                                                                  \
 }
 
+#define BENCH_UBJSON_ERROR_WRITE(error, msg, docOffset) bench_ubjson_error_write(error, msg, __FILE__, __LINE__, docOffset);
 
 typedef struct bench_ubjson_error {
     bench_error *benchErr;
@@ -53,18 +54,17 @@ typedef struct bench_ubjson_mgr {
     bench_ubjson_error *error;
     ubjs_prmtv *obj;
     uint32_t test;
-    //ubjs_array_iterator *itArr;
-    //ubjs_object_iterator *itObj;
 } bench_ubjson_mgr;
-
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_error_destroy(bench_ubjson_error *error);
 bool bench_ubjson_error_write(bench_ubjson_error *error, const char *msg, const char *file, u32 line, size_t docOffset);
 bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError, const char *filePath);
 bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError);
+bool bench_ubjson_append_doc(bench_ubjson_mgr *manager, const char *filePath);
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager);
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager);
+size_t bench_ubjson_get_doc_size(bench_ubjson_mgr *manager);
 
 bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val);
 

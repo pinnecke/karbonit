@@ -1,6 +1,7 @@
 
 #include <inttypes.h>
 #include <dirent.h>
+#include <time.h>
 
 #include <jakson/archive/pack.h>
 #include <jakson/archive/query.h>
@@ -674,84 +675,60 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         bool isDir = false;
         DIR *d;
         struct dirent *dir;
-
+        char buffer_status[512];
+        long timePast = 0;
+        clock_t diff;
+        bench_format_handler handler;
+        bench_error err;
+        char buffer[512];
+        UNUSED(buffer);
 
         struct stat s;
         if(stat(filePath, &s) == 0 && (s.st_mode & S_IFDIR)) {
             isDir = true;
-            d = opendir(filePath);
         } else if (testFileExists(file, filePath, 1, 1, true) != true) {
             CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", filePath);
             return false;
         }
-        if(strcmp(format, BENCH_FORMAT_CARBON) == 0) {
-            bench_format_handler handler;
-            bench_error err;
-            char buffer[512];
 
-            if(!bench_format_handler_create_carbon_handler(&handler, &err, filePath))
+        clock_t startPoint = clock();
+        if(isDir) {
+            if(!bench_format_handler_create_handler(&handler, &err, NULL, format)) {
+                CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
                 return false;
-
-            bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
-            bench_format_handler_get_doc(buffer, &handler);
-            bench_format_handler_destroy(&handler);
-        } else if(strcmp(format, BENCH_FORMAT_BSON) == 0) {
-            bench_format_handler handler;
-            bench_error err;
-            //char buffer_doc[4096*2];
-            char buffer_status[512];
-            if(isDir) {
-                if(!bench_format_handler_create_bson_handler(&handler, &err, NULL)) {
-                    CONSOLE_WRITELN(file, "Failed to create BSON handler for: %s", filePath);
-                    return false;
-                }
-                if(d) {
-                    while((dir = readdir(d)) != NULL) {
-                        if(strcmp(dir->d_name, ".") == 0) {
-                            break;
-                        }
-                        char dir_filePath[512];
-                        snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
-                        bench_format_handler_append_doc(&handler, dir_filePath);
+            }
+            d = opendir(filePath);
+            if(d) {
+                while((dir = readdir(d)) != NULL) {
+                    if(strcmp(dir->d_name, ".") == 0) {
+                        break;
                     }
-                    closedir(d);
+                    char dir_filePath[512];
+                    snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
+                    bench_format_handler_append_doc(&handler, dir_filePath);
                 }
-            } else {
-                if (!bench_format_handler_create_bson_handler(&handler, &err, filePath)) {
-                    CONSOLE_WRITELN(file, "Failed to create BSON handler for: %s", filePath);
-                    return false;
-                }
+                closedir(d);
             }
-            //bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
-            //bench_format_handler_get_doc(buffer, &handler);
-            /*FILE *fp;
-            fp = fopen("test", "w+");
-            fprintf(fp, "%s", buffer);
-            fclose(fp);*/
-            CONSOLE_WRITELN(file, "%zd", bench_format_handler_get_doc_size(&handler));
-            bench_format_handler_get_process_status(buffer_status);
-            //VmSize is the most important bit!
-            CONSOLE_WRITELN(file, "%s", buffer_status);
-
-            bench_format_handler_destroy(&handler);
-
-        } else if(strcmp(format, BENCH_FORMAT_UBJSON) == 0) {
-            bench_format_handler handler;
-            bench_error err;
-            char buffer[512];
-
-            if(!bench_format_handler_create_ubjson_handler(&handler, &err, filePath)) {
-                //CONSOLE_WRITELN(file, err.msg, "");
-                return false;
-            }
-
-            bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
-            bench_format_handler_get_doc(buffer, &handler);
-            bench_format_handler_destroy(&handler);
-        } else {
-            CONSOLE_WRITELN(file, "Format type '%s' is not supported. STOP", format);
+        } else if(!bench_format_handler_create_handler(&handler, &err, filePath, format)) {
+            CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
+            return false;
         }
+        diff = clock() - startPoint;
+        timePast = diff * 1000 / CLOCKS_PER_SEC;
+        CONSOLE_WRITELN(file, "Conversion to %s took %ld ms", format, timePast);
 
+        //bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
+        //bench_format_handler_get_doc(buffer, &handler);
+        /*FILE *fp;
+        fp = fopen("test", "w+");
+        fprintf(fp, "%s", buffer);
+        fclose(fp);*/
+        //CONSOLE_WRITELN(file, "Doc size: %zd bytes", bench_format_handler_get_doc_size(&handler));
+        bench_format_handler_get_process_status(buffer_status);
+        //VmSize is the most important bit!
+        CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
+
+        bench_format_handler_destroy(&handler);
     }
 
     return true;

@@ -89,6 +89,51 @@ bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error
     return true;
 }
 
+bool bench_carbon_append_doc(bench_carbon_mgr *manager, const char *filePath)
+{
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(filePath);
+
+    carbon *doc = malloc(sizeof(*doc));
+    carbon_array_it arr_it, append_arr_it;
+    carbon_insert ins;
+    carbon_insert_array_state state;
+    static int doc_count = 0;
+    char doc_key[32];
+
+    FILE *f = fopen(filePath, "rb");
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    char *jsonContent = MALLOC(fsize + 1);
+    size_t nread = fread(jsonContent, fsize, 1, f);
+    UNUSED(nread)
+    fclose(f);
+    jsonContent[fsize] = 0;
+
+    CHECK_SUCCESS(carbon_from_json(doc, jsonContent, CARBON_KEY_NOKEY, NULL, manager->error->err));
+
+    carbon_patch_begin(&arr_it, manager->doc);
+    carbon_array_it_insert_begin(&ins, &arr_it);
+
+    carbon_read_begin(&append_arr_it, doc);
+    offset_t start = carbon_array_it_tell(&append_arr_it);
+    carbon_array_it_fast_forward(&append_arr_it);
+    offset_t end = carbon_array_it_tell(&append_arr_it);
+    //carbon_insert_prop_binary(ins, doc_key, mem->memblock[start], end - start, );
+    //obj_ins = *carbon_insert_object_begin(&state, &ins, 6);
+
+    sprintf(doc_key, "%d", doc_count);
+    carbon_insert_prop_array_begin(&state, &ins, doc_key, 1);
+    if(!memblock_write(manager->doc->memblock, ins.position, &memblock_raw_data(doc->memblock)[start], end - start)) {
+        BENCH_CARBON_ERROR_WRITE(manager->error, "Failed to append document.", 0)
+        return false;
+    }
+    carbon_insert_prop_array_end(&state);
+
+    return true;
+}
+
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager)
 {
     ERROR_IF_NULL(manager)

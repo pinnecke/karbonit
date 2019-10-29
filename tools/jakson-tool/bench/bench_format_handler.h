@@ -72,7 +72,7 @@ typedef struct bench_format_handler {
 
 bool bench_format_handler_create_error(bench_error *error);
 //bool bench_format_handler_destroy_error(bench_error *error);
-//bool bench_format_handler_write_error(bench_format_handler *handler);
+bool bench_format_handler_create_handler(bench_format_handler *handler, bench_error *error, const char *filePath, const char *benchType);
 bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);

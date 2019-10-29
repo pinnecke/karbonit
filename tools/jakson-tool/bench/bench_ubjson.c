@@ -191,7 +191,7 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_e
 
     json = json_loadf(file, JSON_DECODE_ANY, &jError);
     if(json == 0) {
-        // TODO : Error feedback
+        BENCH_UBJSON_ERROR_WRITE(ubjsonError, "Failed to read JSON file", jError.line)
         return false;
     }
     fclose(file);
@@ -207,7 +207,7 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_e
     ubjs_writer_write(writer, obj);
 
     ubjs_writer_free(&writer);
-    obj = 0;
+    //obj = 0;
 
     manager->obj = obj;
     manager->lib = lib;
@@ -238,11 +238,42 @@ bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error
     return true;
 }
 
+bool bench_ubjson_append_doc(bench_ubjson_mgr *manager, const char *filePath)
+{
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(filePath);
+
+    ubjs_prmtv *obj = 0;
+    json_error_t jError;
+    json_t *json = 0;
+    FILE *file;
+    file = fopen(filePath, "r");
+    static int doc_count = 0;
+    char doc_key[32];
+
+    json = json_loadf(file, JSON_DECODE_ANY, &jError);
+    if(json == 0) {
+        BENCH_UBJSON_ERROR_WRITE(manager->error, "Failed to read JSON file", jError.line)
+        return false;
+    }
+    fclose(file);
+    sprintf(doc_key,"%d", doc_count);
+    js2ubj_main_encode_json_to_ubjson(json, manager->lib, &obj);
+    ubjs_prmtv_object_set(manager->obj, strlen(doc_key), doc_key, obj);
+    free(json);
+
+    doc_count++;
+
+    return true;
+}
+
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager)
 {
     ERROR_IF_NULL(manager)
+
     ubjs_prmtv_free(&manager->obj);
     ubjs_library_free(&manager->lib);
+    bench_ubjson_error_destroy(manager->error);
     return true;
 }
 
@@ -284,6 +315,41 @@ bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager)
     ubjs_object_iterator_free(&it);
 
     return true;
+}
+
+size_t bench_ubjson_iterate(ubjs_prmtv *obj)
+{
+    ERROR_IF_NULL(obj);
+
+    //ubjs_prmtv_int3
+
+    return false;
+}
+
+size_t bench_ubjson_get_doc_size(bench_ubjson_mgr *manager)
+{
+    ERROR_IF_NULL(manager);
+    uint32_t doc_len;
+    UNUSED(doc_len);
+    ubjs_object_iterator *it;
+    ubjs_prmtv_object_iterate(manager->obj, &it);
+
+    while(UR_OK == ubjs_object_iterator_next(it)) {
+        unsigned int key_length;
+        char *key;
+        ubjs_prmtv *item;
+
+        ubjs_object_iterator_get_key_length(it, &key_length);
+        key = (char *)malloc(sizeof(char) * key_length);
+        /* Note that this string is NOT null terminated. */
+        ubjs_object_iterator_copy_key(it, key);
+        ubjs_object_iterator_get_value(it, &item);
+    }
+
+    //ubjs_prmtv_object_get_length(manager->obj, &doc_len);
+
+
+    return false;
 }
 
 bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val)

@@ -23,7 +23,7 @@
 #include <libs/bson/bson.h>
 #include <jakson/error.h>
 
-#include"bench_fwd.h"
+#include "bench_fwd.h"
 
 #define BENCH_BSON_ERROR_WRITE(error, msg, docOffset) bench_bson_error_write(error, msg, __FILE__, __LINE__, docOffset);
 

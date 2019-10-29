@@ -21,6 +21,7 @@ bool bench_bson_error_destroy(bench_bson_error *error)
 
     CHECK_SUCCESS(error_drop(error->err));
     free(error);
+
     return true;
 }
 
@@ -54,30 +55,7 @@ bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *
     bench_bson_error_create(bsonError, benchError);
     bson_error_t bError;
     char msg[ERROR_MSG_SIZE];
-/*
-    if(!(jReader = bson_json_reader_new_from_file(filePath, &bError))) {
-        snprintf(msg, sizeof(msg), "BSON reader failed to open: %s : %s", filePath, bError.message);
-        BENCH_BSON_ERROR_WRITE(bsonError, msg, 0);
-        return false;
-    }
 
-    int readResult;
-    while((readResult = bson_json_reader_read (jReader, &b, &bError))) {
-        if(readResult < 0) {
-            snprintf(msg, sizeof(msg), "Error in JSON parsing: %s", bError.message);
-            BENCH_BSON_ERROR_WRITE(bsonError, msg, 0);
-            return false;
-        }
-    }
-
-    size_t errOffset;
-    if(!bson_validate(&b, BSON_VALIDATE_NONE, &errOffset)) {
-        snprintf(msg, sizeof(msg), "BSON document failed to validate at offset: %s", (char*) errOffset);
-        BENCH_BSON_ERROR_WRITE(bsonError, "BSON Document failed to validate.", errOffset);
-        return false;
-    }
-    bson_json_reader_destroy(jReader);
-*/
     FILE *f = fopen(filePath, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
@@ -131,7 +109,8 @@ bool bench_bson_append_doc(bench_bson_mgr *manager, const char *filePath)
     bson_t *b;
     bson_error_t bError;
     char msg[ERROR_MSG_SIZE];
-    char array_key[32];
+    static int doc_count = 0;
+    char doc_key[32];
 
     FILE *f = fopen(filePath, "rb");
     fseek(f, 0, SEEK_END);
@@ -150,12 +129,14 @@ bool bench_bson_append_doc(bench_bson_mgr *manager, const char *filePath)
         return false;
     }
 
-    sprintf(array_key, "%d", bson_count_keys(manager->b));
-
-    bson_append_document(manager->b, array_key, -1, b);
+    sprintf(doc_key, "%d", doc_count);
+    bson_append_document(manager->b, doc_key, -1, b);
+    doc_count++;
 
     return true;
 }
+
+
 
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager)
 {
@@ -163,6 +144,7 @@ bool bench_bson_mgr_destroy(bench_bson_mgr *manager)
 
     bson_destroy(manager->b);
     CHECK_SUCCESS(bench_bson_error_destroy(manager->error));
+
     return true;
 }
 
@@ -198,6 +180,7 @@ bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
 size_t bench_bson_get_doc_size(bench_bson_mgr *manager)
 {
     ERROR_IF_NULL(manager);
+
     return manager->b->len;
 }
 

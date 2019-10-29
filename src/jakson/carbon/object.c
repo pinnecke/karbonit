@@ -33,6 +33,7 @@ bool internal_carbon_object_create(carbon_object *it, memfile *memfile, err *err
         it->object_contents_off = payload_start;
         it->object_start_off = payload_start;
         it->mod_size = 0;
+        it->pos = 0;
         it->object_end_reached = false;
 
         error_init(&it->err);
@@ -77,6 +78,7 @@ bool internal_carbon_object_clone(carbon_object *dst, carbon_object *src)
         dst->object_start_off = src->object_start_off;
         error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
+        dst->pos = src->pos;
         dst->object_end_reached = src->object_end_reached;
         dst->abstract_type = src->abstract_type;
         vector_cpy(&dst->history, &src->history);
@@ -101,6 +103,7 @@ bool carbon_object_rewind(carbon_object *it)
         DEBUG_ERROR_IF_NULL(it);
         ERROR_IF(it->object_contents_off >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
         carbon_int_history_clear(&it->history);
+        it->pos = 0;
         return memfile_seek(&it->memfile, it->object_contents_off);
 }
 
@@ -111,6 +114,7 @@ bool carbon_object_next(carbon_object *it)
         offset_t last_off = memfile_tell(&it->memfile);
         carbon_int_field_access_drop(&it->field.value.data);
         if (carbon_int_object_it_next(&is_empty_slot, &it->object_end_reached, it)) {
+                it->pos++;
                 carbon_int_history_push(&it->history, last_off);
                 return true;
         } else {
@@ -140,6 +144,7 @@ bool carbon_object_prev(carbon_object *it)
         DEBUG_ERROR_IF_NULL(it);
         if (carbon_int_history_has(&it->history)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
+                it->pos--;
                 memfile_seek(&it->memfile, prev_off);
                 return carbon_int_object_it_refresh(NULL, NULL, it);
         } else {

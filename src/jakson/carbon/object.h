@@ -37,6 +37,8 @@ typedef struct carbon_object {
         offset_t object_contents_off, object_start_off;
         bool object_end_reached;
 
+        u64 pos;
+
         vector ofType(offset_t) history;
 
         struct {

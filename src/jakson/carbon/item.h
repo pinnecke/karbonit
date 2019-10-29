@@ -297,6 +297,7 @@ typedef struct carbon_item
 // ---------------------------------------------------------------------------------------------------------------------
 
 bool internal_carbon_item_create_from_array(carbon_item *item, carbon_array *parent);
+bool internal_carbon_item_create_from_object(carbon_item *item, carbon_object *parent);
 
 END_DECL
 

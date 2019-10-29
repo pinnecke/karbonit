@@ -157,6 +157,22 @@ DECLARE_IN_PLACE_UPDATE_FUNCTION(float)
 bool internal_carbon_array_update_true(carbon_array *it);
 bool internal_carbon_array_update_false(carbon_array *it);
 bool internal_carbon_array_update_null(carbon_array *it);
+bool internal_carbon_array_update_string(carbon_array *it, const char *str);
+bool internal_carbon_array_update_binary(carbon_array *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
+carbon_insert *internal_carbon_array_update_array_begin(carbon_insert_array_state *state, carbon_array *it);
+bool internal_carbon_array_update_array_end(carbon_insert_array_state *state);
+
+carbon_insert *internal_carbon_array_update_column_begin(carbon_insert_column_state *state, carbon_array *it);
+bool internal_carbon_array_update_column_end(carbon_insert_column_state *state);
+
+carbon_insert *internal_carbon_array_update_object_begin(carbon_insert_object_state *state, carbon_array *it);
+bool internal_carbon_array_update_object_end(carbon_insert_object_state *state);
+
+bool internal_carbon_array_update_from_carbon(carbon_array *it, const carbon *src);
+bool internal_carbon_array_update_from_array(carbon_array *it, const carbon_array *src);
+bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_object *src);
+bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_column *src);
+
 
 bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it);
 

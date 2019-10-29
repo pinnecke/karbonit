@@ -133,6 +133,115 @@ bool internal_carbon_array_update_null(carbon_array *it)
         return update_in_place_constant(it, CARBON_CONSTANT_NULL);
 }
 
+bool internal_carbon_array_update_string(carbon_array *it, const char *str)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(str)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_binary(carbon_array *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        UNUSED(nbytes)
+        UNUSED(file_ext)
+        UNUSED(user_type)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+carbon_insert *internal_carbon_array_update_array_begin(carbon_insert_array_state *state, carbon_array *it)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_array_end(carbon_insert_array_state *state)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+carbon_insert *internal_carbon_array_update_column_begin(carbon_insert_column_state *state, carbon_array *it)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_column_end(carbon_insert_column_state *state)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+carbon_insert *internal_carbon_array_update_object_begin(carbon_insert_object_state *state, carbon_array *it)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_object_end(carbon_insert_object_state *state)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_from_carbon(carbon_array *it, const carbon *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_from_array(carbon_array *it, const carbon_array *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_object *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_column *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+
 static void __carbon_array_load_abstract_type(carbon_array *it)
 {
         carbon_abstract_type_class_e type_class;

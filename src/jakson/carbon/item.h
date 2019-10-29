@@ -138,21 +138,89 @@ typedef struct carbon_item
 #define carbon_item_set_number_float(item, float_value)                                                                \
         internal_carbon_array_update_float((item)->parent, float_value)
 
+#define carbon_item_set_number_signed(item, i64_value)                                                                 \
+({                                                                                                                     \
+        bool ret = false;                                                                                              \
+        DEBUG_ERROR_IF_NULL(subj);                                                                                     \
+        switch (number_min_type_signed(value)) {                                                                       \
+                case NUMBER_I8:                                                                                        \
+                        ret = internal_carbon_array_update_i8(subj->parent, (i8) i64_value);                           \
+                break;                                                                                                 \
+                case NUMBER_I16:                                                                                       \
+                        ret = internal_carbon_array_update_i16(subj->parent, (i16) i64_value);                         \
+                break;                                                                                                 \
+                case NUMBER_I32:                                                                                       \
+                        ret = internal_carbon_array_update_i32(subj->parent, (i32) i64_value);                         \
+                break;                                                                                                 \
+                case NUMBER_I64:                                                                                       \
+                        ret = internal_carbon_array_update_i64(subj->parent, i64_value);                               \
+                break;                                                                                                 \
+                default:                                                                                               \
+                        ERROR_PRINT(ERR_INTERNALERR)                                                                   \
+                break;                                                                                                 \
+        }                                                                                                              \
+        ret;                                                                                                           \
+})
 
-void carbon_item_set_number_signed(const carbon_item *item, i64 value);
-void carbon_item_set_number_unsigned(const carbon_item *item, u64 value);
-const char *carbon_item_set_string(u64 *str_len, const carbon_item *item);
-const carbon_binary *carbon_item_set_binary(const carbon_item *item);
-carbon_array *carbon_item_set_array_begin(const carbon_item *item);
-carbon_array *carbon_item_set_array_end(const carbon_item *item);
-carbon_column *carbon_item_set_column_begin(const carbon_item *item);
-carbon_column *carbon_item_set_column_end(const carbon_item *item);
-carbon_object *carbon_item_set_object_begin(const carbon_item *item);
-carbon_object *carbon_item_set_object_end(const carbon_item *item);
-bool carbon_item_set_from_carbon(); // TODO: Implement P2
-bool carbon_item_set_from_array(); // TODO: Implement P2
-bool carbon_item_set_from_object(); // TODO: Implement P2
-bool carbon_item_set_from_column(); // TODO: Implement P2
+#define carbon_item_set_number_unsigned(item, u64_value)                                                               \
+({                                                                                                                     \
+        bool ret = false;                                                                                              \
+        DEBUG_ERROR_IF_NULL(subj);                                                                                     \
+        switch (number_min_type_unsigned(value)) {                                                                     \
+                case NUMBER_U8:                                                                                        \
+                        ret = internal_carbon_array_update_u8(subj->parent, (u8) u64_value);                           \
+                break;                                                                                                 \
+                case NUMBER_U16:                                                                                       \
+                        ret = internal_carbon_array_update_u16(subj->parent, (u16) u64_value);                         \
+                break;                                                                                                 \
+                case NUMBER_U32:                                                                                       \
+                        ret = internal_carbon_array_update_u32(subj->parent, (u32) u64_value);                         \
+                break;                                                                                                 \
+                case NUMBER_U64:                                                                                       \
+                        ret = internal_carbon_array_update_u64(subj->parent, u64_value);                               \
+                break;                                                                                                 \
+                default:                                                                                               \
+                        ERROR_PRINT(ERR_INTERNALERR)                                                                   \
+                break;                                                                                                 \
+        }                                                                                                              \
+        ret;                                                                                                           \
+})
+
+#define carbon_item_set_string(item, const_char_str)                                                                   \
+        internal_carbon_array_update_string((item)->parent, const_char_str)
+
+#define carbon_item_set_binary(item, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type) \
+        internal_carbon_array_update_binary((item)->parent, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type)
+
+#define carbon_item_set_array_begin(state, item)                                                                       \
+        internal_carbon_array_update_array_begin((state), (item)->parent)
+
+#define carbon_item_set_array_end(state)                                                                               \
+        internal_carbon_array_update_array_end((state))
+
+#define carbon_item_set_column_begin(state, item)                                                                      \
+        internal_carbon_array_update_column_begin((state), (item)->parent)
+
+#define carbon_item_set_column_end(state)                                                                              \
+        internal_carbon_array_update_column_end((state))
+
+#define carbon_item_set_object_begin(state, item)                                                                      \
+        internal_carbon_array_update_object_begin((state), (item)->parent)
+
+#define carbon_item_set_object_end(state)                                                                              \
+        internal_carbon_array_update_object_end((state))
+
+#define carbon_item_set_from_carbon(item, const_carbon_ptr_src)                                                        \
+        internal_carbon_array_update_from_carbon((item)->parent, const_carbon_ptr_src)
+
+#define carbon_item_set_from_array(item, const_carbon_array_ptr_src)                                                   \
+        internal_carbon_array_update_from_array((item)->>parent, const_carbon_array_ptr_src)
+
+#define carbon_item_set_from_object(item, const_carbon_object_ptr_src)                                                 \
+        internal_carbon_array_update_from_object((item)->parent, const_carbon_object_ptr_src)
+
+#define carbon_item_set_from_column(item, const_carbon_column_ptr_src)                                                 \
+        internal_carbon_array_update_from_column((item)->parent, const_carbon_column_ptr_src);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

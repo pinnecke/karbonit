@@ -18,56 +18,7 @@
 #include <jakson/carbon/item.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/internal.h>
-
-void carbon_item_set_number_signed(const carbon_item *item, i64 value)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        UNUSED(value);
-}
-
-void carbon_item_set_number_unsigned(const carbon_item *item, u64 value)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        UNUSED(value);
-}
-
-const char *carbon_item_set_string(u64 *str_len, const carbon_item *item)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        UNUSED(str_len);
-        return 0;
-}
-
-const carbon_binary *carbon_item_set_binary(const carbon_item *item)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        return 0;
-}
-
-carbon_array *carbon_item_set_array(const carbon_item *item)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        return 0;
-}
-
-carbon_column *carbon_item_set_column(const carbon_item *item)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        return 0;
-}
-
-carbon_object *carbon_item_set_object(const carbon_item *item)
-{
-        // TODO: Implement P1
-        UNUSED(item);
-        return 0;
-}
+#include <jakson/utils/numbers.h>
 
 bool internal_carbon_item_create(carbon_item *item, carbon_array *parent)
 {

@@ -326,7 +326,6 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
 
         string_buffer_add(str_buf, "{");
         char sep = '\0';
-        u64 key_len;
         const char *string;
         carbon_binary binary;
         u64 string_len;
@@ -337,8 +336,8 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';
 
-                const char *key = internal_carbon_object_prop_name(&key_len, it);
-                __carbon_print_json_string(str_buf, key, key_len);
+                carbon_string_field prop_key = internal_carbon_object_prop_name(it);
+                __carbon_print_json_string(str_buf, prop_key.string, prop_key.length);
                 string_buffer_add_char(str_buf, ':');
 
                 internal_carbon_object_prop_type(&type, it);

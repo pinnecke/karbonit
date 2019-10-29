@@ -290,12 +290,11 @@ static void column_traverse(struct path_index_node *parent, carbon_column *it)
 static void object_traverse(struct path_index_node *parent, carbon_object *it)
 {
         while (carbon_object_next(it)) {
-                u64 prop_name_len = 0;
                 offset_t key_off = 0, value_off = 0;
                 internal_carbon_object_tell(&key_off, &value_off, it);
-                const char *prop_name = internal_carbon_object_prop_name(&prop_name_len, it);
+                carbon_string_field prop_key = internal_carbon_object_prop_name(it);
                 struct path_index_node *elem_node = path_index_node_add_key_elem(parent, key_off,
-                                                                                 prop_name, prop_name_len, value_off);
+                                                                                 prop_key.string, prop_key.length, value_off);
                 object_build_index(elem_node, it);
         }
 }

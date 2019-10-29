@@ -5790,7 +5790,6 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
         carbon_insert nested_ins;
@@ -5828,8 +5827,8 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_insert_begin(&nested_ins, obj_it);
         carbon_insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
@@ -6250,7 +6249,6 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
 
@@ -6287,8 +6285,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
@@ -6324,7 +6322,6 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
         carbon_insert_object_state nested_obj;
@@ -6368,8 +6365,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
@@ -6405,7 +6402,6 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
         carbon_insert_array_state nested_arr;
@@ -6446,8 +6442,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
@@ -6485,7 +6481,6 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
         carbon_insert_array_state nested_arr;
@@ -6529,8 +6524,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
@@ -6566,7 +6561,6 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
         carbon_insert_column_state nested_col;
@@ -6607,8 +6601,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);
@@ -6644,7 +6638,6 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
-        u64 key_len;
 
         carbon_insert_object_state state;
         carbon_insert_object_state nested_obj;
@@ -6684,8 +6677,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         carbon_object *obj_it = carbon_item_get_object(&(rev_it.item));
         has_next = carbon_object_next(obj_it);
         ASSERT_TRUE(has_next);
-        const char *prop_name = internal_carbon_object_prop_name(&key_len, obj_it);
-        ASSERT_TRUE(strncmp(prop_name, "1", strlen("1")) == 0);
+        auto prop_key = internal_carbon_object_prop_name(obj_it);
+        ASSERT_TRUE(strncmp(prop_key.string, "1", strlen("1")) == 0);
 
         internal_carbon_object_remove(obj_it);
         carbon_object_drop(obj_it);

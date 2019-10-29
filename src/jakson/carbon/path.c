@@ -225,10 +225,10 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                 /** empty document */
                 return CARBON_PATH_EMPTY_DOC;
         } else {
-                DECLARE_AND_INIT(u64, key_len)
+                carbon_string_field prop_key;
                 do {
-                        const char *key_name = internal_carbon_object_prop_name(&key_len, it);
-                        if (key_len == needle_len && strncmp(key_name, needle, needle_len) == 0) {
+                        prop_key = internal_carbon_object_prop_name(it);
+                        if (prop_key.length == needle_len && strncmp(prop_key.string, needle, needle_len) == 0) {
                                 if (next_path_pos == path_length) {
                                         state->result.container_type = CARBON_OBJECT;
                                         internal_carbon_object_clone(&state->result.containers.object.it, it);

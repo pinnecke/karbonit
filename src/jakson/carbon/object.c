@@ -161,12 +161,14 @@ bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, carbon_
         return true;
 }
 
-const char *internal_carbon_object_prop_name(u64 *key_len, carbon_object *it)
+carbon_string_field internal_carbon_object_prop_name(carbon_object *it)
 {
-        DEBUG_ERROR_IF_NULL(it)
-        DEBUG_ERROR_IF_NULL(key_len)
-        *key_len = it->field.key.name_len;
-        return it->field.key.name;
+        carbon_string_field ret = CARBON_NULL_STRING;
+        if (LIKELY(it != NULL)) {
+                ret.length = it->field.key.name_len;
+                ret.string = it->field.key.name;
+        }
+        return ret;
 }
 
 static i64 prop_remove(carbon_object *it, carbon_field_type_e type)
@@ -349,4 +351,226 @@ bool internal_carbon_object_fast_forward(carbon_object *it)
         JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(u8)) == CARBON_MOBJECT_END);
         memfile_skip(&it->memfile, sizeof(u8));
         return true;
+}
+
+bool internal_carbon_object_update_name(carbon_object *it, const char *key)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(key)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_u8(carbon_object *it, u8 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_u16(carbon_object *it, u16 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_u32(carbon_object *it, u32 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_u64(carbon_object *it, u64 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_i8(carbon_object *it, i8 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_i16(carbon_object *it, i16 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_i32(carbon_object *it, i32 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_i64(carbon_object *it, i64 value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_float(carbon_object *it, float value)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_true(carbon_object *it)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_false(carbon_object *it)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_null(carbon_object *it)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_string(carbon_object *it, const char *str)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(str)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_binary(carbon_object *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(value)
+        UNUSED(nbytes)
+        UNUSED(file_ext)
+        UNUSED(user_type)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+carbon_insert *internal_carbon_object_update_array_begin(carbon_insert_array_state *state, carbon_object *it)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_array_end(carbon_insert_array_state *state)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+carbon_insert *internal_carbon_object_update_column_begin(carbon_insert_column_state *state, carbon_object *it)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_column_end(carbon_insert_column_state *state)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+carbon_insert *internal_carbon_object_update_object_begin(carbon_insert_object_state *state, carbon_object *it)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        UNUSED(it)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_object_end(carbon_insert_object_state *state)
+{
+        // TODO: Implement P1
+        UNUSED(state)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_from_carbon(carbon_object *it, const carbon *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_from_array(carbon_object *it, const carbon_object *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_from_object(carbon_object *it, const carbon_object *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
+}
+
+bool internal_carbon_object_update_from_column(carbon_object *it, const carbon_column *src)
+{
+        // TODO: Implement P1
+        UNUSED(it)
+        UNUSED(src)
+        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        return false;
 }

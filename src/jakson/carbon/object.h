@@ -85,7 +85,7 @@ bool internal_carbon_object_fast_forward(carbon_object *it);
 offset_t internal_carbon_object_memfile_pos(carbon_object *it);
 bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, carbon_object *it);
 
-const char *internal_carbon_object_prop_name(u64 *key_len, carbon_object *it);
+carbon_string_field internal_carbon_object_prop_name(carbon_object *it);
 bool internal_carbon_object_remove(carbon_object *it);
 bool internal_carbon_object_prop_type(carbon_field_type_e *type, carbon_object *it);
 
@@ -112,6 +112,35 @@ bool internal_carbon_object_binary_value(carbon_binary *out, carbon_object *it);
 carbon_array *internal_carbon_object_array_value(carbon_object *it_in);
 carbon_object *internal_carbon_object_object_value(carbon_object *it_in);
 carbon_column *internal_carbon_object_column_value(carbon_object *it_in);
+
+bool internal_carbon_object_update_name(carbon_object *it, const char *key);
+bool internal_carbon_object_update_u8(carbon_object *it, u8 value);
+bool internal_carbon_object_update_u16(carbon_object *it, u16 value);
+bool internal_carbon_object_update_u32(carbon_object *it, u32 value);
+bool internal_carbon_object_update_u64(carbon_object *it, u64 value);
+bool internal_carbon_object_update_i8(carbon_object *it, i8 value);
+bool internal_carbon_object_update_i16(carbon_object *it, i16 value);
+bool internal_carbon_object_update_i32(carbon_object *it, i32 value);
+bool internal_carbon_object_update_i64(carbon_object *it, i64 value);
+bool internal_carbon_object_update_float(carbon_object *it, float value);
+bool internal_carbon_object_update_true(carbon_object *it);
+bool internal_carbon_object_update_false(carbon_object *it);
+bool internal_carbon_object_update_null(carbon_object *it);
+bool internal_carbon_object_update_string(carbon_object *it, const char *str);
+bool internal_carbon_object_update_binary(carbon_object *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
+carbon_insert *internal_carbon_object_update_array_begin(carbon_insert_array_state *state, carbon_object *it);
+bool internal_carbon_object_update_array_end(carbon_insert_array_state *state);
+
+carbon_insert *internal_carbon_object_update_column_begin(carbon_insert_column_state *state, carbon_object *it);
+bool internal_carbon_object_update_column_end(carbon_insert_column_state *state);
+
+carbon_insert *internal_carbon_object_update_object_begin(carbon_insert_object_state *state, carbon_object *it);
+bool internal_carbon_object_update_object_end(carbon_insert_object_state *state);
+
+bool internal_carbon_object_update_from_carbon(carbon_object *it, const carbon *src);
+bool internal_carbon_object_update_from_array(carbon_object *it, const carbon_object *src);
+bool internal_carbon_object_update_from_object(carbon_object *it, const carbon_object *src);
+bool internal_carbon_object_update_from_column(carbon_object *it, const carbon_column *src);
 
 END_DECL
 

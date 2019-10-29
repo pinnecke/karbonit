@@ -19,6 +19,9 @@ typedef struct carbon_prop
         carbon_item          value;
 } carbon_prop;
 
+#define carbon_prop_get_name(prop)                                                                                     \
+        (prop ? (prop)->key : CARBON_NULL_STRING)
+
 #define carbon_prop_get_type(prop)                                                                                     \
         ((prop) ? carbon_item_get_type((prop)->value) : CARBON_ITEM_UNDEF)
 
@@ -94,6 +97,9 @@ typedef struct carbon_prop
 #define carbon_prop_remove(prop)                                                                                       \
         ((prop) ? internal_carbon_object_remove((prop)->value) : default_value)
 
+#define carbon_prop_set_name(prop, key_name)                                                                           \
+        (internal_carbon_object_update_name((prop)->parent, key_name))
+
 #define carbon_prop_set_null(prop)                                                                                     \
         carbon_item_set_null((prop)->value)
 
@@ -115,37 +121,37 @@ typedef struct carbon_prop
 #define carbon_prop_set_string(prop, const_char_str)                                                                   \
         carbon_item_set_string((prop)->value, const_char_str)
 
-#define carbon_prop_set_binary(item, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type) \
+#define carbon_prop_set_binary(prop, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type) \
         carbon_item_set_binary((prop)->value, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext, const_char_ptr_user_type)
 
-#define carbon_prop_set_array_begin(state, item)                                                                       \
+#define carbon_prop_set_array_begin(state, prop)                                                                       \
         carbon_item_set_array_begin(state, (prop)->value)
 
 #define carbon_prop_set_array_end(state)                                                                               \
         carbon_item_set_array_end
 
-#define carbon_prop_set_column_begin(state, item)                                                                      \
+#define carbon_prop_set_column_begin(state, prop)                                                                      \
         carbon_item_set_column_begin(state, (prop)->value)
 
 #define carbon_prop_set_column_end(state)                                                                              \
         carbon_item_set_column_end(state)
 
-#define carbon_prop_set_object_begin(state, item)                                                                      \
+#define carbon_prop_set_object_begin(state, prop)                                                                      \
         carbon_item_set_object_begin(state, (prop)->value)
 
 #define carbon_prop_set_object_end(state)                                                                              \
         carbon_item_set_object_end(state)
 
-#define carbon_prop_set_from_carbon(item, const_carbon_ptr_src)                                                        \
+#define carbon_prop_set_from_carbon(prop, const_carbon_ptr_src)                                                        \
         carbon_item_set_from_carbon((prop)->value, const_carbon_ptr_src)
 
-#define carbon_prop_set_from_array(item, const_carbon_array_ptr_src)                                                   \
+#define carbon_prop_set_from_array(prop, const_carbon_array_ptr_src)                                                   \
         carbon_item_set_from_array((prop)->value, const_carbon_array_ptr_src)
 
-#define carbon_prop_set_from_object(item, const_carbon_object_ptr_src)                                                 \
+#define carbon_prop_set_from_object(prop, const_carbon_object_ptr_src)                                                 \
         carbon_item_set_from_object((prop)->value, const_carbon_object_ptr_src)
 
-#define carbon_prop_set_from_column(item, const_carbon_column_ptr_src)                                                 \
+#define carbon_prop_set_from_column(prop, const_carbon_column_ptr_src)                                                 \
         carbon_item_set_from_column((prop)->value, const_carbon_column_ptr_src)
 
 // ---------------------------------------------------------------------------------------------------------------------

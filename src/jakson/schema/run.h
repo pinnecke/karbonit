@@ -475,5 +475,41 @@ static inline fn_result schema_validate_run_handleKeyword_contains(schema *s, ca
 }
 
 
+static inline fn_result schema_validate_run_handleKeyword_minProperties(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    u64 len;
+    carbon_object_it *oit = carbon_array_it_object_value(ait);
+    carbon_object_it_length(&len, oit);
+    carbon_object_it_drop(oit);
+
+    if (len < s->data.minProperties) {
+        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"minProperties\" failed");
+    }
+    return FN_OK();
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_maxProperties(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    u64 len;
+    carbon_object_it *oit = carbon_array_it_object_value(ait);
+    carbon_object_it_length(&len, oit);
+    carbon_object_it_drop(oit);
+
+    if (len > s->data.maxProperties) {
+        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"maxProperties\" failed");
+    }
+    return FN_OK();
+}
+
+
+static inline fn_result schema_validate_run_handleKeyword_required(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    carbon_object_it *oit = carbon_array_it_object_value(ait);
+    
+
 
 #endif

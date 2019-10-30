@@ -132,21 +132,16 @@ bool carbon_array_it_update_in_place_null(carbon_array_it *it)
         return update_in_place_constant(it, CARBON_CONSTANT_NULL);
 }
 
-static void __carbon_array_it_load_abstract_type(carbon_array_it *it)
-{
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_get_class(&type_class, &it->memfile);
-        carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
-}
-
-fn_result carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err,
+bool carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err,
                             offset_t payload_start)
 {
-        FN_FAIL_IF_NULL(it, memfile, err);
+        ERROR_IF_NULL(it);
+        ERROR_IF_NULL(memfile);
+        ERROR_IF_NULL(err);
 
         ZERO_MEMORY(it, sizeof(carbon_array_it));
 
-        it->array_begin_off = payload_start;
+        it->payload_start = payload_start;
         it->mod_size = 0;
         it->array_end_reached = false;
         it->field_offset = 0;
@@ -159,53 +154,45 @@ fn_result carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err
 
         ERROR_IF(memfile_remain_size(&it->memfile) < sizeof(u8), err, ERR_CORRUPTED);
 
-        fn_result ofType(bool) instance = carbon_abstract_is_instanceof_array(&it->memfile);
-        if (!FN_IS_OK(instance)) {
-                return FN_FAIL_FORWARD();
-        } else {
-                if (!FN_BOOL(instance)) {
-                        return FN_FAIL(ERR_MARKERMAPPING, "expected array or sub type marker");
-                }
-        }
+        u8 marker = *memfile_read(&it->memfile, sizeof(u8));
+        ERROR_IF_WDETAILS(marker != CARBON_MARRAY_BEGIN, err, ERR_ILLEGALOP,
+                              "array begin marker ('[') not found");
 
-        __carbon_array_it_load_abstract_type(it);
-
-        memfile_skip(&it->memfile, sizeof(u8));
+        it->payload_start += sizeof(u8);
 
         carbon_int_field_access_create(&it->field_access);
 
         carbon_array_it_rewind(it);
 
-        return FN_OK();
+        return true;
 }
 
 bool carbon_array_it_copy(carbon_array_it *dst, carbon_array_it *src)
 {
         ERROR_IF_NULL(dst);
         ERROR_IF_NULL(src);
-        carbon_array_it_create(dst, &src->memfile, &src->err, src->array_begin_off);
+        carbon_array_it_create(dst, &src->memfile, &src->err, src->payload_start - sizeof(u8));
         return true;
 }
 
 bool carbon_array_it_clone(carbon_array_it *dst, carbon_array_it *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
-        dst->array_begin_off = src->array_begin_off;
+        dst->payload_start = src->payload_start;
         spinlock_init(&dst->lock);
         error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
         dst->array_end_reached = src->array_end_reached;
-        dst->abstract_type = src->abstract_type;
         vector_cpy(&dst->history, &src->history);
         carbon_int_field_access_clone(&dst->field_access, &src->field_access);
         dst->field_offset = src->field_offset;
         return true;
 }
 
-bool carbon_array_it_set_mode(carbon_array_it *it, access_mode_e mode)
+bool carbon_array_it_readonly(carbon_array_it *it)
 {
         ERROR_IF_NULL(it);
-        it->memfile.mode = mode;
+        it->memfile.mode = READ_ONLY;
         return true;
 }
 
@@ -230,12 +217,12 @@ bool carbon_array_it_is_empty(carbon_array_it *it)
         return carbon_array_it_next(it);
 }
 
-fn_result carbon_array_it_drop(carbon_array_it *it)
+bool carbon_array_it_drop(carbon_array_it *it)
 {
         carbon_int_field_auto_close(&it->field_access);
         carbon_int_field_access_drop(&it->field_access);
         vector_drop(&it->history);
-        return FN_OK();
+        return true;
 }
 
 /**
@@ -261,9 +248,9 @@ bool carbon_array_it_unlock(carbon_array_it *it)
 bool carbon_array_it_rewind(carbon_array_it *it)
 {
         ERROR_IF_NULL(it);
-        ERROR_IF(it->array_begin_off >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
+        ERROR_IF(it->payload_start >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
         carbon_int_history_clear(&it->history);
-        return memfile_seek(&it->memfile, it->array_begin_off + sizeof(u8));
+        return memfile_seek(&it->memfile, it->payload_start);
 }
 
 static void auto_adjust_pos_after_mod(carbon_array_it *it)
@@ -375,16 +362,6 @@ bool carbon_array_it_field_type(carbon_field_type_e *type, carbon_array_it *it)
         return carbon_int_field_access_field_type(type, &it->field_access);
 }
 
-bool carbon_array_it_bool_value(bool *value, carbon_array_it *it)
-{
-        return carbon_int_field_access_bool_value(value, &it->field_access, &it->err);
-}
-
-bool carbon_array_it_is_null(bool *is_null, carbon_array_it *it)
-{
-        return carbon_int_field_access_is_null(is_null, &it->field_access);
-}
-
 bool carbon_array_it_u8_value(u8 *value, carbon_array_it *it)
 {
         return carbon_int_field_access_u8_value(value, &it->field_access, &it->err);
@@ -465,15 +442,16 @@ carbon_column_it *carbon_array_it_column_value(carbon_array_it *it_in)
         return carbon_int_field_access_column_value(&it_in->field_access, &it_in->err);
 }
 
-fn_result carbon_array_it_insert_begin(carbon_insert *inserter, carbon_array_it *it)
+bool carbon_array_it_insert_begin(carbon_insert *inserter, carbon_array_it *it)
 {
-        FN_FAIL_IF_NULL(inserter, it)
+        ERROR_IF_NULL(inserter)
+        ERROR_IF_NULL(it)
         return carbon_int_insert_create_for_array(inserter, it);
 }
 
-fn_result carbon_array_it_insert_end(carbon_insert *inserter)
+bool carbon_array_it_insert_end(carbon_insert *inserter)
 {
-        FN_FAIL_IF_NULL(inserter)
+        ERROR_IF_NULL(inserter)
         return carbon_insert_drop(inserter);
 }
 
@@ -494,39 +472,4 @@ bool carbon_array_it_remove(carbon_array_it *it)
                 ERROR(&it->err, ERR_ILLEGALSTATE);
                 return false;
         }
-}
-
-/** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
- * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_multiset(carbon_array_it *it)
-{
-        FN_FAIL_IF_NULL(it)
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_multiset(type_class);
-}
-
-/** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
- * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_sorted(carbon_array_it *it)
-{
-        FN_FAIL_IF_NULL(it)
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_sorted(type_class);
-}
-
-fn_result carbon_array_it_update_type(carbon_array_it *it, carbon_list_derivable_e derivation)
-{
-        FN_FAIL_IF_NULL(it)
-
-        memfile_save_position(&it->memfile);
-        memfile_seek(&it->memfile, it->array_begin_off);
-
-        carbon_derived_e derive_marker;
-        carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-        carbon_abstract_write_derived_type(&it->memfile, derive_marker);
-
-        memfile_restore_position(&it->memfile);
-        return FN_OK();
 }

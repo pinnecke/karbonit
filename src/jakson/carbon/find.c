@@ -29,7 +29,7 @@ static void result_from_object(carbon_find *find, carbon_object_it *it);
 static inline bool
 result_from_column(carbon_find *find, u32 requested_idx, carbon_column_it *it);
 
-bool carbon_find_begin(carbon_find *out, const char *dot_path, carbon *doc)
+bool carbon_find_open(carbon_find *out, const char *dot_path, carbon *doc)
 {
         ERROR_IF_NULL(out)
         ERROR_IF_NULL(dot_path)
@@ -41,10 +41,10 @@ bool carbon_find_begin(carbon_find *out, const char *dot_path, carbon *doc)
         return true;
 }
 
-fn_result carbon_find_end(carbon_find *find)
+bool carbon_find_close(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        if (FN_BOOL(carbon_find_has_result(find))) {
+        ERROR_IF_NULL(find)
+        if (carbon_find_has_result(find)) {
                 carbon_field_type_e type;
                 carbon_find_result_type(&type, find);
                 switch (type) {
@@ -106,19 +106,21 @@ fn_result carbon_find_end(carbon_find *find)
                 }
                 return carbon_find_drop(find);
         }
-        return FN_OK();
+        return true;
 }
 
-fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, carbon *doc)
+bool carbon_find_create(carbon_find *find, carbon_dot_path *path, carbon *doc)
 {
-        FN_FAIL_IF_NULL(find, path, doc)
+        ERROR_IF_NULL(find)
+        ERROR_IF_NULL(path)
+        ERROR_IF_NULL(doc)
 
         ZERO_MEMORY(find, sizeof(carbon_find));
         error_init(&find->err);
         find->doc = doc;
 
-        FN_FAIL_FORWARD_IF_NOT_OK(carbon_path_evaluator_begin(&find->path_evaluater, path, doc));
-        if (FN_BOOL(carbon_path_evaluator_has_result(&find->path_evaluater))) {
+        CHECK_SUCCESS(carbon_path_evaluator_begin(&find->path_evaluater, path, doc));
+        if (carbon_path_evaluator_has_result(&find->path_evaluater)) {
                 switch (find->path_evaluater.result.container_type) {
                         case CARBON_ARRAY:
                                 result_from_array(find, &find->path_evaluater.result.containers.array.it);
@@ -130,30 +132,31 @@ fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, carbon *d
                         case CARBON_OBJECT:
                                 result_from_object(find, &find->path_evaluater.result.containers.object.it);
                                 break;
-                        default:
-                                return FN_FAIL(ERR_INTERNALERR, "unknown container type");
+                        default: ERROR(&path->err, ERR_INTERNALERR);
+                                return false;
                 }
         }
-        return FN_OK();
+        return true;
 }
 
-fn_result ofType(bool) carbon_find_has_result(carbon_find *find)
+bool carbon_find_has_result(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
+        ERROR_IF_NULL(find)
         return carbon_path_evaluator_has_result(&find->path_evaluater);
 }
 
-fn_result ofType(const char *)
+const char *
 carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(dst_str, find)
+        ERROR_IF_NULL(dst_str)
+        ERROR_IF_NULL(find)
 
         string_buffer_clear(dst_str);
 
         carbon_printer printer;
         carbon_printer_by_type(&printer, print_type);
 
-        if (FN_BOOL(carbon_find_has_result(find))) {
+        if (carbon_find_has_result(find)) {
                 carbon_field_type_e result_type;
                 carbon_find_result_type(&result_type, find);
                 switch (result_type) {
@@ -170,7 +173,7 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                carbon_object_it *sub_it = FN_PTR(carbon_object_it, carbon_find_result_object(find));
+                                carbon_object_it *sub_it = carbon_find_result_object(find);
                                 carbon_printer_print_object(sub_it, &printer, dst_str);
                         }
                                 break;
@@ -178,7 +181,7 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                carbon_array_it *sub_it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
+                                carbon_array_it *sub_it = carbon_find_result_array(find);
                                 carbon_printer_print_array(sub_it, &printer, dst_str, false);
                         }
                                 break;
@@ -222,13 +225,13 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column_it *sub_it = FN_PTR(carbon_column_it, carbon_find_result_column(find));
+                                carbon_column_it *sub_it = carbon_find_result_column(find);
                                 carbon_printer_print_column(sub_it, &printer, dst_str);
                         }
                                 break;
                         case CARBON_FIELD_STRING: {
                                 u64 str_len = 0;
-                                const char *str = FN_PTR(const char, carbon_find_result_string(&str_len, find));
+                                const char *str = carbon_find_result_string(&str_len, find);
                                 carbon_printer_string(&printer, dst_str, str, str_len);
                         }
                                 break;
@@ -288,12 +291,12 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM: {
-                                const carbon_binary *val = FN_PTR(const carbon_binary, carbon_find_result_binary(find));
+                                const carbon_binary *val = carbon_find_result_binary(find);
                                 carbon_printer_binary(&printer, dst_str, val);
                         }
                                 break;
-                        default:
-                                return FN_FAIL(ERR_INTERNALERR, "unknown field type");
+                        default: ERROR(&find->err, ERR_INTERNALERR)
+                                return NULL;
                 }
 
         } else {
@@ -301,345 +304,115 @@ carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_ty
         }
         carbon_printer_drop(&printer);
 
-        return FN_OK_PTR(string_cstr(dst_str));
+        return string_cstr(dst_str);
 }
 
-fn_result ofType(const char *) carbon_find_result_to_json_compact(string_buffer *dst_str, carbon_find *find)
+const char *carbon_find_result_to_json_compact(string_buffer *dst_str, carbon_find *find)
 {
         return carbon_find_result_to_str(dst_str, JSON_COMPACT, find);
 }
 
-fn_result ofType(char *) carbon_find_result_to_json_compact_dup(carbon_find *find)
+char *carbon_find_result_to_json_compact_dup(carbon_find *find)
 {
         string_buffer str;
         string_buffer_create(&str);
-        char *ret = strdup(FN_PTR(const char, carbon_find_result_to_json_compact(&str, find)));
+        char *ret = strdup(carbon_find_result_to_json_compact(&str, find));
         string_buffer_drop(&str);
-        return FN_OK_PTR(ret);
+        return ret;
 }
 
-fn_result carbon_find_result_type(carbon_field_type_e *type, carbon_find *find)
+bool carbon_find_result_type(carbon_field_type_e *type, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(type, find)
-        FN_FAIL_FORWARD_IF_NOT_OK(carbon_path_evaluator_has_result(&find->path_evaluater));
+        ERROR_IF_NULL(type)
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
         *type = find->type;
-        return FN_OK();
+        return true;
 }
 
-fn_result carbon_find_update_array_type(carbon_find *find, carbon_list_derivable_e derivation)
+carbon_array_it *carbon_find_result_array(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
-                memfile mod;
-                carbon_array_it *it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
-                memfile_clone(&mod, &it->memfile);
-                memfile_seek_from_here(&mod, -sizeof(u8));
-                carbon_derived_e derive_marker;
-                carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-                carbon_abstract_write_derived_type(&mod, derive_marker);
-
-                return FN_OK();
-
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: array type update must be invoked on array or sub type");
-        }
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_array_or_subtype(find->type), &find->err, ERR_TYPEMISMATCH)
+        return find->value.array_it;
 }
 
-fn_result ofType(bool) carbon_find_array_is_multiset(carbon_find *find)
+carbon_object_it *carbon_find_result_object(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
-                carbon_array_it *it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
-                return carbon_array_it_is_multiset(it);
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
-        }
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_object_or_subtype(find->type), &find->err, ERR_TYPEMISMATCH)
+        return find->value.object_it;
 }
 
-fn_result ofType(bool) carbon_find_array_is_sorted(carbon_find *find)
+carbon_column_it *carbon_find_result_column(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
-                carbon_array_it *it = FN_PTR(carbon_array_it, carbon_find_result_array(find));
-                return carbon_array_it_is_sorted(it);
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
-        }
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_column_or_subtype(find->type), &find->err, ERR_TYPEMISMATCH)
+        return find->value.column_it;
 }
 
-fn_result carbon_find_update_column_type(carbon_find *find, carbon_list_derivable_e derivation)
+bool carbon_find_result_boolean(bool *out, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_column_or_subtype(type)) {
-                carbon_column_it *it = FN_PTR(carbon_column_it, carbon_find_result_column(find));
-                memfile_save_position(&it->memfile);
-                memfile_seek(&it->memfile, it->column_start_offset);
-
-                carbon_derived_e derive_marker;
-                carbon_list_container_e list_container;
-                carbon_list_container_type_by_column_type(&list_container, it->type);
-                carbon_abstract_derive_list_to(&derive_marker, list_container, derivation);
-                carbon_abstract_write_derived_type(&it->memfile, derive_marker);
-
-                memfile_restore_position(&it->memfile);
-
-                return FN_OK();
-
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: column type update must be invoked on column or sub type");
-        }
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_boolean(find->type), &find->err, ERR_TYPEMISMATCH)
+        *out = find->value.boolean;
+        return true;
 }
 
-fn_result ofType(bool) carbon_find_column_is_multiset(carbon_find *find)
+bool carbon_find_result_unsigned(u64 *out, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_column_or_subtype(type)) {
-                carbon_column_it *it = FN_PTR(carbon_column_it, carbon_find_result_column(find));
-                return carbon_column_it_is_multiset(it);
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
-        }
-}
-
-fn_result ofType(bool) carbon_find_column_is_sorted(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_column_or_subtype(type)) {
-                carbon_column_it *it = FN_PTR(carbon_column_it, carbon_find_result_column(find));
-                return carbon_column_it_is_sorted(it);
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
-        }
-}
-
-fn_result carbon_find_update_object_type(carbon_find *find, carbon_map_derivable_e derivation)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
-                carbon_object_it *it = FN_PTR(carbon_object_it, carbon_find_result_object(find));
-                memfile_save_position(&it->memfile);
-                memfile_seek(&it->memfile, it->object_start_off);
-
-                carbon_derived_e derive_marker;
-                carbon_abstract_derive_map_to(&derive_marker, derivation);
-                carbon_abstract_write_derived_type(&it->memfile, derive_marker);
-
-                memfile_restore_position(&it->memfile);
-
-                return FN_OK();
-
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: object type update must be invoked on object or sub type");
-        }
-}
-
-fn_result ofType(bool) carbon_find_object_is_multimap(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
-                carbon_object_it *it = FN_PTR(carbon_object_it, carbon_find_result_object(find));
-                return carbon_object_it_is_multimap(it);
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
-        }
-}
-
-fn_result ofType(bool) carbon_find_object_is_sorted(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
-                carbon_object_it *it = FN_PTR(carbon_object_it, carbon_find_result_object(find));
-                return carbon_object_it_is_sorted(it);
-        } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
-        }
-}
-
-fn_result ofType(bool) carbon_find_multimap(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
-                return carbon_find_object_is_multimap(find);
-        } else {
-                return FN_OK_FALSE();
-        }
-}
-
-fn_result ofType(bool) carbon_find_multiset(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
-                return carbon_find_array_is_multiset(find);
-        } else if (carbon_field_type_is_column_or_subtype(type)) {
-                return carbon_find_column_is_multiset(find);
-        } else {
-                return FN_OK_FALSE();
-        }
-}
-
-fn_result ofType(bool) carbon_find_sorted(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        carbon_field_type_e type;
-        carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
-                return carbon_find_array_is_sorted(find);
-        } else if (carbon_field_type_is_column_or_subtype(type)) {
-                return carbon_find_column_is_sorted(find);
-        } else {
-                return carbon_find_object_is_sorted(find);
-        }
-}
-
-
-fn_result __check_path_evaluator_has_result(carbon_find *find)
-{
-        assert(find);
-        if (UNLIKELY(!FN_IS_TRUE(carbon_path_evaluator_has_result(&find->path_evaluater)))) {
-                return FN_FAIL(ERR_ILLEGALSTATE, "no path evaluation result available");
-        } else {
-                return FN_OK();
-        }
-}
-
-fn_result ofType(carbon_array_it *) carbon_find_result_array(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_array_or_subtype(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "container must be array or sub type");
-        }
-
-        return FN_OK_PTR(find->value.array_it);
-}
-
-fn_result ofType(carbon_object_it *) carbon_find_result_object(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_object_or_subtype(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "container must be object or sub type");
-        }
-
-        return FN_OK_PTR(find->value.object_it);
-}
-
-fn_result ofType(carbon_column_it *) carbon_find_result_column(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_column_or_subtype(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "container must be column or sub type");
-        }
-
-        return FN_OK_PTR(find->value.column_it);
-}
-
-fn_result ofType(bool) carbon_find_result_boolean(carbon_find *find)
-{
-        FN_FAIL_IF_NULL(find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_boolean(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of boolean type");
-        }
-
-        return FN_OK_BOOL(find->value.boolean);
-}
-
-fn_result carbon_find_result_unsigned(u64 *out, carbon_find *find)
-{
-        FN_FAIL_IF_NULL(out, find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_unsigned(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of unsigned type");
-        }
-
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_unsigned(find->type), &find->err, ERR_TYPEMISMATCH)
         *out = find->value.unsigned_number;
-        return FN_OK();
+        return true;
 }
 
-fn_result carbon_find_result_signed(i64 *out, carbon_find *find)
+bool carbon_find_result_signed(i64 *out, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(out, find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_signed(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of signed type");
-        }
-
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_signed(find->type), &find->err, ERR_TYPEMISMATCH)
         *out = find->value.signed_number;
-        return FN_OK();
+        return true;
 }
 
-fn_result carbon_find_result_float(float *out, carbon_find *find)
+bool carbon_find_result_float(float *out, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(out, find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_floating(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of float type");
-        }
-
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_floating(find->type), &find->err, ERR_TYPEMISMATCH)
         *out = find->value.float_number;
-        return FN_OK();
+        return true;
 }
 
-fn_result ofType(const char *) carbon_find_result_string(u64 *str_len, carbon_find *find)
+const char *carbon_find_result_string(u64 *str_len, carbon_find *find)
 {
-        FN_FAIL_IF_NULL(str_len, find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_string(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of string type");
-        }
+        ERROR_IF_NULL(find)
+        ERROR_IF_NULL(str_len)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(find->type != CARBON_FIELD_STRING, &find->err, ERR_TYPEMISMATCH)
         *str_len = find->value.string.len;
-        return FN_OK_PTR(find->value.string.base);
+        return find->value.string.base;
 }
 
-fn_result ofType(carbon_binary *) carbon_find_result_binary(carbon_find *find)
+carbon_binary *carbon_find_result_binary(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
-        FN_FAIL_FORWARD_IF_NOT_OK(__check_path_evaluator_has_result(find));
-
-        if (UNLIKELY(!carbon_field_type_is_binary(find->type))) {
-                return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of binary type");
-        }
-
-        return FN_OK_PTR(&find->value.binary);
+        ERROR_IF_NULL(find)
+        ERROR_IF(!carbon_path_evaluator_has_result(&find->path_evaluater), &find->err, ERR_ILLEGALSTATE)
+        ERROR_IF(!carbon_field_type_is_binary(find->type), &find->err, ERR_TYPEMISMATCH)
+        return &find->value.binary;
 }
 
-fn_result carbon_find_drop(carbon_find *find)
+bool carbon_find_drop(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
+        ERROR_IF_NULL(find)
         carbon_path_evaluator_end(&find->path_evaluater);
-        return FN_OK();
+        return true;
 }
 
 static void result_from_array(carbon_find *find, carbon_array_it *it)
@@ -656,7 +429,6 @@ static void result_from_array(carbon_find *find, carbon_array_it *it)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         find->value.array_it = carbon_array_it_array_value(it);
-                        find->value.array_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -699,14 +471,12 @@ static void result_from_array(carbon_find *find, carbon_array_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         find->value.column_it = carbon_array_it_column_value(it);
-                        find->value.column_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         find->value.object_it = carbon_array_it_object_value(it);
-                        find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_STRING:
                         find->value.string.base = carbon_array_it_string_value(&find->value.string.len, it);
@@ -749,7 +519,6 @@ static void result_from_object(carbon_find *find, carbon_object_it *it)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         find->value.array_it = carbon_object_it_array_value(it);
-                        find->value.array_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -792,14 +561,12 @@ static void result_from_object(carbon_find *find, carbon_object_it *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         find->value.column_it = carbon_object_it_column_value(it);
-                        find->value.column_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         find->value.object_it = carbon_object_it_object_value(it);
-                        find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_STRING:
                         find->value.string.base = carbon_object_it_string_value(&find->value.string.len, it);

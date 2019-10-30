@@ -1,3 +1,3 @@
-# DEBUG_ERROR_IF_NULL
+# ERROR_IF_NULL
 
 > **This document is work-in-progress**. 

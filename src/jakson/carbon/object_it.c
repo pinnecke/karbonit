@@ -31,7 +31,6 @@ bool carbon_object_it_create(carbon_object_it *it, memfile *memfile, err *err,
         ERROR_IF_NULL(err);
 
         it->object_contents_off = payload_start;
-        it->object_start_off = payload_start;
         it->mod_size = 0;
         it->object_end_reached = false;
 
@@ -49,8 +48,7 @@ bool carbon_object_it_create(carbon_object_it *it, memfile *memfile, err *err,
         carbon_abstract_get_container_subtype(&sub_type, &it->memfile);
         ERROR_IF_WDETAILS(sub_type != CARBON_CONTAINER_OBJECT, err, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
-        char marker = memfile_read_byte(&it->memfile);
-        it->abstract_type = (carbon_map_derivable_e) marker;
+        memfile_skip(&it->memfile, sizeof(u8));
 
         it->object_contents_off += sizeof(u8);
 
@@ -65,7 +63,7 @@ bool carbon_object_it_copy(carbon_object_it *dst, carbon_object_it *src)
 {
         ERROR_IF_NULL(dst);
         ERROR_IF_NULL(src);
-        carbon_object_it_create(dst, &src->memfile, &src->err, src->object_start_off);
+        carbon_object_it_create(dst, &src->memfile, &src->err, src->object_contents_off - sizeof(u8));
         return true;
 }
 
@@ -75,12 +73,10 @@ bool carbon_object_it_clone(carbon_object_it *dst, carbon_object_it *src)
         ERROR_IF_NULL(src);
         memfile_clone(&dst->memfile, &src->memfile);
         dst->object_contents_off = src->object_contents_off;
-        dst->object_start_off = src->object_start_off;
         spinlock_init(&dst->lock);
         error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
         dst->object_end_reached = src->object_end_reached;
-        dst->abstract_type = src->abstract_type;
         vector_cpy(&dst->history, &src->history);
         dst->field.key.name_len = src->field.key.name_len;
         dst->field.key.name = src->field.key.name;
@@ -203,48 +199,6 @@ bool carbon_object_it_prop_type(carbon_field_type_e *type, carbon_object_it *it)
         return carbon_int_field_access_field_type(type, &it->field.value.data);
 }
 
-fn_result ofType(bool) carbon_object_it_is_multimap(carbon_object_it *it)
-{
-        FN_FAIL_IF_NULL(it)
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_map_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_multimap(type_class);
-}
-
-fn_result ofType(bool) carbon_object_it_is_sorted(carbon_object_it *it)
-{
-        FN_FAIL_IF_NULL(it)
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_map_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_sorted(type_class);
-}
-
-fn_result carbon_object_it_update_type(carbon_object_it *it, carbon_map_derivable_e derivation)
-{
-        FN_FAIL_IF_NULL(it)
-
-        memfile_save_position(&it->memfile);
-        memfile_seek(&it->memfile, it->object_start_off);
-
-        carbon_derived_e derive_marker;
-        carbon_abstract_derive_map_to(&derive_marker, derivation);
-        carbon_abstract_write_derived_type(&it->memfile, derive_marker);
-
-        memfile_restore_position(&it->memfile);
-
-        return FN_OK();
-}
-
-bool carbon_object_it_bool_value(bool *is_true, carbon_object_it *it)
-{
-        return carbon_int_field_access_bool_value(is_true, &it->field.value.data, &it->err);
-}
-
-bool carbon_object_it_is_null(bool *is_null, carbon_object_it *it)
-{
-        return carbon_int_field_access_is_null(is_null, &it->field.value.data);
-}
-
 bool carbon_object_it_u8_value(u8 *value, carbon_object_it *it)
 {
         return carbon_int_field_access_u8_value(value, &it->field.value.data, &it->err);
@@ -332,9 +286,9 @@ bool carbon_object_it_insert_begin(carbon_insert *inserter, carbon_object_it *it
         return carbon_int_insert_create_for_object(inserter, it);
 }
 
-fn_result carbon_object_it_insert_end(carbon_insert *inserter)
+bool carbon_object_it_insert_end(carbon_insert *inserter)
 {
-        FN_FAIL_IF_NULL(inserter)
+        ERROR_IF_NULL(inserter)
         return carbon_insert_drop(inserter);
 }
 

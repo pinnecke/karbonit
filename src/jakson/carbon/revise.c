@@ -37,19 +37,21 @@ static bool carbon_header_rev_inc(carbon *doc);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fn_result carbon_revise_try_begin(carbon_revise *context, carbon *revised_doc, carbon *doc)
+bool carbon_revise_try_begin(carbon_revise *context, carbon *revised_doc, carbon *doc)
 {
-        FN_FAIL_IF_NULL(context, doc)
+        ERROR_IF_NULL(context)
+        ERROR_IF_NULL(doc)
         if (!doc->versioning.commit_lock) {
                 return carbon_revise_begin(context, revised_doc, doc);
         } else {
-                return FN_FAIL(ERR_PERMISSIONS, "commit is locked");
+                return false;
         }
 }
 
-fn_result carbon_revise_begin(carbon_revise *context, carbon *revised_doc, carbon *original)
+bool carbon_revise_begin(carbon_revise *context, carbon *revised_doc, carbon *original)
 {
-        FN_FAIL_IF_NULL(context, original)
+        ERROR_IF_NULL(context)
+        ERROR_IF_NULL(original)
 
         if (LIKELY(original->versioning.is_latest)) {
                 spinlock_acquire(&original->versioning.write_lock);
@@ -58,9 +60,10 @@ fn_result carbon_revise_begin(carbon_revise *context, carbon *revised_doc, carbo
                 context->revised_doc = revised_doc;
                 error_init(&context->err);
                 carbon_clone(context->revised_doc, context->original);
-                return FN_OK();
+                return true;
         } else {
-                return FN_FAIL(ERR_OUTDATED, "out dated");
+                ERROR(&original->err, ERR_OUTDATED)
+                return false;
         }
 }
 
@@ -157,50 +160,36 @@ bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value)
         }
 }
 
-fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_derivable_e derivation)
+bool carbon_revise_iterator_open(carbon_array_it *it, carbon_revise *context)
 {
-        FN_FAIL_IF_NULL(context)
-        carbon_array_it it;
-        carbon_revise_iterator_open(&it, context);
-
-        memfile_seek_from_here(&it.memfile, -sizeof(u8));
-        carbon_derived_e derive_marker;
-        carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-        carbon_abstract_write_derived_type(&it.memfile, derive_marker);
-
-        carbon_revise_iterator_close(&it);
-        return FN_OK();
-}
-
-fn_result carbon_revise_iterator_open(carbon_array_it *it, carbon_revise *context)
-{
-        FN_FAIL_IF_NULL(it, context);
+        ERROR_IF_NULL(it);
+        ERROR_IF_NULL(context);
         offset_t payload_start = carbon_int_payload_after_header(context->revised_doc);
-        if (UNLIKELY(context->revised_doc->memfile.mode != READ_WRITE)) {
-                return FN_FAIL(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
-        }
+        ERROR_IF(context->revised_doc->memfile.mode != READ_WRITE, &context->original->err, ERR_INTERNALERR)
         return carbon_array_it_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
 }
 
-fn_result carbon_revise_iterator_close(carbon_array_it *it)
+bool carbon_revise_iterator_close(carbon_array_it *it)
 {
-        FN_FAIL_IF_NULL(it);
+        ERROR_IF_NULL(it);
         return carbon_array_it_drop(it);
 }
 
-fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, carbon_revise *context)
+bool carbon_revise_find_open(carbon_find *out, const char *dot_path, carbon_revise *context)
 {
-        FN_FAIL_IF_NULL(out, dot_path, context)
+        ERROR_IF_NULL(out)
+        ERROR_IF_NULL(dot_path)
+        ERROR_IF_NULL(context)
         carbon_dot_path path;
         carbon_dot_path_from_string(&path, dot_path);
-        fn_result status = carbon_find_create(out, &path, context->revised_doc);
+        bool status = carbon_find_create(out, &path, context->revised_doc);
         carbon_dot_path_drop(&path);
         return status;
 }
 
-fn_result carbon_revise_find_end(carbon_find *find)
+bool carbon_revise_find_close(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
+        ERROR_IF_NULL(find)
         return carbon_find_drop(find);
 }
 
@@ -280,18 +269,21 @@ bool carbon_revise_shrink(carbon_revise *context)
         return true;
 }
 
-fn_result ofType(const carbon *) carbon_revise_end(carbon_revise *context)
+const carbon *carbon_revise_end(carbon_revise *context)
 {
-        FN_FAIL_IF_NULL(context)
+        if (LIKELY(context != NULL)) {
+                internal_commit_update(context->revised_doc);
 
-        internal_commit_update(context->revised_doc);
+                context->original->versioning.is_latest = false;
+                context->original->versioning.commit_lock = false;
 
-        context->original->versioning.is_latest = false;
-        context->original->versioning.commit_lock = false;
+                spinlock_release(&context->original->versioning.write_lock);
 
-        spinlock_release(&context->original->versioning.write_lock);
-
-        return FN_OK_PTR(context->revised_doc);
+                return context->revised_doc;
+        } else {
+                ERROR_PRINT(ERR_NULLPTR);
+                return NULL;
+        }
 }
 
 bool carbon_revise_abort(carbon_revise *context)
@@ -368,7 +360,8 @@ static bool internal_pack_array(carbon_array_it *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array_it nested_array_it;
                                         carbon_array_it_create(&nested_array_it, &it->memfile, &it->err,
-                                                               it->field_access.nested_array_it->array_begin_off);
+                                                               it->field_access.nested_array_it->payload_start -
+                                                               sizeof(u8));
                                         internal_pack_array(&nested_array_it);
                                         JAK_ASSERT(*memfile_peek(&nested_array_it.memfile, sizeof(char)) ==
                                                    CARBON_MARRAY_END);
@@ -511,7 +504,8 @@ static bool internal_pack_object(carbon_object_it *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array_it nested_array_it;
                                         carbon_array_it_create(&nested_array_it, &it->memfile, &it->err,
-                                                               it->field.value.data.nested_array_it->array_begin_off);
+                                                               it->field.value.data.nested_array_it->payload_start -
+                                                               sizeof(u8));
                                         internal_pack_array(&nested_array_it);
                                         JAK_ASSERT(*memfile_peek(&nested_array_it.memfile, sizeof(char)) ==
                                                    CARBON_MARRAY_END);

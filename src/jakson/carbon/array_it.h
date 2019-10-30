@@ -56,11 +56,9 @@ typedef struct field_access {
 
 typedef struct carbon_array_it {
         memfile memfile;
-        offset_t array_begin_off;
+        offset_t payload_start;
         spinlock lock;
         err err;
-
-        carbon_list_derivable_e abstract_type;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
@@ -93,17 +91,17 @@ bool carbon_array_it_update_in_place_null(carbon_array_it *it);
  * that starts with the first (potentially empty) array entry. If there is some data before the array contents
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
-fn_result carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err, offset_t payload_start);
+bool carbon_array_it_create(carbon_array_it *it, memfile *memfile, err *err, offset_t payload_start);
 bool carbon_array_it_copy(carbon_array_it *dst, carbon_array_it *src);
 bool carbon_array_it_clone(carbon_array_it *dst, carbon_array_it *src);
-bool carbon_array_it_set_mode(carbon_array_it *it, access_mode_e mode);
+bool carbon_array_it_readonly(carbon_array_it *it);
 bool carbon_array_it_length(u64 *len, carbon_array_it *it);
 bool carbon_array_it_is_empty(carbon_array_it *it);
 
 /**
  * Drops the iterator.
  */
-fn_result carbon_array_it_drop(carbon_array_it *it);
+bool carbon_array_it_drop(carbon_array_it *it);
 
 /**
  * Locks the iterator with a spinlock. A call to <code>carbon_array_it_unlock</code> is required for unlocking.
@@ -135,8 +133,6 @@ bool carbon_int_array_it_offset(offset_t *off, carbon_array_it *it);
 bool carbon_array_it_fast_forward(carbon_array_it *it);
 
 bool carbon_array_it_field_type(carbon_field_type_e *type, carbon_array_it *it);
-bool carbon_array_it_bool_value(bool *value, carbon_array_it *it);
-bool carbon_array_it_is_null(bool *is_null, carbon_array_it *it);
 bool carbon_array_it_u8_value(u8 *value, carbon_array_it *it);
 bool carbon_array_it_u16_value(u16 *value, carbon_array_it *it);
 bool carbon_array_it_u32_value(u32 *value, carbon_array_it *it);
@@ -157,20 +153,9 @@ carbon_column_it *carbon_array_it_column_value(carbon_array_it *it_in);
 /**
  * Inserts a new element at the current position of the iterator.
  */
-fn_result carbon_array_it_insert_begin(carbon_insert *inserter, carbon_array_it *it);
-fn_result carbon_array_it_insert_end(carbon_insert *inserter);
+bool carbon_array_it_insert_begin(carbon_insert *inserter, carbon_array_it *it);
+bool carbon_array_it_insert_end(carbon_insert *inserter);
 bool carbon_array_it_remove(carbon_array_it *it);
-
-/** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
- * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_multiset(carbon_array_it *it);
-
-/** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
- * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_it_is_sorted(carbon_array_it *it);
-
-/** Updates this arrays abstract type to the given abstract type */
-fn_result carbon_array_it_update_type(carbon_array_it *it, carbon_list_derivable_e derivation);
 
 END_DECL
 

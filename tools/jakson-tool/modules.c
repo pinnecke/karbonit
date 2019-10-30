@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <dirent.h>
 #include <time.h>
+#include <pthread.h>
 
 #include <jakson/archive/pack.h>
 #include <jakson/archive/query.h>
@@ -676,6 +677,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         DIR *d;
         struct dirent *dir;
         char buffer_status[512];
+        UNUSED(buffer_status);
         long timePast = 0;
         clock_t diff;
         bench_format_handler handler;
@@ -698,14 +700,19 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                 return false;
             }
             d = opendir(filePath);
+            //size_t conv_size;
             if(d) {
                 while((dir = readdir(d)) != NULL) {
                     if(strcmp(dir->d_name, ".") == 0) {
                         break;
                     }
                     char dir_filePath[512];
+
                     snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
                     bench_format_handler_append_doc(&handler, dir_filePath);
+                    //bench_format_handler_convert_doc(&conv_size, &handler, filePath);
+                    //CONSOLE_WRITELN(file, "File size for %s : %ld", dir->d_name, conv_size);
+                    //pthread_exit(NULL);
                 }
                 closedir(d);
             }
@@ -724,9 +731,10 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         fprintf(fp, "%s", buffer);
         fclose(fp);*/
         //CONSOLE_WRITELN(file, "Doc size: %zd bytes", bench_format_handler_get_doc_size(&handler));
-        bench_format_handler_get_process_status(buffer_status);
+        //bench_format_handler_get_process_status(buffer_status);
+        CONSOLE_WRITELN(file, "Process size for %s to %s : %ld\n", format, filePath, bench_format_handler_get_process_size());
         //VmSize is the most important bit!
-        CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
+        //CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
 
         bench_format_handler_destroy(&handler);
     }

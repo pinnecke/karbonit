@@ -45,6 +45,7 @@ bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, const 
 bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError, const char *filePath);
 bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError);
 bool bench_carbon_append_doc(bench_carbon_mgr *manager, const char *filePath);
+bool bench_carbon_convert_doc(size_t *conv_size, bench_carbon_mgr *manager, const char *filePath);
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);
 bool bench_carbon_get_doc(char *str, bench_carbon_mgr *manager);
 

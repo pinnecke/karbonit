@@ -134,6 +134,16 @@ bool bench_carbon_append_doc(bench_carbon_mgr *manager, const char *filePath)
     return true;
 }
 
+// TODO : Implement
+bool bench_carbon_convert_doc(size_t *conv_size, bench_carbon_mgr *manager, const char *filePath)
+{
+    ERROR_IF_NULL(conv_size);
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(filePath);
+
+    return false;
+}
+
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager)
 {
     ERROR_IF_NULL(manager)

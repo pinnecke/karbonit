@@ -122,6 +122,23 @@ bool bench_format_handler_append_doc(bench_format_handler *handler, const char *
     return false;
 }
 
+bool bench_format_handler_convert_doc(size_t *conv_size, bench_format_handler *handler, const char *filePath)
+{
+    ERROR_IF_NULL(conv_size);
+    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(filePath);
+
+    if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
+        return bench_carbon_convert_doc(conv_size, (bench_carbon_mgr*) handler->manager, filePath);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
+        bench_bson_convert_doc(conv_size, (bench_bson_mgr*) handler->manager, filePath);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
+        bench_ubjson_convert_doc(conv_size, (bench_ubjson_mgr*) handler->manager, filePath);
+    }
+
+    return false;
+}
+
 bool bench_format_handler_destroy(bench_format_handler *handler)
 {
     if(handler == NULL)
@@ -172,6 +189,7 @@ size_t bench_format_handler_get_doc_size(bench_format_handler *handler)
 
     return false;
 }
+
 bool bench_format_handler_get_process_status(char *buffer)
 {
     FILE* status = fopen( "/proc/self/status", "r" );
@@ -183,6 +201,18 @@ bool bench_format_handler_get_process_status(char *buffer)
     fclose(status);
 
     return true;
+}
+
+size_t bench_format_handler_get_process_size()
+{
+    FILE* status = fopen( "/proc/self/statm", "r" );
+    char buffer[256];
+    char *rest;
+
+    fgets(buffer, sizeof(buffer), status);
+    fclose(status);
+
+    return strtol(buffer, &rest, 10);
 }
 
 bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *file, long file_size) {

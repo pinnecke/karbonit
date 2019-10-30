@@ -136,7 +136,39 @@ bool bench_bson_append_doc(bench_bson_mgr *manager, const char *filePath)
     return true;
 }
 
+bool bench_bson_convert_doc(size_t *conv_size, bench_bson_mgr *manager, const char *filePath)
+{
+    ERROR_IF_NULL(conv_size);
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(filePath);
 
+    bson_t *b;
+    bson_error_t bError;
+    char msg[ERROR_MSG_SIZE];
+
+    FILE *f = fopen(filePath, "rb");
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    unsigned char *jsonContent = MALLOC(fsize + 1);
+    size_t nread = fread(jsonContent, fsize, 1, f);
+    UNUSED(nread);
+    fclose(f);
+    jsonContent[fsize] = 0;
+
+    b = bson_new_from_json(jsonContent, -1, &bError);
+    if(!b) {
+        snprintf(msg, sizeof(msg), "Failed to create BSON document from JSON.\nError: %s", bError.message);
+        BENCH_BSON_ERROR_WRITE(manager->error, msg, 0);
+        return false;
+    }
+
+    *conv_size = b->len;
+
+    bson_destroy(b);
+
+    return true;
+}
 
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager)
 {

@@ -62,6 +62,7 @@ bool bench_ubjson_error_write(bench_ubjson_error *error, const char *msg, const 
 bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError, const char *filePath);
 bool bench_ubjson_mgr_create_empty(bench_ubjson_mgr *manager, bench_ubjson_error *ubjsonError, bench_error *benchError);
 bool bench_ubjson_append_doc(bench_ubjson_mgr *manager, const char *filePath);
+bool bench_ubjson_convert_doc(size_t *conv_size, bench_ubjson_mgr *manager, const char *filePath);
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager);
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager);
 size_t bench_ubjson_get_doc_size(bench_ubjson_mgr *manager);

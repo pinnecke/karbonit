@@ -267,6 +267,42 @@ bool bench_ubjson_append_doc(bench_ubjson_mgr *manager, const char *filePath)
     return true;
 }
 
+bool bench_ubjson_convert_doc(size_t *conv_size, bench_ubjson_mgr *manager, const char *filePath)
+{
+    ERROR_IF_NULL(conv_size);
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(filePath);
+
+    ubjs_prmtv *obj = 0;
+    json_error_t jError;
+    json_t *json = 0;
+    FILE *file;
+    file = fopen(filePath, "r");
+    ubjs_library_builder library_builder;
+    ubjs_library *lib = 0;
+
+    ubjs_library_builder_init(&library_builder);
+    ubjs_library_builder_build(&library_builder, &lib);
+
+    json = json_loadf(file, JSON_DECODE_ANY, &jError);
+    if(json == 0) {
+        BENCH_UBJSON_ERROR_WRITE(manager->error, "Failed to read JSON file", jError.line)
+        return false;
+    }
+    fclose(file);
+
+    js2ubj_main_encode_json_to_ubjson(json, lib, &obj);
+
+    *conv_size = bench_format_handler_get_process_size();
+    pthread_attr_t atr;
+    pthread_attr_getstacksize(&atr, conv_size);
+
+    ubjs_prmtv_free(&obj);
+    ubjs_library_free(&lib);
+
+    return true;
+}
+
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager)
 {
     ERROR_IF_NULL(manager)
@@ -338,7 +374,6 @@ size_t bench_ubjson_get_doc_size(bench_ubjson_mgr *manager)
         unsigned int key_length;
         char *key;
         ubjs_prmtv *item;
-
         ubjs_object_iterator_get_key_length(it, &key_length);
         key = (char *)malloc(sizeof(char) * key_length);
         /* Note that this string is NOT null terminated. */

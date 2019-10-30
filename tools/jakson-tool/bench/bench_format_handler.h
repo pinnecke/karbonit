@@ -77,10 +77,12 @@ bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, b
 bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_append_doc(bench_format_handler *handler, const char *filePath);
+bool bench_format_handler_convert_doc(size_t *conv_size, bench_format_handler *handler, const char *filePath);
 bool bench_format_handler_destroy(bench_format_handler *handler);
 bool bench_format_handler_get_doc(char *str, bench_format_handler *handler);
 size_t bench_format_handler_get_doc_size(bench_format_handler *handler);
 bool bench_format_handler_get_process_status(char *buffer);
+size_t bench_format_handler_get_process_size();
 bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *file, long file_size);
 
 /*

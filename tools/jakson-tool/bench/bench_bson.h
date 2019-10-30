@@ -44,6 +44,7 @@ bool bench_bson_error_write(bench_bson_error *error, const char *msg, const char
 bool bench_bson_mgr_create_from_file(bench_bson_mgr *manager, bench_bson_error *bsonError, bench_error *benchError, const char *filePath);
 bool bench_bson_mgr_create_empty(bench_bson_mgr *manager, bench_bson_error *error, bench_error *benchError);
 bool bench_bson_append_doc(bench_bson_mgr *manager, const char *filePath);
+bool bench_bson_convert_doc(size_t *conv_size, bench_bson_mgr *manager, const char *filePath);
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager);
 bool bench_bson_get_doc(char *str, bench_bson_mgr *manager);
 size_t bench_bson_get_doc_size(bench_bson_mgr *manager);

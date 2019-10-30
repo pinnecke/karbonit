@@ -693,6 +693,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
             return false;
         }
 
+        CONSOLE_WRITELN(file, "Converting %s to %s...", filePath, format);
         clock_t startPoint = clock();
         if(isDir) {
             if(!bench_format_handler_create_handler(&handler, &err, NULL, format)) {
@@ -722,7 +723,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         }
         diff = clock() - startPoint;
         timePast = diff * 1000 / CLOCKS_PER_SEC;
-        CONSOLE_WRITELN(file, "Conversion to %s took %ld ms", format, timePast);
+        CONSOLE_WRITELN(file, "Took %ld ms", timePast);
 
         //bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
         //bench_format_handler_get_doc(buffer, &handler);
@@ -732,7 +733,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         fclose(fp);*/
         //CONSOLE_WRITELN(file, "Doc size: %zd bytes", bench_format_handler_get_doc_size(&handler));
         //bench_format_handler_get_process_status(buffer_status);
-        CONSOLE_WRITELN(file, "Process size for %s to %s : %ld\n", format, filePath, bench_format_handler_get_process_size());
+        CONSOLE_WRITELN(file, "Process size: %ld\n", bench_format_handler_get_process_size());
         //VmSize is the most important bit!
         //CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
 

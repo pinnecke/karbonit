@@ -32,7 +32,7 @@ struct ctx
     unsigned int verbose_before;
     unsigned int verbose_after;
 };
-
+/*
 static void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data,
                                                    unsigned int len)
 {
@@ -52,7 +52,8 @@ static void js2ubj_main_writer_context_would_write(void *userdata, uint8_t *data
                100 * my_ctx->verbose_after / my_ctx->verbose_before);
     }
 }
-
+*/
+/*
 static void js2ubj_main_writer_context_would_print(void *userdata, char *data,
                                                    unsigned int len)
 {
@@ -64,11 +65,13 @@ static void js2ubj_main_writer_context_would_print(void *userdata, char *data,
     printf("Pretty-printed [%u]: %s\n", len, tmp);
     free(tmp);
 }
-
+*/
+/*
 static void js2ubj_main_writer_context_free(void *userdata)
 {
     UNUSED(userdata)
 }
+ */
 static void js2ubj_main_encode_json_to_ubjson(json_t *jsoned, ubjs_library *lib, ubjs_prmtv **pobj)
 {
     size_t index;
@@ -177,15 +180,10 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_e
 
     bench_ubjson_mgr_create_empty(manager, ubjsonError, benchError);
 
-    ubjs_writer_builder *writer_builder = 0;
-    ubjs_writer *writer = 0;
     ubjs_prmtv *obj = 0;
     ubjs_library *lib = 0;
     json_error_t jError;
     json_t *json = 0;
-    ctx my_ctx;
-    my_ctx.verbose = false;
-    my_ctx.pretty_print_output = false;
     FILE *file;
     file = fopen(filePath, "r");
 
@@ -197,16 +195,6 @@ bool bench_ubjson_mgr_create_from_file(bench_ubjson_mgr *manager, bench_ubjson_e
     fclose(file);
 
     js2ubj_main_encode_json_to_ubjson(json, lib, &obj);
-    ubjs_writer_builder_new(lib, &writer_builder);
-    ubjs_writer_builder_set_userdata(writer_builder, &my_ctx);
-    ubjs_writer_builder_set_would_write_f(writer_builder, js2ubj_main_writer_context_would_write);
-    ubjs_writer_builder_set_would_print_f(writer_builder, js2ubj_main_writer_context_would_print);
-    ubjs_writer_builder_set_free_f(writer_builder, js2ubj_main_writer_context_free);
-    ubjs_writer_builder_build(writer_builder, &writer);
-    ubjs_writer_builder_free(&writer_builder);
-    ubjs_writer_write(writer, obj);
-
-    ubjs_writer_free(&writer);
     //obj = 0;
 
     manager->obj = obj;

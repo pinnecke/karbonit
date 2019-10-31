@@ -180,7 +180,31 @@ bool bench_bson_mgr_destroy(bench_bson_mgr *manager)
     return true;
 }
 
-bool bench_bson_get_doc(char* str, bench_bson_mgr *manager) {
+bool bench_bson_to_file(bench_bson_mgr *manager, const char *filePath)
+{
+    ERROR_IF_NULL(manager);
+    ERROR_IF_NULL(filePath);
+
+    size_t errOffset;
+    FILE *f = fopen(filePath, "w");
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    if (!bson_validate(manager->b, BSON_VALIDATE_NONE, &errOffset)) {
+        BENCH_BSON_ERROR_WRITE(manager->error, "The document failed to validate at offset: %u\n", errOffset);
+        return false;
+    }
+
+    fprintf(f, "%s", bson_as_canonical_extended_json(manager->b, NULL));
+
+    return true;
+}
+
+bool bench_bson_get_doc(char* str, bench_bson_mgr *manager)
+{
     ERROR_IF_NULL(manager)
     ERROR_IF_NULL(str)
 

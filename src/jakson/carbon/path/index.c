@@ -363,7 +363,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        carbon_column *it = internal_carbon_object_column_value(elem_it);
+                        carbon_column *it = carbon_item_get_column(&(elem_it->prop.value));
                         column_traverse(parent, it);
 
                 }
@@ -372,7 +372,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        carbon_array *it = internal_carbon_object_array_value(elem_it);
+                        carbon_array *it = carbon_item_get_array(&(elem_it->prop.value));
                         array_traverse(parent, it);
                         carbon_array_drop(it);
                 }
@@ -381,7 +381,7 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                        carbon_object *it = internal_carbon_object_object_value(elem_it);
+                        carbon_object *it = carbon_item_get_object(&(elem_it->prop.value));
                         object_traverse(parent, it);
                         carbon_object_drop(it);
                 }

@@ -158,6 +158,8 @@ typedef struct carbon_prop
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
 
+bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent);
+
 u64 internal_carbon_prop_size(memfile *file);
 
 END_DECL

@@ -24,6 +24,7 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 #include <stdint.h>
+#include "find.h"
 
 static void result_from_array(carbon_find *find, carbon_array *it);
 
@@ -622,8 +623,8 @@ fn_result ofType(const char *) carbon_find_result_string(u64 *str_len, carbon_fi
         if (UNLIKELY(!carbon_field_type_is_string(find->type))) {
                 return FN_FAIL(ERR_TYPEMISMATCH, "result value must be of string type");
         }
-        *str_len = find->value.string.len;
-        return FN_OK_PTR(find->value.string.base);
+        *str_len = find->value.string.length;
+        return FN_OK_PTR(find->value.string.string);
 }
 
 fn_result ofType(carbon_binary *) carbon_find_result_binary(carbon_find *find)
@@ -711,11 +712,9 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                         find->value.object_it = carbon_item_get_object(&(it->item));
                         find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
-                case CARBON_FIELD_STRING: {
-                        carbon_string_field string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
-                        find->value.string.base = string.string;
-                        find->value.string.len = string.length;
-                } break;
+                case CARBON_FIELD_STRING:
+                        find->value.string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
+                        break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_U32:
@@ -756,7 +755,7 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = internal_carbon_object_array_value(it);
+                        find->value.array = carbon_item_get_array(&(it->prop.value));
                         find->value.array->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -799,38 +798,40 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column_it = internal_carbon_object_column_value(it);
+                        find->value.column_it = carbon_item_get_column(&(it->prop.value));
                         find->value.column_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
-                        find->value.object_it = internal_carbon_object_object_value(it);
+                        find->value.object_it = carbon_item_get_object(&(it->prop.value));
                         find->value.object_it->memfile.mode = find->doc->memfile.mode;
                         break;
                 case CARBON_FIELD_STRING:
-                        find->value.string.base = internal_carbon_object_string_value(&find->value.string.len, it);
+                        find->value.string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                         break;
                 case CARBON_FIELD_NUMBER_U8:
                 case CARBON_FIELD_NUMBER_U16:
                 case CARBON_FIELD_NUMBER_U32:
                 case CARBON_FIELD_NUMBER_U64:
-                        carbon_object_unsigned_value(&find->value_is_nulled, &find->value.unsigned_number, it);
+                        find->value.unsigned_number = carbon_item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
+                        find->value_is_nulled = IS_NULL_UNSIGNED(find->value.unsigned_number);
                         break;
                 case CARBON_FIELD_NUMBER_I8:
                 case CARBON_FIELD_NUMBER_I16:
                 case CARBON_FIELD_NUMBER_I32:
                 case CARBON_FIELD_NUMBER_I64:
-                        internal_carbon_object_signed_value(&find->value_is_nulled, &find->value.signed_number, it);
+                        find->value.signed_number = carbon_item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
+                        find->value_is_nulled = IS_NULL_SIGNED(find->value.signed_number);
                         break;
                 case CARBON_FIELD_NUMBER_FLOAT:
-                        internal_carbon_object_float_value_nullable(&find->value_is_nulled, &find->value.float_number,
-                                                                    it);
+                        find->value.float_number = carbon_item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
+                        find->value_is_nulled = IS_NULL_FLOAT(find->value.float_number);
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
-                        internal_carbon_object_binary_value(&find->value.binary, it);
+                        find->value.binary = carbon_item_get_binary(&(it->prop.value), CARBON_NULL_BINARY);
                         break;
                 default: ERROR(&find->err, ERR_INTERNALERR);
                         break;

@@ -28,7 +28,7 @@ TEST(TestCarbonPatch, CreatePatch) {
                                 carbon_object_next(obj);
                                 internal_carbon_object_prop_type(&type, obj);
                                 EXPECT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
-                                arr = internal_carbon_object_array_value(obj);
+                                arr = carbon_item_get_array(&obj->prop.value);
                                 {
                                         carbon_array_next(arr); /* { ...: [1,...] } */
                                         internal_carbon_array_update_u8(arr, 42);

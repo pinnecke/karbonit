@@ -51,11 +51,7 @@ typedef struct carbon_find {
                 i64 signed_number;
                 float float_number;
 
-                struct {
-                        const char *base;
-                        u64 len;
-                } string;
-
+                carbon_string_field string;
                 carbon_binary binary;
         } value;
 } carbon_find;

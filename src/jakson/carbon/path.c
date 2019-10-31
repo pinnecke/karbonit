@@ -296,8 +296,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                                         case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
-                                                                carbon_object *sub_it = internal_carbon_object_object_value(
-                                                                        it);
+                                                                carbon_object *sub_it = carbon_item_get_object(&(it->prop.value));
                                                                 carbon_path_status_e ret = traverse_object(state,
                                                                                                               path,
                                                                                                               next_path_pos,
@@ -309,8 +308,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                                                carbon_array *sub_it = internal_carbon_object_array_value(
-                                                                        it);
+                                                                carbon_array *sub_it = carbon_item_get_array(&(it->prop.value));
                                                                 carbon_path_status_e ret = traverse_array(state,
                                                                                                              path,
                                                                                                              next_path_pos,
@@ -359,8 +357,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                                                carbon_column *sub_it = internal_carbon_object_column_value(
-                                                                        it);
+                                                                carbon_column *sub_it = carbon_item_get_column(&(it->prop.value));
                                                                 return traverse_column(state,
                                                                                        path,
                                                                                        next_path_pos,

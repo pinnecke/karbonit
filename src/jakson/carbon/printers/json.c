@@ -120,24 +120,23 @@ static inline void __carbon_print_json_binary(struct string_buffer *restrict buf
 //DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(i64)
 //DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(float)
 
-#define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(type)                                                            \
+#define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(type, clazz, default_value)                                                            \
 static inline void __carbon_print_json_##type##_from_prop_value(struct string_buffer *restrict buf,                    \
-                                                                struct carbon_object *restrict it)                  \
+                                                                struct carbon_object *restrict it)                     \
 {                                                                                                                      \
-        type val;                                                                                                      \
-        internal_carbon_object_##type##_value(&val, it);                                                                     \
+        type val = (type) carbon_item_get_##clazz(&(it->prop.value), default_value);                                                    \
         string_buffer_add_##type(buf, val);                                                                            \
 }
 
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u32)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u64)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i8)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i16)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i32)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i64)
-DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(float)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u8, number_unsigned, CARBON_NULL_UNSIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u16, number_unsigned, CARBON_NULL_UNSIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u32, number_unsigned, CARBON_NULL_UNSIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u64, number_unsigned, CARBON_NULL_UNSIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i8, number_signed, CARBON_NULL_SIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i16, number_signed, CARBON_NULL_SIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i32, number_signed, CARBON_NULL_SIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(i64, number_signed, CARBON_NULL_SIGNED)
+DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(float, number_float, CARBON_NULL_FLOAT)
 
 static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_extra *restrict extra,
                                                         carbon_array *restrict it)
@@ -326,9 +325,6 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
 
         string_buffer_add(str_buf, "{");
         char sep = '\0';
-        const char *string;
-        carbon_binary binary;
-        u64 string_len;
 
         while (carbon_object_next(it)) {
                 internal_carbon_object_prop_type(&type, it);
@@ -351,10 +347,10 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                         case CARBON_FIELD_FALSE:
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
-                        case CARBON_FIELD_STRING:
-                                string = internal_carbon_object_string_value(&string_len, it);
-                                __carbon_print_json_string(str_buf, string, string_len);
-                                break;
+                        case CARBON_FIELD_STRING: {
+                                carbon_string_field string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                __carbon_print_json_string(str_buf, string.string, string.length);
+                        } break;
                         case CARBON_FIELD_NUMBER_U8:
                                 __carbon_print_json_u8_from_prop_value(str_buf, it);
                                 break;
@@ -383,22 +379,22 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 __carbon_print_json_float_from_prop_value(str_buf, it);
                                 break;
                         case CARBON_FIELD_BINARY:
-                        case CARBON_FIELD_BINARY_CUSTOM:
-                                internal_carbon_object_binary_value(&binary, it);
+                        case CARBON_FIELD_BINARY_CUSTOM: {
+                                carbon_binary binary = carbon_item_get_binary(&(it->prop.value), CARBON_NULL_BINARY);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
-                                break;
+                        } break;
                         default:
                                 break;
                 }
 
                 if (carbon_field_type_is_object_or_subtype(type)) {
-                        carbon_object *sub = internal_carbon_object_object_value(it);
+                        carbon_object *sub = carbon_item_get_object(&(it->prop.value));
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column *sub = internal_carbon_object_column_value(it);
+                        carbon_column *sub = carbon_item_get_column(&(it->prop.value));
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
-                        carbon_array *sub = internal_carbon_object_array_value(it);
+                        carbon_array *sub = carbon_item_get_array(&(it->prop.value));
                         carbon_traverse_continue_array(extra, sub);
                 }
         }

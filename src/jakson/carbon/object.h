@@ -23,6 +23,7 @@
 #include <jakson/mem/file.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/array.h>
+#include <jakson/carbon/prop.h>
 
 BEGIN_DECL
 
@@ -54,6 +55,7 @@ typedef struct carbon_object {
         } field;
 
         carbon_map_derivable_e abstract_type;
+        carbon_prop prop;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
@@ -66,7 +68,7 @@ typedef struct carbon_object {
 bool carbon_object_drop(carbon_object *it);
 
 bool carbon_object_rewind(carbon_object *it);
-bool carbon_object_next(carbon_object *it);
+carbon_prop *carbon_object_next(carbon_object *it);
 bool carbon_object_has_next(carbon_object *it);
 bool carbon_object_prev(carbon_object *it);
 
@@ -93,27 +95,6 @@ bool internal_carbon_object_prop_type(carbon_field_type_e *type, carbon_object *
 
 bool internal_carbon_object_insert_begin(carbon_insert *inserter, carbon_object *it);
 fn_result internal_carbon_object_insert_end(carbon_insert *inserter);
-
-bool internal_carbon_object_bool_value(bool *is_true, carbon_object *it);
-bool internal_carbon_object_is_null(bool *is_null, carbon_object *it);
-
-bool internal_carbon_object_u8_value(u8 *value, carbon_object *it);
-bool internal_carbon_object_u16_value(u16 *value, carbon_object *it);
-bool internal_carbon_object_u32_value(u32 *value, carbon_object *it);
-bool internal_carbon_object_u64_value(u64 *value, carbon_object *it);
-bool internal_carbon_object_i8_value(i8 *value, carbon_object *it);
-bool internal_carbon_object_i16_value(i16 *value, carbon_object *it);
-bool internal_carbon_object_i32_value(i32 *value, carbon_object *it);
-bool internal_carbon_object_i64_value(i64 *value, carbon_object *it);
-bool internal_carbon_object_float_value(float *value, carbon_object *it);
-bool internal_carbon_object_float_value_nullable(bool *is_null_in, float *value, carbon_object *it);
-bool internal_carbon_object_signed_value(bool *is_null_in, i64 *value, carbon_object *it);
-bool carbon_object_unsigned_value(bool *is_null_in, u64 *value, carbon_object *it);
-const char *internal_carbon_object_string_value(u64 *strlen, carbon_object *it);
-bool internal_carbon_object_binary_value(carbon_binary *out, carbon_object *it);
-carbon_array *internal_carbon_object_array_value(carbon_object *it_in);
-carbon_object *internal_carbon_object_object_value(carbon_object *it_in);
-carbon_column *internal_carbon_object_column_value(carbon_object *it_in);
 
 bool internal_carbon_object_update_name(carbon_object *it, const char *key);
 bool internal_carbon_object_update_u8(carbon_object *it, u8 value);

@@ -18,6 +18,19 @@
 #include <jakson/carbon/prop.h>
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/field.h>
+#include "object.h"
+
+bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent)
+{
+        DEBUG_ERROR_IF_NULL(dst)
+        DEBUG_ERROR_IF_NULL(parent)
+        dst->parent = parent;
+        dst->idx = parent->pos;
+        dst->key.string = parent->field.key.name;
+        dst->key.length = parent->field.key.name_len;
+        internal_carbon_item_create_from_object(&dst->value, parent);
+        return true;
+}
 
 u64 internal_carbon_prop_size(memfile *file)
 {

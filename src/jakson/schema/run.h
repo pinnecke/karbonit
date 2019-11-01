@@ -188,7 +188,7 @@ static inline fn_result schema_validate_run_handleKeyword_pattern(schema *s, car
     const char *_str = carbon_array_it_string_value(&strlen, ait);
     char *str = strndup(_str, strlen);
 
-    reti = regcomp(&regex, s->data.pattern, 0);
+    reti = regcomp(&regex, s->data.pattern, REG_EXTENDED);
     if (reti) {
         return FN_FAIL(ERR_INITFAILED, "could not initiate \"pattern\" constraint. Not a POSIX regexp");
     }
@@ -228,11 +228,11 @@ static inline fn_result schema_validate_run_handleKeyword_format(schema *s, carb
             format = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]";
             break;
         case URI :
-            // https://tools.ietf.org/html/rfc3986#appendix-B
-            format = "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?";
+            format = "\\w+:(\\/?\\/?)[^\\s]+";
             break;
         case EMAIL : 
-            format = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+            // TODO: find POSIX compatible REGEX 
+            format = "/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
             break;
         case HOSTNAME :
             format = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
@@ -245,7 +245,7 @@ static inline fn_result schema_validate_run_handleKeyword_format(schema *s, carb
             break;
         case REGEX :
             format = str;
-            reti = regcomp(&regex, format, 0);
+            reti = regcomp(&regex, format, REG_EXTENDED);
             if (reti) {
                 return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"format\" failed. Not a POSIX regex");
             }
@@ -254,7 +254,7 @@ static inline fn_result schema_validate_run_handleKeyword_format(schema *s, carb
             return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "unknown \"format\" keyword");
     }
 
-    reti = regcomp(&regex, format, 0);
+    reti = regcomp(&regex, format, REG_EXTENDED);
     if (reti) {
         return FN_FAIL(ERR_ERRINTERNAL, "could not initiate \"format\" constraint");
     }

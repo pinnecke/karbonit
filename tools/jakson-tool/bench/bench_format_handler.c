@@ -230,7 +230,7 @@ bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *fi
 
     return true;
 }
-
+/*
 bool bench_format_handler_insert_int32(bench_format_handler *handler, char *key, int32_t val)
 {
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
@@ -313,7 +313,7 @@ bool bench_format_handler_delete_int32(bench_format_handler *handler, char *key)
         return false;
     }
 }
-
+*/
 bool bench_format_handler_execute_benchmark_operation(bench_format_handler *handler, bench_type type,
         bench_operation_type opType, uint32_t numOperations)
 {

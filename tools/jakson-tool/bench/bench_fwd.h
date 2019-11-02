@@ -23,18 +23,18 @@
 #define ERROR_MSG_SIZE 256
 
 typedef enum bench_type {
-    BENCH_TYPE_TEST = 0x00,
-    BENCH_TYPE_INT8 = 0x01,
-    BENCH_TYPE_INT16 = 0x02,
-    BENCH_TYPE_INT32 = 0x03,
-    BENCH_TYPE_INT64 = 0x04,
+    BENCH_TYPE_TEST = 0x01,
+    BENCH_TYPE_INT8 = 0x02,
+    BENCH_TYPE_INT16 = 0x03,
+    BENCH_TYPE_INT32 = 0x04,
+    BENCH_TYPE_INT64 = 0x05,
 } bench_type;
 
 typedef enum bench_operation_type {
-    BENCH_OP_TYPE_INSERT = 0x00,
-    BENCH_OP_TYPE_READ = 0x01,
-    BENCH_OP_TYPE_UPDATE = 0x02,
-    BENCH_OP_TYPE_DELETE = 0x03,
+    BENCH_OP_TYPE_INSERT = 0x01,
+    BENCH_OP_TYPE_READ = 0x02,
+    BENCH_OP_TYPE_UPDATE = 0x03,
+    BENCH_OP_TYPE_DELETE = 0x04,
 } bench_operation_type;
 
 typedef struct bench_error bench_error;

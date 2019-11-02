@@ -658,88 +658,136 @@ bool moduleListInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manage
     }
 }
 
+#define BENCH_OPTION_SELECT_TYPE "--select-type"
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpointer-sign"
-bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager)
-{
+bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager) {
     UNUSED(manager);
 
-    // TODO: Allow input of multiple files
-    if (argc != 2) {
+    if (argc > 3) {
+        wrong_input:
         CONSOLE_WRITE(file, "Require <format type> and <input> parameters for <args>.%s", "");
         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
         CONSOLE_WRITELN(file, "Run '%s' to see an example on the usage.", "$ types bench");
         return false;
-    } else {
+    } else if (argc == 1) {
         const char *format = argv[0];
-        const char *filePath = argv[1];
-        bool isDir = false;
-        DIR *d;
-        struct dirent *dir;
-        char buffer_status[512];
-        UNUSED(buffer_status);
-        long timePast = 0;
-        clock_t diff;
+        CONSOLE_WRITELN(file, "Starting universal benchmark for %s...", format);
+        // TODO : Implement
+    } else {
+        char *opt = argv[1];
+        bool flagSelectType = false;
+        bench_type selectType;
         bench_format_handler handler;
         bench_error err;
-        char buffer[512];
-        UNUSED(buffer);
+        uint32_t numOperationsInsert = 50000;
+        uint32_t numOperationsRead = 25000;
+        uint32_t numOperationsUpdate = 10000;
+        uint32_t numOperationsDelete = 5000;
 
-        struct stat s;
-        if(stat(filePath, &s) == 0 && (s.st_mode & S_IFDIR)) {
-            isDir = true;
-        } else if (testFileExists(file, filePath, 1, 1, true) != true) {
-            CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", filePath);
-            return false;
-        }
+        if (strncmp(opt, "--", 2) == 0) {
+            if (strcmp(opt, BENCH_OPTION_SELECT_TYPE) == 0) {
+                flagSelectType = true;
+                if (!strcmp(argv[2], "int8")) {
+                    selectType = BENCH_TYPE_INT8;
+                } else if (!strcmp(argv[2], "int16")) {
+                    selectType = BENCH_TYPE_INT16;
+                } else if (!strcmp(argv[2], "int32")) {
+                    selectType = BENCH_TYPE_INT32;
+                } else if (!strcmp(argv[2], "int64")) {
+                    selectType = BENCH_TYPE_INT64;
+                } else {
+                    CONSOLE_WRITELN(file, "Selected type '%s' not found. STOP", argv[2]);
+                    return false;
+                }
 
-        CONSOLE_WRITELN(file, "Converting %s to %s...", filePath, format);
-        clock_t startPoint = clock();
-        if(isDir) {
-            if(!bench_format_handler_create_handler(&handler, &err, NULL, format)) {
+                const char *format = argv[0];
+
+                if (!bench_format_handler_create_handler(&handler, &err, NULL, format)) {
+                    CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
+                    return false;
+                }
+                CONSOLE_WRITELN(file, "Executing benchmark process for %s", format);
+                bench_format_handler_execute_benchmark(&handler, selectType,
+                        numOperationsInsert, numOperationsRead, numOperationsUpdate, numOperationsDelete);
+                CONSOLE_WRITELN(file, "Process size after initial insertions: %ldKB", handler.proc_size);
+                CONSOLE_WRITELN(file, "Insertion of %d %s values took: %ldms", numOperationsInsert, argv[2], handler.benchTimes[0]);
+                CONSOLE_WRITELN(file, "Reading of %d %s values took: %ldms", numOperationsRead, argv[2], handler.benchTimes[1]);
+                CONSOLE_WRITELN(file, "Updating of %d %s values took: %ldms", numOperationsUpdate, argv[2], handler.benchTimes[2]);
+                CONSOLE_WRITELN(file, "Deleting of %d %s values took: %ldms", numOperationsDelete, argv[2], handler.benchTimes[3]);
+                CONSOLE_WRITELN(file, "Total time passed: %ldms", handler.benchTimes[4]);
+            }
+        } else if (argc != 2) {
+            goto wrong_input;
+        } else {
+            const char *format = argv[0];
+            const char *filePath = argv[1];
+            bool isDir = false;
+            DIR *d;
+            struct dirent *dir;
+            char buffer_status[512];
+            UNUSED(buffer_status);
+            long timePast = 0;
+            clock_t diff;
+
+            char buffer[512];
+            UNUSED(buffer);
+
+            struct stat s;
+            if (stat(filePath, &s) == 0 && (s.st_mode & S_IFDIR)) {
+                isDir = true;
+            } else if (testFileExists(file, filePath, 1, 1, true) != true) {
+                CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", filePath);
+                return false;
+            }
+
+            CONSOLE_WRITELN(file, "Converting %s to %s...", filePath, format);
+            clock_t startPoint = clock();
+            if (isDir) {
+                if (!bench_format_handler_create_handler(&handler, &err, NULL, format)) {
+                    CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
+                    return false;
+                }
+                d = opendir(filePath);
+                //size_t conv_size;
+                if (d) {
+                    while ((dir = readdir(d)) != NULL) {
+                        if (strcmp(dir->d_name, ".") == 0) {
+                            break;
+                        }
+                        char dir_filePath[512];
+
+                        snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
+                        bench_format_handler_append_doc(&handler, dir_filePath);
+                        //bench_format_handler_convert_doc(&conv_size, &handler, filePath);
+                        //CONSOLE_WRITELN(file, "File size for %s : %ld", dir->d_name, conv_size);
+                        //pthread_exit(NULL);
+                    }
+                    closedir(d);
+                }
+            } else if (!bench_format_handler_create_handler(&handler, &err, filePath, format)) {
                 CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
                 return false;
             }
-            d = opendir(filePath);
-            //size_t conv_size;
-            if(d) {
-                while((dir = readdir(d)) != NULL) {
-                    if(strcmp(dir->d_name, ".") == 0) {
-                        break;
-                    }
-                    char dir_filePath[512];
+            diff = clock() - startPoint;
+            timePast = diff * 1000 / CLOCKS_PER_SEC;
+            CONSOLE_WRITELN(file, "Took %ld ms", timePast);
 
-                    snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
-                    bench_format_handler_append_doc(&handler, dir_filePath);
-                    //bench_format_handler_convert_doc(&conv_size, &handler, filePath);
-                    //CONSOLE_WRITELN(file, "File size for %s : %ld", dir->d_name, conv_size);
-                    //pthread_exit(NULL);
-                }
-                closedir(d);
-            }
-        } else if(!bench_format_handler_create_handler(&handler, &err, filePath, format)) {
-            CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
-            return false;
+            //bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
+            //bench_format_handler_get_doc(buffer, &handler);
+            /*FILE *fp;
+            fp = fopen("test", "w+");
+            fprintf(fp, "%s", buffer);
+            fclose(fp);*/
+            //CONSOLE_WRITELN(file, "Doc size: %zd bytes", bench_format_handler_get_doc_size(&handler));
+            //bench_format_handler_get_process_status(buffer_status);
+            CONSOLE_WRITELN(file, "Process size: %ld\n", bench_format_handler_get_process_size());
+            //VmSize is the most important bit!
+            //CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
         }
-        diff = clock() - startPoint;
-        timePast = diff * 1000 / CLOCKS_PER_SEC;
-        CONSOLE_WRITELN(file, "Took %ld ms", timePast);
-
-        //bench_format_handler_execute_benchmark(&handler, BENCH_TYPE_TEST);
-        //bench_format_handler_get_doc(buffer, &handler);
-        /*FILE *fp;
-        fp = fopen("test", "w+");
-        fprintf(fp, "%s", buffer);
-        fclose(fp);*/
-        //CONSOLE_WRITELN(file, "Doc size: %zd bytes", bench_format_handler_get_doc_size(&handler));
-        //bench_format_handler_get_process_status(buffer_status);
-        CONSOLE_WRITELN(file, "Process size: %ld\n", bench_format_handler_get_process_size());
-        //VmSize is the most important bit!
-        //CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
-
         bench_format_handler_destroy(&handler);
     }
-
     return true;
 }
 #pragma clang diagnostic pop

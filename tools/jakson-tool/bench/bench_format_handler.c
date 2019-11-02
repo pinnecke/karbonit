@@ -23,26 +23,6 @@ bool bench_format_handler_write_error(bench_error *error, const char *msg)
     return true;
 }
 
-bool bench_format_handler_create_handler(bench_format_handler *handler, bench_error *error, const char *filePath, const char *formatType)
-{
-    ERROR_IF_NULL(handler)
-    ERROR_IF_NULL(error)
-    ERROR_IF_NULL(formatType)
-
-    CHECK_SUCCESS(bench_format_handler_create_error(error));
-
-    if(strcmp(formatType, BENCH_FORMAT_CARBON) == 0) {
-        return bench_format_handler_create_carbon_handler(handler, error, filePath);
-    } else if(strcmp(formatType, BENCH_FORMAT_BSON) == 0) {
-        return bench_format_handler_create_bson_handler(handler, error, filePath);
-    } else if(strcmp(formatType, BENCH_FORMAT_UBJSON) == 0) {
-        return bench_format_handler_create_ubjson_handler(handler, error, filePath);
-    } else {
-        bench_format_handler_write_error(error, strcat("Wrong format type: ", formatType));
-        return false;
-    }
-}
-
 bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath)
 {
     ERROR_IF_NULL(handler)
@@ -104,6 +84,26 @@ bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, b
     handler->error = error;
 
     return true;
+}
+
+bool bench_format_handler_create_handler(bench_format_handler *handler, bench_error *error, const char *filePath, const char *formatType)
+{
+    ERROR_IF_NULL(handler)
+    ERROR_IF_NULL(error)
+    ERROR_IF_NULL(formatType)
+
+    CHECK_SUCCESS(bench_format_handler_create_error(error));
+
+    if(strcmp(formatType, BENCH_FORMAT_CARBON) == 0) {
+        return bench_format_handler_create_carbon_handler(handler, error, filePath);
+    } else if(strcmp(formatType, BENCH_FORMAT_BSON) == 0) {
+        return bench_format_handler_create_bson_handler(handler, error, filePath);
+    } else if(strcmp(formatType, BENCH_FORMAT_UBJSON) == 0) {
+        return bench_format_handler_create_ubjson_handler(handler, error, filePath);
+    } else {
+        bench_format_handler_write_error(error, strcat("Wrong format type: ", formatType));
+        return false;
+    }
 }
 
 bool bench_format_handler_append_doc(bench_format_handler *handler, const char *filePath)
@@ -314,17 +314,53 @@ bool bench_format_handler_delete_int32(bench_format_handler *handler, char *key)
     }
 }
 
-bool bench_format_handler_execute_benchmark(bench_format_handler *handler, const char *benchType)
+bool bench_format_handler_execute_benchmark_operation(bench_format_handler *handler, bench_type type,
+        bench_operation_type opType, uint32_t numOperations)
 {
-    ERROR_IF_NULL(handler)
-    ERROR_IF_NULL(benchType)
+    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(type);
+    ERROR_IF_NULL(opType);
+
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
-        return bench_carbon_execute_benchmark((bench_carbon_mgr*) handler->manager, benchType);
+        return bench_carbon_execute_benchmark_operation((bench_carbon_mgr*) handler->manager, type, opType, numOperations);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
-        return bench_bson_execute_benchmark((bench_bson_mgr*) handler->manager, benchType);
+        return bench_bson_execute_benchmark_operation((bench_bson_mgr*) handler->manager, type, opType, numOperations);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
-        return bench_ubjson_execute_benchmark((bench_ubjson_mgr*) handler->manager, benchType);
+        return bench_ubjson_execute_benchmark_operation((bench_ubjson_mgr*) handler->manager, type, opType, numOperations);
     } else {
         return false;
     }
+}
+
+bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench_type type,
+        uint32_t numOperationsInsert, uint32_t numOperationsRead, uint32_t numOperationsUpdate, uint32_t numOperationsDelete)
+{
+    ERROR_IF_NULL(handler);
+    ERROR_IF_NULL(type);
+    JAK_ASSERT(numOperationsInsert >= numOperationsDelete);
+
+    clock_t clockStart, clockInsert, clockRead, clockUpdate, clockDelete;
+    clockStart = clock();
+
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_INSERT, numOperationsInsert));
+    clockInsert = clock();
+    handler->proc_size = bench_format_handler_get_process_size();
+
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_READ, numOperationsRead));
+    clockRead = clock();
+
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_UPDATE, numOperationsUpdate));
+    clockUpdate = clock();
+
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_DELETE, numOperationsDelete));
+    clockDelete = clock();
+
+    // TODO : Out-source time measuring
+    handler->benchTimes[0] = (clockInsert - clockStart) * 1000 / CLOCKS_PER_SEC;
+    handler->benchTimes[1] = (clockRead - clockInsert) * 1000 / CLOCKS_PER_SEC;
+    handler->benchTimes[2] = (clockUpdate - clockRead) * 1000 / CLOCKS_PER_SEC;
+    handler->benchTimes[3] = (clockDelete - clockUpdate) * 1000 / CLOCKS_PER_SEC;
+    handler->benchTimes[4] = (clock() - clockStart) * 1000 / CLOCKS_PER_SEC;
+
+    return true;
 }

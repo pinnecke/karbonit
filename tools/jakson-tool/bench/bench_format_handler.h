@@ -34,14 +34,9 @@
 #include "bench_bson.h"
 #include "bench_ubjson.h"
 
-
-
-
 #define BENCH_FORMAT_BSON "BSON"
 #define BENCH_FORMAT_CARBON "CARBON"
 #define BENCH_FORMAT_UBJSON "UBJSON"
-
-#define BENCH_TYPE_TEST "test"
 
 typedef struct bench_bson_error bench_bson_error;
 
@@ -63,19 +58,20 @@ struct bench_format_ops {
     // TODO: Add more operations
 };
 */
-
 typedef struct bench_format_handler {
     bench_error *error;
     void *manager;
     char *format_name;
+    long benchTimes[5 /* INSERT READ UPDATE DELETE TOTAL */];
+    size_t proc_size;
 } bench_format_handler;
 
-bool bench_format_handler_create_error(bench_error *error);
+//bool bench_format_handler_create_error(bench_error *error);
 //bool bench_format_handler_destroy_error(bench_error *error);
+//bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
+//bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
+//bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_handler(bench_format_handler *handler, bench_error *error, const char *filePath, const char *benchType);
-bool bench_format_handler_create_carbon_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
-bool bench_format_handler_create_bson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
-bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_append_doc(bench_format_handler *handler, const char *filePath);
 bool bench_format_handler_convert_doc(size_t *conv_size, bench_format_handler *handler, const char *filePath);
 bool bench_format_handler_destroy(bench_format_handler *handler);
@@ -117,7 +113,8 @@ bool bench_format_handler_delete_int32(bench_format_handler *handler, char *key)
 bool bench_format_handler_delete_int64(bench_format_handler *handler, char *key);
 bool bench_format_handler_delete_string(bench_format_handler *handler, char *key);
 */
-// TODO : Write centralized benchmark access point
-bool bench_format_handler_execute_benchmark(bench_format_handler *handler, const char *benchType);
+
+bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench_type type,
+        uint32_t numOperationsInsert, uint32_t numOperationsRead, uint32_t numOperationsUpdate, uint32_t numOperationsDelete);
 
 #endif

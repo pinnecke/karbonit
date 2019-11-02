@@ -70,6 +70,7 @@ typedef struct schema {
         vector patternProperties;
         vector dependencies;
         vector ifThenElse;
+        vector properties;
         carbon _enum;
         long double minimum;
         long double maximum;
@@ -92,7 +93,6 @@ typedef struct schema {
         struct schema *contains;
         struct schema *_not;
         struct schema *additionalItems;
-        carbon_object_it *properties;
         void *_const;
         bool additionalItemsBool;
         bool additionalProperties;
@@ -134,6 +134,7 @@ typedef struct schema {
         u8 has_patternProperties : 1;
         u8 has_additionalProperties : 1;
         u8 has_dependencies : 1;
+        u8 dependencies_isObject : 1;
         u8 has_propertyNames : 1;
         u8 has_patternRequired : 1;
         // keywords for all types:
@@ -198,6 +199,7 @@ static inline fn_result schema_init(schema *s, const char* key_name) {
     s->applies.has_ifThenElse = false;
     
     s->applies.items_isObject = false;
+    s->applies.dependencies_isObject = false;
 
     return FN_OK();
 }
@@ -270,6 +272,9 @@ static inline fn_result longDoubleFromOit (bool *is_null, long double *val, carb
 
 static inline void schema_drop(schema *s) {
 
+    if (s->key_name) {
+        free((void*)s->key_name);
+    }
     if (s->applies.has_type) {
         vector_drop(&(s->data.type));
     }
@@ -282,13 +287,14 @@ static inline void schema_drop(schema *s) {
     }
     if (s->applies.has_required) {
         for (size_t i = 0; i < vector_length(&(s->data.required)); i++) {
-            free((void*)vector_at(&(s->data.required), i));
+            //FIXME: why double free??
+            //free((void*)vector_at(&(s->data.required), i));
         }
         vector_drop(&(s->data.required));
     }
     if (s->applies.has_patternRequired) {
         for (size_t i = 0; i < vector_length(&(s->data.patternRequired)); i++) {
-            free((void*)vector_at(&(s->data.patternRequired), i));
+            //free((void*)vector_at(&(s->data.patternRequired), i));
         }
         vector_drop(&(s->data.patternRequired));
     }
@@ -302,7 +308,7 @@ static inline void schema_drop(schema *s) {
     if (s->applies.has_anyOf) {
         for (size_t i = 0; i < vector_length(&(s->data.anyOf)); i++) {
             schema_drop((schema*)vector_at(&(s->data.anyOf), i));
-            free((void*)vector_at(&(s->data.anyOf), i));
+            //free((void*)vector_at(&(s->data.anyOf), i));
         }
         vector_drop(&(s->data.anyOf));
     }
@@ -314,11 +320,11 @@ static inline void schema_drop(schema *s) {
         vector_drop(&(s->data.allOf));
     }
     if (s->applies.has_patternProperties) {
-        for (size_t i = 0; i < vector_length(&(s->data.patternProperties)); i++) {
-            schema_drop((schema*)vector_at(&(s->data.patternProperties), i));
-            free((void*)vector_at(&(s->data.patternProperties), i));
-        }
-        vector_drop(&(s->data.patternProperties));
+        //for (size_t i = 0; i < vector_length(&(s->data.patternProperties)); i++) {
+        //    schema_drop((schema*)vector_at(&(s->data.patternProperties), i));
+        //    free((void*)vector_at(&(s->data.patternProperties), i));
+        //}
+        //vector_drop(&(s->data.patternProperties));
     }
     if (s->applies.has_dependencies) {
         for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
@@ -362,8 +368,8 @@ static inline void schema_drop(schema *s) {
         free(s->data.additionalItems);
     }
     //TODO: implement
-    if (s->applies.has_properties) {
-    }
+    //if (s->applies.has_properties) {
+    //}
     // TODO: implement
     if (s->applies.has_const) {
         free(s->data._const);

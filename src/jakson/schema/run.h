@@ -1,7 +1,7 @@
 
 /*
  * Copyright 2019 Marcus Pinnecke, Jasper Orschulko
- *
+
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -74,7 +74,7 @@ static inline fn_result schema_validate_run_handleKeyword_type(schema *s, carbon
     }
     return FN_OK();
 }
-    
+
 
 static inline fn_result schema_validate_run_handleKeyword_minimum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
@@ -123,7 +123,7 @@ static inline fn_result schema_validate_run_handleKeyword_exclusiveMinimum(schem
 
 static inline fn_result schema_validate_run_handleKeyword_exclusiveMaximum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
-    
+
     bool isnull;
     long double val;
     longDoubleFromAit(&isnull, &val, ait);
@@ -219,7 +219,7 @@ static inline fn_result schema_validate_run_handleKeyword_format(schema *s, carb
     u64 strlen;
     const char *_str = carbon_array_it_string_value(&strlen, ait);
     const char *str = strndup(_str, strlen);
-    
+
     switch(s->data.format) {
         case DATE :
             format = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])";
@@ -318,74 +318,78 @@ static inline fn_result schema_validate_run_handleKeyword_minItems(schema *s, ca
     u64 numItems;
     carbon_array_it *sait = carbon_array_it_array_value(ait);
     carbon_array_it_length(&numItems, sait);
-    
+
     if (numItems < s->data.minItems) {
+        carbon_array_it_drop(sait);
         return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"minItems\" constraint not met");
     }
+    carbon_array_it_drop(sait);
     return FN_OK();
 }
 
 
 static inline fn_result schema_validate_run_handleKeyword_maxItems(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
-    
+
     u64 numItems;
     carbon_array_it *sait = carbon_array_it_array_value(ait);
     carbon_array_it_length(&numItems, sait);
-    
+
     if (numItems > s->data.maxItems) {
+        carbon_array_it_drop(sait);
         return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"maxItems\" constraint not met");
     }
+    carbon_array_it_drop(sait);
     return FN_OK();
 }
 
 // TODO: implement - question: is e.g. [[1,1],[2,2]] valid?
 static inline fn_result schema_validate_run_handleKeyword_uniqueItems(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
-    
+
     UNUSED(s);
     UNUSED(ait);
-    
+
     return FN_FAIL(ERR_NOTIMPL, "function uniqueItems not implemented yet");
 
-//    carbon_field_type_e field_type;
-//
-//    while (carbon_array_it_next(ait)) {
-//        carbon_array_it_field_type(&field_type, &ait);
-//
-//        if (carbon_field_type_is_array_or_subtype(field_type)) {
-//            carbon_array_it *sait = carbon_array_it_array_value(ait);
-//            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems(s, sait)))) {
-//                carbon_array_it_drop(sait);
-//                return FN_FAIL_FORWARD();
-//            }
-//            carbon_array_it_drop(sait);
-//        }
-//
-//        else if (carbon_field_type_is_object_or_subtype(field_type)) {
-//            carbon_object_it *oit = carbon_array_it_object_value(ait);
-//            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_oit(s, oit)))) {
-//                carbon_object_it_drop(oit);
-//                return FN_FAIL_FORWARD();
-//            }
-//            carbon_object_it_drop(oit);
-//        }
-//
-//        else if (carbon_field_type_is_number(field_type)) {
-//            bool isnull;
-//            long double value;
-//            if (!(FN_IS_OK(longDoubleFromAit(&isnull, &value, ait)))) {
-//                return FN_FAIL_FORWARD();
-//            }
-//        }
-//
-//        else if (carbon_field_type_is_string(field_type)) {
-//
-//            char *value
-//
-//            
-//
-//    }
+    //    carbon_field_type_e field_type;
+    //
+    //    while (carbon_array_it_next(ait)) {
+    //        carbon_array_it_field_type(&field_type, &ait);
+    //
+    //        if (carbon_field_type_is_array_or_subtype(field_type)) {
+    //            carbon_array_it *sait = carbon_array_it_array_value(ait);
+    //            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems(s, sait)))) {
+    //                carbon_array_it_drop(sait);
+    //                return FN_FAIL_FORWARD();
+    //            }
+    //            carbon_array_it_drop(sait);
+    //        }
+    //
+    //        else if (carbon_field_type_is_object_or_subtype(field_type)) {
+    //            carbon_object_it *oit = carbon_array_it_object_value(ait);
+    //            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_oit(s, oit)))) {
+    //                carbon_object_it_drop(oit);
+    //                return FN_FAIL_FORWARD();
+    //            }
+    //            carbon_object_it_drop(oit);
+    //        }
+    //
+    //        else if (carbon_field_type_is_number(field_type)) {
+    //            bool isnull;
+    //            long double value;
+    //            if (!(FN_IS_OK(longDoubleFromAit(&isnull, &value, ait)))) {
+    //                return FN_FAIL_FORWARD();
+    //            }
+    //        }
+    //
+    //        else if (carbon_field_type_is_string(field_type)) {
+    //
+    //            char *value
+    //
+    //            
+    //
+    //    }
 
 }
 
@@ -405,7 +409,7 @@ static inline fn_result schema_validate_run_handleKeyword_additionalItems(schema
     }
     return FN_OK();
 }
-    
+
 
 static inline fn_result schema_validate_run_handleKeyword_items(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
@@ -457,7 +461,7 @@ static inline fn_result schema_validate_run_handleKeyword_items(schema *s, carbo
 
 static inline fn_result schema_validate_run_handleKeyword_contains(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
-   
+
     carbon_array_it *sait = carbon_array_it_array_value(ait);
     bool contains = false;
 
@@ -510,7 +514,6 @@ static inline fn_result schema_validate_run_handleKeyword_required(schema *s, ca
 
     carbon_object_it *oit = carbon_array_it_object_value(ait);
     for (u64 i = 0; i < vector_length(&(s->data.required)); i++) {
-        carbon_object_it_rewind(oit);
         const char *key = (const char*) vector_at(&(s->data.required), i);
         if (!(carbon_object_it_has_key(key, oit))) {
             carbon_object_it_drop(oit);
@@ -523,15 +526,25 @@ static inline fn_result schema_validate_run_handleKeyword_required(schema *s, ca
 
 
 // TODO: implement
+// TODO: need function to create carbon file from object it
 static inline fn_result schema_validate_run_handleKeyword_properties(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
     UNUSED(s);
     UNUSED(ait);
+//    carbon_object_it *oit = carbon_array_it_object_value(ait);
+//    for (size_t i = 0; i < vector_length(&(s->data.properties)); i++) {
+//        schema *item = (schema*) vector_at(&(s->data.properties), i);
+//        while (carbon_object_it_next(oit)) {
+//            u64 keylen;
+//            const char *_key = carbon_object_it_prop_name(&keylen, oit);
+//            const char *key = strncmp(_key, keylen);
+//            if (!(strcmp(key, s->key_name))) {
+//                if (!(FN_IS_OK
 
     return FN_FAIL(ERR_NOTIMPL, "\"properties\" keyword not implemented yet");
 }
-    
+
 
 // TODO: implement
 static inline fn_result schema_validate_run_handleKeyword_patternProperties(schema *s, carbon_array_it *ait) {
@@ -559,10 +572,37 @@ static inline fn_result schema_validate_run_handleKeyword_additionalProperties(s
 static inline fn_result schema_validate_run_handleKeyword_dependencies(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
-    UNUSED(s);
-    UNUSED(ait);
+    carbon_object_it *oit = carbon_array_it_object_value(ait);
 
-    return FN_FAIL(ERR_NOTIMPL, "\"dependencies\" keyword not implemented yet");
+    if (!(s->applies.dependencies_isObject)) {
+        for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
+            vector *item = (vector*) vector_at(&(s->data.dependencies), i);
+            const char *key = (const char*) vector_at(item, 0);
+            if (carbon_object_it_has_key(key, oit)) {
+                for (size_t j = 1; j < vector_length(item); i++) {
+                    const char *str = (const char*) vector_at(item, j);
+                    if (!(carbon_object_it_has_key(str, oit))) {
+                        carbon_object_it_drop(oit);
+                        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"dependencies\" was not met");
+                    }
+                }
+            }
+        }
+    }
+    else {
+        for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
+            schema *dependency = (schema*) vector_at(&(s->data.dependencies), i);
+            const char *key = dependency->key_name;
+            if (carbon_object_it_has_key(key, oit)) {
+                if (!(FN_IS_OK(schema_validate_run(dependency, ait)))) {
+                    carbon_object_it_drop(oit);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"dependencies\" was not met");
+                }
+            }
+        }
+    }
+    carbon_object_it_drop(oit);
+    return FN_OK();
 }
 
 
@@ -668,9 +708,9 @@ static inline fn_result schema_validate_run_handleKeyword_const(schema *s, carbo
 
 static inline fn_result schema_validate_run_handleKeyword_not(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
-    
+
     carbon_array_it_rewind(ait);
-    
+
     // TODO: how to differentiate between return value 0 and failed function in FN_RESULT?
     if(!(FN_IS_OK(schema_validate_run(s->data._not, ait)))) {
         return FN_OK();

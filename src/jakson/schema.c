@@ -80,7 +80,6 @@ fn_result schema_generate(schema *s, carbon_object_it *oit) {
     return FN_OK();
 }
 
-
 fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 

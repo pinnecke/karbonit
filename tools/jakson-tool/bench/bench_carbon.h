@@ -37,6 +37,7 @@ typedef struct bench_carbon_error {
 typedef struct bench_carbon_mgr {
     carbon *doc;
     bench_carbon_error *error;
+    uint32_t numEntries;
 } bench_carbon_mgr;
 
 bool bench_carbon_error_create(bench_carbon_error *carbonError, bench_error *benchError);
@@ -47,8 +48,9 @@ bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error
 bool bench_carbon_append_doc(bench_carbon_mgr *manager, const char *filePath);
 bool bench_carbon_convert_doc(size_t *conv_size, bench_carbon_mgr *manager, const char *filePath);
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);
-bool bench_carbon_get_doc(char *str, bench_carbon_mgr *manager);
-
+size_t bench_carbon_get_doc_size(bench_carbon_mgr *manager);
+bool bench_carbon_to_file(bench_carbon_mgr *manager, const char *filePath);
+/*
 bool bench_carbon_insert_int32(bench_carbon_mgr *manager, carbon_object_it *it, carbon_insert *ins, char *key,  int32_t val);
 
 bool bench_carbon_find_int32(bench_carbon_mgr *manager, carbon_object_it *it, char *key, int32_t val);
@@ -59,8 +61,8 @@ bool bench_carbon_convert_entry_int32(bench_carbon_mgr *manager, carbon_object_i
 bool bench_carbon_convert_entry_int64(bench_carbon_mgr *manager, carbon_object_it *it, char *key);
 
 bool bench_carbon_delete_int32(bench_carbon_mgr *manager, carbon_object_it *it, char *key);
-
-bool bench_carbon_execute_benchmark(bench_carbon_mgr *manager, const char *benchType);
+*/
+bool bench_carbon_execute_benchmark_operation(bench_carbon_mgr *manager, bench_type type, bench_operation_type opType, uint32_t numOperations);
 
 
 #endif

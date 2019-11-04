@@ -684,7 +684,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         uint32_t numOperationsInsert = 50000;
         uint32_t numOperationsRead = 25000;
         uint32_t numOperationsUpdate = 10000;
-        uint32_t numOperationsDelete = 5000;
+        uint32_t numOperationsDelete = 20;
 
         if (strncmp(opt, "--", 2) == 0) {
             if (strcmp(opt, BENCH_OPTION_SELECT_TYPE) == 0) {
@@ -712,10 +712,10 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                 bench_format_handler_execute_benchmark(&handler, selectType,
                         numOperationsInsert, numOperationsRead, numOperationsUpdate, numOperationsDelete);
                 CONSOLE_WRITELN(file, "Process size after initial insertions: %ldKB", handler.proc_size);
-                CONSOLE_WRITELN(file, "Insertion of %d %s values took: %ldms", numOperationsInsert, argv[2], handler.benchTimes[0]);
-                CONSOLE_WRITELN(file, "Reading of %d %s values took: %ldms", numOperationsRead, argv[2], handler.benchTimes[1]);
-                CONSOLE_WRITELN(file, "Updating of %d %s values took: %ldms", numOperationsUpdate, argv[2], handler.benchTimes[2]);
-                CONSOLE_WRITELN(file, "Deleting of %d %s values took: %ldms", numOperationsDelete, argv[2], handler.benchTimes[3]);
+                CONSOLE_WRITELN(file, "Insertion of %d %s values took: %ldms with %f", numOperationsInsert, argv[2], handler.benchTimes[0], ((double)numOperationsInsert / handler.benchTimes[0]));
+                CONSOLE_WRITELN(file, "Reading of %d %s values took: %ldms with %f", numOperationsRead, argv[2], handler.benchTimes[1], ((double)numOperationsRead / handler.benchTimes[1]));
+                CONSOLE_WRITELN(file, "Updating of %d %s values took: %ldms with %f", numOperationsUpdate, argv[2], handler.benchTimes[2], ((double)numOperationsUpdate / handler.benchTimes[2]));
+                CONSOLE_WRITELN(file, "Deleting of %d %s values took: %ldms with %f", numOperationsDelete, argv[2], handler.benchTimes[3], ((double)numOperationsDelete / handler.benchTimes[3]));
                 CONSOLE_WRITELN(file, "Total time passed: %ldms", handler.benchTimes[4]);
             }
         } else if (argc != 2) {

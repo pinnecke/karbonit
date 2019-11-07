@@ -681,11 +681,11 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         bench_type selectType;
         bench_format_handler handler;
         bench_error err;
-        uint32_t numOperationsInsert = 1000;
-        uint32_t numOperationsRead = 500;
-        uint32_t numOperationsUpdate = 500;
-        uint32_t numOperationsDelete = 100;
-        container_type contType = BENCH_CONTAINER_TYPE_COLUMN;
+        uint32_t numOperationsInsert = 10000;
+        uint32_t numOperationsRead = 5000;
+        uint32_t numOperationsUpdate = 5000;
+        uint32_t numOperationsDelete = 1000;
+        container_type contType = BENCH_CONTAINER_TYPE_OBJECT;
 
         if (strncmp(opt, "--", 2) == 0) {
             if (strcmp(opt, BENCH_OPTION_SELECT_TYPE) == 0) {

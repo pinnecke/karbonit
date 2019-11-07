@@ -320,12 +320,19 @@ bool bench_format_handler_execute_benchmark_operation(bench_format_handler *hand
     ERROR_IF_NULL(handler);
     ERROR_IF_NULL(type);
     ERROR_IF_NULL(opType);
+    ERROR_IF_NULL(contType)
 
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
         return bench_carbon_execute_benchmark_operation((bench_carbon_mgr*) handler->manager, type, opType, numOperations, contType);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
-        return bench_bson_execute_benchmark_operation((bench_bson_mgr*) handler->manager, type, opType, numOperations);
+        if(contType == BENCH_CONTAINER_TYPE_COLUMN) {
+            return false;
+        }
+        return bench_bson_execute_benchmark_operation((bench_bson_mgr*) handler->manager, type, opType, numOperations, contType);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
+        if(contType == BENCH_CONTAINER_TYPE_COLUMN) {
+            return false;
+        }
         return bench_ubjson_execute_benchmark_operation((bench_ubjson_mgr*) handler->manager, type, opType, numOperations, contType);
     } else {
         return false;

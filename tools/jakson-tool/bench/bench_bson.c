@@ -240,68 +240,184 @@ size_t bench_bson_get_doc_size(bench_bson_mgr *manager)
     return manager->b->len;
 }
 
-bool bench_bson_insert_int8(bench_bson_mgr *manager, uint32_t numOperations)
+bool bench_bson_insert_int8(bench_bson_mgr *manager, uint32_t numOperations, container_type type)
 {
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int8_t val = random() % INT8_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", i);
+    char msg[ERROR_MSG_SIZE];
 
-        // Using int32 function since BSON internally manages the represented size
-        if(!bson_append_int32(manager->b, key, -1, val)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to insert int8 item at position: %d\nAborting.\n", i);
-            return false;
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        bson_t nestedArray;
+        bson_append_array_begin(manager->b, "0", 1, &nestedArray);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int8_t val = random() % INT8_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            // Using int32 function since BSON internally manages the represented size
+            if (!bson_append_int32(&nestedArray, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int8 value '%d' into array at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
+        bson_append_array_end(manager->b, &nestedArray);
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        bson_t nestedObj;
+        bson_append_document_begin(manager->b, "0", 1, &nestedObj);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int8_t val = random() % INT8_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            // Using int32 function since BSON internally manages the represented size
+            if (!bson_append_int32(&nestedObj, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int8 value '%d' into object at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        bson_append_document_end(manager->b, &nestedObj);
     }
 
     return true;
 }
 
-bool bench_bson_insert_int16(bench_bson_mgr *manager, uint32_t numOperations)
+bool bench_bson_insert_int16(bench_bson_mgr *manager, uint32_t numOperations, container_type type)
 {
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int16_t val = random() % INT16_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", i);
+    char msg[ERROR_MSG_SIZE];
 
-        // Using int32 function since BSON internally manages the represented size
-        if(!bson_append_int32(manager->b, key, -1, val)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to insert int16 item at position: %d\nAborting.\n", i);
-            return false;
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        bson_t nestedArray;
+        bson_append_array_begin(manager->b, "0", 1, &nestedArray);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int16_t val = random() % INT16_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            // Using int32 function since BSON internally manages the represented size
+            if (!bson_append_int32(&nestedArray, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int16 value '%d' into array at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
+        bson_append_array_end(manager->b, &nestedArray);
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        bson_t nestedObj;
+        bson_append_document_begin(manager->b, "0", 1, &nestedObj);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int16_t val = random() % INT16_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            // Using int32 function since BSON internally manages the represented size
+            if (!bson_append_int32(&nestedObj, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int16 value '%d' into object at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        bson_append_document_end(manager->b, &nestedObj);
     }
 
     return true;
 }
 
-bool bench_bson_insert_int32(bench_bson_mgr *manager, uint32_t numOperations)
+bool bench_bson_insert_int32(bench_bson_mgr *manager, uint32_t numOperations, container_type type)
 {
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int32_t val = random() % INT32_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", i);
+    char msg[ERROR_MSG_SIZE];
 
-        if(!bson_append_int32(manager->b, key, -1, val)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to insert int32 item at position: %d\nAborting.\n", i);
-            return false;
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        bson_t *nestedArray = malloc(sizeof(*nestedArray));
+        bson_append_array_begin(manager->b, "0", 1, nestedArray);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int32_t val = random() % INT32_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+            if (!bson_append_int32(nestedArray, key, -1/*(uint32_t) strlen(key)*/, val)) {
+                sprintf(msg, "Failed to insert int32 value '%d' into array at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
-        manager->numEntries++;
+        bson_append_array_end(manager->b, nestedArray);
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        bson_t nestedObj;
+        bson_append_document_begin(manager->b, "0", 1, &nestedObj);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int32_t val = random() % INT32_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            if (!bson_append_int32(&nestedObj, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int32 value '%d' into object at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        bson_append_document_end(manager->b, &nestedObj);
     }
 
     return true;
 }
 
-bool bench_bson_insert_int64(bench_bson_mgr *manager, uint32_t numOperations)
+bool bench_bson_insert_int64(bench_bson_mgr *manager, uint32_t numOperations, container_type type)
 {
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int64_t val = random() % INT64_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", i);
+    char msg[ERROR_MSG_SIZE];
 
-        if(!bson_append_int64(manager->b, key, -1, val)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to insert int64 item.", i);
-            return false;
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        bson_t nestedArray;
+        bson_append_array_begin(manager->b, "0", 1, &nestedArray);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int64_t val = random() % INT64_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            if (!bson_append_int64(&nestedArray, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int64 value '%ld' into array at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
+        bson_append_array_end(manager->b, &nestedArray);
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        bson_t nestedObj;
+        bson_append_document_begin(manager->b, "0", 1, &nestedObj);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int64_t val = random() % INT64_MAX;
+            char str[UINT32_MAX_DIGITS + 1];
+            const char *key;
+            //sprintf(key, "%d", i);
+            bson_uint32_to_string(i, &key, str, sizeof(str));
+
+            if (!bson_append_int64(&nestedObj, key, (uint32_t) strlen(key), val)) {
+                sprintf(msg, "Failed to insert int64 value '%ld' into object at position: %d", val, i);
+                BENCH_BSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        bson_append_document_end(manager->b, &nestedObj);
     }
 
     return true;
@@ -309,15 +425,17 @@ bool bench_bson_insert_int64(bench_bson_mgr *manager, uint32_t numOperations)
 
 bool bench_bson_read(bench_bson_mgr *manager, uint32_t numOperations)
 {
-    bson_iter_t it;
+    bson_iter_t it, nestedIt;
     char msg[ERROR_MSG_SIZE];
+    //bson_iter_init_find_w_len(&it, manager->b, "0", 1);
+    //bson_iter_recurse(&it, &nestedIt);
     for(uint32_t i = 0; i < numOperations; i++) {
         bson_iter_init(&it, manager->b);
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", (uint32_t)(random() % numOperations));
+        char key[UINT32_MAX_DIGITS + 3];
+        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
 
-        if(!bson_iter_find(&it, key)) {
-            sprintf(msg, "Failed to read item:%s\nAborting.\n", key);
+        if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
+            sprintf(msg, "Failed to read item: %s", key);
             BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
@@ -327,80 +445,88 @@ bool bench_bson_read(bench_bson_mgr *manager, uint32_t numOperations)
 
 bool bench_bson_update_int8(bench_bson_mgr *manager, uint32_t numOperations)
 {
-    bson_iter_t it;
+    bson_iter_t it, nestedIt;
+    char msg[ERROR_MSG_SIZE];
 
     for(uint32_t i = 0; i < numOperations; i++) {
         bson_iter_init(&it, manager->b);
         int8_t newVal = random() % INT8_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", (uint32_t)(random() % numOperations));
+        char key[UINT32_MAX_DIGITS + 3];
+        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
 
-        if(!bson_iter_find(&it, key)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to update int8 item: %d\nAborting.\n", atoi(key));
+        if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
+            sprintf(msg, "Failed to update int8 item:%s\nAborting.\n", key);
+            BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
-        bson_iter_overwrite_int32(&it, newVal);
+        bson_iter_overwrite_int32(&nestedIt, newVal);
     }
     return true;
 }
 
 bool bench_bson_update_int16(bench_bson_mgr *manager, uint32_t numOperations)
 {
-    bson_iter_t it;
+    bson_iter_t it, nestedIt;
+    char msg[ERROR_MSG_SIZE];
 
     for(uint32_t i = 0; i < numOperations; i++) {
         bson_iter_init(&it, manager->b);
         int16_t newVal = random() % INT16_MAX;
-        char key[sizeof(uint32_t) + 1];
+        char key[UINT32_MAX_DIGITS + 3];
+        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
 
-        sprintf(key, "%d", (uint32_t)(random() % numOperations));
-        if(!bson_iter_find(&it, key)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to update int16 item: %d\nAborting.\n", atoi(key));
+        if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
+            sprintf(msg, "Failed to update int16 item:%s\nAborting.\n", key);
+            BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
-        bson_iter_overwrite_int32(&it, newVal);
+        bson_iter_overwrite_int32(&nestedIt, newVal);
     }
     return true;
 }
 
 bool bench_bson_update_int32(bench_bson_mgr *manager, uint32_t numOperations)
 {
-    bson_iter_t it;
+    bson_iter_t it, nestedIt;
+    char msg[ERROR_MSG_SIZE];
 
     for(uint32_t i = 0; i < numOperations; i++) {
         bson_iter_init(&it, manager->b);
         int32_t newVal = random() % INT32_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", (uint32_t)(random() % numOperations));
+        char key[UINT32_MAX_DIGITS + 3];
+        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
 
-        if(!bson_iter_find(&it, key)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to update int32 item: %d\nAborting.\n", atoi(key));
+        if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
+            sprintf(msg, "Failed to update int32 item:%s\nAborting.\n", key);
+            BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
-        bson_iter_overwrite_int32(&it, newVal);
+        bson_iter_overwrite_int32(&nestedIt, newVal);
     }
     return true;
 }
 
 bool bench_bson_update_int64(bench_bson_mgr *manager, uint32_t numOperations)
 {
-    bson_iter_t it;
+    bson_iter_t it, nestedIt;
+    char msg[ERROR_MSG_SIZE];
 
     for(uint32_t i = 0; i < numOperations; i++) {
         bson_iter_init(&it, manager->b);
         int64_t newVal = random() % INT64_MAX;
-        char key[sizeof(uint32_t) + 1];
-        sprintf(key, "%d", (uint32_t)(random() % numOperations));
+        char key[UINT32_MAX_DIGITS + 3];
+        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
 
-        if(!bson_iter_find(&it, key)) {
-            BENCH_BSON_ERROR_WRITE(manager->error, "Failed to update int64 item: %d", atoi(key));
+        if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
+            sprintf(msg, "Failed to update int64 item:%s\nAborting.\n", key);
+            BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
-        bson_iter_overwrite_int64(&it, newVal);
+        bson_iter_overwrite_int64(&nestedIt, newVal);
     }
     return true;
 }
-
+/*
 bool bench_bson_convert_entry_int32(bench_bson_mgr *manager, bson_iter_t *it, const char *key) {
     ERROR_IF_NULL(manager);
     ERROR_IF_NULL(key);
@@ -408,14 +534,14 @@ bool bench_bson_convert_entry_int32(bench_bson_mgr *manager, bson_iter_t *it, co
 
     bson_iter_t itStart;
     bson_t *bNew = bson_new();
-    /*
+
     if(bson_iter_find(it, key)) {
         uint8_t *newDoc = malloc(sizeof(manager->b->padding) - sizeof(bson_iter_type(it)));
         memcpy(newDoc, manager->b->padding, bson_iter_offset(it));
     } else {
         return false;
     }
-    */
+
     if (bson_iter_init(&itStart, manager->b)) {
         while (bson_iter_next (&itStart)) {
             if (!strcmp(key, bson_iter_key(&itStart))) {
@@ -458,114 +584,168 @@ bool bench_bson_convert_entry_int64(bench_bson_mgr *manager, bson_iter_t *it, co
     manager->b = bNew;
     return true;
 }
-
-bool bench_bson_delete(bench_bson_mgr *manager, uint32_t numOperations) {
+*/
+bool bench_bson_delete(bench_bson_mgr *manager, uint32_t numOperations, container_type type) {
     char removedKeys[numOperations][sizeof(uint32_t) + 1];
+    int8_t entryList[manager->numEntries];
+    bson_t *nestedB;
+    bson_iter_t it;
 
-    for(uint32_t i = 0; i < numOperations; i++) {
-        bson_t *bNew= bson_new();
-        char key[sizeof(uint32_t) + 1];
-        generate_key:
-        sprintf(key, "%d", (uint32_t)(random() % manager->numEntries));
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            const uint8_t *data;
+            uint32_t len;
+            bson_iter_init_find_w_len(&it, manager->b, "0", 1);
+            bson_iter_array(&it, &len, &data);
+            nestedB = bson_new_from_data(data, len);
+            bson_t *bNew = bson_new();
+            bson_t *nestedBNew = bson_new();
+            char key[UINT32_MAX_DIGITS + 3];
 
-        // Check if key has already been removed
-        for(uint32_t j = 0; j < i; j++) {
-            if(strcmp(key, removedKeys[j]) == 0)
-                goto generate_key;
+            // Check if key has already been removed
+            uint32_t j;
+            do {
+                j = random() % manager->numEntries;
+            } while (entryList[j] != 0);
+            sprintf(key, "%d", j);
+            entryList[j] = 1;
+
+            bson_copy_to_excluding_noinit(nestedB, nestedBNew, key, NULL);
+            bson_copy_to_excluding_noinit(manager->b, bNew, "0", NULL);
+            bson_append_array(bNew, "0", 1, nestedBNew);
+
+            strcat(removedKeys[i], key);
+            bson_destroy(manager->b);
+            bson_destroy(nestedB);
+            bson_destroy(nestedBNew);
+
+            manager->b = bNew;
+            manager->numEntries--;
         }
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            const uint8_t *data;
+            uint32_t len;
+            bson_iter_init_find_w_len(&it, manager->b, "0", 1);
+            bson_iter_document(&it, &len, &data);
+            nestedB = bson_new_from_data(data, len);
+            bson_t *bNew = bson_new();
+            bson_t *nestedBNew = bson_new();
+            char key[UINT32_MAX_DIGITS + 3];
 
-        bson_copy_to_excluding_noinit(manager->b, bNew, key, NULL);
-        strcat(removedKeys[i], key);
-        bson_destroy(manager->b);
-        manager->b = bNew;
+            // Check if key has already been removed
+            uint32_t j;
+            do {
+                j = random() % manager->numEntries;
+            } while (entryList[j] != 0);
+            sprintf(key, "%d", j);
+            entryList[j] = 1;
+
+            bson_copy_to_excluding_noinit(nestedB, nestedBNew, key, NULL);
+            bson_copy_to_excluding_noinit(manager->b, bNew, "0", NULL);
+            bson_append_document(bNew, "0", 1, nestedBNew);
+
+            strcat(removedKeys[i], key);
+            bson_destroy(manager->b);
+            bson_destroy(nestedB);
+            bson_destroy(nestedBNew);
+
+            manager->b = bNew;
+            manager->numEntries--;
+        }
     }
 
     return true;
 }
 
-bool bench_bson_execute_benchmark_operation_int8(bench_bson_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_bson_execute_benchmark_operation_int8(bench_bson_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_bson_insert_int8(manager, numOperations);
+        return bench_bson_insert_int8(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
         return bench_bson_read(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int8(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
         // Random access deletions are not that great.
-        //return bench_bson_delete(manager, numOperations);
+        return bench_bson_delete(manager, numOperations, contType);
         return true;
     } else {
         return false;
     }
 }
 
-bool bench_bson_execute_benchmark_operation_int16(bench_bson_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_bson_execute_benchmark_operation_int16(bench_bson_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_bson_insert_int16(manager, numOperations);
+        return bench_bson_insert_int16(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
         return bench_bson_read(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int16(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
         // Random access deletions are not that great.
-        //return bench_bson_delete(manager, numOperations);
+        return bench_bson_delete(manager, numOperations, contType);
         return true;
     } else {
         return false;
     }
 }
 
-bool bench_bson_execute_benchmark_operation_int32(bench_bson_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_bson_execute_benchmark_operation_int32(bench_bson_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_bson_insert_int32(manager, numOperations);
+        return bench_bson_insert_int32(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
         return bench_bson_read(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int32(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
         // Random access deletions are not that great.
-        //return bench_bson_delete(manager, numOperations);
+        return bench_bson_delete(manager, numOperations, contType);
         return true;
     } else {
         return false;
     }
 }
 
-bool bench_bson_execute_benchmark_operation_int64(bench_bson_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_bson_execute_benchmark_operation_int64(bench_bson_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_bson_insert_int64(manager, numOperations);
+        return bench_bson_insert_int64(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
         return bench_bson_read(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int64(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
         // Random access deletions are not that great.
-        //return bench_bson_delete(manager, numOperations);
+        return bench_bson_delete(manager, numOperations, contType);
         return true;
     } else {
         return false;
     }
 }
 
-bool bench_bson_execute_benchmark_operation(bench_bson_mgr *manager, bench_type type,
-        bench_operation_type opType, uint32_t numOperations)
+bool bench_bson_execute_benchmark_operation(bench_bson_mgr *manager, bench_type type,bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     ERROR_IF_NULL(manager);
     ERROR_IF_NULL(type);
     ERROR_IF_NULL(opType);
+    ERROR_IF_NULL(contType);
 
     if(type == BENCH_TYPE_INT8) {
-        return bench_bson_execute_benchmark_operation_int8(manager, opType, numOperations);
+        return bench_bson_execute_benchmark_operation_int8(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_INT16) {
-        return bench_bson_execute_benchmark_operation_int16(manager, opType, numOperations);
+        return bench_bson_execute_benchmark_operation_int16(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_INT32) {
-        return bench_bson_execute_benchmark_operation_int32(manager, opType, numOperations);
+        return bench_bson_execute_benchmark_operation_int32(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_INT64) {
-        return bench_bson_execute_benchmark_operation_int64(manager, opType, numOperations);
+        return bench_bson_execute_benchmark_operation_int64(manager, opType, numOperations, contType);
     } else {
         return false;
     }

@@ -83,7 +83,8 @@ bool bench_bson_delete_int64(bench_bson_mgr *manager, const char *key);
 //bool bench_bson_delete_string(bench_bson_mgr *manager, const char *key);
 */
 //bool bench_bson_execute_benchmark_operation_int8(bench_bson_mgr *manager, bench_operation_type opType, uint32_t numOperations);
-bool bench_bson_execute_benchmark_operation(bench_bson_mgr *manager, bench_type type, bench_operation_type opType, uint32_t numOperations);
+bool bench_bson_execute_benchmark_operation(bench_bson_mgr *manager, bench_type type, bench_operation_type opType,
+        uint32_t numOperations, container_type contType);
 
 
 #endif

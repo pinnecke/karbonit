@@ -589,7 +589,7 @@ bool bench_ubjson_read(bench_ubjson_mgr *manager, uint32_t numOperations, contai
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
         for (uint32_t i = 0; i < numOperations; i++) {
-            if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, i, &item)) {
+            if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
                 sprintf(msg, "Failed to read value in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;

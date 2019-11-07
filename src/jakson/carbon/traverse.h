@@ -32,19 +32,25 @@ typedef void (*carbon_traverse_clean_t)(struct carbon_traverse_extra *extra);
 /* called when traversing just had started; accesses the record itself */
 typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struct carbon *record);
 
-/* called when an array (iterator) was found */
+/* called when an array was found */
 typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, carbon_array *it);
 
-/* called when an array (iterator) was was passed */
+/* called when an array item was found */
+typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, carbon_item *it);
+
+/* called when an array was was passed */
 typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, carbon_array *it);
 
-/* called when an column (iterator) was found */
+/* called when an column was found */
 typedef void (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column *it);
 
-/* called when an object (iterator) was found */
+/* called when an object was found */
 typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
 
-/* called when an object (iterator) was passed */
+/* called when an object property item was found */
+typedef void (*carbon_visit_prop_t)(struct carbon_traverse_extra *extra, carbon_item *it);
+
+/* called when an object was passed */
 typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
 
 
@@ -82,11 +88,15 @@ struct carbon_traverse
 
         carbon_traverse_setup_t setup;
         carbon_traverse_clean_t cleanup;
+
         carbon_visit_record_t visit_record;
 
         carbon_visit_array_enter_t visit_array_begin;
+        carbon_visit_item_t visit_item;
         carbon_visit_array_exit_t visit_array_end;
+
         carbon_visit_column_t visit_column;
+
         carbon_visit_object_enter_t visit_object_begin;
         carbon_visit_object_exit_t visit_object_end;
 

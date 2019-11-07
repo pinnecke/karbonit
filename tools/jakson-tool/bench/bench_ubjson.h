@@ -53,7 +53,8 @@ typedef struct bench_ubjson_mgr {
     ubjs_library *lib;
     bench_ubjson_error *error;
     ubjs_prmtv *obj;
-    uint32_t test;
+    //uint32_t test;
+    uint32_t numEntries;
 } bench_ubjson_mgr;
 
 bool bench_ubjson_error_create(bench_ubjson_error *ubjsonError, bench_error *benchError);
@@ -66,7 +67,7 @@ bool bench_ubjson_convert_doc(size_t *conv_size, bench_ubjson_mgr *manager, cons
 bool bench_ubjson_mgr_destroy(bench_ubjson_mgr *manager);
 bool bench_ubjson_get_doc(char *str, bench_ubjson_mgr *manager);
 size_t bench_ubjson_get_doc_size(bench_ubjson_mgr *manager);
-
+/*
 bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val);
 
 bool bench_ubjson_find_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key, int32_t val);
@@ -77,8 +78,9 @@ bool bench_ubjson_convert_entry_int32(bench_ubjson_mgr *manager, ubjs_array_iter
 bool bench_ubjson_convert_entry_int64(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key);
 
 bool bench_ubjson_delete_int32(bench_ubjson_mgr *manager, ubjs_array_iterator *it, char *key);
-
-bool bench_ubjson_execute_benchmark(bench_ubjson_mgr *manager, const char *benchType);
+*/
+bool bench_ubjson_execute_benchmark_operation(bench_ubjson_mgr *manager, bench_type type, bench_operation_type opType,
+                                              uint32_t numOperations, container_type contType);
 
 
 #endif

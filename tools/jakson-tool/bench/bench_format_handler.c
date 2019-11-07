@@ -315,44 +315,45 @@ bool bench_format_handler_delete_int32(bench_format_handler *handler, char *key)
 }
 */
 bool bench_format_handler_execute_benchmark_operation(bench_format_handler *handler, bench_type type,
-        bench_operation_type opType, uint32_t numOperations)
+        bench_operation_type opType, uint32_t numOperations, container_type contType)
 {
     ERROR_IF_NULL(handler);
     ERROR_IF_NULL(type);
     ERROR_IF_NULL(opType);
 
     if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
-        return bench_carbon_execute_benchmark_operation((bench_carbon_mgr*) handler->manager, type, opType, numOperations);
+        return bench_carbon_execute_benchmark_operation((bench_carbon_mgr*) handler->manager, type, opType, numOperations, contType);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
         return bench_bson_execute_benchmark_operation((bench_bson_mgr*) handler->manager, type, opType, numOperations);
     } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
-        return bench_ubjson_execute_benchmark_operation((bench_ubjson_mgr*) handler->manager, type, opType, numOperations);
+        return bench_ubjson_execute_benchmark_operation((bench_ubjson_mgr*) handler->manager, type, opType, numOperations, contType);
     } else {
         return false;
     }
 }
 
-bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench_type type,
-        uint32_t numOperationsInsert, uint32_t numOperationsRead, uint32_t numOperationsUpdate, uint32_t numOperationsDelete)
+bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench_type type, uint32_t numOperationsInsert,
+        uint32_t numOperationsRead, uint32_t numOperationsUpdate, uint32_t numOperationsDelete, container_type contType)
 {
     ERROR_IF_NULL(handler);
     ERROR_IF_NULL(type);
+    ERROR_IF_NULL(contType);
     JAK_ASSERT(numOperationsInsert >= numOperationsDelete);
 
     clock_t clockStart, clockInsert, clockRead, clockUpdate, clockDelete;
     clockStart = clock();
 
-    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_INSERT, numOperationsInsert));
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_INSERT, numOperationsInsert, contType));
     clockInsert = clock();
     handler->proc_size = bench_format_handler_get_process_size();
 
-    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_READ, numOperationsRead));
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_READ, numOperationsRead, contType));
     clockRead = clock();
 
-    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_UPDATE, numOperationsUpdate));
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_UPDATE, numOperationsUpdate, contType));
     clockUpdate = clock();
 
-    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_DELETE, numOperationsDelete));
+    JAK_ASSERT(bench_format_handler_execute_benchmark_operation(handler, type, BENCH_OP_TYPE_DELETE, numOperationsDelete, contType));
     clockDelete = clock();
 
     // TODO : Out-source time measuring

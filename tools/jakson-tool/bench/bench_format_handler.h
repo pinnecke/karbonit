@@ -114,7 +114,7 @@ bool bench_format_handler_delete_int64(bench_format_handler *handler, char *key)
 bool bench_format_handler_delete_string(bench_format_handler *handler, char *key);
 */
 
-bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench_type type,
-        uint32_t numOperationsInsert, uint32_t numOperationsRead, uint32_t numOperationsUpdate, uint32_t numOperationsDelete);
+bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench_type type,uint32_t numOperationsInsert,
+        uint32_t numOperationsRead, uint32_t numOperationsUpdate, uint32_t numOperationsDelete, container_type contType);
 
 #endif

@@ -21,6 +21,7 @@
 #define JAKSON_BENCH_FWD_H
 
 #define ERROR_MSG_SIZE 256
+#define UINT32_MAX_DIGITS 10
 
 typedef enum bench_type {
     BENCH_TYPE_TEST = 0x01,
@@ -29,6 +30,12 @@ typedef enum bench_type {
     BENCH_TYPE_INT32 = 0x04,
     BENCH_TYPE_INT64 = 0x05,
 } bench_type;
+
+typedef enum container_type {
+    BENCH_CONTAINER_TYPE_ARRAY = 0x01,
+    BENCH_CONTAINER_TYPE_OBJECT = 0x02,
+    BENCH_CONTAINER_TYPE_COLUMN = 0x03,
+} container_type;
 
 typedef enum bench_operation_type {
     BENCH_OP_TYPE_INSERT = 0x01,

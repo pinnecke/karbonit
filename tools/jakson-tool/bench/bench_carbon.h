@@ -62,7 +62,8 @@ bool bench_carbon_convert_entry_int64(bench_carbon_mgr *manager, carbon_object_i
 
 bool bench_carbon_delete_int32(bench_carbon_mgr *manager, carbon_object_it *it, char *key);
 */
-bool bench_carbon_execute_benchmark_operation(bench_carbon_mgr *manager, bench_type type, bench_operation_type opType, uint32_t numOperations);
+bool bench_carbon_execute_benchmark_operation(bench_carbon_mgr *manager, bench_type type, bench_operation_type opType,
+        uint32_t numOperations, container_type contType);
 
 
 #endif

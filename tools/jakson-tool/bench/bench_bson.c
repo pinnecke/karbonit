@@ -492,7 +492,9 @@ bool bench_bson_execute_benchmark_operation_int8(bench_bson_mgr *manager, bench_
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int8(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
-        return bench_bson_delete(manager, numOperations);
+        // Random access deletions are not that great.
+        //return bench_bson_delete(manager, numOperations);
+        return true;
     } else {
         return false;
     }
@@ -507,7 +509,9 @@ bool bench_bson_execute_benchmark_operation_int16(bench_bson_mgr *manager, bench
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int16(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
-        return bench_bson_delete(manager, numOperations);
+        // Random access deletions are not that great.
+        //return bench_bson_delete(manager, numOperations);
+        return true;
     } else {
         return false;
     }
@@ -522,7 +526,9 @@ bool bench_bson_execute_benchmark_operation_int32(bench_bson_mgr *manager, bench
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int32(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
-        return bench_bson_delete(manager, numOperations);
+        // Random access deletions are not that great.
+        //return bench_bson_delete(manager, numOperations);
+        return true;
     } else {
         return false;
     }
@@ -537,7 +543,9 @@ bool bench_bson_execute_benchmark_operation_int64(bench_bson_mgr *manager, bench
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_bson_update_int64(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
-        return bench_bson_delete(manager, numOperations);
+        // Random access deletions are not that great.
+        //return bench_bson_delete(manager, numOperations);
+        return true;
     } else {
         return false;
     }

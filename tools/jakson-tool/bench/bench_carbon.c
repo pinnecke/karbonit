@@ -214,26 +214,65 @@ bool bench_carbon_find_int32(bench_carbon_mgr *manager, carbon_object_it *it, ch
     return true;
 }
 
-bool bench_carbon_insert_int8(bench_carbon_mgr *manager, uint32_t numOperations)
+bool bench_carbon_insert_int8(bench_carbon_mgr *manager, uint32_t numOperations, container_type type)
 {
     carbon *rev_doc = malloc(sizeof(*rev_doc));
     carbon_revise revise;
     carbon_insert ins;
     carbon_array_it it;
+    char msg[ERROR_MSG_SIZE];
 
     carbon_revise_begin(&revise, rev_doc, manager->doc);
     carbon_revise_iterator_open(&it, &revise);
     carbon_array_it_insert_begin(&ins, &it);
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int8_t val = random() % INT8_MAX;
-        char key[UINT32_MAX_DIGITS + 1];
-        sprintf(key, "%d", i);
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        carbon_insert_array_state arrayState;
+        carbon_insert *nestedIns = carbon_insert_array_begin(&arrayState, &ins, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int8_t val = random() % INT8_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
 
-        if(!carbon_insert_i8(&ins, val)) {
-            BENCH_CARBON_ERROR_WRITE(manager->error, "Failed to insert int8 item at position: %d\nAborting.\n", i);
-            return false;
+            if (!carbon_insert_prop_i8(nestedIns, key, val)) {
+                sprintf(msg, "Failed to insert int8 value '%d' into array at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
-        manager->numEntries++;
+        carbon_insert_array_end(&arrayState);
+    } else if (type == BENCH_CONTAINER_TYPE_COLUMN) {
+        carbon_insert_column_state columnState;
+        carbon_insert *nestedIns = carbon_insert_column_begin(&columnState, &ins, CARBON_COLUMN_TYPE_I32, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int8_t val = random() % INT8_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
+
+            if (!carbon_insert_i8(nestedIns, val)) {
+                sprintf(msg, "Failed to insert int8 value '%d' into column at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        carbon_insert_column_end(&columnState);
+    } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
+        carbon_insert_object_state objectState;
+        carbon_insert *nestedIns = carbon_insert_object_begin(&objectState, &ins, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int8_t val = random() % INT8_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
+
+            if (!carbon_insert_i8(nestedIns, val)) {
+                sprintf(msg, "Failed to insert int8 value '%d' into object at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        carbon_insert_object_end(&objectState);
     }
     carbon_array_it_insert_end(&ins);
     carbon_revise_iterator_close(&it);
@@ -245,26 +284,65 @@ bool bench_carbon_insert_int8(bench_carbon_mgr *manager, uint32_t numOperations)
     return true;
 }
 
-bool bench_carbon_insert_int16(bench_carbon_mgr *manager, uint32_t numOperations)
+bool bench_carbon_insert_int16(bench_carbon_mgr *manager, uint32_t numOperations, container_type type)
 {
     carbon *rev_doc = malloc(sizeof(*rev_doc));
     carbon_revise revise;
     carbon_insert ins;
     carbon_array_it it;
+    char msg[ERROR_MSG_SIZE];
 
     carbon_revise_begin(&revise, rev_doc, manager->doc);
     carbon_revise_iterator_open(&it, &revise);
     carbon_array_it_insert_begin(&ins, &it);
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int16_t val = random() % INT16_MAX;
-        char key[UINT32_MAX_DIGITS + 1];
-        sprintf(key, "%d", i);
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        carbon_insert_array_state arrayState;
+        carbon_insert *nestedIns = carbon_insert_array_begin(&arrayState, &ins, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int16_t val = random() % INT16_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
 
-        if(!carbon_insert_i16(&ins, val)) {
-            BENCH_CARBON_ERROR_WRITE(manager->error, "Failed to insert int16 item at position: %d\nAborting.\n", i);
-            return false;
+            if (!carbon_insert_i16(nestedIns, val)) {
+                sprintf(msg, "Failed to insert int16 value '%d' into array at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
-        manager->numEntries++;
+        carbon_insert_array_end(&arrayState);
+    } else if (type == BENCH_CONTAINER_TYPE_COLUMN) {
+        carbon_insert_column_state columnState;
+        carbon_insert *nestedIns = carbon_insert_column_begin(&columnState, &ins, CARBON_COLUMN_TYPE_I16, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int16_t val = random() % INT16_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
+
+            if (!carbon_insert_i16(nestedIns, val)) {
+                sprintf(msg, "Failed to insert int16 value '%d' into column at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        carbon_insert_column_end(&columnState);
+    } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
+        carbon_insert_object_state objectState;
+        carbon_insert *nestedIns = carbon_insert_object_begin(&objectState, &ins, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int16_t val = random() % INT16_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
+
+            if (!carbon_insert_prop_i16(nestedIns, key, val)) {
+                sprintf(msg, "Failed to insert int16 value '%d' into object at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        carbon_insert_object_end(&objectState);
     }
     carbon_array_it_insert_end(&ins);
     carbon_revise_iterator_close(&it);
@@ -327,7 +405,7 @@ bool bench_carbon_insert_int32(bench_carbon_mgr *manager, uint32_t numOperations
             char key[UINT32_MAX_DIGITS + 1];
             sprintf(key, "%d", i);
 
-            if (!carbon_insert_i32(nestedIns, val)) {
+            if (!carbon_insert_prop_i32(nestedIns, key, val)) {
                 sprintf(msg, "Failed to insert int32 value '%d' into object at position: %d", val, i);
                 BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
                 return false;
@@ -335,9 +413,6 @@ bool bench_carbon_insert_int32(bench_carbon_mgr *manager, uint32_t numOperations
             manager->numEntries++;
         }
         carbon_insert_object_end(&objectState);
-    } else {
-        BENCH_CARBON_ERROR_WRITE(manager->error, "Int32 insertion for wrong container type", 0);
-        return false;
     }
     carbon_array_it_insert_end(&ins);
     carbon_revise_iterator_close(&it);
@@ -349,26 +424,65 @@ bool bench_carbon_insert_int32(bench_carbon_mgr *manager, uint32_t numOperations
     return true;
 }
 
-bool bench_carbon_insert_int64(bench_carbon_mgr *manager, uint32_t numOperations)
+bool bench_carbon_insert_int64(bench_carbon_mgr *manager, uint32_t numOperations, container_type type)
 {
     carbon *rev_doc = malloc(sizeof(*rev_doc));
     carbon_revise revise;
     carbon_insert ins;
     carbon_array_it it;
+    char msg[ERROR_MSG_SIZE];
 
     carbon_revise_begin(&revise, rev_doc, manager->doc);
     carbon_revise_iterator_open(&it, &revise);
     carbon_array_it_insert_begin(&ins, &it);
-    for(uint32_t i = 0; i < numOperations; i++) {
-        int64_t val = random() % INT64_MAX;
-        char key[UINT32_MAX_DIGITS + 1];
-        sprintf(key, "%d", i);
+    if(type == BENCH_CONTAINER_TYPE_ARRAY) {
+        carbon_insert_array_state arrayState;
+        carbon_insert *nestedIns = carbon_insert_array_begin(&arrayState, &ins, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int64_t val = random() % INT64_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
 
-        if(!carbon_insert_i64(&ins, val)) {
-            BENCH_CARBON_ERROR_WRITE(manager->error, "Failed to insert int64 item at position: %d\nAborting.\n", i);
-            return false;
+            if (!carbon_insert_i64(nestedIns, val)) {
+                sprintf(msg, "Failed to insert int64 value '%ld' into array at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
         }
-        manager->numEntries++;
+        carbon_insert_array_end(&arrayState);
+    } else if (type == BENCH_CONTAINER_TYPE_COLUMN) {
+        carbon_insert_column_state columnState;
+        carbon_insert *nestedIns = carbon_insert_column_begin(&columnState, &ins, CARBON_COLUMN_TYPE_I64, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int64_t val = random() % INT64_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
+
+            if (!carbon_insert_i64(nestedIns, val)) {
+                sprintf(msg, "Failed to insert int64 value '%ld' into column at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        carbon_insert_column_end(&columnState);
+    } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
+        carbon_insert_object_state objectState;
+        carbon_insert *nestedIns = carbon_insert_object_begin(&objectState, &ins, numOperations);
+        for (uint32_t i = 0; i < numOperations; i++) {
+            int64_t val = random() % INT64_MAX;
+            char key[UINT32_MAX_DIGITS + 1];
+            sprintf(key, "%d", i);
+
+            if (!carbon_insert_prop_i64(nestedIns, key, val)) {
+                sprintf(msg, "Failed to insert int64 value '%ld' into object at position: %d", val, i);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            manager->numEntries++;
+        }
+        carbon_insert_object_end(&objectState);
     }
     carbon_array_it_insert_end(&ins);
     carbon_revise_iterator_close(&it);
@@ -380,21 +494,35 @@ bool bench_carbon_insert_int64(bench_carbon_mgr *manager, uint32_t numOperations
     return true;
 }
 
-bool bench_carbon_read(bench_carbon_mgr *manager, uint32_t numOperations)
+bool bench_carbon_read(bench_carbon_mgr *manager, uint32_t numOperations, container_type type)
 {
     carbon_find find;
     char msg[ERROR_MSG_SIZE];
 
-    for(uint32_t i = 0; i < numOperations; i++) {
-        char path[UINT32_MAX_DIGITS + 3];
-        sprintf(path, "0.%d", (uint32_t) (random() % numOperations));
-        carbon_find_open(&find, path, manager->doc);
-        if (!carbon_find_has_result(&find)) {
-            sprintf(msg, "Failed to read item:%s\nAborting.\n", path);
-            BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
-            return false;
+    if(type == BENCH_CONTAINER_TYPE_ARRAY || type == BENCH_CONTAINER_TYPE_COLUMN) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            char path[UINT32_MAX_DIGITS + 3];
+            sprintf(path, "0.%d", 1/*(uint32_t) (random() % manager->numEntries)*/);
+            carbon_find_open(&find, path, manager->doc);
+            if (!carbon_find_has_result(&find)) {
+                sprintf(msg, "Failed to read item:%s", path);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
+                return false;
+            }
+        }
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            char path[UINT32_MAX_DIGITS + 5];
+            sprintf(path, "0.\"%d\"", (uint32_t) (random() % manager->numEntries));
+            carbon_find_open(&find, path, manager->doc);
+            if (!carbon_find_has_result(&find)) {
+                sprintf(msg, "Failed to read item:%s", path);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
+                return false;
+            }
         }
     }
+
 
     carbon_find_drop(&find);
 
@@ -409,12 +537,12 @@ bool bench_carbon_update_int8(bench_carbon_mgr *manager, uint32_t numOperations)
 
     carbon_revise_begin(&revise, rev_doc, manager->doc);
     for(uint32_t i = 0; i < numOperations; i++) {
-        char path[UINT32_MAX_DIGITS + 1];
+        char path[UINT32_MAX_DIGITS + 3];
         int8_t newVal = random() % INT8_MAX;
-        sprintf(path, "%d", (uint32_t) (random() % numOperations));
+        sprintf(path, "0.%d", (uint32_t) (random() % numOperations));
 
         if(!carbon_update_set_i8(&revise, path, newVal)) {
-            sprintf(msg, "Failed to update int8 item:%s\nAborting.\n", path);
+            sprintf(msg, "Failed to update int8 item:%s", path);
             BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
             return false;
         }
@@ -435,38 +563,12 @@ bool bench_carbon_update_int16(bench_carbon_mgr *manager, uint32_t numOperations
 
     carbon_revise_begin(&revise, rev_doc, manager->doc);
     for(uint32_t i = 0; i < numOperations; i++) {
-        char path[UINT32_MAX_DIGITS + 1];
-        int16_t newVal = random() % INT16_MAX;
-        sprintf(path, "%d", (uint32_t) (random() % numOperations));
-
-        if(!carbon_update_set_i16(&revise, path, newVal)) {
-            sprintf(msg, "Failed to update int16 item:%s\nAborting.\n", path);
-            BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
-            return false;
-        }
-    }
-    carbon_revise_end(&revise);
-
-    carbon_drop(manager->doc);
-    manager->doc = rev_doc;
-
-    return true;
-}
-
-bool bench_carbon_update_int32(bench_carbon_mgr *manager, uint32_t numOperations)
-{
-    carbon *rev_doc = malloc(sizeof(*rev_doc));
-    carbon_revise revise;
-    char msg[ERROR_MSG_SIZE];
-
-    carbon_revise_begin(&revise, rev_doc, manager->doc);
-    for(uint32_t i = 0; i < numOperations; i++) {
         char path[UINT32_MAX_DIGITS + 3];
-        int32_t newVal = random() % INT32_MAX;
+        int16_t newVal = random() % INT16_MAX;
         sprintf(path, "0.%d", (uint32_t) (random() % numOperations));
 
-        if(!carbon_update_set_i32(&revise, path, newVal)) {
-            sprintf(msg, "Failed to update int32 item:%s\nAborting.\n", path);
+        if(!carbon_update_set_i16(&revise, path, newVal)) {
+            sprintf(msg, "Failed to update int16 item:%s", path);
             BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
             return false;
         }
@@ -479,22 +581,78 @@ bool bench_carbon_update_int32(bench_carbon_mgr *manager, uint32_t numOperations
     return true;
 }
 
-bool bench_carbon_update_int64(bench_carbon_mgr *manager, uint32_t numOperations)
+bool bench_carbon_update_int32(bench_carbon_mgr *manager, uint32_t numOperations, container_type type)
 {
     carbon *rev_doc = malloc(sizeof(*rev_doc));
     carbon_revise revise;
     char msg[ERROR_MSG_SIZE];
 
     carbon_revise_begin(&revise, rev_doc, manager->doc);
-    for(uint32_t i = 0; i < numOperations; i++) {
-        char path[UINT32_MAX_DIGITS + 1];
-        int64_t newVal = random() % INT64_MAX;
-        sprintf(path, "%d", (uint32_t) (random() % numOperations));
+    if(type == BENCH_CONTAINER_TYPE_ARRAY || type == BENCH_CONTAINER_TYPE_COLUMN) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            char path[UINT32_MAX_DIGITS + 3];
+            int32_t newVal = random() % INT32_MAX;
+            sprintf(path, "0.%d", (uint32_t) (random() % numOperations));
 
-        if(!carbon_update_set_i64(&revise, path, newVal)) {
-            sprintf(msg, "Failed to update int64 item:%s\nAborting.\n", path);
-            BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
-            return false;
+            if (!carbon_update_set_i32(&revise, path, newVal)) {
+                sprintf(msg, "Failed to update int32 item:%s", path);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
+                return false;
+            }
+        }
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            char path[UINT32_MAX_DIGITS + 5];
+            int32_t newVal = random() % INT32_MAX;
+            sprintf(path, "0.\"%d\"", (uint32_t) (random() % manager->numEntries));
+
+            // TODO : Make that work
+            if (!carbon_update_set_i32(&revise, path, newVal)) {
+                sprintf(msg, "Failed to update int32 item:%s", path);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
+                return false;
+            }
+        }
+    }
+    carbon_revise_end(&revise);
+
+    carbon_drop(manager->doc);
+    manager->doc = rev_doc;
+
+    return true;
+}
+
+bool bench_carbon_update_int64(bench_carbon_mgr *manager, uint32_t numOperations, container_type type)
+{
+    carbon *rev_doc = malloc(sizeof(*rev_doc));
+    carbon_revise revise;
+    char msg[ERROR_MSG_SIZE];
+
+    carbon_revise_begin(&revise, rev_doc, manager->doc);
+    if(type == BENCH_CONTAINER_TYPE_ARRAY || type == BENCH_CONTAINER_TYPE_COLUMN) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            char path[UINT32_MAX_DIGITS + 3];
+            int64_t newVal = random() % INT64_MAX;
+            sprintf(path, "0.%d", (uint32_t) (random() % numOperations));
+
+            if (!carbon_update_set_i64(&revise, path, newVal)) {
+                sprintf(msg, "Failed to update int64 item:%s", path);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
+                return false;
+            }
+        }
+    } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
+        for (uint32_t i = 0; i < numOperations; i++) {
+            char path[UINT32_MAX_DIGITS + 5];
+            int64_t newVal = random() % INT64_MAX;
+            sprintf(path, "0.\"%d\"", (uint32_t) (random() % manager->numEntries));
+
+            // TODO : Make that work
+            if (!carbon_update_set_i64(&revise, path, newVal)) {
+                sprintf(msg, "Failed to update int64 item:%s", path);
+                BENCH_CARBON_ERROR_WRITE(manager->error, msg, 0);
+                return false;
+            }
         }
     }
     carbon_revise_end(&revise);
@@ -562,6 +720,7 @@ bool bench_carbon_delete(bench_carbon_mgr *manager, uint32_t numOperations)
 
         carbon_revise_remove(path, &revise);
         strcat(removedKeys[i], path);
+        manager->numEntries--;
     }
     carbon_revise_end(&revise);
 
@@ -571,12 +730,13 @@ bool bench_carbon_delete(bench_carbon_mgr *manager, uint32_t numOperations)
     return true;
 }
 
-bool bench_carbon_execute_benchmark_operation_int8(bench_carbon_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_carbon_execute_benchmark_operation_int8(bench_carbon_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_carbon_insert_int8(manager, numOperations);
+        return bench_carbon_insert_int8(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
-        return bench_carbon_read(manager, numOperations);
+        return bench_carbon_read(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_carbon_update_int8(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
@@ -588,12 +748,13 @@ bool bench_carbon_execute_benchmark_operation_int8(bench_carbon_mgr *manager, be
     }
 }
 
-bool bench_carbon_execute_benchmark_operation_int16(bench_carbon_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_carbon_execute_benchmark_operation_int16(bench_carbon_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_carbon_insert_int16(manager, numOperations);
+        return bench_carbon_insert_int16(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
-        return bench_carbon_read(manager, numOperations);
+        return bench_carbon_read(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
         return bench_carbon_update_int16(manager, numOperations);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
@@ -605,14 +766,15 @@ bool bench_carbon_execute_benchmark_operation_int16(bench_carbon_mgr *manager, b
     }
 }
 
-bool bench_carbon_execute_benchmark_operation_int32(bench_carbon_mgr *manager, bench_operation_type opType, uint32_t numOperations, container_type contType)
+bool bench_carbon_execute_benchmark_operation_int32(bench_carbon_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
         return bench_carbon_insert_int32(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
-        return bench_carbon_read(manager, numOperations);
+        return bench_carbon_read(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
-        return bench_carbon_update_int32(manager, numOperations);
+        return bench_carbon_update_int32(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
         // Random access deletions are not that great.
         return bench_carbon_delete(manager, numOperations);
@@ -622,14 +784,15 @@ bool bench_carbon_execute_benchmark_operation_int32(bench_carbon_mgr *manager, b
     }
 }
 
-bool bench_carbon_execute_benchmark_operation_int64(bench_carbon_mgr *manager, bench_operation_type opType, uint32_t numOperations)
+bool bench_carbon_execute_benchmark_operation_int64(bench_carbon_mgr *manager, bench_operation_type opType,
+        uint32_t numOperations, container_type contType)
 {
     if(opType == BENCH_OP_TYPE_INSERT) {
-        return bench_carbon_insert_int64(manager, numOperations);
+        return bench_carbon_insert_int64(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_READ) {
-        return bench_carbon_read(manager, numOperations);
+        return bench_carbon_read(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_UPDATE) {
-        return bench_carbon_update_int64(manager, numOperations);
+        return bench_carbon_update_int64(manager, numOperations, contType);
     } else if(opType == BENCH_OP_TYPE_DELETE) {
         // Random access deletions are not that great.
         return bench_carbon_delete(manager, numOperations);
@@ -648,13 +811,13 @@ bool bench_carbon_execute_benchmark_operation(bench_carbon_mgr *manager, bench_t
     ERROR_IF_NULL(contType);
 
     if(type == BENCH_TYPE_INT8) {
-        return bench_carbon_execute_benchmark_operation_int8(manager, opType, numOperations);
+        return bench_carbon_execute_benchmark_operation_int8(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_INT16) {
-        return bench_carbon_execute_benchmark_operation_int16(manager, opType, numOperations);
+        return bench_carbon_execute_benchmark_operation_int16(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_INT32) {
         return bench_carbon_execute_benchmark_operation_int32(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_INT64) {
-        return bench_carbon_execute_benchmark_operation_int64(manager, opType, numOperations);
+        return bench_carbon_execute_benchmark_operation_int64(manager, opType, numOperations, contType);
     } else {
         return false;
     }

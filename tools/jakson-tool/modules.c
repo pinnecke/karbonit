@@ -665,7 +665,7 @@ bool moduleListInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manage
 bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager) {
     UNUSED(manager);
 
-    if (argc > 3) {
+    if (argc > 5) {
         wrong_input:
         CONSOLE_WRITE(file, "Require <format type> and <input> parameters for <args>.%s", "");
         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
@@ -681,11 +681,11 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         bench_type selectType;
         bench_format_handler handler;
         bench_error err;
-        uint32_t numOperationsInsert = 10000;
-        uint32_t numOperationsRead = 2500;
-        uint32_t numOperationsUpdate = 1000;
-        uint32_t numOperationsDelete = 1000;
-        container_type contType = BENCH_CONTAINER_TYPE_ARRAY;
+        uint32_t numOperationsInsert = 1000;
+        uint32_t numOperationsRead = 500;
+        uint32_t numOperationsUpdate = 500;
+        uint32_t numOperationsDelete = 100;
+        container_type contType = BENCH_CONTAINER_TYPE_COLUMN;
 
         if (strncmp(opt, "--", 2) == 0) {
             if (strcmp(opt, BENCH_OPTION_SELECT_TYPE) == 0) {
@@ -709,7 +709,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                     CONSOLE_WRITELN(file, "Failed to create %s handler: %s", format, err.msg);
                     return false;
                 }
-                CONSOLE_WRITELN(file, "Executing benchmark process for %s", format);
+                CONSOLE_WRITELN(file, "Executing benchmark process for %s and %d container type", format, contType);
                 bench_format_handler_execute_benchmark(&handler, selectType,
                         numOperationsInsert, numOperationsRead, numOperationsUpdate, numOperationsDelete, contType);
                 CONSOLE_WRITELN(file, "Process size after initial insertions: %ldKB", handler.proc_size);

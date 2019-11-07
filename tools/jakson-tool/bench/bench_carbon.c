@@ -233,7 +233,7 @@ bool bench_carbon_insert_int8(bench_carbon_mgr *manager, uint32_t numOperations,
             char key[UINT32_MAX_DIGITS + 1];
             sprintf(key, "%d", i);
 
-            if (!carbon_insert_prop_i8(nestedIns, key, val)) {
+            if (!carbon_insert_i8(nestedIns, val)) {
                 sprintf(msg, "Failed to insert int8 value '%d' into array at position: %d", val, i);
                 BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
                 return false;
@@ -265,7 +265,7 @@ bool bench_carbon_insert_int8(bench_carbon_mgr *manager, uint32_t numOperations,
             char key[UINT32_MAX_DIGITS + 1];
             sprintf(key, "%d", i);
 
-            if (!carbon_insert_i8(nestedIns, val)) {
+            if (!carbon_insert_prop_i8(nestedIns, key, val)) {
                 sprintf(msg, "Failed to insert int8 value '%d' into object at position: %d", val, i);
                 BENCH_CARBON_ERROR_WRITE(manager->error, msg, i);
                 return false;

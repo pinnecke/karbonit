@@ -429,7 +429,7 @@ static inline fn_result schema_validate_run_handleKeyword_items(schema *s, carbo
 
     else {
         for (size_t i = 0; i < vector_length(&(s->data.items)); i++) {
-            if (!(carbon_array_it_has_next(sait))) {
+            if (!(carbon_array_it_next(sait))) {
                 carbon_array_it_drop(sait);
                 return FN_OK();
             }
@@ -442,14 +442,16 @@ static inline fn_result schema_validate_run_handleKeyword_items(schema *s, carbo
             }
         }
 
-        if (carbon_array_it_has_next(sait) && (!(s->applies.has_additionalItems))) {
-            carbon_array_it_drop(sait);
-            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "more items in array then defined in keyword \"items\" and no keyword \"additionalItems\" given");
-        }
+        if (carbon_array_it_has_next(sait)) {
+            if (!(s->applies.has_additionalItems)) {
+                carbon_array_it_drop(sait);
+                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "more items in array then defined in keyword \"items\" and no keyword \"additionalItems\" given");
+            }
 
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_additionalItems(s, sait)))) {
-            carbon_array_it_drop(sait);
-            return FN_FAIL_FORWARD();
+            if (!(FN_IS_OK(schema_validate_run_handleKeyword_additionalItems(s, sait)))) {
+                carbon_array_it_drop(sait);
+                return FN_FAIL_FORWARD();
+            }
         }
         carbon_array_it_drop(sait);
         return FN_OK();

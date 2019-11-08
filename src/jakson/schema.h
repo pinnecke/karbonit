@@ -281,7 +281,6 @@ static inline void schema_drop(schema *s) {
     if (s->applies.has_items) {
         for (size_t i = 0; i < vector_length(&(s->data.items)); i++) {
             schema_drop((schema*)vector_at(&(s->data.items), i));
-            free((void*)vector_at(&(s->data.items), i));
         }
         vector_drop(&(s->data.items));
     }
@@ -327,10 +326,14 @@ static inline void schema_drop(schema *s) {
         //vector_drop(&(s->data.patternProperties));
     }
     if (s->applies.has_dependencies) {
-        for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
-            schema_drop((schema*)vector_at(&(s->data.dependencies), i));
-            free((void*)vector_at(&(s->data.dependencies), i));
-        }
+            for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
+                if (s->applies.dependencies_isObject) {
+                    schema_drop((schema*)vector_at(&(s->data.dependencies), i));
+                }
+                else {
+                    vector_drop((vector*)vector_at(&(s->data.dependencies), i));
+                }
+            }
         vector_drop(&(s->data.dependencies));
     }
     // TODO: implement

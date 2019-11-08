@@ -480,26 +480,36 @@ static inline fn_result schema_generate_handleKeyword_items(schema *s, carbon_ob
 
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
-    vector_create(&(s->data.items), NULL, sizeof(schema*), 5);
+    vector_create(&(s->data.items), NULL, sizeof(schema), 5);
 
+    // if keyword only holds one schema object, every element in array has to conform to the schema
     if (carbon_field_type_is_object_or_subtype(field_type)) {
-        s->applies.items_isObject = true;
+        
+        schema *items = VECTOR_NEW_AND_GET(&(s->data.items), schema);
         carbon_object_it *soit = carbon_object_it_object_value(oit);
-        schema *items = (schema*) malloc(sizeof(schema));
+
+        s->applies.items_isObject = true;
 
         if (!(FN_IS_OK(schema_init(items, NULL)))) {
             carbon_object_it_drop(soit);
             free(items);
+            vector_drop(&(s->data.items));
             return FN_FAIL_FORWARD();
         }
         if (!(FN_IS_OK(schema_generate(items, soit)))) {
             carbon_object_it_drop(soit);
             free(items);
+            vector_drop(&(s->data.items));
             return FN_FAIL_FORWARD();
         }
-        vector_push(&(s->data.items), items, 1);
+        carbon_object_it_drop(soit);
+
+        s->applies.has_items = true;
+
+        return FN_OK();
     }
 
+    // if keyword consists of an array of schema, element x in data array has to conform to schema x in schema array
     else if (carbon_field_type_is_array_or_subtype(field_type)) {
         carbon_array_it *ait = carbon_object_it_array_value(oit);
         while (carbon_array_it_next(ait)) {
@@ -512,34 +522,32 @@ static inline fn_result schema_generate_handleKeyword_items(schema *s, carbon_ob
                 return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
             }
 
+            schema *items = VECTOR_NEW_AND_GET(&(s->data.items), schema);
             carbon_object_it *soit = carbon_array_it_object_value(ait);
-            schema *items = (schema*) malloc(sizeof(schema));
 
             if (!(FN_IS_OK(schema_init(items, NULL)))) {
                 carbon_object_it_drop(soit);
                 carbon_array_it_drop(ait);
-                free(items);
+                schema_drop(items);
                 return FN_FAIL_FORWARD();
             }
             if (!(FN_IS_OK(schema_generate(items, soit)))) {
                 carbon_object_it_drop(soit);
                 carbon_array_it_drop(ait);
-                free(items);
+                schema_drop(items);
                 return FN_FAIL_FORWARD();
             }
             carbon_object_it_drop(soit);
-            vector_push(&(s->data.items), items, 1);
         }
         carbon_array_it_drop(ait);
-    }
-    else {
-        vector_drop(&(s->data.items));
-        return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
+
+        s->applies.has_items = true;
+
+        return FN_OK();
     }
 
-    s->applies.has_items = true;
-
-    return FN_OK();
+    vector_drop(&(s->data.items));
+    return FN_FAIL(ERR_BADTYPE, "keyword \"items\" expects an object or an array of objects");
 }
 
 
@@ -797,7 +805,6 @@ static inline fn_result schema_generate_handleKeyword_dependencies(schema *s, ca
             key = strndup(_key, keylen);
 
             vector *item = VECTOR_NEW_AND_GET(&(s->data.dependencies), vector);
-            item = (vector*) malloc(sizeof(struct vector));
             vector_create(item, NULL, sizeof(const char*), 5);
             vector_push(item, key, 1);
 

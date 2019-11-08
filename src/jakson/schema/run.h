@@ -69,9 +69,7 @@ static inline fn_result schema_validate_run_handleKeyword_type(schema *s, carbon
     if (!(passed)) {
         return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint");
     }
-    if (carbon_array_it_has_next(ait)) {
-        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "failed \"type\" constraint, expected atomar element"); 
-    }
+
     return FN_OK();
 }
 
@@ -579,7 +577,7 @@ static inline fn_result schema_validate_run_handleKeyword_dependencies(schema *s
             vector *item = (vector*) vector_at(&(s->data.dependencies), i);
             const char *key = (const char*) vector_at(item, 0);
             if (carbon_object_it_has_key(key, oit)) {
-                for (size_t j = 1; j < vector_length(item); i++) {
+                for (size_t j = 1; j < vector_length(item); j++) {
                     const char *str = (const char*) vector_at(item, j);
                     if (!(carbon_object_it_has_key(str, oit))) {
                         carbon_object_it_drop(oit);

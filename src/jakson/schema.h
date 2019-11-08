@@ -367,7 +367,7 @@ static inline void schema_drop(schema *s) {
     if (s->applies.has_not) {
         free(s->data._not);
     }
-    if (s->applies.has_additionalItems) {
+    if (s->applies.has_additionalItems && !(s->applies.additionalItemsIsBool)) {
         free(s->data.additionalItems);
     }
     //TODO: implement

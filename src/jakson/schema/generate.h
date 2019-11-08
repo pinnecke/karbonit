@@ -81,6 +81,7 @@ static inline fn_result schema_generate_handleKeyword_properties(schema *s, carb
 }
 
 
+// TODO: allow for type to be a string
 static inline fn_result schema_generate_handleKeyword_type(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
@@ -601,7 +602,7 @@ static inline fn_result schema_generate_handleKeyword_contains(schema *s, carbon
 
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
-    carbon_object_it_next(oit);
+
     if (!(carbon_field_type_is_object_or_subtype(field_type))) {
         return FN_FAIL(ERR_BADTYPE, "keyword \"contains\" expects an object");
     }

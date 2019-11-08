@@ -38,13 +38,13 @@ static inline fn_result schema_validate_run_handleKeyword_type(schema *s, carbon
     for (size_t i = 0; i < vector_length(&(s->data.type)); i++) {
         int *constraint = (int*)(vector_at(&(s->data.type), i));
 
-        if (*constraint == NUMBER && carbon_field_type_is_number(field_type)) {
+        if (*constraint == NUMBER && carbon_field_type_is_number_atom(field_type)) {
             passed = true;
         }
         else if (*constraint == STRING && carbon_field_type_is_string(field_type)) {
             passed = true;
         }
-        else if (*constraint == BOOLEAN && carbon_field_type_is_boolean(field_type)) {
+        else if (*constraint == BOOLEAN && carbon_field_type_is_boolean_atom(field_type)) {
             passed = true;
         }
         else if (*constraint == BINARY && carbon_field_type_is_binary(field_type)) {
@@ -475,7 +475,7 @@ static inline fn_result schema_validate_run_handleKeyword_contains(schema *s, ca
     if (contains) {
         return FN_OK();
     }
-    return FN_OK();
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"contains\" failed");
 }
 
 

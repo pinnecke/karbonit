@@ -612,25 +612,22 @@ static inline fn_result schema_validate_run_handleKeyword_propertyNames(schema *
     carbon_object_it *oit = carbon_array_it_object_value(ait);
     carbon_new context;
     carbon record;
-    carbon_insert *ins, *nested_ins;
-    carbon_insert_array_state state;
+    carbon_insert *ins;
     carbon_array_it sait;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
-    nested_ins = carbon_insert_array_begin(&state, ins, 1024);
 
     while (carbon_object_it_next(oit)) {
         u64 keylen;
         const char *_key = carbon_object_it_prop_name(&keylen, oit);
         const char *key = strndup(_key, keylen);
-        carbon_insert_string(nested_ins, key);
+        carbon_insert_string(ins, key);
     }
-    carbon_insert_array_end(&state);
     carbon_create_end(&context);
 
     carbon_iterator_open(&sait, &record);
-    while (carbon_array_it_has_next(&sait)) {
-        if(!(FN_IS_OK(schema_validate_run(s->data.propertyNames, &sait)))) {
+    while (carbon_array_it_next(&sait)) {
+        if (!(FN_IS_OK(schema_validate_run(s->data.propertyNames, &sait)))) {
             carbon_array_it_drop(&sait);
             carbon_object_it_drop(oit);
             carbon_drop(&record);

@@ -1206,7 +1206,7 @@ static inline fn_result schema_generate_handleKeyword_allOf(schema *s, carbon_ob
 static inline fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
-    vector_create(&(s->data.ifThenElse), NULL, sizeof(schema*), 3);
+    vector_create(&(s->data.ifThenElse), NULL, sizeof(schema), 3);
     carbon_field_type_e field_type;
     carbon_object_it_prop_type(&field_type, oit);
     
@@ -1216,7 +1216,7 @@ static inline fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carb
     }
 
     carbon_object_it *soit = carbon_object_it_object_value(oit);
-    schema *_if = (schema*) malloc(sizeof(schema));
+    schema *_if = VECTOR_NEW_AND_GET(&(s->data.ifThenElse), schema); 
 
     if (!(FN_IS_OK(schema_init(_if, NULL)))) {
         vector_drop(&(s->data.ifThenElse));
@@ -1233,11 +1233,8 @@ static inline fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carb
     }
     carbon_object_it_drop(soit);
 
-    vector_push(&(s->data.ifThenElse), _if, 1);
-    
     const char *keys_needed[2] = { "then", "else" };
     u64 keylen;
-
     for (int i = 0; i < 2; i++) {
         carbon_object_it_next(oit);
         carbon_object_it_prop_type(&field_type, oit);
@@ -1250,7 +1247,7 @@ static inline fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carb
         }
 
         carbon_object_it *soit = carbon_object_it_object_value(oit);
-        schema *val = (schema*) malloc(sizeof(schema));
+        schema *val = VECTOR_NEW_AND_GET(&(s->data.ifThenElse), schema);
 
         if (!(FN_IS_OK(schema_init(val, NULL)))) {
             vector_drop(&(s->data.ifThenElse));
@@ -1266,9 +1263,9 @@ static inline fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carb
             return FN_FAIL_FORWARD();
         }
         carbon_object_it_drop(soit);
-
-        vector_push(&(s->data.ifThenElse), val, 1);
     }
+    s->applies.has_ifThenElse = true;
+
     return FN_OK(); 
 }
 

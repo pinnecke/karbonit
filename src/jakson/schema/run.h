@@ -770,14 +770,24 @@ static inline fn_result schema_validate_run_handleKeyword_allOf(schema *s, carbo
 }
 
 
-// TODO: implement
 static inline fn_result schema_validate_run_handleKeyword_ifThenElse(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
-    UNUSED(s);
-    UNUSED(ait);
+    schema* _if = (schema*) vector_at(&(s->data.ifThenElse), 0);
+    schema *then = (schema*) vector_at(&(s->data.ifThenElse), 1);
+    schema *_else = (schema*) vector_at(&(s->data.ifThenElse), 2);
 
-    return FN_FAIL(ERR_NOTIMPL, "\"ifThenElse\" keyword not implemented yet");
+    if (FN_IS_OK(schema_validate_run(_if, ait))) {
+        if (FN_IS_OK(schema_validate_run(then, ait))) {
+            return FN_OK();
+        }
+        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "contraint \"if/then/else\" was not met.");
+    }
+    
+    if (FN_IS_OK(schema_validate_run(_else, ait))) {
+        return FN_OK();
+    }
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "contraint \"if/then/else\" was not met.");
 }
 
 

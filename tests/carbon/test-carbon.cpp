@@ -8772,6 +8772,42 @@ TEST(CarbonTest, CommitHashStr) {
         string_buffer_drop(&s);
 }
 
+TEST(CarbonTest, ObjectInsert) {
+    carbon doc, rev_doc, rev_doc2;
+
+    carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+    {
+        carbon_revise revise;
+        carbon_insert ins;
+        carbon_array_it it;
+        carbon_insert_object_state objectState;
+
+        carbon_revise_begin(&revise, &rev_doc, &doc);
+        carbon_revise_iterator_open(&it, &revise);
+        carbon_array_it_insert_begin(&ins, &it);
+
+        carbon_insert *nestedIns = carbon_insert_object_begin(&objectState, &ins, 1);
+        ASSERT_TRUE(carbon_insert_prop_i32(nestedIns, "0", (int32_t) 42));
+        carbon_insert_object_end(&objectState);
+
+        carbon_array_it_insert_end(&ins);
+        carbon_revise_iterator_close(&it);
+        carbon_revise_end(&revise);
+    }
+
+    {
+        carbon_revise revise;
+
+        carbon_revise_begin(&revise, &rev_doc2, &rev_doc);
+        ASSERT_TRUE(carbon_update_set_i32(&revise, "0.\"0\"", 43));
+        carbon_revise_end(&revise);
+    }
+
+    carbon_drop(&doc);
+    carbon_drop(&rev_doc);
+    carbon_drop(&rev_doc2);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

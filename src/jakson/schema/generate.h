@@ -1069,7 +1069,7 @@ static inline fn_result schema_generate_handleKeyword_oneOf(schema *s, carbon_ob
     }
 
     carbon_array_it *ait = carbon_object_it_array_value(oit);
-    vector_create(&(s->data.oneOf), NULL, sizeof(schema*), 5);
+    vector_create(&(s->data.oneOf), NULL, sizeof(schema), 5);
 
     while (carbon_array_it_next(ait)) {
 
@@ -1082,22 +1082,21 @@ static inline fn_result schema_generate_handleKeyword_oneOf(schema *s, carbon_ob
         }
 
         carbon_object_it *soit = carbon_array_it_object_value(ait);
-        schema *oneOf = (schema*) malloc(sizeof(schema));
+        schema *oneOf = VECTOR_NEW_AND_GET(&(s->data.oneOf), schema);
 
         if (!(FN_IS_OK(schema_init(oneOf , NULL)))) {
             carbon_object_it_drop(soit);
             carbon_array_it_drop(ait);
-            free(oneOf);
+            vector_drop(&(s->data.oneOf));
             return FN_FAIL_FORWARD();
         }
         if (!(FN_IS_OK(schema_generate(oneOf, soit)))) {
             carbon_object_it_drop(soit);
             carbon_array_it_drop(ait);
-            free(oneOf);
+            vector_drop(&(s->data.oneOf));
             return FN_FAIL_FORWARD();
         }
         carbon_object_it_drop(soit);
-        vector_push(&(s->data.oneOf), oneOf, 1);
     }
     carbon_array_it_drop(ait);
 

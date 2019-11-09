@@ -745,7 +745,7 @@ static inline fn_result schema_validate_run_handleKeyword_anyOf(schema *s, carbo
 
     for (size_t i = 0; i < vector_length(&(s->data.anyOf)); i++) {
         carbon_array_it_rewind(ait);
-        schema *anyOf = (schema*) vector_at(&(s->data.oneOf), i);
+        schema *anyOf = (schema*) vector_at(&(s->data.anyOf), i);
 
         if(FN_IS_OK(schema_validate_run(anyOf, ait))) {
             return FN_OK();

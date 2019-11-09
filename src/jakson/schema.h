@@ -286,35 +286,29 @@ static inline void schema_drop(schema *s) {
     }
     if (s->applies.has_required) {
         for (size_t i = 0; i < vector_length(&(s->data.required)); i++) {
-            //FIXME: why double free??
-            //free((void*)vector_at(&(s->data.required), i));
         }
         vector_drop(&(s->data.required));
     }
     if (s->applies.has_patternRequired) {
         for (size_t i = 0; i < vector_length(&(s->data.patternRequired)); i++) {
-            //free((void*)vector_at(&(s->data.patternRequired), i));
         }
         vector_drop(&(s->data.patternRequired));
     }
     if (s->applies.has_oneOf) {
         for (size_t i = 0; i < vector_length(&(s->data.oneOf)); i++) {
             schema_drop((schema*)vector_at(&(s->data.oneOf), i));
-            free((void*)vector_at(&(s->data.oneOf), i));
         }
         vector_drop(&(s->data.oneOf));
     }
     if (s->applies.has_anyOf) {
         for (size_t i = 0; i < vector_length(&(s->data.anyOf)); i++) {
             schema_drop((schema*)vector_at(&(s->data.anyOf), i));
-            //free((void*)vector_at(&(s->data.anyOf), i));
         }
         vector_drop(&(s->data.anyOf));
     }
     if (s->applies.has_allOf) {
         for (size_t i = 0; i < vector_length(&(s->data.allOf)); i++) {
             schema_drop((schema*)vector_at(&(s->data.allOf), i));
-            free((void*)vector_at(&(s->data.allOf), i));
         }
         vector_drop(&(s->data.allOf));
     }

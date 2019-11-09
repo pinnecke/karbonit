@@ -374,6 +374,19 @@ size_t bench_ubjson_get_doc_size(bench_ubjson_mgr *manager)
 
     return false;
 }
+
+uint32_t bench_ubjson_get_reads(bench_ubjson_mgr *manager)
+{
+    ERROR_IF_NULL(manager);
+
+    return manager->reads;
+}
+uint32_t bench_ubjson_get_updates(bench_ubjson_mgr *manager)
+{
+    ERROR_IF_NULL(manager);
+
+    return manager->updates;
+}
 /*
 bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, char *key, int32_t val)
 {
@@ -415,6 +428,7 @@ bool bench_ubjson_insert_int8(bench_ubjson_mgr *manager, uint32_t numOperations,
         ubjs_prmtv_array_with_length(manager->lib, numOperations, &arrayObj);
         //ubjs_prmtv_array(manager->lib, &arrayObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", arrayObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int8_t val = random() % INT8_MAX;
 
@@ -431,6 +445,7 @@ bool bench_ubjson_insert_int8(bench_ubjson_mgr *manager, uint32_t numOperations,
         ubjs_prmtv_object_with_length(manager->lib, numOperations, &nestedObj);
         //ubjs_prmtv_object(manager->lib, &nestedObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", nestedObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int8_t val = random() % INT8_MAX;
             char key[UINT32_MAX_DIGITS + 1];
@@ -459,6 +474,7 @@ bool bench_ubjson_insert_int16(bench_ubjson_mgr *manager, uint32_t numOperations
         ubjs_prmtv_array_with_length(manager->lib, numOperations, &arrayObj);
         //ubjs_prmtv_array(manager->lib, &arrayObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", arrayObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int16_t val = random() % INT16_MAX;
 
@@ -475,6 +491,7 @@ bool bench_ubjson_insert_int16(bench_ubjson_mgr *manager, uint32_t numOperations
         ubjs_prmtv_object_with_length(manager->lib, numOperations, &nestedObj);
         //ubjs_prmtv_object(manager->lib, &nestedObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", nestedObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int16_t val = random() % INT16_MAX;
             char key[UINT32_MAX_DIGITS + 1];
@@ -503,6 +520,7 @@ bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, uint32_t numOperations
         ubjs_prmtv_array_with_length(manager->lib, numOperations, &arrayObj);
         //ubjs_prmtv_array(manager->lib, &arrayObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", arrayObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int32_t val = random() % INT32_MAX;
 
@@ -519,6 +537,7 @@ bool bench_ubjson_insert_int32(bench_ubjson_mgr *manager, uint32_t numOperations
         ubjs_prmtv_object_with_length(manager->lib, numOperations, &nestedObj);
         //ubjs_prmtv_object(manager->lib, &nestedObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", nestedObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int32_t val = random() % INT32_MAX;
             char key[UINT32_MAX_DIGITS + 1];
@@ -547,6 +566,7 @@ bool bench_ubjson_insert_int64(bench_ubjson_mgr *manager, uint32_t numOperations
         ubjs_prmtv_array_with_length(manager->lib, numOperations, &arrayObj);
         //ubjs_prmtv_array(manager->lib, &arrayObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", arrayObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int64_t val = random() % INT64_MAX;
 
@@ -563,6 +583,7 @@ bool bench_ubjson_insert_int64(bench_ubjson_mgr *manager, uint32_t numOperations
         ubjs_prmtv_object_with_length(manager->lib, numOperations, &nestedObj);
         //ubjs_prmtv_object(manager->lib, &nestedObj);
         ubjs_prmtv_object_set(manager->obj, 1, "0", nestedObj);
+
         for (uint32_t i = 0; i < numOperations; i++) {
             int64_t val = random() % INT64_MAX;
             char key[UINT32_MAX_DIGITS + 1];
@@ -585,27 +606,37 @@ bool bench_ubjson_read(bench_ubjson_mgr *manager, uint32_t numOperations, contai
 {
     ubjs_prmtv *item = 0;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
+
     if(type == BENCH_CONTAINER_TYPE_ARRAY) {
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
                 sprintf(msg, "Failed to read value in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            manager->reads++;
+            timePassed = clock();
         }
     } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
         ubjs_prmtv *nestedObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &nestedObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             char key[UINT32_MAX_DIGITS + 1];
-            sprintf(key, "%d", (uint32_t) (random() % numOperations));
+
+            sprintf(key, "%d", (uint32_t) (random() % manager->numEntries));
             if(UR_OK != ubjs_prmtv_object_get(nestedObj, strlen(key), key, &item)) {
                 sprintf(msg, "Failed to read value in object at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            manager->reads++;
+            timePassed = clock();
         }
     }
     return true;
@@ -615,31 +646,34 @@ bool bench_ubjson_update_int8(bench_ubjson_mgr *manager, uint32_t numOperations,
 {
     ubjs_prmtv *item = 0;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
+
     if(type == BENCH_CONTAINER_TYPE_ARRAY) {
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int8_t *val = malloc(sizeof(*val));
+
             if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
-                sprintf(msg, "Failed to read int8 value in array at position: %d", i);
-                BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
-                return false;
-            }
-            ubjs_prmtv_int8_get(item, val);
-            if(!val) {
                 sprintf(msg, "Failed to read int8 value for update operation in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            ubjs_prmtv_int8_get(item, val);
             *val = random() % INT8_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
         ubjs_prmtv *nestedObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &nestedObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int8_t *val = malloc(sizeof(*val));
             char key[UINT32_MAX_DIGITS + 3];
-            sprintf(key, "%d", (uint32_t) (random() % numOperations));
+            sprintf(key, "%d", (uint32_t) (random() % manager->numEntries));
 
             if(UR_OK != ubjs_prmtv_object_get(nestedObj, strlen(key), key, &item)) {
                 sprintf(msg, "Failed to read int8 value for update operation in object at position: %d", i);
@@ -648,6 +682,8 @@ bool bench_ubjson_update_int8(bench_ubjson_mgr *manager, uint32_t numOperations,
             }
             ubjs_prmtv_int8_get(item, val);
             *val = random() % INT8_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     }
     return true;
@@ -657,31 +693,34 @@ bool bench_ubjson_update_int16(bench_ubjson_mgr *manager, uint32_t numOperations
 {
     ubjs_prmtv *item = 0;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
+
     if(type == BENCH_CONTAINER_TYPE_ARRAY) {
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int16_t *val = malloc(sizeof(*val));
+
             if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
-                sprintf(msg, "Failed to read int16 value in array at position: %d", i);
-                BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
-                return false;
-            }
-            ubjs_prmtv_int16_get(item, val);
-            if(!val) {
                 sprintf(msg, "Failed to read int16 value for update operation in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            ubjs_prmtv_int16_get(item, val);
             *val = random() % INT16_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
         ubjs_prmtv *nestedObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &nestedObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int16_t *val = malloc(sizeof(*val));
             char key[UINT32_MAX_DIGITS + 3];
-            sprintf(key, "%d", (uint32_t) (random() % numOperations));
+            sprintf(key, "%d", (uint32_t) (random() % manager->numEntries));
 
             if(UR_OK != ubjs_prmtv_object_get(nestedObj, strlen(key), key, &item)) {
                 sprintf(msg, "Failed to read int16 value for update operation in object at position: %d", i);
@@ -690,6 +729,8 @@ bool bench_ubjson_update_int16(bench_ubjson_mgr *manager, uint32_t numOperations
             }
             ubjs_prmtv_int16_get(item, val);
             *val = random() % INT16_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     }
     return true;
@@ -699,31 +740,33 @@ bool bench_ubjson_update_int32(bench_ubjson_mgr *manager, uint32_t numOperations
 {
     ubjs_prmtv *item = 0;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
+
     if(type == BENCH_CONTAINER_TYPE_ARRAY) {
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int32_t *val = malloc(sizeof(*val));
             if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
-                sprintf(msg, "Failed to read int32 value in array at position: %d", i);
-                BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
-                return false;
-            }
-            ubjs_prmtv_int32_get(item, val);
-            if(!val) {
                 sprintf(msg, "Failed to read int32 value for update operation in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            ubjs_prmtv_int32_get(item, val);
             *val = random() % INT32_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
         ubjs_prmtv *nestedObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &nestedObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int32_t *val = malloc(sizeof(*val));
             char key[UINT32_MAX_DIGITS + 3];
-            sprintf(key, "%d", (uint32_t) (random() % numOperations));
+            sprintf(key, "%d", (uint32_t) (random() % manager->numEntries));
 
             if(UR_OK != ubjs_prmtv_object_get(nestedObj, strlen(key), key, &item)) {
                 sprintf(msg, "Failed to read int32 value for update operation in object at position: %d", i);
@@ -732,6 +775,8 @@ bool bench_ubjson_update_int32(bench_ubjson_mgr *manager, uint32_t numOperations
             }
             ubjs_prmtv_int32_get(item, val);
             *val = random() % INT32_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     }
     return true;
@@ -741,31 +786,34 @@ bool bench_ubjson_update_int64(bench_ubjson_mgr *manager, uint32_t numOperations
 {
     ubjs_prmtv *item = 0;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
+
     if(type == BENCH_CONTAINER_TYPE_ARRAY) {
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int64_t *val = malloc(sizeof(*val));
+
             if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
-                sprintf(msg, "Failed to read int64 value in array at position: %d", i);
-                BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
-                return false;
-            }
-            ubjs_prmtv_int64_get(item, val);
-            if(!val) {
                 sprintf(msg, "Failed to read int64 value for update operation in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            ubjs_prmtv_int64_get(item, val);
             *val = random() % INT64_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     } else if (type == BENCH_CONTAINER_TYPE_OBJECT) {
         ubjs_prmtv *nestedObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &nestedObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             int64_t *val = malloc(sizeof(*val));
             char key[UINT32_MAX_DIGITS + 3];
-            sprintf(key, "%d", (uint32_t) (random() % numOperations));
+            sprintf(key, "%d", (uint32_t) (random() % manager->numEntries));
 
             if(UR_OK != ubjs_prmtv_object_get(nestedObj, strlen(key), key, &item)) {
                 sprintf(msg, "Failed to read int64 value for update operation in object at position: %d", i);
@@ -774,6 +822,8 @@ bool bench_ubjson_update_int64(bench_ubjson_mgr *manager, uint32_t numOperations
             }
             ubjs_prmtv_int64_get(item, val);
             *val = random() % INT64_MAX;
+            timePassed = clock();
+            manager->updates++;
         }
     }
     return true;
@@ -841,11 +891,14 @@ bool bench_ubjson_delete(bench_ubjson_mgr *manager, uint32_t numOperations, cont
 {
     char msg[ERROR_MSG_SIZE];
     int8_t entryList[manager->numEntries];
+    //clock_t startPoint = clock();
+    //clock_t timePassed = clock();
 
     if(type == BENCH_CONTAINER_TYPE_ARRAY) {
         ubjs_prmtv *arrayObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
-        for(uint32_t i = 0; i < numOperations; i++) {
+
+        for(uint32_t i = 0; i < numOperations /*|| timePassed - startPoint < BENCH_OPERATION_MIN_TIME*/; i++) {
             uint32_t j;
             do {
                 j = random() % manager->numEntries;
@@ -858,11 +911,13 @@ bool bench_ubjson_delete(bench_ubjson_mgr *manager, uint32_t numOperations, cont
                 return false;
             }
             manager->numEntries--;
+            //timePassed = clock();
         }
     } else if(type == BENCH_CONTAINER_TYPE_OBJECT) {
         ubjs_prmtv *nestedObj;
         ubjs_prmtv_object_get(manager->obj, 1, "0", &nestedObj);
-        for (uint32_t i = 0; i < numOperations; i++) {
+
+        for (uint32_t i = 0; i < numOperations /*|| timePassed - startPoint < BENCH_OPERATION_MIN_TIME*/; i++) {
             char key[UINT32_MAX_DIGITS + 1];
 
             uint32_t j;
@@ -877,6 +932,7 @@ bool bench_ubjson_delete(bench_ubjson_mgr *manager, uint32_t numOperations, cont
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            //timePassed = clock();
         }
     }
 

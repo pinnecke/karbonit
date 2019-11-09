@@ -64,6 +64,10 @@ typedef struct bench_format_handler {
     char *format_name;
     long benchTimes[5 /* INSERT READ UPDATE DELETE TOTAL */];
     size_t proc_size;
+    //uint32_t insertions;
+    uint32_t reads;
+    uint32_t updates;
+    //uint32_t deletes;
 } bench_format_handler;
 
 //bool bench_format_handler_create_error(bench_error *error);
@@ -80,6 +84,8 @@ size_t bench_format_handler_get_doc_size(bench_format_handler *handler);
 bool bench_format_handler_get_process_status(char *buffer);
 size_t bench_format_handler_get_process_size();
 bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *file, long file_size);
+uint32_t bench_format_handler_get_reads(bench_format_handler *handler);
+uint32_t bench_format_handler_get_updates(bench_format_handler *handler);
 
 /*
 bool bench_format_handler_insert_int8(bench_format_handler *handler, char *key, int8_t val);

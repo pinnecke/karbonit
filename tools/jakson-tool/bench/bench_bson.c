@@ -240,6 +240,19 @@ size_t bench_bson_get_doc_size(bench_bson_mgr *manager)
     return manager->b->len;
 }
 
+uint32_t bench_bson_get_reads(bench_bson_mgr *manager)
+{
+    ERROR_IF_NULL(manager);
+
+    return manager->reads;
+}
+uint32_t bench_bson_get_updates(bench_bson_mgr *manager)
+{
+    ERROR_IF_NULL(manager);
+
+    return manager->updates;
+}
+
 bool bench_bson_insert_int8(bench_bson_mgr *manager, uint32_t numOperations, container_type type)
 {
     char msg[ERROR_MSG_SIZE];
@@ -427,18 +440,23 @@ bool bench_bson_read(bench_bson_mgr *manager, uint32_t numOperations)
 {
     bson_iter_t it, nestedIt;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
     //bson_iter_init_find_w_len(&it, manager->b, "0", 1);
     //bson_iter_recurse(&it, &nestedIt);
-    for(uint32_t i = 0; i < numOperations; i++) {
+
+    for(uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
         bson_iter_init(&it, manager->b);
         char key[UINT32_MAX_DIGITS + 3];
-        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
+        sprintf(key, "0.%d", (uint32_t)(random() % manager->numEntries));
 
         if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
             sprintf(msg, "Failed to read item: %s", key);
             BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
+        manager->reads++;
+        timePassed = clock();
     }
     return true;
 }
@@ -447,19 +465,24 @@ bool bench_bson_update_int8(bench_bson_mgr *manager, uint32_t numOperations)
 {
     bson_iter_t it, nestedIt;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
 
-    for(uint32_t i = 0; i < numOperations; i++) {
+    for(uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
         bson_iter_init(&it, manager->b);
         int8_t newVal = random() % INT8_MAX;
         char key[UINT32_MAX_DIGITS + 3];
-        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
+        sprintf(key, "0.%d", (uint32_t)(random() % manager->numEntries));
 
         if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
             sprintf(msg, "Failed to update int8 item:%s\nAborting.\n", key);
             BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
+        // Using int32 function since BSON internally manages the represented size
         bson_iter_overwrite_int32(&nestedIt, newVal);
+        manager->updates++;
+        timePassed = clock();
     }
     return true;
 }
@@ -468,19 +491,24 @@ bool bench_bson_update_int16(bench_bson_mgr *manager, uint32_t numOperations)
 {
     bson_iter_t it, nestedIt;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
 
-    for(uint32_t i = 0; i < numOperations; i++) {
+    for(uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
         bson_iter_init(&it, manager->b);
         int16_t newVal = random() % INT16_MAX;
         char key[UINT32_MAX_DIGITS + 3];
-        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
+        sprintf(key, "0.%d", (uint32_t)(random() % manager->numEntries));
 
         if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
             sprintf(msg, "Failed to update int16 item:%s\nAborting.\n", key);
             BENCH_BSON_ERROR_WRITE(manager->error, msg , 0);
             return false;
         }
+        // Using int32 function since BSON internally manages the represented size
         bson_iter_overwrite_int32(&nestedIt, newVal);
+        manager->updates++;
+        timePassed = clock();
     }
     return true;
 }
@@ -489,12 +517,14 @@ bool bench_bson_update_int32(bench_bson_mgr *manager, uint32_t numOperations)
 {
     bson_iter_t it, nestedIt;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
 
-    for(uint32_t i = 0; i < numOperations; i++) {
+    for(uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
         bson_iter_init(&it, manager->b);
         int32_t newVal = random() % INT32_MAX;
         char key[UINT32_MAX_DIGITS + 3];
-        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
+        sprintf(key, "0.%d", (uint32_t)(random() % manager->numEntries));
 
         if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
             sprintf(msg, "Failed to update int32 item:%s\nAborting.\n", key);
@@ -502,6 +532,8 @@ bool bench_bson_update_int32(bench_bson_mgr *manager, uint32_t numOperations)
             return false;
         }
         bson_iter_overwrite_int32(&nestedIt, newVal);
+        manager->updates++;
+        timePassed = clock();
     }
     return true;
 }
@@ -510,12 +542,14 @@ bool bench_bson_update_int64(bench_bson_mgr *manager, uint32_t numOperations)
 {
     bson_iter_t it, nestedIt;
     char msg[ERROR_MSG_SIZE];
+    clock_t startPoint = clock();
+    clock_t timePassed = clock();
 
-    for(uint32_t i = 0; i < numOperations; i++) {
+    for(uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
         bson_iter_init(&it, manager->b);
         int64_t newVal = random() % INT64_MAX;
         char key[UINT32_MAX_DIGITS + 3];
-        sprintf(key, "0.%d", (uint32_t)(random() % numOperations));
+        sprintf(key, "0.%d", (uint32_t)(random() % manager->numEntries));
 
         if(!bson_iter_find_descendant(&it, key, &nestedIt)) {
             sprintf(msg, "Failed to update int64 item:%s\nAborting.\n", key);
@@ -523,6 +557,8 @@ bool bench_bson_update_int64(bench_bson_mgr *manager, uint32_t numOperations)
             return false;
         }
         bson_iter_overwrite_int64(&nestedIt, newVal);
+        manager->updates++;
+        timePassed = clock();
     }
     return true;
 }

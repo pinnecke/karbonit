@@ -37,6 +37,8 @@ typedef struct bench_bson_mgr {
     bench_bson_error *error;
     bson_iter_t *it;
     uint32_t numEntries;
+    uint32_t reads;
+    uint32_t updates;
 } bench_bson_mgr;
 
 bool bench_bson_error_create(bench_bson_error *bsonError, bench_error *benchError);
@@ -49,7 +51,8 @@ bool bench_bson_convert_doc(size_t *conv_size, bench_bson_mgr *manager, const ch
 bool bench_bson_mgr_destroy(bench_bson_mgr *manager);
 bool bench_bson_get_doc(char *str, bench_bson_mgr *manager);
 size_t bench_bson_get_doc_size(bench_bson_mgr *manager);
-
+uint32_t bench_bson_get_reads(bench_bson_mgr *manager);
+uint32_t bench_bson_get_updates(bench_bson_mgr *manager);
 /*
 bool bench_bson_insert_int8(bench_bson_mgr *manager, const char *key, int8_t val);
 bool bench_bson_insert_int16(bench_bson_mgr *manager, const char *key, int16_t val);

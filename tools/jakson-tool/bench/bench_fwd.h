@@ -22,6 +22,7 @@
 
 #define ERROR_MSG_SIZE 256
 #define UINT32_MAX_DIGITS 10
+#define BENCH_OPERATION_MIN_TIME 1000000
 
 typedef enum bench_type {
     BENCH_TYPE_TEST = 0x01,

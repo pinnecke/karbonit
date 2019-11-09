@@ -38,6 +38,8 @@ typedef struct bench_carbon_mgr {
     carbon *doc;
     bench_carbon_error *error;
     uint32_t numEntries;
+    uint32_t reads;
+    uint32_t updates;
 } bench_carbon_mgr;
 
 bool bench_carbon_error_create(bench_carbon_error *carbonError, bench_error *benchError);
@@ -50,6 +52,8 @@ bool bench_carbon_convert_doc(size_t *conv_size, bench_carbon_mgr *manager, cons
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);
 size_t bench_carbon_get_doc_size(bench_carbon_mgr *manager);
 bool bench_carbon_to_file(bench_carbon_mgr *manager, const char *filePath);
+uint32_t bench_carbon_get_reads(bench_carbon_mgr *manager);
+uint32_t bench_carbon_get_updates(bench_carbon_mgr *manager);
 /*
 bool bench_carbon_insert_int32(bench_carbon_mgr *manager, carbon_object_it *it, carbon_insert *ins, char *key,  int32_t val);
 

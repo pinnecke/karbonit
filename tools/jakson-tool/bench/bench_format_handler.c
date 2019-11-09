@@ -230,6 +230,35 @@ bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *fi
 
     return true;
 }
+
+uint32_t bench_format_handler_get_reads(bench_format_handler *handler)
+{
+    ERROR_IF_NULL(handler);
+
+    if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
+        return bench_carbon_get_reads((bench_carbon_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
+        return bench_bson_get_reads((bench_bson_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
+        return bench_ubjson_get_reads((bench_ubjson_mgr*) handler->manager);
+    } else {
+        return false;
+    }
+}
+uint32_t bench_format_handler_get_updates(bench_format_handler *handler)
+{
+    ERROR_IF_NULL(handler);
+
+    if(strcmp(handler->format_name, BENCH_FORMAT_CARBON) == 0) {
+        return bench_carbon_get_updates((bench_carbon_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_BSON) == 0) {
+        return bench_bson_get_updates((bench_bson_mgr*) handler->manager);
+    } else if(strcmp(handler->format_name, BENCH_FORMAT_UBJSON) == 0) {
+        return bench_ubjson_get_updates((bench_ubjson_mgr*) handler->manager);
+    } else {
+        return false;
+    }
+}
 /*
 bool bench_format_handler_insert_int32(bench_format_handler *handler, char *key, int32_t val)
 {
@@ -345,7 +374,7 @@ bool bench_format_handler_execute_benchmark(bench_format_handler *handler, bench
     ERROR_IF_NULL(handler);
     ERROR_IF_NULL(type);
     ERROR_IF_NULL(contType);
-    JAK_ASSERT(numOperationsInsert >= numOperationsDelete);
+    JAK_ASSERT(numOperationsInsert > numOperationsDelete);
 
     clock_t clockStart, clockInsert, clockRead, clockUpdate, clockDelete;
     clockStart = clock();

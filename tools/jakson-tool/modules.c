@@ -681,11 +681,11 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         bench_type selectType;
         bench_format_handler handler;
         bench_error err;
-        uint32_t numOperationsInsert = 10000;
-        uint32_t numOperationsRead = 5000;
-        uint32_t numOperationsUpdate = 5000;
+        uint32_t numOperationsInsert = 100000;
+        uint32_t numOperationsRead = 1000;
+        uint32_t numOperationsUpdate = 1000;
         uint32_t numOperationsDelete = 1000;
-        container_type contType = BENCH_CONTAINER_TYPE_OBJECT;
+        container_type contType = BENCH_CONTAINER_TYPE_ARRAY;
 
         if (strncmp(opt, "--", 2) == 0) {
             if (strcmp(opt, BENCH_OPTION_SELECT_TYPE) == 0) {
@@ -713,6 +713,8 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                 bench_format_handler_execute_benchmark(&handler, selectType,
                         numOperationsInsert, numOperationsRead, numOperationsUpdate, numOperationsDelete, contType);
                 CONSOLE_WRITELN(file, "Process size after initial insertions: %ldKB", handler.proc_size);
+                numOperationsRead = bench_format_handler_get_reads(&handler);
+                numOperationsUpdate = bench_format_handler_get_updates(&handler);
                 CONSOLE_WRITELN(file, "Insertion of %d %s values took: %ldms with %f Ops/s", numOperationsInsert, argv[2], handler.benchTimes[0], ((double)numOperationsInsert / handler.benchTimes[0]));
                 CONSOLE_WRITELN(file, "Reading of %d %s values took: %ldms with %f Ops/s", numOperationsRead, argv[2], handler.benchTimes[1], ((double)numOperationsRead / handler.benchTimes[1]));
                 CONSOLE_WRITELN(file, "Updating of %d %s values took: %ldms with %f Ops/s", numOperationsUpdate, argv[2], handler.benchTimes[2], ((double)numOperationsUpdate / handler.benchTimes[2]));

@@ -1117,7 +1117,7 @@ static inline fn_result schema_generate_handleKeyword_anyOf(schema *s, carbon_ob
     }
 
     carbon_array_it *ait = carbon_object_it_array_value(oit);
-    vector_create(&(s->data.anyOf), NULL, sizeof(schema*), 5);
+    vector_create(&(s->data.anyOf), NULL, sizeof(schema), 5);
 
     while (carbon_array_it_next(ait)) {
 
@@ -1130,7 +1130,7 @@ static inline fn_result schema_generate_handleKeyword_anyOf(schema *s, carbon_ob
         }
 
         carbon_object_it *soit = carbon_array_it_object_value(ait);
-        schema *anyOf = (schema*) malloc(sizeof(schema));
+        schema *anyOf = VECTOR_NEW_AND_GET(&(s->data.anyOf), schema);
 
         if (!(FN_IS_OK(schema_init(anyOf , NULL)))) {
             carbon_object_it_drop(soit);
@@ -1145,7 +1145,6 @@ static inline fn_result schema_generate_handleKeyword_anyOf(schema *s, carbon_ob
             return FN_FAIL_FORWARD();
         }
         carbon_object_it_drop(soit);
-        vector_push(&(s->data.anyOf), anyOf, 1);
     }
     carbon_array_it_drop(ait);
 
@@ -1166,7 +1165,7 @@ static inline fn_result schema_generate_handleKeyword_allOf(schema *s, carbon_ob
     }
 
     carbon_array_it *ait = carbon_object_it_array_value(oit);
-    vector_create(&(s->data.allOf), NULL, sizeof(schema*), 5);
+    vector_create(&(s->data.allOf), NULL, sizeof(schema), 5);
 
     while (carbon_array_it_next(ait)) {
 
@@ -1179,7 +1178,7 @@ static inline fn_result schema_generate_handleKeyword_allOf(schema *s, carbon_ob
         }
 
         carbon_object_it *soit = carbon_array_it_object_value(ait);
-        schema *allOf = (schema*) malloc(sizeof(schema));
+        schema *allOf = VECTOR_NEW_AND_GET(&(s->data.allOf), schema);
 
         if (!(FN_IS_OK(schema_init(allOf , NULL)))) {
             carbon_object_it_drop(soit);
@@ -1194,7 +1193,6 @@ static inline fn_result schema_generate_handleKeyword_allOf(schema *s, carbon_ob
             return FN_FAIL_FORWARD();
         }
         carbon_object_it_drop(soit);
-        vector_push(&(s->data.allOf), allOf, 1);
     }
     carbon_array_it_drop(ait);
 

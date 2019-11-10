@@ -93,7 +93,6 @@ typedef struct schema {
         struct schema *contains;
         struct schema *_not;
         struct schema *additionalItems;
-        void *_const;
         bool additionalItemsBool;
         bool additionalProperties;
         bool uniqueItems;
@@ -139,7 +138,6 @@ typedef struct schema {
         u8 has_patternRequired : 1;
         // keywords for all types:
         u8 has_enum : 1;
-        u8 has_const : 1;
         // compound keywords:
         u8 has_not : 1;
         u8 has_oneOf : 1;
@@ -191,7 +189,6 @@ static inline fn_result schema_init(schema *s, const char* key_name) {
     s->applies.has_propertyNames = false;
     s->applies.has_patternRequired = false;
     s->applies.has_enum = false;
-    s->applies.has_const = false;
     s->applies.has_not = false;
     s->applies.has_oneOf = false;
     s->applies.has_anyOf = false;
@@ -367,11 +364,6 @@ static inline void schema_drop(schema *s) {
     //TODO: implement
     //if (s->applies.has_properties) {
     //}
-    // TODO: implement
-    if (s->applies.has_const) {
-        free(s->data._const);
-    }
-
 }
 
 

@@ -963,15 +963,6 @@ static inline fn_result schema_generate_handleKeyword_enum(schema *s, carbon_obj
     return FN_OK();
 }
 
-// TODO: implement - a bit tricky!
-static inline fn_result schema_generate_handleKeyword_const(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
-}
-
 
 static inline fn_result schema_generate_handleKeyword_not(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
@@ -1366,11 +1357,6 @@ static inline fn_result schema_generate_handleKeyword(schema *s, const char *key
     }
     else if (strcmp(keyword, "enum") == 0) {
         if (!(FN_IS_OK(schema_generate_handleKeyword_enum(s, oit)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    else if (strcmp(keyword, "const") == 0) {
-        if (!(FN_IS_OK(schema_generate_handleKeyword_const(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }

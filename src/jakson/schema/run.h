@@ -681,7 +681,7 @@ static inline fn_result schema_validate_run_handleKeyword_patternRequired(schema
 }
 
 
-// TODO: implement
+// TODO: implement, deeply equal function needed
 static inline fn_result schema_validate_run_handleKeyword_enum(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
@@ -689,17 +689,6 @@ static inline fn_result schema_validate_run_handleKeyword_enum(schema *s, carbon
     UNUSED(ait);
 
     return FN_FAIL(ERR_NOTIMPL, "\"enum\" keyword not implemented yet");
-}
-
-
-// TODO: implement
-static inline fn_result schema_validate_run_handleKeyword_const(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-
-    UNUSED(s);
-    UNUSED(ait);
-
-    return FN_FAIL(ERR_NOTIMPL, "\"const\" keyword not implemented yet");
 }
 
 

@@ -303,13 +303,6 @@ fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
             return FN_FAIL_FORWARD();
         }
     }
-
-    if (s->applies.has_const) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_const(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
     return FN_OK();
 }
 

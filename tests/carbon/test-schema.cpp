@@ -4,6 +4,7 @@
 
 #include <jakson/jakson.h>
 
+// array tests currently have to be nested, see issue https://github.com/jaksonlabs/jakson/issues/3
 TEST(SchemaTest, ValidateType) {
     carbon schemaFile;
     carbon fileToVal;
@@ -44,7 +45,7 @@ TEST(SchemaTest, ValidateType) {
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
-    json_in7 = "[]";
+    json_in7 = "[[]]";
     carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
 
@@ -90,7 +91,7 @@ TEST(SchemaTest, ValidateMinimum) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -142,7 +143,7 @@ TEST(SchemaTest, ValidateMaximum) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -194,7 +195,7 @@ TEST(SchemaTest, ValidateExclusiveMinimum) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -246,7 +247,7 @@ TEST(SchemaTest, ValidateExclusiveMaximum) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -301,7 +302,7 @@ TEST(SchemaTest, ValidateMultipleOf) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -358,7 +359,7 @@ TEST(SchemaTest, ValidateMinLength) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -411,7 +412,7 @@ TEST(SchemaTest, ValidateMaxLength) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -468,7 +469,7 @@ TEST(SchemaTest, ValidatePattern) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -525,7 +526,7 @@ TEST(SchemaTest, ValidateFormatIPv4) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -579,7 +580,7 @@ TEST(SchemaTest, ValidateFormatDate) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -633,7 +634,7 @@ TEST(SchemaTest, ValidateFormatDateTime) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -687,7 +688,7 @@ TEST(SchemaTest, ValidateFormatURI) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -741,7 +742,7 @@ TEST(SchemaTest, ValidateFormatEmail) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -795,7 +796,7 @@ TEST(SchemaTest, ValidateFormatHostname) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -849,7 +850,7 @@ TEST(SchemaTest, ValidateFormatIPv6) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -903,7 +904,7 @@ TEST(SchemaTest, ValidateFormatRegex) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -945,11 +946,11 @@ TEST(SchemaTest, ValidateMinItems) {
     json_in = "{\"minItems\": 5}";
     carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
 
-    json_in2 = "[1, 2, 3, 4]";
+    json_in2 = "[[1, 2, 3, 4]]";
     carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
 
-    json_in4 = "[1, 2, 3, 4, 5, 6]";
+    json_in4 = "[[1, 2, 3, 4, 5, 6]]";
     carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
 
@@ -957,7 +958,7 @@ TEST(SchemaTest, ValidateMinItems) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[1, 2, 3, 4, 5]";
+    json_in6 = "[[1, 2, 3, 4, 5]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -974,302 +975,309 @@ TEST(SchemaTest, ValidateMinItems) {
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
 
 }
-//
-//
-//TEST(SchemaTest, ValidateMaxItems) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    err err;
-//
-//    json_in = "{\"maxItems\": 5}";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "[1, 2, 3, 4, 5]";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "[1, 2, 3, 4, 5, 6]";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "3.1";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "\"foo\"";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//}
-//
-//
-//TEST(SchemaTest, ValidateItemsObject) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    err err;
-//
-//    json_in = "{\"items\": { \"type\": \"string\"} }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "[\"foo\", \"bar\"]";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "[\"foo\", 6]";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "3.1";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "\"foo\"";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//}
-//
-//
-//TEST(SchemaTest, ValidateItemsArray) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    carbon fileToVal9;
-//    carbon fileToVal10;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    const char *json_in10;
-//    const char *json_in11;
-//    err err;
-//
-//    json_in = "{ \"items\": [{\"type\": \"string\"}, {\"type\": \"array\"}] }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "[\"foo\", \"bar\"]";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "[\"foo\", 6]";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "3.1";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "\"foo\"";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//    json_in10 = "[\"foo\", [1, 2]]";
-//    carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
-//
-//    json_in11 = "[\"foo\", [1, 2], 1]";
-//    carbon_from_json(&fileToVal10, json_in11, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal10)));
-//}
-//
-//
-//TEST(SchemaTest, ValidateAdditionalItemsBool) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    err err;
-//
-//    json_in = "{ \"items\": [{\"type\": \"string\"}, {\"type\": \"array\"}], \"additionalItems\": true }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "[\"foo\", \"bar\"]";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "[\"foo\", [1,2], \"bar\"]";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//}
-//
-//TEST(SchemaTest, ValidateAdditionalItemsObject) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    err err;
-//
-//    json_in = "{ \"items\": [{\"type\": \"string\"}, {\"type\": \"array\"}], \"additionalItems\": {\"type\": \"string\"} }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "[\"foo\", \"bar\"]";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "[\"foo\", [1,2], \"bar\"]";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "[\"foo\", [1,2], \"bar\", \"baz\"]";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[\"foo\", [1,2], 1]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//}
-//
-//TEST(SchemaTest, ValidateContains) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    carbon fileToVal9;
-//    carbon fileToVal10;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    const char *json_in10;
-//    const char *json_in11;
-//    err err;
-//
-//    json_in = "{ \"contains\": {\"type\": \"number\"} }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "[\"foo\", \"bar\"]";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "[\"foo\", 6]";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "3.1";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "\"foo\"";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//    json_in10 = "[\"foo\", [1, 2]]";
-//    carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
-//
-//    json_in11 = "[\"foo\", [1, 2], 1]";
-//    carbon_from_json(&fileToVal10, json_in11, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal10)));
-//}
+
+
+TEST(SchemaTest, ValidateMaxItems) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    err err;
+
+    json_in = "{\"maxItems\": 5}";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "[[1, 2, 3, 4, 5]]";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "[[1, 2, 3, 4, 5, 6]]";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "3.1";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "\"foo\"";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+}
+
+
+TEST(SchemaTest, ValidateItemsObject) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    err err;
+
+    json_in = "{\"items\": { \"type\": [\"string\"]} }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "[[\"foo\", \"bar\"]]";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "[[\"foo\", 6]]";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "3.1";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "\"foo\"";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+}
+
+
+TEST(SchemaTest, ValidateItemsArray) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    carbon fileToVal9;
+    carbon fileToVal10;
+    carbon fileToVal11;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    const char *json_in10;
+    const char *json_in11;
+    const char *json_in12;
+    err err;
+
+    json_in = "{ \"items\": [{\"type\": [\"string\"]}, {\"type\": [\"array\"]}] }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "[[\"foo\", \"bar\"]]";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "[[\"foo\", 6]]";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "3.1";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "\"foo\"";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+    json_in10 = "[[\"foo\", [1, 2]]]";
+    carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
+
+    json_in11 = "[[\"foo\", [1, \"bar\"], 1]]";
+    carbon_from_json(&fileToVal10, json_in11, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal10)));
+
+    json_in12 = "[[\"foo\", [1, \"bar\"]]]";
+    carbon_from_json(&fileToVal11, json_in12, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal11)));
+}
+
+
+TEST(SchemaTest, ValidateAdditionalItemsBool) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    err err;
+
+    json_in = "{ \"items\": [{\"type\": [\"string\"]}, {\"type\": [\"column\"]}], \"additionalItems\": true }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "[[\"foo\", \"bar\"]]";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "[[\"foo\", [1,2], \"bar\"]]";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+}
+
+TEST(SchemaTest, ValidateAdditionalItemsObject) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    err err;
+
+    json_in = "{ \"items\": [{\"type\": \"string\"}, {\"type\": \"array\"}], \"additionalItems\": {\"type\": \"string\"} }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "[[\"foo\", \"bar\"]]";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "[[\"foo\", [1,2], \"bar\"]]";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "[[\"foo\", [1,2], \"bar\", \"baz\"]]";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[\"foo\", [1,2], 1]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+}
+
+
+TEST(SchemaTest, ValidateContains) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    carbon fileToVal9;
+    carbon fileToVal10;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    const char *json_in10;
+    const char *json_in11;
+    err err;
+
+    json_in = "{ \"contains\": {\"type\": [\"number\"]} }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "[[\"foo\", \"bar\"]]";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "[[\"foo\", 6]]";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "3.1";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "\"foo\"";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+    json_in10 = "[[\"foo\", [1, 2]]]";
+    carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
+
+    json_in11 = "[[\"foo\", [1, 2], 1]]";
+    carbon_from_json(&fileToVal10, json_in11, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal10)));
+}
 
 
 TEST(SchemaTest, ValidateMinProperties) {
@@ -1309,7 +1317,7 @@ TEST(SchemaTest, ValidateMinProperties) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1369,7 +1377,7 @@ TEST(SchemaTest, ValidateMaxProperties) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1429,7 +1437,7 @@ TEST(SchemaTest, ValidateRequired) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1489,7 +1497,7 @@ TEST(SchemaTest, ValidateProperties) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1549,7 +1557,7 @@ TEST(SchemaTest, ValidatePatternProperties) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1609,7 +1617,7 @@ TEST(SchemaTest, ValidateAdditionalPropertiesBool) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1668,7 +1676,7 @@ TEST(SchemaTest, ValidateAdditionalPropertiesObject) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1730,7 +1738,7 @@ TEST(SchemaTest, ValidateDependencies) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1792,7 +1800,7 @@ TEST(SchemaTest, ValidatePropertyNames) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1846,7 +1854,7 @@ TEST(SchemaTest, ValidatePatternRequired) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1908,7 +1916,7 @@ TEST(SchemaTest, ValidateEnum) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -1924,11 +1932,11 @@ TEST(SchemaTest, ValidateEnum) {
     carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
 
-    json_in10 = "[1, 2, 3]";
+    json_in10 = "[[1, 2, 3]]";
     carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
 
-    json_in11 = "[1, 2, 3, 4]";
+    json_in11 = "[[1, 2, 3, 4]]";
     carbon_from_json(&fileToVal10, json_in11, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal10)));
 
@@ -1985,7 +1993,7 @@ TEST(SchemaTest, ValidateConst) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -2001,11 +2009,11 @@ TEST(SchemaTest, ValidateConst) {
     carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
 
-    json_in10 = "[1, 2, 3]";
+    json_in10 = "[[1, 2, 3]]";
     carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
 
-    json_in11 = "[1, 2, 3, 4]";
+    json_in11 = "[[1, 2, 3, 4]]";
     carbon_from_json(&fileToVal10, json_in11, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal10)));
 
@@ -2029,6 +2037,7 @@ TEST(SchemaTest, ValidateNot) {
     carbon fileToVal6;
     carbon fileToVal7;
     carbon fileToVal8;
+    carbon fileToVal9;
     const char *json_in;
     const char *json_in2;
     const char *json_in4;
@@ -2037,6 +2046,7 @@ TEST(SchemaTest, ValidateNot) {
     const char *json_in7;
     const char *json_in8;
     const char *json_in9;
+    const char *json_in10;
     err err;
 
     json_in = "{ \"not\": { \"minimum\": 3 } }";
@@ -2054,7 +2064,7 @@ TEST(SchemaTest, ValidateNot) {
     carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
 
-    json_in6 = "[]";
+    json_in6 = "[[]]";
     carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
 
@@ -2070,223 +2080,227 @@ TEST(SchemaTest, ValidateNot) {
     carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
     ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
 
+    json_in10 = "[[\"foo\", \"bar\", \"oof\", \"rab\"]]";
+    carbon_from_json(&fileToVal9, json_in10, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal9)));
+
 }
 
 
-//TEST(SchemaTest, ValidateOneOf) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    err err;
-//
-//    json_in = "{ \"oneOf\": [{ \"minimum\": \"3\" }, {\"maximum\": \"3\"}] }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "\"foo\"";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "2";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "3";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "4";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//}
-//
-//
-//TEST(SchemaTest, ValidateAnyOf) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    err err;
-//
-//    json_in = "{ \"anyOf\": [{ \"type\": [\"number\"] }, {\"type\": [\"string\"]}] }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "\"foo\"";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "2";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "4.5";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "[\"test\"]";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//}
-//
-//
-//TEST(SchemaTest, ValidateAllOf) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    err err;
-//
-//    json_in = "{ \"allOf\": [{ \"type\": [\"number\"] }, {\"minimum\": 3}] }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "\"foo\"";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "2";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "4.5";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "[\"test\"]";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//}
-//
-//
-//TEST(SchemaTest, ValidateIfThenElse) {
-//
-//    carbon schemaFile;
-//    carbon fileToVal;
-//    carbon fileToVal3;
-//    carbon fileToVal4;
-//    carbon fileToVal5;
-//    carbon fileToVal6;
-//    carbon fileToVal7;
-//    carbon fileToVal8;
-//    const char *json_in;
-//    const char *json_in2;
-//    const char *json_in4;
-//    const char *json_in5;
-//    const char *json_in6;
-//    const char *json_in7;
-//    const char *json_in8;
-//    const char *json_in9;
-//    err err;
-//
-//    json_in = "{ \"if\": { \"type\": [\"number\"] }, \"then\": {\"minimum\": 5}, \"else\": {\"type\": [\"string\"]} }";
-//    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
-//
-//    json_in2 = "\"foo\"";
-//    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
-//
-//    json_in4 = "2";
-//    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
-//
-//    json_in5 = "{}";
-//    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
-//
-//    json_in6 = "[]";
-//    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
-//
-//    json_in7 = "null";
-//    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
-//
-//    json_in8 = "5";
-//    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
-//
-//    json_in9 = "[\"test\"]";
-//    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
-//    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
-//
-//}
+TEST(SchemaTest, ValidateOneOf) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    err err;
+
+    json_in = "{ \"oneOf\": [{ \"minimum\": 3 }, {\"maximum\": 3}] }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "\"foo\"";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "2";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "3";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "4";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+}
+
+
+TEST(SchemaTest, ValidateAnyOf) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    err err;
+
+    json_in = "{ \"anyOf\": [{ \"minimum\": 5}, {\"multipleOf\": 2}] }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "\"foo\"";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "1";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "6";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "4";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "[[\"foo\"]]";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+}
+
+
+TEST(SchemaTest, ValidateAllOf) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    err err;
+
+    json_in = "{ \"allOf\": [{ \"type\": [\"number\"] }, {\"minimum\": 3}] }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "\"foo\"";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "2";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "4.5";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "[[\"test\"]]";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+}
+
+
+TEST(SchemaTest, ValidateIfThenElse) {
+
+    carbon schemaFile;
+    carbon fileToVal;
+    carbon fileToVal3;
+    carbon fileToVal4;
+    carbon fileToVal5;
+    carbon fileToVal6;
+    carbon fileToVal7;
+    carbon fileToVal8;
+    const char *json_in;
+    const char *json_in2;
+    const char *json_in4;
+    const char *json_in5;
+    const char *json_in6;
+    const char *json_in7;
+    const char *json_in8;
+    const char *json_in9;
+    err err;
+
+    json_in = "{ \"if\": { \"type\": [\"number\"] }, \"then\": {\"minimum\": 5}, \"else\": {\"type\": [\"string\"]} }";
+    carbon_from_json(&schemaFile, json_in, CARBON_KEY_NOKEY, NULL, &err);
+
+    json_in2 = "\"foo\"";
+    carbon_from_json(&fileToVal, json_in2, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal)));
+
+    json_in4 = "2";
+    carbon_from_json(&fileToVal3, json_in4, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal3)));
+
+    json_in5 = "{}";
+    carbon_from_json(&fileToVal4, json_in5, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal4)));
+
+    json_in6 = "[[]]";
+    carbon_from_json(&fileToVal5, json_in6, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal5)));
+
+    json_in7 = "null";
+    carbon_from_json(&fileToVal6, json_in7, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal6)));
+
+    json_in8 = "5";
+    carbon_from_json(&fileToVal7, json_in8, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_TRUE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal7)));
+
+    json_in9 = "[[\"test\"]]";
+    carbon_from_json(&fileToVal8, json_in9, CARBON_KEY_NOKEY, NULL, &err);
+    ASSERT_FALSE(FN_IS_OK(schema_validate(&schemaFile, &fileToVal8)));
+
+}
 
 
 int main(int argc, char **argv) {

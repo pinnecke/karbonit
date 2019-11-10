@@ -831,7 +831,6 @@ static inline fn_result schema_generate_handleKeyword_dependencies(schema *s, ca
 
         else if (carbon_field_type_is_object_or_subtype(field_type)) {
             if (isArray) {
-                // FIXME: might be a memory leak. does drop free memory recursive?
                 vector_drop(&(s->data.dependencies));
                 carbon_object_it_drop(soit);
                 return FN_FAIL(ERR_BADTYPE, "keyword \"dependencies\" failed: mixed schemas and arrays");
@@ -944,76 +943,24 @@ static inline fn_result schema_generate_handleKeyword_patternRequired(schema *s,
     return FN_OK();
 }
 
-// TODO: implement - a bit tricky. carbon from array func would be useful!
+
 static inline fn_result schema_generate_handleKeyword_enum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
-    UNUSED(s);
-    UNUSED(oit);
 
-    //carbon_field_type_e field_type;
-    //carbon_object_it_prop_type(&field_type, oit);
+    carbon_field_type_e field_type;
+    carbon_object_it_prop_type(&field_type, oit);
 
-    //if (!(carbon_field_type_is_array_or_subtype(field_type))) {
-    //    return FN_FAIL(ERR_BADTYPE, "keyword \"enum\" expects an array");
-    //}
+    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+        return FN_FAIL(ERR_BADTYPE, "keyword \"enum\" expects an array");
+    }
 
-    //carbon_array_it *ait = carbon_object_it_array_value(oit);
+    carbon_array_it *ait = carbon_object_it_array_value(oit);
+    carbon_from_array_it(&(s->data._enum), ait);
+    carbon_array_it_drop(ait);
 
-    //carbon_new context;
-    //carbon_insert *ins, *nested_ins;
+    s->applies.has_enum = true;
 
-    //ins = carbon_create_begin(&context, &(s->data._enum), CARBON_KEY_NOKEY, CARBON_KEEP);
-    //while (carbon_object_it_next(oit)) {
-    //    carbon_object_it_prop_
-
-
-
-
-    //vector_create(&(s->data._enum), NULL, sizeof(schema_tuple*), 5);
-    //schema_tuple *tuple = (schema_tuple*) malloc(sizeof(schema_tuple));
-    //carbon_array_it *ait = carbon_object_it_array_value(oit);
-
-    //while (carbon_array_it_next(ait)) {
-    //    carbon_array_it_field_type(&field_type, ait);
-
-    //    if (carbon_field_type_is_number(field_type)) {
-    //        bool isnull;
-    //        long double *val = (long double*) malloc(sizeof(long double));
-    //        longDoubleFromAit (&isnull, val, ait);
-    //       
-    //        tuple->type = NUMBER;
-    //        tuple->value = val;
-    //    }
-
-    //    else if (carbon_field_type_is_string(field_type) || carbon_field_type_is_binary(field_type)) {
-    //        u64 strlen;
-    //        const char *_str = carbon_array_it_string_value(&strlen, ait);
-    //        char *str = (char*) malloc(sizeof(char) *(strlen + 1));
-    //        str = strndup(_str, strlen);
-    //        if (carbon_field_type_is_string(field_type)) {
-    //            tuple->type = STRING;
-    //        }
-    //        else {
-    //            tuple->type = BINARY;
-    //        }
-    //        tuple->value = str;
-    //    }
-
-    //    else if (carbon_field_type_is_boolean(field_type)) {
-    //        bool *val = (bool*) malloc(sizeof(bool));
-    //        carbon_array_it_bool_value(val, ait);
-    //        tuple->type = BOOLEAN;
-    //        tuple->value = val;
-    //    }
-
-    //// ...
-
-    //        
-
-    //}
-
-
-    return FN_FAIL(ERR_NOTIMPL, "handler function for schema keyword not yet implemented");
+    return FN_OK();
 }
 
 // TODO: implement - a bit tricky!

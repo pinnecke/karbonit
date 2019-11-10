@@ -19,27 +19,41 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 #include "schema.h"
+#include <jakson/schema/validate.h>
 #include <jakson/schema/generate.h>
-#include <jakson/schema/run.h>
-#include <regex.h>
+
+fn_result schema_generate_from_json(schema *s, const char *json, carbon_key_e type, const void *key)
+{
+    FN_FAIL_IF_NULL(s, json);
+
+    carbon doc;
+    err err;
+
+    if (!(carbon_from_json(&doc, json, type, key, &err))) {
+        return FN_FAIL(ERR_JSONPARSEERR, err.details);
+    }
+    if (!(FN_IS_OK(schema_generate_from_carbon(s, &doc)))) {
+        return FN_FAIL_FORWARD();
+    }
+    return FN_OK();
+}
 
 
-fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
-    FN_FAIL_IF_NULL(schemaFile, fileToVal);
+fn_result schema_generate_from_carbon(schema *s, carbon *doc)
+{
+    FN_FAIL_IF_NULL(s, doc);
 
-    schema s;
     carbon_array_it ait;
     carbon_field_type_e field_type;
 
-    if (!(FN_IS_OK(schema_init(&s, NULL)))) {
+    if (!(FN_IS_OK(schema_init(s, NULL)))) {
         carbon_array_it_drop(&ait);
         return FN_FAIL_FORWARD();
     }
 
-    carbon_iterator_open(&ait, schemaFile);
+    carbon_iterator_open(&ait, doc);
     carbon_array_it_next(&ait);
 
-    // a schema always has to be an object.
     carbon_array_it_field_type(&field_type, &ait);
     if (!(carbon_field_type_is_object_or_subtype(field_type))){
         carbon_array_it_drop(&ait);
@@ -47,271 +61,47 @@ fn_result schema_validate(carbon *schemaFile, carbon *fileToVal) {
     }
 
     carbon_object_it *oit = carbon_array_it_object_value(&ait);
-    if (!(FN_IS_OK(schema_generate(&s, oit)))) {
+
+    if (!(FN_IS_OK(schema_generate_run(s, oit)))) {
         carbon_object_it_drop(oit);
         carbon_array_it_drop(&ait);
-        schema_drop(&s);
+        schema_drop(s);
         return FN_FAIL_FORWARD();
     }
+
     carbon_object_it_drop(oit);
     carbon_array_it_drop(&ait);
+    return FN_OK();
+}
 
-    if (!(FN_IS_OK(schema_validate_run_fromFile(&s, fileToVal)))) {
-        schema_drop(&s);
+
+fn_result schema_validate_json(schema *s, const char *json, carbon_key_e type, const void *key)
+{
+    FN_FAIL_IF_NULL(s, json);
+
+    carbon doc;
+    err err;
+
+    if (!(carbon_from_json(&doc, json, type, key, &err))) {
+        return FN_FAIL(ERR_JSONPARSEERR, err.details);
+    }
+
+    if (!(FN_IS_OK(schema_validate_carbon(s, &doc)))) {
+        schema_drop(s);
+        carbon_drop(&doc);
         return FN_FAIL_FORWARD();
     }
-
     return FN_OK();
 }
 
 
-fn_result schema_generate(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-
-    while (carbon_object_it_next(oit)) {
-        u64 key_len;
-        const char *_keyword = carbon_object_it_prop_name(&key_len, oit);
-        const char *keyword = strndup(_keyword, key_len);
-
-        if (!(FN_IS_OK(schema_generate_handleKeyword(s, keyword, oit)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    return FN_OK();
-}
-
-fn_result schema_validate_run(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-
-    carbon_field_type_e field_type;
-    carbon_array_it_field_type(&field_type, ait);
-
-    if (s->applies.has_type) {
-        if(!(FN_IS_OK(schema_validate_run_handleKeyword_type(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    // -------------- keywords for numbers --------------
-    if (carbon_field_type_is_number(field_type)) {
-        if (s->applies.has_minimum) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_minimum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_maximum) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_maximum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_exclusiveMinimum) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_exclusiveMinimum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_exclusiveMaximum) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_exclusiveMaximum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_multipleOf) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_multipleOf(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-    }
-
-        // -------------- keywords for strings --------------
-    else if (carbon_field_type_is_string(field_type)) {
-        if (s->applies.has_minLength) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_minLength(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_maxLength) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_maxLength(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_pattern) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_pattern(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_format) {
-            if(!(FN_IS_OK(schema_validate_run_handleKeyword_format(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_formatMinimum) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatMinimum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_formatMaximum) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatMaximum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_formatExclusiveMinimum) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatExclusiveMinimum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_formatExclusiveMaximum) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatExclusiveMaximum(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-    }
-
-        // -------------- keywords for arrays --------------
-    else if (carbon_field_type_is_array_or_subtype(field_type)) {
-        if (s->applies.has_minItems) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_minItems(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_maxItems) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_maxItems(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_uniqueItems) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_items) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_items(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_contains) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_contains(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-    }
-
-        // -------------- keywords for objects --------------
-    else if (carbon_field_type_is_object_or_subtype(field_type)) {
-        if (s->applies.has_minProperties) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_minProperties(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_maxProperties) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_maxProperties(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_required) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_required(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_properties) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_properties(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_patternProperties) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_patternProperties(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_additionalProperties) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_additionalProperties(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_dependencies) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_dependencies(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_propertyNames) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_propertyNames(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-
-        if (s->applies.has_patternRequired) {
-            if (!(FN_IS_OK(schema_validate_run_handleKeyword_patternRequired(s, ait)))) {
-                return FN_FAIL_FORWARD();
-            }
-        }
-    }
-        
-    // -------------- compound keywords --------------
-    if (s->applies.has_not) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_not(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_oneOf) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_oneOf(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_anyOf) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_anyOf(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_allOf) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_allOf(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_ifThenElse) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_ifThenElse(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    // -------------- keywords for all types --------------
-    if (s->applies.has_enum) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_enum(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    return FN_OK();
-}
-
-
-fn_result schema_validate_run_fromFile(schema *s, carbon *fileToVal) {
-    FN_FAIL_IF_NULL(s, fileToVal);
-
+fn_result schema_validate_carbon(schema *s, carbon *doc)
+{
+    FN_FAIL_IF_NULL(s, doc);
+    
     carbon_array_it ait;
-    carbon_iterator_open(&ait, fileToVal);
+
+    carbon_iterator_open(&ait, doc);
     carbon_array_it_next(&ait);
 
     if (!(FN_IS_OK(schema_validate_run(s, &ait)))) {
@@ -322,3 +112,101 @@ fn_result schema_validate_run_fromFile(schema *s, carbon *fileToVal) {
 }
 
 
+void schema_drop(schema *s) {
+
+    if (s->key_name) {
+        free((void*)s->key_name);
+    }
+    if (s->applies.has_type) {
+        vector_drop(&(s->data.type));
+    }
+    if (s->applies.has_items) {
+        for (size_t i = 0; i < vector_length(&(s->data.items)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.items), i));
+        }
+        vector_drop(&(s->data.items));
+    }
+    if (s->applies.has_required) {
+        for (size_t i = 0; i < vector_length(&(s->data.required)); i++) {
+        }
+        vector_drop(&(s->data.required));
+    }
+    if (s->applies.has_patternRequired) {
+        for (size_t i = 0; i < vector_length(&(s->data.patternRequired)); i++) {
+        }
+        vector_drop(&(s->data.patternRequired));
+    }
+    if (s->applies.has_oneOf) {
+        for (size_t i = 0; i < vector_length(&(s->data.oneOf)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.oneOf), i));
+        }
+        vector_drop(&(s->data.oneOf));
+    }
+    if (s->applies.has_anyOf) {
+        for (size_t i = 0; i < vector_length(&(s->data.anyOf)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.anyOf), i));
+        }
+        vector_drop(&(s->data.anyOf));
+    }
+    if (s->applies.has_allOf) {
+        for (size_t i = 0; i < vector_length(&(s->data.allOf)); i++) {
+            schema_drop((schema*)vector_at(&(s->data.allOf), i));
+        }
+        vector_drop(&(s->data.allOf));
+    }
+    if (s->applies.has_patternProperties) {
+        //for (size_t i = 0; i < vector_length(&(s->data.patternProperties)); i++) {
+        //    schema_drop((schema*)vector_at(&(s->data.patternProperties), i));
+        //    free((void*)vector_at(&(s->data.patternProperties), i));
+        //}
+        //vector_drop(&(s->data.patternProperties));
+    }
+    if (s->applies.has_dependencies) {
+            for (size_t i = 0; i < vector_length(&(s->data.dependencies)); i++) {
+                if (s->applies.dependencies_isObject) {
+                    schema_drop((schema*)vector_at(&(s->data.dependencies), i));
+                }
+                else {
+                    vector_drop((vector*)vector_at(&(s->data.dependencies), i));
+                }
+            }
+        vector_drop(&(s->data.dependencies));
+    }
+    // TODO: implement
+    if (s->applies.has_ifThenElse) {
+    }
+    //TODO: implement
+    if (s->applies.has_enum) {
+        carbon_drop(&(s->data._enum));
+    }
+    if (s->applies.has_pattern) {
+        free(s->data.pattern);
+    }
+    if (s->applies.has_formatMinimum) {
+        free(s->data.formatMinimum);
+    }
+    if (s->applies.has_formatMaximum) {
+        free(s->data.formatMaximum);
+    }
+    if (s->applies.has_formatExclusiveMinimum) {
+        free(s->data.formatExclusiveMinimum);
+    }
+    if (s->applies.has_formatExclusiveMaximum) {
+        free(s->data.formatExclusiveMaximum);
+    }
+    if (s->applies.has_propertyNames) {
+        free(s->data.propertyNames);
+    }
+    if (s->applies.has_contains) {
+        free(s->data.contains);
+    }
+    if (s->applies.has_not) {
+        free(s->data._not);
+    }
+    if (s->applies.has_additionalItems && !(s->applies.additionalItemsIsBool)) {
+        free(s->data.additionalItems);
+    }
+    //TODO: implement
+    //if (s->applies.has_properties) {
+    //}
+}

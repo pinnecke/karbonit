@@ -337,9 +337,11 @@ fn_result schema_generate_run(schema *s, carbon_object_it *oit)
         const char *keyword = strndup(_keyword, key_len);
 
         if (!(FN_IS_OK(schema_generate_handleKeyword(s, keyword, oit)))) {
+            free(keyword);
             return FN_FAIL_FORWARD();
         }
     }
+    free(keyword);
     return FN_OK();
 }
 
@@ -795,6 +797,7 @@ fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carbon_object_it *
 
         if (!(carbon_field_type_is_object_or_subtype(field_type)) || strcmp(key, keys_needed[i])) {
             vector_drop(&(s->data.ifThenElse));
+            free(key);
             return FN_FAIL(ERR_BADTYPE, "keyword \"if\" must be followed by the keywords \"then\" and \"else\" which have to be objects");
         }
 
@@ -805,6 +808,7 @@ fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carbon_object_it *
             vector_drop(&(s->data.ifThenElse));
             carbon_object_it_drop(soit);
             free(val);
+            free(key);
             return FN_FAIL_FORWARD();
         }
 
@@ -815,6 +819,7 @@ fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carbon_object_it *
             return FN_FAIL_FORWARD();
         }
         carbon_object_it_drop(soit);
+        free(key);
     }
     s->applies.has_ifThenElse = true;
 
@@ -873,9 +878,11 @@ fn_result schema_generate_handleKeyword_type(schema *s, carbon_object_it *oit) {
         else {
             vector_drop(&(s->data.type));
             carbon_array_it_drop(ait);
+            free(str);
             return FN_FAIL(ERR_UNSUPPORTEDTYPE, "\"type\" keyword contains unsupported constraint");
         }
         vector_push(&(s->data.type), &type, 1);
+        free(str);
     }
     carbon_array_it_drop(ait);
 
@@ -1004,26 +1011,26 @@ fn_result schema_generate_handleKeyword_properties(schema *s, carbon_object_it *
         u64 keylen;
         carbon_object_it *ssoit = carbon_object_it_object_value(soit);
         const char *_key = carbon_object_it_prop_name(&keylen, soit);
-        const char *key = (const char*) malloc(sizeof(char) * (keylen + 1));
-        key = strndup(_key, keylen);
+        const char *key = strndup(_key, keylen);
 
         schema *item = (schema*) malloc(sizeof(schema));
         if (!(FN_IS_OK(schema_init(item, key)))) {
             carbon_object_it_drop(ssoit);
             carbon_object_it_drop(soit);
-            free((void*) key);
+            free(key);
             free(item);
             return FN_FAIL_FORWARD();
         }
         if (!(FN_IS_OK(schema_generate_run(item, ssoit)))) {
             carbon_object_it_drop(ssoit);
             carbon_object_it_drop(soit);
-            free((void*) key);
+            free(key);
             free(item);
             return FN_FAIL_FORWARD();
         }
         carbon_object_it_drop(ssoit);
         vector_push(&(s->data.properties), item, 1);
+        free(key);
     }
     carbon_object_it_drop(soit);
 
@@ -1102,6 +1109,7 @@ fn_result schema_generate_handleKeyword_required(schema *s, carbon_object_it *oi
         const char *required = (const char*) malloc(sizeof(char) * (strlen + 1));
         required = strndup(_required, strlen);
         vector_push(&(s->data.required), required, 1);
+        free(required);
     }
     carbon_array_it_drop(ait);
 
@@ -1134,13 +1142,13 @@ fn_result schema_generate_handleKeyword_patternProperties(schema *s, carbon_obje
         }
 
         schema *patternProperty = (schema*) malloc(sizeof(schema));
-        char *key = (char*) malloc(sizeof(char) * (oit->field.key.name_len + 1));
-        key = strndup(oit->field.key.name, oit->field.key.name_len);
+        char *key = strndup(oit->field.key.name, oit->field.key.name_len);
 
         if (!(FN_IS_OK(schema_init(patternProperty, key)))) {
             carbon_object_it_drop(soit);
             vector_drop(&(s->data.patternProperties));
             free(patternProperty);
+            free(key);
             return FN_FAIL_FORWARD();
         }
 
@@ -1155,6 +1163,7 @@ fn_result schema_generate_handleKeyword_patternProperties(schema *s, carbon_obje
         }
         vector_push(&(s->data.patternProperties), patternProperty, 1);
         carbon_object_it_drop(ssoit);      
+        free(key);
     }
     carbon_object_it_drop(soit);
 
@@ -1222,16 +1231,18 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
                     carbon_array_it_drop(ait);
                     vector_drop(item);
                     vector_drop(&s->data.dependencies);
+                    free(key);
                     carbon_object_it_drop(soit);
                     return FN_FAIL(ERR_BADTYPE, "keyword \"dependencies\" failed: array elem not of type string");
                 }
 
                 u64 strlen;
                 const char *_str = carbon_array_it_string_value(&strlen, ait);
-                const char *str = (const char*) malloc(sizeof(const char) * strlen + 1);
-                str = strndup(_str, strlen);
+                const char *str = strndup(_str, strlen);
                 vector_push(item, str, 1);
+                free(str);
             }
+            free(key);
             carbon_array_it_drop(ait);
         }
 
@@ -1246,12 +1257,12 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
             schema *dependency = (schema*) malloc(sizeof(schema));
             u64 keylen;
             const char *_key = carbon_object_it_prop_name(&keylen, oit);
-            const char *key = (const char*) malloc(sizeof(const char) * keylen + 1);
-            key = strndup(_key, keylen);
+            const char *key = strndup(_key, keylen);
 
             if (!(FN_IS_OK(schema_init(dependency, key)))) {
                 carbon_object_it_drop(soit);
                 free(dependency);
+                free(key);
                 vector_drop(&(s->data.dependencies));
                 return FN_FAIL_FORWARD();
             }
@@ -1262,6 +1273,7 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
                 carbon_object_it_drop(ssoit);      
                 carbon_object_it_drop(soit);
                 free(dependency);
+                free(key);
                 vector_drop(&(s->data.dependencies));
                 return FN_FAIL_FORWARD();
             }
@@ -1272,8 +1284,10 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
             vector_drop(&(s->data.dependencies));
             carbon_object_it_drop(soit);
             vector_drop(&(s->data.dependencies));
+            free(key);
             return FN_FAIL(ERR_BADTYPE, "keyword \"dependencies\" expects a nested schemas or nested string arrays");
         }
+        free(key);
     }
     carbon_object_it_drop(soit);
 
@@ -1337,10 +1351,9 @@ fn_result schema_generate_handleKeyword_patternRequired(schema *s, carbon_object
         }
         u64 strlen;
         const char *_pattern = carbon_array_it_string_value(&strlen, ait);
-        char *pattern = (char*) malloc(sizeof(char) *(strlen + 1));
-        pattern = strndup(_pattern, strlen);
-
+        char *pattern = strndup(_pattern, strlen);
         vector_push(&(s->data.patternRequired), pattern, 1);
+        free(pattern);
     }
     carbon_array_it_drop(ait);
 
@@ -1446,8 +1459,10 @@ fn_result schema_generate_handleKeyword_format(schema *s, carbon_object_it *oit)
         format = REGEX;
     }
     else {
+        free(str);
         return FN_FAIL(ERR_SCHEMA_UNDEF_KEYWORD, "keyword \"format\" defines unknown format"); 
     }
+    free(str);
     s->applies.has_format = true;
     s->data.format = format;
 

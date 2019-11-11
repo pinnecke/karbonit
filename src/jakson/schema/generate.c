@@ -399,6 +399,7 @@ fn_result schema_generate_handleKeyword_uniqueItems(schema *s, carbon_object_it 
     }
 
     s->applies.has_uniqueItems = true;
+    
     carbon_object_it_bool_value(&(s->data.uniqueItems), oit);
 
     return FN_OK();

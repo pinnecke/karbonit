@@ -149,57 +149,388 @@ fn_result schema_validate_run_handleKeyword_maxItems(schema *s, carbon_array_it 
 }
 
 
-// TODO: implement - question: is e.g. [[1,1],[2,2]] valid?
-fn_result schema_validate_run_handleKeyword_uniqueItems(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
+fn_result schema_validate_run_handleKeyword_uniqueItems_compColumns(carbon_column_it *cit1, carbon_column_it *cit2) {
+    FN_FAIL_IF_NULL(cit1, cit2);
 
-    UNUSED(s);
-    UNUSED(ait);
+    carbon_field_type_e type1, type2;
+    u32 nvalues1, nvalues2;
+    carbon_column_it_values_info(&type1, &nvalues1, cit1);
+    carbon_column_it_values_info(&type2, &nvalues2, cit2);
 
-    return FN_FAIL(ERR_NOTIMPL, "function uniqueItems not implemented yet");
+    if (type1 != type2) {
+        return FN_OK();
+    }
 
-    //    carbon_field_type_e field_type;
-    //
-    //    while (carbon_array_it_next(ait)) {
-    //        carbon_array_it_field_type(&field_type, &ait);
-    //
-    //        if (carbon_field_type_is_array_or_subtype(field_type)) {
-    //            carbon_array_it *sait = carbon_array_it_array_value(ait);
-    //            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems(s, sait)))) {
-    //                carbon_array_it_drop(sait);
-    //                return FN_FAIL_FORWARD();
-    //            }
-    //            carbon_array_it_drop(sait);
-    //        }
-    //
-    //        else if (carbon_field_type_is_object_or_subtype(field_type)) {
-    //            carbon_object_it *oit = carbon_array_it_object_value(ait);
-    //            if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_oit(s, oit)))) {
-    //                carbon_object_it_drop(oit);
-    //                return FN_FAIL_FORWARD();
-    //            }
-    //            carbon_object_it_drop(oit);
-    //        }
-    //
-    //        else if (carbon_field_type_is_number(field_type)) {
-    //            bool isnull;
-    //            long double value;
-    //            if (!(FN_IS_OK(longDoubleFromAit(&isnull, &value, ait)))) {
-    //                return FN_FAIL_FORWARD();
-    //            }
-    //        }
-    //
-    //        else if (carbon_field_type_is_string(field_type)) {
-    //
-    //            char *value
-    //
-    //            
-    //
-    //    }
+    if (nvalues1 != nvalues2) {
+        return FN_OK();
 
+    if (carbon_field_type_is_signed(type1)) {
+        const i64 *vals1 = carbon_column_it_i64_values(&nvalues1, cit1);
+        const i64 *vals2 = carbon_column_it_i64_values(&nvalues2, cit2);
+
+        bool unique = false;
+        i64 val1, val2;
+        for (u32 i = 0; i < nvalues1; i++) {
+            val1 = vals1[i];
+            for (u32 j = 0; j < nvalues2; j++) {
+                val2 = vals2[i];
+                if (val1 == val2) {
+                    break;
+                }
+                if (j == (nvalues2 - 1)) {
+                    return FN_OK();
+                }
+            }
+        }
+    }
+        
+    else if (carbon_field_type_is_unsigned(type1)) {
+        const u64 *vals1 = carbon_column_it_u64_values(&nvalues1, cit1);
+        const u64 *vals2 = carbon_column_it_u64_values(&nvalues2, cit2);
+
+        bool unique = false;
+        u64 val1, val2;
+        for (u32 i = 0; i < nvalues1; i++) {
+            val1 = vals1[i];
+            for (u32 j = 0; j < nvalues2; j++) {
+                val2 = vals2[i];
+                if (val1 == val2) {
+                    break;
+                }
+                if (j == (nvalues2 - 1)) {
+                    return FN_OK();
+                }
+            }
+        }
+    }
+
+    else if (carbon_field_type_is_floating(type1)) {
+        const float *vals1 = carbon_column_it_float_values(&nvalues1, cit1);
+        const float *vals2 = carbon_column_it_float_values(&nvalues2, cit2);
+
+        bool unique = false;
+        float val1, val2;
+        for (u32 i = 0; i < nvalues1; i++) {
+            val1 = vals1[i];
+            for (u32 j = 0; j < nvalues2; j++) {
+                val2 = vals2[i];
+                if (val1 == val2) {
+                    break;
+                }
+                if (j == (nvalues2 - 1)) {
+                    return FN_OK();
+                }
+            }
+        }
+    }
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
 }
 
 
+fn_result schema_validate_run_handleKeyword_uniqueItems_compObjects(carbon_object_it* oit1, carbon_object_it *oit2) {
+    FN_FAIL_IF_NULL(oit1, oit2);
+
+    u64 len1, len2;
+    carbon_object_it_length(&len1, oit1);
+    carbon_object_it_length(&len2, oit2);
+
+    if (len1 != len2) {
+        return FN_OK();
+    }
+
+    carbon_field_type_e type1;
+    carbon_field_type_e type2;
+
+    while (carbon_object_it_next(oit1)) {
+        carbon_object_it_field_type(&type1, oit1);
+        u64 keylen1;
+        const char *_key1 = carbon_object_it_prop_name(&keylen1, oit1);
+        const char *key1 = strndup(_key1, keylen1);
+        
+        if (!(carbon_object_it_has_key(key1, oit2))) {
+            return FN_OK();
+        }
+
+
+
+
+
+
+
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+}
+
+
+fn_result schema_validate_run_handleKeyword_uniqueItems_compArrays(carbon_array_it* ait1, carbon_array_it *ait2) {
+    FN_FAIL_IF_NULL(ait1, ait2);
+
+    u64 len1, len2;
+    carbon_array_it_length(&len1, ait1);
+    carbon_array_it_length(&len2, ait2);
+
+    if (len1 != len2) {
+        return FN_OK();
+    }
+
+    carbon_field_type_e type1;
+    carbon_field_type_e type2;
+
+    while (carbon_array_it_next(ait1)) {
+        carbon_array_it_field_type(&type1, ait);
+        u64 pos = 0;
+        carbon_array_it_rewind(ait2);
+        while (carbon_array_it_next(ait2)) {
+            carbon_array_it_field_type(&type2, ait2);
+            
+            if (type1 != type2) {
+                continue;
+            }
+
+            if (carbon_field_type_is_signed(type1)) {
+                i64 val1, val2;
+                carbon_array_it_signed_value(&val1, ait);
+                carbon_array_it_signed_value(&val2, ait);
+                if (val1 == val2) {
+                    break;
+                }
+            }
+                
+            else if (carbon_field_type_is_unsigned(type1)) {
+                u64 val1, val2;
+                carbon_array_it_unsigned_value(&val1, ait);
+                carbon_array_it_unsigned_value(&val2, ait);
+                if (val1 == val2) {
+                    break;
+                }
+            }
+
+            else if (carbon_field_type_is_float(type1)) {
+                float val1, val2;
+                carbon_array_it_float_value(&val1, ait);
+                carbon_array_it_float_value(&val2, ait);
+                if (val1 == val2) {
+                    break;
+                }
+            }
+
+            else if (carbon_field_type_is_bool(type1)) {
+                bool val1, val2;
+                carbon_array_it_bool_value(&val1, ait);
+                carbon_array_it_bool_value(&val2, ait);
+                if (val1 == val2) {
+                    break;
+                }
+            }
+
+            else if (carbon_field_type_is_string(type1)) {
+                u64 strlen1, strlen2;
+                char *_val1 = carbon_array_it_string_value(&strlen1, ait);
+                char *_val2 = carbon_array_it_string_value(&strlen2, ait);
+                if (strlen1 != strlen2) {
+                    continue;
+                }
+                char *val1 = strndup(_val1, strlen1);
+                char *val2 = strndup(_val2, strlen2);
+                if (!(strcmp(val1, val2))) {
+                    break;
+                }
+            }
+
+            else if (carbon_field_type_is_null(type1)) {
+                break;
+            }
+
+            else if (carbon_field_type_is_array(type1)) {
+                carbon_array_it *sait1 = ait1;
+                carbon_array_it *sait2 = ait2;
+                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compArrays(sait1, sait2)))) {
+                    carbon_array_it_drop(sait1);
+                    carbon_array_it_drop(sait2);
+                    break;
+                }
+                carbon_array_it_drop(sait);
+                carbon_array_it_drop(sait2);
+            }
+
+            else if (carbon_field_type_is_column(type1)) {
+                carbon_array_it *cit1 = ait1;
+                carbon_array_it *cit2 = ait2;
+                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compColumns(cit1, cit2)))) {
+                    carbon_array_it_drop(cit1);
+                    carbon_array_it_drop(cit2);
+                    break;
+                }
+                carbon_array_it_drop(cit);
+                carbon_array_it_drop(cit2);
+            }
+
+            else if (carbon_field_type_is_object(type1)) {
+                carbon_array_it *oit1 = oit1;
+                carbon_array_it *oit2 = oit2;
+                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compObjects(oit1, oit2)))) {
+                    carbon_object_it_drop(oit1);
+                    carbon_object_it_drop(oit2);
+                    break;
+                }
+                carbon_object_it_drop(oit1);
+                carbon_object_it_drop(oit2);
+            }
+
+            if (pos == (len1 - 1)) {
+                return FN_OK();
+            }
+            pos++;
+        }
+    }
+    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+}
+
+
+fn_result schema_validate_run_handleKeyword_uniqueItems(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    if (!(&(s->data.uniqueItems))) {
+        return FN_OK();
+    }
+
+    u64 array_len;
+    carbon_array_it_length(&array_len, ait);
+    if (array_len < 2) {
+        return FN_OK();
+    }
+
+    carbon_array_it clone;
+    carbon_array_it_clone(&clone, ait);
+    carbon_field_type_e type1; 
+    carbon_field_type_e type2; 
+    
+    carbon_array_it_next(&clone);
+
+    while (carbon_array_it_next(ait)) {
+        carbon_array_it_field_type(&type1, ait);
+        
+        while (carbon_array_it_next(&clone)) {
+            carbon_array_it saved_pos;
+            carbon_array_it_copy(&saved_pos, &clone);
+            carbon_array_it_field_type(&type2, &clone);
+            
+            if (type1 != type2) {
+                continue;
+            }
+            
+            if (carbon_field_type_is_null(type1)) {
+                carbon_array_it_drop(&clone);
+                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+            }
+            
+            else if (carbon_field_type_is_signed_atom(type1)) {
+                i64 val1, val2;
+                carbon_array_it_signed_value(&val1, ait);
+                carbon_array_it_signed_value(&val2, &clone);
+                if (val1 == val2) {
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+            }
+
+            else if (carbon_field_type_is_unsigned_atom(type1)) {
+                u64 val1, val2;
+                carbon_array_it_unsigned_value(&val1, ait);
+                carbon_array_it_unsigned_value(&val2, &clone);
+                if (val1 == val2) {
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+            }
+
+            else if (carbon_field_type_is_floating_atom(type1)) {
+                float val1, val2;
+                carbon_array_it_float_value(&val1, ait);
+                carbon_array_it_float_value(&val2, &clone);
+                if (val1 == val2) {
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+            }
+
+            else if (carbon_field_type_is_boolean_atom(type1)) {
+                bool val1, val2;
+                carbon_array_it_bool_value(&val1, ait);
+                carbon_array_it_bool_value(&val2, &clone);
+                if (val1 == val2) {
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+            }
+
+            else if (carbon_field_type_is_string(type1)) {
+                u64 strlen1, strlen2;
+                const char *_val1 = carbon_array_it_string_value(val1, ait);
+                const char *_val2 = carbon_array_it_string_value(val2, &clone);
+                if (strlen1 != strlen2) {
+                    continue;
+                }
+                const char *val1 = strndup(_val1, strlen1);
+                const char *val2 = strndup(_val2, strlen2);
+                if (!(strcmp(val1, val2))) {
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+            }
+
+            else if (carbon_field_type_is_binary(type1)) {
+                carbon_array_it_drop(&clone);
+                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met. Cannot compare binary types");
+            }
+
+            else if (carbon_field_type_is_array_or_subtype(type1)) {
+                carbon_array_it *sait = carbon_array_it_array_value(ait);
+                carbon_array_it *sclone = carbon_array_it_array_value(&clone);
+                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compArrays(sait, sclone)))) {
+                    carbon_array_it_drop(sait);
+                    carbon_array_it_drop(sclone);
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+                carbon_array_it_drop(sait);
+                carbon_array_it_drop(sclone);
+            }
+
+            else if (carbon_field_type_is_column_or_subtype(type1)) {
+                carbon_column_it *cit = carbon_array_it_column_value(ait);
+                carbon_column_it *cclone = carbon_array_it_column_value(&clone);
+                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compColumns(cit, cclone)))) {
+                    carbon_column_it_drop(cit);
+                    carbon_column_it_drop(sclone);
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+                carbon_column_it_drop(cit);
+                carbon_column_it_drop(sclone);
+            }
+
+            else if (carbon_field_type_is_object_or_subtype(type1)) {
+                carbon_object_it *oit = carbon_array_it_object_value(ait);
+                carbon_object_it *oclone = carbon_array_it_object_value(&clone);
+                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compObjects(oit, oclone)))) {
+                    carbon_column_it_drop(cit);
+                    carbon_column_it_drop(sclone);
+                    carbon_array_it_drop(&clone);
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+                }
+                carbon_column_it_drop(cit);
+                carbon_column_it_drop(sclone);
+            }
+            //TODO
+            &clone 
+            carbon_array_it_copy(&saved_pos, &clone);
+        }
+    }
+    carbon_array_it_drop(&clone);
+    return FN_OK();
+}
+
+                
 fn_result schema_validate_run_handleKeyword_additionalItems(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
@@ -386,12 +717,10 @@ fn_result schema_validate_run_handleKeyword_not(schema *s, carbon_array_it *ait)
 
     carbon_array_it_rewind(ait);
 
-    // TODO: how to differentiate between return value 0 and failed function in FN_RESULT?
     if(!(FN_IS_OK(schema_validate_run(s->data._not, ait)))) {
         return FN_OK();
     }
 
-    // TODO: better error message
     return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "constraint \"not\" was not met");
 }
 

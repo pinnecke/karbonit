@@ -8773,39 +8773,47 @@ TEST(CarbonTest, CommitHashStr) {
 }
 
 TEST(CarbonTest, ObjectInsert) {
-    carbon doc, rev_doc, rev_doc2;
+    carbon doc, rev_doc;
+    carbon_new context;
+    carbon_insert_object_state objectState;
 
-    carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+    carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+    carbon_insert *nestedIns = carbon_insert_object_begin(&objectState, ins, 1);
+
+    ASSERT_TRUE(carbon_insert_prop_i8(nestedIns, "0", 42));
+    ASSERT_TRUE(carbon_insert_prop_i16(nestedIns, "1", 42));
+    ASSERT_TRUE(carbon_insert_prop_i32(nestedIns, "2", 42));
+    ASSERT_TRUE(carbon_insert_prop_i64(nestedIns, "3", 42));
+
+    carbon_insert_object_end(&objectState);
+    carbon_create_end(&context);
+
     {
-        carbon_revise revise;
-        carbon_insert ins;
-        carbon_array_it it;
-        carbon_insert_object_state objectState;
+        carbon_find find;
 
-        carbon_revise_begin(&revise, &rev_doc, &doc);
-        carbon_revise_iterator_open(&it, &revise);
-        carbon_array_it_insert_begin(&ins, &it);
-
-        carbon_insert *nestedIns = carbon_insert_object_begin(&objectState, &ins, 1);
-        ASSERT_TRUE(carbon_insert_prop_i32(nestedIns, "0", (int32_t) 42));
-        carbon_insert_object_end(&objectState);
-
-        carbon_array_it_insert_end(&ins);
-        carbon_revise_iterator_close(&it);
-        carbon_revise_end(&revise);
+        carbon_find_open(&find, "0.\"0\"", &doc);
+        ASSERT_TRUE(carbon_find_has_result(&find));
+        carbon_find_open(&find, "0.\"1\"", &doc);
+        ASSERT_TRUE(carbon_find_has_result(&find));
+        carbon_find_open(&find, "0.\"2\"", &doc);
+        ASSERT_TRUE(carbon_find_has_result(&find));
+        carbon_find_open(&find, "0.\"3\"", &doc);
+        ASSERT_TRUE(carbon_find_has_result(&find));
     }
 
     {
         carbon_revise revise;
 
-        carbon_revise_begin(&revise, &rev_doc2, &rev_doc);
-        ASSERT_TRUE(carbon_update_set_i32(&revise, "0.\"0\"", 43));
+        carbon_revise_begin(&revise, &rev_doc, &doc);
+        ASSERT_TRUE(carbon_update_set_i8(&revise, "0.\"0\"", 43));
+        ASSERT_TRUE(carbon_update_set_i16(&revise, "0.\"1\"", 43));
+        ASSERT_TRUE(carbon_update_set_i32(&revise, "0.\"2\"", 43));
+        ASSERT_TRUE(carbon_update_set_i64(&revise, "0.\"0\"", 43));
         carbon_revise_end(&revise);
     }
 
     carbon_drop(&doc);
     carbon_drop(&rev_doc);
-    carbon_drop(&rev_doc2);
 }
 
 int main(int argc, char **argv) {

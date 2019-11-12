@@ -24,10 +24,14 @@
 
 #include <jakson/std/string_dict.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, size_t num_index_bucket_cap, size_t num_threads, const allocator *alloc);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -5,8 +5,8 @@
 
 TEST(TestAbstractTypes, CreateRecordDefaultJsonArray) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, 0);
         carbon_create_end(&context);
@@ -19,8 +19,8 @@ TEST(TestAbstractTypes, CreateRecordDefaultJsonArray) {
 
 TEST(TestAbstractTypes, CreateRecordUnsortedMultiset) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_MULTISET);
         carbon_create_end(&context);
@@ -33,8 +33,8 @@ TEST(TestAbstractTypes, CreateRecordUnsortedMultiset) {
 
 TEST(TestAbstractTypes, CreateRecordUnsortedSet) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_SET);
         carbon_create_end(&context);
@@ -47,8 +47,8 @@ TEST(TestAbstractTypes, CreateRecordUnsortedSet) {
 
 TEST(TestAbstractTypes, CreateRecordSortedSet) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_SORTED_SET);
         carbon_create_end(&context);
@@ -61,8 +61,8 @@ TEST(TestAbstractTypes, CreateRecordSortedSet) {
 
 TEST(TestAbstractTypes, CreateRecordSortedMultiset) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_SORTED_MULTISET);
         carbon_create_end(&context);
@@ -75,8 +75,8 @@ TEST(TestAbstractTypes, CreateRecordSortedMultiset) {
 
 TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
 
-        carbon_new new_context;
-        carbon doc, doc2, doc3, doc4, doc5;
+        rec_new new_context;
+        rec doc, doc2, doc3, doc4, doc5;
 
         carbon_create_begin(&new_context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_MULTISET);
         carbon_create_end(&new_context);
@@ -114,13 +114,13 @@ TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
 
 TEST(TestAbstractTypes, ArraySetAbstractType) {
 
-        carbon_new context;
+        rec_new context;
         carbon_insert *ins;
-        carbon doc, doc2;
+        rec doc, doc2;
         carbon_insert_array_state s1;
         carbon_array it, *sub_it;
         carbon_field_type_e ft;
-        carbon_revise rev_context;
+        rev rev_context;
 
         ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
 
@@ -246,11 +246,11 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
 
 TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
 
-        carbon doc, doc2, doc3, doc4, doc5;
+        rec doc, doc2, doc3, doc4, doc5;
         err err;
         carbon_find find;
         carbon_field_type_e ft;
-        carbon_revise revise;
+        rev revise;
 
         carbon_from_json(&doc, "{ x: [ { y: [1,\"b\",3] } ] }", CARBON_KEY_NOKEY, NULL, &err);
 

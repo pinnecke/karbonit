@@ -4,7 +4,7 @@
 
 TEST(TestCarbonPatch, CreatePatch) {
 
-        carbon doc;
+        rec doc;
         struct err err;
         u64 hash_original, hash_patch_1, hash_patch_2;
         carbon_array it, *arr;

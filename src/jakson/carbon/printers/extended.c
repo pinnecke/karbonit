@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <libs/libb64/libb64.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/printers/extended.h>
 #include <jakson/carbon/commit.h>
 

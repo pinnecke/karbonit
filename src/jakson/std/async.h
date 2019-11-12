@@ -27,7 +27,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define ASYNC_MSG_UNKNOWN_HINT "Unknown threading hint"
 
@@ -152,6 +154,8 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
 bool async_filter_early(void *result, size_t *result_size, const void *src, size_t width, size_t len, pred_func_t pred, void *args);
 bool int_async_filter_early(void *result, size_t *result_size, const void *src, size_t width, size_t len, pred_func_t pred, void *args, uint_fast16_t num_threads);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

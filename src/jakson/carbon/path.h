@@ -26,10 +26,12 @@
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/containers.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_path_evaluator {
-        carbon *doc;
+        rec *doc;
         carbon_array root_it;
         carbon_path_status_e status;
         err err;
@@ -53,23 +55,25 @@ typedef struct carbon_path_evaluator {
         } result;
 } carbon_path_evaluator;
 
-fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path, carbon *doc);
-fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const carbon_dot_path *path, carbon_revise *context);
+fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path, rec *doc);
+fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const carbon_dot_path *path, rev *context);
 bool carbon_path_evaluator_end(carbon_path_evaluator *state);
 
 bool carbon_path_evaluator_status(carbon_path_status_e *status, carbon_path_evaluator *state);
 fn_result ofType(bool) carbon_path_evaluator_has_result(carbon_path_evaluator *state);
-bool carbon_path_exists(carbon *doc, const char *path);
+bool carbon_path_exists(rec *doc, const char *path);
 
-bool carbon_path_is_array(carbon *doc, const char *path);
-bool carbon_path_is_column(carbon *doc, const char *path);
-bool carbon_path_is_object(carbon *doc, const char *path);
-bool carbon_path_is_container(carbon *doc, const char *path);
-bool carbon_path_is_null(carbon *doc, const char *path);
-bool carbon_path_is_number(carbon *doc, const char *path);
-bool carbon_path_is_boolean(carbon *doc, const char *path);
-bool carbon_path_is_string(carbon *doc, const char *path);
+bool carbon_path_is_array(rec *doc, const char *path);
+bool carbon_path_is_column(rec *doc, const char *path);
+bool carbon_path_is_object(rec *doc, const char *path);
+bool carbon_path_is_container(rec *doc, const char *path);
+bool carbon_path_is_null(rec *doc, const char *path);
+bool carbon_path_is_number(rec *doc, const char *path);
+bool carbon_path_is_boolean(rec *doc, const char *path);
+bool carbon_path_is_string(rec *doc, const char *path);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

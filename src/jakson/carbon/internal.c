@@ -17,7 +17,7 @@
  */
 
 #include <jakson/std/uintvar/stream.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/internal.h>
@@ -454,41 +454,41 @@ offset_t carbon_int_column_get_payload_off(carbon_column *it)
         return result;
 }
 
-offset_t carbon_int_payload_after_header(carbon *doc)
+offset_t carbon_int_payload_after_header(rec *doc)
 {
         offset_t result = 0;
         carbon_key_e key_type;
 
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
 
-        if (LIKELY(carbon_key_skip(&key_type, &doc->memfile))) {
+        if (LIKELY(carbon_key_skip(&key_type, &doc->file))) {
                 if (key_type != CARBON_KEY_NOKEY) {
-                        carbon_commit_hash_skip(&doc->memfile);
+                        carbon_commit_hash_skip(&doc->file);
                 }
-                result = memfile_tell(&doc->memfile);
+                result = memfile_tell(&doc->file);
         }
 
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
 
         return result;
 }
 
-u64 carbon_int_header_get_commit_hash(carbon *doc)
+u64 carbon_int_header_get_commit_hash(rec *doc)
 {
         JAK_ASSERT(doc);
         u64 rev = 0;
         carbon_key_e key_type;
 
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
 
-        carbon_key_skip(&key_type, &doc->memfile);
+        carbon_key_skip(&key_type, &doc->file);
         if (key_type != CARBON_KEY_NOKEY) {
-                carbon_commit_hash_read(&rev, &doc->memfile);
+                carbon_commit_hash_read(&rev, &doc->file);
         }
 
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
         return rev;
 }
 
@@ -1651,13 +1651,13 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
         }
 }
 
-fn_result carbon_int_from_json(carbon *doc, const json *data,
+fn_result carbon_int_from_json(rec *doc, const json *data,
                           carbon_key_e key_type, const void *primary_key, int mode)
 {
         UNUSED(data)
         UNUSED(primary_key)
 
-        carbon_new context;
+        rec_new context;
         carbon_insert *ins = carbon_create_begin(&context, doc, key_type, mode);
         int_carbon_from_json_elem(ins, data->element, true);
 

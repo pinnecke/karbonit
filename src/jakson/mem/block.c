@@ -17,19 +17,19 @@
 
 #include <jakson/mem/block.h>
 
-typedef struct memblock {
+typedef struct block {
         offset_t blockLength;
         offset_t last_byte;
         void *base;
         err err;
-} memblock;
+} area;
 
-bool memblock_create(memblock **block, size_t size)
+bool memblock_create(area **block, size_t size)
 {
         DEBUG_ERROR_IF_NULL(block)
         ERROR_PRINT_IF(size == 0, ERR_ILLEGALARG)
-        memblock *result = MALLOC(sizeof(memblock));
-        ZERO_MEMORY(result, sizeof(memblock));
+        area *result = MALLOC(sizeof(area));
+        ZERO_MEMORY(result, sizeof(area));
         DEBUG_ERROR_IF_NULL(result)
         result->blockLength = size;
         result->last_byte = 0;
@@ -39,27 +39,27 @@ bool memblock_create(memblock **block, size_t size)
         return true;
 }
 
-bool memblock_zero_out(memblock *block)
+bool memblock_zero_out(area *block)
 {
         DEBUG_ERROR_IF_NULL(block);
         ZERO_MEMORY(block->base, block->blockLength);
         return true;
 }
 
-bool memblock_from_file(memblock **block, FILE *file, size_t nbytes)
+bool memblock_from_file(area **block, FILE *file, size_t nbytes)
 {
         memblock_create(block, nbytes);
         size_t numRead = fread((*block)->base, 1, nbytes, file);
         return numRead == nbytes ? true : false;
 }
 
-bool memblock_from_raw_data(memblock **block, const void *data, size_t nbytes)
+bool memblock_from_raw_data(area **block, const void *data, size_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(block)
         DEBUG_ERROR_IF_NULL(data)
         DEBUG_ERROR_IF_NULL(nbytes)
 
-        memblock *result = MALLOC(sizeof(memblock));
+        area *result = MALLOC(sizeof(area));
         DEBUG_ERROR_IF_NULL(result)
         result->blockLength = nbytes;
         result->last_byte = nbytes;
@@ -71,7 +71,7 @@ bool memblock_from_raw_data(memblock **block, const void *data, size_t nbytes)
         return true;
 }
 
-bool memblock_drop(memblock *block)
+bool memblock_drop(area *block)
 {
         DEBUG_ERROR_IF_NULL(block)
         free(block->base);
@@ -79,37 +79,37 @@ bool memblock_drop(memblock *block)
         return true;
 }
 
-bool memblock_get_error(err *out, memblock *block)
+bool memblock_get_error(err *out, area *block)
 {
         DEBUG_ERROR_IF_NULL(block);
         DEBUG_ERROR_IF_NULL(out);
         return error_cpy(out, &block->err);
 }
 
-bool memblock_size(offset_t *size, const memblock *block)
+bool memblock_size(offset_t *size, const area *block)
 {
         DEBUG_ERROR_IF_NULL(block)
         *size = block->blockLength;
         return true;
 }
 
-offset_t memblock_last_used_byte(const memblock *block)
+offset_t memblock_last_used_byte(const area *block)
 {
         return block ? block->last_byte : 0;
 }
 
-bool memblock_write_to_file(FILE *file, const memblock *block)
+bool memblock_write_to_file(FILE *file, const area *block)
 {
         size_t nwritten = fwrite(block->base, block->blockLength, 1, file);
         return nwritten == 1 ? true : false;
 }
 
-const char *memblock_raw_data(const memblock *block)
+const char *memblock_raw_data(const area *block)
 {
         return (block && block->base ? block->base : NULL);
 }
 
-bool memblock_resize(memblock *block, size_t size)
+bool memblock_resize(area *block, size_t size)
 {
         DEBUG_ERROR_IF_NULL(block)
         ERROR_PRINT_IF(size == 0, ERR_ILLEGALARG)
@@ -121,7 +121,7 @@ bool memblock_resize(memblock *block, size_t size)
         return true;
 }
 
-bool memblock_write(memblock *block, offset_t position, const char *data, offset_t nbytes)
+bool memblock_write(area *block, offset_t position, const char *data, offset_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(block)
         DEBUG_ERROR_IF_NULL(data)
@@ -134,7 +134,7 @@ bool memblock_write(memblock *block, offset_t position, const char *data, offset
         }
 }
 
-bool memblock_cpy(memblock **dst, memblock *src)
+bool memblock_cpy(area **dst, area *src)
 {
         DEBUG_ERROR_IF_NULL(dst)
         DEBUG_ERROR_IF_NULL(src)
@@ -147,7 +147,7 @@ bool memblock_cpy(memblock **dst, memblock *src)
         return true;
 }
 
-bool memblock_shrink(memblock *block)
+bool memblock_shrink(area *block)
 {
         DEBUG_ERROR_IF_NULL(block)
         block->blockLength = block->last_byte;
@@ -155,12 +155,12 @@ bool memblock_shrink(memblock *block)
         return true;
 }
 
-bool memblock_move_right(memblock *block, offset_t where, size_t nbytes)
+bool memblock_move_right(area *block, offset_t where, size_t nbytes)
 {
         return memblock_move_ex(block, where, nbytes, true);
 }
 
-bool memblock_move_left(memblock *block, offset_t where, size_t nbytes)
+bool memblock_move_left(area *block, offset_t where, size_t nbytes)
 {
         DEBUG_ERROR_IF_NULL(block)
         ERROR_IF(where + nbytes >= block->blockLength, &block->err, ERR_OUTOFBOUNDS)
@@ -176,7 +176,7 @@ bool memblock_move_left(memblock *block, offset_t where, size_t nbytes)
         }
 }
 
-bool memblock_move_ex(memblock *block, offset_t where, size_t nbytes, bool zero_out)
+bool memblock_move_ex(area *block, offset_t where, size_t nbytes, bool zero_out)
 {
         DEBUG_ERROR_IF_NULL(block)
         ERROR_IF(where >= block->blockLength, &block->err, ERR_OUTOFBOUNDS);
@@ -201,7 +201,7 @@ bool memblock_move_ex(memblock *block, offset_t where, size_t nbytes, bool zero_
         return true;
 }
 
-void *memblock_move_contents_and_drop(memblock *block)
+void *memblock_move_contents_and_drop(area *block)
 {
         void *result = block->base;
         block->base = NULL;
@@ -209,7 +209,7 @@ void *memblock_move_contents_and_drop(memblock *block)
         return result;
 }
 
-bool memfile_update_last_byte(memblock *block, size_t where)
+bool memfile_update_last_byte(area *block, size_t where)
 {
         DEBUG_ERROR_IF_NULL(block);
         ERROR_IF(where >= block->blockLength, &block->err, ERR_ILLEGALSTATE);

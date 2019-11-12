@@ -161,7 +161,7 @@ bool archive_from_json(archive *out, const char *file, err *err, const char *jso
 
         OPTIONAL_CALL(callback, begin_create_from_json);
 
-        memblock *stream;
+        area *stream;
         FILE *out_file;
 
         if (!archive_stream_from_json(&stream,
@@ -211,7 +211,7 @@ bool archive_from_json(archive *out, const char *file, err *err, const char *jso
         return true;
 }
 
-bool archive_stream_from_json(memblock **stream, err *err, const char *json_string,
+bool archive_stream_from_json(area **stream, err *err, const char *json_string,
                                   packer_e compressor, str_dict_tag_e dictionary,
                                   size_t num_async_dic_threads,
                                   bool read_optimized,
@@ -302,7 +302,7 @@ bool archive_stream_from_json(memblock **stream, err *err, const char *json_stri
         return true;
 }
 
-static bool run_string_id_baking(err *err, memblock **stream)
+static bool run_string_id_baking(err *err, area **stream)
 {
         archive archive;
         char tmp_file_name[512];
@@ -378,7 +378,7 @@ static bool run_string_id_baking(err *err, memblock **stream)
         return true;
 }
 
-bool archive_from_model(memblock **stream, err *err, column_doc *model,
+bool archive_from_model(area **stream, err *err, column_doc *model,
                             packer_e compressor,
                             bool bake_string_id_index, archive_callback *callback)
 {
@@ -440,12 +440,12 @@ archive_io_context *archive_io_context_create(archive *archive)
         }
 }
 
-bool archive_write(FILE *file, const memblock *stream)
+bool archive_write(FILE *file, const area *stream)
 {
         return memblock_write_to_file(file, stream);
 }
 
-bool archive_load(memblock **stream, FILE *file)
+bool archive_load(area **stream, FILE *file)
 {
         long start = ftell(file);
         fseek(file, 0, SEEK_END);
@@ -456,7 +456,7 @@ bool archive_load(memblock **stream, FILE *file)
         return memblock_from_file(stream, file, fileSize);
 }
 
-bool archive_print(FILE *file, err *err, memblock *stream)
+bool archive_print(FILE *file, err *err, area *stream)
 {
         memfile memfile;
         memfile_open(&memfile, stream, READ_ONLY);

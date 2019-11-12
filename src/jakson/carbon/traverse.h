@@ -21,7 +21,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/forwdecl.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* called before traversing is started; used to allocate 'extra' allocated memory */
 typedef void (*carbon_traverse_setup_t)(struct carbon_traverse_extra *extra);
@@ -30,7 +32,7 @@ typedef void (*carbon_traverse_setup_t)(struct carbon_traverse_extra *extra);
 typedef void (*carbon_traverse_clean_t)(struct carbon_traverse_extra *extra);
 
 /* called when traversing just had started; accesses the record itself */
-typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struct carbon *record);
+typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struct rec *record);
 
 /* called when an array was found */
 typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, carbon_array *it);
@@ -111,7 +113,7 @@ void carbon_traverse_create(struct carbon_traverse *traverse, carbon_traverse_se
 
 void carbon_traverse_drop(struct carbon_traverse *traverse);
 
-void carbon_traverse_carbon(struct carbon *rev_out, struct carbon_traverse *traverse, struct carbon *record);
+void carbon_traverse_carbon(struct rec *rev_out, struct carbon_traverse *traverse, struct rec *record);
 void carbon_traverse_array(struct carbon_traverse *traverse, carbon_array *it);
 void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column *it);
 void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object *it);
@@ -120,6 +122,8 @@ void carbon_traverse_continue_array(struct carbon_traverse_extra *context, carbo
 void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column *it);
 void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object *it);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

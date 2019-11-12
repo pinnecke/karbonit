@@ -27,7 +27,9 @@
 #include <jakson/mem/file.h>
 #include <jakson/std/string.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool carbon_commit_hash_create(memfile *file);
 bool carbon_commit_hash_skip(memfile *file);
@@ -39,6 +41,8 @@ const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash);
 bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash);
 u64 carbon_commit_hash_from_str(const char *commit_str, err *err);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

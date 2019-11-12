@@ -18,7 +18,7 @@
 #include <jakson/mem/file.h>
 #include <jakson/std/uintvar/stream.h>
 
-bool memfile_open(memfile *file, memblock *block, access_mode_e mode)
+bool memfile_open(memfile *file, area *block, access_mode_e mode)
 {
         DEBUG_ERROR_IF_NULL(file)
         DEBUG_ERROR_IF_NULL(block)

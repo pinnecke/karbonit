@@ -4284,12 +4284,12 @@ struct duk_compiler_ctx {
 	duk_lexer_ctx lex;
 
 	/* current and previous token for parsing */
-	duk_token prev_token;
+	duk_token prevoken;
 	duk_token curr_token;
 	duk_idx_t tok11_idx;                /* curr_token slot1 (matches 'lex' slot1_idx) */
 	duk_idx_t tok12_idx;                /* curr_token slot2 (matches 'lex' slot2_idx) */
-	duk_idx_t tok21_idx;                /* prev_token slot1 */
-	duk_idx_t tok22_idx;                /* prev_token slot2 */
+	duk_idx_t tok21_idx;                /* prevoken slot1 */
+	duk_idx_t tok22_idx;                /* prevoken slot2 */
 
 	/* recursion limit */
 	duk_int_t recursion_depth;
@@ -9681,21 +9681,21 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 		DUK_ERROR((thr), DUK_ERR_SYNTAX_ERROR, (msg)); \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_ARGS(thr) do { \
-		duk_err_type_invalid_args((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
+		duk_errype_invalid_args((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_ARGS(thr) do { \
 		DUK_ERROR_TYPE_INVALID_ARGS((thr)); \
 		return 0; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_STATE(thr) do { \
-		duk_err_type_invalid_state((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
+		duk_errype_invalid_state((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_STATE(thr) do { \
 		DUK_ERROR_TYPE_INVALID_STATE((thr)); \
 		return 0; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
-		duk_err_type_invalid_trap_result((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
+		duk_errype_invalid_trap_result((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
 		DUK_ERROR_TYPE((thr), DUK_STR_INVALID_TRAP_RESULT); \
@@ -9710,7 +9710,7 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 /* Non-verbose errors for low memory targets: no file, line, or message. */
 
 #define DUK_ERROR_REQUIRE_TYPE_INDEX(thr,idx,expectname,lowmemstr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 
 #define DUK_ERROR_INTERNAL(thr) do { \
@@ -9773,30 +9773,30 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 		duk_err_syntax((thr)); \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_ARGS(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_ARGS(thr) do { \
 		DUK_UNREF((thr)); \
 		return DUK_RET_TYPE_ERROR; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_STATE(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_STATE(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
 		DUK_UNREF((thr)); \
 		return DUK_RET_TYPE_ERROR; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_ERROR_TYPE(thr,msg) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_ERROR_URI(thr,msg) do { \
 		duk_err_uri((thr)); \
@@ -9951,16 +9951,16 @@ DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_error(duk_hthread *thr, const char *
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range_index(duk_hthread *thr, const char *filename, duk_int_t linenumber, duk_idx_t idx));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range_push_beyond(duk_hthread *thr, const char *filename, duk_int_t linenumber));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range(duk_hthread *thr, const char *filename, duk_int_t linenumber, const char *message));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber));
 #else  /* DUK_VERBOSE_ERRORS */
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_error(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_eval(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_reference(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_syntax(duk_hthread *thr));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type(duk_hthread *thr));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_uri(duk_hthread *thr));
 #endif /* DUK_VERBOSE_ERRORS */
 
@@ -11752,13 +11752,13 @@ DUK_INTERNAL DUK_COLD void duk_err_range_index(duk_hthread *thr, const char *fil
 DUK_INTERNAL DUK_COLD void duk_err_range_push_beyond(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_RANGE_ERROR, DUK_STR_PUSH_BEYOND_ALLOC_STACK);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
+DUK_INTERNAL DUK_COLD void duk_errype_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_TYPE_ERROR, DUK_STR_INVALID_ARGS);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
+DUK_INTERNAL DUK_COLD void duk_errype_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_TYPE_ERROR, DUK_STR_INVALID_STATE);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
+DUK_INTERNAL DUK_COLD void duk_errype_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_TYPE_ERROR, DUK_STR_INVALID_TRAP_RESULT);
 }
 #else
@@ -11785,7 +11785,7 @@ DUK_INTERNAL DUK_COLD void duk_err_reference(duk_hthread *thr) {
 DUK_INTERNAL DUK_COLD void duk_err_syntax(duk_hthread *thr) {
 	duk__err_shared(thr, DUK_ERR_SYNTAX_ERROR);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type(duk_hthread *thr) {
+DUK_INTERNAL DUK_COLD void duk_errype(duk_hthread *thr) {
 	duk__err_shared(thr, DUK_ERR_TYPE_ERROR);
 }
 DUK_INTERNAL DUK_COLD void duk_err_uri(duk_hthread *thr) {
@@ -66027,7 +66027,7 @@ DUK_LOCAL_DECL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, d
 #define DUK__FUNC_FLAG_GETSET          (1 << 1)   /* Parsing an object literal getter/setter. */
 #define DUK__FUNC_FLAG_METDEF          (1 << 2)   /* Parsing an object literal method definition shorthand. */
 #define DUK__FUNC_FLAG_PUSHNAME_PASS1  (1 << 3)   /* Push function name when creating template (first pass only). */
-#define DUK__FUNC_FLAG_USE_PREVTOKEN   (1 << 4)   /* Use prev_token to start function parsing (workaround for object literal). */
+#define DUK__FUNC_FLAG_USE_PREVTOKEN   (1 << 4)   /* Use prevoken to start function parsing (workaround for object literal). */
 
 /*
  *  Parser control values for tokens.  The token table is ordered by the
@@ -66258,7 +66258,7 @@ DUK_LOCAL void duk__advance_helper(duk_compiler_ctx *comp_ctx, duk_small_int_t e
 	}
 
 	/* make current token the previous; need to fiddle with valstack "backing store" */
-	duk_memcpy(&comp_ctx->prev_token, &comp_ctx->curr_token, sizeof(duk_token));
+	duk_memcpy(&comp_ctx->prevoken, &comp_ctx->curr_token, sizeof(duk_token));
 	duk_copy(thr, comp_ctx->tok11_idx, comp_ctx->tok21_idx);
 	duk_copy(thr, comp_ctx->tok12_idx, comp_ctx->tok22_idx);
 
@@ -66276,10 +66276,10 @@ DUK_LOCAL void duk__advance_helper(duk_compiler_ctx *comp_ctx, duk_small_int_t e
 	                     (long) comp_ctx->curr_token.lineterm,
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok11_idx),
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok12_idx),
-	                     (long) comp_ctx->prev_token.t,
-	                     (long) comp_ctx->prev_token.t_nores,
-	                     (long) comp_ctx->prev_token.start_line,
-	                     (long) comp_ctx->prev_token.lineterm,
+	                     (long) comp_ctx->prevoken.t,
+	                     (long) comp_ctx->prevoken.t_nores,
+	                     (long) comp_ctx->prevoken.start_line,
+	                     (long) comp_ctx->prevoken.lineterm,
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok21_idx),
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok22_idx)));
 }
@@ -66897,10 +66897,10 @@ DUK_LOCAL void duk__emit(duk_compiler_ctx *comp_ctx, duk_instr_t ins) {
 #endif
 	duk_compiler_instr *instr;
 
-	DUK_DDD(DUK_DDDPRINT("duk__emit: 0x%08lx curr_token.start_line=%ld prev_token.start_line=%ld pc=%ld --> %!I",
+	DUK_DDD(DUK_DDDPRINT("duk__emit: 0x%08lx curr_token.start_line=%ld prevoken.start_line=%ld pc=%ld --> %!I",
 	                     (unsigned long) ins,
 	                     (long) comp_ctx->curr_token.start_line,
-	                     (long) comp_ctx->prev_token.start_line,
+	                     (long) comp_ctx->prevoken.start_line,
 	                     (long) duk__get_current_pc(comp_ctx),
 	                     (duk_instr_t) ins));
 
@@ -66913,11 +66913,11 @@ DUK_LOCAL void duk__emit(duk_compiler_ctx *comp_ctx, duk_instr_t ins) {
 	 * they have parsed a token (say a terminating semicolon) and called
 	 * duk__advance().  In this case the line number of the previous
 	 * token is the most accurate one (except in prologue where
-	 * prev_token.start_line is 0).  This is probably not 100% correct
+	 * prevoken.start_line is 0).  This is probably not 100% correct
 	 * right now.
 	 */
 	/* approximation, close enough */
-	line = comp_ctx->prev_token.start_line;
+	line = comp_ctx->prevoken.start_line;
 	if (line == 0) {
 		line = comp_ctx->curr_token.start_line;
 	}
@@ -68591,8 +68591,8 @@ DUK_LOCAL void duk__reset_labels_to_length(duk_compiler_ctx *comp_ctx, duk_size_
 /*
  *  Expression parsing: duk__expr_nud(), duk__expr_led(), duk__expr_lbp(), and helpers.
  *
- *  - duk__expr_nud(): ("null denotation"): process prev_token as a "start" of an expression (e.g. literal)
- *  - duk__expr_led(): ("left denotation"): process prev_token in the "middle" of an expression (e.g. operator)
+ *  - duk__expr_nud(): ("null denotation"): process prevoken as a "start" of an expression (e.g. literal)
+ *  - duk__expr_led(): ("left denotation"): process prevoken in the "middle" of an expression (e.g. operator)
  *  - duk__expr_lbp(): ("left-binding power"): return left-binding power of curr_token
  */
 
@@ -68618,7 +68618,7 @@ DUK_LOCAL void duk__nud_array_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *re
 #endif
 
 	/* DUK_TOK_LBRACKET already eaten, current token is right after that */
-	DUK_ASSERT(comp_ctx->prev_token.t == DUK_TOK_LBRACKET);
+	DUK_ASSERT(comp_ctx->prevoken.t == DUK_TOK_LBRACKET);
 
 	max_init_values = DUK__MAX_ARRAY_INIT_VALUES;  /* XXX: depend on available temps? */
 
@@ -68823,7 +68823,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 	duk_compiler_instr *instr;
 #endif
 
-	DUK_ASSERT(comp_ctx->prev_token.t == DUK_TOK_LCURLY);
+	DUK_ASSERT(comp_ctx->prevoken.t == DUK_TOK_LCURLY);
 
 	max_init_pairs = DUK__MAX_OBJECT_INIT_PAIRS;  /* XXX: depend on available temps? */
 
@@ -68910,10 +68910,10 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 		 * identifier string content.
 		 */
 
-		is_get = (comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
-		          comp_ctx->prev_token.str1 == DUK_HTHREAD_STRING_GET(thr));
-		is_set = (comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
-		          comp_ctx->prev_token.str1 == DUK_HTHREAD_STRING_SET(thr));
+		is_get = (comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
+		          comp_ctx->prevoken.str1 == DUK_HTHREAD_STRING_GET(thr));
+		is_set = (comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
+		          comp_ctx->prevoken.str1 == DUK_HTHREAD_STRING_SET(thr));
 		if ((is_get || is_set) && comp_ctx->curr_token.t != DUK_TOK_COLON) {
 			/* getter/setter */
 			duk_int_t fnum;
@@ -68945,22 +68945,22 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 
 			DUK_ASSERT(st.num_pairs == 0);  /* temp state is reset on next loop */
 #if defined(DUK_USE_ES6)
-		} else if (comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
+		} else if (comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
 		           (comp_ctx->curr_token.t == DUK_TOK_COMMA || comp_ctx->curr_token.t == DUK_TOK_RCURLY)) {
 			duk_bool_t load_rc;
 
-			load_rc = duk__objlit_load_key(comp_ctx, res, &comp_ctx->prev_token, reg_temp);
+			load_rc = duk__objlit_load_key(comp_ctx, res, &comp_ctx->prevoken, reg_temp);
 			DUK_UNREF(load_rc);
 			DUK_ASSERT(load_rc == 0);  /* always succeeds because token is identifier */
 
-			duk__ivalue_var_hstring(comp_ctx, res, comp_ctx->prev_token.str1);
+			duk__ivalue_var_hstring(comp_ctx, res, comp_ctx->prevoken.str1);
 			DUK_ASSERT(DUK__GETTEMP(comp_ctx) == reg_temp + 1);
 			duk__ivalue_toforcedreg(comp_ctx, res, reg_temp + 1);
 
 			st.num_pairs++;
-		} else if ((comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER ||
-		            comp_ctx->prev_token.t == DUK_TOK_STRING ||
-		            comp_ctx->prev_token.t == DUK_TOK_NUMBER) &&
+		} else if ((comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER ||
+		            comp_ctx->prevoken.t == DUK_TOK_STRING ||
+		            comp_ctx->prevoken.t == DUK_TOK_NUMBER) &&
 		           comp_ctx->curr_token.t == DUK_TOK_LPAREN) {
 			duk_int_t fnum;
 
@@ -68971,7 +68971,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 			 * current or the previous token to starting parsing from.
 			 */
 
-			if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prev_token, reg_temp) != 0) {
+			if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prevoken, reg_temp) != 0) {
 				goto syntax_error;
 			}
 
@@ -68986,7 +68986,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 #endif  /* DUK_USE_ES6 */
 		} else {
 #if defined(DUK_USE_ES6)
-			if (comp_ctx->prev_token.t == DUK_TOK_LBRACKET) {
+			if (comp_ctx->prevoken.t == DUK_TOK_LBRACKET) {
 				/* ES2015 computed property name.  Executor ToPropertyKey()
 				 * coerces the key at runtime.
 				 */
@@ -69004,7 +69004,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 			else
 #endif  /* DUK_USE_ES6 */
 			{
-				if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prev_token, reg_temp) != 0) {
+				if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prevoken, reg_temp) != 0) {
 					goto syntax_error;
 				}
 			}
@@ -69055,8 +69055,8 @@ DUK_LOCAL duk_int_t duk__parse_arguments(duk_compiler_ctx *comp_ctx, duk_ivalue 
 
 	/* Note: expect that caller has already eaten the left paren */
 
-	DUK_DDD(DUK_DDDPRINT("start parsing arguments, prev_token.t=%ld, curr_token.t=%ld",
-	                     (long) comp_ctx->prev_token.t, (long) comp_ctx->curr_token.t));
+	DUK_DDD(DUK_DDDPRINT("start parsing arguments, prevoken.t=%ld, curr_token.t=%ld",
+	                     (long) comp_ctx->prevoken.t, (long) comp_ctx->curr_token.t));
 
 	for (;;) {
 		if (comp_ctx->curr_token.t == DUK_TOK_RPAREN) {
@@ -69107,7 +69107,7 @@ DUK_LOCAL void duk__expr_nud(duk_compiler_ctx *comp_ctx, duk_ivalue *res) {
 	duk_uint32_t args;  /* temp variable to pass constants and flags to shared code */
 
 	/*
-	 *  ctx->prev_token     token to process with duk__expr_nud()
+	 *  ctx->prevoken     token to process with duk__expr_nud()
 	 *  ctx->curr_token     updated by caller
 	 *
 	 *  Note: the token in the switch below has already been eaten.
@@ -69117,11 +69117,11 @@ DUK_LOCAL void duk__expr_nud(duk_compiler_ctx *comp_ctx, duk_ivalue *res) {
 
 	comp_ctx->curr_func.nud_count++;
 
-	tk = &comp_ctx->prev_token;
+	tk = &comp_ctx->prevoken;
 	tok = tk->t;
 	res->t = DUK_IVAL_NONE;
 
-	DUK_DDD(DUK_DDDPRINT("duk__expr_nud(), prev_token.t=%ld, allow_in=%ld, paren_level=%ld",
+	DUK_DDD(DUK_DDDPRINT("duk__expr_nud(), prevoken.t=%ld, allow_in=%ld, paren_level=%ld",
 	                     (long) tk->t, (long) comp_ctx->curr_func.allow_in, (long) comp_ctx->curr_func.paren_level));
 
 	switch (tok) {
@@ -69642,17 +69642,17 @@ DUK_LOCAL void duk__expr_led(duk_compiler_ctx *comp_ctx, duk_ivalue *left, duk_i
 	duk_uint32_t args;  /* temp variable to pass constants and flags to shared code */
 
 	/*
-	 *  ctx->prev_token     token to process with duk__expr_led()
+	 *  ctx->prevoken     token to process with duk__expr_led()
 	 *  ctx->curr_token     updated by caller
 	 */
 
 	comp_ctx->curr_func.led_count++;
 
 	/* The token in the switch has already been eaten here */
-	tk = &comp_ctx->prev_token;
+	tk = &comp_ctx->prevoken;
 	tok = tk->t;
 
-	DUK_DDD(DUK_DDDPRINT("duk__expr_led(), prev_token.t=%ld, allow_in=%ld, paren_level=%ld",
+	DUK_DDD(DUK_DDDPRINT("duk__expr_led(), prevoken.t=%ld, allow_in=%ld, paren_level=%ld",
 	                     (long) tk->t, (long) comp_ctx->curr_func.allow_in, (long) comp_ctx->curr_func.paren_level));
 
 	/* XXX: default priority for infix operators is duk__expr_lbp(tok) -> get it here? */
@@ -72415,7 +72415,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 		                comp_ctx->curr_func.led_count == 0);   /* no operators */
 
 		if (single_token &&
-		    comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
+		    comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
 		    comp_ctx->curr_token.t == DUK_TOK_COLON) {
 			/*
 			 *  Detected label
@@ -72427,7 +72427,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 			DUK_ASSERT(res->t == DUK_IVAL_VAR);
 			DUK_ASSERT(res->x1.t == DUK_ISPEC_VALUE);
 			DUK_ASSERT(DUK_TVAL_IS_STRING(duk_get_tval(thr, res->x1.valstack_idx)));
-			h_lab = comp_ctx->prev_token.str1;
+			h_lab = comp_ctx->prevoken.str1;
 			DUK_ASSERT(h_lab != NULL);
 
 			DUK_DDD(DUK_DDDPRINT("explicit label site for label '%!O'",
@@ -72455,7 +72455,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 
 		if (dir_prol_at_entry &&                           /* still in prologue */
 		    single_token &&                                /* single string token */
-		    comp_ctx->prev_token.t == DUK_TOK_STRING) {
+		    comp_ctx->prevoken.t == DUK_TOK_STRING) {
 			/*
 			 *  Detected a directive
 			 */
@@ -72465,7 +72465,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 			DUK_ASSERT(res->t == DUK_IVAL_PLAIN);
 			DUK_ASSERT(res->x1.t == DUK_ISPEC_VALUE);
 			DUK_ASSERT(DUK_TVAL_IS_STRING(duk_get_tval(thr, res->x1.valstack_idx)));
-			h_dir = comp_ctx->prev_token.str1;
+			h_dir = comp_ctx->prevoken.str1;
 			DUK_ASSERT(h_dir != NULL);
 
 			DUK_DDD(DUK_DDDPRINT("potential directive: %!O", h_dir));
@@ -72474,7 +72474,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 
 			/* Note: escaped characters differentiate directives */
 
-			if (comp_ctx->prev_token.num_escapes > 0) {
+			if (comp_ctx->prevoken.num_escapes > 0) {
 				DUK_DDD(DUK_DDDPRINT("directive contains escapes: valid directive "
 				                     "but we ignore such directives"));
 			} else {
@@ -73154,7 +73154,7 @@ DUK_LOCAL void duk__parse_func_body(duk_compiler_ctx *comp_ctx, duk_bool_t expec
 		DUK_DDD(DUK_DDDPRINT("rewind lexer"));
 		DUK_LEXER_SETPOINT(&comp_ctx->lex, &lex_pt);
 		comp_ctx->curr_token.t = 0;  /* this is needed for regexp mode */
-		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prev_token.start_line) */
+		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prevoken.start_line) */
 		duk__advance(comp_ctx);
 
 		/*
@@ -73384,14 +73384,14 @@ DUK_LOCAL void duk__parse_func_like_raw(duk_compiler_ctx *comp_ctx, duk_small_ui
 	 *  it is a PropertyName which allows reserved words and also
 	 *  strings and numbers (e.g. "{ get 1() { ... } }").
 	 *
-	 *  Function parsing may start either from prev_token or curr_token
-	 *  (object literal method definition uses prev_token for example).
+	 *  Function parsing may start either from prevoken or curr_token
+	 *  (object literal method definition uses prevoken for example).
 	 *  This is dealt with for the initial token.
 	 */
 
 	no_advance = (flags & DUK__FUNC_FLAG_USE_PREVTOKEN);
 	if (no_advance) {
-		tok = &comp_ctx->prev_token;
+		tok = &comp_ctx->prevoken;
 	} else {
 		tok = &comp_ctx->curr_token;
 	}
@@ -73508,7 +73508,7 @@ DUK_LOCAL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, duk_sm
 
 		DUK_LEXER_SETPOINT(&comp_ctx->lex, &lex_pt);
 		comp_ctx->curr_token.t = 0;  /* this is needed for regexp mode */
-		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prev_token.start_line) */
+		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prevoken.start_line) */
 		duk__advance(comp_ctx);
 
 		/* RegExp is not allowed after a function expression, e.g. in
@@ -73562,13 +73562,13 @@ DUK_LOCAL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, duk_sm
 
 	duk__parse_func_like_raw(comp_ctx, flags);  /* pushes function template */
 
-	/* prev_token.start_offset points to the closing brace here; when skipping
+	/* prevoken.start_offset points to the closing brace here; when skipping
 	 * we're going to reparse the closing brace to ensure semicolon insertion
 	 * etc work as expected.
 	 */
-	DUK_DDD(DUK_DDDPRINT("after func: prev_tok.start_offset=%ld, curr_tok.start_offset=%ld",
-	                     (long) comp_ctx->prev_token.start_offset, (long) comp_ctx->curr_token.start_offset));
-	DUK_ASSERT(comp_ctx->lex.input[comp_ctx->prev_token.start_offset] == (duk_uint8_t) DUK_ASC_RCURLY);
+	DUK_DDD(DUK_DDDPRINT("after func: prevok.start_offset=%ld, curr_tok.start_offset=%ld",
+	                     (long) comp_ctx->prevoken.start_offset, (long) comp_ctx->curr_token.start_offset));
+	DUK_ASSERT(comp_ctx->lex.input[comp_ctx->prevoken.start_offset] == (duk_uint8_t) DUK_ASC_RCURLY);
 
 	/* XXX: append primitive */
 	DUK_ASSERT(duk_get_length(thr, old_func.funcs_idx) == (duk_size_t) (old_func.fnum_next * 3));
@@ -73581,9 +73581,9 @@ DUK_LOCAL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, duk_sm
 
 	/* array writes autoincrement length */
 	(void) duk_put_prop_index(thr, old_func.funcs_idx, (duk_uarridx_t) (fnum * 3));
-	duk_push_size_t(thr, comp_ctx->prev_token.start_offset);
+	duk_push_size_t(thr, comp_ctx->prevoken.start_offset);
 	(void) duk_put_prop_index(thr, old_func.funcs_idx, (duk_uarridx_t) (fnum * 3 + 1));
-	duk_push_int(thr, comp_ctx->prev_token.start_line);
+	duk_push_int(thr, comp_ctx->prevoken.start_line);
 	(void) duk_put_prop_index(thr, old_func.funcs_idx, (duk_uarridx_t) (fnum * 3 + 2));
 
 	/*
@@ -73663,8 +73663,8 @@ DUK_LOCAL duk_ret_t duk__js_compile_raw(duk_hthread *thr, void *udata) {
 #if defined(DUK_USE_EXPLICIT_NULL_INIT)
 	comp_ctx->thr = NULL;
 	comp_ctx->h_filename = NULL;
-	comp_ctx->prev_token.str1 = NULL;
-	comp_ctx->prev_token.str2 = NULL;
+	comp_ctx->prevoken.str1 = NULL;
+	comp_ctx->prevoken.str2 = NULL;
 	comp_ctx->curr_token.str1 = NULL;
 	comp_ctx->curr_token.str2 = NULL;
 #endif
@@ -73700,7 +73700,7 @@ DUK_LOCAL duk_ret_t duk__js_compile_raw(duk_hthread *thr, void *udata) {
 	lex_pt->offset = 0;
 	lex_pt->line = 1;
 	DUK_LEXER_SETPOINT(&comp_ctx->lex, lex_pt);    /* fills window */
-	comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prev_token.start_line) */
+	comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prevoken.start_line) */
 
 	/*
 	 *  Initialize function state for a zero-argument function

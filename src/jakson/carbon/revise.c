@@ -15,7 +15,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/revise.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/internal.h>
@@ -31,74 +31,64 @@ static bool internal_pack_object(carbon_object *it);
 
 static bool internal_pack_column(carbon_column *it);
 
-static bool internal_commit_update(carbon *doc);
+static bool internal_commit_update(rec *doc);
 
-static bool carbon_header_rev_inc(carbon *doc);
+static bool carbon_header_rev_inc(rec *doc);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fn_result carbon_revise_try_begin(carbon_revise *context, carbon *revised_doc, carbon *doc)
+fn_result carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc)
 {
         FN_FAIL_IF_NULL(context, doc)
-        if (!doc->versioning.commit_lock) {
-                return carbon_revise_begin(context, revised_doc, doc);
-        } else {
-                return FN_FAIL(ERR_PERMISSIONS, "commit is locked");
-        }
+        return carbon_revise_begin(context, revised_doc, doc);
 }
 
-fn_result carbon_revise_begin(carbon_revise *context, carbon *revised_doc, carbon *original)
+fn_result carbon_revise_begin(rev *context, rec *revised_doc, rec *original)
 {
         FN_FAIL_IF_NULL(context, original)
 
-        if (LIKELY(original->versioning.is_latest)) {
-                spinlock_acquire(&original->versioning.write_lock);
-                original->versioning.commit_lock = true;
-                context->original = original;
-                context->revised_doc = revised_doc;
-                error_init(&context->err);
-                carbon_clone(context->revised_doc, context->original);
-                return FN_OK();
-        } else {
-                return FN_FAIL(ERR_OUTDATED, "out dated");
-        }
+        context->original = original;
+        context->revised_doc = revised_doc;
+        error_init(&context->err);
+        carbon_clone(context->revised_doc, context->original);
+        return FN_OK();
 }
 
 
-static void key_unsigned_set(carbon *doc, u64 key)
+static void key_unsigned_set(rec *doc, u64 key)
 {
         JAK_ASSERT(doc);
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
 
-        carbon_key_write_unsigned(&doc->memfile, key);
+        carbon_key_write_unsigned(&doc->file, key);
 
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
 }
 
-static void key_signed_set(carbon *doc, i64 key)
+static void key_signed_set(rec *doc, i64 key)
 {
         JAK_ASSERT(doc);
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
 
-        carbon_key_write_signed(&doc->memfile, key);
+        carbon_key_write_signed(&doc->file, key);
 
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
 }
 
-static void key_string_set(carbon *doc, const char *key)
+static void key_string_set(rec *doc, const char *key)
 {
         JAK_ASSERT(doc);
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
 
-        carbon_key_update_string(&doc->memfile, key);
+        carbon_key_update_string(&doc->file, key);
 
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
 }
 
-bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context)
+bool carbon_revise_key_generate(unique_id_t *out, rev *context)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
@@ -115,7 +105,7 @@ bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context)
         }
 }
 
-bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value)
+bool carbon_revise_key_set_unsigned(rev *context, u64 key_value)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
@@ -129,7 +119,7 @@ bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value)
         }
 }
 
-bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value)
+bool carbon_revise_key_set_signed(rev *context, i64 key_value)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
@@ -143,7 +133,7 @@ bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value)
         }
 }
 
-bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value)
+bool carbon_revise_key_set_string(rev *context, const char *key_value)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
@@ -157,7 +147,7 @@ bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value)
         }
 }
 
-fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_derivable_e derivation)
+fn_result carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation)
 {
         FN_FAIL_IF_NULL(context)
         carbon_array it;
@@ -172,14 +162,14 @@ fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_deriva
         return FN_OK();
 }
 
-fn_result carbon_revise_iterator_open(carbon_array *it, carbon_revise *context)
+fn_result carbon_revise_iterator_open(carbon_array *it, rev *context)
 {
         FN_FAIL_IF_NULL(it, context);
         offset_t payload_start = carbon_int_payload_after_header(context->revised_doc);
-        if (UNLIKELY(context->revised_doc->memfile.mode != READ_WRITE)) {
+        if (UNLIKELY(context->revised_doc->file.mode != READ_WRITE)) {
                 return FN_FAIL(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
-        return internal_carbon_array_create(it, &context->revised_doc->memfile, &context->original->err, payload_start);
+        return internal_carbon_array_create(it, &context->revised_doc->file, &context->original->err, payload_start);
 }
 
 fn_result carbon_revise_iterator_close(carbon_array *it)
@@ -188,7 +178,7 @@ fn_result carbon_revise_iterator_close(carbon_array *it)
         return carbon_array_drop(it);
 }
 
-fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, carbon_revise *context)
+fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context)
 {
         FN_FAIL_IF_NULL(out, dot_path, context)
         carbon_dot_path path;
@@ -204,16 +194,16 @@ fn_result carbon_revise_find_end(carbon_find *find)
         return carbon_find_drop(find);
 }
 
-bool carbon_revise_remove_one(const char *dot_path, carbon *rev_doc, carbon *doc)
+bool carbon_revise_remove_one(const char *dot_path, rec *rev_doc, rec *doc)
 {
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         bool status = carbon_revise_remove(dot_path, &revise);
         carbon_revise_end(&revise);
         return status;
 }
 
-bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
+bool carbon_revise_remove(const char *dot_path, rev *context)
 {
         DEBUG_ERROR_IF_NULL(dot_path)
         DEBUG_ERROR_IF_NULL(context)
@@ -252,7 +242,7 @@ bool carbon_revise_remove(const char *dot_path, carbon_revise *context)
         }
 }
 
-bool carbon_revise_pack(carbon_revise *context)
+bool carbon_revise_pack(rev *context)
 {
         DEBUG_ERROR_IF_NULL(context);
         carbon_array it;
@@ -262,7 +252,7 @@ bool carbon_revise_pack(carbon_revise *context)
         return true;
 }
 
-bool carbon_revise_shrink(carbon_revise *context)
+bool carbon_revise_shrink(rev *context)
 {
         carbon_array it;
         carbon_revise_iterator_open(&it, context);
@@ -280,29 +270,20 @@ bool carbon_revise_shrink(carbon_revise *context)
         return true;
 }
 
-fn_result ofType(const carbon *) carbon_revise_end(carbon_revise *context)
+fn_result ofType(const rec *) carbon_revise_end(rev *context)
 {
         FN_FAIL_IF_NULL(context)
 
         internal_commit_update(context->revised_doc);
 
-        context->original->versioning.is_latest = false;
-        context->original->versioning.commit_lock = false;
-
-        spinlock_release(&context->original->versioning.write_lock);
-
         return FN_OK_PTR(context->revised_doc);
 }
 
-bool carbon_revise_abort(carbon_revise *context)
+bool carbon_revise_abort(rev *context)
 {
         DEBUG_ERROR_IF_NULL(context)
 
         carbon_drop(context->revised_doc);
-        context->original->versioning.is_latest = true;
-        context->original->versioning.commit_lock = false;
-        spinlock_release(&context->original->versioning.write_lock);
-
         return true;
 }
 
@@ -618,26 +599,26 @@ static bool internal_pack_column(carbon_column *it)
         }
 }
 
-static bool internal_commit_update(carbon *doc)
+static bool internal_commit_update(rec *doc)
 {
         JAK_ASSERT(doc);
         return carbon_header_rev_inc(doc);
 }
 
-static bool carbon_header_rev_inc(carbon *doc)
+static bool carbon_header_rev_inc(rec *doc)
 {
         JAK_ASSERT(doc);
 
         carbon_key_e key_type;
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
-        carbon_key_read(NULL, &key_type, &doc->memfile);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
+        carbon_key_read(NULL, &key_type, &doc->file);
         if (carbon_has_key(key_type)) {
                 u64 raw_data_len = 0;
                 const void *raw_data = carbon_raw_data(&raw_data_len, doc);
-                carbon_commit_hash_update(&doc->memfile, raw_data, raw_data_len);
+                carbon_commit_hash_update(&doc->file, raw_data, raw_data_len);
         }
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
 
         return true;
 }

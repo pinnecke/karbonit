@@ -20,11 +20,11 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/find.h>
 
-fn_result carbon_patch_begin(carbon_array *it, carbon *doc)
+fn_result carbon_patch_begin(carbon_array *it, rec *doc)
 {
         FN_FAIL_IF_NULL(it, doc);
         offset_t payload_start = carbon_int_payload_after_header(doc);
-        internal_carbon_array_create(it, &doc->memfile, &doc->err, payload_start);
+        internal_carbon_array_create(it, &doc->file, &doc->err, payload_start);
         internal_carbon_array_set_mode(it, READ_WRITE);
         return FN_OK();
 }
@@ -35,14 +35,14 @@ fn_result carbon_patch_end(carbon_array *it)
         return carbon_array_drop(it);
 }
 
-bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, carbon *doc)
+bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc)
 {
-        doc->memfile.mode = READ_WRITE;
+        doc->file.mode = READ_WRITE;
         return carbon_find_begin(out, dot_path, doc);
 }
 
 fn_result carbon_patch_find_end(carbon_find *find)
 {
-        find->doc->memfile.mode = READ_ONLY;
+        find->doc->file.mode = READ_ONLY;
         return carbon_find_end(find);
 }

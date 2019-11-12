@@ -26,7 +26,9 @@
 #include <jakson/std/vector.h>
 #include <jakson/std/spinlock.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct hashtable_bucket {
         bool in_use_flag;  /** flag indicating if bucket is in use */
@@ -71,6 +73,8 @@ const void *hashtable_get_value(hashtable *map, const void *key);
 bool hashtable_get_load_factor(float *factor, hashtable *map);
 bool hashtable_rehash(hashtable *map);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

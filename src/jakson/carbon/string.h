@@ -26,7 +26,9 @@
 #include <jakson/error.h>
 #include <jakson/mem/file.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_string_field
 {
@@ -52,6 +54,8 @@ bool carbon_string_nomarker_skip(memfile *file);
 const char *carbon_string_read(u64 *len, memfile *file);
 const char *carbon_string_nomarker_read(u64 *len, memfile *file);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -5,8 +5,8 @@
 
 int main (void)
 {
-    carbon_new context;
-    carbon record;
+    rec_new context;
+    rec record;
     char *as_json;
 
     carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);

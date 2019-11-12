@@ -54,7 +54,9 @@
 #include <jakson/std/hash.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Enables or disabled packing of entries inside a bucket. By default, packing is disabled.
@@ -447,6 +449,8 @@ inline static int str_hash_counters_add(str_hash_counters *dst_lhs, const str_ha
         return true;
 }
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -27,7 +27,9 @@
 #include <jakson/std/string.h>
 #include <jakson/stdx/unique_id.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_printer
 {
@@ -125,6 +127,8 @@ bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, str
 bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, string_buffer *builder, bool is_record_container);
 bool carbon_printer_print_column(carbon_column *it, carbon_printer *printer, string_buffer *builder);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

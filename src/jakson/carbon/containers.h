@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/carbon/markers.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  container types (lists/maps)
@@ -74,6 +76,8 @@ typedef enum carbon_list_container {
 
 bool carbon_list_container_type_by_column_type(carbon_list_container_e *out, int field_type);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

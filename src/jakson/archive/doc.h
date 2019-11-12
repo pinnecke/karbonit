@@ -27,7 +27,9 @@
 #include <jakson/std/string_dict.h>
 #include <jakson/json/parser.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct doc_entries {
         doc_obj *context;
@@ -78,6 +80,8 @@ doc_obj *doc_entries_get_root(const doc_entries *partition);
 column_doc *doc_entries_columndoc(const doc_bulk *bulk, const doc_entries *partition, bool read_optimized);
 bool doc_entries_drop(doc_entries *partition);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

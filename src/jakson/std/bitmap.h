@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/std/vector.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct bitmap {
         vector ofType(u64) data;
@@ -45,6 +47,8 @@ bool bitmap_blocks(u32 **blocks, u32 *num_blocks, const bitmap *map);
 void bitmap_print_bits(FILE *file, u32 n);
 void bitmap_print_bits_in_char(FILE *file, char n);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

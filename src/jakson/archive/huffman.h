@@ -27,7 +27,9 @@
 #include <jakson/mem/file.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct huffman {
         vector ofType(pack_huffman_entry) table;
@@ -62,6 +64,8 @@ bool coding_huffman_read_string(pack_huffman_str_info *info, memfile *src);
 bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_symbol);
 bool coding_huffman_read_entry(pack_huffman_info *info, memfile *file, char marker_symbol);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

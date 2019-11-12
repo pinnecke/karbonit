@@ -24,7 +24,9 @@
 
 #include "jakson/stdx/alloc.h"
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Returns standard c-lib allocator (malloc, realloc, free) that collects some statistics
@@ -36,6 +38,8 @@ BEGIN_DECL
  */
 int trace_alloc_create(allocator *alloc);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

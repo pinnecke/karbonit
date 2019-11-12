@@ -28,7 +28,9 @@
 #include <jakson/std/hash.h>
 #include <jakson/std/vector.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 FORWARD_STRUCT_DECL(StringDictionary)
 FORWARD_STRUCT_DECL(Vector)
@@ -223,6 +225,8 @@ static BUILT_IN(bool) string_dict_get_contents(vector ofType (char *) *strings, 
         return dic->get_contents(dic, strings, string_ids);
 }
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

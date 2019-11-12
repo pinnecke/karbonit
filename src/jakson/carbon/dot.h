@@ -31,7 +31,9 @@
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/object.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum carbon_dot_node_type {
         DOT_NODE_ARRAY_IDX,
@@ -81,6 +83,8 @@ bool carbon_dot_path_to_str(string_buffer *sb, carbon_dot_path *path);
 bool carbon_dot_path_fprint(FILE *file, carbon_dot_path *path);
 bool carbon_dot_path_print(carbon_dot_path *path);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

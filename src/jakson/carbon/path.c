@@ -28,7 +28,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                      carbon_array *it, bool is_record);
 
 fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path,
-                                 carbon *doc)
+                                 rec *doc)
 {
         FN_FAIL_IF_NULL(eval, path, doc)
 
@@ -42,7 +42,7 @@ fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_pa
 }
 
 fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const carbon_dot_path *path,
-                                         carbon_revise *context)
+                                         rev *context)
 {
         FN_FAIL_IF_NULL(eval, path, context)
 
@@ -85,7 +85,7 @@ bool carbon_path_evaluator_end(carbon_path_evaluator *state)
         return true;
 }
 
-bool carbon_path_exists(carbon *doc, const char *path)
+bool carbon_path_exists(rec *doc, const char *path)
 {
         carbon_find find;
         bool result = carbon_find_begin(&find, path, doc);
@@ -93,7 +93,7 @@ bool carbon_path_exists(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_array(carbon *doc, const char *path)
+bool carbon_path_is_array(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;
@@ -108,7 +108,7 @@ bool carbon_path_is_array(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_column(carbon *doc, const char *path)
+bool carbon_path_is_column(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;
@@ -123,7 +123,7 @@ bool carbon_path_is_column(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_object(carbon *doc, const char *path)
+bool carbon_path_is_object(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;
@@ -138,13 +138,13 @@ bool carbon_path_is_object(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_container(carbon *doc, const char *path)
+bool carbon_path_is_container(rec *doc, const char *path)
 {
         return (carbon_path_is_array(doc, path) || carbon_path_is_column(doc, path) ||
                 carbon_path_is_object(doc, path));
 }
 
-bool carbon_path_is_null(carbon *doc, const char *path)
+bool carbon_path_is_null(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;
@@ -159,7 +159,7 @@ bool carbon_path_is_null(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_number(carbon *doc, const char *path)
+bool carbon_path_is_number(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;
@@ -174,7 +174,7 @@ bool carbon_path_is_number(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_boolean(carbon *doc, const char *path)
+bool carbon_path_is_boolean(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;
@@ -189,7 +189,7 @@ bool carbon_path_is_boolean(carbon *doc, const char *path)
         return result;
 }
 
-bool carbon_path_is_string(carbon *doc, const char *path)
+bool carbon_path_is_string(rec *doc, const char *path)
 {
         carbon_find find;
         carbon_field_type_e field_type;

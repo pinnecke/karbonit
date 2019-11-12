@@ -5,7 +5,7 @@
 
 int main (void)
 {
-    carbon record;
+    rec record;
     err err;
     char *as_json;
 

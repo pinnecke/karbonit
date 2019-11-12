@@ -25,12 +25,16 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef u64 timestamp;
 
 timestamp wallclock();
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -5,7 +5,7 @@
 
 int main (void)
 {
-        carbon record;
+        rec record;
         err err;
         carbon_array it;
         //string_buffer str;

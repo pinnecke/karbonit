@@ -27,11 +27,13 @@
 #include <jakson/forwdecl.h>
 #include <jakson/error.h>
 #include <jakson/std/vector.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/item.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  public structures
@@ -168,7 +170,7 @@ bool internal_carbon_array_update_column_end(carbon_insert_column_state *state);
 carbon_insert *internal_carbon_array_update_object_begin(carbon_insert_object_state *state, carbon_array *it);
 bool internal_carbon_array_update_object_end(carbon_insert_object_state *state);
 
-bool internal_carbon_array_update_from_carbon(carbon_array *it, const carbon *src);
+bool internal_carbon_array_update_from_carbon(carbon_array *it, const rec *src);
 bool internal_carbon_array_update_from_array(carbon_array *it, const carbon_array *src);
 bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_object *src);
 bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_column *src);
@@ -181,6 +183,8 @@ offset_t internal_carbon_array_tell(carbon_array *it);
 bool internal_carbon_array_offset(offset_t *off, carbon_array *it);
 bool internal_carbon_array_fast_forward(carbon_array *it);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

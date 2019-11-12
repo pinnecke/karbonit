@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Allocates <code>num</code> elements of size <code>sizeof(type)</code> using the allocator <code>alloc</code> and
@@ -134,6 +136,8 @@ void *alloc_realloc(allocator *alloc, void *ptr, size_t size);
  */
 bool alloc_free(allocator *alloc, void *ptr);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

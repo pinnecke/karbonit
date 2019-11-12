@@ -28,7 +28,9 @@
 #include <jakson/types.h>
 #include <jakson/archive.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef union encoded_doc_value {
         archive_field_i8_t int8;
@@ -208,6 +210,8 @@ bool encoded_doc_array_push_object(encoded_doc *doc, archive_field_sid_t key, un
 bool encoded_doc_array_push_object_decoded(encoded_doc *doc, const char *key, unique_id_t id);
 bool encoded_doc_print(FILE *file, encoded_doc *doc);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

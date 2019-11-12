@@ -27,7 +27,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/std/vector.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct spinlock {
         atomic_flag lock;
@@ -38,6 +40,8 @@ bool spinlock_init(spinlock *spinlock);
 bool spinlock_acquire(spinlock *spinlock);
 bool spinlock_release(spinlock *spinlock);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

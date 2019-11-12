@@ -6,7 +6,7 @@
 
 TEST(CarbonArchiveOpsTest, CreateStreamFromJsonString)
 {
-    memblock *stream;
+    area *stream;
     err       err;
 
     const char        *json_string = "{ \"test\": 123 }";

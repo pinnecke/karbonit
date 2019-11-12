@@ -26,7 +26,9 @@
 #include <jakson/types.h>
 #include <jakson/archive/query.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct sid_cache_stats {
         size_t num_hits;
@@ -43,6 +45,8 @@ bool string_id_cache_get_statistics(sid_cache_stats *statistics, struct string_c
 bool string_id_cache_reset_statistics(struct string_cache *cache);
 bool string_id_cache_drop(struct string_cache *cache);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -28,7 +28,9 @@
 #include <jakson/stdx/unique_id.h>
 #include <jakson/archive/pack.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct __attribute__((packed)) archive_header {
         char magic[9];
@@ -364,7 +366,7 @@ typedef struct string_table {
 
 typedef struct record_table {
         record_flags flags;
-        memblock *record_db;
+        area *record_db;
 } record_table;
 
 typedef struct archive_info {
@@ -390,6 +392,8 @@ void int_embedded_table_props_read(table_prop *prop, memfile *memfile);
 archive_field_e int_get_value_type_of_char(char c);
 archive_field_e int_marker_to_field_type(char symbol);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

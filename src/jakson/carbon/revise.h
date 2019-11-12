@@ -25,9 +25,11 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/stdx/unique_id.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Acquires a new revision context for the carbon document.
@@ -40,32 +42,34 @@ BEGIN_DECL
  * @return <code>false</code> in case of an already running revision. Otherwise returns value of
  *                            <code>carbon_revise_begin</code>
  */
-fn_result carbon_revise_try_begin(carbon_revise *context, carbon *revised_doc, carbon *doc);
-fn_result carbon_revise_begin(carbon_revise *context, carbon *revised_doc, carbon *original);
-fn_result ofType(const carbon *) carbon_revise_end(carbon_revise *context);
+fn_result carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc);
+fn_result carbon_revise_begin(rev *context, rec *revised_doc, rec *original);
+fn_result ofType(const rec *) carbon_revise_end(rev *context);
 
-bool carbon_revise_key_generate(unique_id_t *out, carbon_revise *context);
+bool carbon_revise_key_generate(unique_id_t *out, rev *context);
 
-bool carbon_revise_key_set_unsigned(carbon_revise *context, u64 key_value);
-bool carbon_revise_key_set_signed(carbon_revise *context, i64 key_value);
-bool carbon_revise_key_set_string(carbon_revise *context, const char *key_value);
+bool carbon_revise_key_set_unsigned(rev *context, u64 key_value);
+bool carbon_revise_key_set_signed(rev *context, i64 key_value);
+bool carbon_revise_key_set_string(rev *context, const char *key_value);
 
-fn_result carbon_revise_set_list_type(carbon_revise *context, carbon_list_derivable_e derivation);
+fn_result carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation);
 
-fn_result carbon_revise_iterator_open(carbon_array *it, carbon_revise *context);
+fn_result carbon_revise_iterator_open(carbon_array *it, rev *context);
 fn_result carbon_revise_iterator_close(carbon_array *it);
 
-fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, carbon_revise *context);
+fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context);
 fn_result carbon_revise_find_end(carbon_find *find);
 
-bool carbon_revise_remove(const char *dot_path, carbon_revise *context);
-bool carbon_revise_remove_one(const char *dot_path, carbon *rev_doc, carbon *doc);
+bool carbon_revise_remove(const char *dot_path, rev *context);
+bool carbon_revise_remove_one(const char *dot_path, rec *rev_doc, rec *doc);
 
-bool carbon_revise_pack(carbon_revise *context);
-bool carbon_revise_shrink(carbon_revise *context);
+bool carbon_revise_pack(rev *context);
+bool carbon_revise_shrink(rev *context);
 
-bool carbon_revise_abort(carbon_revise *context);
+bool carbon_revise_abort(rev *context);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

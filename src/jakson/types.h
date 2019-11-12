@@ -24,7 +24,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef uint8_t u8;
 typedef uint16_t u16;
@@ -194,6 +196,8 @@ typedef const char *field_string_t;
     value_size;                                                                                                        \
 })
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -3,7 +3,7 @@
 #include <jakson/archive/pack.h>
 #include <jakson/archive/query.h>
 #include <jakson/archive/internal.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 
 #include "modules.h"
 
@@ -527,7 +527,7 @@ bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
         }
         err err;
         FILE *inputFile = fopen(carbonFilePath, "r");
-        memblock *stream;
+        area *stream;
         archive_load(&stream, inputFile);
         if (!archive_print(stdout, &err, stream)) {
             error_print_to_stderr(&err);

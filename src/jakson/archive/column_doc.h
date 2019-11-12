@@ -28,7 +28,9 @@
 #include <jakson/std/string_dict.h>
 #include <jakson/archive/doc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Transformation of an JSON-like array of objects to a columnar representation of key values.
@@ -236,6 +238,8 @@ bool columndoc_free(column_doc *doc);
 
 bool columndoc_print(FILE *file, column_doc *doc);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

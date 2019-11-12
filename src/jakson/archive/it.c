@@ -390,7 +390,7 @@ static void prop_iter_state_init(prop_iter *iter)
 }
 
 static bool archive_prop_iter_from_memblock(prop_iter *iter, err *err, u16 mask,
-                                            memblock *memblock, offset_t object_offset)
+                                            area *memblock, offset_t object_offset)
 {
         DEBUG_ERROR_IF_NULL(iter)
         DEBUG_ERROR_IF_NULL(err)

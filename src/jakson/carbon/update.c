@@ -109,7 +109,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, internal_carbon_a
 
 
 static bool
-create(carbon_update *updater, carbon_revise *context, const carbon_dot_path *path)
+create(carbon_update *updater, rev *context, const carbon_dot_path *path)
 {
         DEBUG_ERROR_IF_NULL(updater)
         DEBUG_ERROR_IF_NULL(context)
@@ -260,67 +260,67 @@ static inline carbon_column *column_iterator(u32 *elem_pos, carbon_update *updat
 })
 
 
-fn_result carbon_update_set_null(carbon_revise *context, const char *path)
+fn_result carbon_update_set_null(rev *context, const char *path)
 {
         return compile_path_and_delegate(context, path, carbon_update_set_null_compiled);
 }
 
-fn_result carbon_update_set_true(carbon_revise *context, const char *path)
+fn_result carbon_update_set_true(rev *context, const char *path)
 {
         return compile_path_and_delegate(context, path, carbon_update_set_true_compiled);
 }
 
-fn_result carbon_update_set_false(carbon_revise *context, const char *path)
+fn_result carbon_update_set_false(rev *context, const char *path)
 {
         return compile_path_and_delegate(context, path, carbon_update_set_false_compiled);
 }
 
-fn_result carbon_update_set_u8(carbon_revise *context, const char *path, u8 value)
+fn_result carbon_update_set_u8(rev *context, const char *path, u8 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_u8_compiled, value);
 }
 
-fn_result carbon_update_set_u16(carbon_revise *context, const char *path, u16 value)
+fn_result carbon_update_set_u16(rev *context, const char *path, u16 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_u16_compiled, value);
 }
 
-fn_result carbon_update_set_u32(carbon_revise *context, const char *path, u32 value)
+fn_result carbon_update_set_u32(rev *context, const char *path, u32 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_u32_compiled, value);
 }
 
-fn_result carbon_update_set_u64(carbon_revise *context, const char *path, u64 value)
+fn_result carbon_update_set_u64(rev *context, const char *path, u64 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_u64_compiled, value);
 }
 
-fn_result carbon_update_set_i8(carbon_revise *context, const char *path, i8 value)
+fn_result carbon_update_set_i8(rev *context, const char *path, i8 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_i8_compiled, value);
 }
 
-fn_result carbon_update_set_i16(carbon_revise *context, const char *path, i16 value)
+fn_result carbon_update_set_i16(rev *context, const char *path, i16 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_i16_compiled, value);
 }
 
-fn_result carbon_update_set_i32(carbon_revise *context, const char *path, i32 value)
+fn_result carbon_update_set_i32(rev *context, const char *path, i32 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_i32_compiled, value);
 }
 
-fn_result carbon_update_set_i64(carbon_revise *context, const char *path, i64 value)
+fn_result carbon_update_set_i64(rev *context, const char *path, i64 value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_i64_compiled, value);
 }
 
-fn_result carbon_update_set_float(carbon_revise *context, const char *path, float value)
+fn_result carbon_update_set_float(rev *context, const char *path, float value)
 {
         return compile_path_and_delegate_wargs(context, path, carbon_update_set_float_compiled, value);
 }
 
-fn_result carbon_update_set_unsigned(carbon_revise *context, const char *path, u64 value)
+fn_result carbon_update_set_unsigned(rev *context, const char *path, u64 value)
 {
         switch (number_min_type_unsigned(value)) {
                 case NUMBER_U8:
@@ -336,7 +336,7 @@ fn_result carbon_update_set_unsigned(carbon_revise *context, const char *path, u
         }
 }
 
-fn_result carbon_update_set_signed(carbon_revise *context, const char *path, i64 value)
+fn_result carbon_update_set_signed(rev *context, const char *path, i64 value)
 {
         switch (number_min_type_signed(value)) {
                 case NUMBER_I8:
@@ -352,7 +352,7 @@ fn_result carbon_update_set_signed(carbon_revise *context, const char *path, i64
         }
 }
 
-fn_result carbon_update_set_string(carbon_revise *context, const char *path, const char *value)
+fn_result carbon_update_set_string(rev *context, const char *path, const char *value)
 {
         // TODO: Implement
         UNUSED(context);
@@ -362,7 +362,7 @@ fn_result carbon_update_set_string(carbon_revise *context, const char *path, con
         return FN_FAIL(ERR_NOTIMPLEMENTED, "carbon_update_set_string");
 }
 
-fn_result carbon_update_set_binary(carbon_revise *context, const char *path, const void *value, size_t nbytes,
+fn_result carbon_update_set_binary(rev *context, const char *path, const void *value, size_t nbytes,
                               const char *file_ext, const char *user_type)
 {
         // TODO: Implement
@@ -375,7 +375,7 @@ fn_result carbon_update_set_binary(carbon_revise *context, const char *path, con
         return FN_FAIL(ERR_NOTIMPLEMENTED, "carbon_update_set_binary");
 }
 
-carbon_insert *carbon_update_set_array_begin(carbon_revise *context, const char *path,
+carbon_insert *carbon_update_set_array_begin(rev *context, const char *path,
                                                         carbon_insert_array_state *state_out,
                                                         u64 array_capacity)
 {
@@ -396,7 +396,7 @@ bool carbon_update_set_array_end(carbon_insert_array_state *state_in)
         return false;
 }
 
-carbon_insert *carbon_update_set_column_begin(carbon_revise *context, const char *path,
+carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
                                                          carbon_insert_column_state *state_out,
                                                          carbon_field_type_e type, u64 column_capacity)
 {
@@ -420,76 +420,76 @@ bool carbon_update_set_column_end(carbon_insert_column_state *state_in)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fn_result carbon_update_set_null_compiled(carbon_revise *context, const carbon_dot_path *path)
+fn_result carbon_update_set_null_compiled(rev *context, const carbon_dot_path *path)
 {
         return try_update(context, path, internal_carbon_array_update_null, carbon_column_update_set_null);
 }
 
-fn_result carbon_update_set_true_compiled(carbon_revise *context, const carbon_dot_path *path)
+fn_result carbon_update_set_true_compiled(rev *context, const carbon_dot_path *path)
 {
         return try_update(context, path, internal_carbon_array_update_true, carbon_column_update_set_true);
 }
 
-fn_result carbon_update_set_false_compiled(carbon_revise *context, const carbon_dot_path *path)
+fn_result carbon_update_set_false_compiled(rev *context, const carbon_dot_path *path)
 {
         return try_update(context, path, internal_carbon_array_update_false, carbon_column_update_set_false);
 }
 
-fn_result carbon_update_set_u8_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_u8_compiled(rev *context, const carbon_dot_path *path,
                                    u8 value)
 {
         return try_update_value(context, path, value, array_update_u8, column_update_u8);
 }
 
-fn_result carbon_update_set_u16_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_u16_compiled(rev *context, const carbon_dot_path *path,
                                     u16 value)
 {
         return try_update_value(context, path, value, array_update_u16, column_update_u16);
 }
 
-fn_result carbon_update_set_u32_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_u32_compiled(rev *context, const carbon_dot_path *path,
                                     u32 value)
 {
         return try_update_value(context, path, value, array_update_u32, column_update_u32);
 }
 
-fn_result carbon_update_set_u64_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_u64_compiled(rev *context, const carbon_dot_path *path,
                                     u64 value)
 {
         return try_update_value(context, path, value, array_update_u64, column_update_u64);
 }
 
-fn_result carbon_update_set_i8_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_i8_compiled(rev *context, const carbon_dot_path *path,
                                    i8 value)
 {
         return try_update_value(context, path, value, array_update_i8, column_update_i8);
 }
 
-fn_result carbon_update_set_i16_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_i16_compiled(rev *context, const carbon_dot_path *path,
                                     i16 value)
 {
         return try_update_value(context, path, value, array_update_i16, column_update_i16);
 }
 
-fn_result carbon_update_set_i32_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_i32_compiled(rev *context, const carbon_dot_path *path,
                                     i32 value)
 {
         return try_update_value(context, path, value, array_update_i32, column_update_i32);
 }
 
-fn_result carbon_update_set_i64_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_i64_compiled(rev *context, const carbon_dot_path *path,
                                     i64 value)
 {
         return try_update_value(context, path, value, array_update_i64, column_update_i64);
 }
 
-fn_result carbon_update_set_float_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_float_compiled(rev *context, const carbon_dot_path *path,
                                       float value)
 {
         return try_update_value(context, path, value, array_update_float, column_update_float);
 }
 
-fn_result carbon_update_set_unsigned_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_unsigned_compiled(rev *context, const carbon_dot_path *path,
                                          u64 value)
 {
         switch (number_min_type_unsigned(value)) {
@@ -506,7 +506,7 @@ fn_result carbon_update_set_unsigned_compiled(carbon_revise *context, const carb
         }
 }
 
-fn_result carbon_update_set_signed_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_signed_compiled(rev *context, const carbon_dot_path *path,
                                        i64 value)
 {
         switch (number_min_type_signed(value)) {
@@ -523,7 +523,7 @@ fn_result carbon_update_set_signed_compiled(carbon_revise *context, const carbon
         }
 }
 
-fn_result carbon_update_set_string_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_string_compiled(rev *context, const carbon_dot_path *path,
                                        const char *value)
 {
         // TODO: Implement
@@ -534,7 +534,7 @@ fn_result carbon_update_set_string_compiled(carbon_revise *context, const carbon
         return FN_FAIL(ERR_NOTIMPLEMENTED, "carbon_update_set_binary_compiled");
 }
 
-fn_result carbon_update_set_binary_compiled(carbon_revise *context, const carbon_dot_path *path,
+fn_result carbon_update_set_binary_compiled(rev *context, const carbon_dot_path *path,
                                        const void *value, size_t nbytes, const char *file_ext, const char *user_type)
 {
         // TODO: Implement
@@ -548,7 +548,7 @@ fn_result carbon_update_set_binary_compiled(carbon_revise *context, const carbon
         return FN_FAIL(ERR_NOTIMPLEMENTED, "carbon_update_set_binary_compiled");
 }
 
-carbon_insert *carbon_update_set_array_begin_compiled(carbon_revise *context,
+carbon_insert *carbon_update_set_array_begin_compiled(rev *context,
                                                                  const carbon_dot_path *path,
                                                                  carbon_insert_array_state *state_out,
                                                                  u64 array_capacity)
@@ -570,7 +570,7 @@ bool carbon_update_set_array_end_compiled(carbon_insert_array_state *state_in)
         return false;
 }
 
-carbon_insert *carbon_update_set_column_begin_compiled(carbon_revise *context,
+carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
                                                                   const carbon_dot_path *path,
                                                                   carbon_insert_column_state *state_out,
                                                                   carbon_field_type_e type,
@@ -598,92 +598,92 @@ bool carbon_update_set_column_end_compiled(carbon_insert_column_state *state_in)
 
 #define revision_context_delegate_func(rev_doc, doc, func, ...)                                                        \
 ({                                                                                                                     \
-        carbon_revise revise;                                                                                    \
+        rev revise;                                                                                    \
         carbon_revise_begin(&revise, rev_doc, doc);                                                                     \
         fn_result status = func(&revise, __VA_ARGS__);                                                                      \
         carbon_revise_end(&revise);                                                                                     \
         status;                                                                                                        \
 })
 
-fn_result carbon_update_one_set_null(const char *dot_path, carbon *rev_doc, carbon *doc)
+fn_result carbon_update_one_set_null(const char *dot_path, rec *rev_doc, rec *doc)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_null, dot_path);
 }
 
-fn_result carbon_update_one_set_true(const char *dot_path, carbon *rev_doc, carbon *doc)
+fn_result carbon_update_one_set_true(const char *dot_path, rec *rev_doc, rec *doc)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_true, dot_path);
 }
 
-fn_result carbon_update_one_set_false(const char *dot_path, carbon *rev_doc, carbon *doc)
+fn_result carbon_update_one_set_false(const char *dot_path, rec *rev_doc, rec *doc)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_false, dot_path);
 }
 
-fn_result carbon_update_one_set_u8(const char *dot_path, carbon *rev_doc, carbon *doc, u8 value)
+fn_result carbon_update_one_set_u8(const char *dot_path, rec *rev_doc, rec *doc, u8 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u8, dot_path, value);
 }
 
-fn_result carbon_update_one_set_u16(const char *dot_path, carbon *rev_doc, carbon *doc, u16 value)
+fn_result carbon_update_one_set_u16(const char *dot_path, rec *rev_doc, rec *doc, u16 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u16, dot_path, value);
 }
 
-fn_result carbon_update_one_set_u32(const char *dot_path, carbon *rev_doc, carbon *doc, u32 value)
+fn_result carbon_update_one_set_u32(const char *dot_path, rec *rev_doc, rec *doc, u32 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u32, dot_path, value);
 }
 
-fn_result carbon_update_one_set_u64(const char *dot_path, carbon *rev_doc, carbon *doc, u64 value)
+fn_result carbon_update_one_set_u64(const char *dot_path, rec *rev_doc, rec *doc, u64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u64, dot_path, value);
 }
 
-fn_result carbon_update_one_set_i8(const char *dot_path, carbon *rev_doc, carbon *doc, i8 value)
+fn_result carbon_update_one_set_i8(const char *dot_path, rec *rev_doc, rec *doc, i8 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i8, dot_path, value);
 }
 
-fn_result carbon_update_one_set_i16(const char *dot_path, carbon *rev_doc, carbon *doc, i16 value)
+fn_result carbon_update_one_set_i16(const char *dot_path, rec *rev_doc, rec *doc, i16 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i16, dot_path, value);
 }
 
-fn_result carbon_update_one_set_i32(const char *dot_path, carbon *rev_doc, carbon *doc, i32 value)
+fn_result carbon_update_one_set_i32(const char *dot_path, rec *rev_doc, rec *doc, i32 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i32, dot_path, value);
 }
 
-fn_result carbon_update_one_set_i64(const char *dot_path, carbon *rev_doc, carbon *doc, i64 value)
+fn_result carbon_update_one_set_i64(const char *dot_path, rec *rev_doc, rec *doc, i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i64, dot_path, value);
 }
 
-fn_result carbon_update_one_set_float(const char *dot_path, carbon *rev_doc, carbon *doc,
+fn_result carbon_update_one_set_float(const char *dot_path, rec *rev_doc, rec *doc,
                                  float value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_float, dot_path, value);
 }
 
-fn_result carbon_update_one_set_unsigned(const char *dot_path, carbon *rev_doc, carbon *doc,
+fn_result carbon_update_one_set_unsigned(const char *dot_path, rec *rev_doc, rec *doc,
                                     u64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_unsigned, dot_path, value);
 }
 
-fn_result carbon_update_one_set_signed(const char *dot_path, carbon *rev_doc, carbon *doc, i64 value)
+fn_result carbon_update_one_set_signed(const char *dot_path, rec *rev_doc, rec *doc, i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_signed, dot_path, value);
 }
 
-fn_result carbon_update_one_set_string(const char *dot_path, carbon *rev_doc, carbon *doc,
+fn_result carbon_update_one_set_string(const char *dot_path, rec *rev_doc, rec *doc,
                                   const char *value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_string, dot_path, value);
 }
 
-fn_result carbon_update_one_set_binary(const char *dot_path, carbon *rev_doc, carbon *doc,
+fn_result carbon_update_one_set_binary(const char *dot_path, rec *rev_doc, rec *doc,
                                   const void *value, size_t nbytes, const char *file_ext, const char *user_type)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_binary, dot_path, value, nbytes,
@@ -691,10 +691,10 @@ fn_result carbon_update_one_set_binary(const char *dot_path, carbon *rev_doc, ca
 }
 
 carbon_insert *carbon_update_one_set_array_begin(carbon_insert_array_state *state_out,
-                                                            const char *dot_path, carbon *rev_doc,
-                                                            carbon *doc, u64 array_capacity)
+                                                            const char *dot_path, rec *rev_doc,
+                                                            rec *doc, u64 array_capacity)
 {
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         carbon_insert *result = carbon_update_set_array_begin(&revise, dot_path, state_out, array_capacity);
         // ... TODO: add revision to context
@@ -709,11 +709,11 @@ bool carbon_update_one_set_array_end(carbon_insert_array_state *state_in)
 }
 
 carbon_insert *carbon_update_one_set_column_begin(carbon_insert_column_state *state_out,
-                                                             const char *dot_path, carbon *rev_doc,
-                                                             carbon *doc, carbon_field_type_e type,
+                                                             const char *dot_path, rec *rev_doc,
+                                                             rec *doc, carbon_field_type_e type,
                                                              u64 column_capacity)
 {
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         carbon_insert *result = carbon_update_set_column_begin(&revise, dot_path, state_out, type,
                                                                           column_capacity);
@@ -730,98 +730,98 @@ bool carbon_update_one_set_column_end(carbon_insert_column_state *state_in)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fn_result carbon_update_one_set_null_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                         carbon *doc)
+fn_result carbon_update_one_set_null_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                         rec *doc)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_null_compiled, path);
 }
 
-fn_result carbon_update_one_set_true_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                         carbon *doc)
+fn_result carbon_update_one_set_true_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                         rec *doc)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_true_compiled, path);
 }
 
-fn_result carbon_update_one_set_false_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                          carbon *doc)
+fn_result carbon_update_one_set_false_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                          rec *doc)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_false_compiled, path);
 }
 
-fn_result carbon_update_one_set_u8_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                       carbon *doc, u8 value)
+fn_result carbon_update_one_set_u8_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                       rec *doc, u8 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u8_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_u16_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, u16 value)
+fn_result carbon_update_one_set_u16_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                        rec *doc, u16 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u16_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_u32_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, u32 value)
+fn_result carbon_update_one_set_u32_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                        rec *doc, u32 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u32_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_u64_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, u64 value)
+fn_result carbon_update_one_set_u64_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                        rec *doc, u64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_u64_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_i8_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                       carbon *doc, i8 value)
+fn_result carbon_update_one_set_i8_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                       rec *doc, i8 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i8_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_i16_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, i16 value)
+fn_result carbon_update_one_set_i16_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                        rec *doc, i16 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i16_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_i32_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, i32 value)
+fn_result carbon_update_one_set_i32_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                        rec *doc, i32 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i32_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_i64_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                        carbon *doc, i64 value)
+fn_result carbon_update_one_set_i64_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                        rec *doc, i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_i64_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_float_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                          carbon *doc, float value)
+fn_result carbon_update_one_set_float_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                          rec *doc, float value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_float_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_unsigned_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                             carbon *doc, u64 value)
+fn_result carbon_update_one_set_unsigned_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                             rec *doc, u64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_unsigned_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_signed_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                           carbon *doc, i64 value)
+fn_result carbon_update_one_set_signed_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                           rec *doc, i64 value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_signed_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_string_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                           carbon *doc, const char *value)
+fn_result carbon_update_one_set_string_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                           rec *doc, const char *value)
 {
         return revision_context_delegate_func(rev_doc, doc, carbon_update_set_string_compiled, path, value);
 }
 
-fn_result carbon_update_one_set_binary_compiled(const carbon_dot_path *path, carbon *rev_doc,
-                                           carbon *doc, const void *value, size_t nbytes,
+fn_result carbon_update_one_set_binary_compiled(const carbon_dot_path *path, rec *rev_doc,
+                                           rec *doc, const void *value, size_t nbytes,
                                            const char *file_ext,
                                            const char *user_type)
 {
@@ -831,10 +831,10 @@ fn_result carbon_update_one_set_binary_compiled(const carbon_dot_path *path, car
 
 carbon_insert *carbon_update_one_set_array_begin_compiled(carbon_insert_array_state *state_out,
                                                                      const carbon_dot_path *path,
-                                                                     carbon *rev_doc, carbon *doc,
+                                                                     rec *rev_doc, rec *doc,
                                                                      u64 array_capacity)
 {
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         carbon_insert *result = carbon_update_set_array_begin_compiled(&revise, path, state_out,
                                                                                   array_capacity);
@@ -851,10 +851,10 @@ bool carbon_update_one_set_array_end_compiled(carbon_insert_array_state *state_i
 
 carbon_insert *carbon_update_one_set_column_begin_compiled(
         carbon_insert_column_state *state_out, const carbon_dot_path *path,
-        carbon *rev_doc,
-        carbon *doc, carbon_field_type_e type, u64 column_capacity)
+        rec *rev_doc,
+        rec *doc, carbon_field_type_e type, u64 column_capacity)
 {
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         carbon_insert *result = carbon_update_set_column_begin_compiled(&revise, path, state_out, type,
                                                                                    column_capacity);

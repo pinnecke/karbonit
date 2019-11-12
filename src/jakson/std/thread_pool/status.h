@@ -24,7 +24,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum thread_status_e {
         THREAD_STATUS_IDLE = 0,
@@ -38,6 +40,8 @@ typedef enum thread_status_e {
         THREAD_STATUS_EMPTY = 99
 } thread_status_e;
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

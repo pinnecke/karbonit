@@ -5,14 +5,14 @@
 
 TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
-        carbon_new context;
+        rec_new context;
         carbon_insert *ins;
-        carbon doc, doc2;
+        rec doc, doc2;
         carbon_insert_object_state s1;
         carbon_array it;
         carbon_object *obj_it;
         carbon_field_type_e ft;
-        carbon_revise rev_context;
+        rev rev_context;
 
         ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
 
@@ -139,11 +139,11 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
 TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
 
-        carbon doc, doc2, doc3, doc4, doc5;
+        rec doc, doc2, doc3, doc4, doc5;
         err err;
         carbon_find find;
         carbon_field_type_e ft;
-        carbon_revise revise;
+        rev revise;
 
         carbon_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", CARBON_KEY_NOKEY, NULL, &err);
 

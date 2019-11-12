@@ -28,7 +28,9 @@
 #include <jakson/archive/pred.h>
 #include <jakson/std/hash/table.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct query {
         archive *archive;
@@ -48,6 +50,8 @@ char *query_fetch_string_by_id_nocache(query *query, archive_field_sid_t id);
 char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens, size_t num_offs);
 archive_field_sid_t *query_find_ids(size_t *num_found, query *query, const string_pred *pred, void *capture, i64 limit);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

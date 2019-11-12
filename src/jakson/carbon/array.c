@@ -22,7 +22,7 @@
 
 #include <jakson/forwdecl.h>
 #include <jakson/std/uintvar/stream.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/object.h>
@@ -205,7 +205,7 @@ bool internal_carbon_array_update_object_end(carbon_insert_object_state *state)
         return false;
 }
 
-bool internal_carbon_array_update_from_carbon(carbon_array *it, const carbon *src)
+bool internal_carbon_array_update_from_carbon(carbon_array *it, const rec *src)
 {
         // TODO: Implement P1
         UNUSED(it)

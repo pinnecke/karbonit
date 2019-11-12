@@ -25,11 +25,15 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 i64 convert_atoi64(const char *string);
 u64 convert_atoiu64(const char *string);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

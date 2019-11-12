@@ -25,7 +25,9 @@
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/prop.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  public structures
@@ -120,11 +122,13 @@ bool internal_carbon_object_update_column_end(carbon_insert_column_state *state)
 carbon_insert *internal_carbon_object_update_object_begin(carbon_insert_object_state *state, carbon_object *it);
 bool internal_carbon_object_update_object_end(carbon_insert_object_state *state);
 
-bool internal_carbon_object_update_from_carbon(carbon_object *it, const carbon *src);
+bool internal_carbon_object_update_from_carbon(carbon_object *it, const rec *src);
 bool internal_carbon_object_update_from_array(carbon_object *it, const carbon_object *src);
 bool internal_carbon_object_update_from_object(carbon_object *it, const carbon_object *src);
 bool internal_carbon_object_update_from_column(carbon_object *it, const carbon_column *src);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

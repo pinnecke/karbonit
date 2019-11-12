@@ -26,9 +26,11 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_column {
         memfile memfile;
@@ -97,6 +99,8 @@ bool carbon_column_update_set_float(carbon_column *it, u32 pos, float value);
  */
 bool carbon_column_rewind(carbon_column *it);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

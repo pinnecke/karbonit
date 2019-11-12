@@ -26,7 +26,9 @@
 #include <jakson/std/bitmap.h>
 #include <jakson/std/hash.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define BLOOM_SET(filter, key, key_size)                                                                           \
 ({                                                                                                                     \
@@ -80,6 +82,8 @@ size_t bloom_nbits(bitmap *filter);
 
 unsigned bloom_nhashs();
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

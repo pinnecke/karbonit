@@ -27,7 +27,9 @@
 #include <jakson/std/vector.h>
 #include <jakson/mem/file.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool pack_none_init(packer *self);
 bool pack_none_cpy(const packer *self, packer *dst);
@@ -39,6 +41,8 @@ bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src, u32 
 bool pack_none_encode_string(packer *self, memfile *dst, err *err, const char *string);
 bool pack_none_decode_string(packer *self, char *dst, size_t strlen, FILE *src);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct string_buffer {
         char *data;
@@ -65,6 +67,8 @@ const char *string_cstr(string_buffer *builder);
 bool string_buffer_print(string_buffer *builder);
 bool string_buffer_fprint(FILE *file, string_buffer *builder);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

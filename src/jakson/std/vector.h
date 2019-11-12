@@ -28,7 +28,9 @@
 #include <jakson/stdx/alloc.h>
 #include <jakson/mem/file.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define DECLARE_PRINTER_FUNC(type)                                                                                     \
     void vector_##type##_printer_func(memfile *dst, void ofType(T) *values, size_t num_elems);
@@ -283,6 +285,8 @@ char *vector_string(const vector ofType(T) *vec,
 
 #define VECTOR_ALL(vec, type) (type *) vector_data(vec)
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

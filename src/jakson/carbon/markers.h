@@ -24,7 +24,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  format markers, see carbonspec.org/format-specs/format-overview/marker-format.html
@@ -142,6 +144,8 @@ BEGIN_DECL
 #define CARBON_MUNSORTED_SET_BOOLEAN       '\''
 #define CARBON_MSORTED_SET_BOOLEAN         0x7F /** DEL */
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

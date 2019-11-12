@@ -209,7 +209,7 @@ record_ref_read(carbon_key_e *key_type, u64 *key_length, u64 *commit_hash, memfi
         return ret;
 }
 
-static void record_ref_create(memfile *memfile, carbon *doc)
+static void record_ref_create(memfile *memfile, rec *doc)
 {
         carbon_key_e key_type;
         u64 commit_hash;
@@ -1037,7 +1037,7 @@ static void index_flat(memfile *file, struct path_index_node *root_array)
         array_flat(file, root_array);
 }
 
-static void index_build(memfile *file, carbon *doc)
+static void index_build(memfile *file, rec *doc)
 {
         struct path_index_node root_array;
 
@@ -1149,7 +1149,7 @@ static void record_ref_to_carbon(carbon_insert *roins, carbon_path_index *index)
 //  construction and deconstruction
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool carbon_path_index_create(carbon_path_index *index, carbon *doc)
+bool carbon_path_index_create(carbon_path_index *index, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(index);
         DEBUG_ERROR_IF_NULL(doc);
@@ -1233,7 +1233,7 @@ const char *carbon_path_index_key_string_value(u64 *str_len, carbon_path_index *
         }
 }
 
-bool carbon_path_index_indexes_doc(carbon_path_index *index, carbon *doc)
+bool carbon_path_index_indexes_doc(carbon_path_index *index, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(doc);
 
@@ -1284,7 +1284,7 @@ bool carbon_path_index_indexes_doc(carbon_path_index *index, carbon *doc)
 // ---------------------------------------------------------------------------------------------------------------------
 
 bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *index,
-                               carbon *doc)
+                               rec *doc)
 {
         DEBUG_ERROR_IF_NULL(it)
         DEBUG_ERROR_IF_NULL(index)
@@ -1463,9 +1463,9 @@ bool carbon_path_index_hexdump(FILE *file, carbon_path_index *index)
         return memfile_hexdump_printf(file, &index->memfile);
 }
 
-fn_result carbon_path_index_to_carbon(carbon *doc, carbon_path_index *index)
+fn_result carbon_path_index_to_carbon(rec *doc, carbon_path_index *index)
 {
-        carbon_new context;
+        rec_new context;
         carbon_insert_object_state object;
 
         memfile_seek_to_start(&index->memfile);

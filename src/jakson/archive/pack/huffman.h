@@ -26,7 +26,9 @@
 #include <jakson/std/vector.h>
 #include <jakson/mem/file.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool pack_huffman_init(packer *self);
 bool pack_coding_huffman_cpy(const packer *self, packer *dst);
@@ -38,6 +40,8 @@ bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src, u32 deco
 bool pack_huffman_encode_string(packer *self, memfile *dst, err *err, const char *string);
 bool pack_huffman_decode_string(packer *self, char *dst, size_t strlen, FILE *src);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

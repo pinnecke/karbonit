@@ -24,7 +24,7 @@
 
 #include <jakson/forwdecl.h>
 #include <jakson/std/uintvar/stream.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/object.h>
@@ -43,13 +43,13 @@
 
 #define MIN_DOC_CAPACITY 17 /** minimum number of bytes required to store header and empty document array */
 
-static bool internal_drop(carbon *doc);
+static bool internal_drop(rec *doc);
 
-static void carbon_header_init(carbon *doc, carbon_key_e key_type);
+static void carbon_header_init(rec *doc, carbon_key_e key_type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-carbon_insert * carbon_create_begin(carbon_new *context, carbon *doc,
+carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                                            carbon_key_e type, int options)
 {
         if (context && doc) {
@@ -81,7 +81,7 @@ carbon_insert * carbon_create_begin(carbon_new *context, carbon *doc,
         }
 }
 
-fn_result carbon_create_end(carbon_new *context)
+fn_result carbon_create_end(rec_new *context)
 {
         FN_FAIL_IF_NULL(context);
 
@@ -104,12 +104,12 @@ fn_result carbon_create_end(carbon_new *context)
         }
 }
 
-fn_result carbon_create_empty(carbon *doc, carbon_list_derivable_e derivation, carbon_key_e type)
+fn_result carbon_create_empty(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type)
 {
         return carbon_create_empty_ex(doc, derivation, type, 1024, 1);
 }
 
-fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation, carbon_key_e type,
+fn_result carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type,
                                 u64 doc_cap, u64 array_cap)
 {
         FN_FAIL_IF_NULL(doc);
@@ -117,22 +117,17 @@ fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
 
         error_init(&doc->err);
-        memblock_create(&doc->memblock, doc_cap);
-        memblock_zero_out(doc->memblock);
-        memfile_open(&doc->memfile, doc->memblock, READ_WRITE);
-
-        spinlock_init(&doc->versioning.write_lock);
-
-        doc->versioning.commit_lock = false;
-        doc->versioning.is_latest = true;
+        memblock_create(&doc->area, doc_cap);
+        memblock_zero_out(doc->area);
+        memfile_open(&doc->file, doc->area, READ_WRITE);
 
         carbon_header_init(doc, type);
-        carbon_int_insert_array(&doc->memfile, derivation, array_cap);
+        carbon_int_insert_array(&doc->file, derivation, array_cap);
 
         return FN_OK();
 }
 
-bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type,
+bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
                       const void *key, err *err)
 {
         DEBUG_ERROR_IF_NULL(doc)
@@ -169,7 +164,7 @@ bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type,
         }
 }
 
-bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len)
+bool carbon_from_raw_data(rec *doc, err *err, const void *data, u64 len)
 {
         DEBUG_ERROR_IF_NULL(doc);
         DEBUG_ERROR_IF_NULL(err);
@@ -177,65 +172,54 @@ bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len)
         DEBUG_ERROR_IF_NULL(len);
 
         error_init(&doc->err);
-        memblock_from_raw_data(&doc->memblock, data, len);
-        memfile_open(&doc->memfile, doc->memblock, READ_WRITE);
-
-        spinlock_init(&doc->versioning.write_lock);
-
-        doc->versioning.commit_lock = false;
-        doc->versioning.is_latest = true;
+        memblock_from_raw_data(&doc->area, data, len);
+        memfile_open(&doc->file, doc->area, READ_WRITE);
 
         return true;
 }
 
-bool carbon_drop(carbon *doc)
+bool carbon_drop(rec *doc)
 {
         DEBUG_ERROR_IF_NULL(doc);
         return internal_drop(doc);
 }
 
-const void *carbon_raw_data(u64 *len, carbon *doc)
+const void *carbon_raw_data(u64 *len, rec *doc)
 {
         if (len && doc) {
-                memblock_size(len, doc->memfile.memblock);
-                return memblock_raw_data(doc->memfile.memblock);
+                memblock_size(len, doc->file.memblock);
+                return memblock_raw_data(doc->file.memblock);
         } else {
                 return NULL;
         }
 }
 
-bool carbon_is_up_to_date(carbon *doc)
-{
-        DEBUG_ERROR_IF_NULL(doc);
-        return doc->versioning.is_latest;
-}
-
-bool carbon_key_type(carbon_key_e *out, carbon *doc)
+bool carbon_key_type(carbon_key_e *out, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(out)
         DEBUG_ERROR_IF_NULL(doc)
-        memfile_save_position(&doc->memfile);
-        carbon_key_skip(out, &doc->memfile);
-        memfile_restore_position(&doc->memfile);
+        memfile_save_position(&doc->file);
+        carbon_key_skip(out, &doc->file);
+        memfile_restore_position(&doc->file);
         return true;
 }
 
-const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, carbon *doc)
+const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, rec *doc)
 {
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
-        const void *result = carbon_key_read(len, type, &doc->memfile);
-        memfile_restore_position(&doc->memfile);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
+        const void *result = carbon_key_read(len, type, &doc->file);
+        memfile_restore_position(&doc->file);
         return result;
 }
 
-bool carbon_key_signed_value(i64 *key, carbon *doc)
+bool carbon_key_signed_value(i64 *key, rec *doc)
 {
         carbon_key_e type;
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
-        const void *result = carbon_key_read(NULL, &type, &doc->memfile);
-        memfile_restore_position(&doc->memfile);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
+        const void *result = carbon_key_read(NULL, &type, &doc->file);
+        memfile_restore_position(&doc->file);
         if (LIKELY(carbon_key_is_signed(type))) {
                 *key = *((const i64 *) result);
                 return true;
@@ -245,13 +229,13 @@ bool carbon_key_signed_value(i64 *key, carbon *doc)
         }
 }
 
-bool carbon_key_unsigned_value(u64 *key, carbon *doc)
+bool carbon_key_unsigned_value(u64 *key, rec *doc)
 {
         carbon_key_e type;
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
-        const void *result = carbon_key_read(NULL, &type, &doc->memfile);
-        memfile_restore_position(&doc->memfile);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
+        const void *result = carbon_key_read(NULL, &type, &doc->file);
+        memfile_restore_position(&doc->file);
         if (LIKELY(carbon_key_is_unsigned(type))) {
                 *key = *((const u64 *) result);
                 return true;
@@ -261,13 +245,13 @@ bool carbon_key_unsigned_value(u64 *key, carbon *doc)
         }
 }
 
-const char *carbon_key_string_value(u64 *len, carbon *doc)
+const char *carbon_key_string_value(u64 *len, rec *doc)
 {
         carbon_key_e type;
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
-        const void *result = carbon_key_read(len, &type, &doc->memfile);
-        memfile_restore_position(&doc->memfile);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
+        const void *result = carbon_key_read(len, &type, &doc->file);
+        memfile_restore_position(&doc->file);
         if (LIKELY(carbon_key_is_string(type))) {
                 return result;
         } else {
@@ -296,29 +280,25 @@ bool carbon_has_key(carbon_key_e type)
         return type != CARBON_KEY_NOKEY;
 }
 
-bool carbon_clone(carbon *clone, carbon *doc)
+bool carbon_clone(rec *clone, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(clone);
         DEBUG_ERROR_IF_NULL(doc);
-        CHECK_SUCCESS(memblock_cpy(&clone->memblock, doc->memblock));
-        CHECK_SUCCESS(memfile_open(&clone->memfile, clone->memblock, READ_WRITE));
+        CHECK_SUCCESS(memblock_cpy(&clone->area, doc->area));
+        CHECK_SUCCESS(memfile_open(&clone->file, clone->area, READ_WRITE));
         CHECK_SUCCESS(error_init(&clone->err));
-
-        spinlock_init(&clone->versioning.write_lock);
-        clone->versioning.commit_lock = false;
-        clone->versioning.is_latest = true;
 
         return true;
 }
 
-bool carbon_commit_hash(u64 *hash, carbon *doc)
+bool carbon_commit_hash(u64 *hash, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(doc);
         *hash = carbon_int_header_get_commit_hash(doc);
         return true;
 }
 
-fn_result ofType(bool) carbon_is_multiset(carbon *doc)
+fn_result ofType(bool) carbon_is_multiset(rec *doc)
 {
         FN_FAIL_IF_NULL(doc)
 
@@ -330,7 +310,7 @@ fn_result ofType(bool) carbon_is_multiset(carbon *doc)
         return FN_IS_OK(ret) ? ret : FN_FAIL_FORWARD();
 }
 
-fn_result ofType(bool) carbon_is_sorted(carbon *doc)
+fn_result ofType(bool) carbon_is_sorted(rec *doc)
 {
         FN_FAIL_IF_NULL(doc)
 
@@ -342,17 +322,17 @@ fn_result ofType(bool) carbon_is_sorted(carbon *doc)
         return FN_IS_OK(ret) ? ret : FN_FAIL_FORWARD();
 }
 
-fn_result carbon_update_list_type(carbon *revised_doc, carbon *doc, carbon_list_derivable_e derivation)
+fn_result carbon_update_list_type(rec *revised_doc, rec *doc, carbon_list_derivable_e derivation)
 {
         FN_FAIL_IF_NULL(revised_doc, doc);
-        carbon_revise context;
+        rev context;
         carbon_revise_begin(&context, revised_doc, doc);
         carbon_revise_set_list_type(&context, derivation);
         carbon_revise_end(&context);
         return FN_OK();
 }
 
-bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *doc)
+bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(doc);
 
@@ -363,9 +343,9 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
         u64 rev;
 
         string_buffer_clear(dst);
-        string_buffer_ensure_capacity(dst, 2 * memfile_size(&doc->memfile));
+        string_buffer_ensure_capacity(dst, 2 * memfile_size(&doc->file));
 
-        memfile_save_position(&doc->memfile);
+        memfile_save_position(&doc->file);
 
         ZERO_MEMORY(&p, sizeof(carbon_printer));
         string_buffer_create(&b);
@@ -396,11 +376,11 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, carbon *do
         string_buffer_add(dst, string_cstr(&b));
         string_buffer_drop(&b);
 
-        memfile_restore_position(&doc->memfile);
+        memfile_restore_position(&doc->file);
         return true;
 }
 
-const char *carbon_to_json_extended(string_buffer *dst, carbon *doc)
+const char *carbon_to_json_extended(string_buffer *dst, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(dst)
         DEBUG_ERROR_IF_NULL(doc)
@@ -408,7 +388,7 @@ const char *carbon_to_json_extended(string_buffer *dst, carbon *doc)
         return string_cstr(dst);
 }
 
-const char *carbon_to_json_compact(string_buffer *dst, carbon *doc)
+const char *carbon_to_json_compact(string_buffer *dst, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(dst)
         DEBUG_ERROR_IF_NULL(doc)
@@ -416,7 +396,7 @@ const char *carbon_to_json_compact(string_buffer *dst, carbon *doc)
         return string_cstr(dst);
 }
 
-char *carbon_to_json_extended_dup(carbon *doc)
+char *carbon_to_json_extended_dup(rec *doc)
 {
         string_buffer sb;
         string_buffer_create(&sb);
@@ -425,7 +405,7 @@ char *carbon_to_json_extended_dup(carbon *doc)
         return result;
 }
 
-char *carbon_to_json_compact_dup(carbon *doc)
+char *carbon_to_json_compact_dup(rec *doc)
 {
         string_buffer sb;
         string_buffer_create(&sb);
@@ -434,7 +414,7 @@ char *carbon_to_json_compact_dup(carbon *doc)
         return result;
 }
 
-fn_result carbon_read_begin(carbon_array *it, carbon *doc)
+fn_result carbon_read_begin(carbon_array *it, rec *doc)
 {
         fn_result ret = carbon_patch_begin(it, doc);
         internal_carbon_array_set_mode(it, READ_ONLY);
@@ -446,7 +426,7 @@ fn_result carbon_read_end(carbon_array *it)
         return carbon_patch_end(it);
 }
 
-bool carbon_print(FILE *file, carbon_printer_impl_e printer, carbon *doc)
+bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(file);
         DEBUG_ERROR_IF_NULL(doc);
@@ -460,34 +440,34 @@ bool carbon_print(FILE *file, carbon_printer_impl_e printer, carbon *doc)
         return true;
 }
 
-bool carbon_hexdump_print(FILE *file, carbon *doc)
+bool carbon_hexdump_print(FILE *file, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(file);
         DEBUG_ERROR_IF_NULL(doc);
-        memfile_save_position(&doc->memfile);
-        memfile_seek(&doc->memfile, 0);
-        bool status = hexdump_print(file, memfile_peek(&doc->memfile, 1), memfile_size(&doc->memfile));
-        memfile_restore_position(&doc->memfile);
+        memfile_save_position(&doc->file);
+        memfile_seek(&doc->file, 0);
+        bool status = hexdump_print(file, memfile_peek(&doc->file, 1), memfile_size(&doc->file));
+        memfile_restore_position(&doc->file);
         return status;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-static bool internal_drop(carbon *doc)
+static bool internal_drop(rec *doc)
 {
         JAK_ASSERT(doc);
-        memblock_drop(doc->memblock);
+        memblock_drop(doc->area);
         return true;
 }
 
-static void carbon_header_init(carbon *doc, carbon_key_e key_type)
+static void carbon_header_init(rec *doc, carbon_key_e key_type)
 {
         JAK_ASSERT(doc);
 
-        memfile_seek(&doc->memfile, 0);
-        carbon_key_create(&doc->memfile, key_type, &doc->err);
+        memfile_seek(&doc->file, 0);
+        carbon_key_create(&doc->file, key_type, &doc->err);
 
         if (key_type != CARBON_KEY_NOKEY) {
-                carbon_commit_hash_create(&doc->memfile);
+                carbon_commit_hash_create(&doc->file);
         }
 }

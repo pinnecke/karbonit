@@ -27,7 +27,9 @@
 #include <jakson/std/thread_pool/status.h>
 #include <jakson/std/thread_pool/stats.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef NOOP
 #define NOOP (void)0
@@ -123,6 +125,8 @@ thread_task *__get_next_task(thread_pool *pool);
 bool __create_thread(thread_info *thread_info, pthread_t *pp);
 void __sig_seg(int sig);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

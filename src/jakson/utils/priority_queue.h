@@ -24,7 +24,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct priority_queue_element_info {
         size_t priority;
@@ -44,6 +46,8 @@ void priority_queue_push(priority_queue *queue, void *data, size_t priority);
 void *priority_queue_pop(priority_queue *queue);
 int priority_queue_is_empty(priority_queue *queue);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

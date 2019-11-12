@@ -60,7 +60,9 @@
  *          - ... if read/write performance shall be maximized in exchange of space, use <code>uintvar_marker_t</code>
  */
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define UINT_VAR_MARKER_8 'c'
 #define UINT_VAR_MARKER_16 'd'
@@ -83,6 +85,8 @@ bool uintvar_marker_type(const void *data);
 size_t uintvar_marker_sizeof(uintvar_marker_t value);
 size_t uintvar_marker_required_size(u64 value);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

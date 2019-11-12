@@ -24,7 +24,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef bool (*string_pred_func_t)(size_t *idxs_matching, size_t *num_matching, char **strings, size_t num_strings, void *capture);
 
@@ -59,6 +61,8 @@ BUILT_IN(static bool) string_pred_get_limit(i64 *limit, const string_pred *pred)
         return true;
 }
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

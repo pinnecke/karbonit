@@ -24,7 +24,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool strings_contains_blank_char(const char *str);
 bool strings_is_enquoted(const char *str);
@@ -32,6 +34,8 @@ bool strings_is_enquoted_wlen(const char *str, size_t len);
 const char *strings_skip_blanks(const char *str);
 char *strings_remove_tailing_blanks(char *str_in);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

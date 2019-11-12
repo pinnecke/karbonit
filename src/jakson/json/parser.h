@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/std/vector.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum json_token_type {
         OBJECT_OPEN,
@@ -185,6 +187,8 @@ bool json_list_length(u32 *len, const json_elements *elements);
 json_list_type_e json_fitting_type(json_list_type_e current, json_list_type_e to_add);
 bool json_array_get_type(json_list_type_e *type, const json_array *array);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

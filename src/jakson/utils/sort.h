@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/stdx/alloc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef bool (*less_eq_func_t)(const void *lhs, const void *rhs);
 
@@ -87,6 +89,8 @@ size_t sort_get_max(const size_t *elements, size_t nelemens);
 double sort_get_sum(const size_t *elements, size_t nelemens);
 double sort_get_avg(const size_t *elements, size_t nelemens);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

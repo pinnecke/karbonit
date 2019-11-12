@@ -5,7 +5,7 @@
 #include <jakson/jakson.h>
 
 TEST(CarbonTest, CreateCarbon) {
-        carbon doc;
+        rec doc;
         unique_id_t oid;
         u64 rev;
         string_buffer builder;
@@ -34,9 +34,9 @@ TEST(CarbonTest, CreateCarbon) {
 }
 
 TEST(CarbonTest, CreateCarbonRevisionNumberingNoKey) {
-        carbon_new context;
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec_new context;
+        rec doc, rev_doc;
+        rev revise;
         u64 commit_new, commit_mod;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -56,9 +56,9 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingNoKey) {
 }
 
 TEST(CarbonTest, CreateCarbonRevisionNumberingWithKey) {
-        carbon_new context;
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec_new context;
+        rec doc, rev_doc;
+        rev revise;
         u64 commit_new, commit_mod, commit_mod_cmpr;
 
         carbon_create_begin(&context, &doc, CARBON_KEY_AUTOKEY, CARBON_OPTIMIZE);
@@ -82,8 +82,8 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingWithKey) {
 }
 
 TEST(CarbonTest, CreateCarbonRevisionNumbering) {
-        carbon doc, rev_doc;
-        u64 rev;
+        rec doc, rev_doc;
+        u64 hash;
         string_buffer builder;
         bool status;
 
@@ -92,27 +92,21 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
         status = FN_STATUS(carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY));
         EXPECT_TRUE(status);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_end(&revise);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
-        status = carbon_commit_hash(&rev, &rev_doc);
+        status = carbon_commit_hash(&hash, &rev_doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
-
-        status = carbon_is_up_to_date(&doc);
-        EXPECT_FALSE(status);
-
-        status = carbon_is_up_to_date(&rev_doc);
-        EXPECT_TRUE(status);
+        EXPECT_EQ(hash, 0U);
 
         carbon_to_str(&builder, JSON_EXTENDED, &doc);
         // printf("%s\n", string_builder_cstr(&builder));
@@ -123,8 +117,8 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
 }
 
 TEST(CarbonTest, CreateCarbonRevisionAbort) {
-        carbon doc, rev_doc;
-        u64 rev;
+        rec doc, rev_doc;
+        u64 hash;
         string_buffer builder;
         bool status;
 
@@ -133,17 +127,17 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
         status = FN_STATUS(carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY));
         EXPECT_TRUE(status);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_abort(&revise);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
         carbon_to_str(&builder, JSON_EXTENDED, &doc);
         // printf("%s\n", string_builder_cstr(&builder));
@@ -153,8 +147,8 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
 }
 
 TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
-        carbon doc, rev_doc;
-        u64 rev;
+        rec doc, rev_doc;
+        u64 hash;
         string_buffer builder;
         bool status;
 
@@ -163,22 +157,22 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
         status = FN_STATUS(carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY));
         EXPECT_TRUE(status);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
-        carbon_revise revise;
+        rev revise;
         carbon_revise_begin(&revise, &rev_doc, &doc);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
         carbon_revise_end(&revise);
 
-        status = carbon_commit_hash(&rev, &doc);
+        status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
-        EXPECT_EQ(rev, 0U);
+        EXPECT_EQ(hash, 0U);
 
         carbon_to_str(&builder, JSON_EXTENDED, &doc);
         // printf("%s\n", string_builder_cstr(&builder));
@@ -189,10 +183,10 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
 }
 
 TEST(CarbonTest, ModifyCarbonObjectId) {
-        carbon doc, rev_doc;
+        rec doc, rev_doc;
         unique_id_t oid;
         unique_id_t new_oid;
-        carbon_revise revise;
+        rev revise;
         u64 commit_hash_old, commit_hash_new;
 
         carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
@@ -220,8 +214,8 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
 
         carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
@@ -242,8 +236,8 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -266,8 +260,8 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -304,8 +298,8 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
-        carbon doc, rev_doc, rev_doc2;
-        carbon_revise revise;
+        rec doc, rev_doc, rev_doc2;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -345,8 +339,8 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
-        carbon doc, rev_doc, rev_doc2;
-        carbon_revise revise;
+        rec doc, rev_doc, rev_doc2;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -390,8 +384,8 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -431,8 +425,8 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
 }
 
 TEST(CarbonTest, CarbonArrayIteratorStrings) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -465,8 +459,8 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
 }
 
 TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -490,8 +484,8 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
 }
 
 TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -515,8 +509,8 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
 }
 
 TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -543,8 +537,8 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
 }
 
 TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -573,8 +567,8 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
 
@@ -602,8 +596,8 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state;
@@ -632,8 +626,8 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state;
@@ -672,8 +666,8 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1, array_state_l2;
@@ -720,8 +714,8 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1;
@@ -766,8 +760,8 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1;
@@ -822,8 +816,8 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -862,8 +856,8 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -900,8 +894,8 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -938,8 +932,8 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1042,8 +1036,8 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1082,8 +1076,8 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1125,8 +1119,8 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1170,8 +1164,8 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
 }
 
 TEST(CarbonTest, CarbonInsertNullTest) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1273,8 +1267,8 @@ TEST(CarbonTest, CarbonInsertNullTest) {
 }
 
 TEST(CarbonTest, CarbonShrinkColumnListTest) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1374,8 +1368,8 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
 }
 
 TEST(CarbonTest, CarbonShrinkArrayListTest) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state;
@@ -1427,8 +1421,8 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
 }
 
 TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_array_state array_state, nested_array_state;
@@ -1502,8 +1496,8 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
 }
 
 TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
@@ -1676,8 +1670,8 @@ TEST(CarbonTest, CarbonDotNotationParsing) {
 }
 
 TEST(CarbonTest, CarbonFind) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert ins;
         carbon_find finder;
@@ -1753,8 +1747,8 @@ TEST(CarbonTest, CarbonFind) {
 }
 
 TEST(CarbonTest, CarbonFindTypes) {
-        carbon doc, rev_doc;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rev revise;
         carbon_array it;
         carbon_insert inserter, *ins, *nested_ins, *column_ins;
         carbon_insert_column_state column_state;
@@ -2069,8 +2063,8 @@ TEST(CarbonTest, CarbonFindTypes) {
 
 TEST(CarbonTest, CarbonUpdateU8Simple)
 {
-        carbon doc, rev_doc, rev_doc2, rev_doc3, rev_doc4;
-        carbon_revise revise;
+        rec doc, rev_doc, rev_doc2, rev_doc3, rev_doc4;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         string_buffer sb;
@@ -2163,8 +2157,8 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
 TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 {
-        carbon doc, rev_doc, rev_doc2;
-        carbon_revise revise;
+        rec doc, rev_doc, rev_doc2;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         string_buffer sb;
@@ -2254,9 +2248,9 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 
 TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2303,9 +2297,9 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
 
 TEST(CarbonTest, CarbonRemoveFirstConstants)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2356,9 +2350,9 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
 
 TEST(CarbonTest, CarbonRemoveLastConstants)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2408,9 +2402,9 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
 
 TEST(CarbonTest, CarbonRemoveMiddleConstants)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2465,9 +2459,9 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
 
 TEST(CarbonTest, CarbonRemoveNumberToEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2514,9 +2508,9 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
 
 TEST(CarbonTest, CarbonRemoveFirstNumber)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2567,9 +2561,9 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
 
 TEST(CarbonTest, CarbonRemoveLastNumber)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2619,9 +2613,9 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
 
 TEST(CarbonTest, CarbonRemoveMiddleNumber)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2677,9 +2671,9 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
 
 TEST(CarbonTest, CarbonRemoveStringToEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2726,9 +2720,9 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
 
 TEST(CarbonTest, CarbonRemoveFirstString)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2779,9 +2773,9 @@ TEST(CarbonTest, CarbonRemoveFirstString)
 
 TEST(CarbonTest, CarbonRemoveLastString)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2831,9 +2825,9 @@ TEST(CarbonTest, CarbonRemoveLastString)
 
 TEST(CarbonTest, CarbonRemoveMiddleString)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2892,9 +2886,9 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
 
 TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2942,9 +2936,9 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
 
 TEST(CarbonTest, CarbonRemoveFirstBinary)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -2998,9 +2992,9 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
 
 TEST(CarbonTest, CarbonRemoveLastBinary)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3053,9 +3047,9 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
 
 TEST(CarbonTest, CarbonRemoveMiddleBinary)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3125,9 +3119,9 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
 
 TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3177,9 +3171,9 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
 
 TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3233,9 +3227,9 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
 
 TEST(CarbonTest, CarbonRemoveLastCustomBinary)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3288,9 +3282,9 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
 
 TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3359,9 +3353,9 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
 
 TEST(CarbonTest, CarbonRemoveArrayToEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         carbon_insert_array_state state;
@@ -3416,9 +3410,9 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
 
 TEST(CarbonTest, CarbonRemoveFirstArray)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3481,9 +3475,9 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
 
 TEST(CarbonTest, CarbonRemoveLastArray)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3545,9 +3539,9 @@ TEST(CarbonTest, CarbonRemoveLastArray)
 
 TEST(CarbonTest, CarbonRemoveMiddleArray)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3619,9 +3613,9 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
 
 TEST(CarbonTest, CarbonColumnRemoveTest)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -3715,9 +3709,9 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
 
 TEST(CarbonTest, CarbonRemoveComplexTest)
 {
-        carbon doc, rev_doc, rev_doc2, rev_doc3, rev_doc4, rev_doc5, rev_doc6, rev_doc7, rev_doc8, rev_doc9,
+        rec doc, rev_doc, rev_doc2, rev_doc3, rev_doc4, rev_doc5, rev_doc6, rev_doc7, rev_doc8, rev_doc9,
                 rev_doc10, rev_doc11, rev_doc12, rev_doc13, rev_doc14;
-        carbon_new context;
+        rec_new context;
         string_buffer sb;
         string_buffer_create(&sb);
 
@@ -3876,8 +3870,8 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
 
 TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
 {
-        carbon doc, rev_doc, rev_doc2;
-        carbon_revise revise;
+        rec doc, rev_doc, rev_doc2;
+        rev revise;
         carbon_array it;
         carbon_insert inserter;
         string_buffer sb;
@@ -3926,8 +3920,8 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
 
 TEST(CarbonTest, CarbonShrinkIssueFix)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -3950,8 +3944,8 @@ TEST(CarbonTest, CarbonShrinkIssueFix)
 
 TEST(CarbonTest, CarbonKeyTypeNoKey)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -3975,9 +3969,9 @@ TEST(CarbonTest, CarbonKeyTypeNoKey)
 
 TEST(CarbonTest, CarbonKeyTypeNoKeyNoRevInc)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4006,8 +4000,8 @@ TEST(CarbonTest, CarbonKeyTypeNoKeyNoRevInc)
 
 TEST(CarbonTest, CarbonKeyTypeAutoKey)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -4031,9 +4025,9 @@ TEST(CarbonTest, CarbonKeyTypeAutoKey)
 
 TEST(CarbonTest, CarbonKeyTypeAutoKeyRevInc)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4061,9 +4055,9 @@ TEST(CarbonTest, CarbonKeyTypeAutoKeyRevInc)
 
 TEST(CarbonTest, CarbonKeyTypeAutoKeyUpdate)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         unique_id_t id, id_read;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4093,9 +4087,9 @@ TEST(CarbonTest, CarbonKeyTypeAutoKeyUpdate)
 
 TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         string_buffer sb;
 
         string_buffer_create(&sb);
@@ -4127,9 +4121,9 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
 
 TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         string_buffer sb;
 
         string_buffer_create(&sb);
@@ -4161,9 +4155,9 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
 
 TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         string_buffer sb;
 
         string_buffer_create(&sb);
@@ -4194,8 +4188,8 @@ TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
 
 TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_UKEY, CARBON_OPTIMIZE);
@@ -4216,9 +4210,9 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
 
 TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
 {
-        carbon doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc;
+        rec_new context;
+        rev revise;
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4234,15 +4228,15 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
         u64 test_max = 10000;
 
         vector ofType(carbon) files;
-        vector_create(&files, NULL, sizeof(carbon), test_max);
-        carbon* old_f = &doc;
+        vector_create(&files, NULL, sizeof(rec), test_max);
+        rec* old_f = &doc;
 
 
         for (unsigned i = 0; i < test_max; i++) {
 
                 carbon_commit_hash(&rev_old, old_f);
 
-                carbon* new_f = VECTOR_NEW_AND_GET(&files, carbon);
+                rec* new_f = VECTOR_NEW_AND_GET(&files, rec);
 
                 carbon_revise_begin(&revise, new_f, old_f);
                 carbon_revise_end(&revise);
@@ -4259,9 +4253,9 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
 
 TEST(CarbonTest, CarbonKeyTypeUnsignedKeyRevInc)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4289,8 +4283,8 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyRevInc)
 
 TEST(CarbonTest, CarbonKeyTypeSignedKey)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_IKEY, CARBON_OPTIMIZE);
@@ -4311,8 +4305,8 @@ TEST(CarbonTest, CarbonKeyTypeSignedKey)
 
 TEST(CarbonTest, CarbonKeyTypeStringKey)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -4336,8 +4330,8 @@ TEST(CarbonTest, CarbonKeyTypeStringKey)
 
 TEST(CarbonTest, CarbonObjectInsertEmpty)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4363,8 +4357,8 @@ TEST(CarbonTest, CarbonObjectInsertEmpty)
 
 TEST(CarbonTest, CarbonObjectInsertNull)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4391,8 +4385,8 @@ TEST(CarbonTest, CarbonObjectInsertNull)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4420,8 +4414,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
 
 TEST(CarbonTest, CarbonObjectInsertU8)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4448,8 +4442,8 @@ TEST(CarbonTest, CarbonObjectInsertU8)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4478,8 +4472,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
 
 TEST(CarbonTest, CarbonObjectInsertU16)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4506,8 +4500,8 @@ TEST(CarbonTest, CarbonObjectInsertU16)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4536,8 +4530,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
 
 TEST(CarbonTest, CarbonObjectInsertU32)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4564,8 +4558,8 @@ TEST(CarbonTest, CarbonObjectInsertU32)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4594,8 +4588,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
 
 TEST(CarbonTest, CarbonObjectInsertU64)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4622,8 +4616,8 @@ TEST(CarbonTest, CarbonObjectInsertU64)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4652,8 +4646,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
 
 TEST(CarbonTest, CarbonObjectInsertI8)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4680,8 +4674,8 @@ TEST(CarbonTest, CarbonObjectInsertI8)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4710,8 +4704,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
 
 TEST(CarbonTest, CarbonObjectInsertI16)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4738,8 +4732,8 @@ TEST(CarbonTest, CarbonObjectInsertI16)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4768,8 +4762,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
 
 TEST(CarbonTest, CarbonObjectInsertI32)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4796,8 +4790,8 @@ TEST(CarbonTest, CarbonObjectInsertI32)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4826,8 +4820,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
 
 TEST(CarbonTest, CarbonObjectInsertI64)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4854,8 +4848,8 @@ TEST(CarbonTest, CarbonObjectInsertI64)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4884,8 +4878,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
 
 TEST(CarbonTest, CarbonObjectInsertFloat)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4912,8 +4906,8 @@ TEST(CarbonTest, CarbonObjectInsertFloat)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4942,8 +4936,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
 
 TEST(CarbonTest, CarbonObjectInsertTrue)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4970,8 +4964,8 @@ TEST(CarbonTest, CarbonObjectInsertTrue)
 
 TEST(CarbonTest, CarbonObjectInsertFalse)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4998,8 +4992,8 @@ TEST(CarbonTest, CarbonObjectInsertFalse)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5028,8 +5022,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
 
 TEST(CarbonTest, CarbonObjectInsertMixed)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5068,8 +5062,8 @@ TEST(CarbonTest, CarbonObjectInsertMixed)
 
 TEST(CarbonTest, CarbonObjectInsertString)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5098,8 +5092,8 @@ TEST(CarbonTest, CarbonObjectInsertString)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleString)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5130,8 +5124,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleString)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5175,8 +5169,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
 
 TEST(CarbonTest, CarbonObjectInsertBinary)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5205,8 +5199,8 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5252,8 +5246,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
 
 TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5284,8 +5278,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
 
 TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state, nested;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5315,8 +5309,8 @@ TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
 
 TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state, nested;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5369,8 +5363,8 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
 
 TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
         carbon_insert_array_state array_state;
 
@@ -5401,8 +5395,8 @@ TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
 
 TEST(CarbonTest, CarbonObjectInsertArrayData)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
         carbon_insert_array_state array_state, nested_array_state;
         carbon_insert_column_state column_state;
@@ -5458,8 +5452,8 @@ TEST(CarbonTest, CarbonObjectInsertArrayData)
 
 TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 {
-        carbon doc;
-        carbon_new context;
+        rec doc;
+        rec_new context;
         carbon_insert_object_state state;
         carbon_insert_column_state column_state;
 
@@ -5604,9 +5598,9 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 
 TEST(CarbonTest, CarbonObjectRemoveTest)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -5694,9 +5688,9 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
 
 TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -5783,9 +5777,9 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
 
 TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -5861,9 +5855,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
 
 TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -5936,9 +5930,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
 
 TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6011,9 +6005,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
 
 TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6087,9 +6081,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
 
 TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6164,9 +6158,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
 
 TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6242,9 +6236,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
 
 TEST(CarbonTest, CarbonObjectRemovePropByKey)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6315,9 +6309,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
 
 TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6395,9 +6389,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
 
 TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6474,9 +6468,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
 
 TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6554,9 +6548,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
 
 TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -6631,9 +6625,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
 
 TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
 {
-        carbon doc, rev_doc;
-        carbon_new context;
-        carbon_revise revise;
+        rec doc, rev_doc;
+        rec_new context;
+        rev revise;
         carbon_array rev_it;
         string_buffer sb;
         bool has_next;
@@ -7210,7 +7204,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 
 TEST(CarbonTest, CarbonFromEmptyJson)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7236,7 +7230,7 @@ TEST(CarbonTest, CarbonFromEmptyJson)
 
 TEST(CarbonTest, CarbonFromEmptyArray)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7262,7 +7256,7 @@ TEST(CarbonTest, CarbonFromEmptyArray)
 
 TEST(CarbonTest, CarbonFromJsonNull)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7289,7 +7283,7 @@ TEST(CarbonTest, CarbonFromJsonNull)
 
 TEST(CarbonTest, CarbonFromJsonTrue)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7316,7 +7310,7 @@ TEST(CarbonTest, CarbonFromJsonTrue)
 
 TEST(CarbonTest, CarbonFromJsonFalse)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7343,7 +7337,7 @@ TEST(CarbonTest, CarbonFromJsonFalse)
 
 TEST(CarbonTest, CarbonFromJsonNumberSigned)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7370,7 +7364,7 @@ TEST(CarbonTest, CarbonFromJsonNumberSigned)
 
 TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7397,7 +7391,7 @@ TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
 
 TEST(CarbonTest, CarbonFromJsonNumberFloat)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7424,7 +7418,7 @@ TEST(CarbonTest, CarbonFromJsonNumberFloat)
 
 TEST(CarbonTest, CarbonFromJsonString)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7451,7 +7445,7 @@ TEST(CarbonTest, CarbonFromJsonString)
 
 TEST(CarbonTest, CarbonFromJsonObjectSingle)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7479,7 +7473,7 @@ TEST(CarbonTest, CarbonFromJsonObjectSingle)
 
 TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7506,7 +7500,7 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7533,7 +7527,7 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7560,7 +7554,7 @@ TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7587,7 +7581,7 @@ TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectNullProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7614,7 +7608,7 @@ TEST(CarbonTest, CarbonFromJsonObjectNullProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7641,7 +7635,7 @@ TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7668,7 +7662,7 @@ TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
 
 TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7695,7 +7689,7 @@ TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
 
 TEST(CarbonTest, CarbonFromJsonColumnNumber)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7736,7 +7730,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
 
 TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7778,7 +7772,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 
 TEST(CarbonTest, CarbonFromJsonNonColumn)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7814,8 +7808,8 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
 
 TEST(CarbonTest, CarbonColumnOptimizeFix)
 {
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
         carbon_insert_column_state state_out;
 
         carbon_insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -7834,7 +7828,7 @@ TEST(CarbonTest, CarbonColumnOptimizeFix)
 
 TEST(CarbonTest, CarbonFromJsonExample)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7848,7 +7842,7 @@ TEST(CarbonTest, CarbonFromJsonExample)
         u32 max = 10000;
         timestamp t1 = wallclock();
         for (u32 i = 0; i < max; i++) {
-                carbon d;
+                rec d;
                 carbon_from_json(&d, json_in, CARBON_KEY_NOKEY, NULL, &err);
                 carbon_drop(&d);
         }
@@ -7877,7 +7871,7 @@ TEST(CarbonTest, CarbonFromJsonExample)
 
 TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7901,7 +7895,7 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
 
 TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in;
@@ -7925,7 +7919,7 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
 
 TEST(CarbonTest, CarbonFromJsonSimpleExample)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json_in = "{\"k\": {\"x\": [1,2,3], \"y\": \"z\"}}";
@@ -7937,7 +7931,7 @@ TEST(CarbonTest, CarbonFromJsonSimpleExample)
 
 TEST(CarbonTest, CarbonFromJsonFromExcerpt)
 {
-        carbon doc;
+        rec doc;
         err err;
 
         /* the working directory must be 'tests/carbon' */
@@ -7963,7 +7957,7 @@ TEST(CarbonTest, CarbonFromJsonFromExcerpt)
 
 TEST(CarbonTest, CarbonResolveDotPathForObjects)
 {
-        carbon doc;
+        rec doc;
         err err;
         carbon_find find;
         carbon_field_type_e result_type;
@@ -8104,7 +8098,7 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
 
 TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
 {
-        carbon doc;
+        rec doc;
         err err;
         carbon_find find;
 
@@ -8253,7 +8247,7 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
 
 TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 {
-        carbon doc;
+        rec doc;
         carbon_find find;
         carbon_field_type_e result_type;
         err err;
@@ -8312,7 +8306,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 
 TEST(CarbonTest, CarbonFindPrint)
 {
-        carbon doc;
+        rec doc;
         err err;
         carbon_find find;
         char *result;
@@ -8630,7 +8624,7 @@ TEST(CarbonTest, CarbonFindPrint)
 
 TEST(CarbonTest, CarbonFindPrintExamples)
 {
-        carbon doc;
+        rec doc;
         err err;
         carbon_find find;
         string_buffer result;
@@ -8671,7 +8665,7 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 }
 
 TEST(CarbonTest, ParseBooleanArray) {
-        carbon doc;
+        rec doc;
         err err;
         carbon_find find;
         carbon_field_type_e type;
@@ -8708,7 +8702,7 @@ TEST(CarbonTest, ParseBooleanArray) {
 
 TEST(CarbonTest, PathIndex) {
         carbon_path_index index;
-        carbon doc;
+        rec doc;
         err err;
 
         const char *json = "[\n"
@@ -8738,7 +8732,7 @@ TEST(CarbonTest, PathIndex) {
         carbon_hexdump_print(stdout, &doc);
         carbon_path_index_hexdump(stdout, &index);
 
-        carbon path_carbon;
+        rec path_carbon;
         carbon_path_index_to_carbon(&path_carbon, &index);
         carbon_print(stdout, JSON_COMPACT, &path_carbon);
         carbon_drop(&path_carbon);

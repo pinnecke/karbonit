@@ -28,7 +28,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Unique tag identifying a specific implementation for compressing/decompressing string in a CARBON archives
@@ -242,6 +244,8 @@ bool pack_decode(err *err, packer *self, char *dst, size_t strlen, FILE *src);
 bool pack_print_extra(err *err, packer *self, FILE *file, memfile *src);
 bool pack_print_encoded(err *err, packer *self, FILE *file, memfile *src, u32 decompressed_strlen);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

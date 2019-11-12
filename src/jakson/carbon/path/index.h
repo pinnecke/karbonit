@@ -26,24 +26,26 @@
 #include <jakson/mem/file.h>
 #include <jakson/mem/block.h>
 #include <jakson/error.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/dot.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  types
 // ---------------------------------------------------------------------------------------------------------------------
 
 typedef struct carbon_path_index {
-        memblock *memblock;
+        area *memblock;
         memfile memfile;
         err err;
 } carbon_path_index;
 
 typedef struct carbon_path_index_it {
-        carbon *doc;
+        rec *doc;
         memfile memfile;
         err err;
 
@@ -59,7 +61,7 @@ typedef enum {
 //  construction and deconstruction
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool carbon_path_index_create(carbon_path_index *index, carbon *doc);
+bool carbon_path_index_create(carbon_path_index *index, rec *doc);
 bool carbon_path_index_drop(carbon_path_index *index);
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -72,13 +74,13 @@ bool carbon_path_index_key_type(carbon_key_e *key_type, carbon_path_index *index
 bool carbon_path_index_key_unsigned_value(u64 *key, carbon_path_index *index);
 bool carbon_path_index_key_signed_value(i64 *key, carbon_path_index *index);
 const char *carbon_path_index_key_string_value(u64 *str_len, carbon_path_index *index);
-bool carbon_path_index_indexes_doc(carbon_path_index *index, carbon *doc);
+bool carbon_path_index_indexes_doc(carbon_path_index *index, rec *doc);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  index access and type information
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *index, carbon *doc);
+bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *index, rec *doc);
 bool carbon_path_index_it_type(carbon_container_e *type, carbon_path_index_it *it);
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -128,10 +130,12 @@ bool carbon_path_index_it_field_column_value(carbon_column *it_out, carbon_path_
 // ---------------------------------------------------------------------------------------------------------------------
 
 bool carbon_path_index_hexdump(FILE *file, carbon_path_index *index);
-fn_result carbon_path_index_to_carbon(carbon *doc, carbon_path_index *index);
+fn_result carbon_path_index_to_carbon(rec *doc, carbon_path_index *index);
 const char *carbon_path_index_to_str(string_buffer *str, carbon_path_index *index);
 bool carbon_path_index_print(FILE *file, carbon_path_index *index);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

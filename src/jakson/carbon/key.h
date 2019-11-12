@@ -24,10 +24,12 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/mem/file.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool carbon_key_create(memfile *file, carbon_key_e type, err *err);
 bool carbon_key_skip(carbon_key_e *out, memfile *file);
@@ -40,6 +42,8 @@ bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t leng
 const void *carbon_key_read(u64 *len, carbon_key_e *out, memfile *file);
 const char *carbon_key_type_str(carbon_key_e type);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

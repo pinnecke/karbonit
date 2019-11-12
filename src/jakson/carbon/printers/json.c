@@ -34,7 +34,7 @@
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void __carbon_print_json_record(struct carbon_traverse_extra *extra, struct carbon *record)
+static void __carbon_print_json_record(struct carbon_traverse_extra *extra, rec *record)
 {
         UNUSED(extra)
         UNUSED(record)
@@ -449,7 +449,7 @@ static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-void carbon_json_from_carbon(struct string_buffer *str, struct carbon *record,
+void carbon_json_from_carbon(struct string_buffer *str, rec *record,
                              struct carbon_json_from_opts *config)
 {
         assert(str);
@@ -457,7 +457,7 @@ void carbon_json_from_carbon(struct string_buffer *str, struct carbon *record,
 
         struct carbon_traverse traverse;
 
-        string_buffer_ensure_capacity(str, 2 * memfile_size(&record->memfile));
+        string_buffer_ensure_capacity(str, 2 * memfile_size(&record->file));
         __carbon_print_json_traverse_create(&traverse, str, config);
         carbon_traverse_carbon(NULL, &traverse, record);
         carbon_traverse_drop(&traverse);

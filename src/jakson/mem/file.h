@@ -27,10 +27,12 @@
 #include <jakson/hexdump.h>
 #include <jakson/mem/block.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef struct memfile {
-        memblock *memblock;
+typedef struct mfile {
+        area *memblock;
         offset_t pos;
         offset_t saved_pos[10];
         i8 saved_pos_ptr;
@@ -68,7 +70,7 @@ typedef struct memfile {
     offset;                                                                                                            \
 })
 
-bool memfile_open(memfile *file, memblock *block, access_mode_e mode);
+bool memfile_open(memfile *file, area *block, access_mode_e mode);
 bool memfile_clone(memfile *dst, memfile *src);
 
 bool memfile_seek(memfile *file, offset_t pos);
@@ -119,6 +121,8 @@ bool memfile_hexdump(string_buffer *sb, memfile *file);
 bool memfile_hexdump_printf(FILE *file, memfile *memfile);
 bool memfile_hexdump_print(memfile *memfile);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

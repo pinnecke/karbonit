@@ -5,8 +5,8 @@
 
 int main (void)
 {
-    carbon_new context;
-    carbon record;
+    rec_new context;
+    rec record;
     carbon_insert *ins;
     char *as_json;
 

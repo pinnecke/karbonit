@@ -26,10 +26,14 @@
 #include <jakson/stdx/alloc.h>
 #include <jakson/std/str_hash.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool str_hash_create_inmemory(str_hash *str_hash, const allocator *alloc, size_t num_buckets, size_t cap_buckets);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

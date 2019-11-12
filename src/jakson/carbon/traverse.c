@@ -55,7 +55,7 @@ void carbon_traverse_drop(struct carbon_traverse *traverse)
         }
 }
 
-void carbon_traverse_carbon(struct carbon *rev_out, struct carbon_traverse *traverse, struct carbon *record)
+void carbon_traverse_carbon(rec *rev_out, struct carbon_traverse *traverse, rec *record)
 {
         assert(traverse);
         assert(record);
@@ -69,7 +69,7 @@ void carbon_traverse_carbon(struct carbon *rev_out, struct carbon_traverse *trav
         if (traverse->read_write) {
                 assert(rev_out);
                 
-                carbon_revise context;
+                rev context;
                 carbon_revise_begin(&context, rev_out, record);
                 carbon_revise_iterator_open(&it, &context);
                 carbon_traverse_array(traverse, &it);

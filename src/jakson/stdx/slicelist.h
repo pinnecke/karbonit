@@ -30,7 +30,9 @@
 #include <jakson/std/hash.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 FORWARD_STRUCT_DECL(slice)
 
@@ -121,6 +123,8 @@ bool slice_list_is_empty(const slice_list_t *list);
 bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *ids, size_t npairs);
 bool slice_list_remove(slice_list_t *list, slice_handle *handle);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

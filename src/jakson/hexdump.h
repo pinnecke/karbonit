@@ -25,11 +25,15 @@
 #include <jakson/stdinc.h>
 #include <jakson/std/string.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool hexdump(string_buffer *dst, const void *base, u64 nbytes);
 bool hexdump_print(FILE *file, const void *base, u64 nbytes);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

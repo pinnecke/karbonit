@@ -15,7 +15,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/insert.h>
@@ -452,7 +452,7 @@ bool internal_carbon_object_update_object_end(carbon_insert_object_state *state)
         return false;
 }
 
-bool internal_carbon_object_update_from_carbon(carbon_object *it, const carbon *src)
+bool internal_carbon_object_update_from_carbon(carbon_object *it, const rec *src)
 {
         // TODO: Implement P1
         UNUSED(it)

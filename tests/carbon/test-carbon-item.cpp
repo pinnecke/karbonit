@@ -3,7 +3,7 @@
 #include <jakson/jakson.h>
 
 TEST(TestCarbonItem, CreateId) {
-        carbon doc;
+        rec doc;
         struct err err;
         carbon_array array;
         carbon_item *item;

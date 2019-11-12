@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef u8 hash8_t;
 typedef u16 hash16_t;
@@ -208,6 +210,8 @@ typedef u64 hash64_t;
     hash;                                                                                                              \
 })
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

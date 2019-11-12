@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/archive/pred.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 BUILT_IN(static bool) __string_pred_equals_func(size_t *idxs_matching, size_t *num_matching, char **strings, size_t num_strings, void *capture)
 {
@@ -52,6 +54,8 @@ string_pred_equals_init(string_pred *pred)
         return true;
 }
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

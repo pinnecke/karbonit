@@ -25,10 +25,12 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/mem/file.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/field.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef u8 media_type; /** byte to determine type at hand (e.g., JSON array, string_buffer, null, ...) */
 
@@ -744,6 +746,8 @@ const char *carbon_media_mime_type_by_id(u32 id);
  */
 const char *carbon_media_mime_ext_by_id(u32 id);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

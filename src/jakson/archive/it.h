@@ -26,7 +26,9 @@
 #include <jakson/error.h>
 #include <jakson/archive.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum prop_iter_state {
         PROP_ITER_INIT,
@@ -320,6 +322,8 @@ DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t);
 
 void archive_int_reset_carbon_object_mem_file(archive_object *object);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

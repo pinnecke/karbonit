@@ -6,7 +6,7 @@
 #include <jakson/jakson.h>
 
 TEST(CarbonTest, InvalidObject) {
-        carbon carbon;
+        rec carbon;
         err err;
         const char *json_in = "{\"foo\"}";
         bool status = carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL, &err);
@@ -14,7 +14,7 @@ TEST(CarbonTest, InvalidObject) {
 }
 
 TEST(CarbonTest, EmptyInput) {
-        carbon carbon;
+        rec carbon;
         err err;
         const char *json_in = "";
         bool status = carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL, &err);
@@ -22,7 +22,7 @@ TEST(CarbonTest, EmptyInput) {
 }
 
 TEST(CarbonTest, SingleString) {
-        carbon carbon;
+        rec carbon;
         err err;
         const char *json_in = "  foo  ";
         carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL, &err);

@@ -27,7 +27,9 @@
 #include <jakson/carbon/containers.h>
 #include <jakson/fn_result.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  abstract type class (base or derived)
@@ -309,6 +311,8 @@ fn_result carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_d
  * the function returns an err. */
 fn_result carbon_abstract_get_derived_type(carbon_derived_e *type, memfile *memfile);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -28,10 +28,12 @@
 #include <jakson/mem/block.h>
 #include <jakson/mem/file.h>
 #include <jakson/std/spinlock.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/internal.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context);
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context);
@@ -124,6 +126,8 @@ u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in);
 
 fn_result carbon_insert_drop(carbon_insert *inserter);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

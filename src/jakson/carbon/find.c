@@ -33,7 +33,7 @@ static void result_from_object(carbon_find *find, carbon_object *it);
 static inline bool
 result_from_column(carbon_find *find, u32 requested_idx, carbon_column *it);
 
-bool carbon_find_begin(carbon_find *out, const char *dot_path, carbon *doc)
+bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc)
 {
         DEBUG_ERROR_IF_NULL(out)
         DEBUG_ERROR_IF_NULL(dot_path)
@@ -113,7 +113,7 @@ fn_result carbon_find_end(carbon_find *find)
         return FN_OK();
 }
 
-fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, carbon *doc)
+fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, rec *doc)
 {
         FN_FAIL_IF_NULL(find, path, doc)
 
@@ -660,7 +660,7 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         find->value.array = carbon_item_get_array(&(it->item));
-                        find->value.array->memfile.mode = find->doc->memfile.mode;
+                        find->value.array->memfile.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -703,14 +703,14 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         find->value.column_it = carbon_item_get_column(&(it->item));
-                        find->value.column_it->memfile.mode = find->doc->memfile.mode;
+                        find->value.column_it->memfile.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         find->value.object_it = carbon_item_get_object(&(it->item));
-                        find->value.object_it->memfile.mode = find->doc->memfile.mode;
+                        find->value.object_it->memfile.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_STRING:
                         find->value.string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
@@ -756,7 +756,7 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         find->value.array = carbon_item_get_array(&(it->prop.value));
-                        find->value.array->memfile.mode = find->doc->memfile.mode;
+                        find->value.array->memfile.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -799,14 +799,14 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         find->value.column_it = carbon_item_get_column(&(it->prop.value));
-                        find->value.column_it->memfile.mode = find->doc->memfile.mode;
+                        find->value.column_it->memfile.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         find->value.object_it = carbon_item_get_object(&(it->prop.value));
-                        find->value.object_it->memfile.mode = find->doc->memfile.mode;
+                        find->value.object_it->memfile.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_STRING:
                         find->value.string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);

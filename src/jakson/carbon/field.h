@@ -21,7 +21,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/abstract.h>
 
 #ifndef CARBON_FIELD_H
@@ -216,7 +216,9 @@ typedef enum carbon_constant {
 #define CARBON_FIELD_TYPE_NUMBER_I64_STR "number-i64"
 #define CARBON_FIELD_TYPE_NUMBER_FLOAT_STR "number-float"
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 const char *carbon_field_type_str(err *err, carbon_field_type_e type);
 
@@ -268,6 +270,8 @@ bool carbon_field_skip_64(memfile *file);
 carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivation, carbon_column_type_e type);
 carbon_field_type_e carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is_null, bool is_true);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

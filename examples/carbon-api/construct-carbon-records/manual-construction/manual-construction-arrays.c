@@ -5,8 +5,8 @@
 
 int main (void)
 {
-    carbon_new context;
-    carbon record;
+    rec_new context;
+    rec record;
     carbon_insert *ins, *nested_ins;
     carbon_insert_array_state state;
     char *as_json;

@@ -25,10 +25,14 @@
 #include <jakson/stdinc.h>
 #include <jakson/archive/encoded_doc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool archive_converter(encoded_doc_list *collection, archive *archive);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -26,7 +26,9 @@
 #include <jakson/types.h>
 #include <jakson/archive.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct strid_info {
         archive_field_sid_t id;
@@ -45,6 +47,8 @@ bool strid_iter_open(strid_iter *it, err *err, archive *archive);
 bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_length, strid_iter *it);
 bool strid_iter_close(strid_iter *it);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

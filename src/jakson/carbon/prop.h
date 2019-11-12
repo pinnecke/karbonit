@@ -9,7 +9,9 @@
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/item.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_prop
 {
@@ -162,6 +164,8 @@ bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent);
 
 u64 internal_carbon_prop_size(memfile *file);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

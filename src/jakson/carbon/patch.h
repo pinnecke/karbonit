@@ -21,18 +21,22 @@
 #include <jakson/stdinc.h>
 #include <jakson/forwdecl.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Opens a read-write enabled iterator for patching a record revision without creating a new one. */
-fn_result carbon_patch_begin(carbon_array *it, carbon *doc);
+fn_result carbon_patch_begin(carbon_array *it, rec *doc);
 
 /* Closes a read-write ennabled iterator , which was previously opened via 'carbon_patch_end' */
 fn_result carbon_patch_end(carbon_array *it);
 
-bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, carbon *doc);
+bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc);
 
 fn_result carbon_patch_find_end(carbon_find *find);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -47,14 +47,6 @@
 # define _Atomic(X) std::atomic< X >
 #endif
 
-#ifdef __cplusplus
-#define BEGIN_DECL  extern "C" {
-#define END_DECL    }
-#else
-#define BEGIN_DECL
-#define END_DECL
-#endif
-
 #define MALLOC(size)                \
 ({                                      \
         void *ptr = malloc(size);       \

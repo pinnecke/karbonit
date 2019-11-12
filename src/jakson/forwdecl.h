@@ -83,9 +83,9 @@ typedef struct gather_scatter_args gather_scatter_args;
 
 typedef struct bitmap bitmap;
 
-typedef struct carbon carbon;
+typedef struct rec rec;
 typedef struct carbon_insert carbon_insert;
-typedef struct carbon_new carbon_new;
+typedef struct rec_new rec_new;
 typedef struct field_access field_access;
 
 typedef struct carbon_array carbon_array;
@@ -106,7 +106,7 @@ typedef struct carbon_path_evaluator carbon_path_evaluator;
 typedef struct carbon_path_index carbon_path_index;
 typedef struct carbon_path_index_it carbon_path_index_it;
 typedef struct carbon_printer carbon_printer;
-typedef struct carbon_revise carbon_revise;
+typedef struct rev rev;
 typedef struct carbon_binary carbon_binary;
 typedef struct carbon_update carbon_update;
 typedef struct packer packer;
@@ -136,8 +136,8 @@ typedef struct json_elements json_elements;
 typedef struct json_array json_array;
 typedef struct json_number json_number;
 
-typedef struct memblock memblock;
-typedef struct memfile memfile;
+typedef struct block area;
+typedef struct mfile memfile;
 
 typedef struct command_opt command_opt;
 typedef struct command_opt_group command_opt_group;

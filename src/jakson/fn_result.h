@@ -26,7 +26,9 @@
 #include <jakson/error.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define PAYLOAD_SIZE 48 /** bits used for payload */
 
@@ -297,6 +299,8 @@ void *__fn_result_ptr(fn_result result);
 
 bool __fn_test_nonnull(size_t n,...);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

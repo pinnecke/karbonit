@@ -33,7 +33,9 @@
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/abstract.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_insert {
         carbon_container_e context_type;
@@ -98,9 +100,9 @@ bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, ca
 bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_access);
 
 offset_t carbon_int_column_get_payload_off(carbon_column *it);
-offset_t carbon_int_payload_after_header(carbon *doc);
+offset_t carbon_int_payload_after_header(rec *doc);
 
-u64 carbon_int_header_get_commit_hash(carbon *doc);
+u64 carbon_int_header_get_commit_hash(rec *doc);
 
 void carbon_int_history_push(vector ofType(offset_t) *vec, offset_t off);
 void carbon_int_history_clear(vector ofType(offset_t) *vec);
@@ -147,8 +149,10 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
 /**
  * For <code>mode</code>, see <code>carbon_create_begin</code>
  */
-fn_result carbon_int_from_json(carbon *doc, const json *data, carbon_key_e key_type, const void *primary_key, int mode);
+fn_result carbon_int_from_json(rec *doc, const json *data, carbon_key_e key_type, const void *primary_key, int mode);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

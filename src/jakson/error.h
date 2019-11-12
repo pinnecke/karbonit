@@ -28,7 +28,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef u16 error_code;
 
@@ -263,6 +265,8 @@ bool error_print_and_abort(const err *err);
 }
 
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

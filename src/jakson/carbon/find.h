@@ -24,7 +24,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/carbon.h>
+#include <jakson/rec.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/array.h>
 #include <jakson/carbon/object.h>
@@ -32,10 +32,12 @@
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/path.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct carbon_find {
-        carbon *doc;
+        rec *doc;
         carbon_field_type_e type;
         err err;
         carbon_path_evaluator path_evaluater;
@@ -56,9 +58,9 @@ typedef struct carbon_find {
         } value;
 } carbon_find;
 
-bool carbon_find_begin(carbon_find *out, const char *dot_path, carbon *doc);
+bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc);
 fn_result carbon_find_end(carbon_find *find);
-fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, carbon *doc);
+fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, rec *doc);
 fn_result carbon_find_drop(carbon_find *find);
 
 fn_result ofType(bool) carbon_find_has_result(carbon_find *find);
@@ -94,6 +96,8 @@ fn_result carbon_find_result_float(float *out, carbon_find *find);
 fn_result ofType(const char *) carbon_find_result_string(u64 *str_len, carbon_find *find);
 fn_result ofType(carbon_binary *) carbon_find_result_binary(carbon_find *find);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

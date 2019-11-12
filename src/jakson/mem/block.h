@@ -25,31 +25,35 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-bool memblock_create(memblock **block, size_t size);
-bool memblock_drop(memblock *block);
+bool memblock_create(area **block, size_t size);
+bool memblock_drop(area *block);
 
-bool memblock_from_file(memblock **block, FILE *file, size_t nbytes);
-bool memblock_from_raw_data(memblock **block, const void *data, size_t nbytes);
+bool memblock_from_file(area **block, FILE *file, size_t nbytes);
+bool memblock_from_raw_data(area **block, const void *data, size_t nbytes);
 
-bool memblock_get_error(err *out, memblock *block);
+bool memblock_get_error(err *out, area *block);
 
-bool memblock_zero_out(memblock *block);
-bool memblock_size(offset_t *size, const memblock *block);
-offset_t memblock_last_used_byte(const memblock *block);
-bool memblock_write_to_file(FILE *file, const memblock *block);
-const char *memblock_raw_data(const memblock *block);
-bool memblock_resize(memblock *block, size_t size);
-bool memblock_write(memblock *block, offset_t position, const char *data, offset_t nbytes);
-bool memblock_cpy(memblock **dst, memblock *src);
-bool memblock_shrink(memblock *block);
-bool memblock_move_right(memblock *block, offset_t where, size_t nbytes);
-bool memblock_move_left(memblock *block, offset_t where, size_t nbytes);
-bool memblock_move_ex(memblock *block, offset_t where, size_t nbytes, bool zero_out);
-void *memblock_move_contents_and_drop(memblock *block);
-bool memfile_update_last_byte(memblock *block, size_t where);
+bool memblock_zero_out(area *block);
+bool memblock_size(offset_t *size, const area *block);
+offset_t memblock_last_used_byte(const area *block);
+bool memblock_write_to_file(FILE *file, const area *block);
+const char *memblock_raw_data(const area *block);
+bool memblock_resize(area *block, size_t size);
+bool memblock_write(area *block, offset_t position, const char *data, offset_t nbytes);
+bool memblock_cpy(area **dst, area *src);
+bool memblock_shrink(area *block);
+bool memblock_move_right(area *block, offset_t where, size_t nbytes);
+bool memblock_move_left(area *block, offset_t where, size_t nbytes);
+bool memblock_move_ex(area *block, offset_t where, size_t nbytes, bool zero_out);
+void *memblock_move_contents_and_drop(area *block);
+bool memfile_update_last_byte(area *block, size_t where);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

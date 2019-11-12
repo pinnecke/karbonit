@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool io_context_create(archive_io_context **context, err *err, const char *file_path);
 err *io_context_get_error(archive_io_context *context);
@@ -33,6 +35,8 @@ FILE *io_context_lock_and_access(archive_io_context *context);
 bool io_context_unlock(archive_io_context *context);
 bool io_context_drop(archive_io_context *context);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

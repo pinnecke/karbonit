@@ -20,7 +20,9 @@
 
 #include <jakson/stdinc.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <jakson/utils/time.h>
 #include <stdio.h>
@@ -53,6 +55,8 @@ static inline long long __get_time_diff(struct timespec *begin, struct timespec 
         return (end->tv_sec - begin->tv_sec) * 1000000000L + (end->tv_nsec - begin->tv_nsec); /// 1000000000.0;
 }
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

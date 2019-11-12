@@ -2,7 +2,7 @@
 #include <jakson/jakson.h>
 
 static void make_memfile(memfile *memfile) {
-        memblock *memblock;
+        area *memblock;
         memblock_create(&memblock, 1024);
         memfile_open(memfile, memblock, READ_WRITE);
 }

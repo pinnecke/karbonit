@@ -27,7 +27,9 @@
 #include <jakson/types.h>
 #include <jakson/mem/file.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * This type is for variable-length unsigned integer types.
@@ -111,6 +113,8 @@ u8 uintvar_stream_write(uintvar_stream_t dst, u64 value);
 
 u64 uintvar_stream_read(u8 *nbytes, uintvar_stream_t src);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -25,7 +25,9 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef u64 unique_id_t;
 
@@ -42,6 +44,8 @@ bool unique_id_get_thread_magic(uint_fast8_t *out, unique_id_t id);
 bool unique_id_get_thread_counter(uint_fast32_t *out, unique_id_t id);
 bool unique_id_get_call_random(uint_fast8_t *out, unique_id_t id);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -35,7 +35,6 @@ extern "C" {
 typedef struct query {
         archive *archive;
         archive_io_context *context;
-        err err;
 } archive_query;
 
 bool query_create(query *query, archive *archive);
@@ -43,8 +42,8 @@ bool query_drop(query *query);
 bool query_scan_strids(strid_iter *it, query *query);
 bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query *query);
 void query_drop_index_string_id_to_offset(struct sid_to_offset *index);
-bool query_index_id_to_offset_serialize(FILE *file, err *err, struct sid_to_offset *index);
-bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, err *err, const char *file_path, offset_t offset);
+bool query_index_id_to_offset_serialize(FILE *file, struct sid_to_offset *index);
+bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, const char *file_path, offset_t offset);
 char *query_fetch_string_by_id(query *query, archive_field_sid_t id);
 char *query_fetch_string_by_id_nocache(query *query, archive_field_sid_t id);
 char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens, size_t num_offs);

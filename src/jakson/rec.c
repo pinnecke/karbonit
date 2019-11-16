@@ -53,7 +53,6 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                                            carbon_key_e type, int options)
 {
         if (context && doc) {
-                error_init(&context->err);
                 context->content_it = MALLOC(sizeof(carbon_array));
                 context->inserter = MALLOC(sizeof(carbon_insert));
                 context->mode = options;
@@ -116,7 +115,6 @@ fn_result carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, c
 
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
 
-        error_init(&doc->err);
         memblock_create(&doc->area, doc_cap);
         memblock_zero_out(doc->area);
         memfile_open(&doc->file, doc->area, READ_WRITE);
@@ -128,16 +126,11 @@ fn_result carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, c
 }
 
 bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
-                      const void *key, err *err)
+                      const void *key)
 {
-        DEBUG_ERROR_IF_NULL(doc)
-        DEBUG_ERROR_IF_NULL(json)
-
         struct json data;
         json_err status;
         json_parser parser;
-
-        json_parser_create(&parser);
 
         if (!(json_parse(&data, &status, &parser, json))) {
                 string_buffer sb;
@@ -153,7 +146,7 @@ bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
                         string_buffer_add(&sb, status.msg);
                 }
 
-                ERROR_WDETAILS(err, ERR_JSONPARSEERR, string_cstr(&sb));
+                error(ERR_JSONPARSEERR, string_cstr(&sb));
                 string_buffer_drop(&sb);
 
                 return false;
@@ -164,14 +157,8 @@ bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
         }
 }
 
-bool carbon_from_raw_data(rec *doc, err *err, const void *data, u64 len)
+bool carbon_from_raw_data(rec *doc, const void *data, u64 len)
 {
-        DEBUG_ERROR_IF_NULL(doc);
-        DEBUG_ERROR_IF_NULL(err);
-        DEBUG_ERROR_IF_NULL(data);
-        DEBUG_ERROR_IF_NULL(len);
-
-        error_init(&doc->err);
         memblock_from_raw_data(&doc->area, data, len);
         memfile_open(&doc->file, doc->area, READ_WRITE);
 
@@ -180,7 +167,6 @@ bool carbon_from_raw_data(rec *doc, err *err, const void *data, u64 len)
 
 bool carbon_drop(rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(doc);
         return internal_drop(doc);
 }
 
@@ -196,8 +182,6 @@ const void *carbon_raw_data(u64 *len, rec *doc)
 
 bool carbon_key_type(carbon_key_e *out, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(out)
-        DEBUG_ERROR_IF_NULL(doc)
         memfile_save_position(&doc->file);
         carbon_key_skip(out, &doc->file);
         memfile_restore_position(&doc->file);
@@ -224,7 +208,7 @@ bool carbon_key_signed_value(i64 *key, rec *doc)
                 *key = *((const i64 *) result);
                 return true;
         } else {
-                ERROR(&doc->err, ERR_TYPEMISMATCH);
+                error(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
@@ -240,7 +224,7 @@ bool carbon_key_unsigned_value(u64 *key, rec *doc)
                 *key = *((const u64 *) result);
                 return true;
         } else {
-                ERROR(&doc->err, ERR_TYPEMISMATCH);
+                error(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
@@ -255,7 +239,7 @@ const char *carbon_key_string_value(u64 *len, rec *doc)
         if (LIKELY(carbon_key_is_string(type))) {
                 return result;
         } else {
-                ERROR(&doc->err, ERR_TYPEMISMATCH);
+                error(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
@@ -282,18 +266,13 @@ bool carbon_has_key(carbon_key_e type)
 
 bool carbon_clone(rec *clone, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(clone);
-        DEBUG_ERROR_IF_NULL(doc);
         CHECK_SUCCESS(memblock_cpy(&clone->area, doc->area));
         CHECK_SUCCESS(memfile_open(&clone->file, clone->area, READ_WRITE));
-        CHECK_SUCCESS(error_init(&clone->err));
-
         return true;
 }
 
 bool carbon_commit_hash(u64 *hash, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(doc);
         *hash = carbon_int_header_get_commit_hash(doc);
         return true;
 }
@@ -334,8 +313,6 @@ fn_result carbon_update_list_type(rec *revised_doc, rec *doc, carbon_list_deriva
 
 bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(doc);
-
         carbon_printer p;
         string_buffer b;
         carbon_key_e key_type;
@@ -382,16 +359,12 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
 
 const char *carbon_to_json_extended(string_buffer *dst, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(doc)
         carbon_to_str(dst, JSON_EXTENDED, doc);
         return string_cstr(dst);
 }
 
 const char *carbon_to_json_compact(string_buffer *dst, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(doc)
         carbon_to_str(dst, JSON_COMPACT, doc);
         return string_cstr(dst);
 }
@@ -428,13 +401,10 @@ fn_result carbon_read_end(carbon_array *it)
 
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(file);
-        DEBUG_ERROR_IF_NULL(doc);
-
         string_buffer builder;
         string_buffer_create(&builder);
         carbon_to_str(&builder, printer, doc);
-        printf("%s\n", string_cstr(&builder));
+        fprintf(file, "%s\n", string_cstr(&builder));
         string_buffer_drop(&builder);
 
         return true;
@@ -442,8 +412,6 @@ bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc)
 
 bool carbon_hexdump_print(FILE *file, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(file);
-        DEBUG_ERROR_IF_NULL(doc);
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
         bool status = hexdump_print(file, memfile_peek(&doc->file, 1), memfile_size(&doc->file));
@@ -465,7 +433,7 @@ static void carbon_header_init(rec *doc, carbon_key_e key_type)
         JAK_ASSERT(doc);
 
         memfile_seek(&doc->file, 0);
-        carbon_key_create(&doc->file, key_type, &doc->err);
+        carbon_key_create(&doc->file, key_type);
 
         if (key_type != CARBON_KEY_NOKEY) {
                 carbon_commit_hash_create(&doc->file);

@@ -44,7 +44,7 @@ typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, carbon_
 typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, carbon_array *it);
 
 /* called when an column was found */
-typedef void (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column *it);
+typedef bool (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column *it);
 
 /* called when an object was found */
 typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);

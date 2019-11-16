@@ -64,7 +64,6 @@ insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 c
 
 bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes)
 {
-        DEBUG_ERROR_IF_NULL(memfile);
         assert(derivation == CARBON_MAP_UNSORTED_MULTIMAP || derivation == CARBON_MAP_SORTED_MULTIMAP ||
                derivation == CARBON_MAP_UNSORTED_MAP || derivation == CARBON_MAP_SORTED_MAP);
         carbon_derived_e begin_marker;
@@ -75,7 +74,6 @@ bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivatio
 
 bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes)
 {
-        DEBUG_ERROR_IF_NULL(memfile);
         assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
                derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
         carbon_derived_e begin_marker;
@@ -84,11 +82,9 @@ bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivatio
         return true;
 }
 
-bool carbon_int_insert_column(memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type,
+bool carbon_int_insert_column(memfile *memfile_in, carbon_list_derivable_e derivation, carbon_column_type_e type,
                               size_t capactity)
 {
-        DEBUG_ERROR_IF_NULL(memfile_in);
-        DEBUG_ERROR_IF_NULL(err_in);
         assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
                derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
 
@@ -144,7 +140,7 @@ size_t carbon_int_get_type_size_encoded(carbon_field_type_e type)
                 case CARBON_FIELD_NUMBER_FLOAT:
                         type_size += sizeof(float);
                         break;
-                default: ERROR_PRINT(ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
                         return 0;
         }
         return type_size;
@@ -211,7 +207,7 @@ size_t carbon_int_get_type_value_size(carbon_field_type_e type)
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
                         return sizeof(float);
-                default: ERROR_PRINT(ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
                         return 0;
         }
 }
@@ -238,10 +234,9 @@ bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_
 
 bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
         if (object_it_is_slot_occupied(is_empty_slot, is_object_end, it)) {
                 carbon_int_object_it_prop_key_access(it);
-                carbon_int_field_data_access(&it->memfile, &it->err, &it->field.value.data);
+                carbon_int_field_data_access(&it->memfile, &it->field.value.data);
                 return true;
         } else {
                 return false;
@@ -250,9 +245,6 @@ bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carb
 
 bool carbon_int_object_it_prop_key_access(carbon_object *it)
 {
-        DEBUG_ERROR_IF_NULL(it)
-        //memfile_skip(&it->mem, sizeof(media_type));
-
         it->field.key.offset = memfile_tell(&it->memfile);
         it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->memfile);
         it->field.key.name = memfile_peek(&it->memfile, it->field.key.name_len);
@@ -265,18 +257,14 @@ bool carbon_int_object_it_prop_key_access(carbon_object *it)
 
 bool carbon_int_object_it_prop_value_skip(carbon_object *it)
 {
-        DEBUG_ERROR_IF_NULL(it)
         memfile_seek(&it->memfile, it->field.value.offset);
         return carbon_field_skip(&it->memfile);
 }
 
 bool carbon_int_object_it_prop_skip(carbon_object *it)
 {
-        DEBUG_ERROR_IF_NULL(it)
-
         it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->memfile);
         memfile_skip(&it->memfile, it->field.key.name_len);
-
         return carbon_field_skip(&it->memfile);
 }
 
@@ -294,11 +282,10 @@ bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, car
 
 bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
         carbon_int_field_access_drop(&it->field_access);
         if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_array_field_type_read(it);
-                carbon_int_field_data_access(&it->memfile, &it->err, &it->field_access);
+                carbon_int_field_data_access(&it->memfile, &it->field_access);
                 return true;
         } else {
                 return false;
@@ -307,19 +294,18 @@ bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, carbon_ar
 
 bool carbon_int_array_field_type_read(carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it)
-        ERROR_IF(memfile_remain_size(&it->memfile) < 1, &it->err, ERR_ILLEGALOP);
+        error_if_and_return(memfile_remain_size(&it->memfile) < 1, ERR_ILLEGALOP, NULL);
         memfile_save_position(&it->memfile);
         it->field_offset = memfile_tell(&it->memfile);
         u8 media_type = *memfile_read(&it->memfile, 1);
-        ERROR_IF(media_type == 0, &it->err, ERR_NOTFOUND)
-        ERROR_IF(media_type == CARBON_MARRAY_END, &it->err, ERR_OUTOFBOUNDS)
+        error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
+        error_if_and_return(media_type == CARBON_MARRAY_END, ERR_OUTOFBOUNDS, NULL)
         it->field_access.it_field_type = media_type;
         memfile_restore_position(&it->memfile);
         return true;
 }
 
-bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_access)
+bool carbon_int_field_data_access(memfile *file, field_access *field_access)
 {
         memfile_save_position(file);
         memfile_skip(file, sizeof(media_type));
@@ -376,7 +362,7 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         carbon_int_field_access_create(field_access);
                         field_access->nested_array_is_created = true;
-                        internal_carbon_array_create(field_access->nested_array, file, err,
+                        internal_carbon_array_create(field_access->nested_array, file, 
                                                memfile_tell(file) - sizeof(u8));
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -421,7 +407,7 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         carbon_int_field_access_create(field_access);
                         field_access->nested_column_it_is_created = true;
-                        carbon_column_create(field_access->nested_column_it, file, err,
+                        carbon_column_create(field_access->nested_column_it, file, 
                                                 memfile_tell(file) - sizeof(u8));
                 }
                         break;
@@ -431,10 +417,10 @@ bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_a
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         carbon_int_field_access_create(field_access);
                         field_access->nested_object_it_is_created = true;
-                        internal_carbon_object_create(field_access->nested_object_it, file, err,
+                        internal_carbon_object_create(field_access->nested_object_it, file, 
                                                       memfile_tell(file) - sizeof(u8));
                         break;
-                default: ERROR(err, ERR_CORRUPTED)
+                default: error(ERR_CORRUPTED, NULL)
                         return false;
         }
 
@@ -539,9 +525,6 @@ bool carbon_int_field_access_create(field_access *field)
 
 bool carbon_int_field_access_clone(field_access *dst, field_access *src)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-
         dst->it_field_type = src->it_field_type;
         dst->it_field_data = src->it_field_data;
         dst->it_field_len = src->it_field_len;
@@ -621,7 +604,6 @@ void carbon_int_auto_close_nested_column_it(field_access *field)
 
 bool carbon_int_field_auto_close(field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(field)
         if (field->nested_array_is_created && !field->nested_array_accessed) {
                 carbon_int_auto_close_nested_array(field);
                 field->nested_array_is_created = false;
@@ -642,122 +624,96 @@ bool carbon_int_field_auto_close(field_access *field)
 
 bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(type)
-        DEBUG_ERROR_IF_NULL(field)
         *type = field->it_field_type;
         return true;
 }
 
-bool carbon_int_field_access_bool_value(bool *value, field_access *field, err *err)
+bool carbon_int_field_access_bool_value(bool *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value);
-        DEBUG_ERROR_IF_NULL(field);
-
         bool is_true = field->it_field_type == CARBON_FIELD_TRUE;
         bool is_false = field->it_field_type == CARBON_FIELD_FALSE;
         if (LIKELY(is_true || is_false)) {
                 *value = is_true;
                 return true;
         } else {
-                ERROR(err, ERR_TYPEMISMATCH);
+                error(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
 
 bool carbon_int_field_access_is_null(bool *is_null, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(is_null);
-        DEBUG_ERROR_IF_NULL(field);
         *is_null = field->it_field_type == CARBON_FIELD_NULL;
         return true;
 }
 
-bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err)
+bool carbon_int_field_access_u8_value(u8 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U8, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U8, ERR_TYPEMISMATCH, NULL);
         *value = *(u8 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_u16_value(u16 *value, field_access *field, err *err)
+bool carbon_int_field_access_u16_value(u16 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U16, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U16, ERR_TYPEMISMATCH, NULL);
         *value = *(u16 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_u32_value(u32 *value, field_access *field, err *err)
+bool carbon_int_field_access_u32_value(u32 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U32, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U32, ERR_TYPEMISMATCH, NULL);
         *value = *(u32 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_u64_value(u64 *value, field_access *field, err *err)
+bool carbon_int_field_access_u64_value(u64 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_U64, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U64, ERR_TYPEMISMATCH, NULL);
         *value = *(u64 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i8_value(i8 *value, field_access *field, err *err)
+bool carbon_int_field_access_i8_value(i8 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I8, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I8, ERR_TYPEMISMATCH, NULL);
         *value = *(i8 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i16_value(i16 *value, field_access *field, err *err)
+bool carbon_int_field_access_i16_value(i16 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I16, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I16, ERR_TYPEMISMATCH, NULL);
         *value = *(i16 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i32_value(i32 *value, field_access *field, err *err)
+bool carbon_int_field_access_i32_value(i32 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I32, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I32, ERR_TYPEMISMATCH, NULL);
         *value = *(i32 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_i64_value(i64 *value, field_access *field, err *err)
+bool carbon_int_field_access_i64_value(i64 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_I64, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I64, ERR_TYPEMISMATCH, NULL);
         *value = *(i64 *) field->it_field_data;
         return true;
 }
 
-bool carbon_int_field_access_float_value(float *value, field_access *field, err *err)
+bool carbon_int_field_access_float_value(float *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         *value = *(float *) field->it_field_data;
         return true;
 }
 
 bool
-carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field, err *err)
+carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         float read_value = *(float *) field->it_field_data;
         OPTIONAL_SET(value, read_value);
         OPTIONAL_SET(is_null_in, IS_NULL_FLOAT(read_value));
@@ -765,171 +721,160 @@ carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, fie
         return true;
 }
 
-bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value, field_access *field,
-                                                   err *err)
+bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_I8: {
                         i8 read_value;
-                        carbon_int_field_access_i8_value(&read_value, field, err);
+                        carbon_int_field_access_i8_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I8(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I16: {
                         i16 read_value;
-                        carbon_int_field_access_i16_value(&read_value, field, err);
+                        carbon_int_field_access_i16_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I16(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I32: {
                         i32 read_value;
-                        carbon_int_field_access_i32_value(&read_value, field, err);
+                        carbon_int_field_access_i32_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I32(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I64: {
                         i64 read_value;
-                        carbon_int_field_access_i64_value(&read_value, field, err);
+                        carbon_int_field_access_i64_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I64(read_value));
                 }
                         break;
-                default: ERROR(err, ERR_TYPEMISMATCH);
+                default: error(ERR_TYPEMISMATCH, NULL);
                         return false;
         }
         return true;
 }
 
-bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *value, field_access *field,
-                                                     err *err)
+bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_U8: {
                         u8 read_value;
-                        carbon_int_field_access_u8_value(&read_value, field, err);
+                        carbon_int_field_access_u8_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U8(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U16: {
                         u16 read_value;
-                        carbon_int_field_access_u16_value(&read_value, field, err);
+                        carbon_int_field_access_u16_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U16(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U32: {
                         u32 read_value;
-                        carbon_int_field_access_u32_value(&read_value, field, err);
+                        carbon_int_field_access_u32_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U32(read_value));
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U64: {
                         u64 read_value;
-                        carbon_int_field_access_u64_value(&read_value, field, err);
+                        carbon_int_field_access_u64_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U64(read_value));
                 }
                         break;
-                default: ERROR(err, ERR_TYPEMISMATCH);
+                default: error(ERR_TYPEMISMATCH, NULL);
                         return false;
         }
         return true;
 }
 
-bool carbon_int_field_access_signed_value(i64 *value, field_access *field, err *err)
+bool carbon_int_field_access_signed_value(i64 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_I8: {
                         i8 read_value;
-                        carbon_int_field_access_i8_value(&read_value, field, err);
+                        carbon_int_field_access_i8_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I16: {
                         i16 read_value;
-                        carbon_int_field_access_i16_value(&read_value, field, err);
+                        carbon_int_field_access_i16_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I32: {
                         i32 read_value;
-                        carbon_int_field_access_i32_value(&read_value, field, err);
+                        carbon_int_field_access_i32_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
                 case CARBON_FIELD_NUMBER_I64: {
                         i64 read_value;
-                        carbon_int_field_access_i64_value(&read_value, field, err);
+                        carbon_int_field_access_i64_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                default: ERROR(err, ERR_TYPEMISMATCH);
+                default: error(ERR_TYPEMISMATCH, NULL);
                         return false;
         }
         return true;
 }
 
-bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field, err *err)
+bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(value)
-        DEBUG_ERROR_IF_NULL(field)
         switch (field->it_field_type) {
                 case CARBON_FIELD_NUMBER_U8: {
                         u8 read_value;
-                        carbon_int_field_access_u8_value(&read_value, field, err);
+                        carbon_int_field_access_u8_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U16: {
                         u16 read_value;
-                        carbon_int_field_access_u16_value(&read_value, field, err);
+                        carbon_int_field_access_u16_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U32: {
                         u32 read_value;
-                        carbon_int_field_access_u32_value(&read_value, field, err);
+                        carbon_int_field_access_u32_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
                 case CARBON_FIELD_NUMBER_U64: {
                         u64 read_value;
-                        carbon_int_field_access_u64_value(&read_value, field, err);
+                        carbon_int_field_access_u64_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                default: ERROR(err, ERR_TYPEMISMATCH);
+                default: error(ERR_TYPEMISMATCH, NULL);
                         return false;
         }
         return true;
 }
 
-const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field, err *err)
+const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(strlen);
-        ERROR_IF_AND_RETURN(field == NULL, err, ERR_NULLPTR, NULL);
-        ERROR_IF(field->it_field_type != CARBON_FIELD_STRING, err, ERR_TYPEMISMATCH);
+        error_if_and_return(field == NULL, ERR_NULLPTR, NULL);
+        error_if_and_return(field->it_field_type != CARBON_FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         *strlen = field->it_field_len;
         return field->it_field_data;
 }
 
 bool
-carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err)
+carbon_int_field_access_binary_value(carbon_binary *out, field_access *field)
 {
-        DEBUG_ERROR_IF_NULL(out)
-        DEBUG_ERROR_IF_NULL(field)
-        ERROR_IF(field->it_field_type != CARBON_FIELD_BINARY &&
+        error_if_and_return(field->it_field_type != CARBON_FIELD_BINARY &&
                  field->it_field_type != CARBON_FIELD_BINARY_CUSTOM,
-                 err, ERR_TYPEMISMATCH);
+                 ERR_TYPEMISMATCH, NULL);
         out->blob = field->it_field_data;
         out->blob_len = field->it_field_len;
         out->mime_type = field->it_mime_type;
@@ -937,30 +882,30 @@ carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, er
         return true;
 }
 
-carbon_array *carbon_int_field_access_array_value(field_access *field, err *err)
+carbon_array *carbon_int_field_access_array_value(field_access *field)
 {
-        ERROR_PRINT_IF(!field, ERR_NULLPTR);
-        ERROR_IF(!carbon_field_type_is_array_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
+        error_if_and_return(!field, ERR_NULLPTR, NULL);
+        error_if_and_return(!carbon_field_type_is_array_or_subtype(field->it_field_type), ERR_TYPEMISMATCH, NULL);
         field->nested_array_accessed = true;
         return field->nested_array;
 }
 
-carbon_object *carbon_int_field_access_object_value(field_access *field, err *err)
+carbon_object *carbon_int_field_access_object_value(field_access *field)
 {
-        ERROR_PRINT_IF(!field, ERR_NULLPTR);
-        ERROR_IF(!carbon_field_type_is_object_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
+        error_if_and_return(!field, ERR_NULLPTR, NULL);
+        error_if_and_return(!carbon_field_type_is_object_or_subtype(field->it_field_type), ERR_TYPEMISMATCH, NULL);
         field->nested_object_it_accessed = true;
         return field->nested_object_it;
 }
 
-carbon_column *carbon_int_field_access_column_value(field_access *field, err *err)
+carbon_column *carbon_int_field_access_column_value(field_access *field)
 {
-        ERROR_PRINT_IF(!field, ERR_NULLPTR);
-        ERROR_IF(!carbon_field_type_is_column_or_subtype(field->it_field_type), err, ERR_TYPEMISMATCH);
+        error_if_and_return(!field, ERR_NULLPTR, NULL);
+        error_if_and_return(!carbon_field_type_is_column_or_subtype(field->it_field_type), ERR_TYPEMISMATCH, NULL);
         return field->nested_column_it;
 }
 
-bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e type)
+bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type)
 {
         JAK_ASSERT((carbon_field_type_e) *memfile_peek(memfile, sizeof(u8)) == type);
         offset_t start_off = memfile_tell(memfile);
@@ -1037,7 +982,7 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                         carbon_array it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        internal_carbon_array_create(&it, memfile, err, begin_off - sizeof(u8));
+                        internal_carbon_array_create(&it, memfile, begin_off - sizeof(u8));
                         internal_carbon_array_fast_forward(&it);
                         offset_t end_off = internal_carbon_array_memfilepos(&it);
                         carbon_array_drop(&it);
@@ -1089,7 +1034,7 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                         carbon_column it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_column_create(&it, memfile, err, begin_off - sizeof(u8));
+                        carbon_column_create(&it, memfile, begin_off - sizeof(u8));
                         carbon_column_fast_forward(&it);
                         offset_t end_off = carbon_column_memfilepos(&it);
 
@@ -1104,7 +1049,7 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                         carbon_object it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        internal_carbon_object_create(&it, memfile, err, begin_off - sizeof(u8));
+                        internal_carbon_object_create(&it, memfile, begin_off - sizeof(u8));
                         internal_carbon_object_fast_forward(&it);
                         offset_t end_off = internal_carbon_object_memfile_pos(&it);
                         carbon_object_drop(&it);
@@ -1113,7 +1058,7 @@ bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e typ
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;
-                default: ERROR(err, ERR_INTERNALERR)
+                default: error(ERR_INTERNALERR, NULL)
                         return false;
         }
         memfile_seek(memfile, start_off);
@@ -1151,7 +1096,7 @@ static void int_insert_array_number(carbon_insert *array_ins, json_number *numbe
                 case JSON_NUMBER_SIGNED:
                         carbon_insert_signed(array_ins, number->value.signed_integer);
                         break;
-                default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL)
         }
 }
 
@@ -1202,7 +1147,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
                         case JSON_VALUE_NULL:
                                 int_insert_array_null(array_ins);
                                 break;
-                        default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
                                 break;
                 }
         }
@@ -1382,13 +1327,13 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                         } else if (array_elem->value.value_type == JSON_VALUE_NULL) {
                                                                 carbon_insert_null(array_ins);
                                                         } else {
-                                                                ERROR_PRINT(ERR_UNSUPPORTEDTYPE);
+                                                                error(ERR_UNSUPPORTEDTYPE, NULL);
                                                         }
                                                 }
                                                 carbon_insert_prop_column_end(&state);
                                         }
                                                 break;
-                                        default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
                                                 break;
                                 }
                         }
@@ -1410,7 +1355,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 carbon_insert_prop_signed(oins, prop->key.value,
                                                                           prop->value.value.value.number->value.signed_integer);
                                                 break;
-                                        default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE);
+                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                                 break;
                                 }
                                 break;
@@ -1423,7 +1368,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                         case JSON_VALUE_NULL:
                                 carbon_insert_prop_null(oins, prop->key.value);
                                 break;
-                        default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
                                 break;
                 }
         }
@@ -1585,7 +1530,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                                         } else if (array_elem->value.value_type == JSON_VALUE_NULL) {
                                                                 carbon_insert_null(ins);
                                                         } else {
-                                                                ERROR_PRINT(ERR_UNSUPPORTEDTYPE);
+                                                                error(ERR_UNSUPPORTEDTYPE, NULL);
                                                         }
                                                 }
                                         } else {
@@ -1607,14 +1552,14 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                                         } else if (array_elem->value.value_type == JSON_VALUE_NULL) {
                                                                 carbon_insert_null(array_ins);
                                                         } else {
-                                                                ERROR_PRINT(ERR_UNSUPPORTEDTYPE);
+                                                                error(ERR_UNSUPPORTEDTYPE, NULL);
                                                         }
                                                 }
                                                 carbon_insert_column_end(&state);
                                         }
                                 }
                                         break;
-                                default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                                default: error(ERR_UNSUPPORTEDTYPE, NULL)
                                         break;
                         }
                 }
@@ -1633,7 +1578,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                 case JSON_NUMBER_SIGNED:
                                         carbon_insert_signed(ins, elem->value.value.number->value.signed_integer);
                                         break;
-                                default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                                default: error(ERR_UNSUPPORTEDTYPE, NULL)
                                         break;
                         }
                         break;
@@ -1646,7 +1591,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                 case JSON_VALUE_NULL:
                         carbon_insert_null(ins);
                         break;
-                default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL)
                         break;
         }
 }
@@ -1690,7 +1635,6 @@ static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end,
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)
 {
-        DEBUG_ERROR_IF_NULL(file);
         char c = *memfile_peek(file, 1);
         bool is_empty = c == 0, is_end = c == end_marker;
         OPTIONAL_SET(is_empty_slot, is_empty)

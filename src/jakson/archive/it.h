@@ -58,7 +58,8 @@ typedef enum prop_iter_state {
         PROP_ITER_FLOAT_ARRAYS,
         PROP_ITER_STRING_ARRAYS,
         PROP_ITER_OBJECT_ARRAYS,
-        PROP_ITER_DONE
+        PROP_ITER_DONE,
+        PROP_ITER_ERR
 } prop_iter_state_e;
 
 typedef struct archive_object {
@@ -67,7 +68,6 @@ typedef struct archive_object {
         archive_prop_offs prop_offsets;  /** per-property type offset in the record table byte stream */
         offset_t next_obj_off;                  /** offset to next object in list, or NULL if no such exists */
         memfile memfile;
-        err err;
 } archive_object;
 
 typedef enum prop_iter_mode {
@@ -119,7 +119,6 @@ typedef struct archive_value_vector {
         bool is_array;                          /** flag indicating whether value type is an array or not */
         offset_t data_off;                      /** offset in mem where type-dependent data begins */
         u32 value_max_idx;                      /** maximum index of a value callable by 'at' functions */
-        err err;                         /** ERROR information */
         unique_id_t object_id;                  /** current object id */
         const archive_field_sid_t *keys;
         union {
@@ -170,7 +169,6 @@ typedef struct prop_iter {
         memfile record_table_memfile;          /** iterator-local read-only mem on archive record table */
         u16 mask;                                     /** user-defined mask which properties to include */
         prop_iter_mode_e mode;                     /** determines whether to iterating over object or collection */
-        err err;                               /** ERROR information */
         prop_iter_state_e prop_cursor;             /** current property type in iteration */
         object_iter_state mode_object;
         collection_iter_state mode_collection;
@@ -179,7 +177,6 @@ typedef struct prop_iter {
 typedef struct independent_iter_state {
         memfile record_table_memfile;           /** iterator-local read-only mem on archive record table */
         collection_iter_state state;            /** iterator-local state */
-        err err;                                /** ERROR information */
 } independent_iter_state;
 
 typedef struct column_object_iter {
@@ -187,7 +184,6 @@ typedef struct column_object_iter {
         collection_iter_state entry_state;
         archive_object obj;
         offset_t next_obj_off;
-        err err;
 } column_object_iter;
 
 #define ARCHIVE_ITER_MASK_PRIMITIVES             (1 << 1)
@@ -225,9 +221,9 @@ typedef struct column_object_iter {
                                                     ARCHIVE_ITER_MASK_NULL       |                                 \
                                                     ARCHIVE_ITER_MASK_OBJECT
 
-bool archive_prop_iter_from_archive(prop_iter *iter, err *err, u16 mask, archive *archive);
-bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, err *err, const archive_object *obj);
-bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err, prop_iter *prop_iter);
+bool archive_prop_iter_from_archive(prop_iter *iter, u16 mask, archive *archive);
+bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, const archive_object *obj);
+bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter);
 bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_vector, independent_iter_state *collection_iter, prop_iter *prop_iter);
 const archive_field_sid_t *archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter);
 bool archive_collection_next_column_group(independent_iter_state *group_iter, independent_iter_state *iter);

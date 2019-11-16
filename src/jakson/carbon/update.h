@@ -40,7 +40,6 @@ typedef struct carbon_update {
         rev *context;
         carbon_path_evaluator path_evaluater;
         const carbon_dot_path *path;
-        err err;
         bool is_found;
 } carbon_update;
 

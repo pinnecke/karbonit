@@ -4,11 +4,10 @@
 
 TEST(TestCarbonItem, CreateId) {
         rec doc;
-        struct err err;
         carbon_array array;
         carbon_item *item;
 
-        carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", CARBON_KEY_NOKEY, NULL);
         carbon_read_begin(&array, &doc);
         while ((item = carbon_array_next(&array))) {
                 u64 index = carbon_item_get_index(item);

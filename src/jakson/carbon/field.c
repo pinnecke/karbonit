@@ -27,7 +27,7 @@
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/abstract.h>
 
-const char *carbon_field_type_str(err *err, carbon_field_type_e type)
+const char *carbon_field_type_str(carbon_field_type_e type)
 {
         switch (type) {
                 case CARBON_FIELD_NULL:
@@ -156,9 +156,7 @@ const char *carbon_field_type_str(err *err, carbon_field_type_e type)
                 case CARBON_FIELD_BINARY:
                         return CARBON_FIELD_TYPE_BINARY_STR;
                 default:
-                        if (err) {
-                                ERROR(err, ERR_NOTFOUND);
-                        }
+                        error(ERR_NOTFOUND, NULL);
                         return NULL;
         }
 }
@@ -257,7 +255,6 @@ bool carbon_field_type_is_constant(carbon_field_type_e type)
 
 bool carbon_field_skip(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file)
         u8 type_marker = *MEMFILE_PEEK(file, u8);
 
         switch (type_marker) {
@@ -350,7 +347,7 @@ bool carbon_field_skip(memfile *file)
                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
                         carbon_field_skip_object(file);
                         break;
-                default: ERROR(&file->err, ERR_CORRUPTED);
+                default: error(ERR_CORRUPTED, NULL);
                         return false;
         }
         return true;
@@ -361,7 +358,7 @@ fn_result carbon_field_skip_object(memfile *file)
         fn_result result = carbon_abstract_is_instanceof_object(file);
         if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
                 carbon_object skip_it;
-                internal_carbon_object_create(&skip_it, file, &file->err, memfile_tell(file));
+                internal_carbon_object_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_object_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
                 carbon_object_drop(&skip_it);
@@ -376,7 +373,7 @@ fn_result carbon_field_skip_array(memfile *file)
         fn_result result = carbon_abstract_is_instanceof_array(file);
         if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
                 carbon_array skip_it;
-                internal_carbon_array_create(&skip_it, file, &file->err, memfile_tell(file));
+                internal_carbon_array_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_array_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
                 carbon_array_drop(&skip_it);
@@ -390,11 +387,10 @@ bool carbon_field_skip_column(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(!carbon_field_type_is_column_or_subtype(type_marker), &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(!carbon_field_type_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
         carbon_column skip_it;
-        carbon_column_create(&skip_it, file, &file->err,
-                                memfile_tell(file) - sizeof(u8));
+        carbon_column_create(&skip_it, file, memfile_tell(file) - sizeof(u8));
         carbon_column_fast_forward(&skip_it);
         memfile_seek(file, memfile_tell(&skip_it.memfile));
         return true;
@@ -404,7 +400,7 @@ bool carbon_field_skip_binary(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_BINARY, &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_BINARY, ERR_TYPEMISMATCH, NULL);
         /** read and skip mime type with variable-length integer type */
         u64 mime_type = memfile_read_uintvar_stream(NULL, file);
         UNUSED(mime_type);
@@ -421,7 +417,7 @@ bool carbon_field_skip_custom_binary(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_BINARY_CUSTOM, &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
         /** read custom type string_buffer length, and skip the type string_buffer */
         u64 custom_type_str_len = memfile_read_uintvar_stream(NULL, file);
         memfile_skip(file, custom_type_str_len);
@@ -436,7 +432,7 @@ bool carbon_field_skip_string(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_STRING, &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         u64 strlen = memfile_read_uintvar_stream(NULL, file);
         memfile_skip(file, strlen);
         return true;
@@ -446,7 +442,7 @@ bool carbon_field_skip_float(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_NUMBER_FLOAT, &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         memfile_skip(file, sizeof(float));
         return true;
 }
@@ -455,8 +451,7 @@ bool carbon_field_skip_boolean(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_TRUE && type_marker != CARBON_FIELD_FALSE, &file->err,
-                 ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_TRUE && type_marker != CARBON_FIELD_FALSE, ERR_TYPEMISMATCH, NULL);
         return true;
 }
 
@@ -464,7 +459,7 @@ bool carbon_field_skip_null(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_NULL, &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_NULL, ERR_TYPEMISMATCH, NULL);
         return true;
 }
 
@@ -472,8 +467,8 @@ bool carbon_field_skip_8(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I8 && type_marker != CARBON_FIELD_NUMBER_U8,
-                 &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_NUMBER_I8 && type_marker != CARBON_FIELD_NUMBER_U8,
+                 ERR_TYPEMISMATCH, NULL);
         JAK_ASSERT(sizeof(u8) == sizeof(i8));
         memfile_skip(file, sizeof(u8));
         return true;
@@ -483,8 +478,8 @@ bool carbon_field_skip_16(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I16 && type_marker != CARBON_FIELD_NUMBER_U16,
-                 &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_NUMBER_I16 && type_marker != CARBON_FIELD_NUMBER_U16,
+                 ERR_TYPEMISMATCH, NULL);
         JAK_ASSERT(sizeof(u16) == sizeof(i16));
         memfile_skip(file, sizeof(u16));
         return true;
@@ -494,8 +489,8 @@ bool carbon_field_skip_32(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I32 && type_marker != CARBON_FIELD_NUMBER_U32,
-                 &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_NUMBER_I32 && type_marker != CARBON_FIELD_NUMBER_U32,
+                 ERR_TYPEMISMATCH, NULL);
         JAK_ASSERT(sizeof(u32) == sizeof(i32));
         memfile_skip(file, sizeof(u32));
         return true;
@@ -505,8 +500,8 @@ bool carbon_field_skip_64(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF(type_marker != CARBON_FIELD_NUMBER_I64 && type_marker != CARBON_FIELD_NUMBER_U64,
-                 &file->err, ERR_TYPEMISMATCH);
+        error_if_and_return(type_marker != CARBON_FIELD_NUMBER_I64 && type_marker != CARBON_FIELD_NUMBER_U64,
+                 ERR_TYPEMISMATCH, NULL);
         JAK_ASSERT(sizeof(u64) == sizeof(i64));
         memfile_skip(file, sizeof(u64));
         return true;
@@ -537,7 +532,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET;
-                                default: ERROR_PRINT(ERR_INTERNALERR)
+                                default: error(ERR_INTERNALERR, NULL)
                                         return 0;
                         }
                 case CARBON_LIST_SORTED_MULTISET:
@@ -562,7 +557,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET;
-                                default: ERROR_PRINT(ERR_INTERNALERR)
+                                default: error(ERR_INTERNALERR, NULL)
                                         return 0;
                         }
                 case CARBON_LIST_UNSORTED_SET:
@@ -587,7 +582,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET;
-                                default: ERROR_PRINT(ERR_INTERNALERR)
+                                default: error(ERR_INTERNALERR, NULL)
                                         return 0;
                         }
                 case CARBON_LIST_SORTED_SET:
@@ -612,10 +607,10 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET;
-                                default: ERROR_PRINT(ERR_INTERNALERR)
+                                default: error(ERR_INTERNALERR, NULL)
                                         return 0;
                         }
-                default: ERROR_PRINT(ERR_INTERNALERR)
+                default: error(ERR_INTERNALERR, NULL)
                         return 0;
         }
 }
@@ -677,13 +672,13 @@ carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                 return is_true ? CARBON_FIELD_TRUE : CARBON_FIELD_FALSE;
-                        default: ERROR_PRINT(ERR_INTERNALERR)
+                        default: error(ERR_INTERNALERR, NULL)
                                 return 0;
                 }
         }
 }
 
-carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type, err *err)
+carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type)
 {
         switch (type) {
                 case CARBON_FIELD_NULL:
@@ -754,7 +749,7 @@ carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type, err *
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
                         return CARBON_FIELD_CLASS_BINARY_STRING;
-                default: ERROR(err, ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
                         return 0;
         }
 }

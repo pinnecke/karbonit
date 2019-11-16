@@ -35,8 +35,6 @@ bool memblock_drop(area *block);
 bool memblock_from_file(area **block, FILE *file, size_t nbytes);
 bool memblock_from_raw_data(area **block, const void *data, size_t nbytes);
 
-bool memblock_get_error(err *out, area *block);
-
 bool memblock_zero_out(area *block);
 bool memblock_size(offset_t *size, const area *block);
 offset_t memblock_last_used_byte(const area *block);

@@ -31,14 +31,14 @@ static bool create_strategy(size_t i, packer *strategy)
         return strategy->create(strategy);
 }
 
-bool pack_by_type(err *err, packer *strategy, packer_e type)
+bool pack_by_type(packer *strategy, packer_e type)
 {
         for (size_t i = 0; i < ARRAY_LENGTH(global_pack_strategy_register); i++) {
                 if (global_pack_strategy_register[i].type == type) {
                         return create_strategy(i, strategy);
                 }
         }
-        ERROR(err, ERR_NOCOMPRESSOR)
+        error(ERR_NOCOMPRESSOR, NULL)
         return false;
 }
 
@@ -73,61 +73,52 @@ bool pack_by_name(packer_e *type, const char *name)
         return false;
 }
 
-bool pack_cpy(err *err, packer *dst, const packer *src)
+bool pack_cpy(packer *dst, const packer *src)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
         ERROR_IF_NOT_IMPLEMENTED(err, src, cpy)
         return src->cpy(src, dst);
 }
 
-bool pack_drop(err *err, packer *self)
+bool pack_drop(packer *self)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, drop)
         return self->drop(self);
 }
 
-bool pack_write_extra(err *err, packer *self, memfile *dst,
+bool pack_write_extra(packer *self, memfile *dst,
                       const vector ofType (const char *) *strings)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, write_extra)
         return self->write_extra(self, dst, strings);
 }
 
-bool pack_read_extra(err *err, packer *self, FILE *src, size_t nbytes)
+bool pack_read_extra(packer *self, FILE *src, size_t nbytes)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, read_extra)
         return self->read_extra(self, src, nbytes);
 }
 
-bool pack_encode(err *err, packer *self, memfile *dst, const char *string)
+bool pack_encode(packer *self, memfile *dst, const char *string)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, encode_string)
-        return self->encode_string(self, dst, err, string);
+        return self->encode_string(self, dst, string);
 }
 
-bool pack_decode(err *err, packer *self, char *dst, size_t strlen, FILE *src)
+bool pack_decode(packer *self, char *dst, size_t strlen, FILE *src)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, decode_string)
         return self->decode_string(self, dst, strlen, src);
 }
 
-bool pack_print_extra(err *err, packer *self, FILE *file, memfile *src)
+bool pack_print_extra(packer *self, FILE *file, memfile *src)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, print_extra)
         return self->print_extra(self, file, src);
 }
 
-bool pack_print_encoded(err *err, packer *self, FILE *file, memfile *src,
+bool pack_print_encoded(packer *self, FILE *file, memfile *src,
                         u32 decompressed_strlen)
 {
-        DEBUG_ERROR_IF_NULL(self)
         ERROR_IF_NOT_IMPLEMENTED(err, self, print_encoded)
         return self->print_encoded(self, file, src, decompressed_strlen);
 }

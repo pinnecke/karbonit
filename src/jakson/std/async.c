@@ -172,9 +172,6 @@ bool filter_late(size_t *pos, size_t *num_pos, const void *src, size_t width, si
 bool sync_for(const void *base, size_t width, size_t len, for_body_func_t f,
                   void *args)
 {
-        DEBUG_ERROR_IF_NULL(base)
-        DEBUG_ERROR_IF_NULL(width)
-        DEBUG_ERROR_IF_NULL(len)
         f(base, width, len, args, 0);
         return true;
 }
@@ -182,9 +179,6 @@ bool sync_for(const void *base, size_t width, size_t len, for_body_func_t f,
 bool async_for(const void *base, size_t width, size_t len, for_body_func_t f,
                    void *args, uint_fast16_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(base)
-        DEBUG_ERROR_IF_NULL(width)
-
         if (len > 0) {
                 uint_fast16_t num_thread = num_threads + 1; /** +1 since one is this thread */
                 pthread_t threads[num_threads];
@@ -240,11 +234,6 @@ void map_proxy(const void *src, size_t src_width, size_t len, void *args, thread
 bool async_map_exec(void *dst, const void *src, size_t src_width, size_t len, size_t dst_width,
                         map_body_func_t f, void *args, threading_hint hint, uint_fast16_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(src_width)
-        DEBUG_ERROR_IF_NULL(dst_width)
-        DEBUG_ERROR_IF_NULL(f)
-
         PREFETCH_READ(f);
         PREFETCH_WRITE(dst);
 
@@ -280,11 +269,6 @@ void int_async_gather(const void *start, size_t width, size_t len, void *args, t
 bool sync_gather(void *dst, const void *src, size_t width, const size_t *idx,
                      size_t dst_src_len)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(idx)
-        DEBUG_ERROR_IF_NULL(width)
-
         PREFETCH_READ(src);
         PREFETCH_READ(idx);
         PREFETCH_WRITE(dst);
@@ -308,11 +292,6 @@ bool sync_gather(void *dst, const void *src, size_t width, const size_t *idx,
 bool async_gather(void *dst, const void *src, size_t width, const size_t *idx,
                       size_t dst_src_len, uint_fast16_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(idx)
-        DEBUG_ERROR_IF_NULL(width)
-
         PREFETCH_READ(src);
         PREFETCH_READ(idx);
         PREFETCH_WRITE(dst);
@@ -324,11 +303,6 @@ bool async_gather(void *dst, const void *src, size_t width, const size_t *idx,
 bool sync_gather_adr(void *dst, const void *src, size_t src_width, const size_t *idx,
                          size_t num)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(idx)
-        DEBUG_ERROR_IF_NULL(src_width)
-
         PREFETCH_READ(src);
         PREFETCH_READ(idx);
         PREFETCH_WRITE(dst);
@@ -377,11 +351,6 @@ void async_gather_adr_func(const void *start, size_t width, size_t len, void *ar
 bool int_async_gather_adr_func(void *dst, const void *src, size_t src_width, const size_t *idx,
                                    size_t num, uint_fast16_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(idx)
-        DEBUG_ERROR_IF_NULL(src_width)
-
         PREFETCH_READ(src);
         PREFETCH_READ(idx);
         PREFETCH_WRITE(dst);
@@ -418,11 +387,6 @@ void async_scatter(const void *start, size_t width, size_t len, void *args, thre
 bool sync_scatter(void *dst, const void *src, size_t width, const size_t *idx,
                       size_t num)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(idx)
-        DEBUG_ERROR_IF_NULL(width)
-
         PREFETCH_READ(idx);
         PREFETCH_READ(src);
         PREFETCH_WRITE((num > 0) ? dst + idx[0] * width : NULL);
@@ -441,11 +405,6 @@ bool sync_scatter(void *dst, const void *src, size_t width, const size_t *idx,
 bool sync_scatter_func(void *dst, const void *src, size_t width, const size_t *idx, size_t num,
                            uint_fast16_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(idx)
-        DEBUG_ERROR_IF_NULL(width)
-
         PREFETCH_READ(src);
         PREFETCH_READ(idx);
         PREFETCH_WRITE(dst);
@@ -457,12 +416,6 @@ bool sync_scatter_func(void *dst, const void *src, size_t width, const size_t *i
 bool sync_shuffle(void *dst, const void *src, size_t width, const size_t *dst_idx,
                       const size_t *src_idx, size_t idx_len)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
-        DEBUG_ERROR_IF_NULL(dst_idx)
-        DEBUG_ERROR_IF_NULL(src_idx)
-        DEBUG_ERROR_IF_NULL(width)
-
         bool has_first = (idx_len > 0);
         PREFETCH_READ(src_idx);
         PREFETCH_READ(dst_idx);
@@ -491,20 +444,14 @@ bool async_shuffle(void *dst, const void *src, size_t width, const size_t *dst_i
         UNUSED(dst_idx);
         UNUSED(src_idx);
         UNUSED(idx_len);
-        NOT_IMPLEMENTED
+        error(ERR_NOTIMPLEMENTED, NULL)
+        return false;
 }
 
 bool int_sync_filter_late(size_t *positions, size_t *num_positions, const void *source,
                               size_t width, size_t length, pred_func_t predicate,
                               void *arguments)
 {
-        DEBUG_ERROR_IF_NULL(positions);
-        DEBUG_ERROR_IF_NULL(num_positions);
-        DEBUG_ERROR_IF_NULL(source);
-        DEBUG_ERROR_IF_NULL(width);
-        DEBUG_ERROR_IF_NULL(length);
-        DEBUG_ERROR_IF_NULL(predicate);
-
         predicate(positions, num_positions, source, width, length, arguments, 0);
 
         return true;
@@ -526,12 +473,6 @@ void *int_sync_filter_procy_func(void *args)
 bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t width, size_t len,
                            pred_func_t pred, void *args, size_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(pos);
-        DEBUG_ERROR_IF_NULL(num_pos);
-        DEBUG_ERROR_IF_NULL(src);
-        DEBUG_ERROR_IF_NULL(width);
-        DEBUG_ERROR_IF_NULL(pred);
-
         if (UNLIKELY(len == 0)) {
                 *num_pos = 0;
                 return true;
@@ -611,13 +552,6 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
 bool async_filter_early(void *result, size_t *result_size, const void *src, size_t width,
                             size_t len, pred_func_t pred, void *args)
 {
-        DEBUG_ERROR_IF_NULL(result);
-        DEBUG_ERROR_IF_NULL(result_size);
-        DEBUG_ERROR_IF_NULL(src);
-        DEBUG_ERROR_IF_NULL(width);
-        DEBUG_ERROR_IF_NULL(len);
-        DEBUG_ERROR_IF_NULL(pred);
-
         size_t num_matching_positions;
         size_t *matching_positions = MALLOC(len * sizeof(size_t));
 
@@ -634,13 +568,6 @@ bool async_filter_early(void *result, size_t *result_size, const void *src, size
 bool int_async_filter_early(void *result, size_t *result_size, const void *src, size_t width,
                                 size_t len, pred_func_t pred, void *args, uint_fast16_t num_threads)
 {
-        DEBUG_ERROR_IF_NULL(result);
-        DEBUG_ERROR_IF_NULL(result_size);
-        DEBUG_ERROR_IF_NULL(src);
-        DEBUG_ERROR_IF_NULL(width);
-        DEBUG_ERROR_IF_NULL(len);
-        DEBUG_ERROR_IF_NULL(pred);
-
         uint_fast16_t num_thread = num_threads + 1; /** +1 since one is this thread */
 
         pthread_t threads[num_threads];

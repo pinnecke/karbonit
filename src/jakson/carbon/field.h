@@ -220,7 +220,7 @@ typedef enum carbon_constant {
 extern "C" {
 #endif
 
-const char *carbon_field_type_str(err *err, carbon_field_type_e type);
+const char *carbon_field_type_str(carbon_field_type_e type);
 
 bool carbon_field_type_is_traversable(carbon_field_type_e type);
 bool carbon_field_type_is_signed(carbon_field_type_e type);
@@ -248,7 +248,7 @@ bool carbon_field_type_is_null(carbon_field_type_e type);
 bool carbon_field_type_is_string(carbon_field_type_e type);
 bool carbon_field_type_is_constant(carbon_field_type_e type);
 
-carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type, err *err);
+carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type);
 
 bool carbon_field_skip(memfile *file);
 

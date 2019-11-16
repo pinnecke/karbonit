@@ -35,7 +35,6 @@
 bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
-        DEBUG_ERROR_IF_NULL(it);                                                                                             \
         if (LIKELY(it->field_access.it_field_type == field_type)) {                                                    \
                 memfile_save_position(&it->memfile);                                                                   \
                 internal_carbon_array_offset(&datum, it);                                                                 \
@@ -44,7 +43,7 @@ bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value)
                 memfile_restore_position(&it->memfile);                                                                \
                 return true;                                                                                           \
         } else {                                                                                                       \
-                ERROR(&it->err, ERR_TYPEMISMATCH);                                                                 \
+                error(ERR_TYPEMISMATCH, NULL);                                                                 \
                 return false;                                                                                          \
         }                                                                                                              \
 }
@@ -69,8 +68,6 @@ DEFINE_IN_PLACE_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT)
 
 static bool update_in_place_constant(carbon_array *it, carbon_constant_e constant)
 {
-        DEBUG_ERROR_IF_NULL(it);
-
         memfile_save_position(&it->memfile);
 
         if (carbon_field_type_is_constant(it->field_access.it_field_type)) {
@@ -85,7 +82,7 @@ static bool update_in_place_constant(carbon_array *it, carbon_constant_e constan
                         case CARBON_CONSTANT_NULL:
                                 value = CARBON_FIELD_NULL;
                                 break;
-                        default: ERROR(&it->err, ERR_INTERNALERR);
+                        default: error(ERR_INTERNALERR, NULL);
                                 break;
                 }
                 offset_t datum = 0;
@@ -107,7 +104,7 @@ static bool update_in_place_constant(carbon_array *it, carbon_constant_e constan
                         case CARBON_CONSTANT_NULL:
                                 carbon_insert_null(&ins);
                                 break;
-                        default: ERROR(&it->err, ERR_INTERNALERR);
+                        default: error(ERR_INTERNALERR, NULL);
                                 break;
                 }
 
@@ -138,7 +135,7 @@ bool internal_carbon_array_update_string(carbon_array *it, const char *str)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(str)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -150,7 +147,7 @@ bool internal_carbon_array_update_binary(carbon_array *it, const void *value, si
         UNUSED(nbytes)
         UNUSED(file_ext)
         UNUSED(user_type)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -159,7 +156,7 @@ carbon_insert *internal_carbon_array_update_array_begin(carbon_insert_array_stat
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -167,7 +164,7 @@ bool internal_carbon_array_update_array_end(carbon_insert_array_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -176,7 +173,7 @@ carbon_insert *internal_carbon_array_update_column_begin(carbon_insert_column_st
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -184,7 +181,7 @@ bool internal_carbon_array_update_column_end(carbon_insert_column_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -193,7 +190,7 @@ carbon_insert *internal_carbon_array_update_object_begin(carbon_insert_object_st
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -201,7 +198,7 @@ bool internal_carbon_array_update_object_end(carbon_insert_object_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -210,7 +207,7 @@ bool internal_carbon_array_update_from_carbon(carbon_array *it, const rec *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -219,7 +216,7 @@ bool internal_carbon_array_update_from_array(carbon_array *it, const carbon_arra
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -228,7 +225,7 @@ bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_obj
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -237,7 +234,7 @@ bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_col
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -249,11 +246,8 @@ static void __carbon_array_load_abstract_type(carbon_array *it)
         carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
 }
 
-fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, err *err,
-                            offset_t payload_start)
+fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start)
 {
-        FN_FAIL_IF_NULL(it, memfile, err);
-
         ZERO_MEMORY(it, sizeof(carbon_array));
 
         it->array_begin_off = payload_start;
@@ -262,12 +256,14 @@ fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, err *
         it->field_offset = 0;
         it->pos = (u64) -1;
 
-        error_init(&it->err);
         vector_create(&it->history, NULL, sizeof(offset_t), 40);
         memfile_open(&it->memfile, memfile->memblock, memfile->mode);
         memfile_seek(&it->memfile, payload_start);
 
-        ERROR_IF(memfile_remain_size(&it->memfile) < sizeof(u8), err, ERR_CORRUPTED);
+        if (memfile_remain_size(&it->memfile) < sizeof(u8)) {
+                error(ERR_CORRUPTED, NULL)
+                return FN_FAIL(ERR_FAILED, "");
+        }
 
         fn_result ofType(bool) instance = carbon_abstract_is_instanceof_array(&it->memfile);
         if (!FN_IS_OK(instance)) {
@@ -291,9 +287,7 @@ fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, err *
 
 bool internal_carbon_array_copy(carbon_array *dst, carbon_array *src)
 {
-        DEBUG_ERROR_IF_NULL(dst);
-        DEBUG_ERROR_IF_NULL(src);
-        internal_carbon_array_create(dst, &src->memfile, &src->err, src->array_begin_off);
+        internal_carbon_array_create(dst, &src->memfile, src->array_begin_off);
         return true;
 }
 
@@ -301,7 +295,6 @@ bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
         dst->array_begin_off = src->array_begin_off;
-        error_cpy(&dst->err, &src->err);
         dst->mod_size = src->mod_size;
         dst->array_end_reached = src->array_end_reached;
         dst->abstract_type = src->abstract_type;
@@ -315,16 +308,12 @@ bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src)
 
 bool internal_carbon_array_set_mode(carbon_array *it, access_mode_e mode)
 {
-        DEBUG_ERROR_IF_NULL(it);
         it->memfile.mode = mode;
         return true;
 }
 
 bool carbon_array_length(u64 *len, carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(len)
-        DEBUG_ERROR_IF_NULL(it)
-
         u64 num_elem = 0;
         carbon_array_rewind(it);
         while (carbon_array_next(it)) {
@@ -351,8 +340,7 @@ fn_result carbon_array_drop(carbon_array *it)
 
 bool carbon_array_rewind(carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
-        ERROR_IF(it->array_begin_off >= memfile_size(&it->memfile), &it->err, ERR_OUTOFBOUNDS);
+        error_if_and_return(it->array_begin_off >= memfile_size(&it->memfile), ERR_OUTOFBOUNDS, NULL);
         carbon_int_history_clear(&it->history);
         it->pos = (u64) -1;
         return memfile_seek(&it->memfile, it->array_begin_off + sizeof(u8));
@@ -390,7 +378,6 @@ bool carbon_array_is_unit(carbon_array *it)
 
 static bool internal_array_next(carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
         bool is_empty_slot = true;
 
         auto_adjust_pos_after_mod(it);
@@ -403,7 +390,7 @@ static bool internal_array_next(carbon_array *it)
         } else {
                 /** skip remaining zeros until end of array is reached */
                 if (!it->array_end_reached) {
-                        ERROR_IF(!is_empty_slot, &it->err, ERR_CORRUPTED);
+                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
                         while (*memfile_peek(&it->memfile, 1) == 0) {
                                 memfile_skip(&it->memfile, 1);
@@ -427,7 +414,6 @@ carbon_item *carbon_array_next(carbon_array *it)
 
 bool carbon_array_prev(carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
         if (carbon_int_history_has(&it->history)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
                 memfile_seek(&it->memfile, prev_off);
@@ -443,7 +429,7 @@ offset_t internal_carbon_array_memfilepos(carbon_array *it)
         if (LIKELY(it != NULL)) {
                 return memfile_tell(&it->memfile);
         } else {
-                ERROR(&it->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return 0;
         }
 }
@@ -455,8 +441,6 @@ offset_t internal_carbon_array_tell(carbon_array *it)
 
 bool internal_carbon_array_offset(offset_t *off, carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(off)
-        DEBUG_ERROR_IF_NULL(it)
         if (carbon_int_history_has(&it->history)) {
                 *off = carbon_int_history_peek(&it->history);
                 return true;
@@ -466,7 +450,6 @@ bool internal_carbon_array_offset(offset_t *off, carbon_array *it)
 
 bool internal_carbon_array_fast_forward(carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
         while (carbon_array_next(it)) {}
 
         JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
@@ -488,19 +471,18 @@ fn_result carbon_array_insert_end(carbon_insert *inserter)
 
 bool internal_carbon_array_remove(carbon_array *it)
 {
-        DEBUG_ERROR_IF_NULL(it);
         carbon_field_type_e type;
         if (carbon_array_field_type(&type, it)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
                 memfile_seek(&it->memfile, prev_off);
-                if (carbon_int_field_remove(&it->memfile, &it->err, type)) {
+                if (carbon_int_field_remove(&it->memfile, type)) {
                         carbon_int_array_refresh(NULL, NULL, it);
                         return true;
                 } else {
                         return false;
                 }
         } else {
-                ERROR(&it->err, ERR_ILLEGALSTATE);
+                error(ERR_ILLEGALSTATE, NULL);
                 return false;
         }
 }

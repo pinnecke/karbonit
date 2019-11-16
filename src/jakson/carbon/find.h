@@ -39,7 +39,6 @@ extern "C" {
 typedef struct carbon_find {
         rec *doc;
         carbon_field_type_e type;
-        err err;
         carbon_path_evaluator path_evaluater;
 
         bool value_is_nulled;

@@ -34,7 +34,6 @@ typedef struct carbon_path_evaluator {
         rec *doc;
         carbon_array root_it;
         carbon_path_status_e status;
-        err err;
         struct {
                 carbon_container_e container_type;
                 union {

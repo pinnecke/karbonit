@@ -7,25 +7,22 @@
 
 TEST(CarbonTest, InvalidObject) {
         rec carbon;
-        err err;
         const char *json_in = "{\"foo\"}";
-        bool status = carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        bool status = carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL);
         ASSERT_FALSE(status);
 }
 
 TEST(CarbonTest, EmptyInput) {
         rec carbon;
-        err err;
         const char *json_in = "";
-        bool status = carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        bool status = carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL);
         ASSERT_FALSE(status);
 }
 
 TEST(CarbonTest, SingleString) {
         rec carbon;
-        err err;
         const char *json_in = "  foo  ";
-        carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&carbon, json_in, CARBON_KEY_NOKEY, NULL);
         UNUSED(carbon);
 }
 
@@ -798,7 +795,6 @@ TEST(JsonTest, ParseNullArray)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, "[null, null, null]");
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_ARRAY);
@@ -818,7 +814,6 @@ TEST(JsonTest, ParseBooleanArray)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, "[true, false]");
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_ARRAY);
@@ -836,7 +831,6 @@ TEST(JsonTest, ParseJsonFromString)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, "{\"Hello World\": \"Value\"}");
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_OBJECT);
@@ -854,7 +848,6 @@ TEST(JsonTest, ParseJsonFromStringLaxQuotes)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, "{Hello_World: \"Value\"}");
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_OBJECT);
@@ -872,7 +865,6 @@ TEST(JsonTest, ParseJsonFromStringLaxQuotesList)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, "{Hello: Value1,\nWorld: \"Value2\"}");
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_OBJECT);
@@ -894,7 +886,6 @@ TEST(JsonTest, ParseJsonFromStringLaxQuotesTestNull)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, "null");
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_NULL);
@@ -913,7 +904,6 @@ TEST(JsonTest, ParseRandomJson)
         json_parser parser;
         json json;
         json_err error_desc;
-        json_parser_create(&parser);
         bool status = json_parse(&json, &error_desc, &parser, json_in);
         ASSERT_TRUE(status);
 

@@ -39,7 +39,7 @@ bool carbon_commit_hash_update(memfile *file, const char *base, u64 len);
 bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len);
 const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash);
 bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash);
-u64 carbon_commit_hash_from_str(const char *commit_str, err *err);
+u64 carbon_commit_hash_from_str(const char *commit_str);
 
 #ifdef __cplusplus
 }

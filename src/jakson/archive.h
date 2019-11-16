@@ -40,7 +40,6 @@ typedef struct archive {
         char *disk_file_path;
         string_table string_table;
         record_table record_table;
-        err err;
         struct sid_to_offset *query_index_string_id_to_offset;
         struct string_cache *string_id_cache;
         query *default_query;
@@ -76,12 +75,12 @@ typedef struct archive_callback {
         void (*end_string_id_index_baking)();
 } archive_callback;
 
-bool archive_from_json(archive *out, const char *file, err *err, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_string_id_index, archive_callback *callback);
-bool archive_stream_from_json(area **stream, err *err, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_id_index, archive_callback *callback);
-bool archive_from_model(area **stream, err *err, column_doc *model, packer_e compressor, bool bake_string_id_index, archive_callback *callback);
+bool archive_from_json(archive *out, const char *file, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_string_id_index, archive_callback *callback);
+bool archive_stream_from_json(area **stream, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_id_index, archive_callback *callback);
+bool archive_from_model(area **stream, column_doc *model, packer_e compressor, bool bake_string_id_index, archive_callback *callback);
 bool archive_write(FILE *file, const area *stream);
 bool archive_load(area **stream, FILE *file);
-bool archive_print(FILE *file, err *err, area *stream);
+bool archive_print(FILE *file, area *stream);
 bool archive_open(archive *out, const char *file_path);
 bool archive_get_info(archive_info *info, const archive *archive);
 bool archive_close(archive *archive);

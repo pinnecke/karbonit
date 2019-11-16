@@ -99,11 +99,6 @@ typedef struct vector {
          * A pointer to a memory address managed by 'allocator' that contains the user data
          */
         void *base;
-
-        /**
-         *  Error information
-         */
-        err err;
 } vector;
 
 /**
@@ -125,7 +120,7 @@ bool vector_create(vector *out, const allocator *alloc, size_t elem_size, size_t
 
 bool vector_serialize(FILE *file, vector *vec);
 
-bool vector_deserialize(vector *vec, err *err, FILE *file);
+bool vector_deserialize(vector *vec, FILE *file);
 
 /**
  * Provides hints on the OS kernel how to deal with memory inside this vector.

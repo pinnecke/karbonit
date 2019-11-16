@@ -77,18 +77,15 @@ extern "C" {
 typedef struct rec {
         area *area;
         memfile file;
-        err err;
 } rec;
 
 /* record revision context */
 typedef struct rev {
         rec *original;
         rec *revised_doc;
-        err err;
 } rev;
 
 typedef struct rec_new {
-        err err;
         rec original;
         rev revision_context;
         carbon_array *content_it;
@@ -176,8 +173,8 @@ fn_result carbon_create_end(rec_new *context);
 fn_result carbon_create_empty(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type);
 fn_result carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type, u64 doc_cap, u64 array_cap);
 
-bool carbon_from_json(rec *doc, const char *json, carbon_key_e type, const void *key, err *err);
-bool carbon_from_raw_data(rec *doc, err *err, const void *data, u64 len);
+bool carbon_from_json(rec *doc, const char *json, carbon_key_e type, const void *key);
+bool carbon_from_raw_data(rec *doc, const void *data, u64 len);
 
 bool carbon_drop(rec *doc);
 

@@ -106,7 +106,6 @@ typedef struct slice_list {
         vector ofType(hash_bounds) bounds;
 
         u32 appender_idx;
-        err err;
 } slice_list_t;
 
 typedef struct slice_handle {

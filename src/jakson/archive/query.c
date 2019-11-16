@@ -39,7 +39,7 @@ struct sid_to_offset {
 #define OBJECT_GET_KEYS_TO_FIX_TYPE_GENERIC(num_pairs, obj, bit_flag_name, offset_name)                                \
 {                                                                                                                      \
     if (!obj) {                                                                                                        \
-        ERROR_PRINT_AND_DIE(ERR_NULLPTR)                                                                 \
+        panic(ERR_NULLPTR)                                                                 \
     }                                                                                                                  \
                                                                                                                        \
     if (obj->flags.bits.bit_flag_name) {                                                                               \
@@ -58,33 +58,27 @@ struct sid_to_offset {
 
 bool query_create(query *query, archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(query)
-        DEBUG_ERROR_IF_NULL(archive)
         query->archive = archive;
         query->context = archive_io_context_create(archive);
-        error_init(&query->err);
         return query->context != NULL;
 }
 
 bool query_drop(query *query)
 {
-        DEBUG_ERROR_IF_NULL(query)
         return io_context_drop(query->context);
 }
 
 bool query_scan_strids(strid_iter *it, query *query)
 {
-        DEBUG_ERROR_IF_NULL(it)
-        DEBUG_ERROR_IF_NULL(query)
-        return strid_iter_open(it, &query->err, query->archive);
+        return strid_iter_open(it, query->archive);
 }
 
 static bool
-index_string_id_to_offset_open_file(struct sid_to_offset *index, err *err, const char *file)
+index_string_id_to_offset_open_file(struct sid_to_offset *index, const char *file)
 {
         index->disk_file = fopen(file, "r");
         if (!index->disk_file) {
-                ERROR(err, ERR_FOPEN_FAILED)
+                error(ERR_FOPEN_FAILED, NULL)
                 return false;
         } else {
                 fseek(index->disk_file, 0, SEEK_END);
@@ -96,9 +90,6 @@ index_string_id_to_offset_open_file(struct sid_to_offset *index, err *err, const
 
 bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query *query)
 {
-        DEBUG_ERROR_IF_NULL(index)
-        DEBUG_ERROR_IF_NULL(query)
-
         strid_iter strid_iter;
         strid_info *info;
         size_t vector_len;
@@ -111,19 +102,18 @@ bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query 
 
         struct sid_to_offset *result = MALLOC(sizeof(struct sid_to_offset));
         hashtable_create(&result->mapping,
-                         &query->err,
                          sizeof(archive_field_sid_t),
                          sizeof(struct sid_to_offset_arg),
                          capacity);
 
-        if (!index_string_id_to_offset_open_file(result, &query->err, query->archive->disk_file_path)) {
+        if (!index_string_id_to_offset_open_file(result, query->archive->disk_file_path)) {
                 return false;
         }
 
         status = query_scan_strids(&strid_iter, query);
 
         if (status) {
-                while (strid_iter_next(&success, &info, &query->err, &vector_len, &strid_iter)) {
+                while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
                         for (size_t i = 0; i < vector_len; i++) {
                                 struct sid_to_offset_arg arg = {.offset = info[i].offset, .strlen = info[i].strlen};
                                 hashtable_insert_or_update(&result->mapping, &info[i].id, &arg, 1);
@@ -133,7 +123,7 @@ bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query 
                 strid_iter_close(&strid_iter);
                 return true;
         } else {
-                ERROR(&query->err, ERR_SCAN_FAILED);
+                error(ERR_SCAN_FAILED, NULL);
                 return false;
         }
 
@@ -148,49 +138,42 @@ void query_drop_index_string_id_to_offset(struct sid_to_offset *index)
         }
 }
 
-bool query_index_id_to_offset_serialize(FILE *file, err *err, struct sid_to_offset *index)
+bool query_index_id_to_offset_serialize(FILE *file, struct sid_to_offset *index)
 {
         UNUSED(file);
-        UNUSED(err);
         UNUSED(index);
         return hashtable_serialize(file, &index->mapping);
 }
 
-bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, err *err,
-                                              const char *file_path, offset_t offset)
+bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, const char *file_path, offset_t offset)
 {
-        DEBUG_ERROR_IF_NULL(index)
-        DEBUG_ERROR_IF_NULL(err)
-        DEBUG_ERROR_IF_NULL(file_path)
-        DEBUG_ERROR_IF_NULL(offset)
-
         struct sid_to_offset *result = MALLOC(sizeof(struct sid_to_offset));
         if (!result) {
-                ERROR(err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return false;
         }
 
-        if (!index_string_id_to_offset_open_file(result, err, file_path)) {
+        if (!index_string_id_to_offset_open_file(result, file_path)) {
                 return false;
         }
 
         FILE *index_reader_file = fopen(file_path, "r");
         if (!index_reader_file) {
-                ERROR(err, ERR_FOPEN_FAILED)
+                error(ERR_FOPEN_FAILED, NULL)
                 return false;
         } else {
                 fseek(index_reader_file, 0, SEEK_END);
                 offset_t file_size = ftell(index_reader_file);
 
                 if (offset >= file_size) {
-                        ERROR(err, ERR_INTERNALERR)
+                        error(ERR_INTERNALERR, NULL)
                         return false;
                 }
 
                 fseek(index_reader_file, offset, SEEK_SET);
 
-                if (!hashtable_deserialize(&result->mapping, err, index_reader_file)) {
-                        ERROR(err, ERR_HASTABLE_DESERIALERR);
+                if (!hashtable_deserialize(&result->mapping, index_reader_file)) {
+                        error(ERR_HASTABLE_DESERIALERR, NULL);
                         fclose(index_reader_file);
                         *index = NULL;
                         return false;
@@ -203,14 +186,14 @@ bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, err *err
 }
 
 static char *fetch_string_from_file(bool *decode_success, FILE *disk_file, size_t offset, size_t string_len,
-                                    err *err, archive *archive)
+                                    archive *archive)
 {
         char *result = MALLOC(string_len + 1);
         memset(result, 0, string_len + 1);
 
         fseek(disk_file, offset, SEEK_SET);
 
-        bool decode_result = pack_decode(err, &archive->string_table.compressor, result, string_len, disk_file);
+        bool decode_result = pack_decode(&archive->string_table.compressor, result, string_len, disk_file);
 
         *decode_success = decode_result;
         return result;
@@ -229,7 +212,7 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
         status = query_scan_strids(&strid_iter, query);
 
         if (status) {
-                while (strid_iter_next(&success, &info, &query->err, &vector_len, &strid_iter)) {
+                while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
                         for (size_t i = 0; i < vector_len; i++) {
                                 if (info[i].id == id) {
                                         bool decode_result;
@@ -237,7 +220,6 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
                                                                               strid_iter.disk_file,
                                                                               info[i].offset,
                                                                               info[i].strlen,
-                                                                              &query->err,
                                                                               query->archive);
 
                                         bool close_iter_result = strid_iter_close(&strid_iter);
@@ -246,9 +228,8 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
                                                 if (result) {
                                                         free(result);
                                                 }
-                                                ERROR(&query->err,
-                                                      !decode_result ? ERR_DECOMPRESSFAILED
-                                                                     : ERR_ITERATORNOTCLOSED);
+                                                error(!decode_result ? ERR_DECOMPRESSFAILED
+                                                                     : ERR_ITERATORNOTCLOSED, NULL);
                                                 return NULL;
                                         } else {
                                                 return result;
@@ -257,10 +238,10 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
                         }
                 }
                 strid_iter_close(&strid_iter);
-                ERROR(&query->err, ERR_NOTFOUND);
+                error(ERR_NOTFOUND, NULL);
                 return NULL;
         } else {
-                ERROR(&query->err, ERR_SCAN_FAILED);
+                error(ERR_SCAN_FAILED, NULL);
                 return NULL;
         }
 }
@@ -276,21 +257,20 @@ static char *fetch_string_by_id_via_index(query *query, struct sid_to_offset *in
                                                               index->disk_file,
                                                               args->offset,
                                                               args->strlen,
-                                                              &query->err,
                                                               query->archive);
                         if (decode_result) {
                                 return result;
                         } else {
-                                ERROR(&query->err, ERR_DECOMPRESSFAILED);
+                                error(ERR_DECOMPRESSFAILED, NULL);
                                 return NULL;
                         }
 
                 } else {
-                        ERROR(&query->err, ERR_INDEXCORRUPTED_OFFSET);
+                        error(ERR_INDEXCORRUPTED_OFFSET, NULL);
                         return NULL;
                 }
         } else {
-                ERROR(&query->err, ERR_NOTFOUND);
+                error(ERR_NOTFOUND, NULL);
                 return NULL;
         }
 }
@@ -334,7 +314,7 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
 
         char **result = MALLOC(num_offs * sizeof(char *));
         if (!result) {
-                ERROR(&query->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return NULL;
         }
         for (size_t i = 0; i < num_offs; i++) {
@@ -349,18 +329,16 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
         }
 
         if (!result) {
-                ERROR(io_context_get_error(query->context), ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return NULL;
         } else {
                 if (!(file = io_context_lock_and_access(query->context))) {
-                        error_cpy(&query->err, io_context_get_error(query->context));
                         goto cleanup_and_error;
                 }
 
                 for (size_t i = 0; i < num_offs; i++) {
                         fseek(file, offs[i], SEEK_SET);
-                        if (!pack_decode(&query->err,
-                                         &query->archive->string_table.compressor,
+                        if (!pack_decode(&query->archive->string_table.compressor,
                                          result[i],
                                          strlens[i],
                                          file)) {
@@ -383,7 +361,7 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
 archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                                             const string_pred *pred, void *capture, i64 limit)
 {
-        if (UNLIKELY(string_pred_validate(&query->err, pred) == false)) {
+        if (UNLIKELY(string_pred_validate(pred) == false)) {
                 return NULL;
         }
         i64 pred_limit;
@@ -412,30 +390,30 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         }
 
         if (UNLIKELY(!num_found || !query || !pred)) {
-                ERROR(&query->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 
         if (UNLIKELY((step_ids = MALLOC(str_cap * sizeof(archive_field_sid_t))) == NULL)) {
-                ERROR(&query->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return NULL;
         }
 
         if (UNLIKELY((str_offs = MALLOC(str_cap * sizeof(offset_t))) == NULL)) {
-                ERROR(&query->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
         if (UNLIKELY((str_lens = MALLOC(str_cap * sizeof(u32))) == NULL)) {
-                ERROR(&query->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
         if (UNLIKELY((idxs_matching = MALLOC(str_cap * sizeof(size_t))) == NULL)) {
-                ERROR(&query->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 free(str_lens);
                 goto cleanup_result_and_error;
@@ -450,7 +428,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         }
 
         if (UNLIKELY((result_ids = MALLOC(result_cap * sizeof(archive_field_sid_t))) == NULL)) {
-                ERROR(&query->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 free(str_lens);
                 free(idxs_matching);
@@ -459,7 +437,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                 return NULL;
         }
 
-        while (strid_iter_next(&success, &info, &query->err, &info_len, &it)) {
+        while (strid_iter_next(&success, &info, &info_len, &it)) {
                 if (UNLIKELY(info_len > str_cap)) {
                         str_cap = (info_len + 1) * 1.7f;
                         if (UNLIKELY((tmp = realloc(str_offs, str_cap * sizeof(offset_t))) == NULL)) {
@@ -493,7 +471,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                 if (UNLIKELY(
                         string_pred_eval(pred, idxs_matching, &num_matching, strings, step_len, capture) ==
                         false)) {
-                        ERROR(&query->err, ERR_PREDEVAL_FAILED);
+                        error(ERR_PREDEVAL_FAILED, NULL);
                         strid_iter_close(&it);
                         goto cleanup_intermediate;
                 }
@@ -533,7 +511,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         return result_ids;
 
         realloc_error:
-        ERROR(&query->err, ERR_REALLOCERR);
+        error(ERR_REALLOCERR, NULL);
 
         cleanup_intermediate:
         free(str_offs);

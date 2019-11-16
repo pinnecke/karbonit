@@ -190,8 +190,10 @@ typedef const char *field_string_t;
         case FIELD_OBJECT:                                                                                         \
             value_size = sizeof(column_doc_obj);                                                                   \
             break;                                                                                                     \
-        default:                                                                                                       \
-        ERROR_PRINT_AND_DIE(ERR_NOTYPE);                                                                       \
+        default:  {                                                                                                     \
+            error(ERR_NOTYPE, NULL);                                                                                \
+            value_size = 0;                                                                                         \
+            }                                                                                                       \
     }                                                                                                                  \
     value_size;                                                                                                        \
 })

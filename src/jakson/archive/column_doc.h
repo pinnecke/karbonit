@@ -228,10 +228,9 @@ typedef struct column_doc {
         column_doc_obj columndoc;
         const doc_bulk *bulk;
         bool read_optimized;
-        err err;
 } column_doc;
 
-bool columndoc_create(column_doc *columndoc, err *err, const doc *doc,  const doc_bulk *bulk, const doc_entries *entries, string_dict *dic);
+bool columndoc_create(column_doc *columndoc, const doc *doc,  const doc_bulk *bulk, const doc_entries *entries, string_dict *dic);
 bool columndoc_drop(column_doc *doc);
 
 bool columndoc_free(column_doc *doc);

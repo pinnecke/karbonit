@@ -295,10 +295,7 @@ DEFINE_VISIT_OBJECT_ARRAY_OBJECT_PROP_HANDLER(null, archive_field_u32_t);
 bool archive_converter(encoded_doc_list *collection, archive *archive)
 {
 
-        DEBUG_ERROR_IF_NULL(collection);
-        DEBUG_ERROR_IF_NULL(archive);
-
-        encoded_doc_collection_create(collection, &archive->err, archive);
+        encoded_doc_collection_create(collection, archive);
 
         visitor visitor = {0};
         archive_visitor_desc desc = {.visit_mask = ARCHIVE_ITER_MASK_ANY};

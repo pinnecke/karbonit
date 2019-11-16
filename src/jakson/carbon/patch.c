@@ -24,7 +24,7 @@ fn_result carbon_patch_begin(carbon_array *it, rec *doc)
 {
         FN_FAIL_IF_NULL(it, doc);
         offset_t payload_start = carbon_int_payload_after_header(doc);
-        internal_carbon_array_create(it, &doc->file, &doc->err, payload_start);
+        internal_carbon_array_create(it, &doc->file, payload_start);
         internal_carbon_array_set_mode(it, READ_WRITE);
         return FN_OK();
 }

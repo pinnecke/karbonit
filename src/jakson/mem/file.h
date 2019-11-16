@@ -39,7 +39,6 @@ typedef struct mfile {
         bool bit_mode;
         size_t current_read_bit, current_write_bit, bytes_completed;
         access_mode_e mode;
-        err err;
 } memfile;
 
 #define MEMFILE_PEEK(file, type)                                                                                   \

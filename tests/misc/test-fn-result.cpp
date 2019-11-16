@@ -12,8 +12,6 @@ TEST(CarbonResultTest, CreateFail) {
         ASSERT_FALSE(RESULT_IS_OK(result));
         ASSERT_FALSE(RESULT_HAS_VALUE(result));
         ASSERT_TRUE(RESULT_CODE(result) == ERR_NOTFOUND);
-        struct err *err = RESULT_GET_LAST_ERROR();
-        ASSERT_TRUE(strcmp(err->details, "no element found") == 0);
 }
 
 TEST(CarbonResultTest, CreateOKInt) {

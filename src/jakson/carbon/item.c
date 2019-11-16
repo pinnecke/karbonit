@@ -23,36 +23,35 @@
 #include "item.h"
 #include "object.h"
 
-static bool carbon_item_setup_value(carbon_item *item, carbon_field_type_e field_type, field_access *field, struct err *err)
+static bool carbon_item_setup_value(carbon_item *item, carbon_field_type_e field_type, field_access *field)
 {
         if (carbon_field_type_is_signed(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
-                carbon_int_field_access_signed_value(&item->value.number_signed, field, err);
+                carbon_int_field_access_signed_value(&item->value.number_signed, field);
                 item->value_type = CARBON_ITEM_NUMBER_SIGNED;
         } else if (carbon_field_type_is_unsigned(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
-                carbon_int_field_access_unsigned_value(&item->value.number_unsigned, field, err);
+                carbon_int_field_access_unsigned_value(&item->value.number_unsigned, field);
                 item->value_type = CARBON_ITEM_NUMBER_UNSIGNED;
         } else if (carbon_field_type_is_floating(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
-                carbon_int_field_access_float_value(&item->value.number_float, field, err);
+                carbon_int_field_access_float_value(&item->value.number_float, field);
                 item->value_type = CARBON_ITEM_NUMBER_FLOAT;
         } else if (carbon_field_type_is_binary(field_type)) {
-                carbon_int_field_access_binary_value(&item->value.binary, field, err);
+                carbon_int_field_access_binary_value(&item->value.binary, field);
                 item->value_type = CARBON_ITEM_BINARY;
         } else if (carbon_field_type_is_boolean(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
                 item->value_type = field_type == CARBON_FIELD_TRUE ? CARBON_ITEM_TRUE : CARBON_ITEM_FALSE;
         } else if (carbon_field_type_is_array_or_subtype(field_type)) {
-                item->value.array = carbon_int_field_access_array_value(field, err);
+                item->value.array = carbon_int_field_access_array_value(field);
                 item->value_type = CARBON_ITEM_ARRAY;
         } else if (carbon_field_type_is_column_or_subtype(field_type)) {
-                item->value.column = carbon_int_field_access_column_value(field, err);
+                item->value.column = carbon_int_field_access_column_value(field);
                 item->value_type = CARBON_ITEM_COLUMN;
         } else if (carbon_field_type_is_object_or_subtype(field_type)) {
-                item->value.object = carbon_int_field_access_object_value(field, err);
+                item->value.object = carbon_int_field_access_object_value(field);
                 item->value_type = CARBON_ITEM_OBJECT;
         } else if (carbon_field_type_is_null(field_type)) {
                 item->value_type = CARBON_ITEM_NULL;
         } else if (carbon_field_type_is_string(field_type)) {
-                item->value.string.string = carbon_int_field_access_string_value(&item->value.string.length,
-                                                                                 field, err);
+                item->value.string.string = carbon_int_field_access_string_value(&item->value.string.length, field);
                 item->value_type = CARBON_ITEM_STRING;
         } else {
                 item->value_type = CARBON_ITEM_UNDEF;
@@ -68,7 +67,7 @@ bool internal_carbon_item_create_from_array(carbon_item *item, carbon_array *par
         item->idx = parent->pos;
         carbon_field_type_e field_type = parent->field_access.it_field_type;
 
-        return carbon_item_setup_value(item, field_type, &parent->field_access, &parent->err);
+        return carbon_item_setup_value(item, field_type, &parent->field_access);
 }
 
 bool internal_carbon_item_create_from_object(carbon_item *item, carbon_object *parent)
@@ -78,5 +77,5 @@ bool internal_carbon_item_create_from_object(carbon_item *item, carbon_object *p
         item->idx = parent->pos;
         carbon_field_type_e field_type = parent->field.value.data.it_field_type;
 
-        return carbon_item_setup_value(item, field_type, &parent->field.value.data, &parent->err);
+        return carbon_item_setup_value(item, field_type, &parent->field.value.data);
 }

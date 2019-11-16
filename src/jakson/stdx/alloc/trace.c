@@ -167,7 +167,7 @@ static inline void *alloc_register(size_t size)
                         return entry->new_ptr_func(size);
                 }
         }
-        ERROR_PRINT_AND_DIE(ERR_MALLOCERR)
+        panic(ERR_MALLOCERR)
         return NULL;
 }
 
@@ -207,7 +207,6 @@ if (!global_trace_stats.malloc_sizes) {                                         
 
 int trace_alloc_create(allocator *alloc)
 {
-        DEBUG_ERROR_IF_NULL(alloc);
         allocator default_alloc;
         alloc_create_std(&default_alloc);
 

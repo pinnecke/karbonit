@@ -54,20 +54,17 @@ typedef struct hashtable {
         vector ofType(hashtable_bucket) table;
         spinlock lock;
         u32 size;
-        err err;
 } hashtable;
 
-bool hashtable_create(hashtable *map, err *err, size_t key_size, size_t value_size, size_t capacity);
+bool hashtable_create(hashtable *map, size_t key_size, size_t value_size, size_t capacity);
 hashtable *hashtable_cpy(hashtable *src);
 bool hashtable_drop(hashtable *map);
 
 bool hashtable_clear(hashtable *map);
 bool hashtable_avg_displace(float *displace, const hashtable *map);
-bool hashtable_lock(hashtable *map);
-bool hashtable_unlock(hashtable *map);
 bool hashtable_insert_or_update(hashtable *map, const void *keys, const void *values, uint_fast32_t num_pairs);
 bool hashtable_serialize(FILE *file, hashtable *table);
-bool hashtable_deserialize(hashtable *table, err *err, FILE *file);
+bool hashtable_deserialize(hashtable *table, FILE *file);
 bool hashtable_remove_if_contained(hashtable *map, const void *keys, size_t num_pairs);
 const void *hashtable_get_value(hashtable *map, const void *key);
 bool hashtable_get_load_factor(float *factor, hashtable *map);

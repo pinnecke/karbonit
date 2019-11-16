@@ -33,7 +33,6 @@ extern "C" {
 
 typedef struct huffman {
         vector ofType(pack_huffman_entry) table;
-        err err;
 } huffman;
 
 typedef struct pack_huffman_entry {
@@ -58,7 +57,6 @@ bool coding_huffman_cpy(huffman *dst, huffman *src);
 bool coding_huffman_drop(huffman *dic);
 
 bool coding_huffman_build(huffman *encoder, const string_vector_t *strings);
-bool coding_huffman_get_error(err *err, const huffman *dic);
 bool coding_huffman_encode(memfile *file, huffman *dic, const char *string);
 bool coding_huffman_read_string(pack_huffman_str_info *info, memfile *src);
 bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_symbol);

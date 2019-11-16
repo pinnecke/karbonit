@@ -49,7 +49,6 @@ BUILT_IN(static bool)
 
 string_pred_contains_init(string_pred *pred)
 {
-        DEBUG_ERROR_IF_NULL(pred);
         pred->limit = QUERY_LIMIT_NONE;
         pred->func = __string_pred_contains_func;
         return true;

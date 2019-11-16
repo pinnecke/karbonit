@@ -24,16 +24,16 @@
 static void
 setup_object(column_doc_obj *model, column_doc *parent, archive_field_sid_t key, size_t idx);
 
-static bool object_put(column_doc_obj *model, err *err, const doc_entries *entry,
+static bool object_put(column_doc_obj *model, const doc_entries *entry,
                        string_dict *dic);
 
-static bool import_object(column_doc_obj *dst, err *err, const doc_obj *doc,
+static bool import_object(column_doc_obj *dst, const doc_obj *doc,
                           string_dict *dic);
 
 static bool
-_column_doc_print_object(FILE *file, err *err, const column_doc_obj *object, string_dict *dic);
+_column_doc_print_object(FILE *file, const column_doc_obj *object, string_dict *dic);
 
-static const char *get_type_name(err *err, archive_field_e type);
+static const char *get_type_name(archive_field_e type);
 
 static void object_array_key_columns_create(vector ofType(column_doc_group) *columns);
 
@@ -41,24 +41,17 @@ static column_doc_column *object_array_key_columns_find_or_new(
         vector ofType(column_doc_group) *columns, archive_field_sid_t array_key,
         archive_field_sid_t nested_object_entry_key, archive_field_e nested_object_entry_type);
 
-static bool object_array_key_column_push(column_doc_column *col, err *err,
-                                         const doc_entries *entry,
+static bool object_array_key_column_push(column_doc_column *col, const doc_entries *entry,
                                          u32 array_idx, string_dict *dic,
                                          column_doc_obj *model);
 
-bool columndoc_create(column_doc *columndoc, err *err, const doc *doc,
+bool columndoc_create(column_doc *columndoc, const doc *doc,
                       const doc_bulk *bulk,
                       const doc_entries *entries, string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(columndoc)
-        DEBUG_ERROR_IF_NULL(doc)
-        DEBUG_ERROR_IF_NULL(dic)
-        DEBUG_ERROR_IF_NULL(bulk)
-
         columndoc->dic = dic;
         columndoc->doc = doc;
         columndoc->bulk = bulk;
-        error_init(&columndoc->err);
 
         const char *root_string = "/";
         archive_field_sid_t *rootId;
@@ -70,7 +63,7 @@ bool columndoc_create(column_doc *columndoc, err *err, const doc *doc,
         string_dict_free(dic, rootId);
 
         const doc_obj *root = doc_entries_get_root(entries);
-        if (!import_object(&columndoc->columndoc, err, root, dic)) {
+        if (!import_object(&columndoc->columndoc, root, dic)) {
                 return false;
         }
 
@@ -277,7 +270,6 @@ static void object_meta_model_free(column_doc_obj *columndoc)
 
 bool columndoc_free(column_doc *doc)
 {
-        DEBUG_ERROR_IF_NULL(doc);
         object_meta_model_free(&doc->columndoc);
         return true;
 }
@@ -339,7 +331,7 @@ static void print_primitive_null(FILE *file, const char *type_name,
         fprintf(file, "}, ");
 }
 
-static bool print_primitive_objects(FILE *file, err *err, const char *type_name,
+static bool print_primitive_objects(FILE *file, const char *type_name,
                                     const vector ofType(archive_field_sid_t) *key_vector,
                                     const vector ofType(column_doc_obj) *value_vector,
                                     string_dict *dic)
@@ -349,7 +341,7 @@ static bool print_primitive_objects(FILE *file, err *err, const char *type_name,
                 fprintf(file, "\"Values\": [ ");
                 for (size_t i = 0; i < (value_vector)->num_elems; i++) {
                         const column_doc_obj *object = VECTOR_GET(value_vector, i, column_doc_obj);
-                        if (!_column_doc_print_object(file, err, object, dic)) {
+                        if (!_column_doc_print_object(file, object, dic)) {
                                 return false;
                         }
                         fprintf(file, "%s", i + 1 < (value_vector)->num_elems ? ", " : "");
@@ -557,7 +549,7 @@ static void print_primitive_strings(FILE *file, const char *type_name,
     fprintf(file, "%s", column->num_elems > 1 ? "]" : "");                                                             \
 }
 
-static bool print_array_objects(FILE *file, err *err, const char *type_name,
+static bool print_array_objects(FILE *file, const char *type_name,
                                 const vector ofType(column_doc_group) *key_columns,
                                 string_dict *dic)
 {
@@ -593,7 +585,7 @@ static bool print_array_objects(FILE *file, err *err, const char *type_name,
                                                        column_doc_column);
                         char **decColumnKeyName = string_dict_extract(dic, &columnTable->key_name, 1);
 
-                        const char *column_type_name = get_type_name(err, columnTable->type);
+                        const char *column_type_name = get_type_name(columnTable->type);
                         if (!column_type_name) {
                                 return false;
                         }
@@ -683,7 +675,7 @@ static bool print_array_objects(FILE *file, err *err, const char *type_name,
                                                 for (size_t i = 0; i < column->num_elems; i++) {
                                                         const column_doc_obj
                                                                 *object = VECTOR_GET(column, i, column_doc_obj);
-                                                        if (!_column_doc_print_object(file, err, object, dic)) {
+                                                        if (!_column_doc_print_object(file, object, dic)) {
                                                                 return false;
                                                         }
                                                         fprintf(file, "%s", i + 1 < column->num_elems ? ", " : "");
@@ -691,7 +683,7 @@ static bool print_array_objects(FILE *file, err *err, const char *type_name,
                                                 fprintf(file, "%s", column->num_elems > 1 ? "]" : "");
                                         }
                                                 break;
-                                        default: ERROR(err, ERR_NOTYPE)
+                                        default: error(ERR_NOTYPE, NULL)
                                                 return false;
                                 }
                                 fprintf(file, array_idx + 1 < columnTable->values.num_elems ? ", " : "");
@@ -718,7 +710,7 @@ static bool print_array_objects(FILE *file, err *err, const char *type_name,
 }
 
 static bool
-_column_doc_print_object(FILE *file, err *err, const column_doc_obj *object, string_dict *dic)
+_column_doc_print_object(FILE *file, const column_doc_obj *object, string_dict *dic)
 {
         char **parentKey = string_dict_extract(dic, &object->parent_key, 1);
         fprintf(file, "{ ");
@@ -806,7 +798,7 @@ _column_doc_print_object(FILE *file, err *err, const column_doc_obj *object, str
                                "%f")
         print_primitive_strings(file, "Strings", &object->string_prop_keys, &object->string_prop_vals, dic);
         print_primitive_null(file, "Null", &object->null_prop_keys, dic);
-        if (print_primitive_objects(file, err, "Objects", &object->obj_prop_keys, &object->obj_prop_vals, dic)) {
+        if (print_primitive_objects(file, "Objects", &object->obj_prop_keys, &object->obj_prop_vals, dic)) {
                 return false;
         }
         fprintf(file, "}, ");
@@ -869,7 +861,7 @@ _column_doc_print_object(FILE *file, err *err, const column_doc_obj *object, str
                     (!isnan(value)));
         print_array_strings(file, "Strings", &object->string_array_prop_keys, &object->string_array_prop_vals, dic);
         print_array_null(file, "Null", &object->null_array_prop_keys, &object->null_array_prop_vals, dic);
-        if (!print_array_objects(file, err, "Objects", &object->obj_array_props, dic)) {
+        if (!print_array_objects(file, "Objects", &object->obj_array_props, dic)) {
                 return false;
         }
         fprintf(file, "} ");
@@ -881,15 +873,14 @@ _column_doc_print_object(FILE *file, err *err, const column_doc_obj *object, str
 
 bool columndoc_print(FILE *file, column_doc *doc)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(doc)
-        return _column_doc_print_object(file, &doc->err, &doc->columndoc, doc->dic);
+        return _column_doc_print_object(file, &doc->columndoc, doc->dic);
 }
 
 bool columndoc_drop(column_doc *doc)
 {
         UNUSED(doc);
-        NOT_IMPLEMENTED
+        error(ERR_NOTIMPLEMENTED, NULL);
+        return false;
 }
 
 static void object_array_key_columns_create(vector ofType(column_doc_group) *columns)
@@ -933,7 +924,7 @@ static void object_array_key_columns_drop(vector ofType(column_doc_group) *colum
         vector_drop(columns);
 }
 
-static const char *get_type_name(err *err, archive_field_e type)
+static const char *get_type_name(archive_field_e type)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -961,7 +952,7 @@ static const char *get_type_name(err *err, archive_field_e type)
                 case FIELD_OBJECT:
                         return "Object";
                 default: {
-                        ERROR(err, ERR_NOTYPE);
+                        error(ERR_NOTYPE, NULL);
                         return NULL;
                 }
         }
@@ -1009,8 +1000,7 @@ static column_doc_column *object_array_key_columns_find_or_new(
         return new_column;
 }
 
-static bool object_array_key_column_push(column_doc_column *col, err *err,
-                                         const doc_entries *entry,
+static bool object_array_key_column_push(column_doc_column *col, const doc_entries *entry,
                                          u32 array_idx, string_dict *dic,
                                          column_doc_obj *model)
 {
@@ -1067,7 +1057,6 @@ static bool object_array_key_column_push(column_doc_column *col, err *err,
                                         *nested_object = VECTOR_NEW_AND_GET(values_for_entry, column_doc_obj);
                                 setup_object(nested_object, model->parent, *array_key, array_idx);
                                 if (!import_object(nested_object,
-                                                   err,
                                                    VECTOR_GET(&entry->values, array_idx, doc_obj),
                                                    dic)) {
                                         return false;
@@ -1075,7 +1064,7 @@ static bool object_array_key_column_push(column_doc_column *col, err *err,
                         }
                         string_dict_free(dic, array_key);
                         break;
-                default: ERROR(err, ERR_NOTYPE);
+                default: error(ERR_NOTYPE, NULL);
                         return false;
         }
         return true;
@@ -1170,7 +1159,7 @@ setup_object(column_doc_obj *model, column_doc *parent, archive_field_sid_t key,
 }
 
 static bool
-object_put_primitive(column_doc_obj *columndoc, err *err, const doc_entries *entry,
+object_put_primitive(column_doc_obj *columndoc, const doc_entries *entry,
                      string_dict *dic, const archive_field_sid_t *key_id)
 {
         switch (entry->type) {
@@ -1232,12 +1221,12 @@ object_put_primitive(column_doc_obj *columndoc, err *err, const doc_entries *ent
                         vector_push(&columndoc->obj_prop_vals, &template, 1);
                         nested_object = VECTOR_GET(&columndoc->obj_prop_vals, position, column_doc_obj);
                         setup_object(nested_object, columndoc->parent, *key_id, 0);
-                        if (!import_object(nested_object, err, VECTOR_GET(&entry->values, 0, doc_obj), dic)) {
+                        if (!import_object(nested_object, VECTOR_GET(&entry->values, 0, doc_obj), dic)) {
                                 return false;
                         }
-                }
-                        break;
-                        ERROR(err, ERR_NOTYPE)
+                } break;
+                default:
+                        error(ERR_NOTYPE, NULL)
                         return false;
         }
         return true;
@@ -1259,7 +1248,7 @@ static void object_push_array(vector ofType(Vector
 }
 
 static bool
-object_put_array(column_doc_obj *model, err *err, const doc_entries *entry,
+object_put_array(column_doc_obj *model, const doc_entries *entry,
                  string_dict *dic, const archive_field_sid_t *key_id)
 {
         UNUSED(dic);
@@ -1378,7 +1367,7 @@ object_put_array(column_doc_obj *model, err *err, const doc_entries *entry,
                                                                                      *key_id,
                                                                                      *nested_object_key_name,
                                                                                      pair->type);
-                                        if (!object_array_key_column_push(key_column, err, pair, array_idx, dic,
+                                        if (!object_array_key_column_push(key_column, pair, array_idx, dic,
                                                                           model)) {
                                                 return false;
                                         }
@@ -1388,7 +1377,7 @@ object_put_array(column_doc_obj *model, err *err, const doc_entries *entry,
                 }
                         break;
                 default: {
-                        ERROR(err, ERR_NOTYPE)
+                        error(ERR_NOTYPE, NULL)
                         return false;
                 }
                         break;
@@ -1396,7 +1385,7 @@ object_put_array(column_doc_obj *model, err *err, const doc_entries *entry,
         return true;
 }
 
-static bool object_put(column_doc_obj *model, err *err, const doc_entries *entry,
+static bool object_put(column_doc_obj *model, const doc_entries *entry,
                        string_dict *dic)
 {
         archive_field_sid_t *key_id;
@@ -1415,16 +1404,16 @@ static bool object_put(column_doc_obj *model, err *err, const doc_entries *entry
                         vector_push(&model->null_prop_keys, key_id, 1);
                         break;
                 case ENTRY_TYPE_PRIMITIVE:
-                        if (!object_put_primitive(model, err, entry, dic, key_id)) {
+                        if (!object_put_primitive(model, entry, dic, key_id)) {
                                 return false;
                         }
                         break;
                 case ENTRY_TYPE_ARRAY:
-                        if (!object_put_array(model, err, entry, dic, key_id)) {
+                        if (!object_put_array(model, entry, dic, key_id)) {
                                 return false;
                         }
                         break;
-                default: ERROR(err, ERR_NOTYPE)
+                default: error(ERR_NOTYPE, NULL)
                         return false;
         }
 
@@ -1432,14 +1421,14 @@ static bool object_put(column_doc_obj *model, err *err, const doc_entries *entry
         return true;
 }
 
-static bool import_object(column_doc_obj *dst, err *err, const doc_obj *doc,
+static bool import_object(column_doc_obj *dst, const doc_obj *doc,
                           string_dict *dic)
 {
         const vector ofType(doc_entries) *objectEntries = doc_get_entries(doc);
         const doc_entries *entries = VECTOR_ALL(objectEntries, doc_entries);
         for (size_t i = 0; i < objectEntries->num_elems; i++) {
                 const doc_entries *entry = entries + i;
-                if (!object_put(dst, err, entry, dic)) {
+                if (!object_put(dst, entry, dic)) {
                         return false;
                 }
         }

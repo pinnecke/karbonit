@@ -78,7 +78,8 @@ typedef enum archive_field_type {
         FIELD_UINT64 = 9,
         FIELD_FLOAT = 10,
         FIELD_STRING = 11,
-        FIELD_OBJECT = 12
+        FIELD_OBJECT = 12,
+        FIELD_ERR    = 13
 } archive_field_e;
 
 typedef enum access_mode_e {
@@ -149,29 +150,8 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
         }
 }
 
-#define NOT_IMPLEMENTED                                                                                            \
-{                                                                                                                      \
-    err err;                                                                                                    \
-    error_init(&err);                                                                                                  \
-    ERROR(&err, ERR_NOTIMPLEMENTED)                                                                                \
-    error_print_and_abort(&err);                                                                                       \
-    return false;                                                                                                      \
-};
-
 #define __CPP_VA_ARGS_11(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, ...) a11
 #define VA_ARGS_LENGTH(...) __CPP_VA_ARGS_11(_, ## __VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-
-#ifndef NDEBUG
-#define CHECK_TAG(is, expected)                                                                                 \
-{                                                                                                                      \
-    if (is != expected) {                                                                                              \
-        ERROR_PRINT(ERR_ERRINTERNAL)                                                                     \
-        return false;                                                                                                  \
-    }                                                                                                                  \
-}
-#else
-#define CHECK_TAG(is, expected) { }
-#endif
 
 #if !defined(LOG_TRACE) || defined(NDEBUG)
 #define TRACE(tag, msg, ...) { }
@@ -289,22 +269,6 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 #define JAK_MIN(a, b)                                                                                                  \
     ((a) < (b) ? (a) : (b))
 
-#ifndef NDEBUG
-#define DEBUG_ERROR_IF_NULL(x)                                                                                              \
-{                                                                                                                      \
-    if (!(x)) {                                                                                                        \
-        struct err err;                                                                                                \
-        error_init(&err);                                                                                              \
-        ERROR(&err, ERR_NULLPTR);                                                                                  \
-        error_print_to_stderr(&err);                                                                                   \
-        return false;                                                                                                  \
-    }                                                                                                                  \
-}
-#else
-#define DEBUG_ERROR_IF_NULL(x)    UNUSED(x)
-#endif
-
-
 #define CHECK_SUCCESS(x)                                                                                           \
 {                                                                                                                      \
     if (UNLIKELY(!x)) {                                                                                                \
@@ -339,7 +303,7 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 #define ARE_BITS_SET(mask, bit)   (((bit) & mask ) == (bit))
 
 #define ERROR_IF_NOT_IMPLEMENTED(err, x, func)                                                                         \
-    OPTIONAL(x->func == NULL, ERROR(err, ERR_NOTIMPLEMENTED))
+    OPTIONAL(x->func == NULL, error(ERR_NOTIMPLEMENTED, NULL))
 
 #define OPTIONAL(expr, stmt)                                                                                       \
     if (expr) { stmt; }

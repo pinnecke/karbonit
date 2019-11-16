@@ -40,7 +40,7 @@ typedef struct carbon_printer
         void (*record_end)(carbon_printer *self, string_buffer *builder);
         void (*meta_begin)(carbon_printer *self, string_buffer *builder);
         /** type is of carbon_key_e */
-        void (*meta_data)(carbon_printer *self, string_buffer *builder, int key_type, const void *key, u64 key_length, u64 commit_hash);
+        bool (*meta_data)(carbon_printer *self, string_buffer *builder, int key_type, const void *key, u64 key_length, u64 commit_hash);
         void (*meta_end)(carbon_printer *self, string_buffer *builder);
         void (*doc_begin)(carbon_printer *self, string_buffer *builder);
         void (*doc_end)(carbon_printer *self, string_buffer *builder);

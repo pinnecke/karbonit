@@ -47,7 +47,6 @@ static int convertJs2Model(struct js_to_context *context, FILE *file, bool optim
     json_parser parser;
     json_err error_desc;
     json jsonAst;
-    json_parser_create(&parser);
     int status = json_parse(&jsonAst, &error_desc, &parser, context->jsonContent);
     if (!status) {
         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
@@ -64,11 +63,10 @@ static int convertJs2Model(struct js_to_context *context, FILE *file, bool optim
     }
 
     CONSOLE_WRITE(file, "  - Test document restrictions%s", "");
-    err err;
-    status = json_test(&err, &jsonAst);
+    status = json_test(&jsonAst);
     if (!status) {
         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
-        error_print_to_stderr(&err);
+        error_print(stderr);
         return false;
     } else {
         CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
@@ -428,7 +426,6 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
         jsonContent[fsize] = 0;
 
         archive archive;
-        err err;
 
         archive_callback progress_tracker = { 0 };
         progress_tracker.begin_create_from_model = tracker_begin_create_from_model;
@@ -459,10 +456,10 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
         progress_tracker.begin_string_id_index_baking = tracker_begin_string_id_index_baking;
         progress_tracker.end_string_id_index_baking = tracker_end_string_id_index_baking;
 
-        if (!archive_from_json(&archive, pathCarbonFileOut, &err, jsonContent,
+        if (!archive_from_json(&archive, pathCarbonFileOut, jsonContent,
                                       compressor, dic_type, string_dic_async_nthreads, flagReadOptimized,
                                       flagBakeStringIdIndex, &progress_tracker)) {
-            error_print_to_stderr(&err);
+            error_print(stderr);
             return false;
         } else {
             archive_close(&archive);
@@ -525,13 +522,12 @@ bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
             CONSOLE_WRITELN(file, "Input file '%s' cannot be found. STOP", carbonFilePath);
             return false;
         }
-        err err;
+
         FILE *inputFile = fopen(carbonFilePath, "r");
         area *stream;
         archive_load(&stream, inputFile);
-        if (!archive_print(stdout, &err, stream)) {
-            error_print_to_stderr(&err);
-            error_drop(&err);
+        if (!archive_print(stdout, stream)) {
+            error_print(stderr);
         }
         memblock_drop(stream);
         fclose(inputFile);
@@ -618,7 +614,8 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
             printf("\n");
             encoded_doc_collection_drop(&collection);
         } else {
-            ERROR_PRINT(archive.err.code);
+            error(ERR_FAILED, NULL)
+            return false;
         }
 
         archive_close(&archive);

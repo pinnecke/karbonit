@@ -43,8 +43,8 @@ typedef struct strid_iter {
         strid_info vector[100000];
 } strid_iter;
 
-bool strid_iter_open(strid_iter *it, err *err, archive *archive);
-bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_length, strid_iter *it);
+bool strid_iter_open(strid_iter *it, archive *archive);
+bool strid_iter_next(bool *success, strid_info **info, size_t *info_length, strid_iter *it);
 bool strid_iter_close(strid_iter *it);
 
 #ifdef __cplusplus

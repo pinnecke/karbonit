@@ -117,7 +117,6 @@ str_hash_create_inmemory(str_hash *str_hash, const allocator *alloc, size_t num_
         str_hash->remove = _str_hash_mem_remove;
         str_hash->free = _str_hash_mem_free;
         str_hash->get_exact_safe = this_get_safe_exact;
-        error_init(&str_hash->err);
 
         str_hash_reset_counters(str_hash);
         CHECK_SUCCESS(_str_hash_mem_create_extra(str_hash, num_buckets, cap_buckets));
@@ -351,8 +350,7 @@ static int this_update_key_fast(str_hash *self, const archive_field_sid_t *value
         UNUSED(values);
         UNUSED(keys);
         UNUSED(num_keys);
-        ERROR(&self->err, ERR_NOTIMPL);
-        error_print_to_stderr(&self->err);
+        error(ERR_NOTIMPL, NULL);
         return false;
 }
 
@@ -416,7 +414,7 @@ static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t
                 CHECK_SUCCESS(bucket_create(data, num_buckets, cap_buckets, &self->allocator));
                 return true;
         } else {
-                ERROR(&self->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return false;
         }
 }
@@ -431,8 +429,6 @@ static struct mem_extra *this_get_exta(str_hash *self)
 MAYBE_UNUSED
 static int bucket_create(struct bucket *buckets, size_t num_buckets, size_t bucket_cap, allocator *alloc)
 {
-        DEBUG_ERROR_IF_NULL(buckets);
-
         // TODO: parallize this!
         while (num_buckets--) {
                 struct bucket *bucket = buckets++;
@@ -445,8 +441,6 @@ static int bucket_create(struct bucket *buckets, size_t num_buckets, size_t buck
 static int bucket_drop(struct bucket *buckets, size_t num_buckets, allocator *alloc)
 {
         UNUSED(alloc);
-        DEBUG_ERROR_IF_NULL(buckets);
-
         while (num_buckets--) {
                 struct bucket *bucket = buckets++;
                 slice_list_drop(&bucket->slice_list);
@@ -461,9 +455,6 @@ static int bucket_insert(struct bucket *bucket, const char *restrict key, archiv
 {
         UNUSED(counter);
         UNUSED(alloc);
-
-        DEBUG_ERROR_IF_NULL(bucket);
-        DEBUG_ERROR_IF_NULL(key);
 
         slice_handle handle;
 
@@ -489,11 +480,6 @@ static int this_insert_bulk(vector ofType(bucket) *buckets, char *const *restric
                             allocator *alloc,
                             str_hash_counters *counter)
 {
-        DEBUG_ERROR_IF_NULL(buckets)
-        DEBUG_ERROR_IF_NULL(keys)
-        DEBUG_ERROR_IF_NULL(values)
-        DEBUG_ERROR_IF_NULL(bucket_idxs)
-
         struct bucket *buckets_data = (struct bucket *) vector_data(buckets);
         int status = true;
         for (register size_t i = 0; status == true && i < num_pairs; i++) {
@@ -512,9 +498,6 @@ static int
 this_insert_exact(vector ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
                   size_t bucket_idx, allocator *alloc, str_hash_counters *counter)
 {
-        DEBUG_ERROR_IF_NULL(buckets)
-        DEBUG_ERROR_IF_NULL(key)
-
         struct bucket *buckets_data = (struct bucket *) vector_data(buckets);
         struct bucket *bucket = buckets_data + bucket_idx;
         return bucket_insert(bucket, key, value, alloc, counter);

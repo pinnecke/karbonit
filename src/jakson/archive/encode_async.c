@@ -127,7 +127,6 @@ static bool this_setup_carriers(string_dict *self, size_t capacity, size_t num_i
 
 #define THIS_EXTRAS(self)                                                                                              \
 ({                                                                                                                     \
-    CHECK_TAG(self->tag, ASYNC);                                                             \
     (struct async_extra *) self->extra;                                                                                       \
 })
 
@@ -170,7 +169,6 @@ static bool _encode_async_create_extra(string_dict *self, size_t capacity, size_
 
 static bool _encode_async_drop(string_dict *self)
 {
-        CHECK_TAG(self->tag, ASYNC);
         struct async_extra *extra = THIS_EXTRAS(self);
         for (size_t i = 0; i < extra->carriers.num_elems; i++) {
                 struct carrier *carrier = VECTOR_GET(&extra->carriers, i, struct carrier);
@@ -230,7 +228,7 @@ void *parallel_insert_function(void *args)
                                            this_args->insert_num_threads);
 
                 /** internal ERROR during thread-local string dictionary building process */
-                ERROR_PRINT_AND_DIE_IF(status != true, ERR_INTERNALERR);
+                error_if_and_return(status != true, ERR_INTERNALERR, NULL);
                 DEBUG(STRING_DIC_ASYNC_TAG, "thread %zu done", this_args->carrier->id);
         } else {
                 WARN(STRING_DIC_ASYNC_TAG, "thread %zu had nothing to do", this_args->carrier->id);
@@ -388,9 +386,8 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         timestamp begin = wallclock();
         INFO(STRING_DIC_ASYNC_TAG, "insert operation invoked: %zu strings in total", num_strings)
 
-        CHECK_TAG(self->tag, ASYNC);
         /** parameter 'num_threads' must be set to 0 for async dictionary */
-        ERROR_PRINT_AND_DIE_IF(__num_threads != 0, ERR_INTERNALERR);
+        error_if_and_return(__num_threads != 0, ERR_INTERNALERR, NULL);
 
         this_lock(self);
 
@@ -522,8 +519,6 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
         timestamp begin = wallclock();
         INFO(STRING_DIC_ASYNC_TAG, "remove operation started: %zu strings to remove", num_strings);
 
-        CHECK_TAG(self->tag, ASYNC);
-
         this_lock(self);
 
         struct parallel_remove_arg empty;
@@ -590,8 +585,6 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
 {
         timestamp begin = wallclock();
         INFO(STRING_DIC_ASYNC_TAG, "locate (safe) operation started: %zu strings to locate", num_keys)
-
-        CHECK_TAG(self->tag, ASYNC);
 
         this_lock(self);
 
@@ -715,8 +708,6 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
 static bool
 _encode_async_locate_fast(string_dict *self, archive_field_sid_t **out, char *const *keys, size_t num_keys)
 {
-        CHECK_TAG(self->tag, ASYNC);
-
         this_lock(self);
 
         bool *found_mask;
@@ -817,14 +808,12 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
 
 static bool _encode_async_free(string_dict *self, void *ptr)
 {
-        CHECK_TAG(self->tag, ASYNC);
         alloc_free(&self->alloc, ptr);
         return true;
 }
 
 static bool _encode_async_num_distinct(string_dict *self, size_t *num)
 {
-        CHECK_TAG(self->tag, ASYNC);
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
@@ -845,7 +834,6 @@ static bool _encode_async_num_distinct(string_dict *self, size_t *num)
 static bool _encode_async_get_contents(string_dict *self, vector ofType (char *) *strings,
                               vector ofType(archive_field_sid_t) *string_ids)
 {
-        CHECK_TAG(self->tag, ASYNC);
         this_lock(self);
         struct async_extra *extra = THIS_EXTRAS(self);
         size_t num_carriers = vector_length(&extra->carriers);
@@ -886,8 +874,6 @@ static bool _encode_async_get_contents(string_dict *self, vector ofType (char *)
 
 static bool _encode_async_reset_counters(string_dict *self)
 {
-        CHECK_TAG(self->tag, ASYNC);
-
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
@@ -905,8 +891,6 @@ static bool _encode_async_reset_counters(string_dict *self)
 
 static bool _encode_async_counters(string_dict *self, str_hash_counters *counters)
 {
-        CHECK_TAG(self->tag, ASYNC);
-
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);

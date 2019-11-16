@@ -21,11 +21,8 @@
 #define _HASH_SET_HASHCODE_OF(size, x) HASH_BERNSTEIN(size, x)
 #define FIX_MAP_AUTO_REHASH_LOADFACTOR 0.9f
 
-bool hashset_create(hashset *map, err *err, size_t key_size, size_t capacity)
+bool hashset_create(hashset *map, size_t key_size, size_t capacity)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(key_size)
-
         int err_code = ERR_INITFAILED;
 
         map->size = 0;
@@ -36,7 +33,6 @@ bool hashset_create(hashset *map, err *err, size_t key_size, size_t capacity)
         SUCCESS_OR_JUMP(vector_enlarge_size_to_capacity(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(vector_zero_memory(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(spinlock_init(&map->lock), cleanup_key_value_table_and_error);
-        SUCCESS_OR_JUMP(error_init(&map->err), cleanup_key_value_table_and_error);
 
         return true;
 
@@ -49,21 +45,19 @@ bool hashset_create(hashset *map, err *err, size_t key_size, size_t capacity)
                 err_code = ERR_DROPFAILED;
         }
         error_handling:
-        ERROR(err, err_code);
+        error(err_code, NULL);
         return false;
 }
 
 bool hashset_drop(hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
-
         bool status = true;
 
         status &= vector_drop(&map->table);
         status &= vector_drop(&map->key_data);
 
         if (!status) {
-                ERROR(&map->err, ERR_DROPFAILED);
+                error(ERR_DROPFAILED, NULL);
         }
 
         return status;
@@ -94,7 +88,7 @@ hashset *hashset_cpy(hashset *src)
 
                 hashset_lock(src);
 
-                hashset_create(cpy, &src->err, src->key_data.elem_size, src->table.cap_elems);
+                hashset_create(cpy, src->key_data.elem_size, src->table.cap_elems);
 
                 JAK_ASSERT(src->key_data.cap_elems == src->table.cap_elems);
                 JAK_ASSERT(src->key_data.num_elems <= src->table.num_elems);
@@ -102,7 +96,6 @@ hashset *hashset_cpy(hashset *src)
                 vector_cpy_to(&cpy->key_data, &src->key_data);
                 vector_cpy_to(&cpy->table, &src->table);
                 cpy->size = src->size;
-                error_cpy(&cpy->err, &src->err);
 
                 JAK_ASSERT(cpy->key_data.cap_elems == cpy->table.cap_elems);
                 JAK_ASSERT(cpy->key_data.num_elems <= cpy->table.num_elems);
@@ -110,14 +103,13 @@ hashset *hashset_cpy(hashset *src)
                 hashset_unlock(src);
                 return cpy;
         } else {
-                ERROR(&src->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
 
 bool hashset_clear(hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
         JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
 
@@ -131,7 +123,7 @@ bool hashset_clear(hashset *map)
         JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
 
         if (!status) {
-                ERROR(&map->err, ERR_OPPFAILED);
+                error(ERR_OPPFAILED, NULL);
         }
 
         hashset_unlock(map);
@@ -141,9 +133,6 @@ bool hashset_clear(hashset *map)
 
 bool hashset_avg_displace(float *displace, const hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(displace);
-        DEBUG_ERROR_IF_NULL(map);
-
         size_t sum_dis = 0;
         for (size_t i = 0; i < map->table.num_elems; i++) {
                 hashset_bucket *bucket = VECTOR_GET(&map->table, i, hashset_bucket);
@@ -156,14 +145,12 @@ bool hashset_avg_displace(float *displace, const hashset *map)
 
 bool hashset_lock(hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
         spinlock_acquire(&map->lock);
         return true;
 }
 
 bool hashset_unlock(hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
         spinlock_release(&map->lock);
         return true;
 }
@@ -256,9 +243,6 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
 
 bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_pairs)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(keys)
-
         JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
 
@@ -266,7 +250,7 @@ bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_
 
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                ERROR(&map->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -299,14 +283,11 @@ bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_
 
 bool hashset_remove_if_contained(hashset *map, const void *keys, size_t num_pairs)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(keys)
-
         hashset_lock(map);
 
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                ERROR(&map->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 hashset_unlock(map);
                 return false;
         }
@@ -351,9 +332,6 @@ bool hashset_remove_if_contained(hashset *map, const void *keys, size_t num_pair
 
 bool hashset_contains_key(hashset *map, const void *key)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(key)
-
         bool result = false;
 
         hashset_lock(map);
@@ -380,9 +358,6 @@ bool hashset_contains_key(hashset *map, const void *key)
 
 bool hashset_get_load_factor(float *factor, hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(factor)
-        DEBUG_ERROR_IF_NULL(map)
-
         hashset_lock(map);
 
         *factor = map->size / (float) map->table.num_elems;
@@ -394,8 +369,6 @@ bool hashset_get_load_factor(float *factor, hashset *map)
 
 bool hashset_rehash(hashset *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
-
         hashset_lock(map);
 
         hashset *cpy = hashset_cpy(map);
@@ -416,7 +389,7 @@ bool hashset_rehash(hashset *map)
                 if (bucket->in_use_flag) {
                         const void *old_key = _hash_set_get_bucket_key(bucket, cpy);
                         if (!hashset_insert_or_update(map, old_key, 1)) {
-                                ERROR(&map->err, ERR_REHASH_NOROLLBACK)
+                                error(ERR_REHASH_NOROLLBACK, NULL)
                                 hashset_unlock(map);
                                 return false;
                         }

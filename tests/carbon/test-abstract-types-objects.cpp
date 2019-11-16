@@ -140,12 +140,11 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
 
         rec doc, doc2, doc3, doc4, doc5;
-        err err;
         carbon_find find;
         carbon_field_type_e ft;
         rev revise;
 
-        carbon_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", CARBON_KEY_NOKEY, NULL);
 
         {
                 carbon_revise_begin(&revise, &doc2, &doc);

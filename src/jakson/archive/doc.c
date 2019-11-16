@@ -36,14 +36,12 @@ static bool print_value(FILE *file, archive_field_e type, const vector ofType(<T
 static void _doc_print_object(FILE *file, const doc_obj *model);
 
 static bool
-import_json_object(doc_obj *target, err *err, const json_object *json_obj);
+import_json_object(doc_obj *target, const json_object *json_obj);
 
 static void sort_columndoc_entries(column_doc_obj *columndoc);
 
 bool doc_bulk_create(doc_bulk *bulk, string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(bulk)
-        DEBUG_ERROR_IF_NULL(dic)
         bulk->dic = dic;
         vector_create(&bulk->keys, NULL, sizeof(char *), 500);
         vector_create(&bulk->values, NULL, sizeof(char *), 1000);
@@ -66,8 +64,6 @@ bool doc_bulk_get_dic_contents(vector ofType (const char *) **strings,
                                vector ofType(archive_field_sid_t) **string_ids,
                                const doc_bulk *context)
 {
-        DEBUG_ERROR_IF_NULL(context)
-
         size_t num_distinct_values;
         string_dict_num_distinct(&num_distinct_values, context->dic);
         vector ofType (const char *) *result_strings = MALLOC(sizeof(vector));
@@ -103,7 +99,6 @@ doc *doc_bulk_new_doc(doc_bulk *context, archive_field_e type)
 
 bool doc_bulk_drop(doc_bulk *bulk)
 {
-        DEBUG_ERROR_IF_NULL(bulk)
         for (size_t i = 0; i < bulk->keys.num_elems; i++) {
                 char *string = *VECTOR_GET(&bulk->keys, i, char *);
                 free(string);
@@ -129,7 +124,6 @@ bool doc_bulk_drop(doc_bulk *bulk)
 
 bool doc_bulk_shrink(doc_bulk *bulk)
 {
-        DEBUG_ERROR_IF_NULL(bulk)
         vector_shrink(&bulk->keys);
         vector_shrink(&bulk->values);
         return true;
@@ -137,9 +131,6 @@ bool doc_bulk_shrink(doc_bulk *bulk)
 
 bool doc_bulk_print(FILE *file, doc_bulk *bulk)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(bulk)
-
         fprintf(file, "{");
         char **key_strings = VECTOR_ALL(&bulk->keys, char *);
         fprintf(file, "\"Key Strings\": [");
@@ -160,9 +151,6 @@ bool doc_bulk_print(FILE *file, doc_bulk *bulk)
 
 bool doc_print(FILE *file, const doc *doc)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(doc)
-
         if (doc->obj_model.num_elems == 0) {
                 fprintf(file, "{ }");
         }
@@ -205,10 +193,6 @@ void doc_drop(doc_obj *model)
 
 bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_field_e type)
 {
-        DEBUG_ERROR_IF_NULL(out)
-        DEBUG_ERROR_IF_NULL(obj)
-        DEBUG_ERROR_IF_NULL(key)
-
         size_t entry_idx;
         char *key_dup = strdup(key);
 
@@ -227,9 +211,6 @@ bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_f
 
 bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 {
-        DEBUG_ERROR_IF_NULL(entry)
-        DEBUG_ERROR_IF_NULL((entry->type == FIELD_NULL) || (value != NULL))
-
         switch (entry->type) {
                 case FIELD_NULL:
                         vector_push(&entry->values, &VALUE_NULL, 1);
@@ -249,9 +230,6 @@ bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 
 bool doc_obj_push_object(doc_obj **out, doc_entries *entry)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(entry);
-
         JAK_ASSERT(entry->type == FIELD_OBJECT);
 
         doc_obj objectModel;
@@ -266,7 +244,7 @@ bool doc_obj_push_object(doc_obj **out, doc_entries *entry)
 }
 
 static archive_field_e
-value_type_for_json_number(bool *success, err *err, const json_number *number)
+value_type_for_json_number(bool *success, const json_number *number)
 {
         *success = true;
         switch (number->value_type) {
@@ -296,7 +274,7 @@ value_type_for_json_number(bool *success, err *err, const json_number *number)
                                 return FIELD_INT64;
                         }
                 }
-                default: ERROR(err, ERR_NOJSONNUMBERT);
+                default: error(ERR_NOJSONNUMBERT, NULL);
                         *success = false;
                         return FIELD_INT8;
         }
@@ -310,12 +288,12 @@ import_json_object_string_prop(doc_obj *target, const char *key, const json_stri
         doc_obj_push_primtive(entry, string->value);
 }
 
-static bool import_json_object_number_prop(doc_obj *target, err *err, const char *key,
+static bool import_json_object_number_prop(doc_obj *target, const char *key,
                                            const json_number *number)
 {
         doc_entries *entry;
         bool success;
-        archive_field_e number_type = value_type_for_json_number(&success, err, number);
+        archive_field_e number_type = value_type_for_json_number(&success, number);
         if (!success) {
                 return false;
         }
@@ -338,18 +316,17 @@ static void import_json_object_null_prop(doc_obj *target, const char *key)
         doc_obj_push_primtive(entry, NULL);
 }
 
-static bool import_json_object_object_prop(doc_obj *target, err *err, const char *key,
+static bool import_json_object_object_prop(doc_obj *target, const char *key,
                                            const json_object *object)
 {
         doc_entries *entry;
         doc_obj *nested_object = NULL;
         doc_obj_add_key(&entry, target, key, FIELD_OBJECT);
         doc_obj_push_object(&nested_object, entry);
-        return import_json_object(nested_object, err, object);
+        return import_json_object(nested_object, object);
 }
 
-static bool import_json_object_array_prop(doc_obj *target, err *err, const char *key,
-                                          const json_array *array)
+static bool import_json_object_array_prop(doc_obj *target, const char *key, const json_array *array)
 {
         doc_entries *entry;
 
@@ -385,7 +362,7 @@ static bool import_json_object_array_prop(doc_obj *target, err *err, const char 
                                         } else {
                                                 bool success;
                                                 archive_field_e element_number_type =
-                                                        value_type_for_json_number(&success, err,
+                                                        value_type_for_json_number(&success,
                                                                                    element->value.value.number);
                                                 if (!success) {
                                                         return false;
@@ -453,9 +430,9 @@ static bool import_json_object_array_prop(doc_obj *target, err *err, const char 
                         case JSON_VALUE_NULL:
                                 field_type = FIELD_NULL;
                                 break;
-                        case JSON_VALUE_ARRAY: ERROR(err, ERR_ERRINTERNAL) /** array type is illegal here */
+                        case JSON_VALUE_ARRAY: error(ERR_ERRINTERNAL, NULL) /** array type is illegal here */
                                 return false;
-                        default: ERROR(err, ERR_NOTYPE)
+                        default: error(ERR_NOTYPE, NULL)
                                 return false;
                 }
 
@@ -472,8 +449,7 @@ static bool import_json_object_array_prop(doc_obj *target, err *err, const char 
                                         doc_obj_push_object(&nested_object, entry);
                                         if (ast_node_data_type != JSON_VALUE_NULL) {
                                                 /** the object is null by definition, if no entries are contained */
-                                                if (!import_json_object(nested_object, err,
-                                                                        element->value.value.object)) {
+                                                if (!import_json_object(nested_object, element->value.value.object)) {
                                                         return false;
                                                 }
                                         }
@@ -577,16 +553,14 @@ static bool import_json_object_array_prop(doc_obj *target, err *err, const char 
                                                                 } else if (element_number_type == JSON_NUMBER_SIGNED) {
                                                                         value = element->value.value.number->value.signed_integer;
                                                                 } else {
-                                                                        ERROR_PRINT_AND_DIE(
-                                                                                ERR_INTERNALERR) /** type mismatch */
+                                                                        error(ERR_INTERNALERR, NULL) /** type mismatch */
                                                                         return false;
                                                                 }
                                                         }
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                default: ERROR_PRINT_AND_DIE(
-                                                        ERR_INTERNALERR) /** not a number type  */
+                                                default: error(ERR_INTERNALERR, NULL) /** not a number type  */
                                                         return false;
                                         }
                                 }
@@ -608,7 +582,7 @@ static bool import_json_object_array_prop(doc_obj *target, err *err, const char 
                                         JAK_ASSERT(ast_node_data_type == array_data_type);
                                         doc_obj_push_primtive(entry, NULL);
                                         break;
-                                default: ERROR(err, ERR_NOTYPE)
+                                default: error(ERR_NOTYPE, NULL)
                                         return false;
                         }
                 }
@@ -619,7 +593,7 @@ static bool import_json_object_array_prop(doc_obj *target, err *err, const char 
 }
 
 static bool
-import_json_object(doc_obj *target, err *err, const json_object *json_obj)
+import_json_object(doc_obj *target, const json_object *json_obj)
 {
         for (size_t i = 0; i < json_obj->value->members.num_elems; i++) {
                 json_prop *member = VECTOR_GET(&json_obj->value->members, i, json_prop);
@@ -631,7 +605,6 @@ import_json_object(doc_obj *target, err *err, const json_object *json_obj)
                                 break;
                         case JSON_VALUE_NUMBER:
                                 if (!import_json_object_number_prop(target,
-                                                                    err,
                                                                     member->key.value,
                                                                     member->value.value.value.number)) {
                                         return false;
@@ -649,7 +622,6 @@ import_json_object(doc_obj *target, err *err, const json_object *json_obj)
                                 break;
                         case JSON_VALUE_OBJECT:
                                 if (!import_json_object_object_prop(target,
-                                                                    err,
                                                                     member->key.value,
                                                                     member->value.value.value.object)) {
                                         return false;
@@ -657,13 +629,12 @@ import_json_object(doc_obj *target, err *err, const json_object *json_obj)
                                 break;
                         case JSON_VALUE_ARRAY:
                                 if (!import_json_object_array_prop(target,
-                                                                   err,
                                                                    member->key.value,
                                                                    member->value.value.value.array)) {
                                         return false;
                                 }
                                 break;
-                        default: ERROR(err, ERR_NOTYPE);
+                        default: error(ERR_NOTYPE, NULL);
                                 return false;
                 }
         }
@@ -671,13 +642,13 @@ import_json_object(doc_obj *target, err *err, const json_object *json_obj)
 }
 
 static bool
-import_json(doc_obj *target, err *err, const json *json,
+import_json(doc_obj *target, const json *json,
             doc_entries *partition)
 {
         json_value_type_e value_type = json->element->value.value_type;
         switch (value_type) {
                 case JSON_VALUE_OBJECT:
-                        if (!import_json_object(target, err, json->element->value.value.object)) {
+                        if (!import_json_object(target, json->element->value.value.object)) {
                                 return false;
                         }
                         break;
@@ -689,7 +660,7 @@ import_json(doc_obj *target, err *err, const json *json,
                                                                                json_element);
                                 switch (first->value.value_type) {
                                         case JSON_VALUE_OBJECT:
-                                                if (!import_json_object(target, err, first->value.value.object)) {
+                                                if (!import_json_object(target, first->value.value.object)) {
                                                         return false;
                                                 }
                                                 for (size_t i = 1; i < arrayContent->num_elems; i++) {
@@ -698,8 +669,7 @@ import_json(doc_obj *target, err *err, const json *json,
                                                                                    json_element);
                                                         doc_obj *nested;
                                                         doc_obj_push_object(&nested, partition);
-                                                        if (!import_json_object(nested, err,
-                                                                                element->value.value.object)) {
+                                                        if (!import_json_object(nested, element->value.value.object)) {
                                                                 return false;
                                                         }
                                                 }
@@ -710,8 +680,7 @@ import_json(doc_obj *target, err *err, const json *json,
                                         case JSON_VALUE_TRUE:
                                         case JSON_VALUE_FALSE:
                                         case JSON_VALUE_NULL:
-                                        default: ERROR_PRINT_AND_DIE(
-                                                ERR_INTERNALERR) /** Unsupported operation in arrays */
+                                        default: error(ERR_INTERNALERR, NULL) /** Unsupported operation in arrays */
                                                 break;
                                 }
                         }
@@ -722,7 +691,7 @@ import_json(doc_obj *target, err *err, const json *json,
                 case JSON_VALUE_TRUE:
                 case JSON_VALUE_FALSE:
                 case JSON_VALUE_NULL:
-                default: ERROR(err, ERR_JSONTYPE);
+                default: error(ERR_JSONTYPE, NULL);
                         return false;
         }
         return true;
@@ -736,7 +705,7 @@ doc_obj *doc_bulk_add_json(doc_entries *partition, json *json)
 
         doc_obj *converted_json;
         doc_obj_push_object(&converted_json, partition);
-        if (!import_json(converted_json, &json->err, json, partition)) {
+        if (!import_json(converted_json, json, partition)) {
                 return NULL;
         }
 
@@ -1132,7 +1101,7 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
                 case FIELD_OBJECT:
                         return true;
                         break;
-                default: ERROR_PRINT_AND_DIE(ERR_NOTYPE)
+                default: error(ERR_NOTYPE, NULL)
                         return false;
         }
 }
@@ -1343,9 +1312,8 @@ column_doc *doc_entries_columndoc(const doc_bulk *bulk, const doc_entries *parti
 
         column_doc *columndoc = MALLOC(sizeof(column_doc));
         columndoc->read_optimized = read_optimized;
-        err err;
-        if (!columndoc_create(columndoc, &err, model, bulk, partition, bulk->dic)) {
-                error_print_and_abort(&err);
+        if (!columndoc_create(columndoc, model, bulk, partition, bulk->dic)) {
+                error_print(stderr);
         }
 
         if (columndoc->read_optimized) {
@@ -1410,7 +1378,7 @@ static void create_typed_vector(doc_entries *entry)
                 case FIELD_OBJECT:
                         size = sizeof(doc_obj);
                         break;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR) /** unknown type */
+                default: error(ERR_INTERNALERR, "unknown type") /** unknown type */
                         return;
         }
         vector_create(&entry->values, NULL, size, 50);
@@ -1578,7 +1546,7 @@ static bool print_value(FILE *file, archive_field_e type, const vector ofType(<T
                         }
                 }
                         break;
-                default: NOT_IMPLEMENTED;
+                default: error(ERR_NOTIMPLEMENTED, NULL);
         }
         if (num_values > 1) {
                 fprintf(file, "]");

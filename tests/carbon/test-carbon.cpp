@@ -7205,13 +7205,12 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 TEST(CarbonTest, CarbonFromEmptyJson)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
         json_out_extended = carbon_to_json_extended_dup(&doc);
         json_out_compact = carbon_to_json_compact_dup(&doc);
 
@@ -7231,13 +7230,12 @@ TEST(CarbonTest, CarbonFromEmptyJson)
 TEST(CarbonTest, CarbonFromEmptyArray)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "[]";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
         json_out_extended = carbon_to_json_extended_dup(&doc);
         json_out_compact = carbon_to_json_compact_dup(&doc);
 
@@ -7257,14 +7255,13 @@ TEST(CarbonTest, CarbonFromEmptyArray)
 TEST(CarbonTest, CarbonFromJsonNull)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "null";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [null]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be 'null'
@@ -7284,14 +7281,13 @@ TEST(CarbonTest, CarbonFromJsonNull)
 TEST(CarbonTest, CarbonFromJsonTrue)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "true";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [true]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be 'true'
@@ -7311,14 +7307,13 @@ TEST(CarbonTest, CarbonFromJsonTrue)
 TEST(CarbonTest, CarbonFromJsonFalse)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "false";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [false]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be 'false'
@@ -7338,14 +7333,13 @@ TEST(CarbonTest, CarbonFromJsonFalse)
 TEST(CarbonTest, CarbonFromJsonNumberSigned)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "42";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [42]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '42'
@@ -7365,14 +7359,13 @@ TEST(CarbonTest, CarbonFromJsonNumberSigned)
 TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "-42";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '-42'
@@ -7392,14 +7385,13 @@ TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
 TEST(CarbonTest, CarbonFromJsonNumberFloat)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "-42.23";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42.23]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '-42.23'
@@ -7419,14 +7411,13 @@ TEST(CarbonTest, CarbonFromJsonNumberFloat)
 TEST(CarbonTest, CarbonFromJsonString)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "\"Hello, World!\"";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": ["Hello, World!"]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '"Hello, World!"'
@@ -7446,14 +7437,13 @@ TEST(CarbonTest, CarbonFromJsonString)
 TEST(CarbonTest, CarbonFromJsonObjectSingle)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": \"v\"}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":"v"}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":"v"}'
@@ -7474,14 +7464,13 @@ TEST(CarbonTest, CarbonFromJsonObjectSingle)
 TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": []}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":[]}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":[]}'
@@ -7501,14 +7490,13 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
 TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": {}}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":{}}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":{}}'
@@ -7528,14 +7516,13 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
 TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": true}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":true}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":true}'
@@ -7555,14 +7542,13 @@ TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
 TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": false}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":false}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":false}'
@@ -7582,14 +7568,13 @@ TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
 TEST(CarbonTest, CarbonFromJsonObjectNullProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": null}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":null}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":null}'
@@ -7609,14 +7594,13 @@ TEST(CarbonTest, CarbonFromJsonObjectNullProp)
 TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": 42}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":42}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":42}'
@@ -7636,14 +7620,13 @@ TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
 TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": -42}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":-42}'
@@ -7663,14 +7646,13 @@ TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
 TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": -42.23}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42.23}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":-42.23}'
@@ -7690,14 +7672,13 @@ TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
 TEST(CarbonTest, CarbonFromJsonColumnNumber)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"x\": [1, 2, 3]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         carbon_array it;
         carbon_field_type_e field_type;
@@ -7731,14 +7712,13 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
 TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "{\"x\": [1, null, 3]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         carbon_array it;
         carbon_field_type_e field_type;
@@ -7773,14 +7753,13 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 TEST(CarbonTest, CarbonFromJsonNonColumn)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact, *json_out_extended;
 
         json_in = "[1, null, 3, \"a\"]";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         carbon_array it;
         carbon_field_type_e field_type;
@@ -7829,21 +7808,20 @@ TEST(CarbonTest, CarbonColumnOptimizeFix)
 TEST(CarbonTest, CarbonFromJsonExample)
 {
         rec doc;
-        err err;
-
+        
         const char *json_in;
         char *json_out_compact;
 
         /* example json taken from 'https://json.org/example.html' */
         json_in = "{\"web-app\": {\"servlet\": [{\"servlet-name\": \"cofaxCDS\", \"servlet-class\": \"org.cofax.cds.CDSServlet\", \"init-param\": {\"configGlossary: installationAt\": \"Philadelphia, PA\", \"configGlossary: adminEmail\": \"ksm@pobox.com\", \"configGlossary: poweredBy\": \"Cofax\", \"configGlossary: poweredByIcon\": \"/images/cofax.gif\", \"configGlossary: staticPath\": \"/content/static\", \"templateProcessorClass\": \"org.cofax.WysiwygTemplate\", \"templateLoaderClass\": \"org.cofax.FilesTemplateLoader\", \"templatePath\": \"templates\", \"templateOverridePath\": \"\", \"defaultListTemplate\": \"listTemplate.htm\", \"defaultFileTemplate\": \"articleTemplate.htm\", \"useJSP\": false, \"jspListTemplate\": \"listTemplate.jsp\", \"jspFileTemplate\": \"articleTemplate.jsp\", \"cachePackageTagsTrack\": 200, \"cachePackageTagsStore\": 200, \"cachePackageTagsRefresh\": 60, \"cacheTemplatesTrack\": 100, \"cacheTemplatesStore\": 50, \"cacheTemplatesRefresh\": 15, \"cachePagesTrack\": 200, \"cachePagesStore\": 100, \"cachePagesRefresh\": 10, \"cachePagesDirtyRead\": 10, \"searchEngineListTemplate\": \"forSearchEnginesList.htm\", \"searchEngineFileTemplate\": \"forSearchEngines.htm\", \"searchEngineRobotsDb\": \"WEB-INF/robots.db\", \"useDataStore\": true, \"dataStoreClass\": \"org.cofax.SqlDataStore\", \"redirectionClass\": \"org.cofax.SqlRedirection\", \"dataStoreName\": \"cofax\", \"dataStoreDriver\": \"com.microsoft.jdbc.sqlserver.SQLServerDriver\", \"dataStoreUrl\": \"jdbc: microsoft: sqlserver: //LOCALHOST: 1433;DatabaseName=goon\", \"dataStoreUser\": \"sa\", \"dataStorePassword\": \"dataStoreTestQuery\", \"dataStoreTestQuery\": \"SET NOCOUNT ON;select test='test';\", \"dataStoreLogFile\": \"/usr/local/tomcat/logs/datastore.log\", \"dataStoreInitConns\": 10, \"dataStoreMaxConns\": 100, \"dataStoreConnUsageLimit\": 100, \"dataStoreLogLevel\": \"debug\", \"maxUrlLength\": 500}}, {\"servlet-name\": \"cofaxEmail\", \"servlet-class\": \"org.cofax.cds.EmailServlet\", \"init-param\": {\"mailHost\": \"mail1\", \"mailHostOverride\": \"mail2\"}}, {\"servlet-name\": \"cofaxAdmin\", \"servlet-class\": \"org.cofax.cds.AdminServlet\"}, {\"servlet-name\": \"fileServlet\", \"servlet-class\": \"org.cofax.cds.FileServlet\"}, {\"servlet-name\": \"cofaxTools\", \"servlet-class\": \"org.cofax.cms.CofaxToolsServlet\", \"init-param\": {\"templatePath\": \"toolstemplates/\", \"log\": 1, \"logLocation\": \"/usr/local/tomcat/logs/CofaxTools.log\", \"logMaxSize\": \"\", \"dataLog\": 1, \"dataLogLocation\": \"/usr/local/tomcat/logs/dataLog.log\", \"dataLogMaxSize\": \"\", \"removePageCache\": \"/content/admin/remove?cache=pages&id=\", \"removeTemplateCache\": \"/content/admin/remove?cache=templates&id=\", \"fileTransferFolder\": \"/usr/local/tomcat/webapps/content/fileTransferFolder\", \"lookInContext\": 1, \"adminGroupID\": 4, \"betaServer\": true}}], \"servlet-mapping\": {\"cofaxCDS\": \"/\", \"cofaxEmail\": \"/cofaxutil/aemail/*\", \"cofaxAdmin\": \"/admin/*\", \"fileServlet\": \"/static/*\", \"cofaxTools\": \"/tools/*\"}, \"taglib\": {\"taglib-uri\": \"cofax.tld\", \"taglib-location\": \"/WEB-INF/tlds/cofax.tld\"}}}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         u32 max = 10000;
         timestamp t1 = wallclock();
         for (u32 i = 0; i < max; i++) {
                 rec d;
-                carbon_from_json(&d, json_in, CARBON_KEY_NOKEY, NULL, &err);
+                carbon_from_json(&d, json_in, CARBON_KEY_NOKEY, NULL);
                 carbon_drop(&d);
         }
         timestamp t2 = wallclock();
@@ -7872,14 +7850,13 @@ TEST(CarbonTest, CarbonFromJsonExample)
 TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact;
 
         json_in = "{\"x\": [1]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"x":[1]}'
 
@@ -7896,14 +7873,13 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
 TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
 {
         rec doc;
-        err err;
 
         const char *json_in;
         char *json_out_compact;
 
         json_in = "{\"x\": [{\"y\": 1}]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"x":[{"y":1}]}'
 
@@ -7920,10 +7896,9 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
 TEST(CarbonTest, CarbonFromJsonSimpleExample)
 {
         rec doc;
-        err err;
 
         const char *json_in = "{\"k\": {\"x\": [1,2,3], \"y\": \"z\"}}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
         //carbon_hexdump_print(stdout, &doc);
         //carbon_print(stdout, &doc);
         carbon_drop(&doc);
@@ -7932,7 +7907,6 @@ TEST(CarbonTest, CarbonFromJsonSimpleExample)
 TEST(CarbonTest, CarbonFromJsonFromExcerpt)
 {
         rec doc;
-        err err;
 
         /* the working directory must be 'tests/carbon' */
         int fd = open("./assets/ms-academic-graph.json", O_RDONLY);
@@ -7940,7 +7914,7 @@ TEST(CarbonTest, CarbonFromJsonFromExcerpt)
         u64 json_in_len = lseek(fd, 0, SEEK_END);
         const char *json_in = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         u64 carbon_out_len = 0;
         carbon_raw_data(&carbon_out_len, &doc);
@@ -7958,13 +7932,12 @@ TEST(CarbonTest, CarbonFromJsonFromExcerpt)
 TEST(CarbonTest, CarbonResolveDotPathForObjects)
 {
         rec doc;
-        err err;
         carbon_find find;
         carbon_field_type_e result_type;
         u64 number;
 
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         ASSERT_TRUE(FN_STATUS(carbon_find_has_result(&find)));
@@ -8099,11 +8072,10 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
 TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
 {
         rec doc;
-        err err;
         carbon_find find;
 
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         carbon_dot_path path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11, path12,
                 path13, path14, path15, path16, path17, path18, path19, path20, path21;
@@ -8250,10 +8222,9 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         rec doc;
         carbon_find find;
         carbon_field_type_e result_type;
-        err err;
 
         const char *json_in = "{\"x\": \"y\"}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         /* without shortened dot path rule, the json object as given is embedded in an record container (aka array)
          * such that the object must be referenced by its index in the record container (i.e., 0) */
@@ -8273,7 +8244,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         carbon_drop(&doc);
 
         json_in = "[{\"x\": \"y\"},{\"x\": [{\"z\": 42}]}]";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         /* The shortened dot path rule does not apply here since the user input is an array  */
         carbon_find_begin(&find, "0.x", &doc);
@@ -8307,11 +8278,10 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 TEST(CarbonTest, CarbonFindPrint)
 {
         rec doc;
-        err err;
         carbon_find find;
         char *result;
 
-        carbon_from_json(&doc, "8", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "8", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "8") == 0);
@@ -8319,7 +8289,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "-8", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "-8", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "-8") == 0);
@@ -8327,7 +8297,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "\"A\"", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "\"A\"", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
@@ -8335,7 +8305,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "32.4", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "32.4", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
@@ -8343,7 +8313,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "null", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "null", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "null") == 0);
@@ -8351,7 +8321,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "true", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "true", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "true") == 0);
@@ -8359,7 +8329,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "false", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "false", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "false") == 0);
@@ -8367,7 +8337,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "1") == 0);
@@ -8375,7 +8345,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "1", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "2") == 0);
@@ -8383,7 +8353,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "2", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "3") == 0);
@@ -8391,7 +8361,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "3", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "null") == 0);
@@ -8399,7 +8369,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "4", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
@@ -8407,7 +8377,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
@@ -8415,7 +8385,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "1", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "\"B\"") == 0);
@@ -8423,7 +8393,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "2", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "\"C\"") == 0);
@@ -8431,7 +8401,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "3", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "null") == 0);
@@ -8439,7 +8409,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "\"Hello, World!\"", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "\"Hello, World!\"", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
@@ -8447,7 +8417,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "{}", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "{}", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "{}") == 0);
@@ -8455,7 +8425,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[]", CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, "[]", CARBON_KEY_NOKEY, NULL);
         ASSERT_TRUE(carbon_find_begin(&find, "0", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
@@ -8496,7 +8466,7 @@ TEST(CarbonTest, CarbonFindPrint)
                               "      }\n"
                               "}";
 
-        carbon_from_json(&doc, complex, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, complex, CARBON_KEY_NOKEY, NULL);
 
         ASSERT_TRUE(carbon_find_begin(&find, "m", &doc));
         result = FN_GET_PTR(char, carbon_find_result_to_json_compact_dup(&find));
@@ -8625,13 +8595,12 @@ TEST(CarbonTest, CarbonFindPrint)
 TEST(CarbonTest, CarbonFindPrintExamples)
 {
         rec doc;
-        err err;
         carbon_find find;
         string_buffer result;
 
         const char *json = "{\"x\": {\"y\": [{\"z\": 23}, {\"z\": null}]} }";
 
-        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
         string_buffer_create(&result);
 
         printf("input: '%s'\n", json);
@@ -8666,12 +8635,11 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 
 TEST(CarbonTest, ParseBooleanArray) {
         rec doc;
-        err err;
         carbon_find find;
         carbon_field_type_e type;
         const char *json = "[{\"col\": [true, null, false]}]";
 
-        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
 
         ASSERT_TRUE(carbon_find_begin(&find, "0.col", &doc));
         ASSERT_TRUE(FN_STATUS(carbon_find_has_result(&find)));
@@ -8703,7 +8671,6 @@ TEST(CarbonTest, ParseBooleanArray) {
 TEST(CarbonTest, PathIndex) {
         carbon_path_index index;
         rec doc;
-        err err;
 
         const char *json = "[\n"
                            "   {\n"
@@ -8726,7 +8693,7 @@ TEST(CarbonTest, PathIndex) {
 //        int json_in_len = lseek(fd, 0, SEEK_END);
 //        const char *json = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
 
-        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL, &err);
+        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
         carbon_path_index_create(&index, &doc);
         carbon_path_index_print(stdout, &index);
         carbon_hexdump_print(stdout, &doc);
@@ -8749,14 +8716,14 @@ TEST(CarbonTest, CommitHashStr) {
         ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 42), "000000000000002a") == 0);
         ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 432432532532323), "0001894b8b7dac63") == 0);
         ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 2072006001577230657), "1cc13e7b007d0141") == 0);
-        ASSERT_EQ(1U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 1), NULL));
-        ASSERT_EQ(42U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 42), NULL));
-        ASSERT_EQ(432432532532323U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 432432532532323), NULL));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("", NULL));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("hello", NULL));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("000000000000001", NULL));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("000000000000001Z", NULL));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str(NULL, NULL));
+        ASSERT_EQ(1U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 1)));
+        ASSERT_EQ(42U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 42)));
+        ASSERT_EQ(432432532532323U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 432432532532323)));
+        ASSERT_EQ(0U, carbon_commit_hash_from_str(""));
+        ASSERT_EQ(0U, carbon_commit_hash_from_str("hello"));
+        ASSERT_EQ(0U, carbon_commit_hash_from_str("000000000000001"));
+        ASSERT_EQ(0U, carbon_commit_hash_from_str("000000000000001Z"));
+        ASSERT_EQ(0U, carbon_commit_hash_from_str(NULL));
 
         string_buffer_drop(&s);
 }

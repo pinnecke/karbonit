@@ -28,8 +28,6 @@ bool pack_none_init(packer *self)
 
 bool pack_none_cpy(const packer *self, packer *dst)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         /** nothing to hard copy but the function pointers */
         *dst = *self;
         return true;
@@ -37,8 +35,6 @@ bool pack_none_cpy(const packer *self, packer *dst)
 
 bool pack_none_drop(packer *self)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
         /** nothing to do for uncompressed dictionaries */
         return true;
@@ -47,8 +43,6 @@ bool pack_none_drop(packer *self)
 bool pack_none_write_extra(packer *self, memfile *dst,
                            const vector ofType (const char *) *strings)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
         UNUSED(dst);
         UNUSED(strings);
@@ -58,8 +52,6 @@ bool pack_none_write_extra(packer *self, memfile *dst,
 
 bool pack_none_read_extra(packer *self, FILE *src, size_t nbytes)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
         UNUSED(src);
         UNUSED(nbytes);
@@ -69,8 +61,6 @@ bool pack_none_read_extra(packer *self, FILE *src, size_t nbytes)
 
 bool pack_none_print_extra(packer *self, FILE *file, memfile *src)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
         UNUSED(file);
         UNUSED(src);
@@ -81,8 +71,6 @@ bool pack_none_print_extra(packer *self, FILE *file, memfile *src)
 bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src,
                                     u32 decompressed_strlen)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
 
         const char *string = MEMFILE_READ(src, decompressed_strlen);
@@ -98,11 +86,8 @@ bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src,
         return true;
 }
 
-bool pack_none_encode_string(packer *self, memfile *dst, err *err,
-                             const char *string)
+bool pack_none_encode_string(packer *self, memfile *dst, const char *string)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
 
         u32 string_length = strlen(string);
@@ -112,14 +97,12 @@ bool pack_none_encode_string(packer *self, memfile *dst, err *err,
         return true;
 
         error_handling:
-        ERROR(err, ERR_IO)
+        error(ERR_IO, NULL)
         return false;
 }
 
 bool pack_none_decode_string(packer *self, char *dst, size_t strlen, FILE *src)
 {
-        CHECK_TAG(self->tag, PACK_NONE);
-
         UNUSED(self);
 
         size_t num_read = fread(dst, sizeof(char), strlen, src);

@@ -162,7 +162,6 @@ typedef struct carbon_item
 #define carbon_item_set_number_signed(item, i64_value)                                                                 \
 ({                                                                                                                     \
         bool ret = false;                                                                                              \
-        DEBUG_ERROR_IF_NULL(subj);                                                                                     \
         switch (number_min_type_signed(value)) {                                                                       \
                 case NUMBER_I8:                                                                                        \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
@@ -185,7 +184,7 @@ typedef struct carbon_item
                                         internal_carbon_object_update_i64(subj->parent.ojbect, i64_value) :            \
                 break;                                                                                                 \
                 default:                                                                                               \
-                        ERROR_PRINT(ERR_INTERNALERR)                                                                   \
+                        error(ERR_INTERNALERR, NULL)                                                                   \
                 break;                                                                                                 \
         }                                                                                                              \
         ret;                                                                                                           \
@@ -194,7 +193,6 @@ typedef struct carbon_item
 #define carbon_item_set_number_unsigned(item, u64_value)                                                               \
 ({                                                                                                                     \
         bool ret = false;                                                                                              \
-        DEBUG_ERROR_IF_NULL(subj);                                                                                     \
         switch (number_min_type_unsigned(value)) {                                                                     \
                 case NUMBER_U8:                                                                                        \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
@@ -217,7 +215,7 @@ typedef struct carbon_item
                                         internal_carbon_object_update_u64(subj->parent.object, u64_value) :            \
                 break;                                                                                                 \
                 default:                                                                                               \
-                        ERROR_PRINT(ERR_INTERNALERR)                                                                   \
+                        error(ERR_INTERNALERR, NULL)                                                                   \
                 break;                                                                                                 \
         }                                                                                                              \
         ret;                                                                                                           \

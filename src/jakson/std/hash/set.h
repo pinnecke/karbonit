@@ -52,10 +52,9 @@ typedef struct hashset {
         vector ofType(hashset_bucket) table;
         spinlock lock;
         u32 size;
-        err err;
 } hashset;
 
-bool hashset_create(hashset *map, err *err, size_t key_size, size_t capacity);
+bool hashset_create(hashset *map, size_t key_size, size_t capacity);
 hashset *hashset_cpy(hashset *src);
 bool hashset_drop(hashset *map);
 

@@ -34,7 +34,6 @@ fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_pa
 
         ZERO_MEMORY(eval, sizeof(carbon_path_evaluator));
         eval->doc = doc;
-        error_init(&eval->err);
         FN_FAIL_FORWARD_IF_NOT_OK(carbon_read_begin(&eval->root_it, eval->doc));
         eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
         FN_FAIL_FORWARD_IF_NOT_OK(carbon_read_end(&eval->root_it));
@@ -47,7 +46,6 @@ fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const
         FN_FAIL_IF_NULL(eval, path, context)
 
         eval->doc = context->revised_doc;
-        error_init(&eval->err);
         FN_FAIL_FORWARD_IF_NOT_OK(carbon_revise_iterator_open(&eval->root_it, context));
         eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
         FN_FAIL_FORWARD_IF_NOT_OK(carbon_read_end(&eval->root_it));
@@ -56,8 +54,6 @@ fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const
 
 bool carbon_path_evaluator_status(carbon_path_status_e *status, carbon_path_evaluator *state)
 {
-        DEBUG_ERROR_IF_NULL(status)
-        DEBUG_ERROR_IF_NULL(state)
         *status = state->status;
         return true;
 }
@@ -70,7 +66,6 @@ fn_result ofType(bool) carbon_path_evaluator_has_result(carbon_path_evaluator *s
 
 bool carbon_path_evaluator_end(carbon_path_evaluator *state)
 {
-        DEBUG_ERROR_IF_NULL(state)
         switch (state->result.container_type) {
                 case CARBON_OBJECT:
                         carbon_object_drop(&state->result.containers.object.it);
@@ -80,7 +75,7 @@ bool carbon_path_evaluator_end(carbon_path_evaluator *state)
                         break;
                 case CARBON_COLUMN:
                         break;
-                default: ERROR_PRINT(ERR_NOTIMPLEMENTED);
+                default: error(ERR_NOTIMPLEMENTED, NULL);
         }
         return true;
 }
@@ -363,7 +358,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                                                        next_path_pos,
                                                                                        sub_it);
                                                         }
-                                                        default: ERROR(&it->err, ERR_UNSUPPORTEDTYPE)
+                                                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
                                                                 return CARBON_PATH_INTERNAL;
                                                 }
                                         }
@@ -473,7 +468,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                         carbon_object_drop(sub_it);
                                                                                         return status;
                                                                                 }
-                                                                        default: ERROR_PRINT(ERR_INTERNALERR);
+                                                                        default: error(ERR_INTERNALERR, NULL);
                                                                                 return CARBON_PATH_INTERNAL;
                                                                 }
                                                         }
@@ -512,7 +507,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                         }
                                 }
                                 break;
-                        default: ERROR(&((carbon_dot_path *) path)->err, ERR_INTERNALERR);
+                        default: error(ERR_INTERNALERR, NULL);
                                 return CARBON_PATH_INTERNAL;
                 }
         }

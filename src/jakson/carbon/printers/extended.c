@@ -61,7 +61,7 @@ static void _json_printer_extended_meta_begin(carbon_printer *self, string_buffe
         string_buffer_add(builder, "\"meta\": {");
 }
 
-static void meta_data(carbon_printer *self, string_buffer *builder,
+static bool meta_data(carbon_printer *self, string_buffer *builder,
                       int key_type, const void *key,
                       u64 key_length, u64 commit_hash)
 {
@@ -96,7 +96,8 @@ static void meta_data(carbon_printer *self, string_buffer *builder,
                         }
 
                         break;
-                default: ERROR_PRINT(ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
+                        return false;
         }
         string_buffer_add(builder, "}, \"commit\": ");
         if (commit_hash) {
@@ -106,6 +107,7 @@ static void meta_data(carbon_printer *self, string_buffer *builder,
         } else {
                 string_buffer_add(builder, "null");
         }
+        return true;
 }
 
 static void _json_printer_extended_meta_end(carbon_printer *self, string_buffer *builder)
@@ -205,7 +207,7 @@ static void _json_printer_extended_val_string(carbon_printer *self, string_buffe
 #define code_of(x, data_len)      (x + data_len + 2)
 #define data_of(x)      (x)
 
-static void _json_printer_extended_print_binary(carbon_printer *self, string_buffer *builder, const carbon_binary *binary)
+static bool _json_printer_extended_print_binary(carbon_printer *self, string_buffer *builder, const carbon_binary *binary)
 {
         /** base64 code will be written into the extra's buffer after a null-terminated copy of the binary data */
         struct json_extended_extra *extra = (struct json_extended_extra *) self->extra;
@@ -215,13 +217,15 @@ static void _json_printer_extended_print_binary(carbon_printer *self, string_buf
         if (extra->buffer_size < required_buff_size) {
                 extra->buffer_size = required_buff_size * 1.7f;
                 extra->buffer = realloc(extra->buffer, extra->buffer_size);
-                ERROR_PRINT_IF(!extra->buffer, ERR_REALLOCERR);
+                error_if_and_return(!extra->buffer, ERR_REALLOCERR, NULL);
+                return false;
         }
         /** decrease buffer capacity if needed */
         if (extra->buffer_size * 0.3f > required_buff_size) {
                 extra->buffer_size = required_buff_size;
                 extra->buffer = realloc(extra->buffer, extra->buffer_size);
-                ERROR_PRINT_IF(!extra->buffer, ERR_REALLOCERR);
+                error_if_and_return(!extra->buffer, ERR_REALLOCERR, NULL);
+                return false;
         }
 
         JAK_ASSERT(extra->buffer_size >= required_buff_size);
@@ -241,9 +245,8 @@ static void _json_printer_extended_print_binary(carbon_printer *self, string_buf
                                                code_of(extra->buffer, binary->blob_len), &state);
         base64_encode_blockend(code_of(extra->buffer, binary->blob_len), &state);
         string_buffer_add_nchar(builder, code_of(extra->buffer, binary->blob_len), code_len);
-
-
         string_buffer_add(builder, "\" }");
+        return true;
 }
 
 static void _json_printer_extended_val_binary(carbon_printer *self, string_buffer *builder, const carbon_binary *binary)
@@ -347,7 +350,6 @@ static void _json_printer_extended_obj_prop_name(carbon_printer *self, string_bu
 
 bool json_extended_printer_create(carbon_printer *printer)
 {
-        DEBUG_ERROR_IF_NULL(printer);
         printer->drop = _json_printer_extended_drop;
 
         printer->record_begin = _json_printer_extended_obj_begin;

@@ -24,43 +24,32 @@
 #include <jakson/archive/io.h>
 
 typedef struct archive_io_context {
-        err err;
         FILE *file;
         spinlock lock;
         offset_t last_pos;
 } archive_io_context;
 
-bool io_context_create(archive_io_context **context, err *err, const char *file_path)
+bool io_context_create(archive_io_context **context, const char *file_path)
 {
-        DEBUG_ERROR_IF_NULL(context);
-        DEBUG_ERROR_IF_NULL(err);
-        DEBUG_ERROR_IF_NULL(file_path);
-
         archive_io_context *result = MALLOC(sizeof(archive_io_context));
 
         if (!result) {
-                ERROR(err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return false;
         }
 
         spinlock_init(&result->lock);
-        error_init(&result->err);
 
         result->file = fopen(file_path, "r");
 
         if (!result->file) {
-                ERROR(err, ERR_FOPEN_FAILED);
+                error(ERR_FOPEN_FAILED, NULL);
                 result->file = NULL;
                 return false;
         } else {
                 *context = result;
                 return true;
         }
-}
-
-err *io_context_get_error(archive_io_context *context)
-{
-        return context ? &context->err : NULL;
 }
 
 FILE *io_context_lock_and_access(archive_io_context *context)
@@ -70,7 +59,7 @@ FILE *io_context_lock_and_access(archive_io_context *context)
                 context->last_pos = ftell(context->file);
                 return context->file;
         } else {
-                ERROR(&context->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -82,14 +71,13 @@ bool io_context_unlock(archive_io_context *context)
                 spinlock_release(&context->lock);
                 return true;
         } else {
-                ERROR(&context->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return false;
         }
 }
 
 bool io_context_drop(archive_io_context *context)
 {
-        DEBUG_ERROR_IF_NULL(context);
         OPTIONAL(context->file != NULL, fclose(context->file);
                 context->file = NULL)
         free(context);

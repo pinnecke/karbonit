@@ -33,7 +33,6 @@ typedef struct string_buffer {
         char *data;
         size_t cap;
         size_t end;
-        err err;
 } string_buffer;
 
 bool string_buffer_create(string_buffer *builder);

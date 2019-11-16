@@ -29,8 +29,7 @@
 extern "C" {
 #endif
 
-bool io_context_create(archive_io_context **context, err *err, const char *file_path);
-err *io_context_get_error(archive_io_context *context);
+bool io_context_create(archive_io_context **context, const char *file_path);
 FILE *io_context_lock_and_access(archive_io_context *context);
 bool io_context_unlock(archive_io_context *context);
 bool io_context_drop(archive_io_context *context);

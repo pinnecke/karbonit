@@ -20,34 +20,27 @@
 
 bool memfile_open(memfile *file, area *block, access_mode_e mode)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(block)
         ZERO_MEMORY(file, sizeof(memfile))
         file->memblock = block;
         file->pos = 0;
         file->bit_mode = false;
         file->mode = mode;
         file->saved_pos_ptr = 0;
-        error_init(&file->err);
         return true;
 }
 
 bool memfile_clone(memfile *dst, memfile *src)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
         memfile_open(dst, src->memblock, src->mode);
         memfile_seek(dst, memfile_tell(src));
         dst->bit_mode = src->bit_mode;
         dst->saved_pos_ptr = src->saved_pos_ptr;
-        error_cpy(&dst->err, &src->err);
         memcpy(&dst->saved_pos, &src->saved_pos, ARRAY_LENGTH(src->saved_pos));
         return true;
 }
 
 bool memfile_seek(memfile *file, offset_t pos)
 {
-        DEBUG_ERROR_IF_NULL(file)
         offset_t file_size = 0;
         memblock_size(&file_size, file->memblock);
         if (UNLIKELY(pos >= file_size)) {
@@ -55,7 +48,7 @@ bool memfile_seek(memfile *file, offset_t pos)
                         offset_t new_size = pos + 1;
                         memblock_resize(file->memblock, new_size);
                 } else {
-                        ERROR(&file->err, ERR_MEMSTATE)
+                        error(ERR_MEMSTATE, NULL)
                         return false;
                 }
         }
@@ -72,14 +65,12 @@ bool memfile_seek_from_here(memfile *file, signed_offset_t where)
 
 bool memfile_rewind(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file)
         file->pos = 0;
         return true;
 }
 
 bool memfile_grow(memfile *file_in, size_t grow_by_bytes)
 {
-        DEBUG_ERROR_IF_NULL(file_in)
         if (LIKELY(grow_by_bytes > 0)) {
                 offset_t block_size = 0;
                 memblock_size(&block_size, file_in->memblock);
@@ -90,8 +81,6 @@ bool memfile_grow(memfile *file_in, size_t grow_by_bytes)
 
 bool memfile_get_offset(offset_t *pos, const memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(pos)
-        DEBUG_ERROR_IF_NULL(file)
         *pos = file->pos;
         return true;
 }
@@ -109,7 +98,6 @@ size_t memfile_size(memfile *file)
 
 bool memfile_cut(memfile *file, size_t how_many_bytes)
 {
-        DEBUG_ERROR_IF_NULL(file);
         offset_t block_size = 0;
         memblock_size(&block_size, file->memblock);
 
@@ -119,7 +107,7 @@ bool memfile_cut(memfile *file, size_t how_many_bytes)
                 file->pos = JAK_MIN(file->pos, new_block_size);
                 return true;
         } else {
-                ERROR(&file->err, ERR_ILLEGALARG);
+                error(ERR_ILLEGALARG, NULL);
                 return false;
         }
 }
@@ -132,7 +120,6 @@ size_t memfile_remain_size(memfile *file)
 
 bool memfile_shrink(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
                 int status = memblock_shrink(file->memblock);
                 u64 size;
@@ -140,7 +127,7 @@ bool memfile_shrink(memfile *file)
                 JAK_ASSERT(size == file->pos);
                 return status;
         } else {
-                ERROR(&file->err, ERR_WRITEPROT)
+                error(ERR_WRITEPROT, NULL)
                 return false;
         }
 }
@@ -183,7 +170,7 @@ bool memfile_skip(memfile *file, signed_offset_t nbytes)
                 if (file->mode == READ_WRITE) {
                         memblock_resize(file->memblock, required_size * 1.7f);
                 } else {
-                        ERROR(&file->err, ERR_WRITEPROT);
+                        error(ERR_WRITEPROT, NULL);
                         return false;
                 }
         }
@@ -197,7 +184,7 @@ const char *memfile_peek(memfile *file, offset_t nbytes)
         offset_t file_size = 0;
         memblock_size(&file_size, file->memblock);
         if (UNLIKELY(file->pos + nbytes > file_size)) {
-                ERROR(&file->err, ERR_READOUTOFBOUNDS);
+                error(ERR_READOUTOFBOUNDS, NULL);
                 return NULL;
         } else {
                 const char *result = memblock_raw_data(file->memblock) + file->pos;
@@ -212,8 +199,6 @@ bool memfile_write_byte(memfile *file, u8 data)
 
 bool memfile_write(memfile *file, const void *data, offset_t nbytes)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(data)
         if (file->mode == READ_WRITE) {
                 if (LIKELY(nbytes != 0)) {
                         offset_t file_size = 0;
@@ -230,15 +215,13 @@ bool memfile_write(memfile *file, const void *data, offset_t nbytes)
                 }
                 return true;
         } else {
-                ERROR(&file->err, ERR_WRITEPROT);
+                error(ERR_WRITEPROT, NULL);
                 return false;
         }
 }
 
 bool memfile_write_zero(memfile *file, size_t how_many)
 {
-        DEBUG_ERROR_IF_NULL(file);
-        DEBUG_ERROR_IF_NULL(how_many);
         char empty = 0;
         while (how_many--) {
                 memfile_write(file, &empty, sizeof(char));
@@ -248,7 +231,6 @@ bool memfile_write_zero(memfile *file, size_t how_many)
 
 bool memfile_begin_bit_mode(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         if (file->mode == READ_WRITE) {
                 file->bit_mode = true;
                 file->current_read_bit = file->current_write_bit = file->bytes_completed = 0;
@@ -259,7 +241,7 @@ bool memfile_begin_bit_mode(memfile *file)
                 memfile_write(file, &empty, sizeof(char));
                 memfile_seek(file, offset);
         } else {
-                ERROR(&file->err, ERR_WRITEPROT);
+                error(ERR_WRITEPROT, NULL);
                 return false;
         }
 
@@ -268,7 +250,6 @@ bool memfile_begin_bit_mode(memfile *file)
 
 bool memfile_write_bit(memfile *file, bool flag)
 {
-        DEBUG_ERROR_IF_NULL(file);
         file->current_read_bit = 0;
 
         if (file->bit_mode) {
@@ -300,7 +281,7 @@ bool memfile_write_bit(memfile *file, bool flag)
                 }
                 return true;
         } else {
-                ERROR(&file->err, ERR_NOBITMODE);
+                error(ERR_NOBITMODE, NULL);
                 return false;
         }
 }
@@ -330,40 +311,36 @@ bool memfile_read_bit(memfile *file)
                         return memfile_read_bit(file);
                 }
         } else {
-                ERROR(&file->err, ERR_NOBITMODE);
+                error(ERR_NOBITMODE, NULL);
                 return false;
         }
 }
 
 offset_t memfile_save_position(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         offset_t pos = memfile_tell(file);
         if (LIKELY(file->saved_pos_ptr < (i8) (ARRAY_LENGTH(file->saved_pos)))) {
                 file->saved_pos[file->saved_pos_ptr++] = pos;
         } else {
-                ERROR(&file->err, ERR_STACK_OVERFLOW)
+                error(ERR_STACK_OVERFLOW, NULL)
         }
         return pos;
 }
 
 bool memfile_restore_position(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         if (LIKELY(file->saved_pos_ptr >= 0)) {
                 offset_t pos = file->saved_pos[--file->saved_pos_ptr];
                 memfile_seek(file, pos);
                 return true;
         } else {
-                ERROR(&file->err, ERR_STACK_UNDERFLOW)
+                error(ERR_STACK_UNDERFLOW, NULL)
                 return false;
         }
 }
 
 signed_offset_t memfile_ensure_space(memfile *memfile, u64 nbytes)
 {
-        DEBUG_ERROR_IF_NULL(memfile)
-
         DECLARE_AND_INIT(offset_t, block_size);
 
         memblock_size(&block_size, memfile->memblock);
@@ -402,7 +379,6 @@ u64 memfile_read_uintvar_stream(u8 *nbytes, memfile *memfile)
 
 bool memfile_skip_uintvar_stream(memfile *memfile)
 {
-        DEBUG_ERROR_IF_NULL(memfile)
         memfile_read_uintvar_stream(NULL, memfile);
         return true;
 }
@@ -428,8 +404,6 @@ u64 memfile_write_uintvar_stream(u64 *nbytes_moved, memfile *memfile, u64 value)
 
 signed_offset_t memfile_update_uintvar_stream(memfile *memfile, u64 value)
 {
-        DEBUG_ERROR_IF_NULL(memfile);
-
         u8 bytes_used_now, bytes_used_then;
 
         memfile_peek_uintvar_stream(&bytes_used_now, memfile);
@@ -457,26 +431,22 @@ bool memfile_seek_to_start(memfile *file)
 
 bool memfile_seek_to_end(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file)
         size_t size = memblock_last_used_byte(file->memblock);
         return memfile_seek(file, size);
 }
 
 bool memfile_inplace_insert(memfile *file, size_t nbytes)
 {
-        DEBUG_ERROR_IF_NULL(file);
         return memblock_move_right(file->memblock, file->pos, nbytes);
 }
 
 bool memfile_inplace_remove(memfile *file, size_t nbytes_from_here)
 {
-        DEBUG_ERROR_IF_NULL(file);
         return memblock_move_left(file->memblock, file->pos, nbytes_from_here);
 }
 
 bool memfile_end_bit_mode(size_t *num_bytes_written, memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         file->bit_mode = false;
         if (file->current_write_bit <= 8) {
                 memfile_skip(file, 1);
@@ -497,7 +467,7 @@ void *memfile_current_pos(memfile *file, offset_t nbytes)
                         if (file->mode == READ_WRITE) {
                                 memblock_resize(file->memblock, required_size * 1.7f);
                         } else {
-                                ERROR(&file->err, ERR_WRITEPROT);
+                                error(ERR_WRITEPROT, NULL);
                                 return NULL;
                         }
                 }
@@ -510,8 +480,6 @@ void *memfile_current_pos(memfile *file, offset_t nbytes)
 
 bool memfile_hexdump(string_buffer *sb, memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(sb);
-        DEBUG_ERROR_IF_NULL(file);
         DECLARE_AND_INIT(offset_t, block_size)
         memblock_size(&block_size, file->memblock);
         hexdump(sb, memblock_raw_data(file->memblock), block_size);
@@ -520,8 +488,6 @@ bool memfile_hexdump(string_buffer *sb, memfile *file)
 
 bool memfile_hexdump_printf(FILE *file, memfile *memfile)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(memfile)
         DECLARE_AND_INIT(offset_t, block_size)
         memblock_size(&block_size, memfile->memblock);
         hexdump_print(file, memblock_raw_data(memfile->memblock), block_size);

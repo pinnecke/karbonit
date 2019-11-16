@@ -37,7 +37,6 @@ bool alloc_create_std(allocator *alloc)
                 alloc->realloc = _alloc_invoke_realloc;
                 alloc->free = _alloc_invoke_free;
                 alloc->clone = _alloc_invoke_clone;
-                error_init(&alloc->err);
                 return true;
         } else {
                 return false;
@@ -66,15 +65,12 @@ void *alloc_realloc(allocator *alloc, void *ptr, size_t size)
 
 bool alloc_free(allocator *alloc, void *ptr)
 {
-        DEBUG_ERROR_IF_NULL(alloc);
-        DEBUG_ERROR_IF_NULL(ptr);
         alloc->free(alloc, ptr);
         return true;
 }
 
 bool alloc_clone(allocator *dst, const allocator *src)
 {
-        DEBUG_ERROR_IF_NULL(dst && src)
         src->clone(dst, src);
         return true;
 }
@@ -86,7 +82,7 @@ static void *_alloc_invoke_malloc(allocator *self, size_t size)
 
         errno = 0;
         if ((result = malloc(size)) == NULL) {
-                ERROR_PRINT_AND_DIE(ERR_MALLOCERR)
+                panic(ERR_MALLOCERR)
         } else {
                 return result;
         }
@@ -98,7 +94,7 @@ static void *_alloc_invoke_realloc(allocator *self, void *ptr, size_t size)
         void *result;
 
         if ((result = realloc(ptr, size)) == NULL) {
-                ERROR_PRINT(ERR_MALLOCERR)
+                error(ERR_MALLOCERR, NULL)
                 return ptr;
         } else {
                 return result;

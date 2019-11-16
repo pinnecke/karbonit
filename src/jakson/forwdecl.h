@@ -73,7 +73,6 @@ typedef struct encoded_doc_prop_array encoded_doc_prop_array;
 typedef struct encoded_doc encoded_doc;
 typedef struct encoded_doc_list encoded_doc_list;
 
-typedef struct err err;
 typedef struct fn_result fn_result;
 
 typedef struct async_func_proxy async_func_proxy;

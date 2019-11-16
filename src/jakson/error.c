@@ -17,115 +17,57 @@
 
 #include <jakson/error.h>
 
-_Thread_local err global_error;
+_Thread_local struct err_info g_err = {
+        .line = 0,
+        .file = NULL,
+        .code = ERR_NOERR,
+        .details = NULL
+};
 
-bool error_init(err *err)
+void error_set(int code, const char *file, u32 line, const char *details)
 {
-        if (err) {
-                err->code = ERR_NOERR;
-                err->details = NULL;
-                err->file = NULL;
-                err->line = 0;
+        error_clear();
+        g_err.code = code;
+        g_err.file = file;
+        g_err.line = line;
+        g_err.details = details ? strdup(details) : NULL;
+}
+
+void error_clear()
+{
+        if (g_err.details) {
+                free(g_err.details);
+                g_err.details = NULL;
         }
-        return (err != NULL);
+        g_err.line = 0;
+        g_err.code = ERR_NOERR;
+        g_err.file = NULL;
 }
 
-bool error_cpy(err *dst, const err *src)
+const char *error_get_str()
 {
-        DEBUG_ERROR_IF_NULL(dst);
-        DEBUG_ERROR_IF_NULL(src);
-        *dst = *src;
-        return true;
+        return global_err_str[g_err.code];
 }
 
-bool error_drop(err *err)
+int error_get_code()
 {
-        DEBUG_ERROR_IF_NULL(err);
-        if (err->details) {
-                free(err->details);
-                err->details = NULL;
-        }
-        return true;
+        return g_err.code;
 }
 
-bool error_set(err *err, int code, const char *file, u32 line)
+const char *error_get_file(u32 *line)
 {
-        return error_set_wdetails(err, code, file, line, NULL);
+        *line = g_err.line;
+        return g_err.file;
 }
 
-bool error_set_wdetails(err *err, int code, const char *file, u32 line, const char *details)
+const char *error_get_details()
 {
-        if (err) {
-                err->code = code;
-                err->file = file;
-                err->line = line;
-                err->details = details ? strdup(details) : NULL;
-#ifndef NDEBUG
-                error_print_to_stderr(err);
-#endif
-        }
-        return (err != NULL);
+        return g_err.details;
 }
 
-bool error_set_no_abort(err *err, int code, const char *file, u32 line)
+void error_print(FILE *file)
 {
-        return error_set_wdetails_no_abort(err, code, file, line, NULL);
-}
-
-bool error_set_wdetails_no_abort(err *err, int code, const char *file, u32 line, const char *details)
-{
-        if (err) {
-                err->code = code;
-                err->file = file;
-                err->line = line;
-                err->details = details ? strdup(details) : NULL;
-#ifndef NDEBUG
-                error_print_to_stderr(err);
-#endif
-        }
-        return (err != NULL);
-}
-
-bool error_str(const char **errstr, const char **file, u32 *line, bool *details, const char **detailsstr,
-               const err *err)
-{
-        if (err) {
-                if (err->code >= global_nerr_str) {
-                        OPTIONAL_SET(errstr, ERRSTR_ILLEGAL_CODE)
-                } else {
-                        OPTIONAL_SET(errstr, global_err_str[err->code])
-                }
-                OPTIONAL_SET(file, err->file)
-                OPTIONAL_SET(line, err->line)
-                OPTIONAL_SET(details, err->details != NULL);
-                OPTIONAL_SET(detailsstr, err->details)
-                return true;
-        }
-        return false;
-}
-
-bool error_print_to_stderr(const err *err)
-{
-        if (err) {
-                const char *errstr;
-                const char *file;
-                u32 line;
-                bool has_details;
-                const char *details;
-                if (error_str(&errstr, &file, &line, &has_details, &details, err)) {
-                        fprintf(stderr, "*** ERROR ***   %s\n", errstr);
-                        fprintf(stderr, "                details: %s\n", has_details ? details : "no details");
-                        fprintf(stderr, "                source.: %s(%d)\n", file, line);
-                } else {
-                        fprintf(stderr, "*** ERROR ***   internal ERROR during ERROR information fetch");
-                }
-                fflush(stderr);
-        }
-        return (err != NULL);
-}
-
-bool error_print_and_abort(const err *err)
-{
-        error_print_to_stderr(err);
-        abort();
+        fprintf(file, "** error **  %s (%d)\n", error_get_str(), g_err.code);
+        fprintf(file, "             in %s:%d\n", g_err.file, g_err.line);
+        fprintf(file, "             %s\n", g_err.details ? g_err.details : "no details");
 }

@@ -20,9 +20,6 @@
 bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_eq_func_t comp,
                          size_t nelemns, allocator *alloc)
 {
-        DEBUG_ERROR_IF_NULL(base);
-        DEBUG_ERROR_IF_NULL(alloc);
-
         if (nelemns <= 1) {
                 return true;
         }
@@ -59,9 +56,6 @@ bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_e
 int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, less_eq_wargs_func_t comp,
                               size_t nelemens, allocator *alloc, void *args)
 {
-        DEBUG_ERROR_IF_NULL(base);
-        DEBUG_ERROR_IF_NULL(alloc);
-
         if (nelemens <= 1) {
                 return true;
         }

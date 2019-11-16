@@ -50,11 +50,6 @@ typedef struct allocator {
         void *extra;
 
         /**
-         *  Error information
-         */
-        err err;
-
-        /**
          *  Implementation to call memory allocation.
          */
         void *(*malloc)(allocator *self, size_t size);

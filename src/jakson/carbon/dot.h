@@ -51,7 +51,6 @@ typedef struct carbon_dot_node {
 typedef struct carbon_dot_path {
         carbon_dot_node nodes[256];
         u32 path_len;
-        err err;
 } carbon_dot_path;
 
 typedef enum carbon_path_status {

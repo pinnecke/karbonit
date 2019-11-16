@@ -34,16 +34,12 @@ bool carbon_string_nomarker_write(memfile *file, const char *string)
 
 bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(string)
         write_payload(file, string, str_len);
-
         return true;
 }
 
 bool carbon_string_nomarker_remove(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         u8 len_nbytes;
         u64 str_len = memfile_read_uintvar_stream(&len_nbytes, file);
         memfile_skip(file, -len_nbytes);
@@ -53,13 +49,12 @@ bool carbon_string_nomarker_remove(memfile *file)
 
 bool carbon_string_remove(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 memfile_inplace_remove(file, sizeof(u8));
                 return carbon_string_nomarker_remove(file);
         } else {
-                ERROR(&file->err, ERR_MARKERMAPPING)
+                error(ERR_MARKERMAPPING, NULL)
                 return false;
         }
 }
@@ -71,13 +66,9 @@ bool carbon_string_write(memfile *file, const char *string)
 
 bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(string)
-
         memfile_ensure_space(file, sizeof(media_type));
         carbon_media_write(file, CARBON_FIELD_STRING);
         carbon_string_nomarker_nchar_write(file, string, str_len);
-
         return true;
 }
 
@@ -100,7 +91,7 @@ bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_l
                 write_payload(file, string, str_len);
                 return true;
         } else {
-                ERROR(&file->err, ERR_MARKERMAPPING)
+                error(ERR_MARKERMAPPING, NULL)
                 return false;
         }
 }
@@ -117,12 +108,11 @@ bool carbon_string_nomarker_skip(memfile *file)
 
 const char *carbon_string_read(u64 *len, memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file)
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 return carbon_string_nomarker_read(len, file);
         } else {
-                ERROR(&file->err, ERR_MARKERMAPPING)
+                error(ERR_MARKERMAPPING, NULL)
                 return false;
         }
 }

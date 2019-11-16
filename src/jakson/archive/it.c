@@ -104,7 +104,10 @@ inline static offset_t offset_by_state(prop_iter *iter)
                         return iter->object.prop_offsets.string_arrays;
                 case PROP_ITER_OBJECT_ARRAYS:
                         return iter->object.prop_offsets.object_arrays;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR)
+                default: {
+                        error(ERR_INTERNALERR, NULL)
+                        return 0;
+                }
         }
 }
 
@@ -369,7 +372,10 @@ static prop_iter_state_e prop_iter_state_next(prop_iter *iter)
 
                 case PROP_ITER_DONE:
                         break;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                default: {
+                        error(ERR_INTERNALERR, NULL);
+                        return PROP_ITER_ERR;
+                }
         }
 
         iter->mode = iter->prop_cursor == PROP_ITER_OBJECT_ARRAYS ? PROP_ITER_MODE_COLLECTION
@@ -389,44 +395,38 @@ static void prop_iter_state_init(prop_iter *iter)
         iter->mode = PROP_ITER_MODE_OBJECT;
 }
 
-static bool archive_prop_iter_from_memblock(prop_iter *iter, err *err, u16 mask,
+static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
                                             area *memblock, offset_t object_offset)
 {
-        DEBUG_ERROR_IF_NULL(iter)
-        DEBUG_ERROR_IF_NULL(err)
-        DEBUG_ERROR_IF_NULL(memblock)
-
         iter->mask = mask;
         if (!memfile_open(&iter->record_table_memfile, memblock, READ_ONLY)) {
-                ERROR(err, ERR_MEMFILEOPEN_FAILED)
+                error(ERR_MEMFILEOPEN_FAILED, NULL)
                 return false;
         }
         if (!memfile_seek(&iter->record_table_memfile, object_offset)) {
-                ERROR(err, ERR_MEMFILESEEK_FAILED)
+                error(ERR_MEMFILESEEK_FAILED, NULL)
                 return false;
         }
         if (!init_object_from_memfile(&iter->object, &iter->record_table_memfile)) {
-                ERROR(err, ERR_INTERNALERR);
+                error(ERR_INTERNALERR, NULL);
                 return false;
         }
 
-        error_init(&iter->err);
         prop_iter_state_init(iter);
         prop_iter_state_next(iter);
 
         return true;
 }
 
-bool archive_prop_iter_from_archive(prop_iter *iter, err *err, u16 mask,
+bool archive_prop_iter_from_archive(prop_iter *iter, u16 mask,
                                         archive *archive)
 {
-        return archive_prop_iter_from_memblock(iter, err, mask, archive->record_table.record_db, 0);
+        return archive_prop_iter_from_memblock(iter, mask, archive->record_table.record_db, 0);
 }
 
-bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, err *err,
-                                       const archive_object *obj)
+bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, const archive_object *obj)
 {
-        return archive_prop_iter_from_memblock(iter, err, mask, obj->memfile.memblock, obj->offset);
+        return archive_prop_iter_from_memblock(iter, mask, obj->memfile.memblock, obj->offset);
 }
 
 static enum archive_field_type get_basic_type(prop_iter_state_e state)
@@ -471,7 +471,10 @@ static enum archive_field_type get_basic_type(prop_iter_state_e state)
                 case PROP_ITER_OBJECTS:
                 case PROP_ITER_OBJECT_ARRAYS:
                         return FIELD_OBJECT;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                default: {
+                        error(ERR_INTERNALERR, NULL);
+                        return FIELD_ERR;
+                }
         }
 }
 
@@ -506,16 +509,15 @@ static bool is_array_type(prop_iter_state_e state)
                 case PROP_ITER_STRING_ARRAYS:
                 case PROP_ITER_OBJECT_ARRAYS:
                         return true;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                default:
+                        error(ERR_INTERNALERR, NULL)
+                        return false;
         }
 }
 
 bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_vector,
                                 independent_iter_state *collection_iter, prop_iter *prop_iter)
 {
-        DEBUG_ERROR_IF_NULL(type);
-        DEBUG_ERROR_IF_NULL(prop_iter);
-
         if (prop_iter->prop_cursor != PROP_ITER_DONE) {
                 switch (prop_iter->mode) {
                         case PROP_ITER_MODE_OBJECT: {
@@ -529,9 +531,8 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
                                 value_vector->is_array = prop_iter->mode_object.is_array;
 
                                 if (value_vector
-                                    && !archive_value_vector_from_prop_iter(value_vector, &prop_iter->err,
-                                                                                prop_iter)) {
-                                        ERROR(&prop_iter->err, ERR_VITEROPEN_FAILED);
+                                    && !archive_value_vector_from_prop_iter(value_vector, prop_iter)) {
+                                        error(ERR_VITEROPEN_FAILED, NULL);
                                         return false;
                                 }
                         }
@@ -541,10 +542,8 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
                                 memfile_open(&collection_iter->record_table_memfile,
                                              prop_iter->record_table_memfile.memblock,
                                              READ_ONLY);
-                                error_init(&collection_iter->err);
-                        }
-                                break;
-                        default: ERROR(&prop_iter->err, ERR_INTERNALERR);
+                        } break;
+                        default: error(ERR_INTERNALERR, NULL);
                                 return false;
                 }
                 *type = prop_iter->mode;
@@ -562,7 +561,7 @@ archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter)
                 *num_keys = iter->state.num_column_groups;
                 return iter->state.column_group_keys;
         } else {
-                ERROR(&iter->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -570,14 +569,10 @@ archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter)
 bool archive_collection_next_column_group(independent_iter_state *group_iter,
                                               independent_iter_state *iter)
 {
-        DEBUG_ERROR_IF_NULL(group_iter)
-        DEBUG_ERROR_IF_NULL(iter)
-
         if (iter->state.current_column_group_idx < iter->state.num_column_groups) {
                 collection_iter_read_next_column_group(&iter->state, &iter->record_table_memfile);
                 memfile_open(&group_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
                 group_iter->state = iter->state;
-                error_init(&group_iter->err);
                 return true;
         } else {
                 return false;
@@ -591,7 +586,7 @@ archive_column_group_get_object_ids(u32 *num_objects, independent_iter_state *it
                 *num_objects = iter->state.current_column_group.num_objects;
                 return iter->state.current_column_group.object_ids;
         } else {
-                ERROR(&iter->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -599,14 +594,10 @@ archive_column_group_get_object_ids(u32 *num_objects, independent_iter_state *it
 bool archive_column_group_next_column(independent_iter_state *column_iter,
                                           independent_iter_state *iter)
 {
-        DEBUG_ERROR_IF_NULL(column_iter)
-        DEBUG_ERROR_IF_NULL(iter)
-
         if (iter->state.current_column_group.current_column.idx < iter->state.current_column_group.num_columns) {
                 prop_iter_read_column(&iter->state, &iter->record_table_memfile);
                 memfile_open(&column_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
                 column_iter->state = iter->state;
-                error_init(&column_iter->err);
                 return true;
         } else {
                 return false;
@@ -616,7 +607,6 @@ bool archive_column_group_next_column(independent_iter_state *column_iter,
 bool archive_column_get_name(archive_field_sid_t *name, enum archive_field_type *type,
                                  independent_iter_state *column_iter)
 {
-        DEBUG_ERROR_IF_NULL(column_iter)
         OPTIONAL_SET(name, column_iter->state.current_column_group.current_column.name)
         OPTIONAL_SET(type, column_iter->state.current_column_group.current_column.type)
         return true;
@@ -629,7 +619,7 @@ archive_column_get_entry_positions(u32 *num_entry, independent_iter_state *colum
                 *num_entry = column_iter->state.current_column_group.current_column.num_elem;
                 return column_iter->state.current_column_group.current_column.elem_positions;
         } else {
-                ERROR(&column_iter->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -637,15 +627,11 @@ archive_column_get_entry_positions(u32 *num_entry, independent_iter_state *colum
 bool
 archive_column_next_entry(independent_iter_state *entry_iter, independent_iter_state *iter)
 {
-        DEBUG_ERROR_IF_NULL(entry_iter)
-        DEBUG_ERROR_IF_NULL(iter)
-
         if (iter->state.current_column_group.current_column.current_entry.idx
             < iter->state.current_column_group.current_column.num_elem) {
                 prop_iter_read_colum_entry(&iter->state, &iter->record_table_memfile);
                 memfile_open(&entry_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
                 entry_iter->state = iter->state;
-                error_init(&entry_iter->err);
                 return true;
         } else {
                 return false;
@@ -654,8 +640,6 @@ archive_column_next_entry(independent_iter_state *entry_iter, independent_iter_s
 
 bool archive_column_entry_get_type(enum archive_field_type *type, independent_iter_state *entry)
 {
-        DEBUG_ERROR_IF_NULL(type)
-        DEBUG_ERROR_IF_NULL(entry)
         *type = entry->state.current_column_group.current_column.type;
         return true;
 }
@@ -670,11 +654,11 @@ archive_column_entry_get_##name(u32 *array_length, independent_iter_state *entry
             *array_length =  entry->state.current_column_group.current_column.current_entry.array_length;              \
             return (const built_in_type *) entry->state.current_column_group.current_column.current_entry.array_base;  \
         } else {                                                                                                       \
-            ERROR(&entry->err, ERR_TYPEMISMATCH);                                                        \
+            error(ERR_TYPEMISMATCH, NULL)                                                        \
             return NULL;                                                                                               \
         }                                                                                                              \
     } else {                                                                                                           \
-        ERROR(&entry->err, ERR_NULLPTR);                                                                 \
+        error(ERR_NULLPTR, NULL)                                                                 \
         return NULL;                                                                                                   \
     }                                                                                                                  \
 }
@@ -705,17 +689,12 @@ DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, nulls, FIELD_NU
 
 bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter_state *entry)
 {
-        DEBUG_ERROR_IF_NULL(iter)
-        DEBUG_ERROR_IF_NULL(entry)
-
         iter->entry_state = entry->state;
         memfile_open(&iter->memfile, entry->record_table_memfile.memblock, READ_ONLY);
         memfile_seek(&iter->memfile,
                      entry->state.current_column_group.current_column.elem_offsets[
                              entry->state.current_column_group.current_column.current_entry.idx - 1] + sizeof(u32));
         iter->next_obj_off = memfile_tell(&iter->memfile);
-        error_init(&iter->err);
-
         return true;
 }
 
@@ -728,29 +707,26 @@ const archive_object *archive_column_entry_object_iter_next_object(column_object
                                 iter->next_obj_off = iter->obj.next_obj_off;
                                 return &iter->obj;
                         } else {
-                                ERROR(&iter->err, ERR_INTERNALERR);
+                                error(ERR_INTERNALERR, NULL);
                                 return NULL;
                         }
                 } else {
                         return NULL;
                 }
         } else {
-                ERROR(&iter->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
 
 bool archive_object_get_object_id(unique_id_t *id, const archive_object *object)
 {
-        DEBUG_ERROR_IF_NULL(id)
-        DEBUG_ERROR_IF_NULL(object)
         *id = object->object_id;
         return true;
 }
 
 bool archive_object_get_prop_iter(prop_iter *iter, const archive_object *object)
 {
-        // XXXX archive_prop_iter_from_object()
         UNUSED(iter);
         UNUSED(object);
         return false;
@@ -758,8 +734,6 @@ bool archive_object_get_prop_iter(prop_iter *iter, const archive_object *object)
 
 bool archive_value_vector_get_object_id(unique_id_t *id, const archive_value_vector *iter)
 {
-        DEBUG_ERROR_IF_NULL(id)
-        DEBUG_ERROR_IF_NULL(iter)
         *id = iter->object_id;
         return true;
 }
@@ -771,7 +745,7 @@ archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
                 *num_keys = iter->value_max_idx;
                 return iter->keys;
         } else {
-                ERROR(&iter->err, ERR_NULLPTR)
+                error(ERR_NULLPTR, NULL)
                 return NULL;
         }
 }
@@ -782,7 +756,7 @@ static void value_vector_init_object_basic(archive_value_vector *value)
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, offset_t, value->value_max_idx);
 }
 
-static void value_vector_init_fixed_length_types_basic(archive_value_vector *value)
+static bool value_vector_init_fixed_length_types_basic(archive_value_vector *value)
 {
         JAK_ASSERT(!value->is_array);
 
@@ -831,8 +805,12 @@ static void value_vector_init_fixed_length_types_basic(archive_value_vector *val
                         value->data.basic.values.booleans = MEMFILE_PEEK(&value->record_table_memfile,
                                                                              archive_field_boolean_t);
                         break;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                default: {
+                        error(ERR_INTERNALERR, NULL);
+                        return false;
+                }
         }
+        return true;
 }
 
 static void value_vector_init_fixed_length_types_null_arrays(archive_value_vector *value)
@@ -843,7 +821,7 @@ static void value_vector_init_fixed_length_types_null_arrays(archive_value_vecto
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 }
 
-static void value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
+static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
 {
         JAK_ASSERT (value->is_array);
 
@@ -895,8 +873,12 @@ static void value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
                         value->data.arrays.values.booleans_base =
                                 MEMFILE_PEEK(&value->record_table_memfile, archive_field_boolean_t);
                         break;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                default: {
+                        error(ERR_INTERNALERR, NULL)
+                        return false;
+                }
         }
+        return true;
 }
 
 static void value_vector_init_fixed_length_types(archive_value_vector *value)
@@ -917,29 +899,22 @@ static void value_vector_init_object(archive_value_vector *value)
         }
 }
 
-bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err,
-                                             prop_iter *prop_iter)
+bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter)
 {
-        DEBUG_ERROR_IF_NULL(value);
-        DEBUG_ERROR_IF_NULL(prop_iter);
-
-        ERROR_IF_AND_RETURN (prop_iter->mode != PROP_ITER_MODE_OBJECT,
-                             &prop_iter->err,
-                             ERR_ITER_OBJECT_NEEDED,
-                             false)
-
-        error_init(&value->err);
-
+        if (prop_iter->mode != PROP_ITER_MODE_OBJECT) {
+                error(ERR_ITER_OBJECT_NEEDED, NULL)
+                return false;
+        }
         value->prop_iter = prop_iter;
         value->data_off = prop_iter->mode_object.prop_data_off;
         value->object_id = prop_iter->object.object_id;
 
         if (!memfile_open(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY)) {
-                ERROR(err, ERR_MEMFILEOPEN_FAILED);
+                error(ERR_MEMFILEOPEN_FAILED, NULL)
                 return false;
         }
         if (!memfile_skip(&value->record_table_memfile, value->data_off)) {
-                ERROR(err, ERR_MEMFILESKIP_FAILED);
+                error(ERR_MEMFILESKIP_FAILED, NULL)
                 return false;
         }
 
@@ -969,7 +944,10 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err,
                 case FIELD_BOOLEAN:
                         value_vector_init_fixed_length_types(value);
                         break;
-                default: ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                default: {
+                        error(ERR_INTERNALERR, NULL);
+                        return false;
+                }
         }
 
         return true;
@@ -978,46 +956,33 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, err *err,
 bool archive_value_vector_get_basic_type(enum archive_field_type *type,
                                                  const archive_value_vector *value)
 {
-        DEBUG_ERROR_IF_NULL(type)
-        DEBUG_ERROR_IF_NULL(value)
         *type = value->prop_type;
         return true;
 }
 
 bool archive_value_vector_is_array_type(bool *is_array, const archive_value_vector *value)
 {
-        DEBUG_ERROR_IF_NULL(is_array)
-        DEBUG_ERROR_IF_NULL(value)
         *is_array = value->is_array;
         return true;
 }
 
 bool archive_value_vector_get_length(u32 *length, const archive_value_vector *value)
 {
-        DEBUG_ERROR_IF_NULL(length)
-        DEBUG_ERROR_IF_NULL(value)
         *length = value->value_max_idx;
         return true;
 }
 
 bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *value)
 {
-        DEBUG_ERROR_IF_NULL(is_object)
-        DEBUG_ERROR_IF_NULL(value)
-
         *is_object = value->prop_type == FIELD_OBJECT && !value->is_array;
-
         return true;
 }
 
 bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                                                 archive_value_vector *value)
 {
-        DEBUG_ERROR_IF_NULL(object)
-        DEBUG_ERROR_IF_NULL(value)
-
         if (idx >= value->value_max_idx) {
-                ERROR(&value->err, ERR_OUTOFBOUNDS);
+                error(ERR_OUTOFBOUNDS, NULL)
                 return false;
         }
 
@@ -1031,7 +996,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                 *object = value->data.object.object;
                 return true;
         } else {
-                ERROR(&value->err, ERR_ITER_NOOBJ);
+                error(ERR_ITER_NOOBJ, NULL)
                 return false;
         }
 }
@@ -1040,11 +1005,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
 bool                                                                                                    \
 archive_value_vector_is_##name(bool *type_match, archive_value_vector *value)                          \
 {                                                                                                                      \
-    DEBUG_ERROR_IF_NULL(type_match)                                                                               \
-    DEBUG_ERROR_IF_NULL(value)                                                                                    \
-                                                                                                                       \
     *type_match = value->prop_type == basic_type;                                                                      \
-                                                                                                                       \
     return true;                                                                                                       \
 }
 
@@ -1076,8 +1037,6 @@ DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null, FIELD_NULL)
 const built_in_type *                                                                                   \
 archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)                    \
 {                                                                                                                      \
-    DEBUG_ERROR_IF_NULL(value)                                                                                    \
-                                                                                                                       \
     bool is_array;                                                                                                     \
     bool type_match;                                                                                                   \
                                                                                                                        \
@@ -1088,7 +1047,7 @@ archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)  
         return value->data.basic.values.names;                                                                         \
     } else                                                                                                             \
     {                                                                                                                  \
-        ERROR(&value->err, err_code);                                                                           \
+        error(err_code, NULL);                                                                           \
         return NULL;                                                                                                   \
     }                                                                                                                  \
 }
@@ -1118,8 +1077,6 @@ DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(booleans, boolean, archive_field_boo
 const archive_field_u32_t *
 archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *value)
 {
-        DEBUG_ERROR_IF_NULL(value)
-
         bool is_array;
         bool type_match;
 
@@ -1138,8 +1095,6 @@ const built_in_type *                                                           
 archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,                               \
                                                archive_value_vector *value)                                   \
 {                                                                                                                      \
-    DEBUG_ERROR_IF_NULL(value)                                                                                    \
-                                                                                                                       \
     bool is_array;                                                                                                     \
     bool type_match;                                                                                                   \
                                                                                                                        \

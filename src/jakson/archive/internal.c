@@ -202,7 +202,8 @@ int_marker_to_field_type(char symbol)
                 case MARKER_SYMBOL_PROP_OBJECT_ARRAY:
                         return FIELD_OBJECT;
                 default: {
-                        ERROR_PRINT_AND_DIE(ERR_MARKERMAPPING);
+                        error(ERR_MARKERMAPPING, NULL);
+                        return FIELD_NULL;
                 }
         }
 }

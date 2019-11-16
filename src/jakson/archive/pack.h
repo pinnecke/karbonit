@@ -146,7 +146,7 @@ typedef struct packer {
          * @since 0.1.00.05
          */
         bool
-        (*encode_string)(packer *self, memfile *dst, err *err, const char *string);
+        (*encode_string)(packer *self, memfile *dst, const char *string);
 
         bool (*decode_string)(packer *self, char *dst, size_t strlen, FILE *src);
 
@@ -229,20 +229,20 @@ static struct {
 
 #pragma GCC diagnostic pop
 
-bool pack_cpy(err *err, packer *dst, const packer *src);
-bool pack_drop(err *err, packer *self);
+bool pack_cpy(packer *dst, const packer *src);
+bool pack_drop(packer *self);
 
-bool pack_by_type(err *err, packer *strategy, packer_e type);
+bool pack_by_type(packer *strategy, packer_e type);
 u8 pack_flagbit_by_type(packer_e type);
 bool pack_by_flags(packer *strategy, u8 flags);
 bool pack_by_name(packer_e *type, const char *name);
 
-bool pack_write_extra(err *err, packer *self, memfile *dst, const vector ofType (const char *) *strings);
-bool pack_read_extra(err *err, packer *self, FILE *src, size_t nbytes);
-bool pack_encode(err *err, packer *self, memfile *dst, const char *string);
-bool pack_decode(err *err, packer *self, char *dst, size_t strlen, FILE *src);
-bool pack_print_extra(err *err, packer *self, FILE *file, memfile *src);
-bool pack_print_encoded(err *err, packer *self, FILE *file, memfile *src, u32 decompressed_strlen);
+bool pack_write_extra(packer *self, memfile *dst, const vector ofType (const char *) *strings);
+bool pack_read_extra(packer *self, FILE *src, size_t nbytes);
+bool pack_encode(packer *self, memfile *dst, const char *string);
+bool pack_decode(packer *self, char *dst, size_t strlen, FILE *src);
+bool pack_print_extra(packer *self, FILE *file, memfile *src);
+bool pack_print_encoded(packer *self, FILE *file, memfile *src, u32 decompressed_strlen);
 
 #ifdef __cplusplus
 }

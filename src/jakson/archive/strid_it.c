@@ -21,15 +21,11 @@
 
 #include <jakson/archive/strid_it.h>
 
-bool strid_iter_open(strid_iter *it, err *err, archive *archive)
+bool strid_iter_open(strid_iter *it, archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(it)
-        DEBUG_ERROR_IF_NULL(archive)
-
         memset(&it->vector, 0, sizeof(it->vector));
         it->disk_file = fopen(archive->disk_file_path, "r");
         if (!it->disk_file) {
-                OPTIONAL(err, ERROR(err, ERR_FOPEN_FAILED))
                 it->is_open = false;
                 return false;
         }
@@ -39,13 +35,9 @@ bool strid_iter_open(strid_iter *it, err *err, archive *archive)
         return true;
 }
 
-bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_length,
+bool strid_iter_next(bool *success, strid_info **info, size_t *info_length,
                          strid_iter *it)
 {
-        DEBUG_ERROR_IF_NULL(info)
-        DEBUG_ERROR_IF_NULL(info_length)
-        DEBUG_ERROR_IF_NULL(it)
-
         if (it->disk_offset != 0 && it->is_open) {
                 string_entry_header header;
                 size_t vector_pos = 0;
@@ -53,11 +45,10 @@ bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_le
                         fseek(it->disk_file, it->disk_offset, SEEK_SET);
                         int num_read = fread(&header, sizeof(string_entry_header), 1, it->disk_file);
                         if (header.marker != '-') {
-                                ERROR_PRINT(ERR_INTERNALERR);
+                                error(ERR_INTERNALERR, NULL);
                                 return false;
                         }
                         if (num_read != 1) {
-                                OPTIONAL(err, ERROR(err, ERR_FREAD_FAILED))
                                 *success = false;
                                 return false;
                         } else {
@@ -80,7 +71,6 @@ bool strid_iter_next(bool *success, strid_info **info, err *err, size_t *info_le
 
 bool strid_iter_close(strid_iter *it)
 {
-        DEBUG_ERROR_IF_NULL(it)
         if (it->is_open) {
                 fclose(it->disk_file);
                 it->is_open = false;

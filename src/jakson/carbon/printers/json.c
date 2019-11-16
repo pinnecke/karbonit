@@ -52,10 +52,11 @@ static void __carbon_print_json_exit_array(struct carbon_traverse_extra *extra, 
         UNUSED(it)
 }
 
-static void __carbon_print_json_column(struct carbon_traverse_extra *extra, struct carbon_column *it)
+static bool __carbon_print_json_column(struct carbon_traverse_extra *extra, struct carbon_column *it)
 {
         UNUSED(extra)
         UNUSED(it)
+        return false;
 }
 
 static void __carbon_print_json_enter_object(struct carbon_traverse_extra *extra, struct carbon_object *it)
@@ -256,7 +257,7 @@ static inline void __carbon_print_json_exit_array_fast(struct carbon_traverse_ex
         }                                                                                                              \
 }
 
-static inline void __carbon_print_json_column_fast(struct carbon_traverse_extra *restrict extra,
+static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra *restrict extra,
                                                    struct carbon_column *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
@@ -271,7 +272,7 @@ static inline void __carbon_print_json_column_fast(struct carbon_traverse_extra 
 
         if (UNLIKELY(num_elems == 0)) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
-                return;
+                return false;
         } else if (LIKELY(num_elems > 1)) {
                 string_buffer_add(str_buf, "[");
         }
@@ -308,13 +309,14 @@ static inline void __carbon_print_json_column_fast(struct carbon_traverse_extra 
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, float, base, num_elems, sep, IS_NULL_FLOAT)
                         break;
                 default:
-                        ERROR_PRINT(ERR_INTERNALERR)
-                        break;
+                        error(ERR_INTERNALERR, NULL)
+                        return false;
         }
 
         if (LIKELY(num_elems > 1)) {
                 string_buffer_add(str_buf, "]");
         }
+        return true;
 }
 
 static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_extra *restrict extra,

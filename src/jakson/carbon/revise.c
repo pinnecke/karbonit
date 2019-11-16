@@ -49,7 +49,6 @@ fn_result carbon_revise_begin(rev *context, rec *revised_doc, rec *original)
 
         context->original = original;
         context->revised_doc = revised_doc;
-        error_init(&context->err);
         carbon_clone(context->revised_doc, context->original);
         return FN_OK();
 }
@@ -90,7 +89,6 @@ static void key_string_set(rec *doc, const char *key)
 
 bool carbon_revise_key_generate(unique_id_t *out, rev *context)
 {
-        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_AUTOKEY) {
@@ -100,49 +98,46 @@ bool carbon_revise_key_generate(unique_id_t *out, rev *context)
                 OPTIONAL_SET(out, oid);
                 return true;
         } else {
-                ERROR(&context->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
 
 bool carbon_revise_key_set_unsigned(rev *context, u64 key_value)
 {
-        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_UKEY) {
                 key_unsigned_set(context->revised_doc, key_value);
                 return true;
         } else {
-                ERROR(&context->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
 
 bool carbon_revise_key_set_signed(rev *context, i64 key_value)
 {
-        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_IKEY) {
                 key_signed_set(context->revised_doc, key_value);
                 return true;
         } else {
-                ERROR(&context->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
 
 bool carbon_revise_key_set_string(rev *context, const char *key_value)
 {
-        DEBUG_ERROR_IF_NULL(context);
         carbon_key_e key_type;
         carbon_key_type(&key_type, context->revised_doc);
         if (key_type == CARBON_KEY_SKEY) {
                 key_string_set(context->revised_doc, key_value);
                 return true;
         } else {
-                ERROR(&context->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
@@ -169,7 +164,7 @@ fn_result carbon_revise_iterator_open(carbon_array *it, rev *context)
         if (UNLIKELY(context->revised_doc->file.mode != READ_WRITE)) {
                 return FN_FAIL(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
-        return internal_carbon_array_create(it, &context->revised_doc->file, &context->original->err, payload_start);
+        return internal_carbon_array_create(it, &context->revised_doc->file, payload_start);
 }
 
 fn_result carbon_revise_iterator_close(carbon_array *it)
@@ -205,9 +200,6 @@ bool carbon_revise_remove_one(const char *dot_path, rec *rev_doc, rec *doc)
 
 bool carbon_revise_remove(const char *dot_path, rev *context)
 {
-        DEBUG_ERROR_IF_NULL(dot_path)
-        DEBUG_ERROR_IF_NULL(context)
-
         carbon_dot_path dot;
         carbon_path_evaluator eval;
         bool result;
@@ -230,21 +222,20 @@ bool carbon_revise_remove(const char *dot_path, rev *context)
                                         result = carbon_column_remove(it, elem_pos);
                                 }
                                         break;
-                                default: ERROR(&context->original->err, ERR_INTERNALERR);
+                                default: error(ERR_INTERNALERR, NULL);
                                         result = false;
                         }
                 }
                 carbon_path_evaluator_end(&eval);
                 return result;
         } else {
-                ERROR(&context->original->err, ERR_DOT_PATH_PARSERR);
+                error(ERR_DOT_PATH_PARSERR, NULL);
                 return false;
         }
 }
 
 bool carbon_revise_pack(rev *context)
 {
-        DEBUG_ERROR_IF_NULL(context);
         carbon_array it;
         carbon_revise_iterator_open(&it, context);
         internal_pack_array(&it);
@@ -281,8 +272,6 @@ fn_result ofType(const rec *) carbon_revise_end(rev *context)
 
 bool carbon_revise_abort(rev *context)
 {
-        DEBUG_ERROR_IF_NULL(context)
-
         carbon_drop(context->revised_doc);
         return true;
 }
@@ -301,7 +290,7 @@ static bool internal_pack_array(carbon_array *it)
 
                 if (!is_array_end) {
 
-                        ERROR_IF(!is_empty_slot, &it->err, ERR_CORRUPTED);
+                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
                         offset_t first_empty_slot_offset = memfile_tell(&this_array.memfile);
                         char final;
                         while ((final = *memfile_read(&this_array.memfile, sizeof(char))) == 0) {}
@@ -348,8 +337,8 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array nested_array;
-                                        internal_carbon_array_create(&nested_array, &it->memfile, &it->err,
-                                                               it->field_access.nested_array->array_begin_off);
+                                        internal_carbon_array_create(&nested_array, &it->memfile,
+                                                                     it->field_access.nested_array->array_begin_off);
                                         internal_pack_array(&nested_array);
                                         JAK_ASSERT(*memfile_peek(&nested_array.memfile, sizeof(char)) ==
                                                    CARBON_MARRAY_END);
@@ -408,7 +397,7 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
                                         carbon_object nested_object_it;
-                                        internal_carbon_object_create(&nested_object_it, &it->memfile, &it->err,
+                                        internal_carbon_object_create(&nested_object_it, &it->memfile,
                                                                       it->field_access.nested_object_it->object_contents_off -
                                                                       sizeof(u8));
                                         internal_pack_object(&nested_object_it);
@@ -419,7 +408,7 @@ static bool internal_pack_array(carbon_array *it)
                                         carbon_object_drop(&nested_object_it);
                                 }
                                         break;
-                                default: ERROR(&it->err, ERR_INTERNALERR);
+                                default: error(ERR_INTERNALERR, NULL);
                                         return false;
                         }
                 }
@@ -444,7 +433,7 @@ static bool internal_pack_object(carbon_object *it)
 
                 if (!is_object_end) {
 
-                        ERROR_IF(!is_empty_slot, &it->err, ERR_CORRUPTED);
+                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
                         offset_t first_empty_slot_offset = memfile_tell(&this_object_it.memfile);
                         char final;
                         while ((final = *memfile_read(&this_object_it.memfile, sizeof(char))) == 0) {}
@@ -491,7 +480,7 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array nested_array;
-                                        internal_carbon_array_create(&nested_array, &it->memfile, &it->err,
+                                        internal_carbon_array_create(&nested_array, &it->memfile,
                                                                it->field.value.data.nested_array->array_begin_off);
                                         internal_pack_array(&nested_array);
                                         JAK_ASSERT(*memfile_peek(&nested_array.memfile, sizeof(char)) ==
@@ -551,7 +540,7 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
                                         carbon_object nested_object_it;
-                                        internal_carbon_object_create(&nested_object_it, &it->memfile, &it->err,
+                                        internal_carbon_object_create(&nested_object_it, &it->memfile,
                                                                       it->field.value.data.nested_object_it->object_contents_off -
                                                                       sizeof(u8));
                                         internal_pack_object(&nested_object_it);
@@ -562,7 +551,7 @@ static bool internal_pack_object(carbon_object *it)
                                         carbon_object_drop(&nested_object_it);
                                 }
                                         break;
-                                default: ERROR(&it->err, ERR_INTERNALERR);
+                                default: error(ERR_INTERNALERR, NULL);
                                         return false;
                         }
                 }

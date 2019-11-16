@@ -41,14 +41,11 @@ extern "C" {
 typedef struct carbon_path_index {
         area *memblock;
         memfile memfile;
-        err err;
 } carbon_path_index;
 
 typedef struct carbon_path_index_it {
         rec *doc;
         memfile memfile;
-        err err;
-
         carbon_container_e container_type;
         u64 pos;
 } carbon_path_index_it;

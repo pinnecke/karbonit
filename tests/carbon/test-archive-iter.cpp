@@ -23,7 +23,6 @@ iterate_object_vals(archive_value_vector *value_iter)
     u32 vector_length;
     archive_object object;
     prop_iter  prop_iter;
-    err err;
 
     status = archive_value_vector_is_of_objects(&is_object, value_iter);
     ASSERT_TRUE(status);
@@ -39,7 +38,7 @@ iterate_object_vals(archive_value_vector *value_iter)
         printf("\t\t{type: object, id: %" PRIu64 "}\n", object.object_id);
 
 
-        status = archive_prop_iter_from_object(&prop_iter, ARCHIVE_ITER_MASK_ANY, &err, &object);
+        status = archive_prop_iter_from_object(&prop_iter, ARCHIVE_ITER_MASK_ANY, &object);
         ASSERT_TRUE(status);
 
         iterate_properties(&prop_iter);
@@ -300,7 +299,6 @@ iterate_properties(struct prop_iter *prop_iter)
     independent_iter_state group_iter;
     independent_iter_state       column_iter;
     independent_iter_state entry_iter;
-    err                       err;
 
     while (archive_prop_iter_next(&iter_type, &value_iter, &collection_iter, prop_iter))
     {
@@ -484,7 +482,7 @@ iterate_properties(struct prop_iter *prop_iter)
 
                                 struct prop_iter nested_obj_prop_iter;
                                 archive_prop_iter_from_object(&nested_obj_prop_iter, ARCHIVE_ITER_MASK_ANY,
-                                                                     &err, archive_object);
+                                                                     archive_object);
                                 iterate_properties(&nested_obj_prop_iter);
                             }
                             printf("]\n");
@@ -504,7 +502,6 @@ iterate_properties(struct prop_iter *prop_iter)
 TEST(ArchiveIterTest, CreateIterator)
 {
     archive            archive;
-    err                err;
     prop_iter  prop_iter;
     bool                        status;
 
@@ -513,7 +510,7 @@ TEST(ArchiveIterTest, CreateIterator)
     status = archive_open(&archive, "./assets/test-archive.carbon");
     ASSERT_TRUE(status);
 
-    status = archive_prop_iter_from_archive(&prop_iter, &err, ARCHIVE_ITER_MASK_ANY, &archive);
+    status = archive_prop_iter_from_archive(&prop_iter, ARCHIVE_ITER_MASK_ANY, &archive);
     ASSERT_TRUE(status);
 
     iterate_properties(&prop_iter);

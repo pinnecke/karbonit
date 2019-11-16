@@ -34,8 +34,6 @@ extern "C" {
 
 typedef u16 error_code;
 
-extern _Thread_local err global_error;
-
 #define ERR_NOERR 0                    /** No ERROR */
 #define ERR_NULLPTR 1                  /** Null pointer detected */
 #define ERR_NOTIMPL 2                  /** Function not implemented */
@@ -200,70 +198,24 @@ static const char *const global_err_str[] =
 
 static const int global_nerr_str = ARRAY_LENGTH(global_err_str);
 
-typedef struct err {
+extern _Thread_local struct err_info {
         int code;
         const char *file;
         u32 line;
         char *details;
-} err;
+} g_err;
 
-bool error_init(err *err);
+#define error(code, msg) error_set(code, __FILE__, __LINE__, msg);
+#define error_if_and_return(expr, code, msg) { if ((expr)) { error(code, msg); return false; }}
+#define panic(code) { error(code, "panic condition"); abort(); }
 
-bool error_cpy(err *dst, const err *src);
-
-bool error_drop(err *err);
-
-bool error_set(err *err, int code, const char *file, u32 line);
-
-bool error_set_wdetails(err *err, int code, const char *file, u32 line, const char *details);
-
-bool error_set_no_abort(err *err, int code, const char *file, u32 line);
-
-bool error_set_wdetails_no_abort(err *err, int code, const char *file, u32 line, const char *details);
-
-bool error_str(const char **errstr, const char **file, u32 *line, bool *details, const char **detailsstr,
-               const err *err);
-
-bool error_print_to_stderr(const err *err);
-
-bool error_print_and_abort(const err *err);
-
-#define ERROR_OCCURRED(x)                   ((x)->err.code != ERR_NOERR)
-
-#define SUCCESS_ELSE_RETURN(expr, err, code, retval)                                                                   \
-{                                                                                                                      \
-        bool result = expr;                                                                                            \
-        ERROR_IF(!(result), err, code);                                                                                \
-        if (!(result)) { return retval; }                                                                              \
-}
-
-#define SUCCESS_ELSE_NULL(expr, err)           SUCCESS_ELSE_RETURN(expr, err, ERR_FAILED, NULL)
-#define SUCCESS_ELSE_FAIL(expr, err)           SUCCESS_ELSE_RETURN(expr, err, ERR_FAILED, false)
-
-
-#define ERROR(err, code)                     ERROR_IF (true, err, code)
-#define ERROR_NO_ABORT(err, code)            ERROR_IF (true, err, code)
-#define ERROR_IF(expr, err, code)            { if (expr) { error_set(err, code, __FILE__, __LINE__); } }
-#define ERROR_IF_AND_RETURN(expr, err, code, retval) \
-                                                    { if (expr) { error_set(err, code, __FILE__, __LINE__);            \
-                                                                  return retval; } }
-
-#define ERROR_IF_WDETAILS(expr, err, code, msg)            { if (expr) { ERROR_WDETAILS(err, code, msg); } }
-#define ERROR_WDETAILS(err, code, msg)                     error_set_wdetails(err, code, __FILE__, __LINE__, msg);
-
-#define ERROR_PRINT(code)                    ERROR_PRINT_IF(true, code)
-#define ERROR_PRINT_AND_DIE(code)            { ERROR_PRINT(code); abort(); }
-#define ERROR_PRINT_AND_DIE_IF(expr, code)   { if(expr) { ERROR_PRINT_AND_DIE(code) } }
-#define ERROR_PRINT_IF(expr, code)                                                                                     \
-{                                                                                                                      \
-    if (expr) {                                                                                                        \
-        struct err err;                                                                                                \
-        error_init(&err);                                                                                              \
-        ERROR(&err, code);                                                                                             \
-        error_print_to_stderr(&err);                                                                                   \
-    }                                                                                                                  \
-}
-
+void error_set(int code, const char *file, u32 line, const char *details);
+void error_clear();
+const char *error_get_str();
+int error_get_code();
+const char *error_get_file(u32 *line);
+const char *error_get_details();
+void error_print(FILE *file);
 
 #ifdef __cplusplus
 }

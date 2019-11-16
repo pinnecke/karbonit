@@ -62,12 +62,10 @@ typedef struct json_err {
 typedef struct json_tokenizer {
         const char *cursor;
         json_token token;
-        err err;
 } json_tokenizer;
 
 typedef struct json_parser {
         json_tokenizer tokenizer;
-        err err;
 } json_parser;
 
 typedef enum json_parent {
@@ -102,7 +100,6 @@ typedef enum json_list_type_e {
 
 typedef struct json {
         json_element *element;
-        err err;
 } json;
 
 typedef struct json_node_value {
@@ -177,9 +174,8 @@ bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input);
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer);
 void json_token_dup(json_token *dst, const json_token *src);
 void json_token_print(FILE *file, const json_token *token);
-bool json_parser_create(json_parser *parser);
 bool json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input);
-bool json_test(err *err, json *json);
+bool json_test(json *json);
 bool json_drop(json *json);
 bool json_print(FILE *file, json *json);
 bool json_list_is_empty(const json_elements *elements);

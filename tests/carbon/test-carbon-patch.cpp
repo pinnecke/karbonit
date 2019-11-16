@@ -5,13 +5,12 @@
 TEST(TestCarbonPatch, CreatePatch) {
 
         rec doc;
-        struct err err;
         u64 hash_original, hash_patch_1, hash_patch_2;
         carbon_array it, *arr;
         carbon_object *obj;
         carbon_field_type_e type;
 
-        carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", CARBON_KEY_AUTOKEY, NULL, &err);
+        carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", CARBON_KEY_AUTOKEY, NULL);
         carbon_commit_hash(&hash_original, &doc);
 
         char *json_original = carbon_to_json_compact_dup(&doc);

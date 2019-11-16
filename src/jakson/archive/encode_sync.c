@@ -84,8 +84,6 @@ int
 encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, size_t num_index_bucket_cap,
                    size_t num_threads, const allocator *alloc)
 {
-        DEBUG_ERROR_IF_NULL(dic);
-
         CHECK_SUCCESS(alloc_this_or_std(&dic->alloc, alloc));
 
         dic->tag = SYNC;
@@ -186,8 +184,6 @@ static int freelist_push(string_dict *self, archive_field_sid_t idx)
 
 static bool _encode_sync_drop(string_dict *self)
 {
-        CHECK_TAG(self->tag, SYNC)
-
         struct sync_extra *extra = this_extra(self);
 
         struct entry *entries = (struct entry *) extra->contents.base;
@@ -217,7 +213,6 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
 
         UNUSED(num_threads);
 
-        CHECK_TAG(self->tag, SYNC)
         _encode_sync_lock(self);
 
         struct sync_extra *extra = this_extra(self);
@@ -290,7 +285,7 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
 
                                 /** register in contents list */
                                 bool pop_result = freelist_pop(&string_id, self);
-                                ERROR_PRINT_AND_DIE_IF(!pop_result, ERR_SLOTBROKEN)
+                                error_if_and_return(!pop_result, ERR_SLOTBROKEN, NULL)
                                 struct entry *entries = (struct entry *) vector_data(&extra->contents);
                                 struct entry *entry = entries + string_id;
                                 JAK_ASSERT (!entry->in_use);
@@ -325,10 +320,6 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
 
 static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings, size_t num_strings)
 {
-        DEBUG_ERROR_IF_NULL(self);
-        DEBUG_ERROR_IF_NULL(strings);
-        DEBUG_ERROR_IF_NULL(num_strings);
-        CHECK_TAG(self->tag, SYNC)
         _encode_sync_lock(self);
 
         struct sync_extra *extra = this_extra(self);
@@ -375,14 +366,6 @@ _encode_sync_locate_safe(string_dict *self, archive_field_sid_t **out, bool **fo
         timestamp begin = wallclock();
         TRACE(STRING_DIC_SYNC_TAG, "'locate_safe' function invoked for %zu strings", num_keys)
 
-        DEBUG_ERROR_IF_NULL(self);
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(found_mask);
-        DEBUG_ERROR_IF_NULL(num_not_found);
-        DEBUG_ERROR_IF_NULL(keys);
-        DEBUG_ERROR_IF_NULL(num_keys);
-        CHECK_TAG(self->tag, SYNC)
-
         _encode_sync_lock(self);
         struct sync_extra *extra = this_extra(self);
         int status = str_hash_get_bulk_safe(out, found_mask, num_not_found, &extra->index, keys, num_keys);
@@ -399,8 +382,6 @@ _encode_sync_locate_safe(string_dict *self, archive_field_sid_t **out, bool **fo
 static bool
 _encode_sync_locate_fast(string_dict *self, archive_field_sid_t **out, char *const *keys, size_t num_keys)
 {
-        CHECK_TAG(self->tag, SYNC)
-
         bool *found_mask;
         size_t num_not_found;
 
@@ -464,7 +445,6 @@ static bool _encode_sync_free(string_dict *self, void *ptr)
 
 static bool _encode_sync_reset_counters(string_dict *self)
 {
-        CHECK_TAG(self->tag, SYNC)
         struct sync_extra *extra = this_extra(self);
         CHECK_SUCCESS(str_hash_reset_counters(&extra->index));
         return true;
@@ -472,7 +452,6 @@ static bool _encode_sync_reset_counters(string_dict *self)
 
 static bool _encode_sync_counters(string_dict *self, str_hash_counters *counters)
 {
-        CHECK_TAG(self->tag, SYNC)
         struct sync_extra *extra = this_extra(self);
         CHECK_SUCCESS(str_hash_get_counters(counters, &extra->index));
         return true;
@@ -480,7 +459,6 @@ static bool _encode_sync_counters(string_dict *self, str_hash_counters *counters
 
 static bool _encode_sync_num_distinct(string_dict *self, size_t *num)
 {
-        CHECK_TAG(self->tag, SYNC)
         struct sync_extra *extra = this_extra(self);
         *num = vector_length(&extra->contents);
         return true;
@@ -489,7 +467,6 @@ static bool _encode_sync_num_distinct(string_dict *self, size_t *num)
 static bool _encode_sync_get_contents(string_dict *self, vector ofType (char *) *strings,
                               vector ofType(archive_field_sid_t) *string_ids)
 {
-        CHECK_TAG(self->tag, SYNC);
         struct sync_extra *extra = this_extra(self);
 
         for (archive_field_sid_t i = 0; i < extra->contents.num_elems; i++) {

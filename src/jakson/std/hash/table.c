@@ -17,17 +17,14 @@
 
 #include <jakson/std/hash.h>
 #include <jakson/std/hash/table.h>
+#include <err.h>
 
 #define _HASH_TABLE_HASHCODE_OF(size, x) HASH_BERNSTEIN(size, x)
 #define FIX_MAP_AUTO_REHASH_LOADFACTOR 0.9f
 
-bool hashtable_create(hashtable *map, err *err, size_t key_size, size_t value_size,
+bool hashtable_create(hashtable *map, size_t key_size, size_t value_size,
                       size_t capacity)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(key_size)
-        DEBUG_ERROR_IF_NULL(value_size)
-
         int err_code = ERR_INITFAILED;
 
         map->size = 0;
@@ -39,7 +36,6 @@ bool hashtable_create(hashtable *map, err *err, size_t key_size, size_t value_si
         SUCCESS_OR_JUMP(vector_enlarge_size_to_capacity(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(vector_zero_memory(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(spinlock_init(&map->lock), cleanup_key_value_table_and_error);
-        SUCCESS_OR_JUMP(error_init(&map->err), cleanup_key_value_table_and_error);
 
         return true;
 
@@ -56,14 +52,12 @@ bool hashtable_create(hashtable *map, err *err, size_t key_size, size_t value_si
                 err_code = ERR_DROPFAILED;
         }
         error_handling:
-        ERROR(err, err_code);
+        error(err_code, NULL);
         return false;
 }
 
 bool hashtable_drop(hashtable *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
-
         bool status = true;
 
         status &= vector_drop(&map->table);
@@ -71,7 +65,7 @@ bool hashtable_drop(hashtable *map)
         status &= vector_drop(&map->key_data);
 
         if (!status) {
-                ERROR(&map->err, ERR_DROPFAILED);
+                error(ERR_DROPFAILED, NULL);
         }
 
         return status;
@@ -82,10 +76,7 @@ hashtable *hashtable_cpy(hashtable *src)
         if (src) {
                 hashtable *cpy = MALLOC(sizeof(hashtable));
 
-                hashtable_lock(src);
-
                 hashtable_create(cpy,
-                                 &src->err,
                                  src->key_data.elem_size,
                                  src->value_data.elem_size,
                                  src->table.cap_elems);
@@ -99,30 +90,25 @@ hashtable *hashtable_cpy(hashtable *src)
                 vector_cpy_to(&cpy->value_data, &src->value_data);
                 vector_cpy_to(&cpy->table, &src->table);
                 cpy->size = src->size;
-                error_cpy(&cpy->err, &src->err);
 
                 JAK_ASSERT(cpy->key_data.cap_elems == src->value_data.cap_elems
                            && src->value_data.cap_elems == cpy->table.cap_elems);
                 JAK_ASSERT((cpy->key_data.num_elems == src->value_data.num_elems)
                            && src->value_data.num_elems <= cpy->table.num_elems);
 
-                hashtable_unlock(src);
                 return cpy;
         } else {
-                ERROR(&src->err, ERR_NULLPTR);
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
 
 bool hashtable_clear(hashtable *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
         JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
                    && map->value_data.num_elems <= map->table.num_elems);
-
-        hashtable_lock(map);
 
         bool status = vector_clear(&map->key_data) && vector_clear(&map->value_data) && vector_zero_memory(&map->table);
 
@@ -134,19 +120,14 @@ bool hashtable_clear(hashtable *map)
                    && map->value_data.num_elems <= map->table.num_elems);
 
         if (!status) {
-                ERROR(&map->err, ERR_OPPFAILED);
+                error(ERR_OPPFAILED, NULL);
         }
-
-        hashtable_unlock(map);
 
         return status;
 }
 
 bool hashtable_avg_displace(float *displace, const hashtable *map)
 {
-        DEBUG_ERROR_IF_NULL(displace);
-        DEBUG_ERROR_IF_NULL(map);
-
         size_t sum_dis = 0;
         for (size_t i = 0; i < map->table.num_elems; i++) {
                 hashtable_bucket *bucket = VECTOR_GET(&map->table, i, hashtable_bucket);
@@ -154,20 +135,6 @@ bool hashtable_avg_displace(float *displace, const hashtable *map)
         }
         *displace = (sum_dis / (float) map->table.num_elems);
 
-        return true;
-}
-
-bool hashtable_lock(hashtable *map)
-{
-        DEBUG_ERROR_IF_NULL(map)
-        //spinlock_acquire(&map->lock);
-        return true;
-}
-
-bool hashtable_unlock(hashtable *map)
-{
-        DEBUG_ERROR_IF_NULL(map)
-        //spinlock_release(&map->lock);
         return true;
 }
 
@@ -274,20 +241,14 @@ static inline uint_fast32_t _hash_table_insert_or_update(hashtable *map, const u
 bool hashtable_insert_or_update(hashtable *map, const void *keys, const void *values,
                                 uint_fast32_t num_pairs)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(keys)
-        DEBUG_ERROR_IF_NULL(values)
-
         JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
         JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
                    && map->value_data.num_elems <= map->table.num_elems);
 
-        hashtable_lock(map);
-
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                ERROR(&map->err, ERR_MALLOCERR);
+                error(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -307,14 +268,12 @@ bool hashtable_insert_or_update(hashtable *map, const void *keys, const void *va
                 if (cont_idx != 0) {
                         /** rehashing is required, and [status, num_pairs) are left to be inserted */
                         if (!hashtable_rehash(map)) {
-                                hashtable_unlock(map);
                                 return false;
                         }
                 }
         } while (cont_idx != 0);
 
         free(bucket_idxs);
-        hashtable_unlock(map);
 
         return true;
 }
@@ -353,7 +312,7 @@ bool hashtable_serialize(FILE *file, hashtable *table)
         hashtable_header header = {.marker = MARKER_SYMBOL_HASHTABLE_HEADER, .size = table
                 ->size, .key_data_off = key_data_off, .value_data_off = value_data_off, .table_off = table_off};
         int nwrite = fwrite(&header, sizeof(hashtable_header), 1, file);
-        ERROR_IF(nwrite != 1, &table->err, ERR_FWRITE_FAILED);
+        error_if_and_return(nwrite != 1, ERR_FWRITE_FAILED, NULL);
         fseek(file, end, SEEK_SET);
         return true;
 
@@ -362,12 +321,8 @@ bool hashtable_serialize(FILE *file, hashtable *table)
         return false;
 }
 
-bool hashtable_deserialize(hashtable *table, err *err, FILE *file)
+bool hashtable_deserialize(hashtable *table, FILE *file)
 {
-        DEBUG_ERROR_IF_NULL(table)
-        DEBUG_ERROR_IF_NULL(err)
-        DEBUG_ERROR_IF_NULL(file)
-
         int err_code = ERR_NOERR;
 
         hashtable_header header;
@@ -383,44 +338,37 @@ bool hashtable_deserialize(hashtable *table, err *err, FILE *file)
         }
 
         fseek(file, header.key_data_off, SEEK_SET);
-        if (!vector_deserialize(&table->key_data, err, file)) {
-                err_code = err->code;
+        if (!vector_deserialize(&table->key_data, file)) {
+                err_code = g_err.code;
                 goto error_handling;
         }
 
         fseek(file, header.value_data_off, SEEK_SET);
-        if (!vector_deserialize(&table->value_data, err, file)) {
-                err_code = err->code;
+        if (!vector_deserialize(&table->value_data, file)) {
+                err_code = g_err.code;
                 goto error_handling;
         }
 
         fseek(file, header.table_off, SEEK_SET);
-        if (!vector_deserialize(&table->table, err, file)) {
-                err_code = err->code;
+        if (!vector_deserialize(&table->table, file)) {
+                err_code = g_err.code;
                 goto error_handling;
         }
 
         spinlock_init(&table->lock);
-        error_init(&table->err);
         return true;
 
         error_handling:
         fseek(file, start, SEEK_SET);
-        ERROR(err, err_code);
+        error(err_code, NULL);
         return false;
 }
 
 bool hashtable_remove_if_contained(hashtable *map, const void *keys, size_t num_pairs)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(keys)
-
-        hashtable_lock(map);
-
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                ERROR(&map->err, ERR_MALLOCERR);
-                hashtable_unlock(map);
+                error(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -457,20 +405,12 @@ bool hashtable_remove_if_contained(hashtable *map, const void *keys, size_t num_
         }
 
         free(bucket_idxs);
-
-        hashtable_unlock(map);
-
         return true;
 }
 
 const void *hashtable_get_value(hashtable *map, const void *key)
 {
-        DEBUG_ERROR_IF_NULL(map)
-        DEBUG_ERROR_IF_NULL(key)
-
         const void *result = NULL;
-
-        hashtable_lock(map);
 
         u32 bucket_idx = _HASH_TABLE_HASHCODE_OF(map->key_data.elem_size, key) % map->table.num_elems;
         u32 actual_idx = bucket_idx;
@@ -494,31 +434,18 @@ const void *hashtable_get_value(hashtable *map, const void *key)
                 result = get_bucket_value(bucket, map);
         }
 
-        hashtable_unlock(map);
-
         return result;
 }
 
 bool hashtable_get_load_factor(float *factor, hashtable *map)
 {
-        DEBUG_ERROR_IF_NULL(factor)
-        DEBUG_ERROR_IF_NULL(map)
-
-        hashtable_lock(map);
-
         *factor = map->size / (float) map->table.num_elems;
-
-        hashtable_unlock(map);
 
         return true;
 }
 
 bool hashtable_rehash(hashtable *map)
 {
-        DEBUG_ERROR_IF_NULL(map)
-
-        hashtable_lock(map);
-
         hashtable *cpy = hashtable_cpy(map);
         hashtable_clear(map);
 
@@ -541,13 +468,11 @@ bool hashtable_rehash(hashtable *map)
                         const void *old_key = _hash_table_get_bucket_key(bucket, cpy);
                         const void *old_value = get_bucket_value(bucket, cpy);
                         if (!hashtable_insert_or_update(map, old_key, old_value, 1)) {
-                                ERROR(&map->err, ERR_REHASH_NOROLLBACK)
-                                hashtable_unlock(map);
+                                error(ERR_REHASH_NOROLLBACK, NULL)
                                 return false;
                         }
                 }
         }
 
-        hashtable_unlock(map);
         return true;
 }

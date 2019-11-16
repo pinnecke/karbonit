@@ -64,7 +64,6 @@ typedef struct field_access {
 typedef struct carbon_array {
         memfile memfile;
         offset_t array_begin_off;
-        err err;
 
         carbon_list_derivable_e abstract_type;
         u64 pos;
@@ -136,7 +135,7 @@ fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e der
  * that starts with the first (potentially empty) array entry. If there is some data before the array contents
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
-fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, err *err, offset_t payload_start);
+fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start);
 bool internal_carbon_array_copy(carbon_array *dst, carbon_array *src);
 bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src);
 bool internal_carbon_array_set_mode(carbon_array *it, access_mode_e mode);

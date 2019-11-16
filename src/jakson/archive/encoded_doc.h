@@ -89,7 +89,6 @@ typedef struct encoded_doc {
         vector ofType(encoded_doc_prop_array) props_arrays;
         hashtable ofMapping(archive_field_sid_t,
                                    u32) prop_array_index; /** maps key to index in prop arrays */
-        err err;
 } encoded_doc;
 
 typedef struct encoded_doc_list {
@@ -97,10 +96,9 @@ typedef struct encoded_doc_list {
         vector ofType(
                 encoded_doc) flat_object_collection;   /** list of objects; also nested ones */
         hashtable ofMapping(object_id_t, u32) index;   /** maps oid to index in collection */
-        err err;
 } encoded_doc_list;
 
-bool encoded_doc_collection_create(encoded_doc_list *collection, err *err, archive *archive);
+bool encoded_doc_collection_create(encoded_doc_list *collection, archive *archive);
 bool encoded_doc_collection_drop(encoded_doc_list *collection);
 encoded_doc *encoded_doc_collection_get_or_append(encoded_doc_list *collection, unique_id_t id);
 bool encoded_doc_collection_print(FILE *file, encoded_doc_list *collection);

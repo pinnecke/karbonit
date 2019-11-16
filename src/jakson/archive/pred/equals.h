@@ -48,7 +48,6 @@ BUILT_IN(static bool)
 
 string_pred_equals_init(string_pred *pred)
 {
-        DEBUG_ERROR_IF_NULL(pred);
         pred->limit = QUERY_LIMIT_1;
         pred->func = __string_pred_equals_func;
         return true;

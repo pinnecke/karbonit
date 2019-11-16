@@ -67,7 +67,6 @@ DEFINE_PRINTER_FUNCTION(size_t, "%zu")
 
 bool vector_create(vector *out, const allocator *alloc, size_t elem_size, size_t cap_elems)
 {
-        DEBUG_ERROR_IF_NULL(out)
         out->allocator = MALLOC(sizeof(allocator));
         alloc_this_or_std(out->allocator, alloc);
         out->base = alloc_malloc(out->allocator, cap_elems * elem_size);
@@ -75,7 +74,6 @@ bool vector_create(vector *out, const allocator *alloc, size_t elem_size, size_t
         out->cap_elems = cap_elems;
         out->elem_size = elem_size;
         out->grow_factor = 1.7f;
-        error_init(&out->err);
         return true;
 }
 
@@ -89,26 +87,19 @@ typedef struct vector_serialize_header {
 
 bool vector_serialize(FILE *file, vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(vec)
-
         vector_serialize_header header =
                 {.marker = MARKER_SYMBOL_VECTOR_HEADER, .elem_size = vec->elem_size, .num_elems = vec
                         ->num_elems, .cap_elems = vec->cap_elems, .grow_factor = vec->grow_factor};
         int nwrite = fwrite(&header, sizeof(vector_serialize_header), 1, file);
-        ERROR_IF(nwrite != 1, &vec->err, ERR_FWRITE_FAILED);
+        error_if_and_return(nwrite != 1, ERR_FWRITE_FAILED, NULL);
         nwrite = fwrite(vec->base, vec->elem_size, vec->num_elems, file);
-        ERROR_IF(nwrite != (int) vec->num_elems, &vec->err, ERR_FWRITE_FAILED);
+        error_if_and_return(nwrite != (int) vec->num_elems, ERR_FWRITE_FAILED, NULL);
 
         return true;
 }
 
-bool vector_deserialize(vector *vec, err *err, FILE *file)
+bool vector_deserialize(vector *vec, FILE *file)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(err)
-        DEBUG_ERROR_IF_NULL(vec)
-
         offset_t start = ftell(file);
         int err_code = ERR_NOERR;
 
@@ -130,7 +121,6 @@ bool vector_deserialize(vector *vec, err *err, FILE *file)
         vec->cap_elems = header.cap_elems;
         vec->elem_size = header.elem_size;
         vec->grow_factor = header.grow_factor;
-        error_init(&vec->err);
 
         if (fread(vec->base, header.elem_size, vec->num_elems, file) != vec->num_elems) {
                 err_code = ERR_FREAD_FAILED;
@@ -141,13 +131,12 @@ bool vector_deserialize(vector *vec, err *err, FILE *file)
 
         error_handling:
         fseek(file, start, SEEK_SET);
-        ERROR(err, err_code);
+        error(err_code, NULL);
         return false;
 }
 
 bool vector_memadvice(vector *vec, int madviseAdvice)
 {
-        DEBUG_ERROR_IF_NULL(vec);
         UNUSED(vec);
         UNUSED(madviseAdvice);
         madvise(vec->base, vec->cap_elems * vec->elem_size, madviseAdvice);
@@ -156,15 +145,17 @@ bool vector_memadvice(vector *vec, int madviseAdvice)
 
 bool vector_set_grow_factor(vector *vec, float factor)
 {
-        DEBUG_ERROR_IF_NULL(vec);
-        ERROR_PRINT_IF(factor <= 1.01f, ERR_ILLEGALARG)
+        if (UNLIKELY(factor <= 1.01f)) {
+                error(ERR_ILLEGALARG, NULL)
+                return false;
+        }
+
         vec->grow_factor = factor;
         return true;
 }
 
 bool vector_drop(vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         alloc_free(vec->allocator, vec->base);
         free(vec->allocator);
         vec->base = NULL;
@@ -173,13 +164,11 @@ bool vector_drop(vector *vec)
 
 bool vector_is_empty(const vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         return vec->num_elems == 0 ? true : false;
 }
 
 bool vector_push(vector *vec, const void *data, size_t num_elems)
 {
-        DEBUG_ERROR_IF_NULL(vec && data)
         size_t next_num = vec->num_elems + num_elems;
         while (next_num > vec->cap_elems) {
                 size_t more = next_num - vec->cap_elems;
@@ -202,7 +191,6 @@ const void *vector_peek(vector *vec)
 
 bool vector_repeated_push(vector *vec, const void *data, size_t how_often)
 {
-        DEBUG_ERROR_IF_NULL(vec && data)
         size_t next_num = vec->num_elems + how_often;
         while (next_num > vec->cap_elems) {
                 size_t more = next_num - vec->cap_elems;
@@ -229,14 +217,12 @@ const void *vector_pop(vector *vec)
 
 bool vector_clear(vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         vec->num_elems = 0;
         return true;
 }
 
 bool vector_shrink(vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec);
         if (vec->num_elems < vec->cap_elems) {
                 vec->cap_elems = JAK_MAX(1, vec->num_elems);
                 vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
@@ -246,7 +232,6 @@ bool vector_shrink(vector *vec)
 
 bool vector_grow(size_t *numNewSlots, vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         size_t freeSlotsBefore = vec->cap_elems - vec->num_elems;
 
         vec->cap_elems = (vec->cap_elems * vec->grow_factor) + 1;
@@ -260,7 +245,6 @@ bool vector_grow(size_t *numNewSlots, vector *vec)
 
 bool vector_grow_to(vector *vec, size_t capacity)
 {
-        DEBUG_ERROR_IF_NULL(vec);
         vec->cap_elems = JAK_MAX(vec->cap_elems, capacity);
         vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
         return true;
@@ -268,7 +252,6 @@ bool vector_grow_to(vector *vec, size_t capacity)
 
 size_t vector_length(const vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         return vec->num_elems;
 }
 
@@ -279,27 +262,23 @@ const void *vector_at(const vector *vec, size_t pos)
 
 size_t vector_capacity(const vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         return vec->cap_elems;
 }
 
 bool vector_enlarge_size_to_capacity(vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec);
         vec->num_elems = vec->cap_elems;
         return true;
 }
 
 bool vector_zero_memory(vector *vec)
 {
-        DEBUG_ERROR_IF_NULL(vec);
         ZERO_MEMORY(vec->base, vec->elem_size * vec->num_elems);
         return true;
 }
 
 bool vector_zero_memory_in_range(vector *vec, size_t from, size_t to)
 {
-        DEBUG_ERROR_IF_NULL(vec);
         JAK_ASSERT(from < to);
         JAK_ASSERT(to <= vec->cap_elems);
         ZERO_MEMORY(vec->base + from * vec->elem_size, vec->elem_size * (to - from));
@@ -308,7 +287,6 @@ bool vector_zero_memory_in_range(vector *vec, size_t from, size_t to)
 
 bool vector_set(vector *vec, size_t pos, const void *data)
 {
-        DEBUG_ERROR_IF_NULL(vec)
         JAK_ASSERT(pos < vec->num_elems);
         memcpy(vec->base + pos * vec->elem_size, data, vec->elem_size);
         return true;
@@ -326,8 +304,6 @@ bool vector_cpy(vector *dst, const vector *src)
 
 bool vector_cpy_to(vector *dst, vector *src)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(src)
         void *handle = realloc(dst->base, src->cap_elems * src->elem_size);
         if (handle) {
                 dst->elem_size = src->elem_size;
@@ -336,10 +312,9 @@ bool vector_cpy_to(vector *dst, vector *src)
                 dst->grow_factor = src->grow_factor;
                 dst->base = handle;
                 memcpy(dst->base, src->base, src->cap_elems * src->elem_size);
-                error_cpy(&dst->err, &src->err);
                 return true;
         } else {
-                ERROR(&src->err, ERR_HARDCOPYFAILED)
+                error(ERR_HARDCOPYFAILED, NULL)
                 return false;
         }
 }

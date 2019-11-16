@@ -136,7 +136,6 @@ typedef struct string_dict {
  */
 static BUILT_IN(bool) string_dict_drop(string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(dic);
         JAK_ASSERT(dic->drop);
         return dic->drop(dic);
 }
@@ -144,50 +143,36 @@ static BUILT_IN(bool) string_dict_drop(string_dict *dic)
 static BUILT_IN(bool)
 string_dict_insert(string_dict *dic, archive_field_sid_t **out, char *const *strings, size_t nstrings, size_t nthreads)
 {
-        DEBUG_ERROR_IF_NULL(dic);
-        DEBUG_ERROR_IF_NULL(strings);
         JAK_ASSERT(dic->insert);
         return dic->insert(dic, out, strings, nstrings, nthreads);
 }
 
 static BUILT_IN(bool)  string_dict_reset_counters(string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(dic);
         JAK_ASSERT(dic->resetCounters);
         return dic->resetCounters(dic);
 }
 
 static BUILT_IN(bool)  string_dict_get_counters(str_hash_counters *counters, string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(dic);
         JAK_ASSERT(dic->counters);
         return dic->counters(dic, counters);
 }
 
 static BUILT_IN(bool)  string_dict_remove(string_dict *dic, archive_field_sid_t *strings, size_t num_strings)
 {
-        DEBUG_ERROR_IF_NULL(dic);
-        DEBUG_ERROR_IF_NULL(strings);
         JAK_ASSERT(dic->remove);
         return dic->remove(dic, strings, num_strings);
 }
 
 static BUILT_IN(bool) string_dict_locate_safe(archive_field_sid_t **out, bool **found_mask, size_t *num_not_found, string_dict *dic, char *const *keys, size_t num_keys)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(found_mask);
-        DEBUG_ERROR_IF_NULL(num_not_found);
-        DEBUG_ERROR_IF_NULL(dic);
-        DEBUG_ERROR_IF_NULL(keys);
         JAK_ASSERT(dic->locate_safe);
         return dic->locate_safe(dic, out, found_mask, num_not_found, keys, num_keys);
 }
 
 static BUILT_IN(bool) string_dict_locate_fast(archive_field_sid_t **out, string_dict *dic, char *const *keys, size_t nkeys)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(dic);
-        DEBUG_ERROR_IF_NULL(keys);
         JAK_ASSERT(dic->locate_fast);
         return dic->locate_fast(dic, out, keys, nkeys);
 }
@@ -199,7 +184,6 @@ static BUILT_IN(char **)string_dict_extract(string_dict *dic, const archive_fiel
 
 static BUILT_IN(bool) string_dict_free(string_dict *dic, void *ptr)
 {
-        DEBUG_ERROR_IF_NULL(dic);
         if (ptr) {
                 JAK_ASSERT(dic->free);
                 return dic->free(dic, ptr);
@@ -210,17 +194,12 @@ static BUILT_IN(bool) string_dict_free(string_dict *dic, void *ptr)
 
 static BUILT_IN(bool) string_dict_num_distinct(size_t *num, string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(num);
-        DEBUG_ERROR_IF_NULL(dic);
         JAK_ASSERT(dic->num_distinct);
         return dic->num_distinct(dic, num);
 }
 
 static BUILT_IN(bool) string_dict_get_contents(vector ofType (char *) *strings, vector ofType(archive_field_sid_t) *string_ids, string_dict *dic)
 {
-        DEBUG_ERROR_IF_NULL(strings)
-        DEBUG_ERROR_IF_NULL(string_ids)
-        DEBUG_ERROR_IF_NULL(dic);
         JAK_ASSERT(dic->get_contents);
         return dic->get_contents(dic, strings, string_ids);
 }

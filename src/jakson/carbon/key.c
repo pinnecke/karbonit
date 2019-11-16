@@ -58,10 +58,8 @@ static void write_skey(memfile *file)
         carbon_string_write(file, key);
 }
 
-bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
+bool carbon_key_create(memfile *file, carbon_key_e type)
 {
-        DEBUG_ERROR_IF_NULL(file)
-
         switch (type) {
                 case CARBON_KEY_NOKEY:
                         write_nokey(file);
@@ -79,7 +77,6 @@ bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
                         write_skey(file);
                         break;
                 default:
-                        OPTIONAL(err != NULL, ERROR(err, ERR_INTERNALERR))
                         return false;
         }
         return true;
@@ -87,15 +84,12 @@ bool carbon_key_create(memfile *file, carbon_key_e type, err *err)
 
 bool carbon_key_skip(carbon_key_e *out, memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file)
         carbon_key_read(NULL, out, file);
         return true;
 }
 
 bool carbon_key_write_unsigned(memfile *file, u64 key)
 {
-        DEBUG_ERROR_IF_NULL(file)
-
         DECLARE_AND_INIT(carbon_key_e, key_type)
 
         carbon_key_read_type(&key_type, file);
@@ -103,15 +97,13 @@ bool carbon_key_write_unsigned(memfile *file, u64 key)
                 memfile_write(file, &key, sizeof(u64));
                 return true;
         } else {
-                ERROR(&file->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
 
 bool carbon_key_write_signed(memfile *file, i64 key)
 {
-        DEBUG_ERROR_IF_NULL(file)
-
         DECLARE_AND_INIT(carbon_key_e, key_type)
 
         carbon_key_read_type(&key_type, file);
@@ -119,7 +111,7 @@ bool carbon_key_write_signed(memfile *file, i64 key)
                 memfile_write(file, &key, sizeof(i64));
                 return true;
         } else {
-                ERROR(&file->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
@@ -131,22 +123,19 @@ bool carbon_key_update_string(memfile *file, const char *key)
 
 bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t length)
 {
-        DEBUG_ERROR_IF_NULL(file)
         DECLARE_AND_INIT(carbon_key_e, key_type)
         carbon_key_read_type(&key_type, file);
         if (carbon_key_is_string(key_type)) {
                 carbon_string_update_wnchar(file, key, length);
                 return true;
         } else {
-                ERROR(&file->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
 
 bool carbon_key_write_string(memfile *file, const char *key)
 {
-        DEBUG_ERROR_IF_NULL(file)
-
         DECLARE_AND_INIT(carbon_key_e, key_type)
 
         carbon_key_read_type(&key_type, file);
@@ -154,7 +143,7 @@ bool carbon_key_write_string(memfile *file, const char *key)
                 carbon_string_write(file, key);
                 return true;
         } else {
-                ERROR(&file->err, ERR_TYPEMISMATCH)
+                error(ERR_TYPEMISMATCH, NULL)
                 return false;
         }
 }
@@ -183,7 +172,7 @@ bool carbon_key_read_type(carbon_key_e *out, memfile *file)
                 case CARBON_MSKEY:
                         OPTIONAL_SET(out, CARBON_KEY_SKEY)
                         break;
-                default: ERROR(&file->err, ERR_INTERNALERR)
+                default: error(ERR_INTERNALERR, NULL)
                         return false;
         }
         return true;
@@ -211,7 +200,7 @@ const void *carbon_key_read(u64 *len, carbon_key_e *out, memfile *file)
                         return MEMFILE_READ_TYPE(file, i64);
                 case CARBON_KEY_SKEY:
                         return carbon_string_read(len, file);
-                default: ERROR(&file->err, ERR_INTERNALERR)
+                default: error(ERR_INTERNALERR, NULL)
                         return NULL;
         }
 }
@@ -229,7 +218,7 @@ const char *carbon_key_type_str(carbon_key_e type)
                         return "ikey";
                 case CARBON_KEY_SKEY:
                         return "skey";
-                default: ERROR_PRINT(ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
                         return NULL;
         }
 }

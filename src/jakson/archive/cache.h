@@ -38,7 +38,6 @@ typedef struct sid_cache_stats {
 
 bool string_id_cache_create_lru(struct string_cache **cache, archive *archive);
 bool string_id_cache_create_lru_ex(struct string_cache **cache, archive *archive, size_t capacity);
-bool string_id_cache_get_error(err *err, const struct string_cache *cache);
 bool string_id_cache_get_size(size_t *size, const struct string_cache *cache);
 char *string_id_cache_get(struct string_cache *cache, archive_field_sid_t id);
 bool string_id_cache_get_statistics(sid_cache_stats *statistics, struct string_cache *cache);

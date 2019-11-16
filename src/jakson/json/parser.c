@@ -46,19 +46,16 @@ struct token_memory {
         bool init;
 };
 
-static int process_token(err *err, json_err *error_desc, const json_token *token,
+static int process_token(json_err *error_desc, const json_token *token,
                          vector ofType(json_token_e) *brackets, struct token_memory *token_mem);
 
 static int set_error(json_err *error_desc, const json_token *token, const char *msg);
 
 bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input)
 {
-        DEBUG_ERROR_IF_NULL(tokenizer)
-        DEBUG_ERROR_IF_NULL(input)
         tokenizer->cursor = input;
         tokenizer->token =
                 (json_token) {.type = JSON_UNKNOWN, .length = 0, .column = 0, .line = 1, .string = NULL};
-        error_init(&tokenizer->err);
         return true;
 }
 
@@ -210,11 +207,9 @@ void json_token_print(FILE *file, const json_token *token)
         free(string);
 }
 
-static bool parse_object(json_object *object, err *err,
-                         vector ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_object(json_object *object, vector ofType(json_token) *token_stream, size_t *token_idx);
 
-static bool parse_array(json_array *array, err *err,
-                        vector ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_array(json_array *array, vector ofType(json_token) *token_stream, size_t *token_idx);
 
 static void parse_string(json_string *string, vector ofType(json_token) *token_stream,
                          size_t *token_idx);
@@ -222,14 +217,11 @@ static void parse_string(json_string *string, vector ofType(json_token) *token_s
 static void parse_number(json_number *number, vector ofType(json_token) *token_stream,
                          size_t *token_idx);
 
-static bool parse_element(json_element *element, err *err,
-                          vector ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_element(json_element *element, vector ofType(json_token) *token_stream, size_t *token_idx);
 
-static bool parse_elements(json_elements *elements, err *err,
-                           vector ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_elements(json_elements *elements, vector ofType(json_token) *token_stream, size_t *token_idx);
 
-static bool parse_token_stream(json *json, err *err,
-                               vector ofType(json_token) *token_stream);
+static bool parse_token_stream(json *json, vector ofType(json_token) *token_stream);
 
 static json_token get_token(vector ofType(json_token) *token_stream, size_t token_idx);
 
@@ -245,38 +237,26 @@ static void connect_child_and_parents_element(json_element *element);
 
 static void connect_child_and_parents(json *json);
 
-static bool json_ast_node_member_print(FILE *file, err *err, json_prop *member);
+static bool json_ast_node_member_print(FILE *file, json_prop *member);
 
-static bool json_ast_node_object_print(FILE *file, err *err, json_object *object);
+static bool json_ast_node_object_print(FILE *file, json_object *object);
 
-static bool json_ast_node_array_print(FILE *file, err *err, json_array *array);
+static bool json_ast_node_array_print(FILE *file, json_array *array);
 
 static void json_ast_node_string_print(FILE *file, json_string *string);
 
-static bool json_ast_node_number_print(FILE *file, err *err, json_number *number);
+static bool json_ast_node_number_print(FILE *file, json_number *number);
 
-static bool json_ast_node_value_print(FILE *file, err *err, json_node_value *value);
+static bool json_ast_node_value_print(FILE *file, json_node_value *value);
 
-static bool json_ast_node_element_print(FILE *file, err *err, json_element *element);
+static bool json_ast_node_element_print(FILE *file, json_element *element);
 
 #define NEXT_TOKEN(x) { *x = *x + 1; }
 #define PREV_TOKEN(x) { *x = *x - 1; }
 
-bool json_parser_create(json_parser *parser)
-{
-        DEBUG_ERROR_IF_NULL(parser)
-
-        error_init(&parser->err);
-
-        return true;
-}
-
 bool
 json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input)
 {
-        DEBUG_ERROR_IF_NULL(parser)
-        DEBUG_ERROR_IF_NULL(input)
-
         string_buffer str;
         string_buffer_create(&str);
         string_buffer_add(&str, input);
@@ -295,7 +275,6 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         struct json retval;
         ZERO_MEMORY(&retval, sizeof(json))
         retval.element = MALLOC(sizeof(json_element));
-        error_init(&retval.err);
         const json_token *token;
         int status;
 
@@ -307,7 +286,7 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
 
         while ((token = json_tokenizer_next(&parser->tokenizer))) {
                 if (LIKELY(
-                        (status = process_token(&parser->err, error_desc, token, &brackets, &token_mem)) == true)) {
+                        (status = process_token(error_desc, token, &brackets, &token_mem)) == true)) {
                         json_token *newToken = VECTOR_NEW_AND_GET(&token_stream, json_token);
                         json_token_dup(newToken, token);
                 } else {
@@ -325,7 +304,7 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
                 goto cleanup;
         }
 
-        if (!parse_token_stream(&retval, &parser->err, &token_stream)) {
+        if (!parse_token_stream(&retval, &token_stream)) {
                 status = false;
                 goto cleanup;
         }
@@ -339,14 +318,14 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         return status;
 }
 
-bool test_condition_value(err *err, json_node_value *value)
+bool test_condition_value(json_node_value *value)
 {
         switch (value->value_type) {
                 case JSON_VALUE_OBJECT:
                         for (size_t i = 0; i < value->value.object->value->members.num_elems; i++) {
                                 json_prop *member = VECTOR_GET(&value->value.object->value->members, i,
                                                                        json_prop);
-                                if (!test_condition_value(err, &member->value.value)) {
+                                if (!test_condition_value(&member->value.value)) {
                                         return false;
                                 }
                         }
@@ -377,7 +356,7 @@ bool test_condition_value(err *err, json_node_value *value)
                                         char message[] = "JSON file constraint broken: arrays of mixed types detected";
                                         char *result = MALLOC(strlen(message) + 1);
                                         strcpy(result, &message[0]);
-                                        ERROR_WDETAILS(err, ERR_ARRAYOFMIXEDTYPES, result);
+                                        error(ERR_ARRAYOFMIXEDTYPES, result);
                                         free(result);
                                         return false;
                                 }
@@ -389,7 +368,7 @@ bool test_condition_value(err *err, json_node_value *value)
                                                         json_prop
                                                                 *member = VECTOR_GET(&object->value->members, i,
                                                                                   json_prop);
-                                                        if (!test_condition_value(err, &member->value.value)) {
+                                                        if (!test_condition_value(&member->value.value)) {
                                                                 return false;
                                                         }
                                                 }
@@ -399,7 +378,7 @@ bool test_condition_value(err *err, json_node_value *value)
                                                 char message[] = "JSON file constraint broken: arrays of arrays detected";
                                                 char *result = MALLOC(strlen(message) + 1);
                                                 strcpy(result, &message[0]);
-                                                ERROR_WDETAILS(err, ERR_ARRAYOFARRAYS, result);
+                                                error(ERR_ARRAYOFARRAYS, result);
                                                 free(result);
                                                 return false;
                                         }
@@ -415,9 +394,9 @@ bool test_condition_value(err *err, json_node_value *value)
         return true;
 }
 
-bool json_test(err *err, json *json)
+bool json_test(json *json)
 {
-        return (test_condition_value(err, &json->element->value));
+        return (test_condition_value(&json->element->value));
 }
 
 static json_token get_token(vector ofType(json_token) *token_stream, size_t token_idx)
@@ -430,7 +409,7 @@ static bool has_next_token(size_t token_idx, vector ofType(json_token) *token_st
         return token_idx < token_stream->num_elems;
 }
 
-bool parse_members(err *err, json_members *members,
+bool parse_members(json_members *members,
                    vector ofType(json_token) *token_stream,
                    size_t *token_idx)
 {
@@ -467,14 +446,14 @@ bool parse_members(err *err, json_members *members,
                         case OBJECT_OPEN:
                                 member->value.value.value_type = JSON_VALUE_OBJECT;
                                 member->value.value.value.object = MALLOC(sizeof(json_object));
-                                if (!parse_object(member->value.value.value.object, err, token_stream, token_idx)) {
+                                if (!parse_object(member->value.value.value.object, token_stream, token_idx)) {
                                         return false;
                                 }
                                 break;
                         case ARRAY_OPEN:
                                 member->value.value.value_type = JSON_VALUE_ARRAY;
                                 member->value.value.value.array = MALLOC(sizeof(json_array));
-                                if (!parse_array(member->value.value.value.array, err, token_stream, token_idx)) {
+                                if (!parse_array(member->value.value.value.array, token_stream, token_idx)) {
                                         return false;
                                 }
                                 break;
@@ -501,7 +480,7 @@ bool parse_members(err *err, json_members *members,
                                 member->value.value.value_type = JSON_VALUE_NULL;
                                 NEXT_TOKEN(token_idx);
                                 break;
-                        default: ERROR(err, ERR_PARSETYPE)
+                        default: error(ERR_PARSETYPE, NULL)
                                 return false;
                 }
 
@@ -512,8 +491,7 @@ bool parse_members(err *err, json_members *members,
         return true;
 }
 
-static bool parse_object(json_object *object, err *err,
-                         vector ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_object(json_object *object, vector ofType(json_token) *token_stream, size_t *token_idx)
 {
         JAK_ASSERT(get_token(token_stream, *token_idx).type == OBJECT_OPEN);
         NEXT_TOKEN(token_idx);  /** Skip '{' */
@@ -523,7 +501,7 @@ static bool parse_object(json_object *object, err *err,
         json_token token = get_token(token_stream, *token_idx);
 
         if (token.type != OBJECT_CLOSE) {
-                if (!parse_members(err, object->value, token_stream, token_idx)) {
+                if (!parse_members(object->value, token_stream, token_idx)) {
                         return false;
                 }
         } else {
@@ -534,8 +512,7 @@ static bool parse_object(json_object *object, err *err,
         return true;
 }
 
-static bool parse_array(json_array *array, err *err,
-                        vector ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_array(json_array *array, vector ofType(json_token) *token_stream, size_t *token_idx)
 {
         json_token token = get_token(token_stream, *token_idx);
         UNUSED(token);
@@ -543,7 +520,7 @@ static bool parse_array(json_array *array, err *err,
         NEXT_TOKEN(token_idx); /** Skip '[' */
 
         vector_create(&array->elements.elements, NULL, sizeof(json_element), 250);
-        if (!parse_elements(&array->elements, err, token_stream, token_idx)) {
+        if (!parse_elements(&array->elements, token_stream, token_idx)) {
                 return false;
         }
 
@@ -600,8 +577,7 @@ static void parse_number(json_number *number, vector ofType(json_token) *token_s
         NEXT_TOKEN(token_idx);
 }
 
-static bool parse_element(json_element *element, err *err,
-                          vector ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_element(json_element *element, vector ofType(json_token) *token_stream, size_t *token_idx)
 {
         if (!has_next_token(*token_idx, token_stream)) {
                 return false;
@@ -611,13 +587,13 @@ static bool parse_element(json_element *element, err *err,
         if (token.type == OBJECT_OPEN) { /** Parse object */
                 element->value.value_type = JSON_VALUE_OBJECT;
                 element->value.value.object = MALLOC(sizeof(json_object));
-                if (!parse_object(element->value.value.object, err, token_stream, token_idx)) {
+                if (!parse_object(element->value.value.object, token_stream, token_idx)) {
                         return false;
                 }
         } else if (token.type == ARRAY_OPEN) { /** Parse array */
                 element->value.value_type = JSON_VALUE_ARRAY;
                 element->value.value.array = MALLOC(sizeof(json_array));
-                if (!parse_array(element->value.value.array, err, token_stream, token_idx)) {
+                if (!parse_array(element->value.value.array, token_stream, token_idx)) {
                         return false;
                 }
         } else if (token.type == LITERAL_STRING) { /** Parse string */
@@ -643,15 +619,13 @@ static bool parse_element(json_element *element, err *err,
         return true;
 }
 
-static bool parse_elements(json_elements *elements, err *err,
-                           vector ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_elements(json_elements *elements, vector ofType(json_token) *token_stream, size_t *token_idx)
 {
         json_token delimiter;
         do {
                 json_token current = get_token(token_stream, *token_idx);
                 if (current.type != ARRAY_CLOSE && current.type != OBJECT_CLOSE) {
                         if (!parse_element(VECTOR_NEW_AND_GET(&elements->elements, json_element),
-                                           err,
                                            token_stream,
                                            token_idx)) {
                                 return false;
@@ -664,11 +638,10 @@ static bool parse_elements(json_elements *elements, err *err,
         return true;
 }
 
-static bool parse_token_stream(json *json, err *err,
-                               vector ofType(json_token) *token_stream)
+static bool parse_token_stream(json *json, vector ofType(json_token) *token_stream)
 {
         size_t token_idx = 0;
-        if (!parse_element(json->element, err, token_stream, &token_idx)) {
+        if (!parse_element(json->element, token_stream, &token_idx)) {
                 return false;
         }
         connect_child_and_parents(json);
@@ -740,7 +713,7 @@ static bool isValue(json_token_e token)
                 || token == LITERAL_FALSE || token == LITERAL_NULL);
 }
 
-static int process_token(err *err, json_err *error_desc, const json_token *token,
+static int process_token(json_err *error_desc, const json_token *token,
                          vector ofType(json_token_e) *brackets, struct token_memory *token_mem)
 {
         switch (token->type) {
@@ -868,7 +841,7 @@ static int process_token(err *err, json_err *error_desc, const json_token *token
                                 return set_error(error_desc, token, "Unexpected token");
                         }
                         break;
-                default: ERROR(err, ERR_NOJSONTOKEN)
+                default: error(ERR_NOJSONTOKEN, NULL)
                         return false;
         }
 
@@ -886,18 +859,18 @@ static int set_error(json_err *error_desc, const json_token *token, const char *
         return false;
 }
 
-static bool json_ast_node_member_print(FILE *file, err *err, json_prop *member)
+static bool json_ast_node_member_print(FILE *file, json_prop *member)
 {
         fprintf(file, "\"%s\": ", member->key.value);
-        return json_ast_node_value_print(file, err, &member->value.value);
+        return json_ast_node_value_print(file, &member->value.value);
 }
 
-static bool json_ast_node_object_print(FILE *file, err *err, json_object *object)
+static bool json_ast_node_object_print(FILE *file, json_object *object)
 {
         fprintf(file, "{");
         for (size_t i = 0; i < object->value->members.num_elems; i++) {
                 json_prop *member = VECTOR_GET(&object->value->members, i, json_prop);
-                if (!json_ast_node_member_print(file, err, member)) {
+                if (!json_ast_node_member_print(file, member)) {
                         return false;
                 }
                 fprintf(file, "%s", i + 1 < object->value->members.num_elems ? ", " : "");
@@ -906,12 +879,12 @@ static bool json_ast_node_object_print(FILE *file, err *err, json_object *object
         return true;
 }
 
-static bool json_ast_node_array_print(FILE *file, err *err, json_array *array)
+static bool json_ast_node_array_print(FILE *file, json_array *array)
 {
         fprintf(file, "[");
         for (size_t i = 0; i < array->elements.elements.num_elems; i++) {
                 json_element *element = VECTOR_GET(&array->elements.elements, i, json_element);
-                if (!json_ast_node_element_print(file, err, element)) {
+                if (!json_ast_node_element_print(file, element)) {
                         return false;
                 }
                 fprintf(file, "%s", i + 1 < array->elements.elements.num_elems ? ", " : "");
@@ -925,7 +898,7 @@ static void json_ast_node_string_print(FILE *file, json_string *string)
         fprintf(file, "\"%s\"", string->value);
 }
 
-static bool json_ast_node_number_print(FILE *file, err *err, json_number *number)
+static bool json_ast_node_number_print(FILE *file, json_number *number)
 {
         switch (number->value_type) {
                 case JSON_NUMBER_FLOAT:
@@ -937,22 +910,22 @@ static bool json_ast_node_number_print(FILE *file, err *err, json_number *number
                 case JSON_NUMBER_SIGNED:
                         fprintf(file, "%" PRIi64, number->value.signed_integer);
                         break;
-                default: ERROR(err, ERR_NOJSONNUMBERT);
+                default: error(ERR_NOJSONNUMBERT, NULL);
                         return false;
         }
         return true;
 }
 
-static bool json_ast_node_value_print(FILE *file, err *err, json_node_value *value)
+static bool json_ast_node_value_print(FILE *file, json_node_value *value)
 {
         switch (value->value_type) {
                 case JSON_VALUE_OBJECT:
-                        if (!json_ast_node_object_print(file, err, value->value.object)) {
+                        if (!json_ast_node_object_print(file, value->value.object)) {
                                 return false;
                         }
                         break;
                 case JSON_VALUE_ARRAY:
-                        if (!json_ast_node_array_print(file, err, value->value.array)) {
+                        if (!json_ast_node_array_print(file, value->value.array)) {
                                 return false;
                         }
                         break;
@@ -960,7 +933,7 @@ static bool json_ast_node_value_print(FILE *file, err *err, json_node_value *val
                         json_ast_node_string_print(file, value->value.string);
                         break;
                 case JSON_VALUE_NUMBER:
-                        if (!json_ast_node_number_print(file, err, value->value.number)) {
+                        if (!json_ast_node_number_print(file, value->value.number)) {
                                 return false;
                         }
                         break;
@@ -973,35 +946,35 @@ static bool json_ast_node_value_print(FILE *file, err *err, json_node_value *val
                 case JSON_VALUE_NULL:
                         fprintf(file, "null");
                         break;
-                default: ERROR(err, ERR_NOTYPE);
+                default: error(ERR_NOTYPE, NULL);
                         return false;
         }
         return true;
 }
 
-static bool json_ast_node_element_print(FILE *file, err *err, json_element *element)
+static bool json_ast_node_element_print(FILE *file, json_element *element)
 {
-        return json_ast_node_value_print(file, err, &element->value);
+        return json_ast_node_value_print(file, &element->value);
 }
 
-static bool json_ast_node_value_drop(json_node_value *value, err *err);
+static bool json_ast_node_value_drop(json_node_value *value);
 
-static bool json_ast_node_element_drop(json_element *element, err *err)
+static bool json_ast_node_element_drop(json_element *element)
 {
-        return json_ast_node_value_drop(&element->value, err);
+        return json_ast_node_value_drop(&element->value);
 }
 
-static bool json_ast_node_member_drop(json_prop *member, err *err)
+static bool json_ast_node_member_drop(json_prop *member)
 {
         free(member->key.value);
-        return json_ast_node_element_drop(&member->value, err);
+        return json_ast_node_element_drop(&member->value);
 }
 
-static bool json_ast_node_members_drop(json_members *members, err *err)
+static bool json_ast_node_members_drop(json_members *members)
 {
         for (size_t i = 0; i < members->members.num_elems; i++) {
                 json_prop *member = VECTOR_GET(&members->members, i, json_prop);
-                if (!json_ast_node_member_drop(member, err)) {
+                if (!json_ast_node_member_drop(member)) {
                         return false;
                 }
         }
@@ -1009,11 +982,11 @@ static bool json_ast_node_members_drop(json_members *members, err *err)
         return true;
 }
 
-static bool json_ast_node_elements_drop(json_elements *elements, err *err)
+static bool json_ast_node_elements_drop(json_elements *elements)
 {
         for (size_t i = 0; i < elements->elements.num_elems; i++) {
                 json_element *element = VECTOR_GET(&elements->elements, i, json_element);
-                if (!json_ast_node_element_drop(element, err)) {
+                if (!json_ast_node_element_drop(element)) {
                         return false;
                 }
         }
@@ -1021,9 +994,9 @@ static bool json_ast_node_elements_drop(json_elements *elements, err *err)
         return true;
 }
 
-static bool json_ast_node_object_drop(json_object *object, err *err)
+static bool json_ast_node_object_drop(json_object *object)
 {
-        if (!json_ast_node_members_drop(object->value, err)) {
+        if (!json_ast_node_members_drop(object->value)) {
                 return false;
         } else {
                 free(object->value);
@@ -1031,9 +1004,9 @@ static bool json_ast_node_object_drop(json_object *object, err *err)
         }
 }
 
-static bool json_ast_node_array_drop(json_array *array, err *err)
+static bool json_ast_node_array_drop(json_array *array)
 {
-        return json_ast_node_elements_drop(&array->elements, err);
+        return json_ast_node_elements_drop(&array->elements);
 }
 
 static void json_ast_node_string_drop(json_string *string)
@@ -1046,18 +1019,18 @@ static void json_ast_node_number_drop(json_number *number)
         UNUSED(number);
 }
 
-static bool json_ast_node_value_drop(json_node_value *value, err *err)
+static bool json_ast_node_value_drop(json_node_value *value)
 {
         switch (value->value_type) {
                 case JSON_VALUE_OBJECT:
-                        if (!json_ast_node_object_drop(value->value.object, err)) {
+                        if (!json_ast_node_object_drop(value->value.object)) {
                                 return false;
                         } else {
                                 free(value->value.object);
                         }
                         break;
                 case JSON_VALUE_ARRAY:
-                        if (!json_ast_node_array_drop(value->value.array, err)) {
+                        if (!json_ast_node_array_drop(value->value.array)) {
                                 return false;
                         } else {
                                 free(value->value.array);
@@ -1075,7 +1048,7 @@ static bool json_ast_node_value_drop(json_node_value *value, err *err)
                 case JSON_VALUE_FALSE:
                 case JSON_VALUE_NULL:
                         break;
-                default: ERROR(err, ERR_NOTYPE)
+                default: error(ERR_NOTYPE, NULL)
                         return false;
 
         }
@@ -1085,7 +1058,7 @@ static bool json_ast_node_value_drop(json_node_value *value, err *err)
 bool json_drop(json *json)
 {
         json_element *element = json->element;
-        if (!json_ast_node_value_drop(&element->value, &json->err)) {
+        if (!json_ast_node_value_drop(&element->value)) {
                 return false;
         } else {
                 free(json->element);
@@ -1095,7 +1068,7 @@ bool json_drop(json *json)
 
 bool json_print(FILE *file, json *json)
 {
-        return json_ast_node_element_print(file, &json->err, json->element);
+        return json_ast_node_element_print(file, json->element);
 }
 
 bool json_list_is_empty(const json_elements *elements)
@@ -1105,8 +1078,6 @@ bool json_list_is_empty(const json_elements *elements)
 
 bool json_list_length(u32 *len, const json_elements *elements)
 {
-        DEBUG_ERROR_IF_NULL(len)
-        DEBUG_ERROR_IF_NULL(elements)
         *len = elements->elements.num_elems;
         return true;
 }
@@ -1356,7 +1327,7 @@ static json_list_type_e number_type_to_list_type(number_min_type_e type)
                         return JSON_LIST_FIXED_I32;
                 case NUMBER_I64:
                         return JSON_LIST_FIXED_I64;
-                default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL)
                         return JSON_LIST_EMPTY;
 
         }
@@ -1364,8 +1335,6 @@ static json_list_type_e number_type_to_list_type(number_min_type_e type)
 
 bool json_array_get_type(json_list_type_e *type, const json_array *array)
 {
-        DEBUG_ERROR_IF_NULL(type)
-        DEBUG_ERROR_IF_NULL(array)
         json_list_type_e list_type = JSON_LIST_EMPTY;
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
@@ -1389,7 +1358,7 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
                                                 elem_type = number_type_to_list_type(number_min_type_signed(
                                                         elem->value.value.number->value.signed_integer));
                                                 break;
-                                        default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE);
+                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                                 continue;
                                 }
 
@@ -1412,7 +1381,7 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
                                         goto return_result;
                                 }
                                 break;
-                        default: ERROR_PRINT(ERR_UNSUPPORTEDTYPE);
+                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                 break;
                 }
         }

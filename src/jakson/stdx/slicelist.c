@@ -66,12 +66,8 @@ static void _slicelist_unlock(slice_list_t *list);
 
 bool slice_list_create(slice_list_t *list, const allocator *alloc, size_t slice_capacity)
 {
-        DEBUG_ERROR_IF_NULL(list)
-        DEBUG_ERROR_IF_NULL(slice_capacity)
-
         alloc_this_or_std(&list->alloc, alloc);
         spinlock_init(&list->lock);
-        error_init(&list->err);
 
         vector_create(&list->slices, &list->alloc, sizeof(slice), slice_capacity);
         vector_create(&list->descriptors, &list->alloc, sizeof(slice_descriptor), slice_capacity);
@@ -201,7 +197,7 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
                                                 case SLICE_LOOKUP_BESEARCH:
                                                         pairPosition = SLICE_BESEARCH(slice, keyHash, needle);
                                                         break;
-                                                default: ERROR(&list->err, ERR_UNSUPFINDSTRAT)
+                                                default: error(ERR_UNSUPFINDSTRAT, NULL)
                                                         return false;
                                         }
 
@@ -241,7 +237,8 @@ bool slice_list_remove(slice_list_t *list, slice_handle *handle)
 {
         UNUSED(list);
         UNUSED(handle);
-        NOT_IMPLEMENTED
+        error(ERR_NOTIMPLEMENTED, NULL)
+        return false;
 }
 
 static void appenderNew(slice_list_t *list)

@@ -35,7 +35,6 @@ extern "C" {
 
 typedef struct carbon_object {
         memfile memfile;
-        err err;
 
         offset_t object_contents_off, object_start_off;
         bool object_end_reached;
@@ -82,7 +81,7 @@ fn_result carbon_object_update_type(carbon_object *it, carbon_map_derivable_e de
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool internal_carbon_object_create(carbon_object *it, memfile *memfile, err *err, offset_t payload_start);
+bool internal_carbon_object_create(carbon_object *it, memfile *memfile, offset_t payload_start);
 bool internal_carbon_object_copy(carbon_object *dst, carbon_object *src);
 bool internal_carbon_object_clone(carbon_object *dst, carbon_object *src);
 

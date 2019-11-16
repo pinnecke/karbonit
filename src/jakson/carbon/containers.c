@@ -81,7 +81,7 @@ bool carbon_list_container_type_by_column_type(carbon_list_container_e *out, int
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         *out = CARBON_LIST_CONTAINER_COLUMN_BOOLEAN;
                         break;
-                default: ERROR_PRINT(ERR_TYPEMISMATCH);
+                default: error(ERR_TYPEMISMATCH, NULL);
                         return false;
         }
         return true;

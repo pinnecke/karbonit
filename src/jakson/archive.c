@@ -133,7 +133,7 @@ static void
 update_record_header(memfile *memfile, offset_t root_object_header_offset, column_doc *model,
                      u64 record_size);
 
-static bool __serialize(offset_t *offset, err *err, memfile *memfile,
+static bool __serialize(offset_t *offset, memfile *memfile,
                         column_doc_obj *columndoc,
                         offset_t root_object_header_offset);
 
@@ -143,29 +143,23 @@ static void update_file_header(memfile *memfile, offset_t root_object_header_off
 
 static void skip_file_header(memfile *memfile);
 
-static bool serialize_string_dic(memfile *memfile, err *err, const doc_bulk *context,
+static bool serialize_string_dic(memfile *memfile, const doc_bulk *context,
                                  packer_e compressor);
 
-static bool print_archive_from_memfile(FILE *file, err *err, memfile *memfile);
+static bool print_archive_from_memfile(FILE *file, memfile *memfile);
 
-bool archive_from_json(archive *out, const char *file, err *err, const char *json_string,
+bool archive_from_json(archive *out, const char *file, const char *json_string,
                            packer_e compressor, str_dict_tag_e dictionary,
                            size_t num_async_dic_threads,
                            bool read_optimized,
                            bool bake_string_id_index, archive_callback *callback)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(file);
-        DEBUG_ERROR_IF_NULL(err);
-        DEBUG_ERROR_IF_NULL(json_string);
-
         OPTIONAL_CALL(callback, begin_create_from_json);
 
         area *stream;
         FILE *out_file;
 
         if (!archive_stream_from_json(&stream,
-                                          err,
                                           json_string,
                                           compressor,
                                           dictionary,
@@ -179,13 +173,13 @@ bool archive_from_json(archive *out, const char *file, err *err, const char *jso
         OPTIONAL_CALL(callback, begin_write_archive_file_to_disk);
 
         if ((out_file = fopen(file, "w")) == NULL) {
-                ERROR(err, ERR_FOPENWRITE);
+                error(ERR_FOPENWRITE, NULL);
                 memblock_drop(stream);
                 return false;
         }
 
         if (!archive_write(out_file, stream)) {
-                ERROR(err, ERR_WRITEARCHIVE);
+                error(ERR_WRITEARCHIVE, NULL);
                 fclose(out_file);
                 memblock_drop(stream);
                 return false;
@@ -198,7 +192,7 @@ bool archive_from_json(archive *out, const char *file, err *err, const char *jso
         OPTIONAL_CALL(callback, begin_load_archive);
 
         if (!archive_open(out, file)) {
-                ERROR(err, ERR_ARCHIVEOPEN);
+                error(ERR_ARCHIVEOPEN, NULL);
                 return false;
         }
 
@@ -211,16 +205,12 @@ bool archive_from_json(archive *out, const char *file, err *err, const char *jso
         return true;
 }
 
-bool archive_stream_from_json(area **stream, err *err, const char *json_string,
+bool archive_stream_from_json(area **stream, const char *json_string,
                                   packer_e compressor, str_dict_tag_e dictionary,
                                   size_t num_async_dic_threads,
                                   bool read_optimized,
                                   bool bake_id_index, archive_callback *callback)
 {
-        DEBUG_ERROR_IF_NULL(stream);
-        DEBUG_ERROR_IF_NULL(err);
-        DEBUG_ERROR_IF_NULL(json_string);
-
         string_dict dic;
         json_parser parser;
         json_err error_desc;
@@ -237,13 +227,12 @@ bool archive_stream_from_json(area **stream, err *err, const char *json_string,
         } else if (dictionary == ASYNC) {
                 encode_async_create(&dic, 1000, 1000, 1000, num_async_dic_threads, NULL);
         } else {
-                ERROR(err, ERR_UNKNOWN_DIC_TYPE);
+                error(ERR_UNKNOWN_DIC_TYPE, NULL);
         }
 
         OPTIONAL_CALL(callback, end_setup_string_dict_ionary);
 
         OPTIONAL_CALL(callback, begin_parse_json);
-        json_parser_create(&parser);
         if (!(json_parse(&json, &error_desc, &parser, json_string))) {
                 char buffer[2048];
                 if (error_desc.token) {
@@ -253,24 +242,24 @@ bool archive_stream_from_json(area **stream, err *err, const char *json_string,
                                 error_desc.token_type_str,
                                 error_desc.token->line,
                                 error_desc.token->column);
-                        ERROR_WDETAILS(err, ERR_JSONPARSEERR, &buffer[0]);
+                        error(ERR_JSONPARSEERR, &buffer[0]);
                 } else {
                         sprintf(buffer, "%s", error_desc.msg);
-                        ERROR_WDETAILS(err, ERR_JSONPARSEERR, &buffer[0]);
+                        error(ERR_JSONPARSEERR, &buffer[0]);
                 }
                 return false;
         }
         OPTIONAL_CALL(callback, end_parse_json);
 
         OPTIONAL_CALL(callback, begin_test_json);
-        if (!json_test(err, &json)) {
+        if (!json_test(&json)) {
                 return false;
         }
         OPTIONAL_CALL(callback, end_test_json);
 
         OPTIONAL_CALL(callback, begin_import_json);
         if (!doc_bulk_create(&bulk, &dic)) {
-                ERROR(err, ERR_BULKCREATEFAILED);
+                error(ERR_BULKCREATEFAILED, NULL);
                 return false;
         }
 
@@ -283,7 +272,7 @@ bool archive_stream_from_json(area **stream, err *err, const char *json_string,
 
         columndoc = doc_entries_columndoc(&bulk, partition, read_optimized);
 
-        if (!archive_from_model(stream, err, columndoc, compressor, bake_id_index, callback)) {
+        if (!archive_from_model(stream, columndoc, compressor, bake_id_index, callback)) {
                 return false;
         }
 
@@ -302,7 +291,7 @@ bool archive_stream_from_json(area **stream, err *err, const char *json_string,
         return true;
 }
 
-static bool run_string_id_baking(err *err, area **stream)
+static bool run_string_id_baking(area **stream)
 {
         archive archive;
         char tmp_file_name[512];
@@ -314,12 +303,12 @@ static bool run_string_id_baking(err *err, area **stream)
         FILE *tmp_file;
 
         if ((tmp_file = fopen(tmp_file_name, "w")) == NULL) {
-                ERROR(err, ERR_TMP_FOPENWRITE);
+                error(ERR_TMP_FOPENWRITE, NULL);
                 return false;
         }
 
         if (!archive_write(tmp_file, *stream)) {
-                ERROR(err, ERR_WRITEARCHIVE);
+                error(ERR_WRITEARCHIVE, NULL);
                 fclose(tmp_file);
                 remove(tmp_file_name);
                 return false;
@@ -329,14 +318,14 @@ static bool run_string_id_baking(err *err, area **stream)
         fclose(tmp_file);
 
         if (!archive_open(&archive, tmp_file_name)) {
-                ERROR(err, ERR_ARCHIVEOPEN);
+                error(ERR_ARCHIVEOPEN, NULL);
                 return false;
         }
 
         bool has_index;
         archive_has_query_index_string_id_to_offset(&has_index, &archive);
         if (has_index) {
-                ERROR(err, ERR_INTERNALERR);
+                error(ERR_INTERNALERR, NULL);
                 remove(tmp_file_name);
                 return false;
         }
@@ -349,23 +338,23 @@ static bool run_string_id_baking(err *err, area **stream)
         archive_close(&archive);
 
         if ((tmp_file = fopen(tmp_file_name, "rb+")) == NULL) {
-                ERROR(err, ERR_TMP_FOPENWRITE);
+                error(ERR_TMP_FOPENWRITE, NULL);
                 return false;
         }
 
         fseek(tmp_file, 0, SEEK_END);
         offset_t index_pos = ftell(tmp_file);
-        query_index_id_to_offset_serialize(tmp_file, err, index);
+        query_index_id_to_offset_serialize(tmp_file, index);
         offset_t file_length = ftell(tmp_file);
         fseek(tmp_file, 0, SEEK_SET);
 
         archive_header header;
         size_t nread = fread(&header, sizeof(archive_header), 1, tmp_file);
-        ERROR_IF(nread != 1, err, ERR_FREAD_FAILED);
+        error_if_and_return(nread != 1, ERR_FREAD_FAILED, NULL);
         header.string_id_to_offset_index_offset = index_pos;
         fseek(tmp_file, 0, SEEK_SET);
         int nwrite = fwrite(&header, sizeof(archive_header), 1, tmp_file);
-        ERROR_IF(nwrite != 1, err, ERR_FWRITE_FAILED);
+        error_if_and_return(nwrite != 1, ERR_FWRITE_FAILED, NULL);
         fseek(tmp_file, 0, SEEK_SET);
 
         query_drop_index_string_id_to_offset(index);
@@ -378,14 +367,9 @@ static bool run_string_id_baking(err *err, area **stream)
         return true;
 }
 
-bool archive_from_model(area **stream, err *err, column_doc *model,
-                            packer_e compressor,
+bool archive_from_model(area **stream, column_doc *model, packer_e compressor,
                             bool bake_string_id_index, archive_callback *callback)
 {
-        DEBUG_ERROR_IF_NULL(model)
-        DEBUG_ERROR_IF_NULL(stream)
-        DEBUG_ERROR_IF_NULL(err)
-
         OPTIONAL_CALL(callback, begin_create_from_model)
 
         memblock_create(stream, 1024 * 1024 * 1024);
@@ -394,7 +378,7 @@ bool archive_from_model(area **stream, err *err, column_doc *model,
 
         OPTIONAL_CALL(callback, begin_write_string_table);
         skip_file_header(&memfile);
-        if (!serialize_string_dic(&memfile, err, model->bulk, compressor)) {
+        if (!serialize_string_dic(&memfile, model->bulk, compressor)) {
                 return false;
         }
         OPTIONAL_CALL(callback, end_write_string_table);
@@ -403,7 +387,7 @@ bool archive_from_model(area **stream, err *err, column_doc *model,
         offset_t record_header_offset = skip_record_header(&memfile);
         update_file_header(&memfile, record_header_offset);
         offset_t root_object_header_offset = memfile_tell(&memfile);
-        if (!__serialize(NULL, err, &memfile, &model->columndoc, root_object_header_offset)) {
+        if (!__serialize(NULL, &memfile, &model->columndoc, root_object_header_offset)) {
                 return false;
         }
         u64 record_size = memfile_tell(&memfile) - (record_header_offset + sizeof(record_header));
@@ -415,7 +399,7 @@ bool archive_from_model(area **stream, err *err, column_doc *model,
         if (bake_string_id_index) {
                 /** create string_buffer id to offset index, and append it to the CARBON file */
                 OPTIONAL_CALL(callback, begin_string_id_index_baking);
-                if (!run_string_id_baking(err, stream)) {
+                if (!run_string_id_baking(stream)) {
                         return false;
                 }
                 OPTIONAL_CALL(callback, end_string_id_index_baking);
@@ -430,12 +414,11 @@ bool archive_from_model(area **stream, err *err, column_doc *model,
 
 archive_io_context *archive_io_context_create(archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(archive);
         archive_io_context *context;
-        if (io_context_create(&context, &archive->err, archive->disk_file_path)) {
+        if (io_context_create(&context, archive->disk_file_path)) {
                 return context;
         } else {
-                ERROR(&archive->err, ERR_IO)
+                error(ERR_IO, NULL)
                 return NULL;
         }
 }
@@ -456,28 +439,28 @@ bool archive_load(area **stream, FILE *file)
         return memblock_from_file(stream, file, fileSize);
 }
 
-bool archive_print(FILE *file, err *err, area *stream)
+bool archive_print(FILE *file, area *stream)
 {
         memfile memfile;
         memfile_open(&memfile, stream, READ_ONLY);
         if (memfile_size(&memfile)
             < sizeof(archive_header) + sizeof(string_table_header) +
               sizeof(object_header)) {
-                ERROR(err, ERR_NOCARBONSTREAM);
+                error(ERR_NOCARBONSTREAM, NULL);
                 return false;
         } else {
-                return print_archive_from_memfile(file, err, &memfile);
+                return print_archive_from_memfile(file, &memfile);
         }
 }
 
-bool _archive_print_object(FILE *file, err *err, memfile *memfile, unsigned nesting_level);
+bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level);
 
 static u32 flags_to_int32(object_flags_u *flags)
 {
         return *((i32 *) flags);
 }
 
-static const char *array_value_type_to_string(err *err, archive_field_e type)
+static const char *array_value_type_to_string(archive_field_e type)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -507,7 +490,7 @@ static const char *array_value_type_to_string(err *err, archive_field_e type)
                 case FIELD_OBJECT:
                         return "Object Array";
                 default: {
-                        ERROR(err, ERR_NOVALUESTR)
+                        error(ERR_NOVALUESTR, NULL)
                         return NULL;
                 }
         }
@@ -537,7 +520,7 @@ static void write_var_value_offset_column(memfile *file, offset_t where, offset_
 }
 
 static bool
-write_primitive_fixed_value_column(memfile *memfile, err *err, archive_field_e type,
+write_primitive_fixed_value_column(memfile *memfile, archive_field_e type,
                                    vector ofType(T) *values_vec)
 {
         JAK_ASSERT (type != FIELD_OBJECT); /** use 'write_primitive_var_value_column' instead */
@@ -567,13 +550,13 @@ write_primitive_fixed_value_column(memfile *memfile, err *err, archive_field_e t
                         break;
                 case FIELD_STRING: WRITE_PRIMITIVE_VALUES(memfile, values_vec, archive_field_sid_t);
                         break;
-                default: ERROR(err, ERR_NOTYPE);
+                default: error(ERR_NOTYPE, NULL);
                         return false;
         }
         return true;
 }
 
-static offset_t *__write_primitive_column(memfile *memfile, err *err,
+static offset_t *__write_primitive_column(memfile *memfile,
                                               vector ofType(column_doc_obj) *values_vec,
                                               offset_t root_offset)
 {
@@ -582,14 +565,14 @@ static offset_t *__write_primitive_column(memfile *memfile, err *err,
         for (u32 i = 0; i < values_vec->num_elems; i++) {
                 column_doc_obj *obj = mapped + i;
                 result[i] = memfile_tell(memfile) - root_offset;
-                if (!__serialize(NULL, err, memfile, obj, root_offset)) {
+                if (!__serialize(NULL, memfile, obj, root_offset)) {
                         return NULL;
                 }
         }
         return result;
 }
 
-static bool __write_array_len_column(err *err, memfile *memfile, archive_field_e type,
+static bool __write_array_len_column(memfile *memfile, archive_field_e type,
                                      vector ofType(...) *values)
 {
         switch (type) {
@@ -611,16 +594,16 @@ static bool __write_array_len_column(err *err, memfile *memfile, archive_field_e
                                 memfile_write(memfile, &arrays->num_elems, sizeof(u32));
                         }
                         break;
-                case FIELD_OBJECT: ERROR_PRINT_AND_DIE(ERR_ILLEGALIMPL)
+                case FIELD_OBJECT: error(ERR_ILLEGALIMPL, NULL)
                         return false;
                         break;
-                default: ERROR(err, ERR_NOTYPE);
+                default: error(ERR_NOTYPE, NULL);
                         return false;
         }
         return true;
 }
 
-static bool write_array_value_column(memfile *memfile, err *err, archive_field_e type,
+static bool write_array_value_column(memfile *memfile, archive_field_e type,
                                      vector ofType(...) *values_vec)
 {
 
@@ -649,15 +632,15 @@ static bool write_array_value_column(memfile *memfile, err *err, archive_field_e
                         break;
                 case FIELD_STRING: WRITE_ARRAY_VALUES(memfile, values_vec, archive_field_sid_t);
                         break;
-                case FIELD_OBJECT: ERROR_PRINT_AND_DIE(ERR_NOTIMPL)
+                case FIELD_OBJECT: error(ERR_NOTIMPL, NULL)
                         return false;
-                default: ERROR(err, ERR_NOTYPE)
+                default: error(ERR_NOTYPE, NULL)
                         return false;
         }
         return true;
 }
 
-static bool write_array_prop(offset_t *offset, err *err, memfile *memfile,
+static bool write_array_prop(offset_t *offset, memfile *memfile,
                              vector ofType(archive_field_sid_t) *keys, archive_field_e type,
                              vector ofType(...) *values,
                              offset_t root_object_header_offset)
@@ -672,10 +655,10 @@ static bool write_array_prop(offset_t *offset, err *err, memfile *memfile,
                 memfile_write(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
-                if (!__write_array_len_column(err, memfile, type, values)) {
+                if (!__write_array_len_column(memfile, type, values)) {
                         return false;
                 }
-                if (!write_array_value_column(memfile, err, type, values)) {
+                if (!write_array_value_column(memfile, type, values)) {
                         return false;
                 }
                 *offset = (prop_ofOffset - root_object_header_offset);
@@ -685,11 +668,10 @@ static bool write_array_prop(offset_t *offset, err *err, memfile *memfile,
         return true;
 }
 
-static bool write_array_props(memfile *memfile, err *err, column_doc_obj *columndoc,
+static bool write_array_props(memfile *memfile, column_doc_obj *columndoc,
                               archive_prop_offs *offsets, offset_t root_object_header_offset)
 {
         if (!write_array_prop(&offsets->null_arrays,
-                              err,
                               memfile,
                               &columndoc->null_array_prop_keys,
                               FIELD_NULL,
@@ -698,7 +680,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->bool_arrays,
-                              err,
                               memfile,
                               &columndoc->bool_array_prop_keys,
                               FIELD_BOOLEAN,
@@ -707,7 +688,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->int8_arrays,
-                              err,
                               memfile,
                               &columndoc->int8_array_prop_keys,
                               FIELD_INT8,
@@ -716,7 +696,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->int16_arrays,
-                              err,
                               memfile,
                               &columndoc->int16_array_prop_keys,
                               FIELD_INT16,
@@ -725,7 +704,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->int32_arrays,
-                              err,
                               memfile,
                               &columndoc->int32_array_prop_keys,
                               FIELD_INT32,
@@ -734,7 +712,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->int64_arrays,
-                              err,
                               memfile,
                               &columndoc->int64_array_prop_keys,
                               FIELD_INT64,
@@ -743,7 +720,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->uint8_arrays,
-                              err,
                               memfile,
                               &columndoc->uint8_array_prop_keys,
                               FIELD_UINT8,
@@ -752,7 +728,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->uint16_arrays,
-                              err,
                               memfile,
                               &columndoc->uint16_array_prop_keys,
                               FIELD_UINT16,
@@ -761,7 +736,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->uint32_arrays,
-                              err,
                               memfile,
                               &columndoc->uint32_array_prop_keys,
                               FIELD_UINT32,
@@ -770,7 +744,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->uint64_arrays,
-                              err,
                               memfile,
                               &columndoc->uint64_array_prop_keys,
                               FIELD_UINT64,
@@ -779,7 +752,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->float_arrays,
-                              err,
                               memfile,
                               &columndoc->float_array_prop_keys,
                               FIELD_FLOAT,
@@ -788,7 +760,6 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
                 return false;
         }
         if (!write_array_prop(&offsets->string_arrays,
-                              err,
                               memfile,
                               &columndoc->string_array_prop_keys,
                               FIELD_STRING,
@@ -801,7 +772,7 @@ static bool write_array_props(memfile *memfile, err *err, column_doc_obj *column
 
 /** Fixed-length property lists; value position can be determined by size of value and position of key in key column.
  * In contrast, variable-length property list require an additional offset column (see 'write_var_props') */
-static bool write_fixed_props(offset_t *offset, err *err, memfile *memfile,
+static bool write_fixed_props(offset_t *offset, memfile *memfile,
                               vector ofType(archive_field_sid_t) *keys, archive_field_e type,
                               vector ofType(T) *values)
 {
@@ -817,7 +788,7 @@ static bool write_fixed_props(offset_t *offset, err *err, memfile *memfile,
                 memfile_write(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
-                if (!write_primitive_fixed_value_column(memfile, err, type, values)) {
+                if (!write_primitive_fixed_value_column(memfile, type, values)) {
                         return false;
                 }
                 *offset = prop_ofOffset;
@@ -832,7 +803,7 @@ static bool write_fixed_props(offset_t *offset, err *err, memfile *memfile,
  * to a particular property. Due to the move of strings (i.e., variable-length values) to a dedicated string table,
  * the only variable-length value for properties are "JSON objects".
  * In contrast, fixed-length property list doesn't require an additional offset column (see 'write_fixed_props') */
-static bool write_var_props(offset_t *offset, err *err, memfile *memfile,
+static bool write_var_props(offset_t *offset, memfile *memfile,
                             vector ofType(archive_field_sid_t) *keys,
                             vector ofType(column_doc_obj) *objects,
                             offset_t root_object_header_offset)
@@ -847,7 +818,7 @@ static bool write_var_props(offset_t *offset, err *err, memfile *memfile,
 
                 write_primitive_key_column(memfile, keys);
                 offset_t value_offset = skip_var_value_offset_column(memfile, keys->num_elems);
-                offset_t *value_offsets = __write_primitive_column(memfile, err, objects,
+                offset_t *value_offsets = __write_primitive_column(memfile, objects,
                                                                        root_object_header_offset);
                 if (!value_offsets) {
                         return false;
@@ -864,14 +835,13 @@ static bool write_var_props(offset_t *offset, err *err, memfile *memfile,
 }
 
 static bool
-write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
+write_primitive_props(memfile *memfile, column_doc_obj *columndoc,
                       archive_prop_offs *offsets, offset_t root_object_header_offset)
 {
-        if (!write_fixed_props(&offsets->nulls, err, memfile, &columndoc->null_prop_keys, FIELD_NULL, NULL)) {
+        if (!write_fixed_props(&offsets->nulls, memfile, &columndoc->null_prop_keys, FIELD_NULL, NULL)) {
                 return false;
         }
         if (!write_fixed_props(&offsets->bools,
-                               err,
                                memfile,
                                &columndoc->bool_prop_keys,
                                FIELD_BOOLEAN,
@@ -879,7 +849,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->int8s,
-                               err,
                                memfile,
                                &columndoc->int8_prop_keys,
                                FIELD_INT8,
@@ -887,7 +856,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->int16s,
-                               err,
                                memfile,
                                &columndoc->int16_prop_keys,
                                FIELD_INT16,
@@ -895,7 +863,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->int32s,
-                               err,
                                memfile,
                                &columndoc->int32_prop_keys,
                                FIELD_INT32,
@@ -903,7 +870,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->int64s,
-                               err,
                                memfile,
                                &columndoc->int64_prop_keys,
                                FIELD_INT64,
@@ -911,7 +877,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->uint8s,
-                               err,
                                memfile,
                                &columndoc->uint8_prop_keys,
                                FIELD_UINT8,
@@ -919,7 +884,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->uint16s,
-                               err,
                                memfile,
                                &columndoc->uint16_prop_keys,
                                FIELD_UINT16,
@@ -927,7 +891,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->uint32s,
-                               err,
                                memfile,
                                &columndoc->uin32_prop_keys,
                                FIELD_UINT32,
@@ -935,7 +898,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->uint64s,
-                               err,
                                memfile,
                                &columndoc->uint64_prop_keys,
                                FIELD_UINT64,
@@ -943,7 +905,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->floats,
-                               err,
                                memfile,
                                &columndoc->float_prop_keys,
                                FIELD_FLOAT,
@@ -951,7 +912,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_fixed_props(&offsets->strings,
-                               err,
                                memfile,
                                &columndoc->string_prop_keys,
                                FIELD_STRING,
@@ -959,7 +919,6 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
                 return false;
         }
         if (!write_var_props(&offsets->objects,
-                             err,
                              memfile,
                              &columndoc->obj_prop_keys,
                              &columndoc->obj_prop_vals,
@@ -983,7 +942,7 @@ write_primitive_props(memfile *memfile, err *err, column_doc_obj *columndoc,
         return true;
 }
 
-static bool write_column_entry(memfile *memfile, err *err, archive_field_e type,
+static bool write_column_entry(memfile *memfile, archive_field_e type,
                                vector ofType(<T>) *column, offset_t root_object_header_offset)
 {
         memfile_write(memfile, &column->num_elems, sizeof(u32));
@@ -1015,19 +974,19 @@ static bool write_column_entry(memfile *memfile, err *err, archive_field_e type,
                                         memfile_write(memfile, &relativeContinuePos, sizeof(offset_t));
                                         memfile_seek(memfile, continuePos);
                                 }
-                                if (!__serialize(&preObjectNext, err, memfile, object, root_object_header_offset)) {
+                                if (!__serialize(&preObjectNext, memfile, object, root_object_header_offset)) {
                                         return false;
                                 }
                         }
                 }
                         break;
-                default: ERROR(err, ERR_NOTYPE)
+                default: error(ERR_NOTYPE, NULL)
                         return false;
         }
         return true;
 }
 
-static bool write_column(memfile *memfile, err *err, column_doc_column *column,
+static bool write_column(memfile *memfile, column_doc_column *column,
                          offset_t root_object_header_offset)
 {
         JAK_ASSERT(column->array_positions.num_elems == column->values.num_elems);
@@ -1051,14 +1010,14 @@ static bool write_column(memfile *memfile, err *err, column_doc_column *column,
                 memfile_seek(memfile, value_entry_offsets + i * sizeof(offset_t));
                 memfile_write(memfile, &relative_entry_offset, sizeof(offset_t));
                 memfile_seek(memfile, column_entry_offset);
-                if (!write_column_entry(memfile, err, column->type, column_data, root_object_header_offset)) {
+                if (!write_column_entry(memfile, column->type, column_data, root_object_header_offset)) {
                         return false;
                 }
         }
         return true;
 }
 
-static bool write_object_array_props(memfile *memfile, err *err,
+static bool write_object_array_props(memfile *memfile,
                                      vector ofType(column_doc_group) *object_key_columns,
                                      archive_prop_offs *offsets,
                                      offset_t root_object_header_offset)
@@ -1103,7 +1062,7 @@ static bool write_object_array_props(memfile *memfile, err *err,
                         for (size_t i = 0; i < column_group_header.num_objects; i++) {
                                 unique_id_t oid;
                                 if (!unique_id_create(&oid)) {
-                                        ERROR(err, ERR_THREADOOOBJIDS);
+                                        error(ERR_THREADOOOBJIDS, NULL);
                                         return false;
                                 }
                                 memfile_write(memfile, &oid, sizeof(unique_id_t));
@@ -1125,7 +1084,7 @@ static bool write_object_array_props(memfile *memfile, err *err,
                                 memfile_seek(memfile, offset_column_to_columns + k * sizeof(offset_t));
                                 memfile_write(memfile, &column_off, sizeof(offset_t));
                                 memfile_seek(memfile, continue_write);
-                                if (!write_column(memfile, err, column, root_object_header_offset)) {
+                                if (!write_column(memfile, column, root_object_header_offset)) {
                                         return false;
                                 }
                         }
@@ -1327,7 +1286,7 @@ static void prop_offsets_skip_write(memfile *memfile, const object_flags_u *flag
         memfile_skip(memfile, num_skip_offset_bytes * sizeof(offset_t));
 }
 
-static bool __serialize(offset_t *offset, err *err, memfile *memfile,
+static bool __serialize(offset_t *offset, memfile *memfile,
                         column_doc_obj *columndoc,
                         offset_t root_object_header_offset)
 {
@@ -1343,14 +1302,13 @@ static bool __serialize(offset_t *offset, err *err, memfile *memfile,
         offset_t default_next_nil = 0;
         memfile_write(memfile, &default_next_nil, sizeof(offset_t));
 
-        if (!write_primitive_props(memfile, err, columndoc, &prop_offsets, root_object_header_offset)) {
+        if (!write_primitive_props(memfile, columndoc, &prop_offsets, root_object_header_offset)) {
                 return false;
         }
-        if (!write_array_props(memfile, err, columndoc, &prop_offsets, root_object_header_offset)) {
+        if (!write_array_props(memfile, columndoc, &prop_offsets, root_object_header_offset)) {
                 return false;
         }
         if (!write_object_array_props(memfile,
-                                      err,
                                       &columndoc->obj_array_props,
                                       &prop_offsets,
                                       root_object_header_offset)) {
@@ -1364,7 +1322,7 @@ static bool __serialize(offset_t *offset, err *err, memfile *memfile,
 
         unique_id_t oid;
         if (!unique_id_create(&oid)) {
-                ERROR(err, ERR_THREADOOOBJIDS);
+                error(ERR_THREADOOOBJIDS, NULL);
                 return false;
         }
 
@@ -1429,8 +1387,7 @@ static char *record_header_flags_to_string(const record_flags *flags)
         return string;
 }
 
-static bool serialize_string_dic(memfile *memfile, err *err, const doc_bulk *context,
-                                 packer_e compressor)
+static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, packer_e compressor)
 {
         string_tab_flags_u flags;
         packer strategy;
@@ -1444,7 +1401,7 @@ static bool serialize_string_dic(memfile *memfile, err *err, const doc_bulk *con
         JAK_ASSERT(strings->num_elems == string_ids->num_elems);
 
         flags.value = 0;
-        if (!pack_by_type(err, &strategy, compressor)) {
+        if (!pack_by_type(&strategy, compressor)) {
                 return false;
         }
         u8 flag_bit = pack_flagbit_by_type(compressor);
@@ -1454,7 +1411,7 @@ static bool serialize_string_dic(memfile *memfile, err *err, const doc_bulk *con
         memfile_skip(memfile, sizeof(string_table_header));
 
         offset_t extra_begin_off = memfile_tell(memfile);
-        pack_write_extra(err, &strategy, memfile, strings);
+        pack_write_extra(&strategy, memfile, strings);
         offset_t extra_end_off = memfile_tell(memfile);
 
         header = (string_table_header) {.marker = global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC]
@@ -1472,8 +1429,8 @@ static bool serialize_string_dic(memfile *memfile, err *err, const doc_bulk *con
                 offset_t header_pos_off = memfile_tell(memfile);
                 memfile_skip(memfile, sizeof(string_entry_header));
 
-                if (!pack_encode(err, &strategy, memfile, string)) {
-                        ERROR_PRINT(err.code);
+                if (!pack_encode(&strategy, memfile, string)) {
+                        error_print(stderr);
                         return false;
                 }
                 offset_t continue_off = memfile_tell(memfile);
@@ -1493,7 +1450,7 @@ static bool serialize_string_dic(memfile *memfile, err *err, const doc_bulk *con
         free(strings);
         free(string_ids);
 
-        return pack_drop(err, &strategy);
+        return pack_drop(&strategy);
 }
 
 static void skip_file_header(memfile *memfile)
@@ -1514,7 +1471,7 @@ static void update_file_header(memfile *memfile, offset_t record_header_offset)
 }
 
 static bool
-print_column_form_memfile(FILE *file, err *err, memfile *memfile, unsigned nesting_level)
+print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
 {
         offset_t offset;
         memfile_get_offset(&offset, memfile);
@@ -1522,12 +1479,12 @@ print_column_form_memfile(FILE *file, err *err, memfile *memfile, unsigned nesti
         if (header->marker != MARKER_SYMBOL_COLUMN) {
                 char buffer[256];
                 sprintf(buffer, "expected marker [%c] but found [%c]", MARKER_SYMBOL_COLUMN, header->marker);
-                ERROR_WDETAILS(err, ERR_CORRUPTED, buffer);
+                error(ERR_CORRUPTED, buffer)
                 return false;
         }
         fprintf(file, "0x%04x ", (unsigned) offset);
         INTENT_LINE(nesting_level);
-        const char *type_name = array_value_type_to_string(err, int_marker_to_field_type(header->value_type));
+        const char *type_name = array_value_type_to_string(int_marker_to_field_type(header->value_type));
         if (!type_name) {
                 return false;
         }
@@ -1615,7 +1572,7 @@ print_column_form_memfile(FILE *file, err *err, memfile *memfile, unsigned nesti
                                 INTENT_LINE(nesting_level);
                                 fprintf(file, "   [num_elements: %d] [values: [\n", num_elements);
                                 for (size_t i = 0; i < num_elements; i++) {
-                                        if (!_archive_print_object(file, err, memfile, nesting_level + 2)) {
+                                        if (!_archive_print_object(file, memfile, nesting_level + 2)) {
                                                 return false;
                                         }
                                 }
@@ -1623,14 +1580,14 @@ print_column_form_memfile(FILE *file, err *err, memfile *memfile, unsigned nesti
                                 fprintf(file, "   ]\n");
                         }
                                 break;
-                        default: ERROR(err, ERR_NOTYPE)
+                        default: error(ERR_NOTYPE, NULL)
                                 return false;
                 }
         }
         return true;
 }
 
-static bool _archive_print_object_array_from_memfile(FILE *file, err *err, memfile *mem_file,
+static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_file,
                                             unsigned nesting_level)
 {
         unsigned offset = (unsigned) memfile_tell(mem_file);
@@ -1639,7 +1596,7 @@ static bool _archive_print_object_array_from_memfile(FILE *file, err *err, memfi
                 char buffer[256];
                 sprintf(buffer, "expected marker [%c] but found [%c]", MARKER_SYMBOL_PROP_OBJECT_ARRAY,
                         header->marker);
-                ERROR_WDETAILS(err, ERR_CORRUPTED, buffer);
+                error(ERR_CORRUPTED, buffer);
                 return false;
         }
 
@@ -1673,7 +1630,7 @@ static bool _archive_print_object_array_from_memfile(FILE *file, err *err, memfi
                                 "expected marker [%c] but found [%c]",
                                 MARKER_SYMBOL_COLUMN_GROUP,
                                 column_group_header->marker);
-                        ERROR_WDETAILS(err, ERR_CORRUPTED, buffer);
+                        error(ERR_CORRUPTED, buffer);
                         return false;
                 }
                 fprintf(file, "0x%04x ", offset);
@@ -1701,7 +1658,7 @@ static bool _archive_print_object_array_from_memfile(FILE *file, err *err, memfi
                 fprintf(file, "]\n");
 
                 for (size_t k = 0; k < column_group_header->num_columns; k++) {
-                        if (!print_column_form_memfile(file, err, mem_file, nesting_level + 1)) {
+                        if (!print_column_form_memfile(file, mem_file, nesting_level + 1)) {
                                 return false;
                         }
                 }
@@ -1796,7 +1753,7 @@ static void print_prop_offsets(FILE *file, const object_flags_u *flags,
         }
 }
 
-bool _archive_print_object(FILE *file, err *err, memfile *memfile, unsigned nesting_level)
+bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
 {
         unsigned offset = (unsigned) memfile_tell(memfile);
         object_header *header = MEMFILE_READ_TYPE(memfile, object_header);
@@ -1810,7 +1767,7 @@ bool _archive_print_object(FILE *file, err *err, memfile *memfile, unsigned nest
         if (header->marker != MARKER_SYMBOL_OBJECT_BEGIN) {
                 char buffer[256];
                 sprintf(buffer, "Parsing ERROR: expected object marker [{] but found [%c]\"", header->marker);
-                ERROR_WDETAILS(err, ERR_CORRUPTED, buffer);
+                error(ERR_CORRUPTED, buffer);
                 return false;
         }
 
@@ -1984,7 +1941,7 @@ bool _archive_print_object(FILE *file, err *err, memfile *memfile, unsigned nest
 
                                 char nextEntryMarker;
                                 do {
-                                        if (!_archive_print_object(file, err, memfile, nesting_level + 1)) {
+                                        if (!_archive_print_object(file, memfile, nesting_level + 1)) {
                                                 return false;
                                         }
                                         nextEntryMarker = *MEMFILE_PEEK(memfile, char);
@@ -2167,7 +2124,7 @@ bool _archive_print_object(FILE *file, err *err, memfile *memfile, unsigned nest
                                                                                           "");
                                 break;
                         case MARKER_SYMBOL_PROP_OBJECT_ARRAY:
-                                if (!_archive_print_object_array_from_memfile(file, err, memfile, nesting_level)) {
+                                if (!_archive_print_object_array_from_memfile(file, memfile, nesting_level)) {
                                         return false;
                                 }
                                 break;
@@ -2180,7 +2137,7 @@ bool _archive_print_object(FILE *file, err *err, memfile *memfile, unsigned nest
                                         "Parsing ERROR: unexpected marker [%c] was detected in file %p",
                                         entryMarker,
                                         memfile);
-                                ERROR_WDETAILS(err, ERR_CORRUPTED, buffer);
+                                error(ERR_CORRUPTED, buffer);
                                 return false;
                         }
                 }
@@ -2233,13 +2190,13 @@ static void print_record_header_from_memfile(FILE *file, memfile *memfile)
         free(flags_string);
 }
 
-static bool print_header_from_memfile(FILE *file, err *err, memfile *memfile)
+static bool print_header_from_memfile(FILE *file, memfile *memfile)
 {
         unsigned offset = memfile_tell(memfile);
         JAK_ASSERT(memfile_size(memfile) > sizeof(archive_header));
         archive_header *header = MEMFILE_READ_TYPE(memfile, archive_header);
         if (!is_valid_file(header)) {
-                ERROR(err, ERR_NOARCHIVEFILE)
+                error(ERR_NOARCHIVEFILE, NULL)
                 return false;
         }
 
@@ -2252,7 +2209,7 @@ static bool print_header_from_memfile(FILE *file, err *err, memfile *memfile)
         return true;
 }
 
-static bool print_embedded_dic_from_memfile(FILE *file, err *err, memfile *memfile)
+static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
 {
         packer strategy;
         string_tab_flags_u flags;
@@ -2265,7 +2222,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, err *err, memfile *memfi
                         "expected [%c] marker, but found [%c]",
                         global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC].symbol,
                         header->marker);
-                ERROR_WDETAILS(err, ERR_CORRUPTED, buffer);
+                error(ERR_CORRUPTED, buffer);
                 return false;
         }
         flags.value = header->flags;
@@ -2282,11 +2239,11 @@ static bool print_embedded_dic_from_memfile(FILE *file, err *err, memfile *memfi
         free(flagsStr);
 
         if (pack_by_flags(&strategy, flags.value) != true) {
-                ERROR(err, ERR_NOCOMPRESSOR);
+                error(ERR_NOCOMPRESSOR, NULL)
                 return false;
         }
 
-        pack_print_extra(err, &strategy, file, memfile);
+        pack_print_extra(&strategy, file, memfile);
 
         while ((*MEMFILE_PEEK(memfile, char)) == global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR].symbol) {
                 unsigned offset = memfile_tell(memfile);
@@ -2298,23 +2255,23 @@ static bool print_embedded_dic_from_memfile(FILE *file, err *err, memfile *memfi
                         (size_t) header.next_entry_off,
                         header.string_id,
                         header.string_len);
-                pack_print_encoded(err, &strategy, file, memfile, header.string_len);
+                pack_print_encoded(&strategy, file, memfile, header.string_len);
                 fprintf(file, "\n");
         }
 
-        return pack_drop(err, &strategy);
+        return pack_drop(&strategy);
 }
 
-static bool print_archive_from_memfile(FILE *file, err *err, memfile *memfile)
+static bool print_archive_from_memfile(FILE *file, memfile *memfile)
 {
-        if (!print_header_from_memfile(file, err, memfile)) {
+        if (!print_header_from_memfile(file, memfile)) {
                 return false;
         }
-        if (!print_embedded_dic_from_memfile(file, err, memfile)) {
+        if (!print_embedded_dic_from_memfile(file, memfile)) {
                 return false;
         }
         print_record_header_from_memfile(file, memfile);
-        if (!_archive_print_object(file, err, memfile, 0)) {
+        if (!_archive_print_object(file, memfile, 0)) {
                 return false;
         }
         return true;
@@ -2355,12 +2312,12 @@ static object_flags_u *get_flags(object_flags_u *flags, column_doc_obj *columndo
 
 static bool init_decompressor(packer *strategy, u8 flags);
 
-static bool read_stringtable(string_table *table, err *err, FILE *disk_file);
+static bool read_stringtable(string_table *table, FILE *disk_file);
 
 static bool read_record(record_header *header_read, archive *archive, FILE *disk_file,
                         offset_t record_header_offset);
 
-static bool read_string_id_to_offset_index(err *err, archive *archive, const char *file_path,
+static bool read_string_id_to_offset_index(archive *archive, const char *file_path,
                                            offset_t string_id_to_offset_index_offset);
 
 bool archive_open(archive *out, const char *file_path)
@@ -2368,7 +2325,6 @@ bool archive_open(archive *out, const char *file_path)
         int status;
         FILE *disk_file;
 
-        error_init(&out->err);
         out->disk_file_path = strdup(file_path);
         disk_file = fopen(out->disk_file_path, "r");
         if (!disk_file) {
@@ -2381,7 +2337,7 @@ bool archive_open(archive *out, const char *file_path)
                 string_buffer_add(&sb, "' not found in current working directory ('");
                 string_buffer_add(&sb, getcwd(cwd, sizeof(cwd)));
                 string_buffer_add(&sb, "')");
-                ERROR_WDETAILS(&out->err, ERR_FOPEN_FAILED, string_cstr(&sb));
+                error(ERR_FOPEN_FAILED, string_cstr(&sb));
                 string_buffer_drop(&sb);
                 return false;
         } else {
@@ -2389,11 +2345,11 @@ bool archive_open(archive *out, const char *file_path)
                 size_t nread = fread(&header, sizeof(archive_header), 1, disk_file);
                 if (nread != 1) {
                         fclose(disk_file);
-                        ERROR_PRINT(ERR_IO);
+                        error(ERR_IO, NULL);
                         return false;
                 } else {
                         if (!is_valid_file(&header)) {
-                                ERROR_PRINT(ERR_FORMATVERERR);
+                                error(ERR_FORMATVERERR, NULL);
                                 return false;
                         } else {
                                 out->query_index_string_id_to_offset = NULL;
@@ -2401,7 +2357,7 @@ bool archive_open(archive *out, const char *file_path)
 
                                 record_header record_header;
 
-                                if ((status = read_stringtable(&out->string_table, &out->err, disk_file)) != true) {
+                                if ((status = read_stringtable(&out->string_table, disk_file)) != true) {
                                         return status;
                                 }
                                 if ((status = read_record(&record_header,
@@ -2412,13 +2368,11 @@ bool archive_open(archive *out, const char *file_path)
                                 }
 
                                 if (header.string_id_to_offset_index_offset != 0) {
-                                        err err;
-                                        if ((status = read_string_id_to_offset_index(&err,
-                                                                                     out,
+                                        if ((status = read_string_id_to_offset_index(out,
                                                                                      file_path,
                                                                                      header.string_id_to_offset_index_offset)) !=
                                             true) {
-                                                ERROR_PRINT(err.code);
+                                                error(ERR_NOTFOUND, NULL);
                                                 return status;
                                         }
                                 }
@@ -2451,15 +2405,12 @@ bool archive_open(archive *out, const char *file_path)
 
 bool archive_get_info(archive_info *info, const archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(info);
-        DEBUG_ERROR_IF_NULL(archive);
         *info = archive->info;
         return true;
 }
 
 bool archive_close(archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(archive);
         archive_drop_indexes(archive);
         archive_drop_query_string_id_cache(archive);
         free(archive->disk_file_path);
@@ -2499,23 +2450,18 @@ bool archive_query_run(query *query, archive *archive)
 
 bool archive_has_query_index_string_id_to_offset(bool *state, archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(state)
-        DEBUG_ERROR_IF_NULL(archive)
         *state = (archive->query_index_string_id_to_offset != NULL);
         return true;
 }
 
 bool archive_hash_query_string_id_cache(bool *has_cache, archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(has_cache)
-        DEBUG_ERROR_IF_NULL(archive)
         *has_cache = archive->string_id_cache != NULL;
         return true;
 }
 
 bool archive_drop_query_string_id_cache(archive *archive)
 {
-        DEBUG_ERROR_IF_NULL(archive)
         if (archive->string_id_cache) {
                 string_id_cache_drop(archive->string_id_cache);
                 archive->string_id_cache = NULL;
@@ -2541,7 +2487,7 @@ static bool init_decompressor(packer *strategy, u8 flags)
         return true;
 }
 
-static bool read_stringtable(string_table *table, err *err, FILE *disk_file)
+static bool read_stringtable(string_table *table, FILE *disk_file)
 {
         JAK_ASSERT(disk_file);
 
@@ -2550,11 +2496,11 @@ static bool read_stringtable(string_table *table, err *err, FILE *disk_file)
 
         size_t num_read = fread(&header, sizeof(string_table_header), 1, disk_file);
         if (num_read != 1) {
-                ERROR(err, ERR_IO);
+                error(ERR_IO, NULL)
                 return false;
         }
         if (header.marker != global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC].symbol) {
-                ERROR(err, ERR_CORRUPTED);
+                error(ERR_CORRUPTED, NULL)
                 return false;
         }
 
@@ -2565,7 +2511,7 @@ static bool read_stringtable(string_table *table, err *err, FILE *disk_file)
         if ((init_decompressor(&table->compressor, flags.value)) != true) {
                 return false;
         }
-        if ((pack_read_extra(err, &table->compressor, disk_file, header.compressor_extra_size)) != true) {
+        if ((pack_read_extra(&table->compressor, disk_file, header.compressor_extra_size)) != true) {
                 return false;
         }
         return true;
@@ -2574,28 +2520,25 @@ static bool read_stringtable(string_table *table, err *err, FILE *disk_file)
 static bool read_record(record_header *header_read, archive *archive, FILE *disk_file,
                         offset_t record_header_offset)
 {
-        err err;
         fseek(disk_file, record_header_offset, SEEK_SET);
         record_header header;
         if (fread(&header, sizeof(record_header), 1, disk_file) != 1) {
-                ERROR(&archive->err, ERR_CORRUPTED);
+                error(ERR_CORRUPTED, NULL);
                 return false;
         } else {
                 archive->record_table.flags.value = header.flags;
                 bool status = memblock_from_file(&archive->record_table.record_db, disk_file, header.record_size);
                 if (!status) {
-                        memblock_get_error(&err, archive->record_table.record_db);
-                        error_cpy(&archive->err, &err);
                         return false;
                 }
 
                 memfile memfile;
                 if (memfile_open(&memfile, archive->record_table.record_db, READ_ONLY) != true) {
-                        ERROR(&archive->err, ERR_CORRUPTED);
+                        error(ERR_CORRUPTED, NULL);
                         status = false;
                 }
                 if (*MEMFILE_PEEK(&memfile, char) != MARKER_SYMBOL_OBJECT_BEGIN) {
-                        ERROR(&archive->err, ERR_CORRUPTED);
+                        error(ERR_CORRUPTED, NULL);
                         status = false;
                 }
 
@@ -2604,11 +2547,10 @@ static bool read_record(record_header *header_read, archive *archive, FILE *disk
         }
 }
 
-static bool read_string_id_to_offset_index(err *err, archive *archive, const char *file_path,
+static bool read_string_id_to_offset_index(archive *archive, const char *file_path,
                                            offset_t string_id_to_offset_index_offset)
 {
         return query_index_id_to_offset_deserialize(&archive->query_index_string_id_to_offset,
-                                                        err,
                                                         file_path,
                                                         string_id_to_offset_index_offset);
 }

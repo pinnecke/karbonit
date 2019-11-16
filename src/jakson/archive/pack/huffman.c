@@ -32,31 +32,22 @@ static void huff_tree_create(vector ofType(pack_huffman_entry) *table,
 
 bool coding_huffman_create(huffman *dic)
 {
-        DEBUG_ERROR_IF_NULL(dic);
-
         vector_create(&dic->table, NULL, sizeof(pack_huffman_entry), UCHAR_MAX / 4);
-        error_init(&dic->err);
-
         return true;
 }
 
 bool coding_huffman_cpy(huffman *dst, huffman *src)
 {
-        DEBUG_ERROR_IF_NULL(dst);
-        DEBUG_ERROR_IF_NULL(src);
         if (!vector_cpy(&dst->table, &src->table)) {
-                ERROR(&src->err, ERR_HARDCOPYFAILED);
+                error(ERR_HARDCOPYFAILED, NULL);
                 return false;
         } else {
-                return error_cpy(&dst->err, &src->err);
+                return true;
         }
 }
 
 bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
 {
-        DEBUG_ERROR_IF_NULL(encoder);
-        DEBUG_ERROR_IF_NULL(strings);
-
         vector ofType(u32) frequencies;
         vector_create(&frequencies, NULL, sizeof(u32), UCHAR_MAX);
         vector_enlarge_size_to_capacity(&frequencies);
@@ -79,18 +70,8 @@ bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
         return true;
 }
 
-bool coding_huffman_get_error(err *err, const huffman *dic)
-{
-        DEBUG_ERROR_IF_NULL(err)
-        DEBUG_ERROR_IF_NULL(dic)
-        error_cpy(err, &dic->err);
-        return true;
-}
-
 bool coding_huffman_drop(huffman *dic)
 {
-        DEBUG_ERROR_IF_NULL(dic);
-
         for (size_t i = 0; i < dic->table.num_elems; i++) {
                 pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
                 free(entry->blocks);
@@ -105,9 +86,6 @@ bool coding_huffman_drop(huffman *dic)
 
 bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_symbol)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(dic)
-
         for (size_t i = 0; i < dic->table.num_elems; i++) {
                 pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
                 memfile_write(file, &marker_symbol, sizeof(char));
@@ -152,7 +130,7 @@ static pack_huffman_entry *find_dic_entry(huffman *dic, unsigned char c)
                         return entry;
                 }
         }
-        ERROR(&dic->err, ERR_HUFFERR)
+        error(ERR_HUFFERR, NULL)
         return NULL;
 }
 
@@ -194,10 +172,6 @@ static size_t encodeString(memfile *file, huffman *dic, const char *string)
 
 bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(dic)
-        DEBUG_ERROR_IF_NULL(string)
-
         u32 num_bytes_encoded = 0;
 
         offset_t num_bytes_encoded_off = memfile_tell(file);
@@ -441,7 +415,7 @@ static void huff_tree_create(vector ofType(pack_huffman_entry) *table,
                 } else if (smallest->next) {
                         handle = seek_to_begin(smallest->next);
                 } else {
-                        ERROR_PRINT_AND_DIE(ERR_INTERNALERR);
+                        panic(ERR_INTERNALERR);
                 }
 
                 JAK_ASSERT (!handle->prev);

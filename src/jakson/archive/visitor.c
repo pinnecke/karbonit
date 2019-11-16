@@ -44,7 +44,6 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
         DECLARE_AND_INIT(unique_id_t, parent_object_id)
         DECLARE_AND_INIT(unique_id_t, object_id)
         DECLARE_AND_INIT(prop_iter, prop_iter)
-        DECLARE_AND_INIT(err, err)
 
         archive_value_vector_get_object_id(&parent_object_id, value_iter);
         archive_value_vector_get_length(&vector_length, value_iter);
@@ -63,7 +62,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
                 archive_value_vector_get_object_at(&object, i, value_iter);
                 archive_object_get_object_id(&object_id, &object);
 
-                archive_prop_iter_from_object(&prop_iter, mask, &err, &object);
+                archive_prop_iter_from_object(&prop_iter, mask, &object);
 
                 if (!is_root_object) {
                         visit_policy_e visit = VISIT_INCLUDE;
@@ -599,13 +598,11 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
 
                                                                                                         vector_pop(path_stack);
 
-                                                                                                        err err;
                                                                                                         struct prop_iter
                                                                                                                 nested_obj_prop_iter;
                                                                                                         archive_prop_iter_from_object(
                                                                                                                 &nested_obj_prop_iter,
                                                                                                                 mask,
-                                                                                                                &err,
                                                                                                                 archive_object);
                                                                                                         iterate_props(
                                                                                                                 archive,
@@ -658,15 +655,12 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
 bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
                                visitor *visitor, void *capture)
 {
-        DEBUG_ERROR_IF_NULL(archive)
-        DEBUG_ERROR_IF_NULL(visitor)
-
         prop_iter prop_iter;
         vector ofType(path_entry) path_stack;
 
         int mask = desc ? desc->visit_mask : ARCHIVE_ITER_MASK_ANY;
 
-        if (archive_prop_iter_from_archive(&prop_iter, &archive->err, mask, archive)) {
+        if (archive_prop_iter_from_archive(&prop_iter, mask, archive)) {
                 vector_create(&path_stack, NULL, sizeof(path_entry), 100);
                 OPTIONAL_CALL(visitor, before_visit_starts, archive, capture);
                 iterate_props(archive, &prop_iter, &path_stack, visitor, mask, capture, true, 0, 0);
@@ -702,10 +696,6 @@ void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
 bool archive_visitor_print_path(FILE *file, archive *archive,
                                     const vector ofType(path_entry) *path_stack)
 {
-        DEBUG_ERROR_IF_NULL(file)
-        DEBUG_ERROR_IF_NULL(path_stack)
-        DEBUG_ERROR_IF_NULL(archive)
-
         query *query = archive_query_default(archive);
 
         for (u32 i = 0; i < path_stack->num_elems; i++) {

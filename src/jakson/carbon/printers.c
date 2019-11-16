@@ -24,8 +24,6 @@
 
 bool carbon_printer_by_type(carbon_printer *printer, int impl)
 {
-        DEBUG_ERROR_IF_NULL(printer)
-
         switch (impl) {
                 case JSON_EXTENDED:
                         json_extended_printer_create(printer);
@@ -33,7 +31,7 @@ bool carbon_printer_by_type(carbon_printer *printer, int impl)
                 case JSON_COMPACT:
                         json_compact_printer_create(printer);
                         break;
-                default: ERROR_PRINT(ERR_NOTFOUND)
+                default: error(ERR_NOTFOUND, NULL)
                         return false;
         }
         return true;
@@ -41,28 +39,24 @@ bool carbon_printer_by_type(carbon_printer *printer, int impl)
 
 bool carbon_printer_drop(carbon_printer *printer)
 {
-        DEBUG_ERROR_IF_NULL(printer->drop);
         printer->drop(printer);
         return true;
 }
 
 bool carbon_printer_begin(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->record_begin);
         printer->record_begin(printer, str);
         return true;
 }
 
 bool carbon_printer_end(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->record_end);
         printer->record_end(printer, str);
         return true;
 }
 
 bool carbon_printer_header_begin(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->meta_begin);
         printer->meta_begin(printer, str);
         return true;
 }
@@ -71,127 +65,108 @@ bool carbon_printer_header_contents(carbon_printer *printer, string_buffer *str,
                                     int key_type, const void *key, u64 key_length,
                                     u64 rev)
 {
-        DEBUG_ERROR_IF_NULL(printer->drop);
         printer->meta_data(printer, str, key_type, key, key_length, rev);
         return true;
 }
 
 bool carbon_printer_header_end(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->meta_end);
         printer->meta_end(printer, str);
         return true;
 }
 
 bool carbon_printer_payload_begin(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->doc_begin);
         printer->doc_begin(printer, str);
         return true;
 }
 
 bool carbon_printer_payload_end(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->doc_end);
         printer->doc_end(printer, str);
         return true;
 }
 
 bool carbon_printer_empty_record(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->empty_record);
         printer->empty_record(printer, str);
         return true;
 }
 
 bool carbon_printer_array_begin(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->array_begin);
         printer->array_begin(printer, str);
         return true;
 }
 
 bool carbon_printer_array_end(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->array_end);
         printer->array_end(printer, str);
         return true;
 }
 
 bool carbon_printer_unit_array_begin(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->unit_array_begin);
         printer->unit_array_begin(printer, str);
         return true;
 }
 
 bool carbon_printer_unit_array_end(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->unit_array_end);
         printer->unit_array_end(printer, str);
         return true;
 }
 
 bool carbon_printer_object_begin(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->obj_begin);
         printer->obj_begin(printer, str);
         return true;
 }
 
 bool carbon_printer_object_end(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->obj_end);
         printer->obj_end(printer, str);
         return true;
 }
 
 bool carbon_printer_null(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->const_null);
         printer->const_null(printer, str);
         return true;
 }
 
 bool carbon_printer_true(carbon_printer *printer, bool is_null, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->const_true);
         printer->const_true(printer, is_null, str);
         return true;
 }
 
 bool carbon_printer_false(carbon_printer *printer, bool is_null, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->const_false);
         printer->const_false(printer, is_null, str);
         return true;
 }
 
 bool carbon_printer_comma(carbon_printer *printer, string_buffer *str)
 {
-        DEBUG_ERROR_IF_NULL(printer->comma);
         printer->comma(printer, str);
         return true;
 }
 
 bool carbon_printer_signed_nonull(carbon_printer *printer, string_buffer *str, const i64 *value)
 {
-        DEBUG_ERROR_IF_NULL(printer->val_signed);
         printer->val_signed(printer, str, value);
         return true;
 }
 
 bool carbon_printer_unsigned_nonull(carbon_printer *printer, string_buffer *str, const u64 *value)
 {
-        DEBUG_ERROR_IF_NULL(printer->val_unsigned);
         printer->val_unsigned(printer, str, value);
         return true;
 }
 
 #define delegate_print_call(printer, str, value, null_test_func, print_func, ctype)                                    \
 ({                                                                                                                     \
-        DEBUG_ERROR_IF_NULL(printer)                                                                                         \
-        DEBUG_ERROR_IF_NULL(str)                                                                                             \
         bool status = false;                                                                                           \
         if (null_test_func(value)) {                                                                                       \
                 status = carbon_printer_null(printer, str);                                                            \
@@ -244,21 +219,18 @@ bool carbon_printer_i64_or_null(carbon_printer *printer, string_buffer *str, i64
 
 bool carbon_printer_float(carbon_printer *printer, string_buffer *str, const float *value)
 {
-        DEBUG_ERROR_IF_NULL(printer->val_float);
         printer->val_float(printer, str, value);
         return true;
 }
 
 bool carbon_printer_string(carbon_printer *printer, string_buffer *str, const char *value, u64 strlen)
 {
-        DEBUG_ERROR_IF_NULL(printer->val_string);
         printer->val_string(printer, str, value, strlen);
         return true;
 }
 
 bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const carbon_binary *binary)
 {
-        DEBUG_ERROR_IF_NULL(printer->val_binary);
         printer->val_binary(printer, str, binary);
         return true;
 }
@@ -266,7 +238,6 @@ bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const ca
 bool carbon_printer_prop_null(carbon_printer *printer, string_buffer *str,
                               const char *key_name, u64 key_len)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_null);
         printer->prop_null(printer, str, key_name, key_len);
         return true;
 }
@@ -274,7 +245,6 @@ bool carbon_printer_prop_null(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_true(carbon_printer *printer, string_buffer *str,
                               const char *key_name, u64 key_len)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_true);
         printer->prop_true(printer, str, key_name, key_len);
         return true;
 }
@@ -282,7 +252,6 @@ bool carbon_printer_prop_true(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_false(carbon_printer *printer, string_buffer *str,
                                const char *key_name, u64 key_len)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_false);
         printer->prop_false(printer, str, key_name, key_len);
         return true;
 }
@@ -290,7 +259,6 @@ bool carbon_printer_prop_false(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_signed(carbon_printer *printer, string_buffer *str,
                                 const char *key_name, u64 key_len, const i64 *value)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_signed);
         printer->prop_signed(printer, str, key_name, key_len, value);
         return true;
 }
@@ -298,7 +266,6 @@ bool carbon_printer_prop_signed(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_unsigned(carbon_printer *printer, string_buffer *str,
                                   const char *key_name, u64 key_len, const u64 *value)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_unsigned);
         printer->prop_unsigned(printer, str, key_name, key_len, value);
         return true;
 }
@@ -306,7 +273,6 @@ bool carbon_printer_prop_unsigned(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_float(carbon_printer *printer, string_buffer *str,
                                const char *key_name, u64 key_len, const float *value)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_float);
         printer->prop_float(printer, str, key_name, key_len, value);
         return true;
 }
@@ -314,7 +280,6 @@ bool carbon_printer_prop_float(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_string(carbon_printer *printer, string_buffer *str,
                                 const char *key_name, u64 key_len, const char *value, u64 strlen)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_string);
         printer->prop_string(printer, str, key_name, key_len, value, strlen);
         return true;
 }
@@ -322,7 +287,6 @@ bool carbon_printer_prop_string(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_prop_binary(carbon_printer *printer, string_buffer *str,
                                 const char *key_name, u64 key_len, const carbon_binary *binary)
 {
-        DEBUG_ERROR_IF_NULL(printer->prop_binary);
         printer->prop_binary(printer, str, key_name, key_len, binary);
         return true;
 }
@@ -330,7 +294,6 @@ bool carbon_printer_prop_binary(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_array_prop_name(carbon_printer *printer, string_buffer *str,
                                     const char *key_name, u64 key_len)
 {
-        DEBUG_ERROR_IF_NULL(printer->array_prop_name);
         printer->array_prop_name(printer, str, key_name, key_len);
         return true;
 }
@@ -338,7 +301,6 @@ bool carbon_printer_array_prop_name(carbon_printer *printer, string_buffer *str,
 bool carbon_printer_column_prop_name(carbon_printer *printer, string_buffer *str,
                                      const char *key_name, u64 key_len)
 {
-        DEBUG_ERROR_IF_NULL(printer->column_prop_name);
         printer->column_prop_name(printer, str, key_name, key_len);
         return true;
 }
@@ -346,7 +308,6 @@ bool carbon_printer_column_prop_name(carbon_printer *printer, string_buffer *str
 bool carbon_printer_object_prop_name(carbon_printer *printer, string_buffer *str,
                                      const char *key_name, u64 key_len)
 {
-        DEBUG_ERROR_IF_NULL(printer->obj_prop_name);
         printer->obj_prop_name(printer, str, key_name, key_len);
         return true;
 }
@@ -487,7 +448,7 @@ bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, str
                                 break;
                         default:
                                 carbon_printer_object_end(printer, builder);
-                                ERROR(&it->err, ERR_CORRUPTED);
+                                error(ERR_CORRUPTED, NULL);
                                 return false;
                 }
                 first_entry = false;
@@ -636,7 +597,7 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
                                 break;
                         default:
                                 carbon_printer_array_end(printer, builder);
-                                ERROR(&it->err, ERR_CORRUPTED);
+                                error(ERR_CORRUPTED, NULL);
                                 return false;
                 }
                 first_entry = false;
@@ -662,10 +623,6 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
 
 bool carbon_printer_print_column(carbon_column *it, carbon_printer *printer, string_buffer *builder)
 {
-        DEBUG_ERROR_IF_NULL(it)
-        DEBUG_ERROR_IF_NULL(printer)
-        DEBUG_ERROR_IF_NULL(builder)
-
         carbon_field_type_e type;
         u32 nvalues;
         const void *values = carbon_column_values(&type, &nvalues, it);
@@ -761,7 +718,7 @@ bool carbon_printer_print_column(carbon_column *it, carbon_printer *printer, str
                                 break;
                         default:
                                 carbon_printer_array_end(printer, builder);
-                                ERROR(&it->err, ERR_CORRUPTED);
+                                error(ERR_CORRUPTED, NULL);
                                 return false;
                 }
                 if (i + 1 < nvalues) {

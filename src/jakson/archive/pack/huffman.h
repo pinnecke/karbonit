@@ -37,7 +37,7 @@ bool pack_huffman_write_extra(packer *self, memfile *dst, const vector ofType (c
 bool pack_huffman_read_extra(packer *self, FILE *src, size_t nbytes);
 bool pack_huffman_print_extra(packer *self, FILE *file, memfile *src);
 bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src, u32 decompressed_strlen);
-bool pack_huffman_encode_string(packer *self, memfile *dst, err *err, const char *string);
+bool pack_huffman_encode_string(packer *self, memfile *dst, const char *string);
 bool pack_huffman_decode_string(packer *self, char *dst, size_t strlen, FILE *src);
 
 #ifdef __cplusplus

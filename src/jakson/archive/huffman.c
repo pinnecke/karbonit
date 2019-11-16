@@ -37,8 +37,6 @@ bool pack_huffman_init(packer *self)
 
 bool pack_coding_huffman_cpy(const packer *self, packer *dst)
 {
-        CHECK_TAG(self->tag, PACK_HUFFMAN);
-
         *dst = *self;
         dst->extra = MALLOC(sizeof(huffman));
         if (dst->extra != NULL) {
@@ -52,8 +50,6 @@ bool pack_coding_huffman_cpy(const packer *self, packer *dst)
 
 bool pack_coding_huffman_drop(packer *self)
 {
-        CHECK_TAG(self->tag, PACK_HUFFMAN);
-
         huffman *encoder = (huffman *) self->extra;
         coding_huffman_drop(encoder);
 
@@ -113,8 +109,6 @@ bool huffman_dump_string_table_entry(FILE *file, memfile *memfile)
 bool pack_huffman_write_extra(packer *self, memfile *dst,
                               const vector ofType (const char *) *strings)
 {
-        CHECK_TAG(self->tag, PACK_HUFFMAN);
-
         huffman *encoder = (huffman *) self->extra;
 
         coding_huffman_build(encoder, strings);
@@ -125,8 +119,6 @@ bool pack_huffman_write_extra(packer *self, memfile *dst,
 
 bool pack_huffman_read_extra(packer *self, FILE *src, size_t nbytes)
 {
-        CHECK_TAG(self->tag, PACK_HUFFMAN);
-
         UNUSED(self);
         UNUSED(src);
         UNUSED(nbytes);
@@ -158,14 +150,10 @@ bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src,
 }
 
 bool
-pack_huffman_encode_string(packer *self, memfile *dst, err *err, const char *string)
+pack_huffman_encode_string(packer *self, memfile *dst, const char *string)
 {
-        CHECK_TAG(self->tag, PACK_HUFFMAN);
-
         huffman *encoder = (huffman *) self->extra;
         bool status = coding_huffman_encode(dst, encoder, string);
-        error_cpy(err, &encoder->err);
-
         return status;
 }
 

@@ -38,7 +38,6 @@ typedef struct carbon_column {
         offset_t num_and_capacity_start_offset;
         offset_t column_start_offset;
 
-        err err;
         carbon_field_type_e type;
 
         carbon_list_derivable_e abstract_type;
@@ -51,7 +50,7 @@ typedef struct carbon_column {
 
 } carbon_column;
 
-bool carbon_column_create(carbon_column *it, memfile *memfile, err *err, offset_t column_start_offset);
+bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_start_offset);
 bool carbon_column_clone(carbon_column *dst, carbon_column *src);
 
 bool carbon_column_insert(carbon_insert *inserter, carbon_column *it);

@@ -173,11 +173,6 @@ typedef struct str_hash {
          * by the call to <code>string_id_map_create</code>
          */
         int (*free)(str_hash *self, void *ptr);
-
-        /**
-         *  Error information
-         */
-        err err;
 } str_hash;
 
 /**
@@ -188,7 +183,6 @@ typedef struct str_hash {
  */
 inline static int str_hash_drop(str_hash *str_hash)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
         JAK_ASSERT(str_hash->drop);
         return str_hash->drop(str_hash);
 }
@@ -201,7 +195,6 @@ inline static int str_hash_drop(str_hash *str_hash)
  */
 inline static bool str_hash_reset_counters(str_hash *str_hash)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
         memset(&str_hash->counters, 0, sizeof(str_hash_counters));
         return true;
 }
@@ -214,8 +207,6 @@ inline static bool str_hash_reset_counters(str_hash *str_hash)
  */
 inline static int str_hash_get_counters(str_hash_counters *out, const str_hash *str_hash)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(out);
         *out = str_hash->counters;
         return true;
 }
@@ -233,9 +224,6 @@ inline static int str_hash_get_counters(str_hash_counters *out, const str_hash *
  */
 inline static int str_hash_put_safe(str_hash *str_hash, char *const *keys, const archive_field_sid_t *values, size_t npairs)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(keys);
-        DEBUG_ERROR_IF_NULL(values);
         JAK_ASSERT(str_hash->put_bulk_safe);
         return str_hash->put_bulk_safe(str_hash, keys, values, npairs);
 }
@@ -257,9 +245,6 @@ inline static int str_hash_put_safe(str_hash *str_hash, char *const *keys, const
  */
 inline static int str_hash_put_bulk_fast(str_hash *str_hash, char *const *keys, const archive_field_sid_t *values, size_t npairs)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(keys);
-        DEBUG_ERROR_IF_NULL(values);
         JAK_ASSERT(str_hash->put_bulk_fast);
         return str_hash->put_bulk_fast(str_hash, keys, values, npairs);
 }
@@ -269,8 +254,6 @@ inline static int str_hash_put_bulk_fast(str_hash *str_hash, char *const *keys, 
  */
 inline static int str_hash_put_exact(str_hash *str_hash, const char *key, archive_field_sid_t value)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(key);
         JAK_ASSERT(str_hash->put_exact_safe);
         return str_hash->put_exact_safe(str_hash, key, value);
 }
@@ -280,8 +263,6 @@ inline static int str_hash_put_exact(str_hash *str_hash, const char *key, archiv
  */
 inline static int str_hash_put_exact_fast(str_hash *str_hash, const char *key, archive_field_sid_t value)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(key);
         JAK_ASSERT(str_hash->put_exact_fast);
         return str_hash->put_exact_fast(str_hash, key, value);
 }
@@ -315,11 +296,6 @@ inline static int str_hash_put_exact_fast(str_hash *str_hash, const char *key, a
  */
 inline static int str_hash_get_bulk_safe(archive_field_sid_t **out, bool **found_mask, size_t *num_not_found, str_hash *str_hash, char *const *keys, size_t nkeys)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(found_mask);
-        DEBUG_ERROR_IF_NULL(num_not_found);
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(keys);
         JAK_ASSERT(str_hash->get_bulk_safe);
         int result = str_hash->get_bulk_safe(str_hash, out, found_mask, num_not_found, keys, nkeys);
         JAK_ASSERT (out != NULL);
@@ -329,10 +305,6 @@ inline static int str_hash_get_bulk_safe(archive_field_sid_t **out, bool **found
 
 inline static int str_hash_get_bulk_safe_exact(archive_field_sid_t *out, bool *found, str_hash *str_hash, const char *key)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(found);
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(key);
         JAK_ASSERT(str_hash->get_exact_safe);
         int result = str_hash->get_exact_safe(str_hash, out, found, key);
         JAK_ASSERT (out != NULL);
@@ -357,9 +329,6 @@ inline static int str_hash_get_bulk_safe_exact(archive_field_sid_t *out, bool *f
  */
 inline static int str_hash_get_bulk_fast(archive_field_sid_t **out, str_hash *str_hash, char *const *keys, size_t nkeys)
 {
-        DEBUG_ERROR_IF_NULL(out);
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(keys);
         JAK_ASSERT(str_hash->get_fast);
         return str_hash->get_fast(str_hash, out, keys, nkeys);
 }
@@ -381,8 +350,6 @@ inline static int str_hash_get_bulk_fast(archive_field_sid_t **out, str_hash *st
  */
 inline static int str_hash_update_fast(str_hash *str_hash, const archive_field_sid_t *values, char *const *keys, size_t nkeys)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(keys);
         JAK_ASSERT(str_hash->update_key_fast);
         return str_hash->update_key_fast(str_hash, values, keys, nkeys);
 }
@@ -397,8 +364,6 @@ inline static int str_hash_update_fast(str_hash *str_hash, const archive_field_s
  */
 inline static int str_hash_remove(str_hash *str_hash, char *const *keys, size_t nkeys)
 {
-        DEBUG_ERROR_IF_NULL(str_hash);
-        DEBUG_ERROR_IF_NULL(keys);
         JAK_ASSERT(str_hash->remove);
         return str_hash->remove(str_hash, keys, nkeys);
 }
@@ -412,8 +377,6 @@ inline static int str_hash_remove(str_hash *str_hash, char *const *keys, size_t 
  */
 inline static int str_hash_free(void *ptr, str_hash *str_hash)
 {
-        DEBUG_ERROR_IF_NULL(ptr);
-        DEBUG_ERROR_IF_NULL(str_hash);
         JAK_ASSERT(str_hash->free);
         return str_hash->free(str_hash, ptr);
 }
@@ -426,7 +389,6 @@ inline static int str_hash_free(void *ptr, str_hash *str_hash)
  */
 inline static int str_hash_counters_init(str_hash_counters *counters)
 {
-        DEBUG_ERROR_IF_NULL(counters);
         memset(counters, 0, sizeof(str_hash_counters));
         return true;
 }
@@ -440,8 +402,6 @@ inline static int str_hash_counters_init(str_hash_counters *counters)
  */
 inline static int str_hash_counters_add(str_hash_counters *dst_lhs, const str_hash_counters *rhs)
 {
-        DEBUG_ERROR_IF_NULL(dst_lhs);
-        DEBUG_ERROR_IF_NULL(rhs);
         dst_lhs->num_bucket_search_miss += rhs->num_bucket_search_miss;
         dst_lhs->num_bucket_search_hit += rhs->num_bucket_search_hit;
         dst_lhs->num_bucket_cache_search_hit += rhs->num_bucket_cache_search_hit;

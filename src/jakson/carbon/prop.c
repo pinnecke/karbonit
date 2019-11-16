@@ -22,8 +22,6 @@
 
 bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent)
 {
-        DEBUG_ERROR_IF_NULL(dst)
-        DEBUG_ERROR_IF_NULL(parent)
         dst->parent = parent;
         dst->idx = parent->pos;
         dst->key.string = parent->field.key.name;
@@ -34,7 +32,6 @@ bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent)
 
 u64 internal_carbon_prop_size(memfile *file)
 {
-        DEBUG_ERROR_IF_NULL(file);
         offset_t prop_start = memfile_save_position(file);
         carbon_string_nomarker_skip(file);
         carbon_field_skip(file);

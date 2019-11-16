@@ -111,11 +111,6 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, internal_carbon_a
 static bool
 create(carbon_update *updater, rev *context, const carbon_dot_path *path)
 {
-        DEBUG_ERROR_IF_NULL(updater)
-        DEBUG_ERROR_IF_NULL(context)
-        DEBUG_ERROR_IF_NULL(path)
-
-        error_init(&updater->err);
         updater->context = context;
         updater->path = path;
 
@@ -142,7 +137,7 @@ static bool column_update_u8(carbon_column *it, u32 pos, u8 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -151,7 +146,7 @@ static bool column_update_u16(carbon_column *it, u32 pos, u16 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -160,7 +155,7 @@ static bool column_update_u32(carbon_column *it, u32 pos, u32 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -169,7 +164,7 @@ static bool column_update_u64(carbon_column *it, u32 pos, u64 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -178,7 +173,7 @@ static bool column_update_i8(carbon_column *it, u32 pos, i8 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -187,7 +182,7 @@ static bool column_update_i16(carbon_column *it, u32 pos, i16 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -196,7 +191,7 @@ static bool column_update_i32(carbon_column *it, u32 pos, i32 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -205,7 +200,7 @@ static bool column_update_i64(carbon_column *it, u32 pos, i64 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -214,7 +209,7 @@ static bool column_update_float(carbon_column *it, u32 pos, float value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED);    // TODO: Implement
+        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -384,7 +379,7 @@ carbon_insert *carbon_update_set_array_begin(rev *context, const char *path,
         UNUSED(state_out);
         UNUSED(array_capacity);
         UNUSED(path);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -392,7 +387,7 @@ bool carbon_update_set_array_end(carbon_insert_array_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -406,7 +401,7 @@ carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
         UNUSED(type);
         UNUSED(column_capacity);
         UNUSED(path);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -414,7 +409,7 @@ bool carbon_update_set_column_end(carbon_insert_column_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -558,7 +553,7 @@ carbon_insert *carbon_update_set_array_begin_compiled(rev *context,
         UNUSED(state_out);
         UNUSED(array_capacity);
         UNUSED(path);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -566,7 +561,7 @@ bool carbon_update_set_array_end_compiled(carbon_insert_array_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -582,7 +577,7 @@ carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
         UNUSED(type);
         UNUSED(column_capacity);
         UNUSED(path);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 
@@ -590,7 +585,7 @@ bool carbon_update_set_column_end_compiled(carbon_insert_column_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        ERROR_PRINT(ERR_NOTIMPLEMENTED)
+        error(ERR_NOTIMPLEMENTED, NULL)
         return false;
 }
 

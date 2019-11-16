@@ -47,7 +47,6 @@ typedef struct carbon_insert {
 
         memfile memfile;
         offset_t position;
-        err err;
 } carbon_insert;
 
 typedef struct carbon_insert_array_state {
@@ -74,7 +73,7 @@ typedef struct carbon_insert_column_state {
 
 bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes);
 bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes);
-bool carbon_int_insert_column(memfile *memfile_in, err *err_in, carbon_list_derivable_e derivation, carbon_column_type_e type, size_t capactity);
+bool carbon_int_insert_column(memfile *memfile_in, carbon_list_derivable_e derivation, carbon_column_type_e type, size_t capactity);
 
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.
@@ -97,7 +96,7 @@ bool carbon_int_object_it_prop_key_access(carbon_object *it);
 bool carbon_int_object_it_prop_value_skip(carbon_object *it);
 bool carbon_int_object_it_prop_skip(carbon_object *it);
 bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_object *it);
-bool carbon_int_field_data_access(memfile *file, err *err, field_access *field_access);
+bool carbon_int_field_data_access(memfile *file, field_access *field_access);
 
 offset_t carbon_int_column_get_payload_off(carbon_column *it);
 offset_t carbon_int_payload_after_header(rec *doc);
@@ -118,33 +117,33 @@ bool carbon_int_field_access_object_it_opened(field_access *field);
 bool carbon_int_field_access_array_opened(field_access *field);
 bool carbon_int_field_access_column_it_opened(field_access *field);
 bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field);
-bool carbon_int_field_access_bool_value(bool *value, field_access *field, err *err);
+bool carbon_int_field_access_bool_value(bool *value, field_access *field);
 bool carbon_int_field_access_is_null(bool *is_null, field_access *field);
-bool carbon_int_field_access_u8_value(u8 *value, field_access *field, err *err);
-bool carbon_int_field_access_u16_value(u16 *value, field_access *field, err *err);
-bool carbon_int_field_access_u32_value(u32 *value, field_access *field, err *err);
-bool carbon_int_field_access_u64_value(u64 *value, field_access *field, err *err);
-bool carbon_int_field_access_i8_value(i8 *value, field_access *field, err *err);
-bool carbon_int_field_access_i16_value(i16 *value, field_access *field, err *err);
-bool carbon_int_field_access_i32_value(i32 *value, field_access *field, err *err);
-bool carbon_int_field_access_i64_value(i64 *value, field_access *field, err *err);
-bool carbon_int_field_access_float_value(float *value, field_access *field, err *err);
-bool carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field, err *err);
-bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value, field_access *field, err *err);
-bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *value, field_access *field, err *err);
-bool carbon_int_field_access_signed_value(i64 *value, field_access *field, err *err);
-bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field, err *err);
-const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field, err *err);
-bool carbon_int_field_access_binary_value(carbon_binary *out, field_access *field, err *err);
-carbon_array *carbon_int_field_access_array_value(field_access *field, err *err);
-carbon_object *carbon_int_field_access_object_value(field_access *field, err *err);
-carbon_column *carbon_int_field_access_column_value(field_access *field, err *err);
+bool carbon_int_field_access_u8_value(u8 *value, field_access *field);
+bool carbon_int_field_access_u16_value(u16 *value, field_access *field);
+bool carbon_int_field_access_u32_value(u32 *value, field_access *field);
+bool carbon_int_field_access_u64_value(u64 *value, field_access *field);
+bool carbon_int_field_access_i8_value(i8 *value, field_access *field);
+bool carbon_int_field_access_i16_value(i16 *value, field_access *field);
+bool carbon_int_field_access_i32_value(i32 *value, field_access *field);
+bool carbon_int_field_access_i64_value(i64 *value, field_access *field);
+bool carbon_int_field_access_float_value(float *value, field_access *field);
+bool carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field);
+bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value, field_access *field);
+bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *value, field_access *field);
+bool carbon_int_field_access_signed_value(i64 *value, field_access *field);
+bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field);
+const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field);
+bool carbon_int_field_access_binary_value(carbon_binary *out, field_access *field);
+carbon_array *carbon_int_field_access_array_value(field_access *field);
+carbon_object *carbon_int_field_access_object_value(field_access *field);
+carbon_column *carbon_int_field_access_column_value(field_access *field);
 
 void carbon_int_auto_close_nested_array(field_access *field);
 void carbon_int_auto_close_nested_object_it(field_access *field);
 void carbon_int_auto_close_nested_column_it(field_access *field);
 
-bool carbon_int_field_remove(memfile *memfile, err *err, carbon_field_type_e type);
+bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type);
 
 /**
  * For <code>mode</code>, see <code>carbon_create_begin</code>

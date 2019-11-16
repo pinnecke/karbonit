@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-bool carbon_key_create(memfile *file, carbon_key_e type, err *err);
+bool carbon_key_create(memfile *file, carbon_key_e type);
 bool carbon_key_skip(carbon_key_e *out, memfile *file);
 bool carbon_key_read_type(carbon_key_e *out, memfile *file);
 bool carbon_key_write_unsigned(memfile *file, u64 key);

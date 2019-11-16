@@ -29,12 +29,12 @@ void __fn_result_fail(fn_result *result, error_code code, const char *file, u32 
                        code != ERR_NOERR_RESULT_INT && code != ERR_NOERR_RESULT_UINT &&
                        code != ERR_NOERR_RESULT_PTR);
         __fn_result_create(result, code, NULL, 0);
-        error_set_wdetails_no_abort(&global_error, code, file, line, msg);
+        error_set(code, file, line, msg);
 }
 
 void __fn_result_fail_forward(fn_result *result)
 {
-        __fn_result_create(result, global_error.code, NULL, 0);
+        __fn_result_create(result, g_err.code, NULL, 0);
 }
 
 void __fn_result_ok_uint32(fn_result *result, u32 value)

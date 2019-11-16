@@ -35,9 +35,6 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column *it);
 
 bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc)
 {
-        DEBUG_ERROR_IF_NULL(out)
-        DEBUG_ERROR_IF_NULL(dot_path)
-        DEBUG_ERROR_IF_NULL(doc)
         carbon_dot_path path;
         carbon_dot_path_from_string(&path, dot_path);
         carbon_find_create(out, &path, doc);
@@ -118,7 +115,6 @@ fn_result carbon_find_create(carbon_find *find, carbon_dot_path *path, rec *doc)
         FN_FAIL_IF_NULL(find, path, doc)
 
         ZERO_MEMORY(find, sizeof(carbon_find));
-        error_init(&find->err);
         find->doc = doc;
 
         FN_FAIL_FORWARD_IF_NOT_OK(carbon_path_evaluator_begin(&find->path_evaluater, path, doc));
@@ -737,7 +733,7 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                 case CARBON_FIELD_BINARY_CUSTOM:
                         find->value.binary = carbon_item_get_binary(&(it->item), CARBON_NULL_BINARY);
                         break;
-                default: ERROR(&find->err, ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
                         break;
         }
 }
@@ -833,7 +829,7 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_BINARY_CUSTOM:
                         find->value.binary = carbon_item_get_binary(&(it->prop.value), CARBON_NULL_BINARY);
                         break;
-                default: ERROR(&find->err, ERR_INTERNALERR);
+                default: error(ERR_INTERNALERR, NULL);
                         break;
         }
 }
@@ -858,7 +854,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column *it)
                         } else if (field_value == CARBON_BOOLEAN_COLUMN_FALSE) {
                                 find->type = CARBON_FIELD_FALSE;
                         } else {
-                                ERROR(&it->err, ERR_INTERNALERR);
+                                error(ERR_INTERNALERR, NULL);
                         }
                 }
                         break;
@@ -979,7 +975,7 @@ result_from_column(carbon_find *find, u32 requested_idx, carbon_column *it)
                         }
                 }
                         break;
-                default: ERROR(&it->err, ERR_UNSUPPORTEDTYPE)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL)
                         return false;
         }
         return true;

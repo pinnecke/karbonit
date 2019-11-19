@@ -48,14 +48,13 @@ typedef struct field {
 
 typedef struct arr_it {
         memfile file;
-        offset_t array_begin_off;
+        offset_t begin;
         list_derivable_e list_type;
         u64 pos;
-        carbon_item item;
-
+        item item;
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
-        bool array_end_reached;
+        bool eof;
 
         vector ofType(offset_t) history;
         field field;
@@ -84,7 +83,7 @@ bool carbon_array_is_empty(arr_it *it);
  * Positions the iterator to the slot after the current element, potentially pointing to next element.
  * The function returns true, if the slot is non-empty, and false otherwise.
  */
-carbon_item *carbon_array_next(arr_it *it);
+item *carbon_array_next(arr_it *it);
 
 bool carbon_array_has_next(arr_it *it);
 

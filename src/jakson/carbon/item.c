@@ -23,7 +23,7 @@
 #include "item.h"
 #include "object.h"
 
-static bool carbon_item_setup_value(carbon_item *item, field_type_e field_type, field *field)
+static bool carbon_item_setup_value(item *item, field_type_e field_type, field *field)
 {
         if (carbon_field_type_is_signed(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_signed_value(&item->value.number_signed, field);
@@ -60,7 +60,7 @@ static bool carbon_item_setup_value(carbon_item *item, field_type_e field_type, 
         return true;
 }
 
-bool internal_carbon_item_create_from_array(carbon_item *item, arr_it *parent)
+bool internal_carbon_item_create_from_array(item *item, arr_it *parent)
 {
         item->parent_type = CARBON_PARENT_ARRAY;
         item->parent.array = parent;
@@ -70,7 +70,7 @@ bool internal_carbon_item_create_from_array(carbon_item *item, arr_it *parent)
         return carbon_item_setup_value(item, field_type, &parent->field);
 }
 
-bool internal_carbon_item_create_from_object(carbon_item *item, carbon_object *parent)
+bool internal_carbon_item_create_from_object(item *item, carbon_object *parent)
 {
         item->parent_type = CARBON_PARENT_OBJECT;
         item->parent.object = parent;

@@ -18,7 +18,7 @@ typedef struct carbon_prop
         carbon_object       *parent;
         u64                  idx;
         carbon_string_field  key;
-        carbon_item          value;
+        item          value;
 } carbon_prop;
 
 #define carbon_prop_get_name(prop)                                                                                     \

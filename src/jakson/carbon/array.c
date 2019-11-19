@@ -241,9 +241,9 @@ bool internal_carbon_array_create(arr_it *it, memfile *memfile, offset_t payload
 {
         ZERO_MEMORY(it, sizeof(arr_it));
 
-        it->array_begin_off = payload_start;
+        it->begin = payload_start;
         it->mod_size = 0;
-        it->array_end_reached = false;
+        it->eof = false;
         it->field_offset = 0;
         it->pos = (u64) -1;
 
@@ -272,16 +272,16 @@ bool internal_carbon_array_create(arr_it *it, memfile *memfile, offset_t payload
 
 bool internal_carbon_array_copy(arr_it *dst, arr_it *src)
 {
-        internal_carbon_array_create(dst, &src->file, src->array_begin_off);
+        internal_carbon_array_create(dst, &src->file, src->begin);
         return true;
 }
 
 bool internal_carbon_array_clone(arr_it *dst, arr_it *src)
 {
         memfile_clone(&dst->file, &src->file);
-        dst->array_begin_off = src->array_begin_off;
+        dst->begin = src->begin;
         dst->mod_size = src->mod_size;
-        dst->array_end_reached = src->array_end_reached;
+        dst->eof = src->eof;
         dst->list_type = src->list_type;
         vector_cpy(&dst->history, &src->history);
         carbon_int_field_clone(&dst->field, &src->field);
@@ -324,10 +324,10 @@ void carbon_array_drop(arr_it *it)
 
 bool carbon_array_rewind(arr_it *it)
 {
-        error_if_and_return(it->array_begin_off >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
+        error_if_and_return(it->begin >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
         carbon_int_history_clear(&it->history);
         it->pos = (u64) -1;
-        return memfile_seek(&it->file, it->array_begin_off + sizeof(u8));
+        return memfile_seek(&it->file, it->begin + sizeof(u8));
 }
 
 static void auto_adjust_pos_after_mod(arr_it *it)
@@ -367,13 +367,13 @@ static bool internal_array_next(arr_it *it)
         auto_adjust_pos_after_mod(it);
         offset_t last_off = memfile_tell(&it->file);
 
-        if (carbon_int_array_next(&is_empty_slot, &it->array_end_reached, it)) {
+        if (carbon_int_array_next(&is_empty_slot, &it->eof, it)) {
                 it->pos++;
                 carbon_int_history_push(&it->history, last_off);
                 return true;
         } else {
                 /** skip remaining zeros until end of array is reached */
-                if (!it->array_end_reached) {
+                if (!it->eof) {
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
                         while (*memfile_peek(&it->file, 1) == 0) {
@@ -386,7 +386,7 @@ static bool internal_array_next(arr_it *it)
         }
 }
 
-carbon_item *carbon_array_next(arr_it *it)
+item *carbon_array_next(arr_it *it)
 {
         if (internal_array_next(it)) {
                 internal_carbon_item_create_from_array(&(it->item), it);
@@ -491,7 +491,7 @@ bool carbon_array_is_sorted(arr_it *it)
 void carbon_array_update_type(arr_it *it, list_derivable_e derivation)
 {
         memfile_save_position(&it->file);
-        memfile_seek(&it->file, it->array_begin_off);
+        memfile_seek(&it->file, it->begin);
 
         derived_e derive_marker;
         abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);

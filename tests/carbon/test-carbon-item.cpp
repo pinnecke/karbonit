@@ -5,7 +5,7 @@
 TEST(TestCarbonItem, CreateId) {
         rec doc;
         arr_it array;
-        carbon_item *item;
+        item *item;
 
         carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", CARBON_KEY_NOKEY, NULL);
         carbon_read_begin(&array, &doc);

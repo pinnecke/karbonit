@@ -36,7 +36,7 @@ typedef enum carbon_item_type
     CARBON_ITEM_OBJECT
 } carbon_item_type_e;
 
-typedef struct carbon_item
+typedef struct item
 {
     carbon_parent_type_e     parent_type;
 
@@ -59,7 +59,7 @@ typedef struct carbon_item
         carbon_column       *column;
         carbon_object       *object;
     }                        value;
-} carbon_item;
+} item;
 
 #define INTERNAL_CARBON_ITEM_IS_TYPE(item, type)                                                                       \
         (carbon_item_get_type(item) == type)
@@ -296,8 +296,8 @@ typedef struct carbon_item
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool internal_carbon_item_create_from_array(carbon_item *item, arr_it *parent);
-bool internal_carbon_item_create_from_object(carbon_item *item, carbon_object *parent);
+bool internal_carbon_item_create_from_array(item *item, arr_it *parent);
+bool internal_carbon_item_create_from_object(item *item, carbon_object *parent);
 
 #ifdef __cplusplus
 }

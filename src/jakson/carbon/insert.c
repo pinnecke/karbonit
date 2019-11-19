@@ -56,7 +56,7 @@ void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context
         inserter->position = 0;
 
         offset_t pos = 0;
-        if (context->array_end_reached) {
+        if (context->eof) {
                 pos = memfile_tell(&context->file);
         } else {
                 pos = carbon_int_history_has(&context->history) ? carbon_int_history_peek(&context->history) : 0;

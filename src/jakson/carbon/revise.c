@@ -321,7 +321,7 @@ static bool internal_pack_array(arr_it *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         arr_it array;
                                         internal_carbon_array_create(&array, &it->file,
-                                                                     it->field.array->array_begin_off);
+                                                                     it->field.array->begin);
                                         internal_pack_array(&array);
                                         JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
                                                    CARBON_MARRAY_END);
@@ -464,7 +464,7 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         arr_it array;
                                         internal_carbon_array_create(&array, &it->memfile,
-                                                               it->field.value.data.array->array_begin_off);
+                                                               it->field.value.data.array->begin);
                                         internal_pack_array(&array);
                                         JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
                                                    CARBON_MARRAY_END);

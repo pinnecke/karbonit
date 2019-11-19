@@ -38,7 +38,7 @@ typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struc
 typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, arr_it *it);
 
 /* called when an array item was found */
-typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, carbon_item *it);
+typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, item *it);
 
 /* called when an array was was passed */
 typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, arr_it *it);
@@ -50,7 +50,7 @@ typedef bool (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struc
 typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
 
 /* called when an object property item was found */
-typedef void (*carbon_visit_prop_t)(struct carbon_traverse_extra *extra, carbon_item *it);
+typedef void (*carbon_visit_prop_t)(struct carbon_traverse_extra *extra, item *it);
 
 /* called when an object was passed */
 typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);

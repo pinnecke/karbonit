@@ -61,7 +61,7 @@ typedef enum list_container {
     LIST_COLUMN_FLOAT = MCOLUMN_FLOAT
 } list_container_e;
 
-bool list_container_by_column_type(list_container_e *out, int field_type);
+bool list_by_column_type(list_container_e *out, int field_type);
 
 #ifdef __cplusplus
 }

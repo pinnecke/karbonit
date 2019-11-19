@@ -376,7 +376,7 @@ bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation)
 
                 derived_e derive_marker;
                 list_container_e list_container;
-                list_container_by_column_type(&list_container, it->field_type);
+                list_by_column_type(&list_container, it->field_type);
                 abstract_derive_list_to(&derive_marker, list_container, derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 

@@ -268,7 +268,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
 
         char sep = '\0';
         const void *base = col_it_values(&type, &num_elems, it);
-        list_container_by_column_type(&container, type);
+        list_by_column_type(&container, type);
 
         if (UNLIKELY(num_elems == 0)) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);

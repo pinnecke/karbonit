@@ -316,7 +316,7 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
 
         derived_e derive_marker;
         list_container_e container;
-        list_container_by_column_type(&container, it->field_type);
+        list_by_column_type(&container, it->field_type);
         abstract_derive_list_to(&derive_marker, container, derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 

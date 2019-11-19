@@ -15,24 +15,24 @@ TEST(CarbonResultTest, CreateFail) {
 }
 
 TEST(CarbonResultTest, CreateOKInt) {
-        fn_result result = RESULT_OK_INT(UINT32_MAX);
+        fn_result result = RESULT_OK_INT(INT32_MAX);
         ASSERT_TRUE(RESULT_IS_OK(result));
         ASSERT_TRUE(RESULT_HAS_VALUE(result));
-        ASSERT_EQ(RESULT_INT_VALUE(result), UINT32_MAX);
+        ASSERT_EQ(RESULT_INT_VALUE(result), INT32_MAX);
 }
 
 TEST(CarbonResultTest, CreateOKUIntMin) {
-        fn_result result = RESULT_OK_UINT(INT32_MIN);
+        fn_result result = RESULT_OK_UINT(0);
         ASSERT_TRUE(RESULT_IS_OK(result));
         ASSERT_TRUE(RESULT_HAS_VALUE(result));
-        ASSERT_EQ(RESULT_UINT_VALUE(result), INT32_MIN);
+        ASSERT_EQ(RESULT_UINT_VALUE(result), 0u);
 }
 
 TEST(CarbonResultTest, CreateOKUIntMax) {
-        fn_result result = RESULT_OK_UINT(INT32_MAX);
+        fn_result result = RESULT_OK_UINT(UINT32_MAX);
         ASSERT_TRUE(RESULT_IS_OK(result));
         ASSERT_TRUE(RESULT_HAS_VALUE(result));
-        ASSERT_EQ(RESULT_UINT_VALUE(result), INT32_MAX);
+        ASSERT_EQ(RESULT_UINT_VALUE(result), UINT32_MAX);
 }
 
 TEST(CarbonResultTest, CreateOKTrue) {

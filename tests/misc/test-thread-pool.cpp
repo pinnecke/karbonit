@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <atomic>
-#include <cmath>
 #include <fstream>
 
 #include <jakson/utils/priority_queue.h>

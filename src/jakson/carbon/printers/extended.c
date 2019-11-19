@@ -218,14 +218,12 @@ static bool _json_printer_extended_print_binary(carbon_printer *self, string_buf
                 extra->buffer_size = required_buff_size * 1.7f;
                 extra->buffer = realloc(extra->buffer, extra->buffer_size);
                 error_if_and_return(!extra->buffer, ERR_REALLOCERR, NULL);
-                return false;
         }
         /** decrease buffer capacity if needed */
         if (extra->buffer_size * 0.3f > required_buff_size) {
                 extra->buffer_size = required_buff_size;
                 extra->buffer = realloc(extra->buffer, extra->buffer_size);
                 error_if_and_return(!extra->buffer, ERR_REALLOCERR, NULL);
-                return false;
         }
 
         JAK_ASSERT(extra->buffer_size >= required_buff_size);

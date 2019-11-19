@@ -188,6 +188,32 @@ bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len)
         return true;
 }
 
+bool carbon_from_object_it(carbon *doc, carbon_object_it *it)
+{
+    ERROR_IF_NULL(doc);
+    ERROR_IF_NULL(it);
+
+    carbon_new context;
+    carbon_insert *ins, nested_ins;
+    carbon_insert_object_state state;
+
+    ins = carbon_create_begin(&context, doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+    
+    nested_ins = *carbon_insert_object_begin(&state, ins, 0);
+    carbon_insert_object_end(&state);
+    
+    carbon_create_end(&context);
+
+    carbon_array_it ait;
+    carbon_read_begin(&ait, doc);
+    carbon_object_it *oit = carbon_array_it_object_value(&ait);
+
+    if (carbon_object_it_clone(oit, it)) {
+        return true;
+    }
+    return false;
+}
+
 bool carbon_drop(carbon *doc)
 {
         ERROR_IF_NULL(doc);

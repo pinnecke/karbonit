@@ -205,6 +205,7 @@ fn_result carbon_create_empty_ex(carbon *doc, carbon_list_derivable_e derivation
 
 bool carbon_from_json(carbon *doc, const char *json, carbon_key_e type, const void *key, err *err);
 bool carbon_from_raw_data(carbon *doc, err *err, const void *data, u64 len);
+bool carbon_from_object_it(carbon *doc, carbon_object_it *it);
 
 bool carbon_drop(carbon *doc);
 

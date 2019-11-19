@@ -684,8 +684,8 @@ void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
                 const path_entry *entry = VECTOR_GET(path_stack, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
-                        size_t path_len = strlen(path_buffer);
-                        sprintf(path_buffer + path_len, "%s%s", key, i + 1 < path_stack->num_elems ? ", " : "");
+                        size_t len = strlen(path_buffer);
+                        sprintf(path_buffer + len, "%s%s", key, i + 1 < path_stack->num_elems ? ", " : "");
                         free(key);
                 } else {
                         sprintf(path_buffer, "/");
@@ -732,16 +732,16 @@ bool archive_visitor_path_compare(const vec ofType(path_entry) *path,
                 const path_entry *entry = VECTOR_GET(path, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
-                        size_t path_len = strlen(path_buffer);
-                        sprintf(path_buffer + path_len, "%s/", key);
+                        size_t len = strlen(path_buffer);
+                        sprintf(path_buffer + len, "%s/", key);
                         free(key);
                 }
         }
 
         if (group_name) {
                 char *key = query_fetch_string_by_id(query, *group_name);
-                size_t path_len = strlen(path_buffer);
-                sprintf(path_buffer + path_len, "%s/", key);
+                size_t len = strlen(path_buffer);
+                sprintf(path_buffer + len, "%s/", key);
                 free(key);
         }
 

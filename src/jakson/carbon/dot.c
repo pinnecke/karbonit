@@ -111,20 +111,20 @@ static const char *next_token(struct dot_token *token, const char *str)
         return str;
 }
 
-bool carbon_dot_path_create(carbon_dot_path *path)
+bool dot_create(dot_path *path)
 {
-        path->path_len = 0;
-        ZERO_MEMORY(&path->nodes, ARRAY_LENGTH(path->nodes) * sizeof(carbon_dot_node));
+        path->len = 0;
+        ZERO_MEMORY(&path->nodes, ARRAY_LENGTH(path->nodes) * sizeof(dot_node));
         return true;
 }
 
-bool carbon_dot_path_from_string(carbon_dot_path *path, const char *path_string)
+bool dot_from_string(dot_path *path, const char *path_string)
 {
         UNUSED(path_string);
 
         struct dot_token token;
         int status = ERR_NOERR;
-        carbon_dot_path_create(path);
+        dot_create(path);
 
         enum path_entry {
                 DOT, ENTRY
@@ -144,7 +144,7 @@ bool carbon_dot_path_from_string(carbon_dot_path *path, const char *path_string)
                                         status = ERR_PARSE_ENTRY_EXPECTED;
                                         goto cleanup_and_error;
                                 } else {
-                                        carbon_dot_path_add_nkey(path, token.str, token.len);
+                                        dot_add_nkey(path, token.str, token.len);
                                 }
                                 break;
                         case TOKEN_NUMBER:
@@ -153,7 +153,7 @@ bool carbon_dot_path_from_string(carbon_dot_path *path, const char *path_string)
                                         goto cleanup_and_error;
                                 } else {
                                         u64 num = convert_atoiu64(token.str);
-                                        carbon_dot_path_add_idx(path, num);
+                                        dot_add_idx(path, num);
                                 }
                                 break;
                         case TOKEN_UNKNOWN:
@@ -168,59 +168,59 @@ bool carbon_dot_path_from_string(carbon_dot_path *path, const char *path_string)
         return true;
 
         cleanup_and_error:
-        carbon_dot_path_drop(path);
+        dot_drop(path);
         error(status, NULL);
         return false;
 }
 
-bool carbon_dot_path_add_key(carbon_dot_path *dst, const char *key)
+bool dot_add_key(dot_path *dst, const char *key)
 {
-        return carbon_dot_path_add_nkey(dst, key, strlen(key));
+        return dot_add_nkey(dst, key, strlen(key));
 }
 
-bool carbon_dot_path_add_nkey(carbon_dot_path *dst, const char *key, size_t len)
+bool dot_add_nkey(dot_path *dst, const char *key, size_t len)
 {
-        if (LIKELY(dst->path_len < ARRAY_LENGTH(dst->nodes))) {
-                carbon_dot_node *node = dst->nodes + dst->path_len++;
+        if (LIKELY(dst->len < ARRAY_LENGTH(dst->nodes))) {
+                dot_node *node = dst->nodes + dst->len++;
                 bool enquoted = strings_is_enquoted_wlen(key, len);
-                node->type = DOT_NODE_KEY_NAME;
-                node->identifier.string = strndup(enquoted ? key + 1 : key, len);
+                node->type = DOT_NODE_KEY;
+                node->name.string = strndup(enquoted ? key + 1 : key, len);
                 if (enquoted) {
-                        char *str_wo_rightspaces = strings_remove_tailing_blanks(node->identifier.string);
+                        char *str_wo_rightspaces = strings_remove_tailing_blanks(node->name.string);
                         size_t l = strlen(str_wo_rightspaces);
-                        node->identifier.string[l - 1] = '\0';
+                        node->name.string[l - 1] = '\0';
                 }
-                JAK_ASSERT(!strings_is_enquoted(node->identifier.string));
+                JAK_ASSERT(!strings_is_enquoted(node->name.string));
                 return true;
         } else {
                 return error(ERR_OUTOFBOUNDS, NULL);
         }
 }
 
-bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx)
+bool dot_add_idx(dot_path *dst, u32 idx)
 {
-        if (LIKELY(dst->path_len < ARRAY_LENGTH(dst->nodes))) {
-                carbon_dot_node *node = dst->nodes + dst->path_len++;
-                node->type = DOT_NODE_ARRAY_IDX;
-                node->identifier.idx = idx;
+        if (LIKELY(dst->len < ARRAY_LENGTH(dst->nodes))) {
+                dot_node *node = dst->nodes + dst->len++;
+                node->type = DOT_NODE_IDX;
+                node->name.idx = idx;
                 return true;
         } else {
                 return error(ERR_OUTOFBOUNDS, NULL);
         }
 }
 
-bool carbon_dot_path_len(u32 *len, const carbon_dot_path *path)
+bool dot_len(u32 *len, const dot_path *path)
 {
-        *len = path->path_len;
+        *len = path->len;
         return true;
 }
 
-bool carbon_dot_path_is_empty(const carbon_dot_path *path)
+bool dot_is_empty(const dot_path *path)
 {
-        return (path->path_len == 0);
+        return (path->len == 0);
 }
 
-bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const carbon_dot_path *path)
+bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot_path *path)
 {
         if (LIKELY(pos < ARRAY_LENGTH(path->nodes))) {
                 *type_out = path->nodes[pos].type;
@@ -230,77 +230,77 @@ bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const ca
         return true;
 }
 
-bool carbon_dot_path_idx_at(u32 *idx, u32 pos, const carbon_dot_path *path)
+bool dot_idx_at(u32 *idx, u32 pos, const dot_path *path)
 {
         error_if_and_return(pos >= ARRAY_LENGTH(path->nodes), ERR_OUTOFBOUNDS, NULL);
-        error_if_and_return(path->nodes[pos].type != DOT_NODE_ARRAY_IDX, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(path->nodes[pos].type != DOT_NODE_IDX, ERR_TYPEMISMATCH, NULL);
 
-        *idx = path->nodes[pos].identifier.idx;
+        *idx = path->nodes[pos].name.idx;
         return true;
 }
 
-const char *carbon_dot_path_key_at(u32 pos, const carbon_dot_path *path)
+const char *dot_key_at(u32 pos, const dot_path *path)
 {
         error_if_and_return(pos >= ARRAY_LENGTH(path->nodes), ERR_OUTOFBOUNDS, NULL);
-        error_if_and_return(path->nodes[pos].type != DOT_NODE_KEY_NAME, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(path->nodes[pos].type != DOT_NODE_KEY, ERR_TYPEMISMATCH, NULL);
 
-        return path->nodes[pos].identifier.string;
+        return path->nodes[pos].name.string;
 }
 
-bool carbon_dot_path_drop(carbon_dot_path *path)
+bool dot_drop(dot_path *path)
 {
-        for (u32 i = 0; i < path->path_len; i++) {
-                carbon_dot_node *node = path->nodes + i;
-                if (node->type == DOT_NODE_KEY_NAME) {
-                        free(node->identifier.string);
+        for (u32 i = 0; i < path->len; i++) {
+                dot_node *node = path->nodes + i;
+                if (node->type == DOT_NODE_KEY) {
+                        free(node->name.string);
                 }
         }
-        path->path_len = 0;
+        path->len = 0;
         return true;
 }
 
-bool carbon_dot_path_to_str(string_buffer *sb, carbon_dot_path *path)
+bool dot_to_str(string_buffer *sb, dot_path *path)
 {
-        for (u32 i = 0; i < path->path_len; i++) {
-                carbon_dot_node *node = path->nodes + i;
+        for (u32 i = 0; i < path->len; i++) {
+                dot_node *node = path->nodes + i;
                 switch (node->type) {
-                        case DOT_NODE_KEY_NAME: {
-                                bool empty_str = strlen(node->identifier.string) == 0;
+                        case DOT_NODE_KEY: {
+                                bool empty_str = strlen(node->name.string) == 0;
                                 bool quotes_required =
-                                        empty_str || strings_contains_blank_char(node->identifier.string);
+                                        empty_str || strings_contains_blank_char(node->name.string);
                                 if (quotes_required) {
                                         string_buffer_add_char(sb, '"');
                                 }
                                 if (!empty_str) {
-                                        string_buffer_add(sb, node->identifier.string);
+                                        string_buffer_add(sb, node->name.string);
                                 }
                                 if (quotes_required) {
                                         string_buffer_add_char(sb, '"');
                                 }
                         }
                                 break;
-                        case DOT_NODE_ARRAY_IDX:
-                                string_buffer_add_u32(sb, node->identifier.idx);
+                        case DOT_NODE_IDX:
+                                string_buffer_add_u32(sb, node->name.idx);
                                 break;
                 }
-                if (i + 1 < path->path_len) {
+                if (i + 1 < path->len) {
                         string_buffer_add_char(sb, '.');
                 }
         }
         return true;
 }
 
-bool carbon_dot_path_fprint(FILE *file, carbon_dot_path *path)
+bool dot_fprint(FILE *file, dot_path *path)
 {
         string_buffer sb;
         string_buffer_create(&sb);
-        carbon_dot_path_to_str(&sb, path);
+        dot_to_str(&sb, path);
         fprintf(file, "%s", string_cstr(&sb));
         string_buffer_drop(&sb);
         return true;
 }
 
-bool carbon_dot_path_print(carbon_dot_path *path)
+bool dot_print(dot_path *path)
 {
-        return carbon_dot_path_fprint(stdout, path);
+        return dot_fprint(stdout, path);
 }

@@ -1531,108 +1531,108 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
 }
 
 TEST(CarbonTest, CarbonDotNotation) {
-        carbon_dot_path path;
+        dot_path path;
         string_buffer sb;
         string_buffer_create(&sb);
 
-        carbon_dot_path_create(&path);
+        dot_create(&path);
 
-        carbon_dot_path_to_str(&sb, &path);
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_add_key(&path, "name");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_add_key(&path, "name");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_add_key(&path, "my name");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_add_key(&path, "my name");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\"") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_add_key(&path, "");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_add_key(&path, "");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\"") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_add_idx(&path, 42);
-        carbon_dot_path_to_str(&sb, &path);
+        dot_add_idx(&path, 42);
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_add_idx(&path, 23);
-        carbon_dot_path_to_str(&sb, &path);
+        dot_add_idx(&path, 23);
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42.23") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_add_key(&path, "\"already quotes\"");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_add_key(&path, "\"already quotes\"");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42.23.\"already quotes\"") == 0);
         string_buffer_clear(&sb);
 
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
         string_buffer_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonDotNotationParsing) {
-        carbon_dot_path path;
+        dot_path path;
         string_buffer sb;
         string_buffer_create(&sb);
 
-        carbon_dot_path_from_string(&path, "name");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "name");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "   name");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "   name");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "   name    ");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "   name    ");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "\"name\"");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "\"name\"");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "\"nam e\"");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "\"nam e\"");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "\"nam e\"") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "nam e");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "nam e");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "nam.e") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "\"My Doc\" names 5 age");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "\"My Doc\" names 5 age");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "\"My Doc\".names.5.age") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
-        carbon_dot_path_from_string(&path, "23.authors.3.name");
-        carbon_dot_path_to_str(&sb, &path);
+        dot_from_string(&path, "23.authors.3.name");
+        dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "23.authors.3.name") == 0);
         string_buffer_clear(&sb);
-        carbon_dot_path_drop(&path);
+        dot_drop(&path);
 
         string_buffer_drop(&sb);
 }
@@ -8044,30 +8044,30 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}}";
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
-        carbon_dot_path path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11, path12,
+        dot_path path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11, path12,
                 path13, path14, path15, path16, path17, path18, path19, path20, path21;
 
-        ASSERT_TRUE(carbon_dot_path_from_string(&path1, "0"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path2, "1"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path3, "0.a"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path4, "0.b"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path5, "0.c"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path6, "0.b.c"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path7, "0.b.c.0"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path8, "0.b.c.1"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path9, "0.b.c.2"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path10, "0.b.c.3"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path11, "0.b.d"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path12, "0.b.d.0"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path13, "0.b.d.1"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path14, "0.b.d.2"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path15, "0.b.e"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path16, "0.b.e.0"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path17, "0.b.e.1"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path18, "0.b.f"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path19, "0.b.f.0"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path20, "0.b.f.1"));
-        ASSERT_TRUE(carbon_dot_path_from_string(&path21, "0.b.\"the key\""));
+        ASSERT_TRUE(dot_from_string(&path1, "0"));
+        ASSERT_TRUE(dot_from_string(&path2, "1"));
+        ASSERT_TRUE(dot_from_string(&path3, "0.a"));
+        ASSERT_TRUE(dot_from_string(&path4, "0.b"));
+        ASSERT_TRUE(dot_from_string(&path5, "0.c"));
+        ASSERT_TRUE(dot_from_string(&path6, "0.b.c"));
+        ASSERT_TRUE(dot_from_string(&path7, "0.b.c.0"));
+        ASSERT_TRUE(dot_from_string(&path8, "0.b.c.1"));
+        ASSERT_TRUE(dot_from_string(&path9, "0.b.c.2"));
+        ASSERT_TRUE(dot_from_string(&path10, "0.b.c.3"));
+        ASSERT_TRUE(dot_from_string(&path11, "0.b.d"));
+        ASSERT_TRUE(dot_from_string(&path12, "0.b.d.0"));
+        ASSERT_TRUE(dot_from_string(&path13, "0.b.d.1"));
+        ASSERT_TRUE(dot_from_string(&path14, "0.b.d.2"));
+        ASSERT_TRUE(dot_from_string(&path15, "0.b.e"));
+        ASSERT_TRUE(dot_from_string(&path16, "0.b.e.0"));
+        ASSERT_TRUE(dot_from_string(&path17, "0.b.e.1"));
+        ASSERT_TRUE(dot_from_string(&path18, "0.b.f"));
+        ASSERT_TRUE(dot_from_string(&path19, "0.b.f.0"));
+        ASSERT_TRUE(dot_from_string(&path20, "0.b.f.1"));
+        ASSERT_TRUE(dot_from_string(&path21, "0.b.\"the key\""));
 
         u32 max = 10000;
         timestamp t1 = wallclock();
@@ -8159,27 +8159,27 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
         timestamp t2 = wallclock();
         printf("%.2fmsec/opp, %.4f ops/sec\n", (t2-t1)/(float)max/21.0f, 1.0f/((t2-t1)/(float)max/(21*1000.0f)));
 
-        carbon_dot_path_drop(&path1);
-        carbon_dot_path_drop(&path2);
-        carbon_dot_path_drop(&path3);
-        carbon_dot_path_drop(&path4);
-        carbon_dot_path_drop(&path5);
-        carbon_dot_path_drop(&path6);
-        carbon_dot_path_drop(&path7);
-        carbon_dot_path_drop(&path8);
-        carbon_dot_path_drop(&path9);
-        carbon_dot_path_drop(&path10);
-        carbon_dot_path_drop(&path11);
-        carbon_dot_path_drop(&path12);
-        carbon_dot_path_drop(&path13);
-        carbon_dot_path_drop(&path14);
-        carbon_dot_path_drop(&path15);
-        carbon_dot_path_drop(&path16);
-        carbon_dot_path_drop(&path17);
-        carbon_dot_path_drop(&path18);
-        carbon_dot_path_drop(&path19);
-        carbon_dot_path_drop(&path20);
-        carbon_dot_path_drop(&path21);
+        dot_drop(&path1);
+        dot_drop(&path2);
+        dot_drop(&path3);
+        dot_drop(&path4);
+        dot_drop(&path5);
+        dot_drop(&path6);
+        dot_drop(&path7);
+        dot_drop(&path8);
+        dot_drop(&path9);
+        dot_drop(&path10);
+        dot_drop(&path11);
+        dot_drop(&path12);
+        dot_drop(&path13);
+        dot_drop(&path14);
+        dot_drop(&path15);
+        dot_drop(&path16);
+        dot_drop(&path17);
+        dot_drop(&path18);
+        dot_drop(&path19);
+        dot_drop(&path20);
+        dot_drop(&path21);
 
         carbon_drop(&doc);
 }

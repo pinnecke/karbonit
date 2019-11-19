@@ -15,8 +15,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CARBON_PATH_H
-#define CARBON_PATH_H
+#ifndef PATH_H
+#define PATH_H
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
@@ -33,7 +33,7 @@ extern "C" {
 typedef struct carbon_path_evaluator {
         rec *doc;
         arr_it root_it;
-        carbon_path_status_e status;
+        path_status_e status;
         struct {
                 container_e container;
                 union {
@@ -54,11 +54,11 @@ typedef struct carbon_path_evaluator {
         } result;
 } carbon_path_evaluator;
 
-void carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path, rec *doc);
-bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const carbon_dot_path *path, rev *context);
+void carbon_path_evaluator_begin(carbon_path_evaluator *eval, dot_path *path, rec *doc);
+bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const dot_path *path, rev *context);
 bool carbon_path_evaluator_end(carbon_path_evaluator *state);
 
-bool carbon_path_evaluator_status(carbon_path_status_e *status, carbon_path_evaluator *state);
+bool carbon_path_evaluator_status(path_status_e *status, carbon_path_evaluator *state);
 bool carbon_path_evaluator_has_result(carbon_path_evaluator *state);
 bool carbon_path_exists(rec *doc, const char *path);
 

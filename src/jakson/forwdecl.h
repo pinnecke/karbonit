@@ -93,8 +93,8 @@ typedef struct carbon_string_field carbon_string_field;
 struct carbon_traverse_extra;
 
 typedef struct col_it col_it;
-typedef struct carbon_dot_node carbon_dot_node;
-typedef struct carbon_dot_path carbon_dot_path;
+typedef struct dot_node dot_node;
+typedef struct dot_path dot_path;
 typedef struct carbon_find carbon_find;
 typedef struct carbon_insert_array_state carbon_insert_array_state;
 typedef struct carbon_insert_object_state carbon_insert_object_state;

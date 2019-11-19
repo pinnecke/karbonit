@@ -49,10 +49,8 @@ typedef struct field {
 typedef struct arr_it {
         memfile file;
         offset_t array_begin_off;
-
-        list_derivable_e abstract_type;
+        list_derivable_e list_type;
         u64 pos;
-
         carbon_item item;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */

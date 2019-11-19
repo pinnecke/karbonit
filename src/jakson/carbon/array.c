@@ -234,7 +234,7 @@ static void __carbon_array_load_abstract_type(arr_it *it)
 {
         abstract_type_class_e type_class;
         abstract_get_class(&type_class, &it->file);
-        abstract_class_to_list_derivable(&it->abstract_type, type_class);
+        abstract_class_to_list_derivable(&it->list_type, type_class);
 }
 
 bool internal_carbon_array_create(arr_it *it, memfile *memfile, offset_t payload_start)
@@ -282,7 +282,7 @@ bool internal_carbon_array_clone(arr_it *dst, arr_it *src)
         dst->array_begin_off = src->array_begin_off;
         dst->mod_size = src->mod_size;
         dst->array_end_reached = src->array_end_reached;
-        dst->abstract_type = src->abstract_type;
+        dst->list_type = src->list_type;
         vector_cpy(&dst->history, &src->history);
         carbon_int_field_clone(&dst->field, &src->field);
         dst->field_offset = src->field_offset;
@@ -475,7 +475,7 @@ bool internal_carbon_array_remove(arr_it *it)
 bool carbon_array_is_multiset(arr_it *it)
 {
         abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        abstract_list_derivable_to_class(&type_class, it->list_type);
         return abstract_is_multiset(type_class);
 }
 
@@ -484,7 +484,7 @@ bool carbon_array_is_multiset(arr_it *it)
 bool carbon_array_is_sorted(arr_it *it)
 {
         abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        abstract_list_derivable_to_class(&type_class, it->list_type);
         return abstract_is_sorted(type_class);
 }
 

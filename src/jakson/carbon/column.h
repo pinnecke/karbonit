@@ -40,7 +40,7 @@ typedef struct carbon_column {
 
         field_type_e type;
 
-        list_derivable_e abstract_type;
+        list_derivable_e list_type;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;

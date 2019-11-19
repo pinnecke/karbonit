@@ -50,7 +50,7 @@ bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_s
 
         abstract_type_class_e type_class;
         abstract_get_class(&type_class, &it->memfile);
-        abstract_class_to_list_derivable(&it->abstract_type, type_class);
+        abstract_class_to_list_derivable(&it->list_type, type_class);
 
         u8 marker = *memfile_read(&it->memfile, sizeof(u8));
 
@@ -72,7 +72,7 @@ bool carbon_column_clone(carbon_column *dst, carbon_column *src)
         dst->num_and_capacity_start_offset = src->num_and_capacity_start_offset;
         dst->column_start_offset = src->column_start_offset;
         dst->type = src->type;
-        dst->abstract_type = src->abstract_type;
+        dst->list_type = src->list_type;
         dst->mod_size = src->mod_size;
         dst->column_capacity = src->column_capacity;
         dst->column_num_elements = src->column_num_elements;
@@ -294,14 +294,14 @@ bool carbon_column_remove(carbon_column *it, u32 pos)
 bool carbon_column_is_multiset(carbon_column *it)
 {
         abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        abstract_list_derivable_to_class(&type_class, it->list_type);
         return abstract_is_multiset(type_class);
 }
 
 bool carbon_column_is_sorted(carbon_column *it)
 {
         abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        abstract_list_derivable_to_class(&type_class, it->list_type);
         return abstract_is_sorted(type_class);
 }
 

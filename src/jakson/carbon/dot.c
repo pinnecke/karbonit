@@ -111,14 +111,14 @@ static const char *next_token(struct dot_token *token, const char *str)
         return str;
 }
 
-bool dot_create(dot_path *path)
+bool dot_create(dot *path)
 {
         path->len = 0;
         ZERO_MEMORY(&path->nodes, ARRAY_LENGTH(path->nodes) * sizeof(dot_node));
         return true;
 }
 
-bool dot_from_string(dot_path *path, const char *path_string)
+bool dot_from_string(dot *path, const char *path_string)
 {
         UNUSED(path_string);
 
@@ -173,12 +173,12 @@ bool dot_from_string(dot_path *path, const char *path_string)
         return false;
 }
 
-bool dot_add_key(dot_path *dst, const char *key)
+bool dot_add_key(dot *dst, const char *key)
 {
         return dot_add_nkey(dst, key, strlen(key));
 }
 
-bool dot_add_nkey(dot_path *dst, const char *key, size_t len)
+bool dot_add_nkey(dot *dst, const char *key, size_t len)
 {
         if (LIKELY(dst->len < ARRAY_LENGTH(dst->nodes))) {
                 dot_node *node = dst->nodes + dst->len++;
@@ -197,7 +197,7 @@ bool dot_add_nkey(dot_path *dst, const char *key, size_t len)
         }
 }
 
-bool dot_add_idx(dot_path *dst, u32 idx)
+bool dot_add_idx(dot *dst, u32 idx)
 {
         if (LIKELY(dst->len < ARRAY_LENGTH(dst->nodes))) {
                 dot_node *node = dst->nodes + dst->len++;
@@ -209,18 +209,18 @@ bool dot_add_idx(dot_path *dst, u32 idx)
         }
 }
 
-bool dot_len(u32 *len, const dot_path *path)
+bool dot_len(u32 *len, const dot *path)
 {
         *len = path->len;
         return true;
 }
 
-bool dot_is_empty(const dot_path *path)
+bool dot_is_empty(const dot *path)
 {
         return (path->len == 0);
 }
 
-bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot_path *path)
+bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path)
 {
         if (LIKELY(pos < ARRAY_LENGTH(path->nodes))) {
                 *type_out = path->nodes[pos].type;
@@ -230,7 +230,7 @@ bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot_path *path)
         return true;
 }
 
-bool dot_idx_at(u32 *idx, u32 pos, const dot_path *path)
+bool dot_idx_at(u32 *idx, u32 pos, const dot *path)
 {
         error_if_and_return(pos >= ARRAY_LENGTH(path->nodes), ERR_OUTOFBOUNDS, NULL);
         error_if_and_return(path->nodes[pos].type != DOT_NODE_IDX, ERR_TYPEMISMATCH, NULL);
@@ -239,7 +239,7 @@ bool dot_idx_at(u32 *idx, u32 pos, const dot_path *path)
         return true;
 }
 
-const char *dot_key_at(u32 pos, const dot_path *path)
+const char *dot_key_at(u32 pos, const dot *path)
 {
         error_if_and_return(pos >= ARRAY_LENGTH(path->nodes), ERR_OUTOFBOUNDS, NULL);
         error_if_and_return(path->nodes[pos].type != DOT_NODE_KEY, ERR_TYPEMISMATCH, NULL);
@@ -247,7 +247,7 @@ const char *dot_key_at(u32 pos, const dot_path *path)
         return path->nodes[pos].name.string;
 }
 
-bool dot_drop(dot_path *path)
+bool dot_drop(dot *path)
 {
         for (u32 i = 0; i < path->len; i++) {
                 dot_node *node = path->nodes + i;
@@ -259,7 +259,7 @@ bool dot_drop(dot_path *path)
         return true;
 }
 
-bool dot_to_str(string_buffer *sb, dot_path *path)
+bool dot_to_str(string_buffer *sb, dot *path)
 {
         for (u32 i = 0; i < path->len; i++) {
                 dot_node *node = path->nodes + i;
@@ -290,7 +290,7 @@ bool dot_to_str(string_buffer *sb, dot_path *path)
         return true;
 }
 
-bool dot_fprint(FILE *file, dot_path *path)
+bool dot_fprint(FILE *file, dot *path)
 {
         string_buffer sb;
         string_buffer_create(&sb);
@@ -300,7 +300,7 @@ bool dot_fprint(FILE *file, dot_path *path)
         return true;
 }
 
-bool dot_print(dot_path *path)
+bool dot_print(dot *path)
 {
         return dot_fprint(stdout, path);
 }

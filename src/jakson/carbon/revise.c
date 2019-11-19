@@ -161,10 +161,10 @@ void carbon_revise_iterator_close(arr_it *it)
         arr_it_drop(it);
 }
 
-bool carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context)
+bool carbon_revise_find_begin(carbon_find *out, const char *dot, rev *context)
 {
-        struct dot_path path;
-        dot_from_string(&path, dot_path);
+        struct dot path;
+        dot_from_string(&path, dot);
         bool status = carbon_find_create(out, &path, context->revised_doc);
         dot_drop(&path);
         return status;
@@ -175,22 +175,22 @@ bool carbon_revise_find_end(carbon_find *find)
         return carbon_find_drop(find);
 }
 
-bool carbon_revise_remove_one(const char *dot_path, rec *rev_doc, rec *doc)
+bool carbon_revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
-        bool status = carbon_revise_remove(dot_path, &revise);
+        bool status = carbon_revise_remove(dot, &revise);
         carbon_revise_end(&revise);
         return status;
 }
 
-bool carbon_revise_remove(const char *dot_path, rev *context)
+bool carbon_revise_remove(const char *dot, rev *context)
 {
-        struct dot_path dot;
+        struct dot dot;
         carbon_path_evaluator eval;
         bool result;
 
-        if (dot_from_string(&dot, dot_path)) {
+        if (dot_from_string(&dot, dot)) {
                 carbon_path_evaluator_begin_mutable(&eval, &dot, context);
 
                 if (eval.status != PATH_RESOLVED) {

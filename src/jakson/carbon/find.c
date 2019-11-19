@@ -33,10 +33,10 @@ static void result_from_object(carbon_find *find, obj_it *it);
 static inline bool
 result_from_column(carbon_find *find, u32 requested_idx, col_it *it);
 
-bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc)
+bool carbon_find_begin(carbon_find *out, const char *dot, rec *doc)
 {
-        struct dot_path path;
-        dot_from_string(&path, dot_path);
+        struct dot path;
+        dot_from_string(&path, dot);
         carbon_find_create(out, &path, doc);
         dot_drop(&path);
         return true;
@@ -109,7 +109,7 @@ bool carbon_find_end(carbon_find *find)
         return true;
 }
 
-bool carbon_find_create(carbon_find *find, dot_path *path, rec *doc)
+bool carbon_find_create(carbon_find *find, dot *path, rec *doc)
 {
         ZERO_MEMORY(find, sizeof(carbon_find));
         find->doc = doc;

@@ -31,7 +31,7 @@ void carbon_patch_begin(arr_it *it, rec *doc);
 /* Closes a read-write ennabled iterator , which was previously opened via 'carbon_patch_end' */
 void carbon_patch_end(arr_it *it);
 
-bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc);
+bool carbon_patch_find_begin(carbon_find *out, const char *dot, rec *doc);
 
 bool carbon_patch_find_end(carbon_find *find);
 

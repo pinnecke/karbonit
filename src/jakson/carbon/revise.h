@@ -57,11 +57,11 @@ void carbon_revise_set_list_type(rev *context, list_type_e derivation);
 bool carbon_revise_iterator_open(arr_it *it, rev *context);
 void carbon_revise_iterator_close(arr_it *it);
 
-bool carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context);
+bool carbon_revise_find_begin(carbon_find *out, const char *dot, rev *context);
 bool carbon_revise_find_end(carbon_find *find);
 
-bool carbon_revise_remove(const char *dot_path, rev *context);
-bool carbon_revise_remove_one(const char *dot_path, rec *rev_doc, rec *doc);
+bool carbon_revise_remove(const char *dot, rev *context);
+bool carbon_revise_remove_one(const char *dot, rec *rev_doc, rec *doc);
 
 bool carbon_revise_pack(rev *context);
 bool carbon_revise_shrink(rev *context);

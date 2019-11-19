@@ -36,10 +36,10 @@ typedef struct dot_node {
         } name;
 } dot_node;
 
-typedef struct dot_path {
+typedef struct dot {
         dot_node nodes[256];
         u32 len;
-} dot_path;
+} dot;
 
 typedef enum path_status {
         PATH_RESOLVED,
@@ -53,21 +53,20 @@ typedef enum path_status {
         PATH_INTERNAL
 } path_status_e;
 
-bool dot_create(dot_path *path);
-bool dot_from_string(dot_path *path, const char *path_string);
-bool dot_drop(dot_path *path);
-bool dot_add_key(dot_path *dst, const char *key);
-bool dot_add_nkey(dot_path *dst, const char *key, size_t len);
-bool dot_add_idx(dot_path *dst, u32 idx);
-bool dot_len(u32 *len, const dot_path *path);
-bool dot_is_empty(const dot_path *path);
-bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot_path *path);
-bool dot_idx_at(u32 *idx, u32 pos, const dot_path *path);
-const char *dot_key_at(u32 pos, const dot_path *path);
-
-bool dot_to_str(string_buffer *sb, dot_path *path);
-bool dot_fprint(FILE *file, dot_path *path);
-bool dot_print(dot_path *path);
+bool dot_create(dot *path);
+bool dot_from_string(dot *path, const char *path_string);
+bool dot_drop(dot *path);
+bool dot_add_key(dot *dst, const char *key);
+bool dot_add_nkey(dot *dst, const char *key, size_t len);
+bool dot_add_idx(dot *dst, u32 idx);
+bool dot_len(u32 *len, const dot *path);
+bool dot_is_empty(const dot *path);
+bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path);
+bool dot_idx_at(u32 *idx, u32 pos, const dot *path);
+const char *dot_key_at(u32 pos, const dot *path);
+bool dot_to_str(string_buffer *sb, dot *path);
+bool dot_fprint(FILE *file, dot *path);
+bool dot_print(dot *path);
 
 #ifdef __cplusplus
 }

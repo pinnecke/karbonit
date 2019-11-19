@@ -20,14 +20,14 @@
 #include <jakson/carbon/revise.h>
 
 static inline path_status_e traverse_column(carbon_path_evaluator *state,
-                                                      const dot_path *path, u32 current_path_pos,
+                                                      const dot *path, u32 current_path_pos,
                                                       col_it *it);
 
 static inline path_status_e traverse_array(carbon_path_evaluator *state,
-                                                     const dot_path *path, u32 current_path_pos,
+                                                     const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record);
 
-void carbon_path_evaluator_begin(carbon_path_evaluator *eval, dot_path *path,
+void carbon_path_evaluator_begin(carbon_path_evaluator *eval, dot *path,
                                  rec *doc)
 {
         ZERO_MEMORY(eval, sizeof(carbon_path_evaluator));
@@ -37,7 +37,7 @@ void carbon_path_evaluator_begin(carbon_path_evaluator *eval, dot_path *path,
         carbon_read_end(&eval->root_it);
 }
 
-bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const dot_path *path,
+bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const dot *path,
                                          rev *context)
 {
         eval->doc = context->revised_doc;
@@ -196,7 +196,7 @@ bool carbon_path_is_string(rec *doc, const char *path)
 }
 
 static inline path_status_e traverse_object(carbon_path_evaluator *state,
-                                                      const dot_path *path, u32 current_path_pos,
+                                                      const dot *path, u32 current_path_pos,
                                                       obj_it *it)
 {
         DECLARE_AND_INIT(dot_node_type_e, node_type)
@@ -367,7 +367,7 @@ static inline path_status_e traverse_object(carbon_path_evaluator *state,
 }
 
 static inline path_status_e traverse_array(carbon_path_evaluator *state,
-                                                     const dot_path *path, u32 current_path_pos,
+                                                     const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record)
 {
         JAK_ASSERT(state);
@@ -510,7 +510,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
 }
 
 static inline path_status_e traverse_column(carbon_path_evaluator *state,
-                                                      const dot_path *path, u32 current_path_pos,
+                                                      const dot *path, u32 current_path_pos,
                                                       col_it *it)
 {
         DECLARE_AND_INIT(u32, total_len)

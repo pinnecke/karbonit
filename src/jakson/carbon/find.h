@@ -57,9 +57,9 @@ typedef struct carbon_find {
         } value;
 } carbon_find;
 
-bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc);
+bool carbon_find_begin(carbon_find *out, const char *dot, rec *doc);
 bool carbon_find_end(carbon_find *find);
-bool carbon_find_create(carbon_find *find, dot_path *path, rec *doc);
+bool carbon_find_create(carbon_find *find, dot *path, rec *doc);
 bool carbon_find_drop(carbon_find *find);
 
 bool carbon_find_has_result(carbon_find *find);

@@ -70,7 +70,7 @@ bool internal_carbon_item_create_from_array(item *item, arr_it *parent)
         return carbon_item_setup_value(item, field_type, &parent->field);
 }
 
-bool internal_carbon_item_create_from_object(item *item, carbon_object *parent)
+bool internal_carbon_item_create_from_object(item *item, obj_it *parent)
 {
         item->parent_type = CARBON_PARENT_OBJECT;
         item->parent.object = parent;

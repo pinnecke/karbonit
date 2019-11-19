@@ -41,8 +41,8 @@ typedef struct carbon_insert {
         container_e context_type;
         union {
                 arr_it *array;
-                carbon_column *column;
-                carbon_object *object;
+                col_it *column;
+                obj_it *object;
         } context;
 
         memfile memfile;
@@ -58,7 +58,7 @@ typedef struct carbon_insert_array_state {
 
 typedef struct carbon_insert_object_state {
         carbon_insert *parent_inserter;
-        carbon_object *it;
+        obj_it *it;
         carbon_insert inserter;
         offset_t object_begin, object_end;
 } carbon_insert_object_state;
@@ -66,7 +66,7 @@ typedef struct carbon_insert_object_state {
 typedef struct carbon_insert_column_state {
         carbon_insert *parent_inserter;
         field_type_e type;
-        carbon_column *nested_column;
+        col_it *nested_column;
         carbon_insert nested_inserter;
         offset_t column_begin, column_end;
 } carbon_insert_column_state;
@@ -90,15 +90,15 @@ bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *i
 bool carbon_int_array_field_type_read(arr_it *it);
 bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, arr_it *it);
 
-bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object *it);
-bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object *it);
-bool carbon_int_object_it_prop_key_access(carbon_object *it);
-bool carbon_int_object_it_prop_value_skip(carbon_object *it);
-bool carbon_int_object_it_prop_skip(carbon_object *it);
-bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_object *it);
+bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, obj_it *it);
+bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, obj_it *it);
+bool carbon_int_object_it_prop_key_access(obj_it *it);
+bool carbon_int_object_it_prop_value_skip(obj_it *it);
+bool carbon_int_object_it_prop_skip(obj_it *it);
+bool carbon_int_object_skip_contents(bool *is_empty_slot, bool *is_array_end, obj_it *it);
 bool carbon_int_field_data_access(memfile *file, field *field);
 
-offset_t carbon_int_column_get_payload_off(carbon_column *it);
+offset_t carbon_int_column_get_payload_off(col_it *it);
 offset_t carbon_int_payload_after_header(rec *doc);
 
 u64 carbon_int_header_get_commit_hash(rec *doc);
@@ -136,8 +136,8 @@ bool carbon_int_field_unsigned_value(u64 *value, field *field);
 const char *carbon_int_field_string_value(u64 *strlen, field *field);
 bool carbon_int_field_binary_value(carbon_binary *out, field *field);
 arr_it *carbon_int_field_array_value(field *field);
-carbon_object *carbon_int_field_object_value(field *field);
-carbon_column *carbon_int_field_column_value(field *field);
+obj_it *carbon_int_field_object_value(field *field);
+col_it *carbon_int_field_column_value(field *field);
 
 void carbon_int_auto_close_nested_array(field *field);
 void carbon_int_auto_close_nested_object_it(field *field);

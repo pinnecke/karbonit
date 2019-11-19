@@ -356,7 +356,7 @@ bool carbon_field_skip(memfile *file)
 bool carbon_field_skip_object(memfile *file)
 {
         if (abstract_is_instanceof_object(file)) {
-                carbon_object skip_it;
+                obj_it skip_it;
                 internal_carbon_object_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_object_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
@@ -387,7 +387,7 @@ bool carbon_field_skip_column(memfile *file)
 
         error_if_and_return(!carbon_field_type_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
-        carbon_column skip_it;
+        col_it skip_it;
         carbon_column_create(&skip_it, file, memfile_tell(file) - sizeof(u8));
         carbon_column_fast_forward(&skip_it);
         memfile_seek(file, memfile_tell(&skip_it.memfile));

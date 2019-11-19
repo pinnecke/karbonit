@@ -96,14 +96,14 @@ void carbon_traverse_array(struct carbon_traverse *traverse, arr_it *it)
         }
 }
 
-void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column *it)
+void carbon_traverse_column(struct carbon_traverse *traverse, struct col_it *it)
 {
         if (LIKELY(traverse->visit_column != NULL)) {
                 traverse->visit_column(&traverse->extra, it);
         }
 }
 
-void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object *it)
+void carbon_traverse_object(struct carbon_traverse *traverse, struct obj_it *it)
 {
         if (LIKELY(traverse->visit_object_begin != NULL)) {
                 traverse->visit_object_begin(&traverse->extra, it);
@@ -118,12 +118,12 @@ void carbon_traverse_continue_array(struct carbon_traverse_extra *context, arr_i
         carbon_traverse_array(context->parent, it);
 }
 
-void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column *it)
+void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct col_it *it)
 {
         carbon_traverse_column(context->parent, it);
 }
 
-void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object *it)
+void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct obj_it *it)
 {
         carbon_traverse_object(context->parent, it);
 }

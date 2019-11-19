@@ -151,10 +151,10 @@ void carbon_json_from_carbon(struct string_buffer *str, struct rec *record,
 void carbon_json_from_array(struct string_buffer *str, arr_it *it,
                             struct carbon_json_from_opts *config);
 
-void carbon_json_from_column(struct string_buffer *str, struct carbon_column *it,
+void carbon_json_from_column(struct string_buffer *str, struct col_it *it,
                              struct carbon_json_from_opts *config);
 
-void carbon_json_from_object(struct string_buffer *str, struct carbon_object *it,
+void carbon_json_from_object(struct string_buffer *str, struct obj_it *it,
                              struct carbon_json_from_opts *config);
 
 #ifdef __cplusplus

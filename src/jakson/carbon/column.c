@@ -34,7 +34,7 @@
         (const builtin_type *) raw;                                                                                    \
 })
 
-bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_start_offset)
+bool carbon_column_create(col_it *it, memfile *memfile, offset_t column_start_offset)
 {
         it->column_start_offset = column_start_offset;
         it->mod_size = 0;
@@ -66,7 +66,7 @@ bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_s
         return true;
 }
 
-bool carbon_column_clone(carbon_column *dst, carbon_column *src)
+bool carbon_column_clone(col_it *dst, col_it *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
         dst->num_and_capacity_start_offset = src->num_and_capacity_start_offset;
@@ -79,18 +79,18 @@ bool carbon_column_clone(carbon_column *dst, carbon_column *src)
         return true;
 }
 
-bool carbon_column_insert(carbon_insert *inserter, carbon_column *it)
+bool carbon_column_insert(carbon_insert *inserter, col_it *it)
 {
         return carbon_int_insert_create_for_column(inserter, it);
 }
 
-bool carbon_column_fast_forward(carbon_column *it)
+bool carbon_column_fast_forward(col_it *it)
 {
         carbon_column_values(NULL, NULL, it);
         return true;
 }
 
-offset_t carbon_column_memfilepos(carbon_column *it)
+offset_t carbon_column_memfilepos(col_it *it)
 {
         if (LIKELY(it != NULL)) {
                 return memfile_tell(&it->memfile);
@@ -100,7 +100,7 @@ offset_t carbon_column_memfilepos(carbon_column *it)
         }
 }
 
-offset_t carbon_column_tell(carbon_column *it, u32 elem_idx)
+offset_t carbon_column_tell(col_it *it, u32 elem_idx)
 {
         if (it) {
                 memfile_save_position(&it->memfile);
@@ -118,7 +118,7 @@ offset_t carbon_column_tell(carbon_column *it, u32 elem_idx)
         }
 }
 
-bool carbon_column_values_info(field_type_e *type, u32 *nvalues, carbon_column *it)
+bool carbon_column_values_info(field_type_e *type, u32 *nvalues, col_it *it)
 {
         if (nvalues) {
                 memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
@@ -131,7 +131,7 @@ bool carbon_column_values_info(field_type_e *type, u32 *nvalues, carbon_column *
         return true;
 }
 
-bool carbon_column_value_is_null(carbon_column *it, u32 pos)
+bool carbon_column_value_is_null(col_it *it, u32 pos)
 {
         field_type_e type;
         u32 nvalues = 0;
@@ -193,7 +193,7 @@ bool carbon_column_value_is_null(carbon_column *it, u32 pos)
         }
 }
 
-const void *carbon_column_values(field_type_e *type, u32 *nvalues, carbon_column *it)
+const void *carbon_column_values(field_type_e *type, u32 *nvalues, col_it *it)
 {
         memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
         u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->memfile);
@@ -211,57 +211,57 @@ const void *carbon_column_values(field_type_e *type, u32 *nvalues, carbon_column
         return result;
 }
 
-const boolean *carbon_column_boolean_values(u32 *nvalues, carbon_column *it)
+const boolean *carbon_column_boolean_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(boolean, nvalues, it, carbon_field_type_is_column_bool_or_subtype(type));
 }
 
-const u8 *carbon_column_u8_values(u32 *nvalues, carbon_column *it)
+const u8 *carbon_column_u8_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(u8, nvalues, it, carbon_field_type_is_column_u8_or_subtype(type));
 }
 
-const u16 *carbon_column_u16_values(u32 *nvalues, carbon_column *it)
+const u16 *carbon_column_u16_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(u16, nvalues, it, carbon_field_type_is_column_u16_or_subtype(type));
 }
 
-const u32 *carbon_column_u32_values(u32 *nvalues, carbon_column *it)
+const u32 *carbon_column_u32_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(u32, nvalues, it, carbon_field_type_is_column_u32_or_subtype(type));
 }
 
-const u64 *carbon_column_u64_values(u32 *nvalues, carbon_column *it)
+const u64 *carbon_column_u64_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(u64, nvalues, it, carbon_field_type_is_column_u64_or_subtype(type));
 }
 
-const i8 *carbon_column_i8_values(u32 *nvalues, carbon_column *it)
+const i8 *carbon_column_i8_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(i8, nvalues, it, carbon_field_type_is_column_i8_or_subtype(type));
 }
 
-const i16 *carbon_column_i16_values(u32 *nvalues, carbon_column *it)
+const i16 *carbon_column_i16_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(i16, nvalues, it, carbon_field_type_is_column_i16_or_subtype(type));
 }
 
-const i32 *carbon_column_i32_values(u32 *nvalues, carbon_column *it)
+const i32 *carbon_column_i32_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(i32, nvalues, it, carbon_field_type_is_column_i32_or_subtype(type));
 }
 
-const i64 *carbon_column_i64_values(u32 *nvalues, carbon_column *it)
+const i64 *carbon_column_i64_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(i64, nvalues, it, carbon_field_type_is_column_i64_or_subtype(type));
 }
 
-const float *carbon_column_float_values(u32 *nvalues, carbon_column *it)
+const float *carbon_column_float_values(u32 *nvalues, col_it *it)
 {
         return safe_cast(float, nvalues, it, carbon_field_type_is_column_float_or_subtype(type));
 }
 
-bool carbon_column_remove(carbon_column *it, u32 pos)
+bool carbon_column_remove(col_it *it, u32 pos)
 {
         error_if_and_return(pos >= it->column_num_elements, ERR_OUTOFBOUNDS, NULL);
         memfile_save_position(&it->memfile);
@@ -291,21 +291,21 @@ bool carbon_column_remove(carbon_column *it, u32 pos)
         return true;
 }
 
-bool carbon_column_is_multiset(carbon_column *it)
+bool carbon_column_is_multiset(col_it *it)
 {
         abstract_type_class_e type_class;
         abstract_list_derivable_to_class(&type_class, it->list_type);
         return abstract_is_multiset(type_class);
 }
 
-bool carbon_column_is_sorted(carbon_column *it)
+bool carbon_column_is_sorted(col_it *it)
 {
         abstract_type_class_e type_class;
         abstract_list_derivable_to_class(&type_class, it->list_type);
         return abstract_is_sorted(type_class);
 }
 
-bool carbon_column_update_type(carbon_column *it, list_derivable_e derivation)
+bool carbon_column_update_type(col_it *it, list_derivable_e derivation)
 {
         if (!carbon_field_type_is_column_or_subtype(it->type)) {
                 return false;
@@ -325,7 +325,7 @@ bool carbon_column_update_type(carbon_column *it, list_derivable_e derivation)
         return true;
 }
 
-bool carbon_column_update_set_null(carbon_column *it, u32 pos)
+bool carbon_column_update_set_null(col_it *it, u32 pos)
 {
         error_if_and_return(pos >= it->column_num_elements, ERR_OUTOFBOUNDS, NULL)
 
@@ -471,7 +471,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
         }                                                                                                              \
 }
 
-static bool rewrite_column_to_array(carbon_column *it)
+static bool rewrite_column_to_array(col_it *it)
 {
         abstract_type_class_e type_class;
         list_derivable_e list_type;
@@ -547,7 +547,7 @@ static bool rewrite_column_to_array(carbon_column *it)
         return true;
 }
 
-bool carbon_column_update_set_true(carbon_column *it, u32 pos)
+bool carbon_column_update_set_true(col_it *it, u32 pos)
 {
         error_if_and_return(pos >= it->column_num_elements, ERR_OUTOFBOUNDS, NULL)
 
@@ -676,7 +676,7 @@ bool carbon_column_update_set_true(carbon_column *it, u32 pos)
         return true;
 }
 
-bool carbon_column_update_set_false(carbon_column *it, u32 pos)
+bool carbon_column_update_set_false(col_it *it, u32 pos)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -684,16 +684,7 @@ bool carbon_column_update_set_false(carbon_column *it, u32 pos)
         return false;
 }
 
-bool carbon_column_update_set_u8(carbon_column *it, u32 pos, u8 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool carbon_column_update_set_u16(carbon_column *it, u32 pos, u16 value)
+bool carbon_column_update_set_u8(col_it *it, u32 pos, u8 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -702,7 +693,7 @@ bool carbon_column_update_set_u16(carbon_column *it, u32 pos, u16 value)
         return false;
 }
 
-bool carbon_column_update_set_u32(carbon_column *it, u32 pos, u32 value)
+bool carbon_column_update_set_u16(col_it *it, u32 pos, u16 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -711,7 +702,7 @@ bool carbon_column_update_set_u32(carbon_column *it, u32 pos, u32 value)
         return false;
 }
 
-bool carbon_column_update_set_u64(carbon_column *it, u32 pos, u64 value)
+bool carbon_column_update_set_u32(col_it *it, u32 pos, u32 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -720,7 +711,7 @@ bool carbon_column_update_set_u64(carbon_column *it, u32 pos, u64 value)
         return false;
 }
 
-bool carbon_column_update_set_i8(carbon_column *it, u32 pos, i8 value)
+bool carbon_column_update_set_u64(col_it *it, u32 pos, u64 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -729,7 +720,7 @@ bool carbon_column_update_set_i8(carbon_column *it, u32 pos, i8 value)
         return false;
 }
 
-bool carbon_column_update_set_i16(carbon_column *it, u32 pos, i16 value)
+bool carbon_column_update_set_i8(col_it *it, u32 pos, i8 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -738,7 +729,7 @@ bool carbon_column_update_set_i16(carbon_column *it, u32 pos, i16 value)
         return false;
 }
 
-bool carbon_column_update_set_i32(carbon_column *it, u32 pos, i32 value)
+bool carbon_column_update_set_i16(col_it *it, u32 pos, i16 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -747,7 +738,7 @@ bool carbon_column_update_set_i32(carbon_column *it, u32 pos, i32 value)
         return false;
 }
 
-bool carbon_column_update_set_i64(carbon_column *it, u32 pos, i64 value)
+bool carbon_column_update_set_i32(col_it *it, u32 pos, i32 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -756,7 +747,7 @@ bool carbon_column_update_set_i64(carbon_column *it, u32 pos, i64 value)
         return false;
 }
 
-bool carbon_column_update_set_float(carbon_column *it, u32 pos, float value)
+bool carbon_column_update_set_i64(col_it *it, u32 pos, i64 value)
 {
         UNUSED(it)
         UNUSED(pos)
@@ -765,7 +756,16 @@ bool carbon_column_update_set_float(carbon_column *it, u32 pos, float value)
         return false;
 }
 
-bool carbon_column_rewind(carbon_column *it)
+bool carbon_column_update_set_float(col_it *it, u32 pos, float value)
+{
+        UNUSED(it)
+        UNUSED(pos)
+        UNUSED(value)
+        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        return false;
+}
+
+bool carbon_column_rewind(col_it *it)
 {
         offset_t playload_start = carbon_int_column_get_payload_off(it);
         error_if_and_return(playload_start >= memfile_size(&it->memfile), ERR_OUTOFBOUNDS, NULL);

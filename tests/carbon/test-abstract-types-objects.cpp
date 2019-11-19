@@ -10,7 +10,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec doc, doc2;
         carbon_insert_object_state s1;
         arr_it it;
-        carbon_object *obj_it;
+        obj_it *obj_it;
         field_type_e ft;
         rev rev_context;
 
@@ -151,7 +151,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                carbon_object *find_result = carbon_find_result_object(&find);
+                obj_it *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_object_type(&find, MAP_SORTED_MAP);
                 carbon_revise_find_end(&find);
@@ -168,7 +168,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                carbon_object *find_result = carbon_find_result_object(&find);
+                obj_it *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_object_type(&find, MAP_SORTED_MULTIMAP);
                 carbon_revise_find_end(&find);
@@ -185,7 +185,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                carbon_object *find_result = carbon_find_result_object(&find);
+                obj_it *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_object_type(&find, MAP_UNSORTED_MULTIMAP);
                 carbon_revise_find_end(&find);
@@ -202,7 +202,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
-                carbon_object *find_result = carbon_find_result_object(&find);
+                obj_it *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_object_type(&find, MAP_UNSORTED_MAP);
                 carbon_revise_find_end(&find);

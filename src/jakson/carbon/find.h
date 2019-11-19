@@ -45,8 +45,8 @@ typedef struct carbon_find {
 
         union {
                 arr_it *array;
-                carbon_column *column_it;
-                carbon_object *object_it;
+                col_it *column_it;
+                obj_it *object_it;
                 bool boolean;
                 u64 unsigned_number;
                 i64 signed_number;
@@ -86,8 +86,8 @@ bool carbon_find_multiset(carbon_find *find);
 bool carbon_find_sorted(carbon_find *find);
 
 arr_it *carbon_find_result_array(carbon_find *find);
-carbon_object *carbon_find_result_object(carbon_find *find);
-carbon_column *carbon_find_result_column(carbon_find *find);
+obj_it *carbon_find_result_object(carbon_find *find);
+col_it *carbon_find_result_column(carbon_find *find);
 bool carbon_find_result_boolean(bool *result, carbon_find *find);
 bool carbon_find_result_unsigned(u64 *out, carbon_find *find);
 bool carbon_find_result_signed(i64 *out, carbon_find *find);

@@ -42,7 +42,7 @@ typedef struct item
 
     union {
         arr_it        *array;
-        carbon_object       *object;
+        obj_it       *object;
     }                        parent;
 
     u64                      idx;
@@ -56,8 +56,8 @@ typedef struct item
         carbon_string_field  string;
         carbon_binary        binary;
         arr_it        *array;
-        carbon_column       *column;
-        carbon_object       *object;
+        col_it       *column;
+        obj_it       *object;
     }                        value;
 } item;
 
@@ -297,7 +297,7 @@ typedef struct item
 // ---------------------------------------------------------------------------------------------------------------------
 
 bool internal_carbon_item_create_from_array(item *item, arr_it *parent);
-bool internal_carbon_item_create_from_object(item *item, carbon_object *parent);
+bool internal_carbon_item_create_from_object(item *item, obj_it *parent);
 
 #ifdef __cplusplus
 }

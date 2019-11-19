@@ -52,20 +52,20 @@ static void __carbon_print_json_exit_array(struct carbon_traverse_extra *extra, 
         UNUSED(it)
 }
 
-static bool __carbon_print_json_column(struct carbon_traverse_extra *extra, struct carbon_column *it)
+static bool __carbon_print_json_column(struct carbon_traverse_extra *extra, struct col_it *it)
 {
         UNUSED(extra)
         UNUSED(it)
         return false;
 }
 
-static void __carbon_print_json_enter_object(struct carbon_traverse_extra *extra, struct carbon_object *it)
+static void __carbon_print_json_enter_object(struct carbon_traverse_extra *extra, struct obj_it *it)
 {
         UNUSED(extra)
         UNUSED(it)
 }
 
-static void __carbon_print_json_exit_object(struct carbon_traverse_extra *extra, struct carbon_object *it)
+static void __carbon_print_json_exit_object(struct carbon_traverse_extra *extra, struct obj_it *it)
 {
         UNUSED(extra)
         UNUSED(it)
@@ -123,7 +123,7 @@ static inline void __carbon_print_json_binary(struct string_buffer *restrict buf
 
 #define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(type, clazz, default_value)                                                            \
 static inline void __carbon_print_json_##type##_from_prop_value(struct string_buffer *restrict buf,                    \
-                                                                struct carbon_object *restrict it)                     \
+                                                                struct obj_it *restrict it)                     \
 {                                                                                                                      \
         type val = (type) carbon_item_get_##clazz(&(it->prop.value), default_value);                                                    \
         string_buffer_add_##type(buf, val);                                                                            \
@@ -219,10 +219,10 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 //                }
 
                 if (carbon_field_type_is_object_or_subtype(type)) {
-                        carbon_object *sub = carbon_item_get_object(&(it->item));
+                        obj_it *sub = carbon_item_get_object(&(it->item));
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column *sub = carbon_item_get_column(&(it->item));
+                        col_it *sub = carbon_item_get_column(&(it->item));
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
                         arr_it *sub = carbon_item_get_array(&(it->item));
@@ -258,7 +258,7 @@ static inline void __carbon_print_json_exit_array_fast(struct carbon_traverse_ex
 }
 
 static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra *restrict extra,
-                                                   struct carbon_column *restrict it)
+                                                   struct col_it *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
 
@@ -319,7 +319,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
 }
 
 static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_extra *restrict extra,
-                                                         struct carbon_object *restrict it)
+                                                         struct obj_it *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
         field_type_e type;
@@ -389,10 +389,10 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                 }
 
                 if (carbon_field_type_is_object_or_subtype(type)) {
-                        carbon_object *sub = carbon_item_get_object(&(it->prop.value));
+                        obj_it *sub = carbon_item_get_object(&(it->prop.value));
                         carbon_traverse_continue_object(extra, sub);
                 } else if (carbon_field_type_is_column_or_subtype(type)) {
-                        carbon_column *sub = carbon_item_get_column(&(it->prop.value));
+                        col_it *sub = carbon_item_get_column(&(it->prop.value));
                         carbon_traverse_continue_column(extra, sub);
                 } else if (carbon_field_type_is_array_or_subtype(type)) {
                         arr_it *sub = carbon_item_get_array(&(it->prop.value));
@@ -402,7 +402,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
 }
 
 static inline void __carbon_print_json_exit_object_fast(struct carbon_traverse_extra *restrict extra,
-                                                        struct carbon_object *it)
+                                                        struct obj_it *it)
 {
         UNUSED(it)
         struct string_buffer *str_buf = extra->capture.print_json.str;
@@ -478,7 +478,7 @@ void carbon_json_from_array(struct string_buffer *str, arr_it *it,
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_json_from_column(struct string_buffer *str, struct carbon_column *it,
+void carbon_json_from_column(struct string_buffer *str, struct col_it *it,
                              struct carbon_json_from_opts *config)
 {
         assert(str);
@@ -491,7 +491,7 @@ void carbon_json_from_column(struct string_buffer *str, struct carbon_column *it
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_json_from_object(struct string_buffer *str, struct carbon_object *it,
+void carbon_json_from_object(struct string_buffer *str, struct obj_it *it,
                              struct carbon_json_from_opts *config)
 {
         assert(str);

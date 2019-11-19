@@ -42,8 +42,8 @@ typedef struct field {
         nested_it obj_it;
         bool col_it_created;
         struct arr_it *array;
-        carbon_column *column;
-        carbon_object *object;
+        struct col_it *column;
+        struct obj_it *object;
 } field;
 
 typedef struct arr_it {
@@ -55,7 +55,6 @@ typedef struct arr_it {
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
         bool eof;
-
         vec ofType(offset_t) history;
         field field;
         offset_t field_offset;
@@ -153,8 +152,8 @@ bool internal_carbon_array_update_object_end(carbon_insert_object_state *state);
 
 bool internal_carbon_array_update_from_carbon(arr_it *it, const rec *src);
 bool internal_carbon_array_update_from_array(arr_it *it, const arr_it *src);
-bool internal_carbon_array_update_from_object(arr_it *it, const carbon_object *src);
-bool internal_carbon_array_update_from_column(arr_it *it, const carbon_column *src);
+bool internal_carbon_array_update_from_object(arr_it *it, const obj_it *src);
+bool internal_carbon_array_update_from_column(arr_it *it, const col_it *src);
 
 
 bool carbon_array_field_type(field_type_e *type, arr_it *it);

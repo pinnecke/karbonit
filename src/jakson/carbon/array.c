@@ -213,7 +213,7 @@ bool internal_carbon_array_update_from_array(arr_it *it, const arr_it *src)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_array_update_from_object(arr_it *it, const carbon_object *src)
+bool internal_carbon_array_update_from_object(arr_it *it, const obj_it *src)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -221,7 +221,7 @@ bool internal_carbon_array_update_from_object(arr_it *it, const carbon_object *s
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_array_update_from_column(arr_it *it, const carbon_column *src)
+bool internal_carbon_array_update_from_column(arr_it *it, const col_it *src)
 {
         // TODO: Implement P1
         UNUSED(it)

@@ -15,7 +15,7 @@ extern "C" {
 
 typedef struct carbon_prop
 {
-        carbon_object       *parent;
+        obj_it       *parent;
         u64                  idx;
         carbon_string_field  key;
         item          value;
@@ -160,7 +160,7 @@ typedef struct carbon_prop
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent);
+bool internal_carbon_prop_create(carbon_prop *dst, obj_it *parent);
 
 u64 internal_carbon_prop_size(memfile *file);
 

@@ -44,16 +44,16 @@ typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, item *i
 typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, arr_it *it);
 
 /* called when an column was found */
-typedef bool (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column *it);
+typedef bool (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct col_it *it);
 
 /* called when an object was found */
-typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
+typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct obj_it *it);
 
 /* called when an object property item was found */
 typedef void (*carbon_visit_prop_t)(struct carbon_traverse_extra *extra, item *it);
 
 /* called when an object was passed */
-typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct carbon_object *it);
+typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct obj_it *it);
 
 
 /* built-in or user-defined extra data for operation */
@@ -115,12 +115,12 @@ void carbon_traverse_drop(struct carbon_traverse *traverse);
 
 void carbon_traverse_carbon(struct rec *rev_out, struct carbon_traverse *traverse, struct rec *record);
 void carbon_traverse_array(struct carbon_traverse *traverse, arr_it *it);
-void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column *it);
-void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object *it);
+void carbon_traverse_column(struct carbon_traverse *traverse, struct col_it *it);
+void carbon_traverse_object(struct carbon_traverse *traverse, struct obj_it *it);
 
 void carbon_traverse_continue_array(struct carbon_traverse_extra *context, arr_it *it);
-void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column *it);
-void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object *it);
+void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct col_it *it);
+void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct obj_it *it);
 
 #ifdef __cplusplus
 }

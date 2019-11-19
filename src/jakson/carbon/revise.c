@@ -27,9 +27,9 @@
 
 static bool internal_pack_array(arr_it *it);
 
-static bool internal_pack_object(carbon_object *it);
+static bool internal_pack_object(obj_it *it);
 
-static bool internal_pack_column(carbon_column *it);
+static bool internal_pack_column(col_it *it);
 
 static bool internal_commit_update(rec *doc);
 
@@ -203,7 +203,7 @@ bool carbon_revise_remove(const char *dot_path, rev *context)
                                 }
                                         break;
                                 case CARBON_COLUMN: {
-                                        carbon_column *it = &eval.result.containers.column.it;
+                                        col_it *it = &eval.result.containers.column.it;
                                         u32 elem_pos = eval.result.containers.column.elem_pos;
                                         result = carbon_column_remove(it, elem_pos);
                                 }
@@ -379,7 +379,7 @@ static bool internal_pack_array(arr_it *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                        carbon_object object;
+                                        obj_it object;
                                         internal_carbon_object_create(&object, &it->file,
                                                                       it->field.object->object_contents_off -
                                                                       sizeof(u8));
@@ -402,13 +402,13 @@ static bool internal_pack_array(arr_it *it)
         return true;
 }
 
-static bool internal_pack_object(carbon_object *it)
+static bool internal_pack_object(obj_it *it)
 {
         JAK_ASSERT(it);
 
         /** shrink this object */
         {
-                carbon_object this_object_it;
+                obj_it this_object_it;
                 bool is_empty_slot, is_object_end;
 
                 internal_carbon_object_copy(&this_object_it, it);
@@ -522,7 +522,7 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                        carbon_object object;
+                                        obj_it object;
                                         internal_carbon_object_create(&object, &it->memfile,
                                                                       it->field.value.data.object->object_contents_off -
                                                                       sizeof(u8));
@@ -545,7 +545,7 @@ static bool internal_pack_object(carbon_object *it)
         return true;
 }
 
-static bool internal_pack_column(carbon_column *it)
+static bool internal_pack_column(col_it *it)
 {
         JAK_ASSERT(it);
 

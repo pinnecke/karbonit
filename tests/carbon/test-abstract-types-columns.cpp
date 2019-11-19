@@ -10,7 +10,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec doc, doc2;
         carbon_insert_column_state s1;
         arr_it it;
-        carbon_column *col_it;
+        col_it *col_it;
         field_type_e ft;
         rev rev_context;
 
@@ -75,7 +75,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                carbon_column *column_it;
+                col_it *column_it;
 
                 carbon_revise_begin(&rev_context, &doc2, &doc);
                 carbon_revise_iterator_open(&it, &rev_context);
@@ -153,7 +153,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
-                carbon_column *find_result = carbon_find_result_column(&find);
+                col_it *find_result = carbon_find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_column_type(&find, LIST_SORTED_SET);
                 carbon_revise_find_end(&find);
@@ -170,7 +170,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
-                carbon_column *find_result = carbon_find_result_column(&find);
+                col_it *find_result = carbon_find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_column_type(&find, LIST_SORTED_MULTISET);
                 carbon_revise_find_end(&find);
@@ -187,7 +187,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
-                carbon_column * find_result = carbon_find_result_column(&find);
+                col_it * find_result = carbon_find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_column_type(&find, LIST_UNSORTED_MULTISET);
                 carbon_revise_find_end(&find);
@@ -204,7 +204,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
                 carbon_find_result_type(&ft, &find);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
-                carbon_column *find_result = carbon_find_result_column(&find);
+                col_it *find_result = carbon_find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 carbon_find_update_column_type(&find, LIST_UNSORTED_SET);
                 carbon_revise_find_end(&find);

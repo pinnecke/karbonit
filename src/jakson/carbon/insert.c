@@ -65,7 +65,7 @@ void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context
         internal_create(inserter, &context->file, pos);
 }
 
-bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context)
+bool carbon_int_insert_create_for_column(carbon_insert *inserter, col_it *context)
 {
         inserter->context_type = CARBON_COLUMN;
         inserter->context.column = context;
@@ -73,7 +73,7 @@ bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column 
         return true;
 }
 
-bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object *context)
+bool carbon_int_insert_create_for_object(carbon_insert *inserter, obj_it *context)
 {
         inserter->context_type = CARBON_OBJECT;
         inserter->context.object = context;
@@ -460,7 +460,7 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
 
         *out = (carbon_insert_object_state) {
                 .parent_inserter = inserter,
-                .it = MALLOC(sizeof(carbon_object)),
+                .it = MALLOC(sizeof(obj_it)),
                 .object_begin = memfile_tell(&inserter->memfile),
                 .object_end = 0
         };
@@ -484,7 +484,7 @@ carbon_insert *carbon_insert_object_begin(carbon_insert_object_state *out,
 
 bool carbon_insert_object_end(carbon_insert_object_state *state)
 {
-        carbon_object scan;
+        obj_it scan;
         internal_carbon_object_create(&scan, &state->parent_inserter->memfile, memfile_tell(&state->parent_inserter->memfile) - 1);
         while (carbon_object_next(&scan)) {}
 
@@ -591,7 +591,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
 
         *state_out = (carbon_insert_column_state) {
                 .parent_inserter = inserter_in,
-                .nested_column = MALLOC(sizeof(carbon_column)),
+                .nested_column = MALLOC(sizeof(col_it)),
                 .type = field_type,
                 .column_begin = memfile_tell(&inserter_in->memfile),
                 .column_end = 0
@@ -617,7 +617,7 @@ carbon_insert *carbon_insert_column_begin(carbon_insert_column_state *state_out,
 
 bool carbon_insert_column_end(carbon_insert_column_state *state_in)
 {
-        carbon_column scan;
+        col_it scan;
         carbon_column_create(&scan, &state_in->parent_inserter->memfile,
                                 state_in->nested_column->column_start_offset);
         carbon_column_fast_forward(&scan);

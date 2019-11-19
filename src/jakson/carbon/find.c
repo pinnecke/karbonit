@@ -28,10 +28,10 @@
 
 static void result_from_array(carbon_find *find, arr_it *it);
 
-static void result_from_object(carbon_find *find, carbon_object *it);
+static void result_from_object(carbon_find *find, obj_it *it);
 
 static inline bool
-result_from_column(carbon_find *find, u32 requested_idx, carbon_column *it);
+result_from_column(carbon_find *find, u32 requested_idx, col_it *it);
 
 bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc)
 {
@@ -163,7 +163,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                carbon_object *sub_it = carbon_find_result_object(find);
+                                obj_it *sub_it = carbon_find_result_object(find);
                                 carbon_printer_print_object(sub_it, &printer, dst_str);
                         }
                                 break;
@@ -215,7 +215,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column *sub_it = carbon_find_result_column(find);
+                                col_it *sub_it = carbon_find_result_column(find);
                                 carbon_printer_print_column(sub_it, &printer, dst_str);
                         }
                                 break;
@@ -370,7 +370,7 @@ bool carbon_find_update_column_type(carbon_find *find, list_derivable_e derivati
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_column_or_subtype(type)) {
-                carbon_column *it = carbon_find_result_column(find);
+                col_it *it = carbon_find_result_column(find);
                 memfile_save_position(&it->memfile);
                 memfile_seek(&it->memfile, it->column_start_offset);
 
@@ -392,7 +392,7 @@ bool carbon_find_column_is_multiset(carbon_find *find)
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_column_or_subtype(type)) {
-                carbon_column *it = carbon_find_result_column(find);
+                col_it *it = carbon_find_result_column(find);
                 return carbon_column_is_multiset(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
@@ -404,7 +404,7 @@ bool carbon_find_column_is_sorted(carbon_find *find)
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_column_or_subtype(type)) {
-                carbon_column *it = carbon_find_result_column(find);
+                col_it *it = carbon_find_result_column(find);
                 return carbon_column_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
@@ -416,7 +416,7 @@ bool carbon_find_update_object_type(carbon_find *find, map_derivable_e derivatio
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
-                carbon_object *it = carbon_find_result_object(find);
+                obj_it *it = carbon_find_result_object(find);
                 memfile_save_position(&it->memfile);
                 memfile_seek(&it->memfile, it->object_start_off);
 
@@ -437,7 +437,7 @@ bool carbon_find_object_is_multimap(carbon_find *find)
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
-                carbon_object *it = carbon_find_result_object(find);
+                obj_it *it = carbon_find_result_object(find);
                 return carbon_object_is_multimap(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
@@ -449,7 +449,7 @@ bool carbon_find_object_is_sorted(carbon_find *find)
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
-                carbon_object *it = carbon_find_result_object(find);
+                obj_it *it = carbon_find_result_object(find);
                 return carbon_object_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
@@ -518,7 +518,7 @@ arr_it *carbon_find_result_array(carbon_find *find)
         return find->value.array;
 }
 
-carbon_object *carbon_find_result_object(carbon_find *find)
+obj_it *carbon_find_result_object(carbon_find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -532,7 +532,7 @@ carbon_object *carbon_find_result_object(carbon_find *find)
         return find->value.object_it;
 }
 
-carbon_column *carbon_find_result_column(carbon_find *find)
+col_it *carbon_find_result_column(carbon_find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -731,7 +731,7 @@ static void result_from_array(carbon_find *find, arr_it *it)
         }
 }
 
-static void result_from_object(carbon_find *find, carbon_object *it)
+static void result_from_object(carbon_find *find, obj_it *it)
 {
         internal_carbon_object_prop_type(&find->type, it);
         switch (find->type) {
@@ -828,7 +828,7 @@ static void result_from_object(carbon_find *find, carbon_object *it)
 }
 
 static inline bool
-result_from_column(carbon_find *find, u32 requested_idx, carbon_column *it)
+result_from_column(carbon_find *find, u32 requested_idx, col_it *it)
 {
         u32 num_contained_values;
         carbon_column_values_info(&find->type, &num_contained_values, it);

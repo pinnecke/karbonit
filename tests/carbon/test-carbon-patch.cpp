@@ -7,7 +7,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         rec doc;
         u64 hash_original, hash_patch_1, hash_patch_2;
         arr_it it, *arr;
-        carbon_object *obj;
+        obj_it *obj;
         field_type_e type;
 
         carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", CARBON_KEY_AUTOKEY, NULL);

@@ -24,7 +24,7 @@
 #include <jakson/carbon/object.h>
 #include "object.h"
 
-bool internal_carbon_object_create(carbon_object *it, memfile *memfile, offset_t payload_start)
+bool internal_carbon_object_create(obj_it *it, memfile *memfile, offset_t payload_start)
 {
         it->object_contents_off = payload_start;
         it->object_start_off = payload_start;
@@ -55,13 +55,13 @@ bool internal_carbon_object_create(carbon_object *it, memfile *memfile, offset_t
         return true;
 }
 
-bool internal_carbon_object_copy(carbon_object *dst, carbon_object *src)
+bool internal_carbon_object_copy(obj_it *dst, obj_it *src)
 {
         internal_carbon_object_create(dst, &src->memfile, src->object_start_off);
         return true;
 }
 
-bool internal_carbon_object_clone(carbon_object *dst, carbon_object *src)
+bool internal_carbon_object_clone(obj_it *dst, obj_it *src)
 {
         memfile_clone(&dst->memfile, &src->memfile);
         dst->object_contents_off = src->object_contents_off;
@@ -80,7 +80,7 @@ bool internal_carbon_object_clone(carbon_object *dst, carbon_object *src)
         return true;
 }
 
-bool carbon_object_drop(carbon_object *it)
+bool carbon_object_drop(obj_it *it)
 {
         carbon_int_field_auto_close(&it->field.value.data);
         carbon_int_field_drop(&it->field.value.data);
@@ -88,7 +88,7 @@ bool carbon_object_drop(carbon_object *it)
         return true;
 }
 
-bool carbon_object_rewind(carbon_object *it)
+bool carbon_object_rewind(obj_it *it)
 {
         error_if_and_return(it->object_contents_off >= memfile_size(&it->memfile), ERR_OUTOFBOUNDS, NULL);
         carbon_int_history_clear(&it->history);
@@ -96,7 +96,7 @@ bool carbon_object_rewind(carbon_object *it)
         return memfile_seek(&it->memfile, it->object_contents_off);
 }
 
-carbon_prop *carbon_object_next(carbon_object *it)
+carbon_prop *carbon_object_next(obj_it *it)
 {
         bool is_empty_slot;
         offset_t last_off = memfile_tell(&it->memfile);
@@ -121,14 +121,14 @@ carbon_prop *carbon_object_next(carbon_object *it)
         }
 }
 
-bool carbon_object_has_next(carbon_object *it)
+bool carbon_object_has_next(obj_it *it)
 {
         bool has_next = carbon_object_next(it);
         carbon_object_prev(it);
         return has_next;
 }
 
-bool carbon_object_prev(carbon_object *it)
+bool carbon_object_prev(obj_it *it)
 {
         if (carbon_int_history_has(&it->history)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
@@ -140,19 +140,19 @@ bool carbon_object_prev(carbon_object *it)
         }
 }
 
-offset_t internal_carbon_object_memfile_pos(carbon_object *it)
+offset_t internal_carbon_object_memfile_pos(obj_it *it)
 {
         return memfile_tell(&it->memfile);
 }
 
-bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, carbon_object *it)
+bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, obj_it *it)
 {
         OPTIONAL_SET(key_off, it->field.key.offset);
         OPTIONAL_SET(value_off, it->field.value.offset);
         return true;
 }
 
-carbon_string_field internal_carbon_object_prop_name(carbon_object *it)
+carbon_string_field internal_carbon_object_prop_name(obj_it *it)
 {
         carbon_string_field ret = CARBON_NULL_STRING;
         if (LIKELY(it != NULL)) {
@@ -162,7 +162,7 @@ carbon_string_field internal_carbon_object_prop_name(carbon_object *it)
         return ret;
 }
 
-static i64 prop_remove(carbon_object *it, field_type_e type)
+static i64 prop_remove(obj_it *it, field_type_e type)
 {
         i64 prop_size = internal_carbon_prop_size(&it->memfile);
         carbon_string_nomarker_remove(&it->memfile);
@@ -174,7 +174,7 @@ static i64 prop_remove(carbon_object *it, field_type_e type)
         }
 }
 
-bool internal_carbon_object_remove(carbon_object *it)
+bool internal_carbon_object_remove(obj_it *it)
 {
         field_type_e type;
         if (internal_carbon_object_prop_type(&type, it)) {
@@ -188,26 +188,26 @@ bool internal_carbon_object_remove(carbon_object *it)
         }
 }
 
-bool internal_carbon_object_prop_type(field_type_e *type, carbon_object *it)
+bool internal_carbon_object_prop_type(field_type_e *type, obj_it *it)
 {
         return carbon_int_field_field_type(type, &it->field.value.data);
 }
 
-bool carbon_object_is_multimap(carbon_object *it)
+bool carbon_object_is_multimap(obj_it *it)
 {
         abstract_type_class_e type_class;
         abstract_map_derivable_to_class(&type_class, it->abstract_type);
         return abstract_is_multimap(type_class);
 }
 
-bool carbon_object_is_sorted(carbon_object *it)
+bool carbon_object_is_sorted(obj_it *it)
 {
         abstract_type_class_e type_class;
         abstract_map_derivable_to_class(&type_class, it->abstract_type);
         return abstract_is_sorted(type_class);
 }
 
-void carbon_object_update_type(carbon_object *it, map_derivable_e derivation)
+void carbon_object_update_type(obj_it *it, map_derivable_e derivation)
 {
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->object_start_off);
@@ -219,7 +219,7 @@ void carbon_object_update_type(carbon_object *it, map_derivable_e derivation)
         memfile_restore_position(&it->memfile);
 }
 
-bool internal_carbon_object_insert_begin(carbon_insert *inserter, carbon_object *it)
+bool internal_carbon_object_insert_begin(carbon_insert *inserter, obj_it *it)
 {
         return carbon_int_insert_create_for_object(inserter, it);
 }
@@ -230,7 +230,7 @@ void internal_carbon_object_insert_end(carbon_insert *inserter)
         /* nothing to do */
 }
 
-bool internal_carbon_object_fast_forward(carbon_object *it)
+bool internal_carbon_object_fast_forward(obj_it *it)
 {
         while (carbon_object_next(it)) {}
 
@@ -239,7 +239,7 @@ bool internal_carbon_object_fast_forward(carbon_object *it)
         return true;
 }
 
-bool internal_carbon_object_update_name(carbon_object *it, const char *key)
+bool internal_carbon_object_update_name(obj_it *it, const char *key)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -247,7 +247,7 @@ bool internal_carbon_object_update_name(carbon_object *it, const char *key)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_u8(carbon_object *it, u8 value)
+bool internal_carbon_object_update_u8(obj_it *it, u8 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -255,7 +255,7 @@ bool internal_carbon_object_update_u8(carbon_object *it, u8 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_u16(carbon_object *it, u16 value)
+bool internal_carbon_object_update_u16(obj_it *it, u16 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -263,7 +263,7 @@ bool internal_carbon_object_update_u16(carbon_object *it, u16 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_u32(carbon_object *it, u32 value)
+bool internal_carbon_object_update_u32(obj_it *it, u32 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -271,7 +271,7 @@ bool internal_carbon_object_update_u32(carbon_object *it, u32 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_u64(carbon_object *it, u64 value)
+bool internal_carbon_object_update_u64(obj_it *it, u64 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -279,7 +279,7 @@ bool internal_carbon_object_update_u64(carbon_object *it, u64 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_i8(carbon_object *it, i8 value)
+bool internal_carbon_object_update_i8(obj_it *it, i8 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -287,7 +287,7 @@ bool internal_carbon_object_update_i8(carbon_object *it, i8 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_i16(carbon_object *it, i16 value)
+bool internal_carbon_object_update_i16(obj_it *it, i16 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -295,7 +295,7 @@ bool internal_carbon_object_update_i16(carbon_object *it, i16 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_i32(carbon_object *it, i32 value)
+bool internal_carbon_object_update_i32(obj_it *it, i32 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -303,7 +303,7 @@ bool internal_carbon_object_update_i32(carbon_object *it, i32 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_i64(carbon_object *it, i64 value)
+bool internal_carbon_object_update_i64(obj_it *it, i64 value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -311,7 +311,7 @@ bool internal_carbon_object_update_i64(carbon_object *it, i64 value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_float(carbon_object *it, float value)
+bool internal_carbon_object_update_float(obj_it *it, float value)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -319,28 +319,28 @@ bool internal_carbon_object_update_float(carbon_object *it, float value)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_true(carbon_object *it)
+bool internal_carbon_object_update_true(obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(it)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_false(carbon_object *it)
+bool internal_carbon_object_update_false(obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(it)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_null(carbon_object *it)
+bool internal_carbon_object_update_null(obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(it)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_string(carbon_object *it, const char *str)
+bool internal_carbon_object_update_string(obj_it *it, const char *str)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -348,7 +348,7 @@ bool internal_carbon_object_update_string(carbon_object *it, const char *str)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_binary(carbon_object *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type)
+bool internal_carbon_object_update_binary(obj_it *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -359,7 +359,7 @@ bool internal_carbon_object_update_binary(carbon_object *it, const void *value, 
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_carbon_object_update_array_begin(carbon_insert_array_state *state, carbon_object *it)
+carbon_insert *internal_carbon_object_update_array_begin(carbon_insert_array_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -375,7 +375,7 @@ bool internal_carbon_object_update_array_end(carbon_insert_array_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_carbon_object_update_column_begin(carbon_insert_column_state *state, carbon_object *it)
+carbon_insert *internal_carbon_object_update_column_begin(carbon_insert_column_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -391,7 +391,7 @@ bool internal_carbon_object_update_column_end(carbon_insert_column_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_carbon_object_update_object_begin(carbon_insert_object_state *state, carbon_object *it)
+carbon_insert *internal_carbon_object_update_object_begin(carbon_insert_object_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -407,7 +407,7 @@ bool internal_carbon_object_update_object_end(carbon_insert_object_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_from_carbon(carbon_object *it, const rec *src)
+bool internal_carbon_object_update_from_carbon(obj_it *it, const rec *src)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -415,7 +415,7 @@ bool internal_carbon_object_update_from_carbon(carbon_object *it, const rec *src
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_from_array(carbon_object *it, const carbon_object *src)
+bool internal_carbon_object_update_from_array(obj_it *it, const obj_it *src)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -423,7 +423,7 @@ bool internal_carbon_object_update_from_array(carbon_object *it, const carbon_ob
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_from_object(carbon_object *it, const carbon_object *src)
+bool internal_carbon_object_update_from_object(obj_it *it, const obj_it *src)
 {
         // TODO: Implement P1
         UNUSED(it)
@@ -431,7 +431,7 @@ bool internal_carbon_object_update_from_object(carbon_object *it, const carbon_o
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-bool internal_carbon_object_update_from_column(carbon_object *it, const carbon_column *src)
+bool internal_carbon_object_update_from_column(obj_it *it, const col_it *src)
 {
         // TODO: Implement P1
         UNUSED(it)

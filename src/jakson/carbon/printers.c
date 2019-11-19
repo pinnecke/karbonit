@@ -312,7 +312,7 @@ bool carbon_printer_object_prop_name(carbon_printer *printer, string_buffer *str
         return true;
 }
 
-bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, string_buffer *builder)
+bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buffer *builder)
 {
         JAK_ASSERT(it);
         JAK_ASSERT(printer);
@@ -431,7 +431,7 @@ bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, str
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column *column = carbon_item_get_column(&(it->prop.value));
+                                col_it *column = carbon_item_get_column(&(it->prop.value));
                                 carbon_printer_column_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_column(column, printer, builder);
                         }
@@ -440,7 +440,7 @@ bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, str
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                carbon_object *object = carbon_item_get_object(&(it->prop.value));
+                                obj_it *object = carbon_item_get_object(&(it->prop.value));
                                 carbon_printer_object_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_object(object, printer, builder);
                                 carbon_object_drop(object);
@@ -582,7 +582,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                carbon_column *column = carbon_item_get_column(&(it->item));
+                                col_it *column = carbon_item_get_column(&(it->item));
                                 carbon_printer_print_column(column, printer, builder);
                         }
                                 break;
@@ -590,7 +590,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                carbon_object *object = carbon_item_get_object(&(it->item));
+                                obj_it *object = carbon_item_get_object(&(it->item));
                                 carbon_printer_print_object(object, printer, builder);
                                 carbon_object_drop(object);
                         }
@@ -621,7 +621,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
         return true;
 }
 
-bool carbon_printer_print_column(carbon_column *it, carbon_printer *printer, string_buffer *builder)
+bool carbon_printer_print_column(col_it *it, carbon_printer *printer, string_buffer *builder)
 {
         field_type_e type;
         u32 nvalues;

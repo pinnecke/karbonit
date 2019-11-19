@@ -20,7 +20,7 @@
 #include <jakson/carbon/field.h>
 #include "object.h"
 
-bool internal_carbon_prop_create(carbon_prop *dst, carbon_object *parent)
+bool internal_carbon_prop_create(carbon_prop *dst, obj_it *parent)
 {
         dst->parent = parent;
         dst->idx = parent->pos;

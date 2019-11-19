@@ -23,7 +23,7 @@
 #include <jakson/stdx/unique_id.h>
 #include <jakson/std/hash.h>
 
-bool carbon_commit_hash_create(memfile *file)
+bool commit_create(memfile *file)
 {
         u64 init_rev = 0;
         unique_id_create(&init_rev);
@@ -34,39 +34,39 @@ bool carbon_commit_hash_create(memfile *file)
         return true;
 }
 
-bool carbon_commit_hash_skip(memfile *file)
+bool commit_skip(memfile *file)
 {
         memfile_skip(file, sizeof(u64));
         return true;
 }
 
-bool carbon_commit_hash_read(u64 *commit_hash, memfile *file)
+bool commit_read(u64 *commit_hash, memfile *file)
 {
         *commit_hash = *MEMFILE_READ_TYPE(file, u64);
         return true;
 }
 
-bool carbon_commit_hash_peek(u64 *commit_hash, memfile *file)
+bool commit_peek(u64 *commit_hash, memfile *file)
 {
         *commit_hash = *MEMFILE_PEEK(file, u64);
         return true;
 }
 
-bool carbon_commit_hash_update(memfile *file, const char *base, u64 len)
+bool commit_update(memfile *file, const char *base, u64 len)
 {
         u64 commit_hash;
-        carbon_commit_hash_compute(&commit_hash, base, len);
+        commit_compute(&commit_hash, base, len);
         memfile_write(file, &commit_hash, sizeof(u64));
         return true;
 }
 
-bool carbon_commit_hash_compute(u64 *commit_hash, const void *base, u64 len)
+bool commit_compute(u64 *commit_hash, const void *base, u64 len)
 {
         *commit_hash = HASH64_FNV(len, base);
         return true;
 }
 
-const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash)
+const char *commit_to_str(string_buffer *dst, u64 commit_hash)
 {
         if (dst) {
                 string_buffer_clear(dst);
@@ -77,13 +77,13 @@ const char *carbon_commit_hash_to_str(string_buffer *dst, u64 commit_hash)
         }
 }
 
-bool carbon_commit_hash_append_to_str(string_buffer *dst, u64 commit_hash)
+bool commit_append_to_str(string_buffer *dst, u64 commit_hash)
 {
         string_buffer_add_u64_as_hex(dst, commit_hash);
         return true;
 }
 
-u64 carbon_commit_hash_from_str(const char *commit_str)
+u64 commit_from_str(const char *commit_str)
 {
         if (commit_str && strlen(commit_str) == 16) {
                 char *illegal_char;

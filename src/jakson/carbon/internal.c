@@ -22,7 +22,7 @@
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/column.h>
+#include <jakson/carbon/col_it.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
@@ -450,7 +450,7 @@ offset_t carbon_int_payload_after_header(rec *doc)
 
         if (LIKELY(carbon_key_skip(&key_type, &doc->file))) {
                 if (key_type != CARBON_KEY_NOKEY) {
-                        carbon_commit_hash_skip(&doc->file);
+                        commit_skip(&doc->file);
                 }
                 result = memfile_tell(&doc->file);
         }
@@ -471,7 +471,7 @@ u64 carbon_int_header_get_commit_hash(rec *doc)
 
         carbon_key_skip(&key_type, &doc->file);
         if (key_type != CARBON_KEY_NOKEY) {
-                carbon_commit_hash_read(&rev, &doc->file);
+                commit_read(&rev, &doc->file);
         }
 
         memfile_restore_position(&doc->file);

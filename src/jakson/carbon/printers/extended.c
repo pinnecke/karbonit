@@ -102,7 +102,7 @@ static bool meta_data(carbon_printer *self, string_buffer *builder,
         string_buffer_add(builder, "}, \"commit\": ");
         if (commit_hash) {
                 string_buffer_add(builder, "\"");
-                carbon_commit_hash_append_to_str(builder, commit_hash);
+                commit_append_to_str(builder, commit_hash);
                 string_buffer_add(builder, "\"");
         } else {
                 string_buffer_add(builder, "null");

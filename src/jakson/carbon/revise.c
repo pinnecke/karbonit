@@ -588,7 +588,7 @@ static bool carbon_header_rev_inc(rec *doc)
         if (carbon_has_key(key_type)) {
                 u64 raw_data_len = 0;
                 const void *raw_data = carbon_raw_data(&raw_data_len, doc);
-                carbon_commit_hash_update(&doc->file, raw_data, raw_data_len);
+                commit_update(&doc->file, raw_data, raw_data_len);
         }
         memfile_restore_position(&doc->file);
 

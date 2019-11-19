@@ -20,7 +20,7 @@
 #include <jakson/carbon/printers/json.h>
 #include <jakson/carbon/traverse.h>
 #include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/column.h>
+#include <jakson/carbon/col_it.h>
 #include <jakson/carbon/object.h>
 #include <jakson/jakson.h>
 

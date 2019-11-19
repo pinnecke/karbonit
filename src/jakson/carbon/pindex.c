@@ -1140,7 +1140,7 @@ static void record_ref_to_carbon(carbon_insert *roins, pindex *index)
         u64 commit_hash = memfile_read_u64(&index->memfile);
         string_buffer str;
         string_buffer_create(&str);
-        carbon_commit_hash_to_str(&str, commit_hash);
+        commit_to_str(&str, commit_hash);
         carbon_insert_prop_string(roins, "commit-hash", string_cstr(&str));
         string_buffer_drop(&str);
 }

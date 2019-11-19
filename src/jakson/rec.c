@@ -26,7 +26,7 @@
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/column.h>
+#include <jakson/carbon/col_it.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/printers.h>
 #include <jakson/carbon/internal.h>
@@ -404,6 +404,6 @@ static void carbon_header_init(rec *doc, carbon_key_e key_type)
         carbon_key_create(&doc->file, key_type);
 
         if (key_type != CARBON_KEY_NOKEY) {
-                carbon_commit_hash_create(&doc->file);
+                commit_create(&doc->file);
         }
 }

@@ -75,7 +75,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingWithKey) {
 
         u64 raw_data_len = 0;
         const void *raw_data = carbon_raw_data(&raw_data_len, &doc);
-        carbon_commit_hash_compute(&commit_mod_cmpr, raw_data, raw_data_len);
+        commit_compute(&commit_mod_cmpr, raw_data, raw_data_len);
 
         ASSERT_EQ(commit_mod, commit_mod_cmpr);
 }
@@ -8679,18 +8679,18 @@ TEST(CarbonTest, CommitHashStr) {
         string_buffer s;
         string_buffer_create(&s);
 
-        ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 1), "0000000000000001") == 0);
-        ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 42), "000000000000002a") == 0);
-        ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 432432532532323), "0001894b8b7dac63") == 0);
-        ASSERT_TRUE(strcmp(carbon_commit_hash_to_str(&s, 2072006001577230657), "1cc13e7b007d0141") == 0);
-        ASSERT_EQ(1U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 1)));
-        ASSERT_EQ(42U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 42)));
-        ASSERT_EQ(432432532532323U, carbon_commit_hash_from_str(carbon_commit_hash_to_str(&s, 432432532532323)));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str(""));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("hello"));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("000000000000001"));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str("000000000000001Z"));
-        ASSERT_EQ(0U, carbon_commit_hash_from_str(NULL));
+        ASSERT_TRUE(strcmp(commit_to_str(&s, 1), "0000000000000001") == 0);
+        ASSERT_TRUE(strcmp(commit_to_str(&s, 42), "000000000000002a") == 0);
+        ASSERT_TRUE(strcmp(commit_to_str(&s, 432432532532323), "0001894b8b7dac63") == 0);
+        ASSERT_TRUE(strcmp(commit_to_str(&s, 2072006001577230657), "1cc13e7b007d0141") == 0);
+        ASSERT_EQ(1U, commit_from_str(commit_to_str(&s, 1)));
+        ASSERT_EQ(42U, commit_from_str(commit_to_str(&s, 42)));
+        ASSERT_EQ(432432532532323U, commit_from_str(commit_to_str(&s, 432432532532323)));
+        ASSERT_EQ(0U, commit_from_str(""));
+        ASSERT_EQ(0U, commit_from_str("hello"));
+        ASSERT_EQ(0U, commit_from_str("000000000000001"));
+        ASSERT_EQ(0U, commit_from_str("000000000000001Z"));
+        ASSERT_EQ(0U, commit_from_str(NULL));
 
         string_buffer_drop(&s);
 }

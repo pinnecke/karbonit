@@ -18,10 +18,10 @@
 #include <jakson/carbon/abstract.h>
 #include <jakson/mem/file.h>
 
-bool carbon_abstract_type(carbon_abstract_e *type, memfile *memfile)
+bool abstract_type(abstract_e *type, memfile *memfile)
 {
-        carbon_derived_e derived;
-        if (LIKELY(carbon_abstract_get_derived_type(&derived, memfile))) {
+        derived_e derived;
+        if (LIKELY(abstract_get_derived_type(&derived, memfile))) {
                 switch (derived) {
                         case CARBON_UNSORTED_MULTIMAP:
                         case CARBON_UNSORTED_MULTISET_ARRAY:
@@ -35,7 +35,7 @@ bool carbon_abstract_type(carbon_abstract_e *type, memfile *memfile)
                         case CARBON_UNSORTED_MULTISET_COL_I64:
                         case CARBON_UNSORTED_MULTISET_COL_FLOAT:
                         case CARBON_UNSORTED_MULTISET_COL_BOOLEAN:
-                                OPTIONAL_SET(type, CARBON_ABSTRACT_BASE);
+                                OPTIONAL_SET(type, ABSTRACT_BASE);
                                 goto return_true;
                         case CARBON_SORTED_MULTIMAP:
                         case CARBON_UNSORTED_MAP:
@@ -73,7 +73,7 @@ bool carbon_abstract_type(carbon_abstract_e *type, memfile *memfile)
                         case CARBON_SORTED_MULTISET_COL_BOOLEAN:
                         case CARBON_UNSORTED_SET_COL_BOOLEAN:
                         case CARBON_SORTED_SET_COL_BOOLEAN:
-                                OPTIONAL_SET(type, CARBON_ABSTRACT_DERIVED);
+                                OPTIONAL_SET(type, ABSTRACT_DERIVED);
                                 goto return_true;
                         default:
                                 return error(ERR_MARKERMAPPING, "unknown abstract type marker detected");
@@ -85,21 +85,21 @@ return_true:
         }
 }
 
-bool carbon_abstract_is_base(bool *result, memfile *memfile)
+bool abstract_is_base(bool *result, memfile *memfile)
 {
-        carbon_abstract_e type;
-        if (LIKELY(carbon_abstract_type(&type, memfile))) {
-                *result = type == CARBON_ABSTRACT_BASE;
+        abstract_e type;
+        if (LIKELY(abstract_type(&type, memfile))) {
+                *result = type == ABSTRACT_BASE;
                 return true;
         } else {
                 return false;
         }
 }
 
-bool carbon_abstract_is_derived(bool *result, memfile *memfile)
+bool abstract_is_derived(bool *result, memfile *memfile)
 {
         bool ret = false;
-        if (carbon_abstract_is_base(&ret, memfile)) {
+        if (abstract_is_base(&ret, memfile)) {
             *result = !ret;
             return true;
         } else {
@@ -107,16 +107,16 @@ bool carbon_abstract_is_derived(bool *result, memfile *memfile)
         }
 }
 
-bool carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memfile)
+bool abstract_get_class(abstract_type_class_e *type, memfile *memfile)
 {
-        carbon_derived_e derived;
-        if (LIKELY(carbon_abstract_get_derived_type(&derived, memfile))) {
+        derived_e derived;
+        if (LIKELY(abstract_get_derived_type(&derived, memfile))) {
                 switch (derived) {
                         case CARBON_SORTED_MAP:
-                                *type = CARBON_TYPE_SORTED_MAP;
+                                *type = TYPE_SORTED_MAP;
                                 goto return_true;
                         case CARBON_SORTED_MULTIMAP:
-                                *type = CARBON_TYPE_SORTED_MULTIMAP;
+                                *type = TYPE_SORTED_MULTIMAP;
                                 goto return_true;
                         case CARBON_SORTED_MULTISET_ARRAY:
                         case CARBON_SORTED_MULTISET_COL_BOOLEAN:
@@ -129,7 +129,7 @@ bool carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memf
                         case CARBON_SORTED_MULTISET_COL_U32:
                         case CARBON_SORTED_MULTISET_COL_U64:
                         case CARBON_SORTED_MULTISET_COL_U8:
-                                *type = CARBON_TYPE_SORTED_MULTISET;
+                                *type = TYPE_SORTED_MULTISET;
                                 goto return_true;
                         case CARBON_SORTED_SET_ARRAY:
                         case CARBON_SORTED_SET_COL_BOOLEAN:
@@ -142,13 +142,13 @@ bool carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memf
                         case CARBON_SORTED_SET_COL_U32:
                         case CARBON_SORTED_SET_COL_U64:
                         case CARBON_SORTED_SET_COL_U8:
-                                *type = CARBON_TYPE_SORTED_SET;
+                                *type = TYPE_SORTED_SET;
                                 goto return_true;
                         case CARBON_UNSORTED_MAP:
-                                *type = CARBON_TYPE_UNSORTED_MAP;
+                                *type = TYPE_UNSORTED_MAP;
                                 goto return_true;
                         case CARBON_UNSORTED_MULTIMAP:
-                                *type = CARBON_TYPE_UNSORTED_MULTIMAP;
+                                *type = TYPE_UNSORTED_MULTIMAP;
                                 goto return_true;
                         case CARBON_UNSORTED_MULTISET_ARRAY:
                         case CARBON_UNSORTED_MULTISET_COL_BOOLEAN:
@@ -161,7 +161,7 @@ bool carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memf
                         case CARBON_UNSORTED_MULTISET_COL_U32:
                         case CARBON_UNSORTED_MULTISET_COL_U64:
                         case CARBON_UNSORTED_MULTISET_COL_U8:
-                                *type = CARBON_TYPE_UNSORTED_MULTISET;
+                                *type = TYPE_UNSORTED_MULTISET;
                                 goto return_true;
                         case CARBON_UNSORTED_SET_ARRAY:
                         case CARBON_UNSORTED_SET_COL_BOOLEAN:
@@ -174,7 +174,7 @@ bool carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memf
                         case CARBON_UNSORTED_SET_COL_U32:
                         case CARBON_UNSORTED_SET_COL_U64:
                         case CARBON_UNSORTED_SET_COL_U8:
-                                *type = CARBON_TYPE_UNSORTED_SET;
+                                *type = TYPE_UNSORTED_SET;
                                 goto return_true;
                         default:
                                 return error(ERR_MARKERMAPPING, "unknown marker detected");
@@ -186,89 +186,89 @@ return_true:
         }
 }
 
-bool carbon_abstract_is_multiset(carbon_abstract_type_class_e type)
+bool abstract_is_multiset(abstract_type_class_e type)
 {
         switch (type) {
-                case CARBON_TYPE_UNSORTED_MULTISET:
-                case CARBON_TYPE_SORTED_MULTISET:
+                case TYPE_UNSORTED_MULTISET:
+                case TYPE_SORTED_MULTISET:
                         return true;
                 default:
                         return false;
         }
 }
 
-bool carbon_abstract_is_set(carbon_abstract_type_class_e type)
+bool abstract_is_set(abstract_type_class_e type)
 {
         switch (type) {
-                case CARBON_TYPE_UNSORTED_SET:
-                case CARBON_TYPE_SORTED_SET:
+                case TYPE_UNSORTED_SET:
+                case TYPE_SORTED_SET:
                         return true;
                 default:
                         return false;
         }
 }
 
-bool carbon_abstract_is_multimap(carbon_abstract_type_class_e type)
+bool abstract_is_multimap(abstract_type_class_e type)
 {
         switch (type) {
-                case CARBON_TYPE_UNSORTED_MULTIMAP:
-                case CARBON_TYPE_SORTED_MULTIMAP:
+                case TYPE_UNSORTED_MULTIMAP:
+                case TYPE_SORTED_MULTIMAP:
                         return true;
                 default:
                         return false;
         }
 }
 
-bool carbon_abstract_is_map(carbon_abstract_type_class_e type)
+bool abstract_is_map(abstract_type_class_e type)
 {
         switch (type) {
-                case CARBON_TYPE_SORTED_MAP:
-                case CARBON_TYPE_UNSORTED_MAP:
+                case TYPE_SORTED_MAP:
+                case TYPE_UNSORTED_MAP:
                         return true;
                 default:
                         return false;
         }
 }
 
-bool carbon_abstract_is_sorted(carbon_abstract_type_class_e type)
+bool abstract_is_sorted(abstract_type_class_e type)
 {
         switch (type) {
-                case CARBON_TYPE_SORTED_MULTISET:
-                case CARBON_TYPE_SORTED_SET:
-                case CARBON_TYPE_SORTED_MAP:
-                case CARBON_TYPE_SORTED_MULTIMAP:
+                case TYPE_SORTED_MULTISET:
+                case TYPE_SORTED_SET:
+                case TYPE_SORTED_MAP:
+                case TYPE_SORTED_MULTIMAP:
                         return true;
                 default:
                         return false;
         }
 }
 
-bool carbon_abstract_is_distinct(carbon_abstract_type_class_e type)
+bool abstract_is_distinct(abstract_type_class_e type)
 {
         switch (type) {
-                case CARBON_TYPE_UNSORTED_SET:
-                case CARBON_TYPE_SORTED_SET:
-                case CARBON_TYPE_SORTED_MAP:
-                case CARBON_TYPE_UNSORTED_MAP:
+                case TYPE_UNSORTED_SET:
+                case TYPE_SORTED_SET:
+                case TYPE_SORTED_MAP:
+                case TYPE_UNSORTED_MAP:
                         return true;
                 default:
                         return false;
         }
 }
 
-bool carbon_abstract_class_to_list_derivable(carbon_list_derivable_e *out, carbon_abstract_type_class_e in)
+bool abstract_class_to_list_derivable(carbon_list_derivable_e *out, abstract_type_class_e in)
 {
         switch (in) {
-                case CARBON_TYPE_UNSORTED_MULTISET:
+                case TYPE_UNSORTED_MULTISET:
                         *out = CARBON_LIST_UNSORTED_MULTISET;
                         break;
-                case CARBON_TYPE_SORTED_MULTISET:
+                case TYPE_SORTED_MULTISET:
                         *out = CARBON_LIST_SORTED_MULTISET;
                         break;
-                case CARBON_TYPE_UNSORTED_SET:
+                case TYPE_UNSORTED_SET:
                         *out = CARBON_LIST_UNSORTED_SET;
                         break;
-                case CARBON_TYPE_SORTED_SET:
+                case TYPE_SORTED_SET:
                         *out = CARBON_LIST_SORTED_SET;
                         break;
                 default:
@@ -277,20 +277,20 @@ bool carbon_abstract_class_to_list_derivable(carbon_list_derivable_e *out, carbo
         return true;
 }
 
-bool carbon_abstract_list_derivable_to_class(carbon_abstract_type_class_e *out, carbon_list_derivable_e in)
+bool abstract_list_derivable_to_class(abstract_type_class_e *out, carbon_list_derivable_e in)
 {
         switch (in) {
                 case CARBON_LIST_UNSORTED_MULTISET:
-                        *out = CARBON_TYPE_UNSORTED_MULTISET;
+                        *out = TYPE_UNSORTED_MULTISET;
                         break;
                 case CARBON_LIST_SORTED_MULTISET:
-                        *out = CARBON_TYPE_SORTED_MULTISET;
+                        *out = TYPE_SORTED_MULTISET;
                         break;
                 case CARBON_LIST_UNSORTED_SET:
-                        *out = CARBON_TYPE_UNSORTED_SET;
+                        *out = TYPE_UNSORTED_SET;
                         break;
                 case CARBON_LIST_SORTED_SET:
-                        *out = CARBON_TYPE_SORTED_SET;
+                        *out = TYPE_SORTED_SET;
                         break;
                 default:
                         return error(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");
@@ -298,20 +298,20 @@ bool carbon_abstract_list_derivable_to_class(carbon_abstract_type_class_e *out, 
         return true;
 }
 
-bool carbon_abstract_map_derivable_to_class(carbon_abstract_type_class_e *out, carbon_map_derivable_e in)
+bool abstract_map_derivable_to_class(abstract_type_class_e *out, carbon_map_derivable_e in)
 {
         switch (in) {
                 case CARBON_MAP_UNSORTED_MULTIMAP:
-                        *out = CARBON_TYPE_UNSORTED_MULTIMAP;
+                        *out = TYPE_UNSORTED_MULTIMAP;
                         break;
                 case CARBON_MAP_SORTED_MULTIMAP:
-                        *out = CARBON_TYPE_SORTED_MULTIMAP;
+                        *out = TYPE_SORTED_MULTIMAP;
                         break;
                 case CARBON_MAP_UNSORTED_MAP:
-                        *out = CARBON_TYPE_UNSORTED_MAP;
+                        *out = TYPE_UNSORTED_MAP;
                         break;
                 case CARBON_MAP_SORTED_MAP:
-                        *out = CARBON_TYPE_SORTED_MAP;
+                        *out = TYPE_SORTED_MAP;
                         break;
                 default:
                         return error(ERR_TYPEMISMATCH, "abstract class type does not encode a map type");
@@ -319,17 +319,17 @@ bool carbon_abstract_map_derivable_to_class(carbon_abstract_type_class_e *out, c
         return true;
 }
 
-void carbon_abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type)
+void abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type)
 {
         memfile_write(memfile, &type, sizeof(u8));
 }
 
-void carbon_abstract_write_derived_type(memfile *memfile, carbon_derived_e type)
+void abstract_write_derived_type(memfile *memfile, derived_e type)
 {
         memfile_write(memfile, &type, sizeof(u8));
 }
 
-bool carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile)
+bool abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile)
 {
         u8 marker = memfile_peek_byte(memfile);
         switch (marker) {
@@ -422,105 +422,105 @@ bool carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, me
         }
 }
 
-static bool __carbon_abstract_is_instanceof(memfile *memfile, carbon_container_sub_type_e T)
+static bool __abstract_is_instanceof(memfile *memfile, carbon_container_sub_type_e T)
 {
         carbon_container_sub_type_e type;
-        if (LIKELY(carbon_abstract_get_container_subtype(&type, memfile))) {
+        if (LIKELY(abstract_get_container_subtype(&type, memfile))) {
                 return type == T;
         } else {
                 return false;
         }
 }
 
-bool carbon_abstract_is_instanceof_object(memfile *memfile)
+bool abstract_is_instanceof_object(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_OBJECT);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_OBJECT);
 }
 
-bool carbon_abstract_is_instanceof_array(memfile *memfile)
+bool abstract_is_instanceof_array(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_ARRAY);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_ARRAY);
 }
 
-bool carbon_abstract_is_instanceof_column_u8(memfile *memfile)
+bool abstract_is_instanceof_column_u8(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U8);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U8);
 }
 
-bool carbon_abstract_is_instanceof_column_u16(memfile *memfile)
+bool abstract_is_instanceof_column_u16(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U16);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U16);
 }
 
-bool carbon_abstract_is_instanceof_column_u32(memfile *memfile)
+bool abstract_is_instanceof_column_u32(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U32);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U32);
 }
 
-bool carbon_abstract_is_instanceof_column_u64(memfile *memfile)
+bool abstract_is_instanceof_column_u64(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U64);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U64);
 }
 
-bool carbon_abstract_is_instanceof_column_i8(memfile *memfile)
+bool abstract_is_instanceof_column_i8(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I8);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I8);
 }
 
-bool carbon_abstract_is_instanceof_column_i16(memfile *memfile)
+bool abstract_is_instanceof_column_i16(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I16);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I16);
 }
 
-bool carbon_abstract_is_instanceof_column_i32(memfile *memfile)
+bool abstract_is_instanceof_column_i32(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I32);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I32);
 }
 
-bool carbon_abstract_is_instanceof_column_i64(memfile *memfile)
+bool abstract_is_instanceof_column_i64(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I64);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I64);
 }
 
-bool carbon_abstract_is_instanceof_column_float(memfile *memfile)
+bool abstract_is_instanceof_column_float(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_FLOAT);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_FLOAT);
 }
 
-bool carbon_abstract_is_instanceof_column_boolean(memfile *memfile)
+bool abstract_is_instanceof_column_boolean(memfile *memfile)
 {
-        return __carbon_abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
+        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
 }
 
-bool carbon_abstract_is_instanceof_column(memfile *memfile)
+bool abstract_is_instanceof_column(memfile *memfile)
 {
-       if (carbon_abstract_is_instanceof_column_u8(memfile) ||
-                carbon_abstract_is_instanceof_column_u16(memfile) ||
-                carbon_abstract_is_instanceof_column_u32(memfile) ||
-                carbon_abstract_is_instanceof_column_u64(memfile) ||
-                carbon_abstract_is_instanceof_column_i8(memfile) ||
-                carbon_abstract_is_instanceof_column_i16(memfile) ||
-                carbon_abstract_is_instanceof_column_i32(memfile) ||
-                carbon_abstract_is_instanceof_column_i64(memfile) ||
-                carbon_abstract_is_instanceof_column_float(memfile) ||
-                carbon_abstract_is_instanceof_column_boolean(memfile)) {
+       if (abstract_is_instanceof_column_u8(memfile) ||
+                abstract_is_instanceof_column_u16(memfile) ||
+                abstract_is_instanceof_column_u32(memfile) ||
+                abstract_is_instanceof_column_u64(memfile) ||
+                abstract_is_instanceof_column_i8(memfile) ||
+                abstract_is_instanceof_column_i16(memfile) ||
+                abstract_is_instanceof_column_i32(memfile) ||
+                abstract_is_instanceof_column_i64(memfile) ||
+                abstract_is_instanceof_column_float(memfile) ||
+                abstract_is_instanceof_column_boolean(memfile)) {
                 return true;
         } else {
                 return false;
         }
 }
 
-bool carbon_abstract_is_instanceof_list(memfile *memfile)
+bool abstract_is_instanceof_list(memfile *memfile)
 {
-        if (carbon_abstract_is_instanceof_array(memfile) ||
-            carbon_abstract_is_instanceof_column(memfile)) {
+        if (abstract_is_instanceof_array(memfile) ||
+            abstract_is_instanceof_column(memfile)) {
                 return true;
         } else {
                 return false;
         }
 }
 
-bool carbon_abstract_derive_list_to(carbon_derived_e *concrete, carbon_list_container_e is,
+bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                          carbon_list_derivable_e should)
 {
         switch (is) {
@@ -718,7 +718,7 @@ error_case:
         return error(ERR_INTERNALERR, "unknown list container type");
 }
 
-bool carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_derivable_e should)
+bool abstract_derive_map_to(derived_e *concrete, carbon_map_derivable_e should)
 {
         switch (should) {
                 case CARBON_MAP_UNSORTED_MULTIMAP:
@@ -738,7 +738,7 @@ bool carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_deriva
         }
 }
 
-bool carbon_abstract_get_derived_type(carbon_derived_e *type, memfile *memfile)
+bool abstract_get_derived_type(derived_e *type, memfile *memfile)
 {
         u8 c = memfile_peek_byte(memfile);
         if (!(c == CARBON_MUNSORTED_MULTIMAP || c == CARBON_MSORTED_MULTIMAP || c == CARBON_MUNSORTED_MAP ||

@@ -66,8 +66,8 @@ bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivatio
 {
         assert(derivation == CARBON_MAP_UNSORTED_MULTIMAP || derivation == CARBON_MAP_SORTED_MULTIMAP ||
                derivation == CARBON_MAP_UNSORTED_MAP || derivation == CARBON_MAP_SORTED_MAP);
-        carbon_derived_e begin_marker;
-        carbon_abstract_derive_map_to(&begin_marker, derivation);
+        derived_e begin_marker;
+        abstract_derive_map_to(&begin_marker, derivation);
         insert_embedded_container(memfile, begin_marker, CARBON_MOBJECT_END, nbytes);
         return true;
 }
@@ -76,8 +76,8 @@ bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivatio
 {
         assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
                derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
-        carbon_derived_e begin_marker;
-        carbon_abstract_derive_list_to(&begin_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+        derived_e begin_marker;
+        abstract_derive_list_to(&begin_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
         insert_embedded_container(memfile, begin_marker, CARBON_MARRAY_END, nbytes);
         return true;
 }

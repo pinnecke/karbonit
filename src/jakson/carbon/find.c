@@ -331,9 +331,9 @@ bool carbon_find_update_array_type(carbon_find *find, carbon_list_derivable_e de
                 carbon_array *it = carbon_find_result_array(find);
                 memfile_clone(&mod, &it->memfile);
                 memfile_seek_from_here(&mod, -sizeof(u8));
-                carbon_derived_e derive_marker;
-                carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-                carbon_abstract_write_derived_type(&mod, derive_marker);
+                derived_e derive_marker;
+                abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+                abstract_write_derived_type(&mod, derive_marker);
                 return true;
 
         } else {
@@ -374,11 +374,11 @@ bool carbon_find_update_column_type(carbon_find *find, carbon_list_derivable_e d
                 memfile_save_position(&it->memfile);
                 memfile_seek(&it->memfile, it->column_start_offset);
 
-                carbon_derived_e derive_marker;
+                derived_e derive_marker;
                 carbon_list_container_e list_container;
                 carbon_list_container_type_by_column_type(&list_container, it->type);
-                carbon_abstract_derive_list_to(&derive_marker, list_container, derivation);
-                carbon_abstract_write_derived_type(&it->memfile, derive_marker);
+                abstract_derive_list_to(&derive_marker, list_container, derivation);
+                abstract_write_derived_type(&it->memfile, derive_marker);
 
                 memfile_restore_position(&it->memfile);
                 return true;
@@ -420,9 +420,9 @@ bool carbon_find_update_object_type(carbon_find *find, carbon_map_derivable_e de
                 memfile_save_position(&it->memfile);
                 memfile_seek(&it->memfile, it->object_start_off);
 
-                carbon_derived_e derive_marker;
-                carbon_abstract_derive_map_to(&derive_marker, derivation);
-                carbon_abstract_write_derived_type(&it->memfile, derive_marker);
+                derived_e derive_marker;
+                abstract_derive_map_to(&derive_marker, derivation);
+                abstract_write_derived_type(&it->memfile, derive_marker);
 
                 memfile_restore_position(&it->memfile);
                 return true;

@@ -16,75 +16,75 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
         memfile memfile;
         make_memfile(&memfile);
 
-        carbon_abstract_e abstract_type;
+        abstract_e type;
 
         /* object is base type */
         {
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_OBJECT);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_OBJECT);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* array is base type */
         {
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_ARRAY);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_ARRAY);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* column-... is base type */
         {
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U8);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U16);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U32);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U64);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I8);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I16);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I32);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I64);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_FLOAT);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_FLOAT);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
 
-                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
+                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
         drop_memfile(&memfile);
 }
@@ -94,122 +94,122 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         memfile memfile;
         make_memfile(&memfile);
 
-        carbon_abstract_e abstract_type;
+        abstract_e type;
 
         /* CARBON_UNSORTED_MULTIMAP is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTIMAP);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTIMAP);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_ARRAY is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_ARRAY);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_ARRAY);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U8 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U8);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U16 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U16);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U32 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U32);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U64 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U64);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I8 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I8);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I16 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I16);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I32 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I32 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I64 is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I64);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_FLOAT is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_FLOAT);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_FLOAT);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_BOOLEAN is base type */
         {
-                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_BOOLEAN);
+                abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_BOOLEAN);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
-                ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
+                ASSERT_TRUE(abstract_type(&type, &memfile));
+                ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
         drop_memfile(&memfile);
 }
 
 
-static void test_derived_is_base(memfile *memfile, carbon_derived_e type, bool is_base)
+static void test_derived_is_base(memfile *memfile, derived_e type, bool is_base)
 {
         bool result;
-        carbon_abstract_write_derived_type(memfile, type);
+        abstract_write_derived_type(memfile, type);
         memfile_seek_from_here(memfile, -1);
-        bool status = carbon_abstract_is_base(&result, memfile);
+        bool status = abstract_is_base(&result, memfile);
         ASSERT_EQ(status, true);
         ASSERT_EQ(result, is_base);
 }
@@ -282,13 +282,13 @@ TEST(TestAbstractTypeMarker, DetectNonBaseTypeByDerivedType) {
         drop_memfile(&memfile);
 }
 
-static void test_get_class_of_concrete_derived(memfile *file, carbon_derived_e concrete,
-        carbon_abstract_type_class_e expected)
+static void test_get_class_of_concrete_derived(memfile *file, derived_e concrete,
+        abstract_type_class_e expected)
 {
-        carbon_abstract_type_class_e clazz;
-        carbon_abstract_write_derived_type(file, concrete);
+        abstract_type_class_e clazz;
+        abstract_write_derived_type(file, concrete);
         memfile_seek_from_here(file, -1);
-        ASSERT_TRUE(carbon_abstract_get_class(&clazz, file));
+        ASSERT_TRUE(abstract_get_class(&clazz, file));
         ASSERT_EQ(clazz, expected);
 }
 
@@ -297,76 +297,76 @@ TEST(TestAbstractTypeMarker, GetClassOfConcreteDerivedType) {
         memfile memfile;
         make_memfile(&memfile);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTIMAP, CARBON_TYPE_UNSORTED_MULTIMAP);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTIMAP, CARBON_TYPE_SORTED_MULTIMAP);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MAP, CARBON_TYPE_UNSORTED_MAP);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MAP, CARBON_TYPE_SORTED_MAP);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTIMAP, TYPE_UNSORTED_MULTIMAP);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTIMAP, TYPE_SORTED_MULTIMAP);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MAP, TYPE_UNSORTED_MAP);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MAP, TYPE_SORTED_MAP);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_ARRAY, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_ARRAY, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_ARRAY, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_ARRAY, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_ARRAY, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_ARRAY, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_ARRAY, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_ARRAY, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U8, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U8, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U8, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U8, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U8, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U8, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U8, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U8, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U16, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U16, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U16, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U16, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U16, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U16, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U16, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U16, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U32, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U32, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U32, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U32, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U32, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U32, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U32, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U32, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U64, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U64, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U64, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U64, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_U64, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_U64, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_U64, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_U64, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I8, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I8, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I8, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I8, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I8, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I8, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I8, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I8, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I16, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I16, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I16, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I16, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I16, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I16, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I16, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I16, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I32, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I32, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I32, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I32, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I32, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I32, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I32, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I32, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I64, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I64, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I64, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I64, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_I64, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_I64, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_I64, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_I64, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_FLOAT, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_FLOAT, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_FLOAT, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_FLOAT, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_FLOAT, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_FLOAT, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_FLOAT, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_FLOAT, TYPE_SORTED_SET);
 
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_BOOLEAN, CARBON_TYPE_UNSORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_BOOLEAN, CARBON_TYPE_SORTED_MULTISET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_BOOLEAN, CARBON_TYPE_UNSORTED_SET);
-        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_BOOLEAN, CARBON_TYPE_SORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_MULTISET_COL_BOOLEAN, TYPE_UNSORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_MULTISET_COL_BOOLEAN, TYPE_SORTED_MULTISET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_UNSORTED_SET_COL_BOOLEAN, TYPE_UNSORTED_SET);
+        test_get_class_of_concrete_derived(&memfile, CARBON_SORTED_SET_COL_BOOLEAN, TYPE_SORTED_SET);
 
         drop_memfile(&memfile);
 }
 
-static void test_get_container_for_derived_type(memfile *memfile, carbon_derived_e derived,
+static void test_get_container_for_derived_type(memfile *memfile, derived_e derived,
                                                 carbon_container_sub_type_e expected)
 {
         carbon_container_sub_type_e sub_type;
-        carbon_abstract_write_derived_type(memfile, derived);
+        abstract_write_derived_type(memfile, derived);
         memfile_seek_from_here(memfile, -1);
-        ASSERT_TRUE(carbon_abstract_get_container_subtype(&sub_type, memfile));
+        ASSERT_TRUE(abstract_get_container_subtype(&sub_type, memfile));
         ASSERT_EQ(sub_type, expected);
 }
 
@@ -451,10 +451,10 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
 }
 
 static void test_get_derive_from_list(carbon_list_container_e is, carbon_list_derivable_e should,
-                                      carbon_derived_e expected)
+                                      derived_e expected)
 {
-        carbon_derived_e concrete;
-        ASSERT_TRUE(carbon_abstract_derive_list_to(&concrete, is, should));
+        derived_e concrete;
+        ASSERT_TRUE(abstract_derive_list_to(&concrete, is, should));
         ASSERT_EQ(concrete, expected);
 }
 
@@ -560,10 +560,10 @@ TEST(TestAbstractTypeMarker, GetDeriveFromList)
                                   CARBON_SORTED_SET_COL_BOOLEAN);
 }
 
-static void test_get_derive_from_list(carbon_map_derivable_e should, carbon_derived_e expected)
+static void test_get_derive_from_list(carbon_map_derivable_e should, derived_e expected)
 {
-        carbon_derived_e concrete;
-        ASSERT_TRUE(carbon_abstract_derive_map_to(&concrete, should));
+        derived_e concrete;
+        ASSERT_TRUE(abstract_derive_map_to(&concrete, should));
         ASSERT_EQ(concrete, expected);
 }
 

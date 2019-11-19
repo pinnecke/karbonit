@@ -140,9 +140,9 @@ void carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivatio
         carbon_revise_iterator_open(&it, context);
 
         memfile_seek_from_here(&it.memfile, -sizeof(u8));
-        carbon_derived_e derive_marker;
-        carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-        carbon_abstract_write_derived_type(&it.memfile, derive_marker);
+        derived_e derive_marker;
+        abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+        abstract_write_derived_type(&it.memfile, derive_marker);
 
         carbon_revise_iterator_close(&it);
 }

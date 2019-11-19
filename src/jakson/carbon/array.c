@@ -232,9 +232,9 @@ bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_col
 
 static void __carbon_array_load_abstract_type(carbon_array *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_get_class(&type_class, &it->memfile);
-        carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
+        abstract_type_class_e type_class;
+        abstract_get_class(&type_class, &it->memfile);
+        abstract_class_to_list_derivable(&it->abstract_type, type_class);
 }
 
 bool internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start)
@@ -255,7 +255,7 @@ bool internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t p
                 return error(ERR_CORRUPTED, NULL);
         }
 
-        if (!carbon_abstract_is_instanceof_array(&it->memfile)) {
+        if (!abstract_is_instanceof_array(&it->memfile)) {
             return error(ERR_MARKERMAPPING, "expected array or sub type marker");
         }
 
@@ -474,18 +474,18 @@ bool internal_carbon_array_remove(carbon_array *it)
  * it is a set. In case of any error, a failure is returned. */
 bool carbon_array_is_multiset(carbon_array *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_multiset(type_class);
+        abstract_type_class_e type_class;
+        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        return abstract_is_multiset(type_class);
 }
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
  * otherwise false. In case of any error, a failure is returned. */
 bool carbon_array_is_sorted(carbon_array *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_sorted(type_class);
+        abstract_type_class_e type_class;
+        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        return abstract_is_sorted(type_class);
 }
 
 void carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation)
@@ -493,9 +493,9 @@ void carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivati
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->array_begin_off);
 
-        carbon_derived_e derive_marker;
-        carbon_abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
-        carbon_abstract_write_derived_type(&it->memfile, derive_marker);
+        derived_e derive_marker;
+        abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+        abstract_write_derived_type(&it->memfile, derive_marker);
 
         memfile_restore_position(&it->memfile);
 }

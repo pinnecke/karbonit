@@ -40,7 +40,7 @@ bool internal_carbon_object_create(carbon_object *it, memfile *memfile, offset_t
         error_if_and_return(memfile_remain_size(&it->memfile) < sizeof(u8), ERR_CORRUPTED, NULL);
 
         carbon_container_sub_type_e sub_type;
-        carbon_abstract_get_container_subtype(&sub_type, &it->memfile);
+        abstract_get_container_subtype(&sub_type, &it->memfile);
         error_if_and_return(sub_type != CARBON_CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
         char marker = memfile_read_byte(&it->memfile);
@@ -195,16 +195,16 @@ bool internal_carbon_object_prop_type(carbon_field_type_e *type, carbon_object *
 
 bool carbon_object_is_multimap(carbon_object *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_map_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_multimap(type_class);
+        abstract_type_class_e type_class;
+        abstract_map_derivable_to_class(&type_class, it->abstract_type);
+        return abstract_is_multimap(type_class);
 }
 
 bool carbon_object_is_sorted(carbon_object *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_map_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_sorted(type_class);
+        abstract_type_class_e type_class;
+        abstract_map_derivable_to_class(&type_class, it->abstract_type);
+        return abstract_is_sorted(type_class);
 }
 
 void carbon_object_update_type(carbon_object *it, carbon_map_derivable_e derivation)
@@ -212,9 +212,9 @@ void carbon_object_update_type(carbon_object *it, carbon_map_derivable_e derivat
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->object_start_off);
 
-        carbon_derived_e derive_marker;
-        carbon_abstract_derive_map_to(&derive_marker, derivation);
-        carbon_abstract_write_derived_type(&it->memfile, derive_marker);
+        derived_e derive_marker;
+        abstract_derive_map_to(&derive_marker, derivation);
+        abstract_write_derived_type(&it->memfile, derive_marker);
 
         memfile_restore_position(&it->memfile);
 }

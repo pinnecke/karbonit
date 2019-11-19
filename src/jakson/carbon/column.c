@@ -44,13 +44,13 @@ bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_s
 
         error_if_and_return(memfile_remain_size(&it->memfile) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
 
-        if (!carbon_abstract_is_instanceof_column(&it->memfile)) {
+        if (!abstract_is_instanceof_column(&it->memfile)) {
             return error(ERR_ILLEGALOP, "column begin marker or sub type expected");
         }
 
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_get_class(&type_class, &it->memfile);
-        carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
+        abstract_type_class_e type_class;
+        abstract_get_class(&type_class, &it->memfile);
+        abstract_class_to_list_derivable(&it->abstract_type, type_class);
 
         u8 marker = *memfile_read(&it->memfile, sizeof(u8));
 
@@ -293,16 +293,16 @@ bool carbon_column_remove(carbon_column *it, u32 pos)
 
 bool carbon_column_is_multiset(carbon_column *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_multiset(type_class);
+        abstract_type_class_e type_class;
+        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        return abstract_is_multiset(type_class);
 }
 
 bool carbon_column_is_sorted(carbon_column *it)
 {
-        carbon_abstract_type_class_e type_class;
-        carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
-        return carbon_abstract_is_sorted(type_class);
+        abstract_type_class_e type_class;
+        abstract_list_derivable_to_class(&type_class, it->abstract_type);
+        return abstract_is_sorted(type_class);
 }
 
 bool carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation)
@@ -314,11 +314,11 @@ bool carbon_column_update_type(carbon_column *it, carbon_list_derivable_e deriva
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->column_start_offset);
 
-        carbon_derived_e derive_marker;
+        derived_e derive_marker;
         carbon_list_container_e container_type;
         carbon_list_container_type_by_column_type(&container_type, it->type);
-        carbon_abstract_derive_list_to(&derive_marker, container_type, derivation);
-        carbon_abstract_write_derived_type(&it->memfile, derive_marker);
+        abstract_derive_list_to(&derive_marker, container_type, derivation);
+        abstract_write_derived_type(&it->memfile, derive_marker);
 
         memfile_restore_position(&it->memfile);
 
@@ -473,7 +473,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
 
 static bool rewrite_column_to_array(carbon_column *it)
 {
-        carbon_abstract_type_class_e type_class;
+        abstract_type_class_e type_class;
         carbon_list_derivable_e list_type;
         carbon_array array;
         carbon_insert array_ins;
@@ -481,8 +481,8 @@ static bool rewrite_column_to_array(carbon_column *it)
         memfile_save_position(&it->memfile);
         assert(carbon_field_type_is_column_or_subtype(memfile_peek_byte(&it->memfile)));
 
-        carbon_abstract_get_class(&type_class, &it->memfile);
-        carbon_abstract_class_to_list_derivable(&list_type, type_class);
+        abstract_get_class(&type_class, &it->memfile);
+        abstract_class_to_list_derivable(&list_type, type_class);
 
         /** Potentially tailing space after the last ']' marker of the outer most array is used for temporary space */
         memfile_seek_to_end(&it->memfile);

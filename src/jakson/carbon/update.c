@@ -388,13 +388,13 @@ bool carbon_update_set_array_end(carbon_insert_array_state *state_in)
 
 carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
                                                          carbon_insert_column_state *state_out,
-                                                         field_type_e type, u64 column_capacity)
+                                                         field_type_e type, u64 cap)
 {
         // TODO: Implement
         UNUSED(state_out);
         UNUSED(context);
         UNUSED(type);
-        UNUSED(column_capacity);
+        UNUSED(cap);
         UNUSED(path);
         error(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
@@ -411,17 +411,17 @@ bool carbon_update_set_column_end(carbon_insert_column_state *state_in)
 
 bool carbon_update_set_null_compiled(rev *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, internal_arr_it_update_null, carbon_column_update_set_null);
+        return try_update(context, path, internal_arr_it_update_null, col_it_update_set_null);
 }
 
 bool carbon_update_set_true_compiled(rev *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, internal_arr_it_update_true, carbon_column_update_set_true);
+        return try_update(context, path, internal_arr_it_update_true, col_it_update_set_true);
 }
 
 bool carbon_update_set_false_compiled(rev *context, const carbon_dot_path *path)
 {
-        return try_update(context, path, internal_arr_it_update_false, carbon_column_update_set_false);
+        return try_update(context, path, internal_arr_it_update_false, col_it_update_set_false);
 }
 
 bool carbon_update_set_u8_compiled(rev *context, const carbon_dot_path *path,
@@ -562,13 +562,13 @@ carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
                                                                   const carbon_dot_path *path,
                                                                   carbon_insert_column_state *state_out,
                                                                   field_type_e type,
-                                                                  u64 column_capacity)
+                                                                  u64 cap)
 {
         // TODO: Implement
         UNUSED(state_out);
         UNUSED(context);
         UNUSED(type);
-        UNUSED(column_capacity);
+        UNUSED(cap);
         UNUSED(path);
         error(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
@@ -698,12 +698,12 @@ bool carbon_update_one_set_array_end(carbon_insert_array_state *state_in)
 carbon_insert *carbon_update_one_set_column_begin(carbon_insert_column_state *state_out,
                                                              const char *dot_path, rec *rev_doc,
                                                              rec *doc, field_type_e type,
-                                                             u64 column_capacity)
+                                                             u64 cap)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         carbon_insert *result = carbon_update_set_column_begin(&revise, dot_path, state_out, type,
-                                                                          column_capacity);
+                                                                          cap);
         // ... TODO: add revision to context
         return result;
 }
@@ -839,12 +839,12 @@ bool carbon_update_one_set_array_end_compiled(carbon_insert_array_state *state_i
 carbon_insert *carbon_update_one_set_column_begin_compiled(
         carbon_insert_column_state *state_out, const carbon_dot_path *path,
         rec *rev_doc,
-        rec *doc, field_type_e type, u64 column_capacity)
+        rec *doc, field_type_e type, u64 cap)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
         carbon_insert *result = carbon_update_set_column_begin_compiled(&revise, path, state_out, type,
-                                                                                   column_capacity);
+                                                                                   cap);
         // ... TODO: add revision to context
         return result;
 }

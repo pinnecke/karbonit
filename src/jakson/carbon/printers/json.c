@@ -267,7 +267,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
         carbon_list_container_e container_type;
 
         char sep = '\0';
-        const void *base = carbon_column_values(&type, &num_elems, it);
+        const void *base = col_it_values(&type, &num_elems, it);
         carbon_list_container_type_by_column_type(&container_type, type);
 
         if (UNLIKELY(num_elems == 0)) {

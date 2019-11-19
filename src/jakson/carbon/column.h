@@ -1,23 +1,11 @@
-/**
- * Columnar Binary JSON -- Copyright 2019 Marcus Pinnecke
- * This file implements an (read-/write) iterator for (JSON) arrays in carbon
+/*
+ * col_it - column iterator implementation
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright 2019 Marcus Pinnecke
  */
 
-#ifndef CARBON_COLUMN_H
-#define CARBON_COLUMN_H
+#ifndef HAD_COL_IT_H
+#define HAD_COL_IT_H
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
@@ -33,70 +21,52 @@ extern "C" {
 #endif
 
 typedef struct col_it {
-        memfile memfile;
-
-        offset_t num_and_capacity_start_offset;
-        offset_t column_start_offset;
-
-        field_type_e type;
-
+        memfile file;
+        offset_t header_begin;
+        offset_t begin;
+        field_type_e field_type;
         list_type_e list_type;
-
-        /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
-        i64 mod_size;
-
-        u32 column_capacity;
-        u32 column_num_elements;
-
+        i64 mod_size; /* in case of modifications, the number of bytes that are added resp. removed */
+        u32 cap;
+        u32 num;
 } col_it;
 
-bool carbon_column_create(col_it *it, memfile *memfile, offset_t column_start_offset);
-bool carbon_column_clone(col_it *dst, col_it *src);
-
-bool carbon_column_insert(carbon_insert *inserter, col_it *it);
-bool carbon_column_fast_forward(col_it *it);
-offset_t carbon_column_memfilepos(col_it *it);
-offset_t carbon_column_tell(col_it *it, u32 elem_idx);
-
-const void *carbon_column_values(field_type_e *type, u32 *nvalues, col_it *it);
-bool carbon_column_values_info(field_type_e *type, u32 *nvalues, col_it *it);
-
-bool carbon_column_value_is_null(col_it *it, u32 pos);
-
-const boolean *carbon_column_boolean_values(u32 *nvalues, col_it *it);
-const u8 *carbon_column_u8_values(u32 *nvalues, col_it *it);
-const u16 *carbon_column_u16_values(u32 *nvalues, col_it *it);
-const u32 *carbon_column_u32_values(u32 *nvalues, col_it *it);
-const u64 *carbon_column_u64_values(u32 *nvalues, col_it *it);
-const i8 *carbon_column_i8_values(u32 *nvalues, col_it *it);
-const i16 *carbon_column_i16_values(u32 *nvalues, col_it *it);
-const i32 *carbon_column_i32_values(u32 *nvalues, col_it *it);
-const i64 *carbon_column_i64_values(u32 *nvalues, col_it *it);
-const float *carbon_column_float_values(u32 *nvalues, col_it *it);
-
-bool carbon_column_remove(col_it *it, u32 pos);
-
-bool carbon_column_is_multiset(col_it *it);
-bool carbon_column_is_sorted(col_it *it);
-bool carbon_column_update_type(col_it *it, list_type_e derivation);
-
-bool carbon_column_update_set_null(col_it *it, u32 pos);
-bool carbon_column_update_set_true(col_it *it, u32 pos);
-bool carbon_column_update_set_false(col_it *it, u32 pos);
-bool carbon_column_update_set_u8(col_it *it, u32 pos, u8 value);
-bool carbon_column_update_set_u16(col_it *it, u32 pos, u16 value);
-bool carbon_column_update_set_u32(col_it *it, u32 pos, u32 value);
-bool carbon_column_update_set_u64(col_it *it, u32 pos, u64 value);
-bool carbon_column_update_set_i8(col_it *it, u32 pos, i8 value);
-bool carbon_column_update_set_i16(col_it *it, u32 pos, i16 value);
-bool carbon_column_update_set_i32(col_it *it, u32 pos, i32 value);
-bool carbon_column_update_set_i64(col_it *it, u32 pos, i64 value);
-bool carbon_column_update_set_float(col_it *it, u32 pos, float value);
-
-/**
- * Positions the iterator at the beginning of this array.
- */
-bool carbon_column_rewind(col_it *it);
+bool col_it_create(col_it *it, memfile *memfile, offset_t begin);
+bool col_it_clone(col_it *dst, col_it *src);
+bool col_it_insert(carbon_insert *inserter, col_it *it);
+bool col_it_fast_forward(col_it *it);
+offset_t col_it_memfilepos(col_it *it);
+offset_t col_it_tell(col_it *it, u32 elem_idx);
+const void *col_it_values(field_type_e *type, u32 *nvalues, col_it *it);
+bool col_it_values_info(field_type_e *type, u32 *nvalues, col_it *it);
+bool col_it_value_is_null(col_it *it, u32 pos);
+const boolean *col_it_boolean_values(u32 *nvalues, col_it *it);
+const u8 *col_it_u8_values(u32 *nvalues, col_it *it);
+const u16 *col_it_u16_values(u32 *nvalues, col_it *it);
+const u32 *col_it_u32_values(u32 *nvalues, col_it *it);
+const u64 *col_it_u64_values(u32 *nvalues, col_it *it);
+const i8 *col_it_i8_values(u32 *nvalues, col_it *it);
+const i16 *col_it_i16_values(u32 *nvalues, col_it *it);
+const i32 *col_it_i32_values(u32 *nvalues, col_it *it);
+const i64 *col_it_i64_values(u32 *nvalues, col_it *it);
+const float *col_it_float_values(u32 *nvalues, col_it *it);
+bool col_it_remove(col_it *it, u32 pos);
+bool col_it_is_multiset(col_it *it);
+bool col_it_is_sorted(col_it *it);
+bool col_it_update_type(col_it *it, list_type_e derivation);
+bool col_it_update_set_null(col_it *it, u32 pos);
+bool col_it_update_set_true(col_it *it, u32 pos);
+bool col_it_update_set_false(col_it *it, u32 pos);
+bool col_it_update_set_u8(col_it *it, u32 pos, u8 value);
+bool col_it_update_set_u16(col_it *it, u32 pos, u16 value);
+bool col_it_update_set_u32(col_it *it, u32 pos, u32 value);
+bool col_it_update_set_u64(col_it *it, u32 pos, u64 value);
+bool col_it_update_set_i8(col_it *it, u32 pos, i8 value);
+bool col_it_update_set_i16(col_it *it, u32 pos, i16 value);
+bool col_it_update_set_i32(col_it *it, u32 pos, i32 value);
+bool col_it_update_set_i64(col_it *it, u32 pos, i64 value);
+bool col_it_update_set_float(col_it *it, u32 pos, float value);
+bool col_it_rewind(col_it *it);
 
 #ifdef __cplusplus
 }

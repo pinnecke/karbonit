@@ -205,7 +205,7 @@ bool carbon_revise_remove(const char *dot_path, rev *context)
                                 case CARBON_COLUMN: {
                                         col_it *it = &eval.result.containers.column.it;
                                         u32 elem_pos = eval.result.containers.column.elem_pos;
-                                        result = carbon_column_remove(it, elem_pos);
+                                        result = col_it_remove(it, elem_pos);
                                 }
                                         break;
                                 default: error(ERR_INTERNALERR, NULL);
@@ -370,10 +370,10 @@ static bool internal_pack_array(arr_it *it)
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        carbon_column_rewind(it->field.column);
+                                        col_it_rewind(it->field.column);
                                         internal_pack_column(it->field.column);
                                         memfile_seek(&it->file,
-                                                     memfile_tell(&it->field.column->memfile));
+                                                     memfile_tell(&it->field.column->file));
                                         break;
                                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -513,10 +513,10 @@ static bool internal_pack_object(obj_it *it)
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        carbon_column_rewind(it->field.value.data.column);
+                                        col_it_rewind(it->field.value.data.column);
                                         internal_pack_column(it->field.value.data.column);
                                         memfile_seek(&it->memfile,
-                                                     memfile_tell(&it->field.value.data.column->memfile));
+                                                     memfile_tell(&it->field.value.data.column->file));
                                         break;
                                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -549,21 +549,21 @@ static bool internal_pack_column(col_it *it)
 {
         JAK_ASSERT(it);
 
-        u32 free_space = (it->column_capacity - it->column_num_elements) * carbon_int_get_type_value_size(it->type);
+        u32 free_space = (it->cap - it->num) * carbon_int_get_type_value_size(it->field_type);
         offset_t payload_start = carbon_int_column_get_payload_off(it);
-        u64 payload_size = it->column_num_elements * carbon_int_get_type_value_size(it->type);
-        memfile_seek(&it->memfile, payload_start);
-        memfile_skip(&it->memfile, payload_size);
+        u64 payload_size = it->num * carbon_int_get_type_value_size(it->field_type);
+        memfile_seek(&it->file, payload_start);
+        memfile_skip(&it->file, payload_size);
 
         if (free_space > 0) {
-                memfile_inplace_remove(&it->memfile, free_space);
+                memfile_inplace_remove(&it->file, free_space);
 
-                memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
-                memfile_skip_uintvar_stream(&it->memfile); // skip num of elements counter
-                memfile_update_uintvar_stream(&it->memfile,
-                                              it->column_num_elements); // update capacity counter to num elems
+                memfile_seek(&it->file, it->header_begin);
+                memfile_skip_uintvar_stream(&it->file); // skip num of elements counter
+                memfile_update_uintvar_stream(&it->file,
+                                              it->num); // update capacity counter to num elems
 
-                memfile_skip(&it->memfile, payload_size);
+                memfile_skip(&it->file, payload_size);
 
                 return true;
         } else {

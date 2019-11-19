@@ -3616,34 +3616,34 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         col_it *cit = carbon_item_get_column(&(rev_it.item));
         field_type_e type;
         u32 num_elems;
-        carbon_column_values_info(&type, &num_elems, cit);
+        col_it_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 3u);
 
-        status = carbon_column_remove(cit, 1);
+        status = col_it_remove(cit, 1);
         ASSERT_TRUE(status);
-        carbon_column_values_info(&type, &num_elems, cit);
+        col_it_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 2u);
-        values = carbon_column_u16_values(&num_elems, cit);
+        values = col_it_u16_values(&num_elems, cit);
         ASSERT_EQ(values[0], 1);
         ASSERT_EQ(values[1], 3);
 
         char *json_2 = strdup(carbon_to_json_extended(&sb, &rev_doc));
 
-        status = carbon_column_remove(cit, 0);
+        status = col_it_remove(cit, 0);
         ASSERT_TRUE(status);
-        carbon_column_values_info(&type, &num_elems, cit);
+        col_it_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 1u);
-        values = carbon_column_u16_values(&num_elems, cit);
+        values = col_it_u16_values(&num_elems, cit);
         ASSERT_EQ(values[0], 3);
 
         char *json_3 = strdup(carbon_to_json_extended(&sb, &rev_doc));
 
-        status = carbon_column_remove(cit, 0);
+        status = col_it_remove(cit, 0);
         ASSERT_TRUE(status);
-        carbon_column_values_info(&type, &num_elems, cit);
+        col_it_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 0u);
 

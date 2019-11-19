@@ -40,36 +40,36 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_TRUE(carbon_column_is_multiset(col_it));
-                ASSERT_FALSE(carbon_column_is_sorted(col_it));
+                ASSERT_TRUE(col_it_is_multiset(col_it));
+                ASSERT_FALSE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_TRUE(carbon_column_is_multiset(col_it));
-                ASSERT_FALSE(carbon_column_is_sorted(col_it));
+                ASSERT_TRUE(col_it_is_multiset(col_it));
+                ASSERT_FALSE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_TRUE(carbon_column_is_multiset(col_it));
-                ASSERT_TRUE(carbon_column_is_sorted(col_it));
+                ASSERT_TRUE(col_it_is_multiset(col_it));
+                ASSERT_TRUE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_FALSE(carbon_column_is_multiset(col_it));
-                ASSERT_FALSE(carbon_column_is_sorted(col_it));
+                ASSERT_FALSE(col_it_is_multiset(col_it));
+                ASSERT_FALSE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_FALSE(carbon_column_is_multiset(col_it));
-                ASSERT_TRUE(carbon_column_is_sorted(col_it));
+                ASSERT_FALSE(col_it_is_multiset(col_it));
+                ASSERT_TRUE(col_it_is_sorted(col_it));
 
                 carbon_read_end(&it);
         }
@@ -82,19 +82,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 arr_it_next(&it);
                 column_it = carbon_item_get_column(&(it.item));
-                carbon_column_update_type(column_it, LIST_SORTED_MULTISET);
+                col_it_update_type(column_it, LIST_SORTED_MULTISET);
 
                 arr_it_next(&it);
                 column_it = carbon_item_get_column(&(it.item));
-                carbon_column_update_type(column_it, LIST_UNSORTED_SET);
+                col_it_update_type(column_it, LIST_UNSORTED_SET);
 
                 arr_it_next(&it);
                 column_it = carbon_item_get_column(&(it.item));
-                carbon_column_update_type(column_it, LIST_SORTED_SET);
+                col_it_update_type(column_it, LIST_SORTED_SET);
 
                 arr_it_next(&it);
                 column_it = carbon_item_get_column(&(it.item));
-                carbon_column_update_type(column_it, LIST_UNSORTED_MULTISET);
+                col_it_update_type(column_it, LIST_UNSORTED_MULTISET);
 
                 carbon_revise_iterator_close(&it);
                 carbon_revise_end(&rev_context);
@@ -107,29 +107,29 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_TRUE(carbon_column_is_multiset(col_it));
-                ASSERT_TRUE(carbon_column_is_sorted(col_it));
+                ASSERT_TRUE(col_it_is_multiset(col_it));
+                ASSERT_TRUE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_FALSE(carbon_column_is_multiset(col_it));
-                ASSERT_FALSE(carbon_column_is_sorted(col_it));
+                ASSERT_FALSE(col_it_is_multiset(col_it));
+                ASSERT_FALSE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_FALSE(carbon_column_is_multiset(col_it));
-                ASSERT_TRUE(carbon_column_is_sorted(col_it));
+                ASSERT_FALSE(col_it_is_multiset(col_it));
+                ASSERT_TRUE(col_it_is_sorted(col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(carbon_field_type_is_column_or_subtype(ft));
                 col_it = carbon_item_get_column(&(it.item));
-                ASSERT_TRUE(carbon_column_is_multiset(col_it));
-                ASSERT_FALSE(carbon_column_is_sorted(col_it));
+                ASSERT_TRUE(col_it_is_multiset(col_it));
+                ASSERT_FALSE(col_it_is_sorted(col_it));
 
                 carbon_read_end(&it);
         }

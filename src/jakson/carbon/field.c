@@ -388,9 +388,9 @@ bool carbon_field_skip_column(memfile *file)
         error_if_and_return(!carbon_field_type_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
         col_it skip_it;
-        carbon_column_create(&skip_it, file, memfile_tell(file) - sizeof(u8));
-        carbon_column_fast_forward(&skip_it);
-        memfile_seek(file, memfile_tell(&skip_it.memfile));
+        col_it_create(&skip_it, file, memfile_tell(file) - sizeof(u8));
+        col_it_fast_forward(&skip_it);
+        memfile_seek(file, memfile_tell(&skip_it.file));
         return true;
 }
 
@@ -505,7 +505,7 @@ bool carbon_field_skip_64(memfile *file)
         return true;
 }
 
-field_type_e carbon_field_type_for_column(list_type_e derivation, carbon_column_type_e type)
+field_type_e carbon_field_type_for_column(list_type_e derivation, col_it_type_e type)
 {
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:

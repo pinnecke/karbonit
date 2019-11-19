@@ -271,16 +271,16 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
         field_type_e entry_type;
         u32 nvalues = 0;
 
-        carbon_column_values_info(&column_type, &nvalues, it);
+        col_it_values_info(&column_type, &nvalues, it);
 
         for (u32 i = 0; i < nvalues; i++) {
-                bool is_null = carbon_column_value_is_null(it, i);
+                bool is_null = col_it_value_is_null(it, i);
                 bool is_true = false;
                 if (carbon_field_type_is_column_bool_or_subtype(column_type)) {
-                        is_true = carbon_column_boolean_values(NULL, it)[i];
+                        is_true = col_it_boolean_values(NULL, it)[i];
                 }
                 entry_type = carbon_field_type_column_entry_to_regular_type(column_type, is_null, is_true);
-                offset_t sub_elem_off = carbon_column_tell(it, i);
+                offset_t sub_elem_off = col_it_tell(it, i);
 
                 struct pindex_node *node = pindex_node_add_column_elem(parent, i, sub_elem_off);
                 pindex_node_set_field_type(node, entry_type);

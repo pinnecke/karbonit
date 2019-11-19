@@ -285,12 +285,12 @@ typedef struct item
                                 internal_carbon_object_update_from_object((item)->parent.object,                       \
                                                                          const_carbon_object_ptr_src))
 
-#define carbon_item_set_from_column(item, const_carbon_column_ptr_src)                                                 \
+#define carbon_item_set_from_column(item, const_col_it_ptr_src)                                                 \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
                                 internal_arr_it_update_from_column((item)->parent.array,                         \
-                                                                         const_carbon_column_ptr_src) :                \
+                                                                         const_col_it_ptr_src) :                \
                                 internal_carbon_object_update_from_column((item)->parent.object,                       \
-                                                                         const_carbon_column_ptr_src))
+                                                                         const_col_it_ptr_src))
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

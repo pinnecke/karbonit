@@ -625,7 +625,7 @@ bool carbon_printer_print_column(col_it *it, carbon_printer *printer, string_buf
 {
         field_type_e type;
         u32 nvalues;
-        const void *values = carbon_column_values(&type, &nvalues, it);
+        const void *values = col_it_values(&type, &nvalues, it);
 
         carbon_printer_array_begin(printer, builder);
         for (u32 i = 0; i < nvalues; i++) {

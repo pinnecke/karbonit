@@ -153,8 +153,8 @@ typedef struct carbon_prop
 #define carbon_prop_set_from_object(prop, const_carbon_object_ptr_src)                                                 \
         carbon_item_set_from_object((prop)->value, const_carbon_object_ptr_src)
 
-#define carbon_prop_set_from_column(prop, const_carbon_column_ptr_src)                                                 \
-        carbon_item_set_from_column((prop)->value, const_carbon_column_ptr_src)
+#define carbon_prop_set_from_column(prop, const_col_it_ptr_src)                                                 \
+        carbon_item_set_from_column((prop)->value, const_col_it_ptr_src)
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

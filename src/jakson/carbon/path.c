@@ -527,13 +527,13 @@ static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
                 carbon_dot_path_type_at(&node_type, current_path_pos, path);
                 JAK_ASSERT(node_type == DOT_NODE_ARRAY_IDX);
                 carbon_dot_path_idx_at(&requested_idx, current_path_pos, path);
-                carbon_column_values_info(&column_type, &nun_values_contained, it);
+                col_it_values_info(&column_type, &nun_values_contained, it);
                 if (requested_idx >= nun_values_contained) {
                         /** requested index does not exists in this column */
                         return CARBON_PATH_NOSUCHINDEX;
                 } else {
                         state->result.container_type = CARBON_COLUMN;
-                        carbon_column_clone(&state->result.containers.column.it, it);
+                        col_it_clone(&state->result.containers.column.it, it);
                         state->result.containers.column.elem_pos = requested_idx;
                         return CARBON_PATH_RESOLVED;
                 }

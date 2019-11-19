@@ -82,7 +82,7 @@ bool carbon_int_insert_array(memfile *memfile, list_type_e derivation, size_t nb
         return true;
 }
 
-bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, carbon_column_type_e type,
+bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, col_it_type_e type,
                               size_t capactity)
 {
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
@@ -407,7 +407,7 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         carbon_int_field_create(field);
                         field->col_it_created = true;
-                        carbon_column_create(field->column, file,
+                        col_it_create(field->column, file,
                                                 memfile_tell(file) - sizeof(u8));
                 }
                         break;
@@ -431,12 +431,12 @@ bool carbon_int_field_data_access(memfile *file, field *field)
 
 offset_t carbon_int_column_get_payload_off(col_it *it)
 {
-        memfile_save_position(&it->memfile);
-        memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
-        memfile_skip_uintvar_stream(&it->memfile); // skip num of elements
-        memfile_skip_uintvar_stream(&it->memfile); // skip capacity of elements
-        offset_t result = memfile_tell(&it->memfile);
-        memfile_restore_position(&it->memfile);
+        memfile_save_position(&it->file);
+        memfile_seek(&it->file, it->header_begin);
+        memfile_skip_uintvar_stream(&it->file); // skip num of elements
+        memfile_skip_uintvar_stream(&it->file); // skip capacity of elements
+        offset_t result = memfile_tell(&it->file);
+        memfile_restore_position(&it->file);
         return result;
 }
 
@@ -542,7 +542,7 @@ bool carbon_int_field_clone(field *dst, field *src)
         if (carbon_int_field_object_it_opened(src)) {
                 internal_carbon_object_clone(dst->object, src->object);
         } else if (carbon_int_field_column_it_opened(src)) {
-                carbon_column_clone(dst->column, src->column);
+                col_it_clone(dst->column, src->column);
         } else if (carbon_int_field_array_opened(src)) {
                 internal_arr_it_clone(dst->array, src->array);
         }
@@ -1034,9 +1034,9 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         col_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        carbon_column_create(&it, memfile, begin_off - sizeof(u8));
-                        carbon_column_fast_forward(&it);
-                        offset_t end_off = carbon_column_memfilepos(&it);
+                        col_it_create(&it, memfile, begin_off - sizeof(u8));
+                        col_it_fast_forward(&it);
+                        offset_t end_off = col_it_memfilepos(&it);
 
                         JAK_ASSERT(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);

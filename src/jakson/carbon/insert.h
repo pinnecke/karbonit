@@ -83,10 +83,10 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in);
 carbon_insert *carbon_insert_array_list_begin(carbon_insert_array_state *state_out, carbon_insert *inserter_in, list_type_e derivation, u64 array_capacity);
 bool carbon_insert_array_list_end(carbon_insert_array_state *state_in);
 
-carbon_insert *carbon_insert_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, carbon_column_type_e type, u64 column_capacity);
+carbon_insert *carbon_insert_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, col_it_type_e type, u64 cap);
 bool carbon_insert_column_end(carbon_insert_column_state *state_in);
 
-carbon_insert *carbon_insert_column_list_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, list_type_e derivation, carbon_column_type_e type, u64 column_capacity);
+carbon_insert *carbon_insert_column_list_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap);
 bool carbon_insert_column_list_end(carbon_insert_column_state *state_in);
 
 bool carbon_insert_prop_null(carbon_insert *inserter, const char *key);
@@ -121,7 +121,7 @@ u64 carbon_insert_prop_map_end(carbon_insert_object_state *state);
 carbon_insert *carbon_insert_prop_array_begin(carbon_insert_array_state *state, carbon_insert *inserter, const char *key, u64 array_capacity);
 u64 carbon_insert_prop_array_end(carbon_insert_array_state *state);
 
-carbon_insert *carbon_insert_prop_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, const char *key, carbon_column_type_e type, u64 column_capacity);
+carbon_insert *carbon_insert_prop_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, const char *key, col_it_type_e type, u64 cap);
 u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in);
 
 #ifdef __cplusplus

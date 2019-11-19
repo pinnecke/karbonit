@@ -126,7 +126,7 @@ typedef enum carbon_field_type {
         CARBON_FIELD_BINARY_CUSTOM = CARBON_MCUSTOM_BINARY, /** arbitrary binary object with unknown mime type*/
 } field_type_e;
 
-typedef enum carbon_column_type {
+typedef enum col_it_type {
         CARBON_COLUMN_TYPE_U8,
         CARBON_COLUMN_TYPE_U16,
         CARBON_COLUMN_TYPE_U32,
@@ -137,7 +137,7 @@ typedef enum carbon_column_type {
         CARBON_COLUMN_TYPE_I64,
         CARBON_COLUMN_TYPE_FLOAT,
         CARBON_COLUMN_TYPE_BOOLEAN
-} carbon_column_type_e;
+} col_it_type_e;
 
 typedef enum carbon_field_class {
         CARBON_FIELD_CLASS_CONSTANT,
@@ -267,7 +267,7 @@ bool carbon_field_skip_16(memfile *file);
 bool carbon_field_skip_32(memfile *file);
 bool carbon_field_skip_64(memfile *file);
 
-field_type_e carbon_field_type_for_column(list_type_e derivation, carbon_column_type_e type);
+field_type_e carbon_field_type_for_column(list_type_e derivation, col_it_type_e type);
 field_type_e carbon_field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is_true);
 
 #ifdef __cplusplus

@@ -73,7 +73,7 @@ typedef struct carbon_insert_column_state {
 
 bool carbon_int_insert_object(memfile *memfile, map_type_e derivation, size_t nbytes);
 bool carbon_int_insert_array(memfile *memfile, list_type_e derivation, size_t nbytes);
-bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, carbon_column_type_e type, size_t capactity);
+bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, col_it_type_e type, size_t capactity);
 
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.

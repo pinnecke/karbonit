@@ -42,6 +42,7 @@ fn_result schema_generate_handleKeyword_uniqueItems(schema *s, carbon_object_it 
 fn_result schema_generate_handleKeyword_items(schema *s, carbon_object_it *oit);
 fn_result schema_generate_handleKeyword_additionalItems(schema *s, carbon_object_it *oit);
 fn_result schema_generate_handleKeyword_contains(schema *s, carbon_object_it *oit);
+// TODO: implement
 fn_result schema_generate_handleKeyword_enum(schema *s, carbon_object_it *oit);
 fn_result schema_generate_handleKeyword_not(schema *s, carbon_object_it *oit);
 fn_result schema_generate_handleKeyword_oneOf(schema *s, carbon_object_it *oit);
@@ -68,10 +69,6 @@ fn_result schema_generate_handleKeyword_minLength(schema *s, carbon_object_it *o
 fn_result schema_generate_handleKeyword_maxLength(schema *s, carbon_object_it *oit);
 fn_result schema_generate_handleKeyword_pattern(schema *s, carbon_object_it *oit);
 fn_result schema_generate_handleKeyword_format(schema *s, carbon_object_it *oit);
-fn_result schema_generate_handleKeyword_formatMinimum(schema *s, carbon_object_it *oit);
-fn_result schema_generate_handleKeyword_formatMaximum(schema *s, carbon_object_it *oit);
-fn_result schema_generate_handleKeyword_formatExclusiveMinimum(schema *s, carbon_object_it *oit);
-fn_result schema_generate_handleKeyword_formatExclusiveMaximum(schema *s, carbon_object_it *oit);
 
 
 END_DECL

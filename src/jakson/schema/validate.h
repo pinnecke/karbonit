@@ -78,14 +78,6 @@ fn_result schema_validate_run_handleKeyword_minLength(schema *s, carbon_array_it
 fn_result schema_validate_run_handleKeyword_maxLength(schema *s, carbon_array_it *ait);
 fn_result schema_validate_run_handleKeyword_pattern(schema *s, carbon_array_it *ait);
 fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *ait);
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatMinimum(schema *s, carbon_array_it *ait);
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatMaximum(schema *s, carbon_array_it *ait);
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatExclusiveMinimum(schema *s, carbon_array_it *ait);
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatExclusiveMaximum(schema *s, carbon_array_it *ait);
 
 
 END_DECL

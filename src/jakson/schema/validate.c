@@ -1263,30 +1263,6 @@ fn_result schema_keyword_validate_string_type(schema *s, carbon_array_it *ait)
             return FN_FAIL_FORWARD();
         }
     }
-
-    if (s->applies.has_formatMinimum) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatMinimum(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_formatMaximum) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatMaximum(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_formatExclusiveMinimum) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatExclusiveMinimum(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-
-    if (s->applies.has_formatExclusiveMaximum) {
-        if (!(FN_IS_OK(schema_validate_run_handleKeyword_formatExclusiveMaximum(s, ait)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
     return FN_OK();
 }
 
@@ -1423,40 +1399,4 @@ fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *a
     }
     free(str);
     return FN_OK();
-}
-
-
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatMinimum(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-    UNUSED(s);
-    UNUSED(ait);
-    return FN_FAIL(ERR_NOTIMPL, "function formatMinimum not implemented yet");
-}
-
-
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatMaximum(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-    UNUSED(s);
-    UNUSED(ait);
-    return FN_FAIL(ERR_NOTIMPL, "function formatMaximum not implemented yet");
-}
-
-
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatExclusiveMinimum(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-    UNUSED(s);
-    UNUSED(ait);
-    return FN_FAIL(ERR_NOTIMPL, "function formatExclusiveMinimum not implemented yet");
-}
-
-
-//TODO: implement
-fn_result schema_validate_run_handleKeyword_formatExclusiveMaximum(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-    UNUSED(s);
-    UNUSED(ait);
-    return FN_FAIL(ERR_NOTIMPL, "function formatExclusiveMaximum not implemented yet");
 }

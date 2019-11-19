@@ -41,10 +41,6 @@ fn_result schema_init(schema *s, const char* key_name) {
     s->applies.has_maxLength = false;
     s->applies.has_pattern = false;
     s->applies.has_format = false;
-    s->applies.has_formatMinimum = false;
-    s->applies.has_formatMaximum = false;
-    s->applies.has_formatExclusiveMinimum = false;
-    s->applies.has_formatExclusiveMaximum = false;
     s->applies.has_minItems = false;
     s->applies.has_maxItems = false;
     s->applies.has_uniqueItems = false;
@@ -191,26 +187,6 @@ fn_result schema_generate_handleKeyword(schema *s, const char *keyword, carbon_o
     }
     else if (strcmp(keyword, "format") == 0) {
         if (!(FN_IS_OK(schema_generate_handleKeyword_format(s, oit)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    else if (strcmp(keyword, "formatMinimum") == 0) {
-        if (!(FN_IS_OK(schema_generate_handleKeyword_formatMinimum(s, oit)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    else if (strcmp(keyword, "formatMaximum") == 0) {
-        if (!(FN_IS_OK(schema_generate_handleKeyword_formatMaximum(s, oit)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    else if (strcmp(keyword, "formatExclusiveMinimum") == 0) {
-        if (!(FN_IS_OK(schema_generate_handleKeyword_formatExclusiveMinimum(s, oit)))) {
-            return FN_FAIL_FORWARD();
-        }
-    }
-    else if (strcmp(keyword, "formatExclusiveMaximum") == 0) {
-        if (!(FN_IS_OK(schema_generate_handleKeyword_formatExclusiveMaximum(s, oit)))) {
             return FN_FAIL_FORWARD();
         }
     }
@@ -559,24 +535,27 @@ fn_result schema_generate_handleKeyword_contains(schema *s, carbon_object_it *oi
     return FN_OK();
 }
 
-
+//TODO: needs carbon_from_array_it func
 fn_result schema_generate_handleKeyword_enum(schema *s, carbon_object_it *oit) {
     FN_FAIL_IF_NULL(s, oit);
 
-    carbon_field_type_e field_type;
-    carbon_object_it_prop_type(&field_type, oit);
+    UNUSED(s);
+    UNUSED(oit);
+    //carbon_field_type_e field_type;
+    //carbon_object_it_prop_type(&field_type, oit);
 
-    if (!(carbon_field_type_is_array_or_subtype(field_type))) {
-        return FN_FAIL(ERR_BADTYPE, "keyword \"enum\" expects an array");
-    }
+    //if (!(carbon_field_type_is_array_or_subtype(field_type))) {
+    //    return FN_FAIL(ERR_BADTYPE, "keyword \"enum\" expects an array");
+    //}
 
-    carbon_array_it *ait = carbon_object_it_array_value(oit);
-    carbon_from_array_it(&(s->data._enum), ait);
-    carbon_array_it_drop(ait);
+    //carbon_array_it *ait = carbon_object_it_array_value(oit);
+    //carbon_from_array_it(&(s->data._enum), ait);
+    //carbon_array_it_drop(ait);
 
-    s->applies.has_enum = true;
+    //s->applies.has_enum = true;
 
-    return FN_OK();
+    //return FN_OK();
+    return FN_FAIL(ERR_NOTIMPL, "keyword enum not implemented yet");
 }
 
 
@@ -1462,78 +1441,6 @@ fn_result schema_generate_handleKeyword_format(schema *s, carbon_object_it *oit)
     free(str);
     s->applies.has_format = true;
     s->data.format = format;
-
-    return FN_OK();
-}
-
-
-fn_result schema_generate_handleKeyword_formatMinimum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-
-    carbon_field_type_e field_type;
-    carbon_object_it_prop_type(&field_type, oit);
-    if (!(carbon_field_type_is_string(field_type))) {
-        return FN_FAIL(ERR_BADTYPE, "keyword \"formatMinimum\" expects a string value");
-    }
-    u64 strlen;
-    const char* _str = carbon_object_it_string_value(&strlen, oit);
-
-    s->applies.has_formatMinimum = true;
-    s->data.formatMinimum = strndup(_str, strlen);
-
-    return FN_OK();
-}
-
-
-fn_result schema_generate_handleKeyword_formatMaximum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-
-    carbon_field_type_e field_type;
-    carbon_object_it_prop_type(&field_type, oit);
-    if (!(carbon_field_type_is_string(field_type))) {
-        return FN_FAIL(ERR_BADTYPE, "keyword \"formatMaximum\" expects a string value");
-    }
-    u64 strlen;
-    const char* _str = carbon_object_it_string_value(&strlen, oit);
-
-    s->applies.has_formatMaximum = true;
-    s->data.formatMaximum = strndup(_str, strlen);
-
-    return FN_OK();
-}
-
-
-fn_result schema_generate_handleKeyword_formatExclusiveMinimum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-
-    carbon_field_type_e field_type;
-    carbon_object_it_prop_type(&field_type, oit);
-    if (!(carbon_field_type_is_string(field_type))) {
-        return FN_FAIL(ERR_BADTYPE, "keyword \"formatMaximum\" expects a string value");
-    }
-    u64 strlen;
-    const char* _str = carbon_object_it_string_value(&strlen, oit);
-
-    s->applies.has_formatExclusiveMinimum = true;
-    s->data.formatExclusiveMinimum = strndup(_str, strlen);
-
-    return FN_OK();
-}
-
-
-fn_result schema_generate_handleKeyword_formatExclusiveMaximum(schema *s, carbon_object_it *oit) {
-    FN_FAIL_IF_NULL(s, oit);
-
-    carbon_field_type_e field_type;
-    carbon_object_it_prop_type(&field_type, oit);
-    if (!(carbon_field_type_is_string(field_type))) {
-        return FN_FAIL(ERR_BADTYPE, "keyword \"formatExclusiveMaximum\" expects a string value");
-    }
-    u64 strlen;
-    const char* _str = carbon_object_it_string_value(&strlen, oit);
-
-    s->applies.has_formatExclusiveMaximum = true;
-    s->data.formatExclusiveMaximum = strndup(_str, strlen);
 
     return FN_OK();
 }

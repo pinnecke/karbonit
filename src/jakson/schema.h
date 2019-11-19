@@ -83,10 +83,6 @@ typedef struct schema {
         u64 maxProperties;
         u8 format;
         char *pattern;
-        char *formatMinimum;
-        char *formatMaximum;
-        char *formatExclusiveMinimum;
-        char *formatExclusiveMaximum;
         struct schema *propertyNames;
         struct schema *contains;
         struct schema *_not;
@@ -117,10 +113,6 @@ typedef struct schema {
         u8 has_maxLength : 1;
         u8 has_pattern : 1;
         u8 has_format : 1;
-        u8 has_formatMinimum : 1;
-        u8 has_formatMaximum : 1;
-        u8 has_formatExclusiveMinimum : 1;
-        u8 has_formatExclusiveMaximum : 1;
         // keywords for arrays:
         u8 has_minItems : 1;
         u8 has_maxItems : 1;

@@ -182,18 +182,6 @@ void schema_drop(schema *s) {
     if (s->applies.has_pattern) {
         free(s->data.pattern);
     }
-    if (s->applies.has_formatMinimum) {
-        free(s->data.formatMinimum);
-    }
-    if (s->applies.has_formatMaximum) {
-        free(s->data.formatMaximum);
-    }
-    if (s->applies.has_formatExclusiveMinimum) {
-        free(s->data.formatExclusiveMinimum);
-    }
-    if (s->applies.has_formatExclusiveMaximum) {
-        free(s->data.formatExclusiveMaximum);
-    }
     if (s->applies.has_propertyNames) {
         free(s->data.propertyNames);
     }

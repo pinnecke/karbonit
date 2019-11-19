@@ -35,7 +35,7 @@
 bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
-        if (LIKELY(it->field_access.type == field_type)) {                                                    \
+        if (LIKELY(it->field.type == field_type)) {                                                    \
                 memfile_save_position(&it->memfile);                                                                   \
                 internal_carbon_array_offset(&datum, it);                                                                 \
                 memfile_seek(&it->memfile, datum + sizeof(u8));                                                        \
@@ -70,7 +70,7 @@ static bool update_in_place_constant(carbon_array *it, carbon_constant_e constan
 {
         memfile_save_position(&it->memfile);
 
-        if (carbon_field_type_is_constant(it->field_access.type)) {
+        if (carbon_field_type_is_constant(it->field.type)) {
                 u8 value;
                 switch (constant) {
                         case CARBON_CONSTANT_TRUE:
@@ -263,7 +263,7 @@ bool internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t p
 
         memfile_skip(&it->memfile, sizeof(u8));
 
-        carbon_int_field_access_create(&it->field_access);
+        carbon_int_field_create(&it->field);
 
         carbon_array_rewind(it);
 
@@ -284,7 +284,7 @@ bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src)
         dst->array_end_reached = src->array_end_reached;
         dst->abstract_type = src->abstract_type;
         vector_cpy(&dst->history, &src->history);
-        carbon_int_field_access_clone(&dst->field_access, &src->field_access);
+        carbon_int_field_clone(&dst->field, &src->field);
         dst->field_offset = src->field_offset;
         dst->pos = src->pos;
         internal_carbon_item_create_from_array(&dst->item, dst);
@@ -317,8 +317,8 @@ bool carbon_array_is_empty(carbon_array *it)
 
 void carbon_array_drop(carbon_array *it)
 {
-        carbon_int_field_auto_close(&it->field_access);
-        carbon_int_field_access_drop(&it->field_access);
+        carbon_int_field_auto_close(&it->field);
+        carbon_int_field_drop(&it->field);
         vector_drop(&it->history);
 }
 
@@ -332,10 +332,10 @@ bool carbon_array_rewind(carbon_array *it)
 
 static void auto_adjust_pos_after_mod(carbon_array *it)
 {
-        if (carbon_int_field_access_object_it_opened(&it->field_access)) {
-                memfile_skip(&it->memfile, it->field_access.nested_object_it->mod_size);
-        } else if (carbon_int_field_access_array_opened(&it->field_access)) {
-                //memfile_skip(&it->mem, it->field_access.nested_array->mod_size);
+        if (carbon_int_field_object_it_opened(&it->field)) {
+                memfile_skip(&it->memfile, it->field.nested_object_it->mod_size);
+        } else if (carbon_int_field_array_opened(&it->field)) {
+                //memfile_skip(&it->mem, it->field.nested_array->mod_size);
                 //abort(); // TODO: implement!
         }
 }
@@ -381,7 +381,7 @@ static bool internal_array_next(carbon_array *it)
                         }
                 }
                 JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MARRAY_END);
-                carbon_int_field_auto_close(&it->field_access);
+                carbon_int_field_auto_close(&it->field);
                 return false;
         }
 }
@@ -502,5 +502,5 @@ void carbon_array_update_type(carbon_array *it, list_derivable_e derivation)
 
 bool carbon_array_field_type(field_type_e *type, carbon_array *it)
 {
-        return carbon_int_field_access_field_type(type, &it->field_access);
+        return carbon_int_field_field_type(type, &it->field);
 }

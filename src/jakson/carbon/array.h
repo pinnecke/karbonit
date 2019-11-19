@@ -27,7 +27,7 @@ extern "C" {
 //  public structures
 // ---------------------------------------------------------------------------------------------------------------------
 
-typedef struct field_access {
+typedef struct field {
         field_type_e type;
 
         const void *data;
@@ -47,7 +47,7 @@ typedef struct field_access {
         carbon_array *nested_array;
         carbon_column *nested_column_it;
         carbon_object *nested_object_it;
-} field_access;
+} field;
 
 typedef struct carbon_array {
         memfile memfile;
@@ -63,7 +63,7 @@ typedef struct carbon_array {
         bool array_end_reached;
 
         vector ofType(offset_t) history;
-        field_access field_access;
+        field field;
         offset_t field_offset;
 } carbon_array;
 

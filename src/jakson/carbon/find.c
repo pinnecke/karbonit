@@ -637,7 +637,7 @@ bool carbon_find_drop(carbon_find *find)
 
 static void result_from_array(carbon_find *find, carbon_array *it)
 {
-        find->type = it->field_access.type;
+        find->type = it->field.type;
         switch (find->type) {
                 case CARBON_FIELD_NULL:
                 case CARBON_FIELD_TRUE:

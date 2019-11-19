@@ -321,7 +321,7 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         carbon_array nested_array;
                                         internal_carbon_array_create(&nested_array, &it->memfile,
-                                                                     it->field_access.nested_array->array_begin_off);
+                                                                     it->field.nested_array->array_begin_off);
                                         internal_pack_array(&nested_array);
                                         JAK_ASSERT(*memfile_peek(&nested_array.memfile, sizeof(char)) ==
                                                    CARBON_MARRAY_END);
@@ -370,10 +370,10 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        carbon_column_rewind(it->field_access.nested_column_it);
-                                        internal_pack_column(it->field_access.nested_column_it);
+                                        carbon_column_rewind(it->field.nested_column_it);
+                                        internal_pack_column(it->field.nested_column_it);
                                         memfile_seek(&it->memfile,
-                                                     memfile_tell(&it->field_access.nested_column_it->memfile));
+                                                     memfile_tell(&it->field.nested_column_it->memfile));
                                         break;
                                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -381,7 +381,7 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         carbon_object nested_object_it;
                                         internal_carbon_object_create(&nested_object_it, &it->memfile,
-                                                                      it->field_access.nested_object_it->object_contents_off -
+                                                                      it->field.nested_object_it->object_contents_off -
                                                                       sizeof(u8));
                                         internal_pack_object(&nested_object_it);
                                         JAK_ASSERT(*memfile_peek(&nested_object_it.memfile, sizeof(char)) ==

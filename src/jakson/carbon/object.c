@@ -48,7 +48,7 @@ bool internal_carbon_object_create(carbon_object *it, memfile *memfile, offset_t
 
         it->object_contents_off += sizeof(u8);
 
-        carbon_int_field_access_create(&it->field.value.data);
+        carbon_int_field_create(&it->field.value.data);
 
         carbon_object_rewind(it);
 
@@ -75,7 +75,7 @@ bool internal_carbon_object_clone(carbon_object *dst, carbon_object *src)
         dst->field.key.name = src->field.key.name;
         dst->field.key.offset = src->field.key.offset;
         dst->field.value.offset = src->field.value.offset;
-        carbon_int_field_access_clone(&dst->field.value.data, &src->field.value.data);
+        carbon_int_field_clone(&dst->field.value.data, &src->field.value.data);
         internal_carbon_prop_create(&dst->prop, dst);
         return true;
 }
@@ -83,7 +83,7 @@ bool internal_carbon_object_clone(carbon_object *dst, carbon_object *src)
 bool carbon_object_drop(carbon_object *it)
 {
         carbon_int_field_auto_close(&it->field.value.data);
-        carbon_int_field_access_drop(&it->field.value.data);
+        carbon_int_field_drop(&it->field.value.data);
         vector_drop(&it->history);
         return true;
 }
@@ -100,7 +100,7 @@ carbon_prop *carbon_object_next(carbon_object *it)
 {
         bool is_empty_slot;
         offset_t last_off = memfile_tell(&it->memfile);
-        carbon_int_field_access_drop(&it->field.value.data);
+        carbon_int_field_drop(&it->field.value.data);
         if (carbon_int_object_it_next(&is_empty_slot, &it->object_end_reached, it)) {
                 it->pos++;
                 carbon_int_history_push(&it->history, last_off);
@@ -190,7 +190,7 @@ bool internal_carbon_object_remove(carbon_object *it)
 
 bool internal_carbon_object_prop_type(field_type_e *type, carbon_object *it)
 {
-        return carbon_int_field_access_field_type(type, &it->field.value.data);
+        return carbon_int_field_field_type(type, &it->field.value.data);
 }
 
 bool carbon_object_is_multimap(carbon_object *it)

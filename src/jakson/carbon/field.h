@@ -29,9 +29,9 @@
 
 typedef enum carbon_field_type {
         /** constants */
-        CARBON_FIELD_NULL = CARBON_MNULL, /** null */
-        CARBON_FIELD_TRUE = CARBON_MTRUE, /** true */
-        CARBON_FIELD_FALSE = CARBON_MFALSE, /** false */
+        CARBON_FIELD_NULL = MNULL, /** null */
+        CARBON_FIELD_TRUE = MTRUE, /** true */
+        CARBON_FIELD_FALSE = MFALSE, /** false */
 
         /** containers / abstract base types */
         CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP = UNSORTED_MULTIMAP, /** object */
@@ -108,22 +108,22 @@ typedef enum carbon_field_type {
         CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET = SORTED_SET_COL_BOOLEAN,
 
         /** character strings */
-        CARBON_FIELD_STRING = CARBON_MSTRING, /** UTF-8 string_buffer */
+        CARBON_FIELD_STRING = MSTRING, /** UTF-8 string_buffer */
 
         /** numbers */
-        CARBON_FIELD_NUMBER_U8 = CARBON_MU8, /** 8bit unsigned integer */
-        CARBON_FIELD_NUMBER_U16 = CARBON_MU16, /** 16bit unsigned integer */
-        CARBON_FIELD_NUMBER_U32 = CARBON_MU32, /** 32bit unsigned integer */
-        CARBON_FIELD_NUMBER_U64 = CARBON_MU64, /** 64bit unsigned integer */
-        CARBON_FIELD_NUMBER_I8 = CARBON_MI8, /** 8bit signed integer */
-        CARBON_FIELD_NUMBER_I16 = CARBON_MI16, /** 16bit signed integer */
-        CARBON_FIELD_NUMBER_I32 = CARBON_MI32, /** 32bit signed integer */
-        CARBON_FIELD_NUMBER_I64 = CARBON_MI64, /** 64bit signed integer */
-        CARBON_FIELD_NUMBER_FLOAT = CARBON_MFLOAT, /** 32bit float */
+        CARBON_FIELD_NUMBER_U8 = MU8, /** 8bit unsigned integer */
+        CARBON_FIELD_NUMBER_U16 = MU16, /** 16bit unsigned integer */
+        CARBON_FIELD_NUMBER_U32 = MU32, /** 32bit unsigned integer */
+        CARBON_FIELD_NUMBER_U64 = MU64, /** 64bit unsigned integer */
+        CARBON_FIELD_NUMBER_I8 = MI8, /** 8bit signed integer */
+        CARBON_FIELD_NUMBER_I16 = MI16, /** 16bit signed integer */
+        CARBON_FIELD_NUMBER_I32 = MI32, /** 32bit signed integer */
+        CARBON_FIELD_NUMBER_I64 = MI64, /** 64bit signed integer */
+        CARBON_FIELD_NUMBER_FLOAT = MFLOAT, /** 32bit float */
 
         /** binary data */
-        CARBON_FIELD_BINARY = CARBON_MBINARY, /** arbitrary binary object with known mime type */
-        CARBON_FIELD_BINARY_CUSTOM = CARBON_MCUSTOM_BINARY, /** arbitrary binary object with unknown mime type*/
+        CARBON_FIELD_BINARY = MBINARY, /** arbitrary binary object with known mime type */
+        CARBON_FIELD_BINARY_CUSTOM = MCUSTOM_BINARY, /** arbitrary binary object with unknown mime type*/
 } field_type_e;
 
 typedef enum col_it_type {

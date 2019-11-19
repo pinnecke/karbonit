@@ -33,113 +33,113 @@ extern "C" {
 // ---------------------------------------------------------------------------------------------------------------------
 
 /** data type marker */
-#define CARBON_MNULL                        'n'
-#define CARBON_MTRUE                        't'
-#define CARBON_MFALSE                       'f'
-#define CARBON_MSTRING                      's'
-#define CARBON_MU8                          'c'
-#define CARBON_MU16                         'd'
-#define CARBON_MU32                         'i'
-#define CARBON_MU64                         'l'
-#define CARBON_MI8                          'C'
-#define CARBON_MI16                         'D'
-#define CARBON_MI32                         'I'
-#define CARBON_MI64                         'L'
-#define CARBON_MFLOAT                       'r'
-#define CARBON_MBINARY                      'b'
-#define CARBON_MCUSTOM_BINARY               'x'
+#define MNULL                        'n'
+#define MTRUE                        't'
+#define MFALSE                       'f'
+#define MSTRING                      's'
+#define MU8                          'c'
+#define MU16                         'd'
+#define MU32                         'i'
+#define MU64                         'l'
+#define MI8                          'C'
+#define MI16                         'D'
+#define MI32                         'I'
+#define MI64                         'L'
+#define MFLOAT                       'r'
+#define MBINARY                      'b'
+#define MCUSTOM_BINARY               'x'
 
 /** container marker */
-#define CARBON_MOBJECT_BEGIN                '{'
-#define CARBON_MOBJECT_END                  '}'
-#define CARBON_MARRAY_BEGIN                 '['
-#define CARBON_MARRAY_END                   ']'
-#define CARBON_MCOLUMN_U8                   '1'
-#define CARBON_MCOLUMN_U16                  '2'
-#define CARBON_MCOLUMN_U32                  '3'
-#define CARBON_MCOLUMN_U64                  '4'
-#define CARBON_MCOLUMN_I8                   '5'
-#define CARBON_MCOLUMN_I16                  '6'
-#define CARBON_MCOLUMN_I32                  '7'
-#define CARBON_MCOLUMN_I64                  '8'
-#define CARBON_MCOLUMN_FLOAT                'R'
-#define CARBON_MCOLUMN_BOOLEAN              'B'
+#define MOBJECT_BEGIN                '{'
+#define MOBJECT_END                  '}'
+#define MARRAY_BEGIN                 '['
+#define MARRAY_END                   ']'
+#define MCOLUMN_U8                   '1'
+#define MCOLUMN_U16                  '2'
+#define MCOLUMN_U32                  '3'
+#define MCOLUMN_U64                  '4'
+#define MCOLUMN_I8                   '5'
+#define MCOLUMN_I16                  '6'
+#define MCOLUMN_I32                  '7'
+#define MCOLUMN_I64                  '8'
+#define MCOLUMN_FLOAT                'R'
+#define MCOLUMN_BOOLEAN              'B'
 
 /** record identifier marker */
-#define CARBON_MNOKEY                       '?'
-#define CARBON_MAUTOKEY                     '*'
-#define CARBON_MUKEY                        '+'
-#define CARBON_MIKEY                        '-'
-#define CARBON_MSKEY                        '!'
+#define MNOKEY                       '?'
+#define MAUTOKEY                     '*'
+#define MUKEY                        '+'
+#define MIKEY                        '-'
+#define MSKEY                        '!'
 
 /** abstract types for object containers */
-#define MUNSORTED_MULTIMAP           CARBON_MOBJECT_BEGIN
+#define MUNSORTED_MULTIMAP           MOBJECT_BEGIN
 #define MSORTED_MULTIMAP             '~'
 #define MUNSORTED_MAP                ':'
 #define MSORTED_MAP                  '#'
 
 /** abstract types for array containers */
-#define MUNSORTED_MULTISET_ARR       CARBON_MARRAY_BEGIN
+#define MUNSORTED_MULTISET_ARR       MARRAY_BEGIN
 #define MSORTED_MULTISET_ARR         '<'
 #define MUNSORTED_SET_ARR            '/'
 #define MSORTED_SET_ARR              '='
 
 /** abstract types for column-u8 containers */
-#define MUNSORTED_MULTISET_U8        CARBON_MCOLUMN_U8
+#define MUNSORTED_MULTISET_U8        MCOLUMN_U8
 #define MSORTED_MULTISET_U8          0x01 /** SOH */
 #define MUNSORTED_SET_U8             0x02 /** STX */
 #define MSORTED_SET_U8               0x03 /** ETX */
 
 /** abstract types for column-u16 containers */
-#define MUNSORTED_MULTISET_U16       CARBON_MCOLUMN_U16
+#define MUNSORTED_MULTISET_U16       MCOLUMN_U16
 #define MSORTED_MULTISET_U16         0x05 /** ENQ */
 #define MUNSORTED_SET_U16            0x06 /** ACK */
 #define MSORTED_SET_U16              0x07 /** BEL */
 
 /** abstract types for column-u32 containers */
-#define MUNSORTED_MULTISET_U32       CARBON_MCOLUMN_U32
+#define MUNSORTED_MULTISET_U32       MCOLUMN_U32
 #define MSORTED_MULTISET_U32         0x09 /** TAB */
 #define MUNSORTED_SET_U32            0x0A /** LF */
 #define MSORTED_SET_U32              0x0B /** VT */
 
 /** abstract types for column-u64 containers */
-#define MUNSORTED_MULTISET_U64       CARBON_MCOLUMN_U64
+#define MUNSORTED_MULTISET_U64       MCOLUMN_U64
 #define MSORTED_MULTISET_U64         0x0D /** CR */
 #define MUNSORTED_SET_U64            0x0E /** SO */
 #define MSORTED_SET_U64              0x0F /** SI */
 
 /** abstract types for column-i8 containers */
-#define MUNSORTED_MULTISET_I8        CARBON_MCOLUMN_I8
+#define MUNSORTED_MULTISET_I8        MCOLUMN_I8
 #define MSORTED_MULTISET_I8          0x11 /** DC1 */
 #define MUNSORTED_SET_I8             0x12 /** DC2 */
 #define MSORTED_SET_I8               0x13 /** DC3 */
 
 /** abstract types for column-i16 containers */
-#define MUNSORTED_MULTISET_I16       CARBON_MCOLUMN_I16
+#define MUNSORTED_MULTISET_I16       MCOLUMN_I16
 #define MSORTED_MULTISET_I16         0x15 /** NAK */
 #define MUNSORTED_SET_I16            0x16 /** SYN */
 #define MSORTED_SET_I16              0x17 /** ETB */
 
 /** abstract types for column-i32 containers */
-#define MUNSORTED_MULTISET_I32       CARBON_MCOLUMN_I32
+#define MUNSORTED_MULTISET_I32       MCOLUMN_I32
 #define MSORTED_MULTISET_I32         0x19 /** EM */
 #define MUNSORTED_SET_I32            0x1A /** SUB */
 #define MSORTED_SET_I32              0x1B /** ESC */
 
 /** abstract types for column-i64 containers */
-#define MUNSORTED_MULTISET_I64       CARBON_MCOLUMN_I64
+#define MUNSORTED_MULTISET_I64       MCOLUMN_I64
 #define MSORTED_MULTISET_I64         0x1D /** GS */
 #define MUNSORTED_SET_I64            0x1E /** RS */
 #define MSORTED_SET_I64              0x1F /** US */
 
 /** abstract types for column-float containers */
-#define MUNSORTED_MULTISET_FLOAT    CARBON_MCOLUMN_FLOAT
+#define MUNSORTED_MULTISET_FLOAT    MCOLUMN_FLOAT
 #define MSORTED_MULTISET_FLOAT      '"'
 #define MUNSORTED_SET_FLOAT         '$'
 #define MSORTED_SET_FLOAT           '.'
 
 /** abstract types for column-boolean containers */
-#define MUNSORTED_MULTISET_BOOLEAN  CARBON_MCOLUMN_BOOLEAN
+#define MUNSORTED_MULTISET_BOOLEAN  MCOLUMN_BOOLEAN
 #define MSORTED_MULTISET_BOOLEAN    '_'
 #define MUNSORTED_SET_BOOLEAN       '\''
 #define MSORTED_SET_BOOLEAN         0x7F /** DEL */

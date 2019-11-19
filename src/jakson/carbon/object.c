@@ -116,7 +116,7 @@ carbon_prop *carbon_object_next(obj_it *it)
                         }
                 }
 
-                JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MOBJECT_END);
+                JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == MOBJECT_END);
                 return NULL;
         }
 }
@@ -234,7 +234,7 @@ bool internal_carbon_object_fast_forward(obj_it *it)
 {
         while (carbon_object_next(it)) {}
 
-        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(u8)) == CARBON_MOBJECT_END);
+        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(u8)) == MOBJECT_END);
         memfile_skip(&it->memfile, sizeof(u8));
         return true;
 }

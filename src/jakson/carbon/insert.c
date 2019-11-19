@@ -488,7 +488,7 @@ bool carbon_insert_object_end(carbon_insert_object_state *state)
         internal_carbon_object_create(&scan, &state->parent_inserter->memfile, memfile_tell(&state->parent_inserter->memfile) - 1);
         while (carbon_object_next(&scan)) {}
 
-        JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == CARBON_MOBJECT_END);
+        JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == MOBJECT_END);
         memfile_read(&scan.memfile, sizeof(char));
 
         state->object_end = memfile_tell(&scan.memfile);

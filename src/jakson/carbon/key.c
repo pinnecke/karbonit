@@ -21,13 +21,13 @@
 
 static void write_nokey(memfile *file)
 {
-        u8 marker = CARBON_MNOKEY;
+        u8 marker = MNOKEY;
         memfile_write(file, &marker, sizeof(u8));
 }
 
 static void write_autokey(memfile *file)
 {
-        u8 marker = CARBON_MAUTOKEY;
+        u8 marker = MAUTOKEY;
         unique_id_t key;
         unique_id_create(&key);
         memfile_write(file, &marker, sizeof(u8));
@@ -36,7 +36,7 @@ static void write_autokey(memfile *file)
 
 static void write_ukey(memfile *file)
 {
-        u8 marker = CARBON_MUKEY;
+        u8 marker = MUKEY;
         u64 key = 0;
         memfile_write(file, &marker, sizeof(u8));
         memfile_write(file, &key, sizeof(u64));
@@ -44,7 +44,7 @@ static void write_ukey(memfile *file)
 
 static void write_ikey(memfile *file)
 {
-        u8 marker = CARBON_MIKEY;
+        u8 marker = MIKEY;
         i64 key = 0;
         memfile_write(file, &marker, sizeof(u8));
         memfile_write(file, &key, sizeof(u64));
@@ -52,7 +52,7 @@ static void write_ikey(memfile *file)
 
 static void write_skey(memfile *file)
 {
-        u8 marker = CARBON_MSKEY;
+        u8 marker = MSKEY;
         const char *key = "";
         memfile_write(file, &marker, sizeof(u8));
         carbon_string_write(file, key);
@@ -148,24 +148,24 @@ bool carbon_key_read_type(carbon_key_e *out, memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
 
-        JAK_ASSERT(marker == CARBON_MNOKEY || marker == CARBON_MAUTOKEY || marker ==
-                                                                                                       CARBON_MUKEY ||
-                   marker == CARBON_MIKEY || marker == CARBON_MSKEY);
+        JAK_ASSERT(marker == MNOKEY || marker == MAUTOKEY || marker ==
+                                                                                                       MUKEY ||
+                   marker == MIKEY || marker == MSKEY);
 
         switch (marker) {
-                case CARBON_MNOKEY:
+                case MNOKEY:
                         OPTIONAL_SET(out, CARBON_KEY_NOKEY)
                         break;
-                case CARBON_MAUTOKEY:
+                case MAUTOKEY:
                         OPTIONAL_SET(out, CARBON_KEY_AUTOKEY)
                         break;
-                case CARBON_MUKEY:
+                case MUKEY:
                         OPTIONAL_SET(out, CARBON_KEY_UKEY)
                         break;
-                case CARBON_MIKEY:
+                case MIKEY:
                         OPTIONAL_SET(out, CARBON_KEY_IKEY)
                         break;
-                case CARBON_MSKEY:
+                case MSKEY:
                         OPTIONAL_SET(out, CARBON_KEY_SKEY)
                         break;
                 default:

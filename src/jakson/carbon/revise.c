@@ -277,7 +277,7 @@ static bool internal_pack_array(arr_it *it)
                         offset_t first_empty_slot_offset = memfile_tell(&this_array.file);
                         char final;
                         while ((final = *memfile_read(&this_array.file, sizeof(char))) == 0) {}
-                        JAK_ASSERT(final == CARBON_MARRAY_END);
+                        JAK_ASSERT(final == MARRAY_END);
                         offset_t last_empty_slot_offset = memfile_tell(&this_array.file) - sizeof(char);
                         memfile_seek(&this_array.file, first_empty_slot_offset);
                         JAK_ASSERT(last_empty_slot_offset > first_empty_slot_offset);
@@ -286,7 +286,7 @@ static bool internal_pack_array(arr_it *it)
                                                last_empty_slot_offset - first_empty_slot_offset);
 
                         final = *memfile_read(&this_array.file, sizeof(char));
-                        JAK_ASSERT(final == CARBON_MARRAY_END);
+                        JAK_ASSERT(final == MARRAY_END);
                 }
 
                 arr_it_drop(&this_array);
@@ -324,7 +324,7 @@ static bool internal_pack_array(arr_it *it)
                                                                      it->field.array->begin);
                                         internal_pack_array(&array);
                                         JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
-                                                   CARBON_MARRAY_END);
+                                                   MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&array.file));
                                         arr_it_drop(&array);
@@ -385,7 +385,7 @@ static bool internal_pack_array(arr_it *it)
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
                                         JAK_ASSERT(*memfile_peek(&object.memfile, sizeof(char)) ==
-                                                   CARBON_MOBJECT_END);
+                                                   MOBJECT_END);
                                         memfile_skip(&object.memfile, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&object.memfile));
                                         carbon_object_drop(&object);
@@ -397,7 +397,7 @@ static bool internal_pack_array(arr_it *it)
                 }
         }
 
-        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == CARBON_MARRAY_END);
+        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
 
         return true;
 }
@@ -420,7 +420,7 @@ static bool internal_pack_object(obj_it *it)
                         offset_t first_empty_slot_offset = memfile_tell(&this_object_it.memfile);
                         char final;
                         while ((final = *memfile_read(&this_object_it.memfile, sizeof(char))) == 0) {}
-                        JAK_ASSERT(final == CARBON_MOBJECT_END);
+                        JAK_ASSERT(final == MOBJECT_END);
                         offset_t last_empty_slot_offset = memfile_tell(&this_object_it.memfile) - sizeof(char);
                         memfile_seek(&this_object_it.memfile, first_empty_slot_offset);
                         JAK_ASSERT(last_empty_slot_offset > first_empty_slot_offset);
@@ -429,7 +429,7 @@ static bool internal_pack_object(obj_it *it)
                                                last_empty_slot_offset - first_empty_slot_offset);
 
                         final = *memfile_read(&this_object_it.memfile, sizeof(char));
-                        JAK_ASSERT(final == CARBON_MOBJECT_END);
+                        JAK_ASSERT(final == MOBJECT_END);
                 }
 
                 carbon_object_drop(&this_object_it);
@@ -467,7 +467,7 @@ static bool internal_pack_object(obj_it *it)
                                                                it->field.value.data.array->begin);
                                         internal_pack_array(&array);
                                         JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
-                                                   CARBON_MARRAY_END);
+                                                   MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
                                         memfile_seek(&it->memfile, memfile_tell(&array.file));
                                         arr_it_drop(&array);
@@ -528,7 +528,7 @@ static bool internal_pack_object(obj_it *it)
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
                                         JAK_ASSERT(*memfile_peek(&object.memfile, sizeof(char)) ==
-                                                   CARBON_MOBJECT_END);
+                                                   MOBJECT_END);
                                         memfile_skip(&object.memfile, sizeof(char));
                                         memfile_seek(&it->memfile, memfile_tell(&object.memfile));
                                         carbon_object_drop(&object);
@@ -540,7 +540,7 @@ static bool internal_pack_object(obj_it *it)
                 }
         }
 
-        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == CARBON_MOBJECT_END);
+        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == MOBJECT_END);
 
         return true;
 }

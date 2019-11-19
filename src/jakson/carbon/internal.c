@@ -68,7 +68,7 @@ bool carbon_int_insert_object(memfile *memfile, map_type_e derivation, size_t nb
                derivation == MAP_UNSORTED_MAP || derivation == MAP_SORTED_MAP);
         derived_e begin_marker;
         abstract_derive_map_to(&begin_marker, derivation);
-        insert_embedded_container(memfile, begin_marker, CARBON_MOBJECT_END, nbytes);
+        insert_embedded_container(memfile, begin_marker, MOBJECT_END, nbytes);
         return true;
 }
 
@@ -78,7 +78,7 @@ bool carbon_int_insert_array(memfile *memfile, list_type_e derivation, size_t nb
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
         derived_e begin_marker;
         abstract_derive_list_to(&begin_marker, LIST_ARRAY, derivation);
-        insert_embedded_container(memfile, begin_marker, CARBON_MARRAY_END, nbytes);
+        insert_embedded_container(memfile, begin_marker, MARRAY_END, nbytes);
         return true;
 }
 
@@ -299,7 +299,7 @@ bool carbon_int_array_field_type_read(arr_it *it)
         it->field_offset = memfile_tell(&it->file);
         u8 media_type = *memfile_read(&it->file, 1);
         error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
-        error_if_and_return(media_type == CARBON_MARRAY_END, ERR_OUTOFBOUNDS, NULL)
+        error_if_and_return(media_type == MARRAY_END, ERR_OUTOFBOUNDS, NULL)
         it->field.type = media_type;
         memfile_restore_position(&it->file);
         return true;
@@ -1622,13 +1622,13 @@ static void marker_insert(memfile *memfile, u8 marker)
 static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
         carbon_int_field_auto_close(&it->field);
-        return is_slot_occupied(is_empty_slot, is_array_end, &it->file, CARBON_MARRAY_END);
+        return is_slot_occupied(is_empty_slot, is_array_end, &it->file, MARRAY_END);
 }
 
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, obj_it *it)
 {
         carbon_int_field_auto_close(&it->field.value.data);
-        return is_slot_occupied(is_empty_slot, is_object_end, &it->memfile, CARBON_MOBJECT_END);
+        return is_slot_occupied(is_empty_slot, is_object_end, &it->memfile, MOBJECT_END);
 }
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)

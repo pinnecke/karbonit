@@ -100,15 +100,15 @@ typedef enum carbon_printer_impl {
 
 typedef enum carbon_key_type {
         /** no key, no revision number */
-        CARBON_KEY_NOKEY = CARBON_MNOKEY,
+        CARBON_KEY_NOKEY = MNOKEY,
         /** auto-generated 64bit unsigned integer key */
-        CARBON_KEY_AUTOKEY = CARBON_MAUTOKEY,
+        CARBON_KEY_AUTOKEY = MAUTOKEY,
         /** user-defined 64bit unsigned integer key */
-        CARBON_KEY_UKEY = CARBON_MUKEY,
+        CARBON_KEY_UKEY = MUKEY,
         /** user-defined 64bit signed integer key */
-        CARBON_KEY_IKEY = CARBON_MIKEY,
+        CARBON_KEY_IKEY = MIKEY,
         /** user-defined n-char string_buffer key */
-        CARBON_KEY_SKEY = CARBON_MSKEY
+        CARBON_KEY_SKEY = MSKEY
 } carbon_key_e;
 
 #define CARBON_KEEP              0x00 /** do not shrink, do not compact, use UNSORTED_MULTISET (equiv. JSON array) */

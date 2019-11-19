@@ -28,7 +28,7 @@ typedef enum container {
 //  implementation types (and marker) for list/map container types
 // ---------------------------------------------------------------------------------------------------------------------
 
-typedef enum carbon_list_container_sub_type {
+typedef enum sub_type {
     CARBON_CONTAINER_OBJECT = CARBON_MOBJECT_BEGIN,
     CARBON_CONTAINER_ARRAY = CARBON_MARRAY_BEGIN,
     CARBON_CONTAINER_COLUMN_U8 = CARBON_MCOLUMN_U8,
@@ -41,7 +41,7 @@ typedef enum carbon_list_container_sub_type {
     CARBON_CONTAINER_COLUMN_I64 = CARBON_MCOLUMN_I64,
     CARBON_CONTAINER_COLUMN_BOOLEAN = CARBON_MCOLUMN_BOOLEAN,
     CARBON_CONTAINER_COLUMN_FLOAT = CARBON_MCOLUMN_FLOAT
-} carbon_container_sub_type_e;
+} sub_type_e;
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  implementation types (and marker) for list-only container types

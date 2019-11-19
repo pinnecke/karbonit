@@ -214,7 +214,7 @@ bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_type_e in);
 
 /** Writes the marker for a particular base type to the actual position in the memory file, and steps
  * the memory file cursor one byte towards the end. */
-void abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type);
+void abstract_write_base_type(memfile *memfile, sub_type_e type);
 
 /** Writes the marker for the particular derived abstract type to the actual position in the memory file, and
  * steps the memory file cursor one byte towards the end. */
@@ -225,7 +225,7 @@ void abstract_write_derived_type(memfile *memfile, derived_e type);
  * actual container type that implements that derived type is returned. For instance, if '[1]' is read,
  * a column-u8 container type is returned, and if [SOH] is read (which is MSORTED_MULTISET_U8),
  * a column-u8 container type is returned, too. */
-bool abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile);
+bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an object container or a derived type of that container type. */

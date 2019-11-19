@@ -319,7 +319,7 @@ bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_type_e in)
         return true;
 }
 
-void abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type)
+void abstract_write_base_type(memfile *memfile, sub_type_e type)
 {
         memfile_write(memfile, &type, sizeof(u8));
 }
@@ -329,7 +329,7 @@ void abstract_write_derived_type(memfile *memfile, derived_e type)
         memfile_write(memfile, &type, sizeof(u8));
 }
 
-bool abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile)
+bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)
 {
         u8 marker = memfile_peek_byte(memfile);
         switch (marker) {
@@ -422,9 +422,9 @@ bool abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *
         }
 }
 
-static bool __abstract_is_instanceof(memfile *memfile, carbon_container_sub_type_e T)
+static bool __abstract_is_instanceof(memfile *memfile, sub_type_e T)
 {
-        carbon_container_sub_type_e type;
+        sub_type_e type;
         if (LIKELY(abstract_get_container_subtype(&type, memfile))) {
                 return type == T;
         } else {

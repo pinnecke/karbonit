@@ -361,9 +361,9 @@ TEST(TestAbstractTypeMarker, GetClassOfConcreteDerivedType) {
 }
 
 static void test_get_container_for_derived_type(memfile *memfile, derived_e derived,
-                                                carbon_container_sub_type_e expected)
+                                                sub_type_e expected)
 {
-        carbon_container_sub_type_e sub_type;
+        sub_type_e sub_type;
         abstract_write_derived_type(memfile, derived);
         memfile_seek_from_here(memfile, -1);
         ASSERT_TRUE(abstract_get_container_subtype(&sub_type, memfile));

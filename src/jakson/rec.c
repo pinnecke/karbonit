@@ -60,13 +60,13 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                 /** get the annotation type for that records outer-most array from options*/
                 carbon_list_derivable_e derivation;
 
-                if (context->mode & CARBON_SORTED_MULTISET) {
+                if (context->mode & SORTED_MULTISET) {
                         derivation = CARBON_LIST_SORTED_MULTISET;
-                } else if (context->mode & CARBON_UNSORTED_SET) {
+                } else if (context->mode & UNSORTED_SET) {
                         derivation = CARBON_LIST_UNSORTED_SET;
-                } else if (context->mode & CARBON_SORTED_SET) {
+                } else if (context->mode & SORTED_SET) {
                         derivation = CARBON_LIST_SORTED_SET;
-                } else { /** CARBON_UNSORTED_MULTISET is default */
+                } else { /** UNSORTED_MULTISET is default */
                         derivation = CARBON_LIST_UNSORTED_MULTISET;
                 }
 

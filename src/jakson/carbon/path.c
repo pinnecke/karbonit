@@ -236,8 +236,8 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                         } else {
                                                 JAK_ASSERT(prop_type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP ||
                                                            prop_type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
-                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP ||
-                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP ||
+                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
+                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP ||
                                                            prop_type == CARBON_FIELD_ARRAY_UNSORTED_MULTISET ||
                                                            prop_type == CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET ||
                                                            prop_type == CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET ||
@@ -285,8 +285,8 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                 switch (prop_type) {
                                                         case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                                                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                                                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                                                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                                                 carbon_object *sub_it = carbon_item_get_object(&(it->prop.value));
                                                                 carbon_path_status_e ret = traverse_object(state,
                                                                                                               path,

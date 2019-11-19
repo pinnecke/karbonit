@@ -377,8 +377,8 @@ static bool internal_pack_array(carbon_array *it)
                                         break;
                                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         carbon_object nested_object_it;
                                         internal_carbon_object_create(&nested_object_it, &it->memfile,
                                                                       it->field_access.nested_object_it->object_contents_off -
@@ -520,8 +520,8 @@ static bool internal_pack_object(carbon_object *it)
                                         break;
                                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         carbon_object nested_object_it;
                                         internal_carbon_object_create(&nested_object_it, &it->memfile,
                                                                       it->field.value.data.nested_object_it->object_contents_off -

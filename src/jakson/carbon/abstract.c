@@ -23,56 +23,56 @@ bool abstract_type(abstract_e *type, memfile *memfile)
         derived_e derived;
         if (LIKELY(abstract_get_derived_type(&derived, memfile))) {
                 switch (derived) {
-                        case CARBON_UNSORTED_MULTIMAP:
-                        case CARBON_UNSORTED_MULTISET_ARRAY:
-                        case CARBON_UNSORTED_MULTISET_COL_U8:
-                        case CARBON_UNSORTED_MULTISET_COL_U16:
-                        case CARBON_UNSORTED_MULTISET_COL_U32:
-                        case CARBON_UNSORTED_MULTISET_COL_U64:
-                        case CARBON_UNSORTED_MULTISET_COL_I8:
-                        case CARBON_UNSORTED_MULTISET_COL_I16:
-                        case CARBON_UNSORTED_MULTISET_COL_I32:
-                        case CARBON_UNSORTED_MULTISET_COL_I64:
-                        case CARBON_UNSORTED_MULTISET_COL_FLOAT:
-                        case CARBON_UNSORTED_MULTISET_COL_BOOLEAN:
+                        case UNSORTED_MULTIMAP:
+                        case UNSORTED_MULTISET_ARRAY:
+                        case UNSORTED_MULTISET_COL_U8:
+                        case UNSORTED_MULTISET_COL_U16:
+                        case UNSORTED_MULTISET_COL_U32:
+                        case UNSORTED_MULTISET_COL_U64:
+                        case UNSORTED_MULTISET_COL_I8:
+                        case UNSORTED_MULTISET_COL_I16:
+                        case UNSORTED_MULTISET_COL_I32:
+                        case UNSORTED_MULTISET_COL_I64:
+                        case UNSORTED_MULTISET_COL_FLOAT:
+                        case UNSORTED_MULTISET_COL_BOOLEAN:
                                 OPTIONAL_SET(type, ABSTRACT_BASE);
                                 goto return_true;
-                        case CARBON_SORTED_MULTIMAP:
-                        case CARBON_UNSORTED_MAP:
-                        case CARBON_SORTED_MAP:
-                        case CARBON_SORTED_MULTISET_ARRAY:
-                        case CARBON_UNSORTED_SET_ARRAY:
-                        case CARBON_SORTED_SET_ARRAY:
-                        case CARBON_SORTED_MULTISET_COL_U8:
-                        case CARBON_UNSORTED_SET_COL_U8:
-                        case CARBON_SORTED_SET_COL_U8:
-                        case CARBON_SORTED_MULTISET_COL_U16:
-                        case CARBON_UNSORTED_SET_COL_U16:
-                        case CARBON_SORTED_SET_COL_U16:
-                        case CARBON_SORTED_MULTISET_COL_U32:
-                        case CARBON_UNSORTED_SET_COL_U32:
-                        case CARBON_SORTED_SET_COL_U32:
-                        case CARBON_SORTED_MULTISET_COL_U64:
-                        case CARBON_UNSORTED_SET_COL_U64:
-                        case CARBON_SORTED_SET_COL_U64:
-                        case CARBON_SORTED_MULTISET_COL_I8:
-                        case CARBON_UNSORTED_SET_COL_I8:
-                        case CARBON_SORTED_SET_COL_I8:
-                        case CARBON_SORTED_MULTISET_COL_I16:
-                        case CARBON_UNSORTED_SET_COL_I16:
-                        case CARBON_SORTED_SET_COL_I16:
-                        case CARBON_SORTED_MULTISET_COL_I32:
-                        case CARBON_UNSORTED_SET_COL_I32:
-                        case CARBON_SORTED_SET_COL_I32:
-                        case CARBON_SORTED_MULTISET_COL_I64:
-                        case CARBON_UNSORTED_SET_COL_I64:
-                        case CARBON_SORTED_SET_COL_I64:
-                        case CARBON_SORTED_MULTISET_COL_FLOAT:
-                        case CARBON_UNSORTED_SET_COL_FLOAT:
-                        case CARBON_SORTED_SET_COL_FLOAT:
-                        case CARBON_SORTED_MULTISET_COL_BOOLEAN:
-                        case CARBON_UNSORTED_SET_COL_BOOLEAN:
-                        case CARBON_SORTED_SET_COL_BOOLEAN:
+                        case SORTED_MULTIMAP:
+                        case UNSORTED_MAP:
+                        case SORTED_MAP:
+                        case SORTED_MULTISET_ARRAY:
+                        case UNSORTED_SET_ARRAY:
+                        case SORTED_SET_ARRAY:
+                        case SORTED_MULTISET_COL_U8:
+                        case UNSORTED_SET_COL_U8:
+                        case SORTED_SET_COL_U8:
+                        case SORTED_MULTISET_COL_U16:
+                        case UNSORTED_SET_COL_U16:
+                        case SORTED_SET_COL_U16:
+                        case SORTED_MULTISET_COL_U32:
+                        case UNSORTED_SET_COL_U32:
+                        case SORTED_SET_COL_U32:
+                        case SORTED_MULTISET_COL_U64:
+                        case UNSORTED_SET_COL_U64:
+                        case SORTED_SET_COL_U64:
+                        case SORTED_MULTISET_COL_I8:
+                        case UNSORTED_SET_COL_I8:
+                        case SORTED_SET_COL_I8:
+                        case SORTED_MULTISET_COL_I16:
+                        case UNSORTED_SET_COL_I16:
+                        case SORTED_SET_COL_I16:
+                        case SORTED_MULTISET_COL_I32:
+                        case UNSORTED_SET_COL_I32:
+                        case SORTED_SET_COL_I32:
+                        case SORTED_MULTISET_COL_I64:
+                        case UNSORTED_SET_COL_I64:
+                        case SORTED_SET_COL_I64:
+                        case SORTED_MULTISET_COL_FLOAT:
+                        case UNSORTED_SET_COL_FLOAT:
+                        case SORTED_SET_COL_FLOAT:
+                        case SORTED_MULTISET_COL_BOOLEAN:
+                        case UNSORTED_SET_COL_BOOLEAN:
+                        case SORTED_SET_COL_BOOLEAN:
                                 OPTIONAL_SET(type, ABSTRACT_DERIVED);
                                 goto return_true;
                         default:
@@ -112,68 +112,68 @@ bool abstract_get_class(abstract_type_class_e *type, memfile *memfile)
         derived_e derived;
         if (LIKELY(abstract_get_derived_type(&derived, memfile))) {
                 switch (derived) {
-                        case CARBON_SORTED_MAP:
+                        case SORTED_MAP:
                                 *type = TYPE_SORTED_MAP;
                                 goto return_true;
-                        case CARBON_SORTED_MULTIMAP:
+                        case SORTED_MULTIMAP:
                                 *type = TYPE_SORTED_MULTIMAP;
                                 goto return_true;
-                        case CARBON_SORTED_MULTISET_ARRAY:
-                        case CARBON_SORTED_MULTISET_COL_BOOLEAN:
-                        case CARBON_SORTED_MULTISET_COL_FLOAT:
-                        case CARBON_SORTED_MULTISET_COL_I16:
-                        case CARBON_SORTED_MULTISET_COL_I32:
-                        case CARBON_SORTED_MULTISET_COL_I64:
-                        case CARBON_SORTED_MULTISET_COL_I8:
-                        case CARBON_SORTED_MULTISET_COL_U16:
-                        case CARBON_SORTED_MULTISET_COL_U32:
-                        case CARBON_SORTED_MULTISET_COL_U64:
-                        case CARBON_SORTED_MULTISET_COL_U8:
+                        case SORTED_MULTISET_ARRAY:
+                        case SORTED_MULTISET_COL_BOOLEAN:
+                        case SORTED_MULTISET_COL_FLOAT:
+                        case SORTED_MULTISET_COL_I16:
+                        case SORTED_MULTISET_COL_I32:
+                        case SORTED_MULTISET_COL_I64:
+                        case SORTED_MULTISET_COL_I8:
+                        case SORTED_MULTISET_COL_U16:
+                        case SORTED_MULTISET_COL_U32:
+                        case SORTED_MULTISET_COL_U64:
+                        case SORTED_MULTISET_COL_U8:
                                 *type = TYPE_SORTED_MULTISET;
                                 goto return_true;
-                        case CARBON_SORTED_SET_ARRAY:
-                        case CARBON_SORTED_SET_COL_BOOLEAN:
-                        case CARBON_SORTED_SET_COL_FLOAT:
-                        case CARBON_SORTED_SET_COL_I16:
-                        case CARBON_SORTED_SET_COL_I32:
-                        case CARBON_SORTED_SET_COL_I64:
-                        case CARBON_SORTED_SET_COL_I8:
-                        case CARBON_SORTED_SET_COL_U16:
-                        case CARBON_SORTED_SET_COL_U32:
-                        case CARBON_SORTED_SET_COL_U64:
-                        case CARBON_SORTED_SET_COL_U8:
+                        case SORTED_SET_ARRAY:
+                        case SORTED_SET_COL_BOOLEAN:
+                        case SORTED_SET_COL_FLOAT:
+                        case SORTED_SET_COL_I16:
+                        case SORTED_SET_COL_I32:
+                        case SORTED_SET_COL_I64:
+                        case SORTED_SET_COL_I8:
+                        case SORTED_SET_COL_U16:
+                        case SORTED_SET_COL_U32:
+                        case SORTED_SET_COL_U64:
+                        case SORTED_SET_COL_U8:
                                 *type = TYPE_SORTED_SET;
                                 goto return_true;
-                        case CARBON_UNSORTED_MAP:
+                        case UNSORTED_MAP:
                                 *type = TYPE_UNSORTED_MAP;
                                 goto return_true;
-                        case CARBON_UNSORTED_MULTIMAP:
+                        case UNSORTED_MULTIMAP:
                                 *type = TYPE_UNSORTED_MULTIMAP;
                                 goto return_true;
-                        case CARBON_UNSORTED_MULTISET_ARRAY:
-                        case CARBON_UNSORTED_MULTISET_COL_BOOLEAN:
-                        case CARBON_UNSORTED_MULTISET_COL_FLOAT:
-                        case CARBON_UNSORTED_MULTISET_COL_I16:
-                        case CARBON_UNSORTED_MULTISET_COL_I32:
-                        case CARBON_UNSORTED_MULTISET_COL_I64:
-                        case CARBON_UNSORTED_MULTISET_COL_I8:
-                        case CARBON_UNSORTED_MULTISET_COL_U16:
-                        case CARBON_UNSORTED_MULTISET_COL_U32:
-                        case CARBON_UNSORTED_MULTISET_COL_U64:
-                        case CARBON_UNSORTED_MULTISET_COL_U8:
+                        case UNSORTED_MULTISET_ARRAY:
+                        case UNSORTED_MULTISET_COL_BOOLEAN:
+                        case UNSORTED_MULTISET_COL_FLOAT:
+                        case UNSORTED_MULTISET_COL_I16:
+                        case UNSORTED_MULTISET_COL_I32:
+                        case UNSORTED_MULTISET_COL_I64:
+                        case UNSORTED_MULTISET_COL_I8:
+                        case UNSORTED_MULTISET_COL_U16:
+                        case UNSORTED_MULTISET_COL_U32:
+                        case UNSORTED_MULTISET_COL_U64:
+                        case UNSORTED_MULTISET_COL_U8:
                                 *type = TYPE_UNSORTED_MULTISET;
                                 goto return_true;
-                        case CARBON_UNSORTED_SET_ARRAY:
-                        case CARBON_UNSORTED_SET_COL_BOOLEAN:
-                        case CARBON_UNSORTED_SET_COL_FLOAT:
-                        case CARBON_UNSORTED_SET_COL_I16:
-                        case CARBON_UNSORTED_SET_COL_I32:
-                        case CARBON_UNSORTED_SET_COL_I64:
-                        case CARBON_UNSORTED_SET_COL_I8:
-                        case CARBON_UNSORTED_SET_COL_U16:
-                        case CARBON_UNSORTED_SET_COL_U32:
-                        case CARBON_UNSORTED_SET_COL_U64:
-                        case CARBON_UNSORTED_SET_COL_U8:
+                        case UNSORTED_SET_ARRAY:
+                        case UNSORTED_SET_COL_BOOLEAN:
+                        case UNSORTED_SET_COL_FLOAT:
+                        case UNSORTED_SET_COL_I16:
+                        case UNSORTED_SET_COL_I32:
+                        case UNSORTED_SET_COL_I64:
+                        case UNSORTED_SET_COL_I8:
+                        case UNSORTED_SET_COL_U16:
+                        case UNSORTED_SET_COL_U32:
+                        case UNSORTED_SET_COL_U64:
+                        case UNSORTED_SET_COL_U8:
                                 *type = TYPE_UNSORTED_SET;
                                 goto return_true;
                         default:
@@ -334,87 +334,87 @@ bool abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *
         u8 marker = memfile_peek_byte(memfile);
         switch (marker) {
                 /** abstract types for object containers */
-                case CARBON_UNSORTED_MULTIMAP:
-                case CARBON_SORTED_MULTIMAP:
-                case CARBON_UNSORTED_MAP:
-                case CARBON_SORTED_MAP:
+                case UNSORTED_MULTIMAP:
+                case SORTED_MULTIMAP:
+                case UNSORTED_MAP:
+                case SORTED_MAP:
                         *type = CARBON_CONTAINER_OBJECT;
                         return true;
                 /** abstract types for array containers */
-                case CARBON_UNSORTED_MULTISET_ARRAY:
-                case CARBON_SORTED_MULTISET_ARRAY:
-                case CARBON_UNSORTED_SET_ARRAY:
-                case CARBON_SORTED_SET_ARRAY:
+                case UNSORTED_MULTISET_ARRAY:
+                case SORTED_MULTISET_ARRAY:
+                case UNSORTED_SET_ARRAY:
+                case SORTED_SET_ARRAY:
                         *type = CARBON_CONTAINER_ARRAY;
                         return true;
                 /** abstract types for column-u8 containers */
-                case CARBON_UNSORTED_MULTISET_COL_U8:
-                case CARBON_SORTED_MULTISET_COL_U8:
-                case CARBON_UNSORTED_SET_COL_U8:
-                case CARBON_SORTED_SET_COL_U8:
+                case UNSORTED_MULTISET_COL_U8:
+                case SORTED_MULTISET_COL_U8:
+                case UNSORTED_SET_COL_U8:
+                case SORTED_SET_COL_U8:
                         *type = CARBON_CONTAINER_COLUMN_U8;
                         return true;
                 /** abstract types for column-u16 containers */
-                case CARBON_UNSORTED_MULTISET_COL_U16:
-                case CARBON_SORTED_MULTISET_COL_U16:
-                case CARBON_UNSORTED_SET_COL_U16:
-                case CARBON_SORTED_SET_COL_U16:
+                case UNSORTED_MULTISET_COL_U16:
+                case SORTED_MULTISET_COL_U16:
+                case UNSORTED_SET_COL_U16:
+                case SORTED_SET_COL_U16:
                         *type = CARBON_CONTAINER_COLUMN_U16;
                         return true;
                 /** abstract types for column-u32 containers */
-                case CARBON_UNSORTED_MULTISET_COL_U32:
-                case CARBON_SORTED_MULTISET_COL_U32:
-                case CARBON_UNSORTED_SET_COL_U32:
-                case CARBON_SORTED_SET_COL_U32:
+                case UNSORTED_MULTISET_COL_U32:
+                case SORTED_MULTISET_COL_U32:
+                case UNSORTED_SET_COL_U32:
+                case SORTED_SET_COL_U32:
                         *type = CARBON_CONTAINER_COLUMN_U32;
                         return true;
                 /** abstract types for column-u64 containers */
-                case CARBON_UNSORTED_MULTISET_COL_U64:
-                case CARBON_SORTED_MULTISET_COL_U64:
-                case CARBON_UNSORTED_SET_COL_U64:
-                case CARBON_SORTED_SET_COL_U64:
+                case UNSORTED_MULTISET_COL_U64:
+                case SORTED_MULTISET_COL_U64:
+                case UNSORTED_SET_COL_U64:
+                case SORTED_SET_COL_U64:
                         *type = CARBON_CONTAINER_COLUMN_U64;
                         return true;
                 /** abstract types for column-i8 containers */
-                case CARBON_UNSORTED_MULTISET_COL_I8:
-                case CARBON_SORTED_MULTISET_COL_I8:
-                case CARBON_UNSORTED_SET_COL_I8:
-                case CARBON_SORTED_SET_COL_I8:
+                case UNSORTED_MULTISET_COL_I8:
+                case SORTED_MULTISET_COL_I8:
+                case UNSORTED_SET_COL_I8:
+                case SORTED_SET_COL_I8:
                         *type = CARBON_CONTAINER_COLUMN_I8;
                         return true;
                 /** abstract types for column-i16 containers */
-                case CARBON_UNSORTED_MULTISET_COL_I16:
-                case CARBON_SORTED_MULTISET_COL_I16:
-                case CARBON_UNSORTED_SET_COL_I16:
-                case CARBON_SORTED_SET_COL_I16:
+                case UNSORTED_MULTISET_COL_I16:
+                case SORTED_MULTISET_COL_I16:
+                case UNSORTED_SET_COL_I16:
+                case SORTED_SET_COL_I16:
                         *type = CARBON_CONTAINER_COLUMN_I16;
                         return true;
                 /** abstract types for column-i32 containers */
-                case CARBON_UNSORTED_MULTISET_COL_I32:
-                case CARBON_SORTED_MULTISET_COL_I32:
-                case CARBON_UNSORTED_SET_COL_I32:
-                case CARBON_SORTED_SET_COL_I32:
+                case UNSORTED_MULTISET_COL_I32:
+                case SORTED_MULTISET_COL_I32:
+                case UNSORTED_SET_COL_I32:
+                case SORTED_SET_COL_I32:
                         *type = CARBON_CONTAINER_COLUMN_I32;
                         return true;
                 /** abstract types for column-i64 containers */
-                case CARBON_UNSORTED_MULTISET_COL_I64:
-                case CARBON_SORTED_MULTISET_COL_I64:
-                case CARBON_UNSORTED_SET_COL_I64:
-                case CARBON_SORTED_SET_COL_I64:
+                case UNSORTED_MULTISET_COL_I64:
+                case SORTED_MULTISET_COL_I64:
+                case UNSORTED_SET_COL_I64:
+                case SORTED_SET_COL_I64:
                         *type = CARBON_CONTAINER_COLUMN_I64;
                         return true;
                 /** abstract types for column-float containers */
-                case CARBON_UNSORTED_MULTISET_COL_FLOAT:
-                case CARBON_SORTED_MULTISET_COL_FLOAT:
-                case CARBON_UNSORTED_SET_COL_FLOAT:
-                case CARBON_SORTED_SET_COL_FLOAT:
+                case UNSORTED_MULTISET_COL_FLOAT:
+                case SORTED_MULTISET_COL_FLOAT:
+                case UNSORTED_SET_COL_FLOAT:
+                case SORTED_SET_COL_FLOAT:
                         *type = CARBON_CONTAINER_COLUMN_FLOAT;
                         return true;
                 /** abstract types for column-boolean containers */
-                case CARBON_UNSORTED_MULTISET_COL_BOOLEAN:
-                case CARBON_SORTED_MULTISET_COL_BOOLEAN:
-                case CARBON_UNSORTED_SET_COL_BOOLEAN:
-                case CARBON_SORTED_SET_COL_BOOLEAN:
+                case UNSORTED_MULTISET_COL_BOOLEAN:
+                case SORTED_MULTISET_COL_BOOLEAN:
+                case UNSORTED_SET_COL_BOOLEAN:
+                case SORTED_SET_COL_BOOLEAN:
                         *type = CARBON_CONTAINER_COLUMN_BOOLEAN;
                         return true;
                 default:
@@ -527,16 +527,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_ARRAY:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_ARRAY;
+                                        *concrete = UNSORTED_MULTISET_ARRAY;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_ARRAY;
+                                        *concrete = SORTED_MULTISET_ARRAY;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_ARRAY;
+                                        *concrete = UNSORTED_SET_ARRAY;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_ARRAY;
+                                        *concrete = SORTED_SET_ARRAY;
                                         return true;
                                 default:
                                         goto error_case;
@@ -544,16 +544,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_U8:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_U8;
+                                        *concrete = UNSORTED_MULTISET_COL_U8;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_U8;
+                                        *concrete = SORTED_MULTISET_COL_U8;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_U8;
+                                        *concrete = UNSORTED_SET_COL_U8;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_U8;
+                                        *concrete = SORTED_SET_COL_U8;
                                         return true;
                                 default:
                                         goto error_case;
@@ -561,16 +561,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_U16:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_U16;
+                                        *concrete = UNSORTED_MULTISET_COL_U16;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_U16;
+                                        *concrete = SORTED_MULTISET_COL_U16;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_U16;
+                                        *concrete = UNSORTED_SET_COL_U16;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_U16;
+                                        *concrete = SORTED_SET_COL_U16;
                                         return true;
                                 default:
                                         goto error_case;
@@ -578,16 +578,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_U32:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_U32;
+                                        *concrete = UNSORTED_MULTISET_COL_U32;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_U32;
+                                        *concrete = SORTED_MULTISET_COL_U32;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_U32;
+                                        *concrete = UNSORTED_SET_COL_U32;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_U32;
+                                        *concrete = SORTED_SET_COL_U32;
                                         return true;
                                 default:
                                         goto error_case;
@@ -595,16 +595,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_U64:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_U64;
+                                        *concrete = UNSORTED_MULTISET_COL_U64;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_U64;
+                                        *concrete = SORTED_MULTISET_COL_U64;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_U64;
+                                        *concrete = UNSORTED_SET_COL_U64;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_U64;
+                                        *concrete = SORTED_SET_COL_U64;
                                         return true;
                                 default:
                                         goto error_case;
@@ -612,16 +612,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_I8:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_I8;
+                                        *concrete = UNSORTED_MULTISET_COL_I8;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_I8;
+                                        *concrete = SORTED_MULTISET_COL_I8;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_I8;
+                                        *concrete = UNSORTED_SET_COL_I8;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_I8;
+                                        *concrete = SORTED_SET_COL_I8;
                                         return true;
                                 default:
                                         goto error_case;
@@ -629,16 +629,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_I16:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_I16;
+                                        *concrete = UNSORTED_MULTISET_COL_I16;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_I16;
+                                        *concrete = SORTED_MULTISET_COL_I16;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_I16;
+                                        *concrete = UNSORTED_SET_COL_I16;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_I16;
+                                        *concrete = SORTED_SET_COL_I16;
                                         return true;
                                 default:
                                         goto error_case;
@@ -646,16 +646,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_I32:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_I32;
+                                        *concrete = UNSORTED_MULTISET_COL_I32;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_I32;
+                                        *concrete = SORTED_MULTISET_COL_I32;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_I32;
+                                        *concrete = UNSORTED_SET_COL_I32;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_I32;
+                                        *concrete = SORTED_SET_COL_I32;
                                         return true;
                                 default:
                                         goto error_case;
@@ -663,16 +663,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_I64:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_I64;
+                                        *concrete = UNSORTED_MULTISET_COL_I64;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_I64;
+                                        *concrete = SORTED_MULTISET_COL_I64;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_I64;
+                                        *concrete = UNSORTED_SET_COL_I64;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_I64;
+                                        *concrete = SORTED_SET_COL_I64;
                                         return true;
                                 default:
                                         goto error_case;
@@ -680,16 +680,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_BOOLEAN:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_BOOLEAN;
+                                        *concrete = UNSORTED_MULTISET_COL_BOOLEAN;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_BOOLEAN;
+                                        *concrete = SORTED_MULTISET_COL_BOOLEAN;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_BOOLEAN;
+                                        *concrete = UNSORTED_SET_COL_BOOLEAN;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_BOOLEAN;
+                                        *concrete = SORTED_SET_COL_BOOLEAN;
                                         return true;
                                 default:
                                         goto error_case;
@@ -697,16 +697,16 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                 case CARBON_LIST_CONTAINER_COLUMN_FLOAT:
                         switch (should) {
                                 case CARBON_LIST_UNSORTED_MULTISET:
-                                        *concrete = CARBON_UNSORTED_MULTISET_COL_FLOAT;
+                                        *concrete = UNSORTED_MULTISET_COL_FLOAT;
                                         return true;
                                 case CARBON_LIST_SORTED_MULTISET:
-                                        *concrete = CARBON_SORTED_MULTISET_COL_FLOAT;
+                                        *concrete = SORTED_MULTISET_COL_FLOAT;
                                         return true;
                                 case CARBON_LIST_UNSORTED_SET:
-                                        *concrete = CARBON_UNSORTED_SET_COL_FLOAT;
+                                        *concrete = UNSORTED_SET_COL_FLOAT;
                                         return true;
                                 case CARBON_LIST_SORTED_SET:
-                                        *concrete = CARBON_SORTED_SET_COL_FLOAT;
+                                        *concrete = SORTED_SET_COL_FLOAT;
                                         return true;
                                 default:
                                         goto error_case;
@@ -722,16 +722,16 @@ bool abstract_derive_map_to(derived_e *concrete, carbon_map_derivable_e should)
 {
         switch (should) {
                 case CARBON_MAP_UNSORTED_MULTIMAP:
-                        *concrete = CARBON_UNSORTED_MULTIMAP;
+                        *concrete = UNSORTED_MULTIMAP;
                         return true;
                 case CARBON_MAP_SORTED_MULTIMAP:
-                        *concrete = CARBON_SORTED_MULTIMAP;
+                        *concrete = SORTED_MULTIMAP;
                         return true;
                 case CARBON_MAP_UNSORTED_MAP:
-                        *concrete = CARBON_UNSORTED_MAP;
+                        *concrete = UNSORTED_MAP;
                         return true;
                 case CARBON_MAP_SORTED_MAP:
-                        *concrete = CARBON_SORTED_MAP;
+                        *concrete = SORTED_MAP;
                         return true;
                 default:
                         return error(ERR_INTERNALERR, "unknown list container type");
@@ -741,30 +741,30 @@ bool abstract_derive_map_to(derived_e *concrete, carbon_map_derivable_e should)
 bool abstract_get_derived_type(derived_e *type, memfile *memfile)
 {
         u8 c = memfile_peek_byte(memfile);
-        if (!(c == CARBON_MUNSORTED_MULTIMAP || c == CARBON_MSORTED_MULTIMAP || c == CARBON_MUNSORTED_MAP ||
-                       c == CARBON_MSORTED_MAP || c == CARBON_MUNSORTED_MULTISET_ARR ||
-                       c == CARBON_MSORTED_MULTISET_ARR || c == CARBON_MUNSORTED_SET_ARR ||
-                       c == CARBON_MSORTED_SET_ARR || c == CARBON_MUNSORTED_MULTISET_U8 ||
-                       c == CARBON_MSORTED_MULTISET_U8 || c == CARBON_MUNSORTED_SET_U8 ||
-                       c == CARBON_MSORTED_SET_U8 || c == CARBON_MUNSORTED_MULTISET_U16 ||
-                       c == CARBON_MSORTED_MULTISET_U16 || c == CARBON_MUNSORTED_SET_U16 ||
-                       c == CARBON_MSORTED_SET_U16 || c == CARBON_MUNSORTED_MULTISET_U32 ||
-                       c == CARBON_MSORTED_MULTISET_U32 || c == CARBON_MUNSORTED_SET_U32 ||
-                       c == CARBON_MSORTED_SET_U32 || c == CARBON_MUNSORTED_MULTISET_U64 ||
-                       c == CARBON_MSORTED_MULTISET_U64 || c == CARBON_MUNSORTED_SET_U64 ||
-                       c == CARBON_MSORTED_SET_U64 || c == CARBON_MUNSORTED_MULTISET_I8 ||
-                       c == CARBON_MSORTED_MULTISET_I8 || c == CARBON_MUNSORTED_SET_I8 ||
-                       c == CARBON_MSORTED_SET_I8 || c == CARBON_MUNSORTED_MULTISET_I16 ||
-                       c == CARBON_MSORTED_MULTISET_I16 || c == CARBON_MUNSORTED_SET_I16 ||
-                       c == CARBON_MSORTED_SET_I16 || c == CARBON_MUNSORTED_MULTISET_I32 ||
-                       c == CARBON_MSORTED_MULTISET_I32 || c == CARBON_MUNSORTED_SET_I32 ||
-                       c == CARBON_MSORTED_SET_I32 || c == CARBON_MUNSORTED_MULTISET_I64 ||
-                       c == CARBON_MSORTED_MULTISET_I64 || c == CARBON_MUNSORTED_SET_I64 ||
-                       c == CARBON_MSORTED_SET_I64 || c == CARBON_MUNSORTED_MULTISET_FLOAT ||
-                       c == CARBON_MSORTED_MULTISET_FLOAT || c == CARBON_MUNSORTED_SET_FLOAT ||
-                       c == CARBON_MSORTED_SET_FLOAT || c == CARBON_MUNSORTED_MULTISET_BOOLEAN ||
-                       c == CARBON_MSORTED_MULTISET_BOOLEAN || c == CARBON_MUNSORTED_SET_BOOLEAN ||
-                       c == CARBON_MSORTED_SET_BOOLEAN)) {
+        if (!(c == MUNSORTED_MULTIMAP || c == MSORTED_MULTIMAP || c == MUNSORTED_MAP ||
+                       c == MSORTED_MAP || c == MUNSORTED_MULTISET_ARR ||
+                       c == MSORTED_MULTISET_ARR || c == MUNSORTED_SET_ARR ||
+                       c == MSORTED_SET_ARR || c == MUNSORTED_MULTISET_U8 ||
+                       c == MSORTED_MULTISET_U8 || c == MUNSORTED_SET_U8 ||
+                       c == MSORTED_SET_U8 || c == MUNSORTED_MULTISET_U16 ||
+                       c == MSORTED_MULTISET_U16 || c == MUNSORTED_SET_U16 ||
+                       c == MSORTED_SET_U16 || c == MUNSORTED_MULTISET_U32 ||
+                       c == MSORTED_MULTISET_U32 || c == MUNSORTED_SET_U32 ||
+                       c == MSORTED_SET_U32 || c == MUNSORTED_MULTISET_U64 ||
+                       c == MSORTED_MULTISET_U64 || c == MUNSORTED_SET_U64 ||
+                       c == MSORTED_SET_U64 || c == MUNSORTED_MULTISET_I8 ||
+                       c == MSORTED_MULTISET_I8 || c == MUNSORTED_SET_I8 ||
+                       c == MSORTED_SET_I8 || c == MUNSORTED_MULTISET_I16 ||
+                       c == MSORTED_MULTISET_I16 || c == MUNSORTED_SET_I16 ||
+                       c == MSORTED_SET_I16 || c == MUNSORTED_MULTISET_I32 ||
+                       c == MSORTED_MULTISET_I32 || c == MUNSORTED_SET_I32 ||
+                       c == MSORTED_SET_I32 || c == MUNSORTED_MULTISET_I64 ||
+                       c == MSORTED_MULTISET_I64 || c == MUNSORTED_SET_I64 ||
+                       c == MSORTED_SET_I64 || c == MUNSORTED_MULTISET_FLOAT ||
+                       c == MSORTED_MULTISET_FLOAT || c == MUNSORTED_SET_FLOAT ||
+                       c == MSORTED_SET_FLOAT || c == MUNSORTED_MULTISET_BOOLEAN ||
+                       c == MSORTED_MULTISET_BOOLEAN || c == MUNSORTED_SET_BOOLEAN ||
+                       c == MSORTED_SET_BOOLEAN)) {
                 return error(ERR_MARKERMAPPING, "unknown marker for abstract derived type");
         }
         *type = c;

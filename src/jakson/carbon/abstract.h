@@ -33,7 +33,7 @@ typedef enum abstract {
 } abstract_e;
 
 /** Reads the abstract type from the memory file without moving the memory file cursors. This function translates
- * from a particular derived container (e.g., CARBON_UNSORTED_MULTISET_COL_U8, or CARBON_SORTED_MULTIMAP)
+ * from a particular derived container (e.g., UNSORTED_MULTISET_COL_U8, or SORTED_MULTIMAP)
  * to its abstract type (e.g., ABSTRACT_BASE resp. ABSTRACT_DERIVED) */
 bool abstract_type(abstract_e *type, memfile *memfile);
 
@@ -105,76 +105,76 @@ bool abstract_is_distinct(abstract_type_class_e type);
 /** particular abstract derived type container (with marker) */
 typedef enum {
         /** abstract types for object containers */
-        CARBON_UNSORTED_MULTIMAP = CARBON_MUNSORTED_MULTIMAP,
-        CARBON_SORTED_MULTIMAP = CARBON_MSORTED_MULTIMAP,
-        CARBON_UNSORTED_MAP = CARBON_MUNSORTED_MAP,
-        CARBON_SORTED_MAP = CARBON_MSORTED_MAP,
+        UNSORTED_MULTIMAP = MUNSORTED_MULTIMAP,
+        SORTED_MULTIMAP = MSORTED_MULTIMAP,
+        UNSORTED_MAP = MUNSORTED_MAP,
+        SORTED_MAP = MSORTED_MAP,
 
         /** abstract types for array containers */
-        CARBON_UNSORTED_MULTISET_ARRAY = CARBON_MUNSORTED_MULTISET_ARR,
-        CARBON_SORTED_MULTISET_ARRAY = CARBON_MSORTED_MULTISET_ARR,
-        CARBON_UNSORTED_SET_ARRAY = CARBON_MUNSORTED_SET_ARR,
-        CARBON_SORTED_SET_ARRAY = CARBON_MSORTED_SET_ARR,
+        UNSORTED_MULTISET_ARRAY = MUNSORTED_MULTISET_ARR,
+        SORTED_MULTISET_ARRAY = MSORTED_MULTISET_ARR,
+        UNSORTED_SET_ARRAY = MUNSORTED_SET_ARR,
+        SORTED_SET_ARRAY = MSORTED_SET_ARR,
 
         /** abstract types for column-u8 containers */
-        CARBON_UNSORTED_MULTISET_COL_U8 = CARBON_MUNSORTED_MULTISET_U8,
-        CARBON_SORTED_MULTISET_COL_U8 = CARBON_MSORTED_MULTISET_U8,
-        CARBON_UNSORTED_SET_COL_U8 = CARBON_MUNSORTED_SET_U8,
-        CARBON_SORTED_SET_COL_U8 = CARBON_MSORTED_SET_U8,
+        UNSORTED_MULTISET_COL_U8 = MUNSORTED_MULTISET_U8,
+        SORTED_MULTISET_COL_U8 = MSORTED_MULTISET_U8,
+        UNSORTED_SET_COL_U8 = MUNSORTED_SET_U8,
+        SORTED_SET_COL_U8 = MSORTED_SET_U8,
 
         /** abstract types for column-u16 containers */
-        CARBON_UNSORTED_MULTISET_COL_U16 = CARBON_MUNSORTED_MULTISET_U16,
-        CARBON_SORTED_MULTISET_COL_U16 = CARBON_MSORTED_MULTISET_U16,
-        CARBON_UNSORTED_SET_COL_U16 = CARBON_MUNSORTED_SET_U16,
-        CARBON_SORTED_SET_COL_U16 = CARBON_MSORTED_SET_U16,
+        UNSORTED_MULTISET_COL_U16 = MUNSORTED_MULTISET_U16,
+        SORTED_MULTISET_COL_U16 = MSORTED_MULTISET_U16,
+        UNSORTED_SET_COL_U16 = MUNSORTED_SET_U16,
+        SORTED_SET_COL_U16 = MSORTED_SET_U16,
 
         /** abstract types for column-u32 containers */
-        CARBON_UNSORTED_MULTISET_COL_U32 = CARBON_MUNSORTED_MULTISET_U32,
-        CARBON_SORTED_MULTISET_COL_U32 = CARBON_MSORTED_MULTISET_U32,
-        CARBON_UNSORTED_SET_COL_U32 = CARBON_MUNSORTED_SET_U32,
-        CARBON_SORTED_SET_COL_U32 = CARBON_MSORTED_SET_U32,
+        UNSORTED_MULTISET_COL_U32 = MUNSORTED_MULTISET_U32,
+        SORTED_MULTISET_COL_U32 = MSORTED_MULTISET_U32,
+        UNSORTED_SET_COL_U32 = MUNSORTED_SET_U32,
+        SORTED_SET_COL_U32 = MSORTED_SET_U32,
 
         /** abstract types for column-u64 containers */
-        CARBON_UNSORTED_MULTISET_COL_U64 = CARBON_MUNSORTED_MULTISET_U64,
-        CARBON_SORTED_MULTISET_COL_U64 = CARBON_MSORTED_MULTISET_U64,
-        CARBON_UNSORTED_SET_COL_U64 = CARBON_MUNSORTED_SET_U64,
-        CARBON_SORTED_SET_COL_U64 = CARBON_MSORTED_SET_U64,
+        UNSORTED_MULTISET_COL_U64 = MUNSORTED_MULTISET_U64,
+        SORTED_MULTISET_COL_U64 = MSORTED_MULTISET_U64,
+        UNSORTED_SET_COL_U64 = MUNSORTED_SET_U64,
+        SORTED_SET_COL_U64 = MSORTED_SET_U64,
 
         /** abstract types for column-i8 containers */
-        CARBON_UNSORTED_MULTISET_COL_I8 = CARBON_MUNSORTED_MULTISET_I8,
-        CARBON_SORTED_MULTISET_COL_I8 = CARBON_MSORTED_MULTISET_I8,
-        CARBON_UNSORTED_SET_COL_I8 = CARBON_MUNSORTED_SET_I8,
-        CARBON_SORTED_SET_COL_I8 = CARBON_MSORTED_SET_I8,
+        UNSORTED_MULTISET_COL_I8 = MUNSORTED_MULTISET_I8,
+        SORTED_MULTISET_COL_I8 = MSORTED_MULTISET_I8,
+        UNSORTED_SET_COL_I8 = MUNSORTED_SET_I8,
+        SORTED_SET_COL_I8 = MSORTED_SET_I8,
 
         /** abstract types for column-i16 containers */
-        CARBON_UNSORTED_MULTISET_COL_I16 = CARBON_MUNSORTED_MULTISET_I16,
-        CARBON_SORTED_MULTISET_COL_I16 = CARBON_MSORTED_MULTISET_I16,
-        CARBON_UNSORTED_SET_COL_I16 = CARBON_MUNSORTED_SET_I16,
-        CARBON_SORTED_SET_COL_I16 = CARBON_MSORTED_SET_I16,
+        UNSORTED_MULTISET_COL_I16 = MUNSORTED_MULTISET_I16,
+        SORTED_MULTISET_COL_I16 = MSORTED_MULTISET_I16,
+        UNSORTED_SET_COL_I16 = MUNSORTED_SET_I16,
+        SORTED_SET_COL_I16 = MSORTED_SET_I16,
 
         /** abstract types for column-i32 containers */
-        CARBON_UNSORTED_MULTISET_COL_I32 = CARBON_MUNSORTED_MULTISET_I32,
-        CARBON_SORTED_MULTISET_COL_I32 = CARBON_MSORTED_MULTISET_I32,
-        CARBON_UNSORTED_SET_COL_I32 = CARBON_MUNSORTED_SET_I32,
-        CARBON_SORTED_SET_COL_I32 = CARBON_MSORTED_SET_I32,
+        UNSORTED_MULTISET_COL_I32 = MUNSORTED_MULTISET_I32,
+        SORTED_MULTISET_COL_I32 = MSORTED_MULTISET_I32,
+        UNSORTED_SET_COL_I32 = MUNSORTED_SET_I32,
+        SORTED_SET_COL_I32 = MSORTED_SET_I32,
 
         /** abstract types for column-i64 containers */
-        CARBON_UNSORTED_MULTISET_COL_I64 = CARBON_MUNSORTED_MULTISET_I64,
-        CARBON_SORTED_MULTISET_COL_I64 = CARBON_MSORTED_MULTISET_I64,
-        CARBON_UNSORTED_SET_COL_I64 = CARBON_MUNSORTED_SET_I64,
-        CARBON_SORTED_SET_COL_I64 = CARBON_MSORTED_SET_I64,
+        UNSORTED_MULTISET_COL_I64 = MUNSORTED_MULTISET_I64,
+        SORTED_MULTISET_COL_I64 = MSORTED_MULTISET_I64,
+        UNSORTED_SET_COL_I64 = MUNSORTED_SET_I64,
+        SORTED_SET_COL_I64 = MSORTED_SET_I64,
 
         /** abstract types for column-float containers */
-        CARBON_UNSORTED_MULTISET_COL_FLOAT = CARBON_MUNSORTED_MULTISET_FLOAT,
-        CARBON_SORTED_MULTISET_COL_FLOAT = CARBON_MSORTED_MULTISET_FLOAT,
-        CARBON_UNSORTED_SET_COL_FLOAT = CARBON_MUNSORTED_SET_FLOAT,
-        CARBON_SORTED_SET_COL_FLOAT = CARBON_MSORTED_SET_FLOAT,
+        UNSORTED_MULTISET_COL_FLOAT = MUNSORTED_MULTISET_FLOAT,
+        SORTED_MULTISET_COL_FLOAT = MSORTED_MULTISET_FLOAT,
+        UNSORTED_SET_COL_FLOAT = MUNSORTED_SET_FLOAT,
+        SORTED_SET_COL_FLOAT = MSORTED_SET_FLOAT,
 
         /** abstract types for column-boolean containers */
-        CARBON_UNSORTED_MULTISET_COL_BOOLEAN = CARBON_MUNSORTED_MULTISET_BOOLEAN,
-        CARBON_SORTED_MULTISET_COL_BOOLEAN = CARBON_MSORTED_MULTISET_BOOLEAN,
-        CARBON_UNSORTED_SET_COL_BOOLEAN = CARBON_MUNSORTED_SET_BOOLEAN,
-        CARBON_SORTED_SET_COL_BOOLEAN = CARBON_MSORTED_SET_BOOLEAN
+        UNSORTED_MULTISET_COL_BOOLEAN = MUNSORTED_MULTISET_BOOLEAN,
+        SORTED_MULTISET_COL_BOOLEAN = MSORTED_MULTISET_BOOLEAN,
+        UNSORTED_SET_COL_BOOLEAN = MUNSORTED_SET_BOOLEAN,
+        SORTED_SET_COL_BOOLEAN = MSORTED_SET_BOOLEAN
 } derived_e;
 
 /** derivable types for a list container (column or array) */
@@ -194,13 +194,13 @@ typedef enum carbon_list_derivable
 typedef enum carbon_map_derivable
 {
         /** the container type that implements the map */
-        CARBON_MAP_UNSORTED_MULTIMAP = CARBON_MUNSORTED_MULTIMAP,
+        CARBON_MAP_UNSORTED_MULTIMAP = MUNSORTED_MULTIMAP,
         /** mark map as sorted */
-        CARBON_MAP_SORTED_MULTIMAP = CARBON_MSORTED_MULTIMAP,
+        CARBON_MAP_SORTED_MULTIMAP = MSORTED_MULTIMAP,
         /** mark map as non-distinct */
-        CARBON_MAP_UNSORTED_MAP = CARBON_MUNSORTED_MAP,
+        CARBON_MAP_UNSORTED_MAP = MUNSORTED_MAP,
         /** mark map as sorted and non-distinct */
-        CARBON_MAP_SORTED_MAP = CARBON_MSORTED_MAP
+        CARBON_MAP_SORTED_MAP = MSORTED_MAP
 } carbon_map_derivable_e;
 
 /** Converts an abstract type class to a list derivable type. In case the abstract type class does not define
@@ -223,7 +223,7 @@ void abstract_write_derived_type(memfile *memfile, derived_e type);
 /** Peeks a byte from the memory file and returns the encoded container sub type. This is either an object
  * container, an array container, or and particular column container. In case a derived type is found, the
  * actual container type that implements that derived type is returned. For instance, if '[1]' is read,
- * a column-u8 container type is returned, and if [SOH] is read (which is CARBON_MSORTED_MULTISET_U8),
+ * a column-u8 container type is returned, and if [SOH] is read (which is MSORTED_MULTISET_U8),
  * a column-u8 container type is returned, too. */
 bool abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile);
 
@@ -283,15 +283,15 @@ bool abstract_is_instanceof_column(memfile *memfile);
  * marker sets a type of column container or array container or a derived type of that container type. */
 bool abstract_is_instanceof_list(memfile *memfile);
 
-/** Returns the concrete derived type <code>concrete</code> (e.g., CARBON_SORTED_SET_COL_BOOLEAN) for a
+/** Returns the concrete derived type <code>concrete</code> (e.g., SORTED_SET_COL_BOOLEAN) for a
  * given list type <code>is</code> (e.g., CARBON_LIST_CONTAINER_COLUMN_BOOLEAN) when deriving that
- * list type to a particular abstract type <code>should</code> (e.g., CARBON_SORTED_SET) */
+ * list type to a particular abstract type <code>should</code> (e.g., SORTED_SET) */
 bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                          carbon_list_derivable_e should);
 
 /** Returns the concrete derived type <code>concrete</code> (e.g., CARBON_MAP_SORTED_MULTIMAP) for a
  * given map when deriving that map type to a particular abstract type <code>should</code>
- * (e.g., CARBON_SORTED_MULTIMAP) */
+ * (e.g., SORTED_MULTIMAP) */
 bool abstract_derive_map_to(derived_e *concrete, carbon_map_derivable_e should);
 
 /** Reads a marker from the memory file, and returns the particular abstract derived container (including

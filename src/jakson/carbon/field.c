@@ -40,9 +40,9 @@ const char *carbon_field_type_str(carbon_field_type_e type)
                         return CARBON_FIELD_TYPE_OBJECT_UNSORTED_MULTIMAP_STR;
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         return CARBON_FIELD_TYPE_OBJECT_SORTED_MULTIMAP_STR;
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         return CARBON_FIELD_TYPE_OBJECT_UNSORTED_MAP_STR;
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                         return CARBON_FIELD_TYPE_OBJECT_SORTED_MAP_STR;
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                         return CARBON_FIELD_TYPE_ARRAY_UNSORTED_MULTISET_STR;
@@ -343,8 +343,8 @@ bool carbon_field_skip(memfile *file)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                         carbon_field_skip_object(file);
                         break;
                 default: error(ERR_CORRUPTED, NULL);
@@ -685,8 +685,8 @@ carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type)
                         return CARBON_FIELD_CLASS_CONSTANT;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
@@ -862,8 +862,8 @@ bool carbon_field_type_is_column_or_subtype(carbon_field_type_e type)
 bool carbon_field_type_is_object_or_subtype(carbon_field_type_e type)
 {
         return (type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP || type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
-                        type == CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP ||
-                        type == CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP);
+                        type == CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
+                        type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP);
 }
 
 bool carbon_field_type_is_null(carbon_field_type_e type)

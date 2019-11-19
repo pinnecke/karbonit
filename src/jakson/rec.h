@@ -114,12 +114,12 @@ typedef enum carbon_key_type {
 #define CARBON_KEEP              0x00 /** do not shrink, do not compact, use UNSORTED_MULTISET (equiv. JSON array) */
 #define CARBON_SHRINK            0x01 /** perform shrinking, i.e., remove tail-buffer from carbon file */
 #define CARBON_COMPACT           0x02 /** perform compacting, i.e., remove reserved memory from containers */
-#define CARBON_UNSORTED_MULTISET 0x04 /** annotate the record outer-most array as unsorted multi set */
-#define CARBON_SORTED_MULTISET   0x08 /** annotate the record outer-most array as sorted multi set */
-#define CARBON_UNSORTED_SET      0x10 /** annotate the record outer-most array as unsorted set */
-#define CARBON_SORTED_SET        0x20 /** annotate the record outer-most array as sorted set */
+#define UNSORTED_MULTISET 0x04 /** annotate the record outer-most array as unsorted multi set */
+#define SORTED_MULTISET   0x08 /** annotate the record outer-most array as sorted multi set */
+#define UNSORTED_SET      0x10 /** annotate the record outer-most array as unsorted set */
+#define SORTED_SET        0x20 /** annotate the record outer-most array as sorted set */
 
-#define CARBON_OPTIMIZE          (CARBON_SHRINK | CARBON_COMPACT | CARBON_UNSORTED_MULTISET)
+#define CARBON_OPTIMIZE          (CARBON_SHRINK | CARBON_COMPACT | UNSORTED_MULTISET)
 
 /**
  * Constructs a new context in which a new document can be created. The parameter <b>options</b> controls
@@ -155,12 +155,12 @@ typedef enum carbon_key_type {
  * To annotate the outer-most record array as an array container with particular properties, set <code>options</code>
  * to...
  * <ul>
- *  <li>...<code>CARBON_UNSORTED_MULTISET</code> that allows duplicates and has no sorting</li>
- *  <li>...<code>CARBON_SORTED_MULTISET</code> that allows duplicates and has a particular sorting</li>
- *  <li>...<code>CARBON_UNSORTED_SET</code> that disallows duplicates and has no sorting</li>
- *  <li>...<code>CARBON_SORTED_SET</code> that disallows duplicates and has a particular sorting</li>
+ *  <li>...<code>UNSORTED_MULTISET</code> that allows duplicates and has no sorting</li>
+ *  <li>...<code>SORTED_MULTISET</code> that allows duplicates and has a particular sorting</li>
+ *  <li>...<code>UNSORTED_SET</code> that disallows duplicates and has no sorting</li>
+ *  <li>...<code>SORTED_SET</code> that disallows duplicates and has a particular sorting</li>
  *  </ul>
- *  If no annotation is given, the outer-most record array is annotated as <code>CARBON_UNSORTED_MULTISET</code>, which
+ *  If no annotation is given, the outer-most record array is annotated as <code>UNSORTED_MULTISET</code>, which
  *  matches the semantics of a JSON array. Please note that this library does not provide any features to make
  *  deduplication and sorting work. Instead, the annotation stores the semantics of that particular container, which
  *  functionality must be effectively implemented at caller site.

@@ -438,8 +438,8 @@ bool carbon_printer_print_object(carbon_object *it, carbon_printer *printer, str
                                 break;
                         case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 carbon_object *object = carbon_item_get_object(&(it->prop.value));
                                 carbon_printer_object_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_object(object, printer, builder);
@@ -588,8 +588,8 @@ bool carbon_printer_print_array(carbon_array *it, carbon_printer *printer, strin
                                 break;
                         case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 carbon_object *object = carbon_item_get_object(&(it->item));
                                 carbon_printer_print_object(object, printer, builder);
                                 carbon_object_drop(object);

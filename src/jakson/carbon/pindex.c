@@ -379,8 +379,8 @@ static void object_build_index(struct pindex_node *parent, carbon_object *elem_i
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         carbon_object *it = carbon_item_get_object(&(elem_it->prop.value));
                         object_traverse(parent, it);
                         carbon_object_drop(it);
@@ -470,8 +470,8 @@ static void array_build_index(struct pindex_node *parent, carbon_array *elem_it)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         carbon_object *it = carbon_item_get_object(&elem_it->item);
                         object_traverse(parent, it);
                         carbon_object_drop(it);
@@ -538,8 +538,8 @@ static void container_field_flat(memfile *file, struct pindex_node *node)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
@@ -803,8 +803,8 @@ container_to_str(string_buffer *str, pindex *index, u8 field_type, unsigned inte
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
@@ -879,8 +879,8 @@ static void container_into_carbon(carbon_insert *ins, pindex *index, u8 field_ty
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:

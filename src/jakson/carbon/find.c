@@ -50,8 +50,8 @@ bool carbon_find_end(carbon_find *find)
                 switch (type) {
                         case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                                 carbon_object_drop(find->value.object_it);
                                 break;
                         case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
@@ -161,8 +161,8 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                                 break;
                         case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                         case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 carbon_object *sub_it = carbon_find_result_object(find);
                                 carbon_printer_print_object(sub_it, &printer, dst_str);
                         }
@@ -696,8 +696,8 @@ static void result_from_array(carbon_find *find, carbon_array *it)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                         find->value.object_it = carbon_item_get_object(&(it->item));
                         find->value.object_it->memfile.mode = find->doc->file.mode;
                         break;
@@ -792,8 +792,8 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                         find->value.object_it = carbon_item_get_object(&(it->prop.value));
                         find->value.object_it->memfile.mode = find->doc->file.mode;
                         break;

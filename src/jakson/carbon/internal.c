@@ -413,8 +413,8 @@ bool carbon_int_field_data_access(memfile *file, field_access *field_access)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                         carbon_int_field_access_create(field_access);
                         field_access->nested_object_it_is_created = true;
                         internal_carbon_object_create(field_access->nested_object_it, file, 
@@ -1044,8 +1044,8 @@ bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type)
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP: {
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         carbon_object it;
 
                         offset_t begin_off = memfile_tell(memfile);

@@ -22,7 +22,7 @@ TEST(TestAbstractTypes, CreateRecordUnsortedMultiset) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_MULTISET);
+        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, UNSORTED_MULTISET);
         carbon_create_end(&context);
 
         ASSERT_TRUE(carbon_is_multiset(&doc));
@@ -36,7 +36,7 @@ TEST(TestAbstractTypes, CreateRecordUnsortedSet) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_SET);
+        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, UNSORTED_SET);
         carbon_create_end(&context);
 
         ASSERT_FALSE(carbon_is_multiset(&doc));
@@ -50,7 +50,7 @@ TEST(TestAbstractTypes, CreateRecordSortedSet) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_SORTED_SET);
+        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, SORTED_SET);
         carbon_create_end(&context);
 
         ASSERT_FALSE(carbon_is_multiset(&doc));
@@ -64,7 +64,7 @@ TEST(TestAbstractTypes, CreateRecordSortedMultiset) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_SORTED_MULTISET);
+        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, SORTED_MULTISET);
         carbon_create_end(&context);
 
         ASSERT_TRUE(carbon_is_multiset(&doc));
@@ -78,7 +78,7 @@ TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
         rec_new new_context;
         rec doc, doc2, doc3, doc4, doc5;
 
-        carbon_create_begin(&new_context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_MULTISET);
+        carbon_create_begin(&new_context, &doc, CARBON_KEY_NOKEY, UNSORTED_MULTISET);
         carbon_create_end(&new_context);
 
         {

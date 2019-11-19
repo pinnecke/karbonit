@@ -420,8 +420,8 @@ bool carbon_column_update_set_null(carbon_column *it, u32 pos)
                 case CARBON_FIELD_FALSE:
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
@@ -645,8 +645,8 @@ bool carbon_column_update_set_true(carbon_column *it, u32 pos)
                 case CARBON_FIELD_FALSE:
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_CARBON_SORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                 case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:

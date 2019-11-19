@@ -33,7 +33,7 @@ typedef struct command_opt {
 } command_opt;
 
 typedef struct command_opt_group {
-        vec_t ofType(command_opt) cmd_options;
+        vec ofType(command_opt) cmd_options;
         char *desc;
 } command_opt_group;
 
@@ -42,7 +42,7 @@ typedef enum module_arg_policy {
 } module_arg_policy;
 
 typedef struct command_opt_mgr {
-        vec_t ofType(command_opt_group) groups;
+        vec ofType(command_opt_group) groups;
         module_arg_policy policy;
         bool (*fallback)(int argc, char **argv, FILE *file, command_opt_mgr *manager);
         char *module_name;

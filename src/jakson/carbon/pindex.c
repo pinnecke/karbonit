@@ -56,7 +56,7 @@ struct pindex_node {
         field_type_e field_type;
         offset_t field_offset;
 
-        vec_t ofType(struct pindex_node) sub_entries;
+        vec ofType(struct pindex_node) sub_entries;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

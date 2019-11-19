@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 typedef struct huffman {
-        vec_t ofType(pack_huffman_entry) table;
+        vec ofType(pack_huffman_entry) table;
 } huffman;
 
 typedef struct pack_huffman_entry {

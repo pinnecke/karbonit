@@ -49,9 +49,9 @@ typedef struct hashtable_bucket {
  * lock implementation.
  */
 typedef struct hashtable {
-        vec_t key_data;
-        vec_t value_data;
-        vec_t ofType(hashtable_bucket) table;
+        vec key_data;
+        vec value_data;
+        vec ofType(hashtable_bucket) table;
         spinlock lock;
         u32 size;
 } hashtable;

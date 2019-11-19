@@ -34,7 +34,7 @@ extern "C" {
 bool pack_none_init(packer *self);
 bool pack_none_cpy(const packer *self, packer *dst);
 bool pack_none_drop(packer *self);
-bool pack_none_write_extra(packer *self, memfile *dst, const vec_t ofType (const char *) *strings);
+bool pack_none_write_extra(packer *self, memfile *dst, const vec ofType (const char *) *strings);
 bool pack_none_read_extra(packer *self, FILE *src, size_t nbytes);
 bool pack_none_print_extra(packer *self, FILE *file, memfile *src);
 bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src, u32 decompressed_strlen);

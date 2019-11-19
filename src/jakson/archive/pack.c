@@ -85,7 +85,7 @@ bool pack_drop(packer *self)
 }
 
 bool pack_write_extra(packer *self, memfile *dst,
-                      const vec_t ofType (const char *) *strings)
+                      const vec ofType (const char *) *strings)
 {
         ERROR_IF_NOT_IMPLEMENTED(err, self, write_extra)
         return self->write_extra(self, dst, strings);

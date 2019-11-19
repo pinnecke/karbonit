@@ -47,7 +47,7 @@ struct token_memory {
 };
 
 static int process_token(json_err *error_desc, const json_token *token,
-                         vec_t ofType(json_token_e) *brackets, struct token_memory *token_mem);
+                         vec ofType(json_token_e) *brackets, struct token_memory *token_mem);
 
 static int set_error(json_err *error_desc, const json_token *token, const char *msg);
 
@@ -207,23 +207,23 @@ void json_token_print(FILE *file, const json_token *token)
         free(string);
 }
 
-static bool parse_object(json_object *object, vec_t ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_object(json_object *object, vec ofType(json_token) *token_stream, size_t *token_idx);
 
-static bool parse_array(json_array *array, vec_t ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_array(json_array *array, vec ofType(json_token) *token_stream, size_t *token_idx);
 
-static void parse_string(json_string *string, vec_t ofType(json_token) *token_stream,
+static void parse_string(json_string *string, vec ofType(json_token) *token_stream,
                          size_t *token_idx);
 
-static void parse_number(json_number *number, vec_t ofType(json_token) *token_stream,
+static void parse_number(json_number *number, vec ofType(json_token) *token_stream,
                          size_t *token_idx);
 
-static bool parse_element(json_element *element, vec_t ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_element(json_element *element, vec ofType(json_token) *token_stream, size_t *token_idx);
 
-static bool parse_elements(json_elements *elements, vec_t ofType(json_token) *token_stream, size_t *token_idx);
+static bool parse_elements(json_elements *elements, vec ofType(json_token) *token_stream, size_t *token_idx);
 
-static bool parse_token_stream(json *json, vec_t ofType(json_token) *token_stream);
+static bool parse_token_stream(json *json, vec ofType(json_token) *token_stream);
 
-static json_token get_token(vec_t ofType(json_token) *token_stream, size_t token_idx);
+static json_token get_token(vec ofType(json_token) *token_stream, size_t token_idx);
 
 static void connect_child_and_parents_member(json_prop *member);
 
@@ -269,8 +269,8 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         string_buffer_drop(&str);
 
 
-        vec_t ofType(json_token_e) brackets;
-        vec_t ofType(json_token) token_stream;
+        vec ofType(json_token_e) brackets;
+        vec ofType(json_token) token_stream;
 
         struct json retval;
         ZERO_MEMORY(&retval, sizeof(json))
@@ -399,18 +399,18 @@ bool json_test(json *json)
         return (test_condition_value(&json->element->value));
 }
 
-static json_token get_token(vec_t ofType(json_token) *token_stream, size_t token_idx)
+static json_token get_token(vec ofType(json_token) *token_stream, size_t token_idx)
 {
         return *(json_token *) vector_at(token_stream, token_idx);
 }
 
-static bool has_next_token(size_t token_idx, vec_t ofType(json_token) *token_stream)
+static bool has_next_token(size_t token_idx, vec ofType(json_token) *token_stream)
 {
         return token_idx < token_stream->num_elems;
 }
 
 bool parse_members(json_members *members,
-                   vec_t ofType(json_token) *token_stream,
+                   vec ofType(json_token) *token_stream,
                    size_t *token_idx)
 {
         vector_create(&members->members, sizeof(json_prop), 20);
@@ -491,7 +491,7 @@ bool parse_members(json_members *members,
         return true;
 }
 
-static bool parse_object(json_object *object, vec_t ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_object(json_object *object, vec ofType(json_token) *token_stream, size_t *token_idx)
 {
         JAK_ASSERT(get_token(token_stream, *token_idx).type == OBJECT_OPEN);
         NEXT_TOKEN(token_idx);  /** Skip '{' */
@@ -512,7 +512,7 @@ static bool parse_object(json_object *object, vec_t ofType(json_token) *token_st
         return true;
 }
 
-static bool parse_array(json_array *array, vec_t ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_array(json_array *array, vec ofType(json_token) *token_stream, size_t *token_idx)
 {
         json_token token = get_token(token_stream, *token_idx);
         UNUSED(token);
@@ -528,7 +528,7 @@ static bool parse_array(json_array *array, vec_t ofType(json_token) *token_strea
         return true;
 }
 
-static void parse_string(json_string *string, vec_t ofType(json_token) *token_stream,
+static void parse_string(json_string *string, vec ofType(json_token) *token_stream,
                          size_t *token_idx)
 {
         json_token token = get_token(token_stream, *token_idx);
@@ -542,7 +542,7 @@ static void parse_string(json_string *string, vec_t ofType(json_token) *token_st
         NEXT_TOKEN(token_idx);
 }
 
-static void parse_number(json_number *number, vec_t ofType(json_token) *token_stream,
+static void parse_number(json_number *number, vec ofType(json_token) *token_stream,
                          size_t *token_idx)
 {
         json_token token = get_token(token_stream, *token_idx);
@@ -577,7 +577,7 @@ static void parse_number(json_number *number, vec_t ofType(json_token) *token_st
         NEXT_TOKEN(token_idx);
 }
 
-static bool parse_element(json_element *element, vec_t ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_element(json_element *element, vec ofType(json_token) *token_stream, size_t *token_idx)
 {
         if (!has_next_token(*token_idx, token_stream)) {
                 return false;
@@ -619,7 +619,7 @@ static bool parse_element(json_element *element, vec_t ofType(json_token) *token
         return true;
 }
 
-static bool parse_elements(json_elements *elements, vec_t ofType(json_token) *token_stream, size_t *token_idx)
+static bool parse_elements(json_elements *elements, vec ofType(json_token) *token_stream, size_t *token_idx)
 {
         json_token delimiter;
         do {
@@ -638,7 +638,7 @@ static bool parse_elements(json_elements *elements, vec_t ofType(json_token) *to
         return true;
 }
 
-static bool parse_token_stream(json *json, vec_t ofType(json_token) *token_stream)
+static bool parse_token_stream(json *json, vec ofType(json_token) *token_stream)
 {
         size_t token_idx = 0;
         if (!parse_element(json->element, token_stream, &token_idx)) {
@@ -714,7 +714,7 @@ static bool isValue(json_token_e token)
 }
 
 static int process_token(json_err *error_desc, const json_token *token,
-                         vec_t ofType(json_token_e) *brackets, struct token_memory *token_mem)
+                         vec ofType(json_token_e) *brackets, struct token_memory *token_mem)
 {
         switch (token->type) {
                 case OBJECT_OPEN:

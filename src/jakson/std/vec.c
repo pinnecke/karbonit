@@ -65,7 +65,7 @@ DEFINE_PRINTER_FUNCTION(u64, "%"
 
 DEFINE_PRINTER_FUNCTION(size_t, "%zu")
 
-bool vector_create(vec_t *out, size_t elem_size, size_t cap_elems)
+bool vector_create(vec *out, size_t elem_size, size_t cap_elems)
 {
         out->base = MALLOC(cap_elems * elem_size);
         out->num_elems = 0;
@@ -83,7 +83,7 @@ typedef struct vector_serialize_header {
         float grow_factor;
 } vector_serialize_header;
 
-bool vector_serialize(FILE *file, vec_t *vec)
+bool vector_serialize(FILE *file, vec *vec)
 {
         vector_serialize_header header =
                 {.marker = MARKER_SYMBOL_VECTOR_HEADER, .elem_size = vec->elem_size, .num_elems = vec
@@ -96,7 +96,7 @@ bool vector_serialize(FILE *file, vec_t *vec)
         return true;
 }
 
-bool vector_deserialize(vec_t *vec, FILE *file)
+bool vector_deserialize(vec *vec, FILE *file)
 {
         offset_t start = ftell(file);
         int err_code = ERR_NOERR;
@@ -131,7 +131,7 @@ bool vector_deserialize(vec_t *vec, FILE *file)
         return false;
 }
 
-bool vector_memadvice(vec_t *vec, int madviseAdvice)
+bool vector_memadvice(vec *vec, int madviseAdvice)
 {
         UNUSED(vec);
         UNUSED(madviseAdvice);
@@ -139,7 +139,7 @@ bool vector_memadvice(vec_t *vec, int madviseAdvice)
         return true;
 }
 
-bool vector_set_grow_factor(vec_t *vec, float factor)
+bool vector_set_grow_factor(vec *vec, float factor)
 {
         if (UNLIKELY(factor <= 1.01f)) {
                 return error(ERR_ILLEGALARG, NULL);
@@ -149,19 +149,19 @@ bool vector_set_grow_factor(vec_t *vec, float factor)
         return true;
 }
 
-bool vector_drop(vec_t *vec)
+bool vector_drop(vec *vec)
 {
         free(vec->base);
         vec->base = NULL;
         return true;
 }
 
-bool vector_is_empty(const vec_t *vec)
+bool vector_is_empty(const vec *vec)
 {
         return vec->num_elems == 0 ? true : false;
 }
 
-bool vector_push(vec_t *vec, const void *data, size_t num_elems)
+bool vector_push(vec *vec, const void *data, size_t num_elems)
 {
         size_t next_num = vec->num_elems + num_elems;
         while (next_num > vec->cap_elems) {
@@ -174,7 +174,7 @@ bool vector_push(vec_t *vec, const void *data, size_t num_elems)
         return true;
 }
 
-const void *vector_peek(vec_t *vec)
+const void *vector_peek(vec *vec)
 {
         if (!vec) {
                 return NULL;
@@ -183,7 +183,7 @@ const void *vector_peek(vec_t *vec)
         }
 }
 
-bool vector_repeated_push(vec_t *vec, const void *data, size_t how_often)
+bool vector_repeated_push(vec *vec, const void *data, size_t how_often)
 {
         size_t next_num = vec->num_elems + how_often;
         while (next_num > vec->cap_elems) {
@@ -199,7 +199,7 @@ bool vector_repeated_push(vec_t *vec, const void *data, size_t how_often)
         return true;
 }
 
-const void *vector_pop(vec_t *vec)
+const void *vector_pop(vec *vec)
 {
         void *result;
         if (LIKELY((result = (vec ? (vec->num_elems > 0 ? vec->base + (vec->num_elems - 1) * vec->elem_size : NULL)
@@ -209,13 +209,13 @@ const void *vector_pop(vec_t *vec)
         return result;
 }
 
-bool vector_clear(vec_t *vec)
+bool vector_clear(vec *vec)
 {
         vec->num_elems = 0;
         return true;
 }
 
-bool vector_shrink(vec_t *vec)
+bool vector_shrink(vec *vec)
 {
         if (vec->num_elems < vec->cap_elems) {
                 vec->cap_elems = JAK_MAX(1, vec->num_elems);
@@ -224,7 +224,7 @@ bool vector_shrink(vec_t *vec)
         return true;
 }
 
-bool vector_grow(size_t *numNewSlots, vec_t *vec)
+bool vector_grow(size_t *numNewSlots, vec *vec)
 {
         size_t freeSlotsBefore = vec->cap_elems - vec->num_elems;
 
@@ -237,41 +237,41 @@ bool vector_grow(size_t *numNewSlots, vec_t *vec)
         return true;
 }
 
-bool vector_grow_to(vec_t *vec, size_t capacity)
+bool vector_grow_to(vec *vec, size_t capacity)
 {
         vec->cap_elems = JAK_MAX(vec->cap_elems, capacity);
         vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         return true;
 }
 
-size_t vector_length(const vec_t *vec)
+size_t vector_length(const vec *vec)
 {
         return vec->num_elems;
 }
 
-const void *vector_at(const vec_t *vec, size_t pos)
+const void *vector_at(const vec *vec, size_t pos)
 {
         return (vec && pos < vec->num_elems) ? vec->base + pos * vec->elem_size : NULL;
 }
 
-size_t vector_capacity(const vec_t *vec)
+size_t vector_capacity(const vec *vec)
 {
         return vec->cap_elems;
 }
 
-bool vector_enlarge_size_to_capacity(vec_t *vec)
+bool vector_enlarge_size_to_capacity(vec *vec)
 {
         vec->num_elems = vec->cap_elems;
         return true;
 }
 
-bool vector_zero_memory(vec_t *vec)
+bool vector_zero_memory(vec *vec)
 {
         ZERO_MEMORY(vec->base, vec->elem_size * vec->num_elems);
         return true;
 }
 
-bool vector_zero_memory_in_range(vec_t *vec, size_t from, size_t to)
+bool vector_zero_memory_in_range(vec *vec, size_t from, size_t to)
 {
         JAK_ASSERT(from < to);
         JAK_ASSERT(to <= vec->cap_elems);
@@ -279,14 +279,14 @@ bool vector_zero_memory_in_range(vec_t *vec, size_t from, size_t to)
         return true;
 }
 
-bool vector_set(vec_t *vec, size_t pos, const void *data)
+bool vector_set(vec *vec, size_t pos, const void *data)
 {
         JAK_ASSERT(pos < vec->num_elems);
         memcpy(vec->base + pos * vec->elem_size, data, vec->elem_size);
         return true;
 }
 
-bool vector_cpy(vec_t *dst, const vec_t *src)
+bool vector_cpy(vec *dst, const vec *src)
 {
         CHECK_SUCCESS(vector_create(dst, src->elem_size, src->num_elems));
         dst->num_elems = src->num_elems;
@@ -296,7 +296,7 @@ bool vector_cpy(vec_t *dst, const vec_t *src)
         return true;
 }
 
-bool vector_cpy_to(vec_t *dst, vec_t *src)
+bool vector_cpy_to(vec *dst, vec *src)
 {
         void *handle = realloc(dst->base, src->cap_elems * src->elem_size);
         if (handle) {
@@ -312,12 +312,12 @@ bool vector_cpy_to(vec_t *dst, vec_t *src)
         }
 }
 
-const void *vector_data(const vec_t *vec)
+const void *vector_data(const vec *vec)
 {
         return vec ? vec->base : NULL;
 }
 
-char *vector_string(const vec_t ofType(T) *vec,
+char *vector_string(const vec ofType(T) *vec,
                     void (*printerFunc)(memfile *dst, void ofType(T) *values, size_t num_elems))
 {
         memblock *block;

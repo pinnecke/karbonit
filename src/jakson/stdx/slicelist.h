@@ -99,10 +99,10 @@ typedef struct slice_descriptor {
 typedef struct slice_list {
         spinlock lock;
 
-        vec_t ofType(slice) slices;
-        vec_t ofType(slice_descriptor) descriptors;
-        vec_t ofType(bloomfilter) filters;
-        vec_t ofType(hash_bounds) bounds;
+        vec ofType(slice) slices;
+        vec ofType(slice_descriptor) descriptors;
+        vec ofType(bloomfilter) filters;
+        vec ofType(hash_bounds) bounds;
 
         u32 appender_idx;
 } slice_list_t;

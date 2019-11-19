@@ -32,7 +32,7 @@ struct bucket {
 };
 
 struct mem_extra {
-        vec_t ofType(bucket) buckets;
+        vec ofType(bucket) buckets;
 };
 
 static int _str_hash_mem_drop(str_hash *self);
@@ -63,22 +63,22 @@ static int _str_hash_mem_remove(str_hash *self, char *const *keys, size_t num_ke
 
 static int _str_hash_mem_free(str_hash *self, void *ptr);
 
-static int this_insert_bulk(vec_t ofType(bucket) *buckets, char *const *restrict keys,
+static int this_insert_bulk(vec ofType(bucket) *buckets, char *const *restrict keys,
                             const archive_field_sid_t *restrict values, size_t *restrict bucket_idxs,
                             size_t num_pairs,
                             str_hash_counters *counter);
 
 static int
-this_insert_exact(vec_t ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
+this_insert_exact(vec ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
                   size_t bucket_idx, str_hash_counters *counter);
 
 static int
-this_fetch_bulk(vec_t ofType(bucket) *buckets, archive_field_sid_t *values_out, bool *key_found_mask,
+this_fetch_bulk(vec ofType(bucket) *buckets, archive_field_sid_t *values_out, bool *key_found_mask,
                 size_t *num_keys_not_found, size_t *bucket_idxs, char *const *keys, size_t num_keys,
                 str_hash_counters *counter);
 
 static int
-this_fetch_single(vec_t ofType(bucket) *buckets, archive_field_sid_t *value_out, bool *key_found,
+this_fetch_single(vec ofType(bucket) *buckets, archive_field_sid_t *value_out, bool *key_found,
                   const size_t bucket_idx, const char *key, str_hash_counters *counter);
 
 static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t cap_buckets);
@@ -187,7 +187,7 @@ static int this_put_fast_bulk(str_hash *self, char *const *keys, const archive_f
 }
 
 static int
-this_fetch_bulk(vec_t ofType(bucket) *buckets, archive_field_sid_t *values_out, bool *key_found_mask,
+this_fetch_bulk(vec ofType(bucket) *buckets, archive_field_sid_t *values_out, bool *key_found_mask,
                 size_t *num_keys_not_found, size_t *bucket_idxs, char *const *keys, size_t num_keys,
                 str_hash_counters *counter)
 {
@@ -219,7 +219,7 @@ this_fetch_bulk(vec_t ofType(bucket) *buckets, archive_field_sid_t *values_out, 
 }
 
 static int
-this_fetch_single(vec_t ofType(bucket) *buckets, archive_field_sid_t *value_out, bool *key_found,
+this_fetch_single(vec ofType(bucket) *buckets, archive_field_sid_t *value_out, bool *key_found,
                   const size_t bucket_idx, const char *key, str_hash_counters *counter)
 {
         UNUSED(counter);
@@ -443,7 +443,7 @@ static int bucket_insert(struct bucket *bucket, const char *restrict key, archiv
         return true;
 }
 
-static int this_insert_bulk(vec_t ofType(bucket) *buckets, char *const *restrict keys,
+static int this_insert_bulk(vec ofType(bucket) *buckets, char *const *restrict keys,
                             const archive_field_sid_t *restrict values, size_t *restrict bucket_idxs,
                             size_t num_pairs, str_hash_counters *counter)
 {
@@ -462,7 +462,7 @@ static int this_insert_bulk(vec_t ofType(bucket) *buckets, char *const *restrict
 }
 
 static int
-this_insert_exact(vec_t ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
+this_insert_exact(vec ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
                   size_t bucket_idx, str_hash_counters *counter)
 {
         struct bucket *buckets_data = (struct bucket *) vector_data(buckets);

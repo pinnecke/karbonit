@@ -27,8 +27,8 @@ struct huff_node {
         unsigned char letter;
 };
 
-static void huff_tree_create(vec_t ofType(pack_huffman_entry) *table,
-                             const vec_t ofType(u32) *frequencies);
+static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
+                             const vec ofType(u32) *frequencies);
 
 bool coding_huffman_create(huffman *dic)
 {
@@ -48,7 +48,7 @@ bool coding_huffman_cpy(huffman *dst, huffman *src)
 
 bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
 {
-        vec_t ofType(u32) frequencies;
+        vec ofType(u32) frequencies;
         vector_create(&frequencies, sizeof(u32), UCHAR_MAX);
         vector_enlarge_size_to_capacity(&frequencies);
 
@@ -299,7 +299,7 @@ static struct huff_node *find_smallest(struct huff_node *begin, u64 lowerBound, 
 }
 
 static void assign_code(struct huff_node *node, const bitmap *path,
-                        vec_t ofType(pack_huffman_entry) *table)
+                        vec ofType(pack_huffman_entry) *table)
 {
         if (!node->left && !node->right) {
                 pack_huffman_entry *entry = VECTOR_NEW_AND_GET(table, pack_huffman_entry);
@@ -324,7 +324,7 @@ static void assign_code(struct huff_node *node, const bitmap *path,
         }
 }
 
-static struct huff_node *trim_and_begin(vec_t ofType(HuffNode) *candidates)
+static struct huff_node *trim_and_begin(vec ofType(HuffNode) *candidates)
 {
         struct huff_node *begin = NULL;
         for (struct huff_node *it = VECTOR_GET(candidates, 0, struct huff_node);; it++) {
@@ -347,12 +347,12 @@ static struct huff_node *trim_and_begin(vec_t ofType(HuffNode) *candidates)
         return begin;
 }
 
-static void huff_tree_create(vec_t ofType(pack_huffman_entry) *table,
-                             const vec_t ofType(u32) *frequencies)
+static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
+                             const vec ofType(u32) *frequencies)
 {
         JAK_ASSERT(UCHAR_MAX == frequencies->num_elems);
 
-        vec_t ofType(HuffNode) candidates;
+        vec ofType(HuffNode) candidates;
         vector_create(&candidates, sizeof(struct huff_node), UCHAR_MAX * UCHAR_MAX);
         size_t appender_idx = UCHAR_MAX;
 

@@ -143,12 +143,12 @@ typedef struct json_prop {
 
 typedef struct json_members {
         json_object *parent;
-        vec_t ofType(json_prop) members;
+        vec ofType(json_prop) members;
 } json_members;
 
 typedef struct json_elements {
         json_array *parent;
-        vec_t ofType(json_element) elements;
+        vec ofType(json_element) elements;
 } json_elements;
 
 typedef struct json_array {

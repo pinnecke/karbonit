@@ -47,18 +47,18 @@ typedef struct column_doc_column {
         /** Particular key type */
         archive_field_e type;
         /** Positions of objects in the parent array that has this particular key name with this particular value type */
-        vec_t ofType(u32) array_positions;
+        vec ofType(u32) array_positions;
         /** Values stored in objects assigned to this key-type mapping. The i-th element in `values` (which hold the
          * i-th value) is associated to the i-th element in `arrayPosition` which holds the position of the object inside
          * the array from which this pair was taken. */
-        vec_t ofType(Vector ofType( < T >)) values;
+        vec ofType(Vector ofType( < T >)) values;
 } column_doc_column;
 
 typedef struct column_doc_group {
         /** Key name */
         archive_field_sid_t key;
         /** Key columns as a decomposition of objects stored in that JSON-like array */
-        vec_t ofType(column_doc_column) columns;
+        vec ofType(column_doc_column) columns;
 } column_doc_group;
 
 typedef struct column_doc_obj {
@@ -70,156 +70,156 @@ typedef struct column_doc_obj {
         size_t index;
 
         /** Inverted index of keys mapping to primitive boolean types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) bool_prop_keys;
+        vec ofType(archive_field_sid_t) bool_prop_keys;
         /** Inverted index of keys mapping to primitive int8 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int8_prop_keys;
+        vec ofType(archive_field_sid_t) int8_prop_keys;
         /** Inverted index of keys mapping to primitive int16 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int16_prop_keys;
+        vec ofType(archive_field_sid_t) int16_prop_keys;
         /** Inverted index of keys mapping to primitive int32 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int32_prop_keys;
+        vec ofType(archive_field_sid_t) int32_prop_keys;
         /** Inverted index of keys mapping to primitive int64 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int64_prop_keys;
+        vec ofType(archive_field_sid_t) int64_prop_keys;
         /** Inverted index of keys mapping to primitive uint8 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint8_prop_keys;
+        vec ofType(archive_field_sid_t) uint8_prop_keys;
         /** Inverted index of keys mapping to primitive uint16 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint16_prop_keys;
+        vec ofType(archive_field_sid_t) uint16_prop_keys;
         /** Inverted index of keys mapping to primitive uint32 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uin32_prop_keys;
+        vec ofType(archive_field_sid_t) uin32_prop_keys;
         /** Inverted index of keys mapping to primitive uint64 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint64_prop_keys;
+        vec ofType(archive_field_sid_t) uint64_prop_keys;
         /** Inverted index of keys mapping to primitive string types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) string_prop_keys;
+        vec ofType(archive_field_sid_t) string_prop_keys;
         /** Inverted index of keys mapping to primitive real types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) float_prop_keys;
+        vec ofType(archive_field_sid_t) float_prop_keys;
         /** Inverted index of keys mapping to primitive null values (sorted by key) */
-        vec_t ofType(archive_field_sid_t) null_prop_keys;
+        vec ofType(archive_field_sid_t) null_prop_keys;
         /** Inverted index of keys mapping to exactly one nested object value (sorted by key) */
-        vec_t ofType(archive_field_sid_t) obj_prop_keys;
+        vec ofType(archive_field_sid_t) obj_prop_keys;
 
         /** Inverted index of keys mapping to array of boolean types (sorted by key)*/
-        vec_t ofType(archive_field_sid_t) bool_array_prop_keys;
+        vec ofType(archive_field_sid_t) bool_array_prop_keys;
         /** Inverted index of keys mapping to array of int8 number types (sorted by key)*/
-        vec_t ofType(archive_field_sid_t) int8_array_prop_keys;
+        vec ofType(archive_field_sid_t) int8_array_prop_keys;
         /** Inverted index of keys mapping to array of int16 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int16_array_prop_keys;
+        vec ofType(archive_field_sid_t) int16_array_prop_keys;
         /** Inverted index of keys mapping to array of int32 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int32_array_prop_keys;
+        vec ofType(archive_field_sid_t) int32_array_prop_keys;
         /** Inverted index of keys mapping to array of int64 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) int64_array_prop_keys;
+        vec ofType(archive_field_sid_t) int64_array_prop_keys;
         /** Inverted index of keys mapping to array of uint8 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint8_array_prop_keys;
+        vec ofType(archive_field_sid_t) uint8_array_prop_keys;
         /** Inverted index of keys mapping to array of uint16 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint16_array_prop_keys;
+        vec ofType(archive_field_sid_t) uint16_array_prop_keys;
         /** Inverted index of keys mapping to array of uint32 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint32_array_prop_keys;
+        vec ofType(archive_field_sid_t) uint32_array_prop_keys;
         /** Inverted index of keys mapping to array of uint64 number types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) uint64_array_prop_keys;
+        vec ofType(archive_field_sid_t) uint64_array_prop_keys;
         /** Inverted index of keys mapping array of string types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) string_array_prop_keys;
+        vec ofType(archive_field_sid_t) string_array_prop_keys;
         /** Inverted index of keys mapping array of real types (sorted by key) */
-        vec_t ofType(archive_field_sid_t) float_array_prop_keys;
+        vec ofType(archive_field_sid_t) float_array_prop_keys;
         /** Inverted index of keys mapping array of null value (sorted by key)s */
-        vec_t ofType(archive_field_sid_t) null_array_prop_keys;
+        vec ofType(archive_field_sid_t) null_array_prop_keys;
 
         /** Primitive boolean values associated to keys stored above (sorted by key) */
-        vec_t ofType(FIELD_BOOLEANean_t) bool_prop_vals;
+        vec ofType(FIELD_BOOLEANean_t) bool_prop_vals;
         /** Primitive int8 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_i8_t) int8_prop_vals;
+        vec ofType(archive_field_i8_t) int8_prop_vals;
         /** Primitive int16 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_i16_t) int16_prop_vals;
+        vec ofType(archive_field_i16_t) int16_prop_vals;
         /** Primitive int32 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_i32_t) int32_prop_vals;
+        vec ofType(archive_field_i32_t) int32_prop_vals;
         /** Primitive int64 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_i64_t) int64_prop_vals;
+        vec ofType(archive_field_i64_t) int64_prop_vals;
         /** Primitive uint8 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_u8_t) uint8_prop_vals;
+        vec ofType(archive_field_u8_t) uint8_prop_vals;
         /** Primitive uint16 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_u16_t) uint16_prop_vals;
+        vec ofType(archive_field_u16_t) uint16_prop_vals;
         /** Primitive uint32 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_u32_t) uint32_prop_vals;
+        vec ofType(archive_field_u32_t) uint32_prop_vals;
         /** Primitive uint64 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_u64_t) uint64_prop_vals;
+        vec ofType(archive_field_u64_t) uint64_prop_vals;
         /** Primitive real number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_number_t) float_prop_vals;
+        vec ofType(archive_field_number_t) float_prop_vals;
         /** Primitive string number values associated to keys stored above (sorted by key) */
-        vec_t ofType(archive_field_sid_t) string_prop_vals;
+        vec ofType(archive_field_sid_t) string_prop_vals;
 
         /** Array of boolean values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) bool_array_prop_vals;
+        vec ofType(Vector) bool_array_prop_vals;
         /** Array of int8 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) int8_array_prop_vals;
+        vec ofType(Vector) int8_array_prop_vals;
         /** Array of int16 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) int16_array_prop_vals;
+        vec ofType(Vector) int16_array_prop_vals;
         /** Array of int32 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) int32_array_prop_vals;
+        vec ofType(Vector) int32_array_prop_vals;
         /** Array of int64 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) int64_array_prop_vals;
+        vec ofType(Vector) int64_array_prop_vals;
         /** Array of uint8 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) uint8_array_prop_vals;
+        vec ofType(Vector) uint8_array_prop_vals;
         /** Array of uint16 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) uint16_array_prop_vals;
+        vec ofType(Vector) uint16_array_prop_vals;
         /** Array of uint32 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) uint32_array_prop_vals;
+        vec ofType(Vector) uint32_array_prop_vals;
         /** Array of uint64 number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) ui64_array_prop_vals;
+        vec ofType(Vector) ui64_array_prop_vals;
         /** Array of real number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) float_array_prop_vals;
+        vec ofType(Vector) float_array_prop_vals;
         /** Array of string number values associated to keys stored above (sorted by key) */
-        vec_t ofType(Vector) string_array_prop_vals;
+        vec ofType(Vector) string_array_prop_vals;
         /** Array of null values associated to keys stored above (sorted by key). The number represents the
          * multiplicity of nulls for the associated key. */
-        vec_t ofType(u16) null_array_prop_vals;
+        vec ofType(u16) null_array_prop_vals;
         /** Primitive objects associated to keys stored above (sorted by key) */
-        vec_t ofType(column_doc_obj) obj_prop_vals;
+        vec ofType(column_doc_obj) obj_prop_vals;
 
         /** Index of primitive boolean values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) bool_val_idxs;
+        vec ofType(u32) bool_val_idxs;
         /** Index of primitive int8 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) int8_val_idxs;
+        vec ofType(u32) int8_val_idxs;
         /** Index of primitive int16 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) int16_val_idxs;
+        vec ofType(u32) int16_val_idxs;
         /** Index of primitive int32 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) int32_val_idxs;
+        vec ofType(u32) int32_val_idxs;
         /** Index of primitive int64 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) int64_val_idxs;
+        vec ofType(u32) int64_val_idxs;
         /** Index of primitive uint8 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) uint8_val_idxs;
+        vec ofType(u32) uint8_val_idxs;
         /** Index of primitive uint16 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) uint16_val_idxs;
+        vec ofType(u32) uint16_val_idxs;
         /** Index of primitive uint32 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) uint32_val_idxs;
+        vec ofType(u32) uint32_val_idxs;
         /** Index of primitive uint64 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) uint64_val_idxs;
+        vec ofType(u32) uint64_val_idxs;
         /** Index of primitive real number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) float_val_idxs;
+        vec ofType(u32) float_val_idxs;
         /** Index of primitive string number values associated to keys stored above (sorted by value) */
-        vec_t ofType(u32) string_val_idxs;
+        vec ofType(u32) string_val_idxs;
 
         /** Index of array of boolean values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) bool_array_idxs;
+        vec ofType(Vector) bool_array_idxs;
         /** Index of array of int8 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) int8_array_idxs;
+        vec ofType(Vector) int8_array_idxs;
         /** Index of array of int16 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) int16_array_idxs;
+        vec ofType(Vector) int16_array_idxs;
         /** Index of array of int32 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) int32_array_idxs;
+        vec ofType(Vector) int32_array_idxs;
         /** Index of array of int64 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) int64_array_idxs;
+        vec ofType(Vector) int64_array_idxs;
         /** Index of array of uint8 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) uint8_array_idxs;
+        vec ofType(Vector) uint8_array_idxs;
         /** Index of array of uint16 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) uint16_array_idxs;
+        vec ofType(Vector) uint16_array_idxs;
         /** Index of array of uint32 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) uint32_array_idxs;
+        vec ofType(Vector) uint32_array_idxs;
         /** Index of array of uint64 number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) uint64_array_idxs;
+        vec ofType(Vector) uint64_array_idxs;
         /** Index of array of real number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) float_array_idxs;
+        vec ofType(Vector) float_array_idxs;
         /** Index of array of string number values associated to keys stored above (sorted by value) */
-        vec_t ofType(Vector) string_array_idxs;
+        vec ofType(Vector) string_array_idxs;
 
         /** Array of objects associated to keys stored above (sorted by key) */
-        vec_t ofType(column_doc_group) obj_array_props;
+        vec ofType(column_doc_group) obj_array_props;
 } column_doc_obj;
 
 typedef struct column_doc {

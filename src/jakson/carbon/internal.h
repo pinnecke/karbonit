@@ -103,11 +103,11 @@ offset_t carbon_int_payload_after_header(rec *doc);
 
 u64 carbon_int_header_get_commit_hash(rec *doc);
 
-void carbon_int_history_push(vec_t ofType(offset_t) *vec, offset_t off);
-void carbon_int_history_clear(vec_t ofType(offset_t) *vec);
-offset_t carbon_int_history_pop(vec_t ofType(offset_t) *vec);
-offset_t carbon_int_history_peek(vec_t ofType(offset_t) *vec);
-bool carbon_int_history_has(vec_t ofType(offset_t) *vec);
+void carbon_int_history_push(vec ofType(offset_t) *vec, offset_t off);
+void carbon_int_history_clear(vec ofType(offset_t) *vec);
+offset_t carbon_int_history_pop(vec ofType(offset_t) *vec);
+offset_t carbon_int_history_peek(vec ofType(offset_t) *vec);
+bool carbon_int_history_has(vec ofType(offset_t) *vec);
 
 bool carbon_int_field_create(field *field);
 bool carbon_int_field_clone(field *dst, field *src);

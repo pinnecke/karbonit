@@ -79,21 +79,21 @@ typedef struct encoded_doc_prop {
 
 typedef struct encoded_doc_prop_array {
         encoded_doc_prop_header header;
-        vec_t ofType(encoded_doc_value_u) values;
+        vec ofType(encoded_doc_value_u) values;
 } encoded_doc_prop_array;
 
 typedef struct encoded_doc {
         encoded_doc_list *context;
         unique_id_t object_id;
-        vec_t ofType(encoded_doc_prop) props;
-        vec_t ofType(encoded_doc_prop_array) props_arrays;
+        vec ofType(encoded_doc_prop) props;
+        vec ofType(encoded_doc_prop_array) props_arrays;
         hashtable ofMapping(archive_field_sid_t,
                                    u32) prop_array_index; /** maps key to index in prop arrays */
 } encoded_doc;
 
 typedef struct encoded_doc_list {
         archive *archive;
-        vec_t ofType(
+        vec ofType(
                 encoded_doc) flat_object_collection;   /** list of objects; also nested ones */
         hashtable ofMapping(object_id_t, u32) index;   /** maps oid to index in collection */
 } encoded_doc_list;

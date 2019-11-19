@@ -63,10 +63,10 @@ bool hashset_drop(hashset *map)
         return status;
 }
 
-vec_t *hashset_keys(hashset *map)
+vec *hashset_keys(hashset *map)
 {
         if (map) {
-                vec_t *result = MALLOC(sizeof(vec_t));
+                vec *result = MALLOC(sizeof(vec));
                 vector_create(result, map->key_data.elem_size, map->key_data.num_elems);
                 for (u32 i = 0; i < map->table.num_elems; i++) {
                         hashset_bucket *bucket = VECTOR_GET(&map->table, i, hashset_bucket);

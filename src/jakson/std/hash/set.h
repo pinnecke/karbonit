@@ -48,8 +48,8 @@ typedef struct hashset_bucket {
  * lock implementation.
  */
 typedef struct hashset {
-        vec_t key_data;
-        vec_t ofType(hashset_bucket) table;
+        vec key_data;
+        vec ofType(hashset_bucket) table;
         spinlock lock;
         u32 size;
 } hashset;
@@ -58,7 +58,7 @@ bool hashset_create(hashset *map, size_t key_size, size_t capacity);
 hashset *hashset_cpy(hashset *src);
 bool hashset_drop(hashset *map);
 
-vec_t *hashset_keys(hashset *map);
+vec *hashset_keys(hashset *map);
 bool hashset_clear(hashset *map);
 bool hashset_avg_displace(float *displace, const hashset *map);
 bool hashset_lock(hashset *map);

@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 typedef struct bitmap {
-        vec_t ofType(u64) data;
+        vec ofType(u64) data;
         u16 num_bits;
 } bitmap;
 

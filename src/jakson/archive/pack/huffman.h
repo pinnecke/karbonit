@@ -33,7 +33,7 @@ extern "C" {
 bool pack_huffman_init(packer *self);
 bool pack_coding_huffman_cpy(const packer *self, packer *dst);
 bool pack_coding_huffman_drop(packer *self);
-bool pack_huffman_write_extra(packer *self, memfile *dst, const vec_t ofType (const char *) *strings);
+bool pack_huffman_write_extra(packer *self, memfile *dst, const vec ofType (const char *) *strings);
 bool pack_huffman_read_extra(packer *self, FILE *src, size_t nbytes);
 bool pack_huffman_print_extra(packer *self, FILE *file, memfile *src);
 bool pack_huffman_print_encoded(packer *self, FILE *file, memfile *src, u32 decompressed_strlen);

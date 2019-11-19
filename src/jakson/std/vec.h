@@ -68,14 +68,14 @@ DECLARE_PRINTER_FUNC(size_t)
 /**
  * An implementation of the concrete data type Vector, a resizeable dynamic array.
  */
-typedef struct vec_t {
+typedef struct vec {
         /**
-         *  Fixed number of bytes for a single element that should be stored in the vec_t
+         *  Fixed number of bytes for a single element that should be stored in the vec
          */
         size_t elem_size;
 
         /**
-         *  The number of elements currently stored in the vec_t
+         *  The number of elements currently stored in the vec
          */
         u32 num_elems;
 
@@ -93,49 +93,49 @@ typedef struct vec_t {
          * A pointer to a memory address managed by 'allocator' that contains the user data
          */
         void *base;
-} vec_t;
+} vec;
 
 /**
- * Utility implementation of generic vec_t to specialize for type of 'char *'
+ * Utility implementation of generic vec to specialize for type of 'char *'
  */
-typedef vec_t ofType(const char *) string_vector_t;
+typedef vec ofType(const char *) string_vector_t;
 
 /**
- * Constructs a new vec_t for elements of size 'elem_size', reserving memory for 'cap_elems' elements using
+ * Constructs a new vec for elements of size 'elem_size', reserving memory for 'cap_elems' elements using
  * the allocator 'alloc'.
  *
- * @param out non-null vec_t that should be constructed
+ * @param out non-null vec that should be constructed
  * @param alloc an allocator
  * @param elem_size fixed-length element size
  * @param cap_elems number of elements for which memory should be reserved
  * @return STATUS_OK if success, and STATUS_NULLPTR in case of NULL pointer parameters
  */
-bool vector_create(vec_t *out, size_t elem_size, size_t cap_elems);
+bool vector_create(vec *out, size_t elem_size, size_t cap_elems);
 
-bool vector_serialize(FILE *file, vec_t *vec);
+bool vector_serialize(FILE *file, vec *vec);
 
-bool vector_deserialize(vec_t *vec, FILE *file);
+bool vector_deserialize(vec *vec, FILE *file);
 
 /**
- * Provides hints on the OS kernel how to deal with memory inside this vec_t.
+ * Provides hints on the OS kernel how to deal with memory inside this vec.
  *
- * @param vec non-null vec_t
+ * @param vec non-null vec
  * @param madviseAdvice value to give underlying <code>madvise</code> syscall and advice, see man page
  * of <code>madvise</code>
  * @return STATUS_OK if success, otherwise a value indicating the ERROR
  */
-bool vector_memadvice(vec_t *vec, int madviseAdvice);
+bool vector_memadvice(vec *vec, int madviseAdvice);
 
 /**
  * Sets the factor for determining the reallocation size in case of a resizing operation.
  *
  * Note that <code>factor</code> must be larger than one.
  *
- * @param vec non-null vec_t for which the grow factor should be changed
+ * @param vec non-null vec for which the grow factor should be changed
  * @param factor a positive real number larger than 1
  * @return STATUS_OK if success, otherwise a value indicating the ERROR
  */
-bool vector_set_grow_factor(vec_t *vec, float factor);
+bool vector_set_grow_factor(vec *vec, float factor);
 
 /**
  * Frees up memory requested via the allocator.
@@ -143,87 +143,87 @@ bool vector_set_grow_factor(vec_t *vec, float factor);
  * Depending on the allocator implementation, dropping the reserved memory might not take immediately effect.
  * The pointer 'vec' itself gets not freed.
  *
- * @param vec vec_t to be freed
+ * @param vec vec to be freed
  * @return STATUS_OK if success, and STATUS_NULL_PTR in case of NULL pointer to 'vec'
  */
-bool vector_drop(vec_t *vec);
+bool vector_drop(vec *vec);
 
 /**
- * Returns information on whether elements are stored in this vec_t or not.
- * @param vec non-null pointer to the vec_t
+ * Returns information on whether elements are stored in this vec or not.
+ * @param vec non-null pointer to the vec
  * @return Returns <code>STATUS_TRUE</code> if <code>vec</code> is empty. Otherwise <code>STATUS_FALSE</code> unless
  *         an ERROR occurs. In case an ERROR is occured, the return value is neither <code>STATUS_TRUE</code> nor
  *         <code>STATUS_FALSE</code> but an value indicating that ERROR.
  */
-bool vector_is_empty(const vec_t *vec);
+bool vector_is_empty(const vec *vec);
 
 /**
- * Appends 'num_elems' elements stored in 'data' into the vec_t by copying num_elems * vec->elem_size into the
+ * Appends 'num_elems' elements stored in 'data' into the vec by copying num_elems * vec->elem_size into the
  * vectors memory block.
  *
- * In case the capacity is not sufficient, the vec_t gets automatically resized.
+ * In case the capacity is not sufficient, the vec gets automatically resized.
  *
- * @param vec the vec_t in which the data should be pushed
+ * @param vec the vec in which the data should be pushed
  * @param data non-null pointer to data that should be appended. Must be at least size of 'num_elems' * vec->elem_size.
  * @param num_elems number of elements stored in data
  * @return STATUS_OK if success, and STATUS_NULLPTR in case of NULL pointer parameters
  */
-bool vector_push(vec_t *vec, const void *data, size_t num_elems);
+bool vector_push(vec *vec, const void *data, size_t num_elems);
 
-const void *vector_peek(vec_t *vec);
+const void *vector_peek(vec *vec);
 
 #define VECTOR_PEEK(vec, type) (type *)(vector_peek(vec))
 
 /**
- * Appends 'how_many' elements of the same source stored in 'data' into the vec_t by copying how_many * vec->elem_size
+ * Appends 'how_many' elements of the same source stored in 'data' into the vec by copying how_many * vec->elem_size
  * into the vectors memory block.
  *
- * In case the capacity is not sufficient, the vec_t gets automatically resized.
+ * In case the capacity is not sufficient, the vec gets automatically resized.
  *
- * @param vec the vec_t in which the data should be pushed
+ * @param vec the vec in which the data should be pushed
  * @param data non-null pointer to data that should be appended. Must be at least size of one vec->elem_size.
  * @param num_elems number of elements stored in data
  * @return STATUS_OK if success, and STATUS_NULLPTR in case of NULL pointer parameters
  */
-bool vector_repeated_push(vec_t *vec, const void *data, size_t how_often);
+bool vector_repeated_push(vec *vec, const void *data, size_t how_often);
 
 /**
- * Returns a pointer to the last element in this vec_t, or <code>NULL</code> is the vec_t is already empty.
- * The number of elements contained in that vec_t is decreased, too.
+ * Returns a pointer to the last element in this vec, or <code>NULL</code> is the vec is already empty.
+ * The number of elements contained in that vec is decreased, too.
  *
- * @param vec non-null pointer to the vec_t
- * @return Pointer to last element, or <code>NULL</code> if vec_t is empty
+ * @param vec non-null pointer to the vec
+ * @return Pointer to last element, or <code>NULL</code> if vec is empty
  */
-const void *vector_pop(vec_t *vec);
+const void *vector_pop(vec *vec);
 
-bool vector_clear(vec_t *vec);
+bool vector_clear(vec *vec);
 
 /**
- * Shinks the vec_t's internal data block to fits its real size, i.e., remove reserved memory
+ * Shinks the vec's internal data block to fits its real size, i.e., remove reserved memory
  *
  * @param vec
  * @return
  */
-bool vector_shrink(vec_t *vec);
+bool vector_shrink(vec *vec);
 
 /**
- * Increases the capacity of that vec_t according the internal grow factor
- * @param numNewSlots a pointer to a value that will store the number of newly created slots in that vec_t if
+ * Increases the capacity of that vec according the internal grow factor
+ * @param numNewSlots a pointer to a value that will store the number of newly created slots in that vec if
  *                      <code>num_new_slots</code> is non-null. If this parameter is <code>NULL</code>, it is ignored.
- * @param vec non-null pointer to the vec_t that should be grown
+ * @param vec non-null pointer to the vec that should be grown
  * @return STATUS_OK in case of success, and another value indicating an ERROR otherwise.
  */
-bool vector_grow(size_t *numNewSlots, vec_t *vec);
+bool vector_grow(size_t *numNewSlots, vec *vec);
 
-bool vector_grow_to(vec_t *vec, size_t capacity);
+bool vector_grow_to(vec *vec, size_t capacity);
 
 /**
- * Returns the number of elements currently stored in the vec_t
+ * Returns the number of elements currently stored in the vec
  *
- * @param vec the vec_t for which the operation is started
+ * @param vec the vec for which the operation is started
  * @return 0 in case of NULL pointer to 'vec', or the number of elements otherwise.
  */
-size_t vector_length(const vec_t *vec);
+size_t vector_length(const vec *vec);
 
 #define VECTOR_GET(vec, pos, type) (type *) vector_at(vec, pos)
 
@@ -235,41 +235,41 @@ size_t vector_length(const vec_t *vec);
     VECTOR_GET(vec, vectorLength, type);                                                                           \
 })
 
-const void *vector_at(const vec_t *vec, size_t pos);
+const void *vector_at(const vec *vec, size_t pos);
 
 /**
- * Returns the number of elements for which memory is currently reserved in the vec_t
+ * Returns the number of elements for which memory is currently reserved in the vec
  *
- * @param vec the vec_t for which the operation is started
+ * @param vec the vec for which the operation is started
  * @return 0 in case of NULL pointer to 'vec', or the number of elements otherwise.
  */
-size_t vector_capacity(const vec_t *vec);
+size_t vector_capacity(const vec *vec);
 
 /**
  * Set the internal size of <code>vec</code> to its capacity.
  */
-bool vector_enlarge_size_to_capacity(vec_t *vec);
+bool vector_enlarge_size_to_capacity(vec *vec);
 
-bool vector_zero_memory(vec_t *vec);
+bool vector_zero_memory(vec *vec);
 
-bool vector_zero_memory_in_range(vec_t *vec, size_t from, size_t to);
+bool vector_zero_memory_in_range(vec *vec, size_t from, size_t to);
 
-bool vector_set(vec_t *vec, size_t pos, const void *data);
+bool vector_set(vec *vec, size_t pos, const void *data);
 
-bool vector_cpy(vec_t *dst, const vec_t *src);
+bool vector_cpy(vec *dst, const vec *src);
 
-bool vector_cpy_to(vec_t *dst, vec_t *src);
+bool vector_cpy_to(vec *dst, vec *src);
 
 /**
- * Gives raw data access to data stored in the vec_t; do not manipulate this data since otherwise the vec_t
+ * Gives raw data access to data stored in the vec; do not manipulate this data since otherwise the vec
  * might get corrupted.
  *
- * @param vec the vec_t for which the operation is started
- * @return pointer to user-data managed by this vec_t
+ * @param vec the vec for which the operation is started
+ * @return pointer to user-data managed by this vec
  */
-const void *vector_data(const vec_t *vec);
+const void *vector_data(const vec *vec);
 
-char *vector_string(const vec_t ofType(T) *vec,
+char *vector_string(const vec ofType(T) *vec,
                     void (*printerFunc)(memfile *dst, void ofType(T) *values, size_t num_elems));
 
 #define VECTOR_ALL(vec, type) (type *) vector_data(vec)

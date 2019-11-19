@@ -35,10 +35,10 @@ _column_doc_print_object(FILE *file, const column_doc_obj *object, string_dict *
 
 static const char *get_type_name(archive_field_e type);
 
-static void object_array_key_columns_create(vec_t ofType(column_doc_group) *columns);
+static void object_array_key_columns_create(vec ofType(column_doc_group) *columns);
 
 static column_doc_column *object_array_key_columns_find_or_new(
-        vec_t ofType(column_doc_group) *columns, archive_field_sid_t array_key,
+        vec ofType(column_doc_group) *columns, archive_field_sid_t array_key,
         archive_field_sid_t nested_object_entry_key, archive_field_e nested_object_entry_type);
 
 static bool object_array_key_column_push(column_doc_column *col, const doc_entries *entry,
@@ -70,7 +70,7 @@ bool columndoc_create(column_doc *columndoc, const doc *doc,
         return true;
 }
 
-static void object_array_key_columns_drop(vec_t ofType(column_doc_group) *columns);
+static void object_array_key_columns_drop(vec ofType(column_doc_group) *columns);
 
 static void object_meta_model_free(column_doc_obj *columndoc)
 {
@@ -114,68 +114,68 @@ static void object_meta_model_free(column_doc_obj *columndoc)
         vector_drop(&columndoc->string_prop_vals);
 
         for (size_t i = 0; i < columndoc->bool_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->bool_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->bool_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->bool_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->int8_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int8_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int8_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int8_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->int16_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int16_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int16_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int16_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->int32_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int32_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int32_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int32_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->int64_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int64_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int64_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int64_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->uint8_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint8_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint8_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint8_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->uint16_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint16_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint16_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint16_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->uint32_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint32_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint32_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint32_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->ui64_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->ui64_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->ui64_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->ui64_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->float_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->float_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->float_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->float_array_prop_vals);
 
         for (size_t i = 0; i < columndoc->string_array_prop_vals.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->string_array_prop_vals, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->string_array_prop_vals, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->string_array_prop_vals);
 
@@ -194,68 +194,68 @@ static void object_meta_model_free(column_doc_obj *columndoc)
         vector_drop(&columndoc->string_val_idxs);
 
         for (size_t i = 0; i < columndoc->bool_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->bool_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->bool_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->bool_array_idxs);
 
         for (size_t i = 0; i < columndoc->int8_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int8_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int8_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int8_array_idxs);
 
         for (size_t i = 0; i < columndoc->int16_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int16_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int16_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int16_array_idxs);
 
         for (size_t i = 0; i < columndoc->int32_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int32_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int32_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int32_array_idxs);
 
         for (size_t i = 0; i < columndoc->int64_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->int64_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->int64_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->int64_array_idxs);
 
         for (size_t i = 0; i < columndoc->uint8_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint8_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint8_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint8_array_idxs);
 
         for (size_t i = 0; i < columndoc->uint16_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint16_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint16_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint16_array_idxs);
 
         for (size_t i = 0; i < columndoc->uint32_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint32_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint32_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint32_array_idxs);
 
         for (size_t i = 0; i < columndoc->uint64_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->uint64_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->uint64_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->uint64_array_idxs);
 
         for (size_t i = 0; i < columndoc->float_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->float_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->float_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->float_array_idxs);
 
         for (size_t i = 0; i < columndoc->string_array_idxs.num_elems; i++) {
-                vec_t *vec = VECTOR_GET(&columndoc->string_array_idxs, i, vec_t);
-                vector_drop(vec);
+                vec *v = VECTOR_GET(&columndoc->string_array_idxs, i, vec);
+                vector_drop(v);
         }
         vector_drop(&columndoc->string_array_idxs);
 
@@ -324,7 +324,7 @@ bool columndoc_free(column_doc *doc)
 }
 
 static void print_primitive_null(FILE *file, const char *type_name,
-                                 const vec_t ofType(archive_field_sid_t) *key_vector,
+                                 const vec ofType(archive_field_sid_t) *key_vector,
                                  string_dict *dic)
 {
         PRINT_PRIMITIVE_KEY_PART(file, type_name, key_vector, dic, "")
@@ -332,8 +332,8 @@ static void print_primitive_null(FILE *file, const char *type_name,
 }
 
 static bool print_primitive_objects(FILE *file, const char *type_name,
-                                    const vec_t ofType(archive_field_sid_t) *key_vector,
-                                    const vec_t ofType(column_doc_obj) *value_vector,
+                                    const vec ofType(archive_field_sid_t) *key_vector,
+                                    const vec ofType(column_doc_obj) *value_vector,
                                     string_dict *dic)
 {
         PRINT_PRIMITIVE_KEY_PART(file, type_name, key_vector, dic, ", ")
@@ -372,7 +372,7 @@ static bool print_primitive_objects(FILE *file, const char *type_name,
         fprintf(file, "],");                                                                                           \
         fprintf(file, "\"Values\": [ ");                                                                               \
         for (size_t i = 0; i < (&value_vector)->num_elems; i++) {                                                      \
-            const vec_t ofType(TYPE) *values = VECTOR_GET(&value_vector, i, vec_t);               \
+            const vec ofType(TYPE) *values = VECTOR_GET(&value_vector, i, vec);               \
             fprintf(file, "[ ");                                                                                       \
             for (size_t j = 0; j < values->num_elems; j++) {                                                           \
                 TYPE value = *VECTOR_GET(values, j, TYPE);                                                      \
@@ -409,7 +409,7 @@ static bool print_primitive_objects(FILE *file, const char *type_name,
         fprintf(file, "],");                                                                                           \
         fprintf(file, "\"Values\": [ ");                                                                               \
         for (size_t i = 0; i < (&value_vector)->num_elems; i++) {                                                      \
-            const vec_t ofType(archive_field_boolean_t) *values = VECTOR_GET(&value_vector, i, vec_t);      \
+            const vec ofType(archive_field_boolean_t) *values = VECTOR_GET(&value_vector, i, vec);      \
             fprintf(file, "[ ");                                                                                       \
             for (size_t j = 0; j < values->num_elems; j++) {                                                           \
                 archive_field_boolean_t value = *VECTOR_GET(values, j, archive_field_boolean_t);                                    \
@@ -423,8 +423,8 @@ static bool print_primitive_objects(FILE *file, const char *type_name,
 }
 
 static void
-print_array_null(FILE *file, const char *type_name, const vec_t ofType(archive_field_sid_t) *key_vector,
-                 const vec_t ofType(u16) *value_vector, string_dict *dic)
+print_array_null(FILE *file, const char *type_name, const vec ofType(archive_field_sid_t) *key_vector,
+                 const vec ofType(u16) *value_vector, string_dict *dic)
 {
         fprintf(file, "\"%s\": { ", type_name);
         if (!vector_is_empty((key_vector))) {
@@ -453,8 +453,8 @@ print_array_null(FILE *file, const char *type_name, const vec_t ofType(archive_f
 }
 
 static void print_array_strings(FILE *file, const char *type_name,
-                                const vec_t ofType(archive_field_sid_t) *key_vector,
-                                const vec_t ofType(Vector
+                                const vec ofType(archive_field_sid_t) *key_vector,
+                                const vec ofType(Vector
                                                                        ofType(archive_field_sid_t)) *value_vector,
                                 string_dict *dic)
 {
@@ -476,8 +476,8 @@ static void print_array_strings(FILE *file, const char *type_name,
                 fprintf(file, "],");
                 fprintf(file, "\"Values\": [ ");
                 for (size_t i = 0; i < (value_vector)->num_elems; i++) {
-                        const vec_t ofType(archive_field_sid_t) *values = VECTOR_GET(value_vector, i,
-                                                                                                  vec_t);
+                        const vec ofType(archive_field_sid_t) *values = VECTOR_GET(value_vector, i,
+                                                                                                  vec);
                         fprintf(file, "[");
                         for (size_t j = 0; j < values->num_elems; j++) {
                                 archive_field_sid_t value = *VECTOR_GET(values, j, archive_field_sid_t);
@@ -489,8 +489,8 @@ static void print_array_strings(FILE *file, const char *type_name,
                 fprintf(file, "], ");
                 fprintf(file, "\"Values Decoded\": [ ");
                 for (size_t i = 0; i < (value_vector)->num_elems; i++) {
-                        const vec_t ofType(archive_field_sid_t) *values = VECTOR_GET(value_vector, i,
-                                                                                                  vec_t);
+                        const vec ofType(archive_field_sid_t) *values = VECTOR_GET(value_vector, i,
+                                                                                                  vec);
                         fprintf(file, "[");
                         for (size_t j = 0; j < values->num_elems; j++) {
                                 archive_field_sid_t value = *VECTOR_GET(values, j, archive_field_sid_t);
@@ -513,8 +513,8 @@ static void print_array_strings(FILE *file, const char *type_name,
 }
 
 static void print_primitive_strings(FILE *file, const char *type_name,
-                                    const vec_t ofType(archive_field_sid_t) *key_vector,
-                                    const vec_t ofType(archive_field_sid_t) *value_vector,
+                                    const vec ofType(archive_field_sid_t) *key_vector,
+                                    const vec ofType(archive_field_sid_t) *value_vector,
                                     string_dict *dic)
 {
         PRINT_PRIMITIVE_KEY_PART(file, type_name, key_vector, dic, ", ")
@@ -540,7 +540,7 @@ static void print_primitive_strings(FILE *file, const char *type_name,
 
 #define PRINT_COLUMN(file, columnTable, array_idx, type, format_string)                                                \
 {                                                                                                                      \
-    const vec_t *column = VECTOR_GET(&columnTable->values, array_idx, vec_t);                     \
+    const vec *column = VECTOR_GET(&columnTable->values, array_idx, vec);                     \
     fprintf(file, "%s", column->num_elems > 1 ? "[" : "");                                                             \
     for (size_t i = 0; i < column->num_elems; i++) {                                                                   \
         fprintf(file, format_string, *VECTOR_GET(column, i, type));                                             \
@@ -550,7 +550,7 @@ static void print_primitive_strings(FILE *file, const char *type_name,
 }
 
 static bool print_array_objects(FILE *file, const char *type_name,
-                                const vec_t ofType(column_doc_group) *key_columns,
+                                const vec ofType(column_doc_group) *key_columns,
                                 string_dict *dic)
 {
         fprintf(file, "\"%s\": {", type_name);
@@ -605,9 +605,9 @@ static bool print_array_objects(FILE *file, const char *type_name,
                         for (size_t array_idx = 0; array_idx < columnTable->values.num_elems; array_idx++) {
                                 switch (columnTable->type) {
                                         case FIELD_NULL: {
-                                                const vec_t
+                                                const vec
                                                         *column = VECTOR_GET(&columnTable->values, array_idx,
-                                                                          vec_t);
+                                                                          vec);
                                                 fprintf(file, "%s", column->num_elems > 1 ? "[" : "");
                                                 for (size_t i = 0; i < column->num_elems; i++) {
                                                         fprintf(file, "null");
@@ -647,9 +647,9 @@ static bool print_array_objects(FILE *file, const char *type_name,
                                                                            "%f")
                                                 break;
                                         case FIELD_STRING: {
-                                                const vec_t
+                                                const vec
                                                         *column = VECTOR_GET(&columnTable->values, array_idx,
-                                                                          vec_t);
+                                                                          vec);
                                                 fprintf(file, "%s", column->num_elems > 1 ? "[" : "");
                                                 for (size_t i = 0; i < column->num_elems; i++) {
                                                         archive_field_sid_t encodedString = *VECTOR_GET(column, i,
@@ -668,9 +668,9 @@ static bool print_array_objects(FILE *file, const char *type_name,
                                         case FIELD_OBJECT: {
                                                 // column_doc_obj *doc = VECTOR_GET(&column->values, valueIdx, column_doc_obj);
                                                 //  _column_doc_print_object(file, doc, encode);
-                                                const vec_t
+                                                const vec
                                                         *column = VECTOR_GET(&columnTable->values, array_idx,
-                                                                          vec_t);
+                                                                          vec);
                                                 fprintf(file, "%s", column->num_elems > 1 ? "[" : "");
                                                 for (size_t i = 0; i < column->num_elems; i++) {
                                                         const column_doc_obj
@@ -882,12 +882,12 @@ bool columndoc_drop(column_doc *doc)
         return false;
 }
 
-static void object_array_key_columns_create(vec_t ofType(column_doc_group) *columns)
+static void object_array_key_columns_create(vec ofType(column_doc_group) *columns)
 {
         vector_create(columns, sizeof(column_doc_group), 20000);
 }
 
-static void object_array_key_columns_drop(vec_t ofType(column_doc_group) *columns)
+static void object_array_key_columns_drop(vec ofType(column_doc_group) *columns)
 {
         for (size_t i = 0; i < columns->num_elems; i++) {
                 column_doc_group *array_columns = VECTOR_GET(columns, i, column_doc_group);
@@ -896,15 +896,15 @@ static void object_array_key_columns_drop(vec_t ofType(column_doc_group) *column
                         column_doc_column *column = VECTOR_GET(&array_columns->columns, j,
                                                                        column_doc_column);
 
-                        vec_t ofType(u32) *array_indices = &column->array_positions;
-                        vec_t ofType(vec_t ofType(<T>)) *values_for_indicies = &column->values;
+                        vec ofType(u32) *array_indices = &column->array_positions;
+                        vec ofType(vec ofType(<T>)) *values_for_indicies = &column->values;
 
                         JAK_ASSERT (array_indices->num_elems == values_for_indicies->num_elems);
 
                         for (size_t k = 0; k < array_indices->num_elems; k++) {
 
-                                vec_t ofType(<T>)
-                                        *values_for_index = VECTOR_GET(values_for_indicies, k, vec_t);
+                                vec ofType(<T>)
+                                        *values_for_index = VECTOR_GET(values_for_indicies, k, vec);
                                 if (column->type == FIELD_OBJECT) {
                                         for (size_t l = 0; l < values_for_index->num_elems; l++) {
                                                 column_doc_obj *nested_object =
@@ -958,7 +958,7 @@ static const char *get_type_name(archive_field_e type)
 }
 
 static column_doc_column *object_array_key_columns_find_or_new(
-        vec_t ofType(column_doc_group) *columns, archive_field_sid_t array_key,
+        vec ofType(column_doc_group) *columns, archive_field_sid_t array_key,
         archive_field_sid_t nested_object_entry_key, archive_field_e nested_object_entry_type)
 {
         column_doc_group *key_columns;
@@ -993,7 +993,7 @@ static column_doc_column *object_array_key_columns_find_or_new(
         new_column = VECTOR_NEW_AND_GET(&key_columns->columns, column_doc_column);
         new_column->key_name = nested_object_entry_key;
         new_column->type = nested_object_entry_type;
-        vector_create(&new_column->values, sizeof(vec_t), 10);
+        vector_create(&new_column->values, sizeof(vec), 10);
         vector_create(&new_column->array_positions, sizeof(u32), 10);
 
         return new_column;
@@ -1008,7 +1008,7 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
         u32 *entry_array_idx = VECTOR_NEW_AND_GET(&col->array_positions, u32);
         *entry_array_idx = array_idx;
 
-        vec_t ofType(<T>) *values_for_entry = VECTOR_NEW_AND_GET(&col->values, vec_t);
+        vec ofType(<T>) *values_for_entry = VECTOR_NEW_AND_GET(&col->values, vec);
         vector_create(values_for_entry, GET_TYPE_SIZE(entry->type), entry->values.num_elems);
 
         bool is_null_by_def = entry->values.num_elems == 0;
@@ -1115,17 +1115,17 @@ setup_object(column_doc_obj *model, column_doc *parent, archive_field_sid_t key,
         vector_create(&model->float_prop_vals, sizeof(archive_field_number_t), 10);
         vector_create(&model->string_prop_vals, sizeof(archive_field_sid_t), 50);
 
-        vector_create(&model->bool_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->int8_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->int16_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->int32_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->int64_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->uint8_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->uint16_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->uint32_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->ui64_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->float_array_prop_vals, sizeof(vec_t), 10);
-        vector_create(&model->string_array_prop_vals, sizeof(vec_t), 50);
+        vector_create(&model->bool_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->int8_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->int16_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->int32_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->int64_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->uint8_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->uint16_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->uint32_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->ui64_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->float_array_prop_vals, sizeof(vec), 10);
+        vector_create(&model->string_array_prop_vals, sizeof(vec), 50);
         vector_create(&model->null_array_prop_vals, sizeof(u16), 10);
 
         vector_create(&model->bool_val_idxs, sizeof(u32), 10);
@@ -1140,17 +1140,17 @@ setup_object(column_doc_obj *model, column_doc *parent, archive_field_sid_t key,
         vector_create(&model->float_val_idxs, sizeof(u32), 10);
         vector_create(&model->string_val_idxs, sizeof(u32), 50);
 
-        vector_create(&model->bool_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->int8_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->int16_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->int32_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->int64_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->uint8_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->uint16_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->uint32_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->uint64_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->float_array_idxs, sizeof(vec_t), 10);
-        vector_create(&model->string_array_idxs, sizeof(vec_t), 50);
+        vector_create(&model->bool_array_idxs, sizeof(vec), 10);
+        vector_create(&model->int8_array_idxs, sizeof(vec), 10);
+        vector_create(&model->int16_array_idxs, sizeof(vec), 10);
+        vector_create(&model->int32_array_idxs, sizeof(vec), 10);
+        vector_create(&model->int64_array_idxs, sizeof(vec), 10);
+        vector_create(&model->uint8_array_idxs, sizeof(vec), 10);
+        vector_create(&model->uint16_array_idxs, sizeof(vec), 10);
+        vector_create(&model->uint32_array_idxs, sizeof(vec), 10);
+        vector_create(&model->uint64_array_idxs, sizeof(vec), 10);
+        vector_create(&model->float_array_idxs, sizeof(vec), 10);
+        vector_create(&model->string_array_idxs, sizeof(vec), 50);
 
         vector_create(&model->obj_prop_vals, sizeof(column_doc_obj), 10);
 
@@ -1230,18 +1230,18 @@ object_put_primitive(column_doc_obj *columndoc, const doc_entries *entry,
         return true;
 }
 
-static void object_push_array(vec_t ofType(Vector
+static void object_push_array(vec ofType(Vector
                                                                ofType( < T >)) *values, size_t TSize,
                               u32 num_elements,
                               const void *data, archive_field_sid_t key_id,
-                              vec_t ofType(archive_field_sid_t) *key_vector)
+                              vec ofType(archive_field_sid_t) *key_vector)
 {
-        vec_t ofType(<T>) template, *vec_t;
+        vec ofType(<T>) template, *vec;
         size_t idx = vector_length(values);
         vector_push(values, &template, 1);
-        vec_t = VECTOR_GET(values, idx, struct vec_t);
-        vector_create(vec_t, TSize, num_elements);
-        vector_push(vec_t, data, num_elements);
+        vec = VECTOR_GET(values, idx, struct vec);
+        vector_create(vec, TSize, num_elements);
+        vector_push(vec, data, num_elements);
         vector_push(key_vector, &key_id, 1);
 }
 
@@ -1421,7 +1421,7 @@ static bool object_put(column_doc_obj *model, const doc_entries *entry,
 static bool import_object(column_doc_obj *dst, const doc_obj *doc,
                           string_dict *dic)
 {
-        const vec_t ofType(doc_entries) *objectEntries = doc_get_entries(doc);
+        const vec ofType(doc_entries) *objectEntries = doc_get_entries(doc);
         const doc_entries *entries = VECTOR_ALL(objectEntries, doc_entries);
         for (size_t i = 0; i < objectEntries->num_elems; i++) {
                 const doc_entries *entry = entries + i;

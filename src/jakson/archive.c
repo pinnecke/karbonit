@@ -46,7 +46,7 @@
 #define WRITE_ARRAY_VALUES(memfile, values_vec, type)                                                                  \
 {                                                                                                                      \
     for (u32 i = 0; i < values_vec->num_elems; i++) {                                                             \
-        vec_t ofType(type) *nested_values = VECTOR_GET(values_vec, i, vec_t);                     \
+        vec ofType(type) *nested_values = VECTOR_GET(values_vec, i, vec);                     \
         WRITE_PRIMITIVE_VALUES(memfile, nested_values, type);                                                          \
     }                                                                                                                  \
 }
@@ -497,7 +497,7 @@ static const char *array_value_type_to_string(archive_field_e type)
 }
 
 static void
-write_primitive_key_column(memfile *memfile, vec_t ofType(archive_field_sid_t) *keys)
+write_primitive_key_column(memfile *memfile, vec ofType(archive_field_sid_t) *keys)
 {
         archive_field_sid_t *string_ids = VECTOR_ALL(keys, archive_field_sid_t);
         memfile_write(memfile, string_ids, keys->num_elems * sizeof(archive_field_sid_t));
@@ -521,7 +521,7 @@ static void write_var_value_offset_column(memfile *file, offset_t where, offset_
 
 static bool
 write_primitive_fixed_value_column(memfile *memfile, archive_field_e type,
-                                   vec_t ofType(T) *values_vec)
+                                   vec ofType(T) *values_vec)
 {
         JAK_ASSERT (type != FIELD_OBJECT); /** use 'write_primitive_var_value_column' instead */
 
@@ -557,7 +557,7 @@ write_primitive_fixed_value_column(memfile *memfile, archive_field_e type,
 }
 
 static offset_t *__write_primitive_column(memfile *memfile,
-                                              vec_t ofType(column_doc_obj) *values_vec,
+                                              vec ofType(column_doc_obj) *values_vec,
                                               offset_t root_offset)
 {
         offset_t *result = MALLOC(values_vec->num_elems * sizeof(offset_t));
@@ -573,7 +573,7 @@ static offset_t *__write_primitive_column(memfile *memfile,
 }
 
 static bool __write_array_len_column(memfile *memfile, archive_field_e type,
-                                     vec_t ofType(...) *values)
+                                     vec ofType(...) *values)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -590,7 +590,7 @@ static bool __write_array_len_column(memfile *memfile, archive_field_e type,
                 case FIELD_FLOAT:
                 case FIELD_STRING:
                         for (u32 i = 0; i < values->num_elems; i++) {
-                                vec_t *arrays = VECTOR_GET(values, i, vec_t);
+                                vec *arrays = VECTOR_GET(values, i, vec);
                                 memfile_write(memfile, &arrays->num_elems, sizeof(u32));
                         }
                         break;
@@ -603,7 +603,7 @@ static bool __write_array_len_column(memfile *memfile, archive_field_e type,
 }
 
 static bool write_array_value_column(memfile *memfile, archive_field_e type,
-                                     vec_t ofType(...) *values_vec)
+                                     vec ofType(...) *values_vec)
 {
 
         switch (type) {
@@ -640,8 +640,8 @@ static bool write_array_value_column(memfile *memfile, archive_field_e type,
 }
 
 static bool write_array_prop(offset_t *offset, memfile *memfile,
-                             vec_t ofType(archive_field_sid_t) *keys, archive_field_e type,
-                             vec_t ofType(...) *values,
+                             vec ofType(archive_field_sid_t) *keys, archive_field_e type,
+                             vec ofType(...) *values,
                              offset_t root_object_header_offset)
 {
         JAK_ASSERT(keys->num_elems == values->num_elems);
@@ -772,8 +772,8 @@ static bool write_array_props(memfile *memfile, column_doc_obj *columndoc,
 /** Fixed-length property lists; value position can be determined by size of value and position of key in key column.
  * In contrast, variable-length property list require an additional offset column (see 'write_var_props') */
 static bool write_fixed_props(offset_t *offset, memfile *memfile,
-                              vec_t ofType(archive_field_sid_t) *keys, archive_field_e type,
-                              vec_t ofType(T) *values)
+                              vec ofType(archive_field_sid_t) *keys, archive_field_e type,
+                              vec ofType(T) *values)
 {
         JAK_ASSERT(!values || keys->num_elems == values->num_elems);
         JAK_ASSERT(type != FIELD_OBJECT); /** use 'write_var_props' instead */
@@ -803,8 +803,8 @@ static bool write_fixed_props(offset_t *offset, memfile *memfile,
  * the only variable-length value for properties are "JSON objects".
  * In contrast, fixed-length property list doesn't require an additional offset column (see 'write_fixed_props') */
 static bool write_var_props(offset_t *offset, memfile *memfile,
-                            vec_t ofType(archive_field_sid_t) *keys,
-                            vec_t ofType(column_doc_obj) *objects,
+                            vec ofType(archive_field_sid_t) *keys,
+                            vec ofType(column_doc_obj) *objects,
                             offset_t root_object_header_offset)
 {
         JAK_ASSERT(!objects || keys->num_elems == objects->num_elems);
@@ -942,7 +942,7 @@ write_primitive_props(memfile *memfile, column_doc_obj *columndoc,
 }
 
 static bool write_column_entry(memfile *memfile, archive_field_e type,
-                               vec_t ofType(<T>) *column, offset_t root_object_header_offset)
+                               vec ofType(<T>) *column, offset_t root_object_header_offset)
 {
         memfile_write(memfile, &column->num_elems, sizeof(u32));
         switch (type) {
@@ -1003,7 +1003,7 @@ static bool write_column(memfile *memfile, column_doc_column *column,
         memfile_write(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
 
         for (size_t i = 0; i < column->values.num_elems; i++) {
-                vec_t ofType(<T>) *column_data = VECTOR_GET(&column->values, i, vec_t);
+                vec ofType(<T>) *column_data = VECTOR_GET(&column->values, i, vec);
                 offset_t column_entry_offset = memfile_tell(memfile);
                 offset_t relative_entry_offset = column_entry_offset - root_object_header_offset;
                 memfile_seek(memfile, value_entry_offsets + i * sizeof(offset_t));
@@ -1017,7 +1017,7 @@ static bool write_column(memfile *memfile, column_doc_column *column,
 }
 
 static bool write_object_array_props(memfile *memfile,
-                                     vec_t ofType(column_doc_group) *object_key_columns,
+                                     vec ofType(column_doc_group) *object_key_columns,
                                      archive_prop_offs *offsets,
                                      offset_t root_object_header_offset)
 {
@@ -1392,8 +1392,8 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
         packer strategy;
         string_table_header header;
 
-        vec_t ofType (const char *) *strings;
-        vec_t ofType(archive_field_sid_t) *string_ids;
+        vec ofType (const char *) *strings;
+        vec ofType(archive_field_sid_t) *string_ids;
 
         doc_bulk_get_dic_contents(&strings, &string_ids, context);
 

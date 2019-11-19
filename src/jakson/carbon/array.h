@@ -56,7 +56,7 @@ typedef struct arr_it {
         i64 mod_size;
         bool eof;
 
-        vec_t ofType(offset_t) history;
+        vec ofType(offset_t) history;
         field field;
         offset_t field_offset;
 } arr_it;

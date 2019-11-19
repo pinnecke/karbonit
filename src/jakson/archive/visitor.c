@@ -27,14 +27,14 @@
 #include <jakson/archive/query.h>
 
 static void iterate_props(archive *archive, prop_iter *prop_iter,
-                          vec_t ofType(path_entry) *path_stack,
+                          vec ofType(path_entry) *path_stack,
                           visitor *visitor,
                           int mask, void *capture,
                           bool is_root_object, archive_field_sid_t parent_key, u32 parent_key_array_idx);
 
 static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u32 num_pairs,
                             archive_value_vector *value_iter,
-                            vec_t ofType(path_entry) *path_stack,
+                            vec ofType(path_entry) *path_stack,
                             visitor *visitor, int mask, void *capture, bool is_root_object)
 {
         UNUSED(num_pairs);
@@ -153,7 +153,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
 }
 
 static void iterate_props(archive *archive, prop_iter *prop_iter,
-                          vec_t ofType(path_entry) *path_stack,
+                          vec ofType(path_entry) *path_stack,
                           visitor *visitor,
                           int mask, void *capture,
                           bool is_root_object, archive_field_sid_t parent_key, u32 parent_key_array_idx)
@@ -656,7 +656,7 @@ bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
                                visitor *visitor, void *capture)
 {
         prop_iter prop_iter;
-        vec_t ofType(path_entry) path_stack;
+        vec ofType(path_entry) path_stack;
 
         int mask = desc ? desc->visit_mask : ARCHIVE_ITER_MASK_ANY;
 
@@ -675,7 +675,7 @@ bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
 #include <inttypes.h>
 
 void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
-                                        const vec_t ofType(path_entry) *path_stack)
+                                        const vec ofType(path_entry) *path_stack)
 {
 
         query *query = archive_query_default(archive);
@@ -694,7 +694,7 @@ void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
 }
 
 bool archive_visitor_print_path(FILE *file, archive *archive,
-                                    const vec_t ofType(path_entry) *path_stack)
+                                    const vec ofType(path_entry) *path_stack)
 {
         query *query = archive_query_default(archive);
 
@@ -718,7 +718,7 @@ bool archive_visitor_print_path(FILE *file, archive *archive,
         return true;
 }
 
-bool archive_visitor_path_compare(const vec_t ofType(path_entry) *path,
+bool archive_visitor_path_compare(const vec ofType(path_entry) *path,
                                       archive_field_sid_t *group_name, const char *path_str,
                                       archive *archive)
 {

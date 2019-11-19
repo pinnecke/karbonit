@@ -41,7 +41,7 @@ typedef struct carbon_object {
 
         u64 pos;
 
-        vec_t ofType(offset_t) history;
+        vec ofType(offset_t) history;
 
         struct {
                 struct {

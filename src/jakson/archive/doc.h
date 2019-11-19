@@ -35,23 +35,23 @@ typedef struct doc_entries {
         doc_obj *context;
         const char *key;
         archive_field_e type;
-        vec_t ofType(<T>) values;
+        vec ofType(<T>) values;
 } doc_entries;
 
 typedef struct doc_bulk {
         string_dict *dic;
-        vec_t ofType(char *) keys, values;
-        vec_t ofType(doc) models;
+        vec ofType(char *) keys, values;
+        vec ofType(doc) models;
 } doc_bulk;
 
 typedef struct doc {
         doc_bulk *context;
-        vec_t ofType(doc_obj) obj_model;
+        vec ofType(doc_obj) obj_model;
         archive_field_e type;
 } doc;
 
 typedef struct doc_obj {
-        vec_t ofType(doc_entries) entries;
+        vec ofType(doc_entries) entries;
         doc *doc;
 } doc_obj;
 
@@ -63,10 +63,10 @@ bool doc_bulk_print(FILE *file, doc_bulk *bulk);
 
 doc *doc_bulk_new_doc(doc_bulk *context, archive_field_e type);
 doc_obj *doc_bulk_new_obj(doc *model);
-bool doc_bulk_get_dic_contents(vec_t ofType (const char *) **strings, vec_t ofType(archive_field_sid_t) **string_ids, const doc_bulk *context);
+bool doc_bulk_get_dic_contents(vec ofType (const char *) **strings, vec ofType(archive_field_sid_t) **string_ids, const doc_bulk *context);
 
 bool doc_print(FILE *file, const doc *doc);
-const vec_t ofType(doc_entries) *doc_get_entries(const doc_obj *model);
+const vec ofType(doc_entries) *doc_get_entries(const doc_obj *model);
 void doc_print_entries(FILE *file, const doc_entries *entries);
 void doc_drop(doc_obj *model);
 

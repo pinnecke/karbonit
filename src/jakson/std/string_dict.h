@@ -120,7 +120,7 @@ typedef struct string_dict {
         /**
          * Returns all contained (unique) strings and their mapped (unique) ids
          */
-        bool (*get_contents)(string_dict *self, vec_t ofType (char *) *strings, vec_t ofType(archive_field_sid_t) *string_ids);
+        bool (*get_contents)(string_dict *self, vec ofType (char *) *strings, vec ofType(archive_field_sid_t) *string_ids);
 } string_dict;
 
 /**
@@ -192,7 +192,7 @@ static BUILT_IN(bool) string_dict_num_distinct(size_t *num, string_dict *dic)
         return dic->num_distinct(dic, num);
 }
 
-static BUILT_IN(bool) string_dict_get_contents(vec_t ofType (char *) *strings, vec_t ofType(archive_field_sid_t) *string_ids, string_dict *dic)
+static BUILT_IN(bool) string_dict_get_contents(vec ofType (char *) *strings, vec ofType(archive_field_sid_t) *string_ids, string_dict *dic)
 {
         JAK_ASSERT(dic->get_contents);
         return dic->get_contents(dic, strings, string_ids);

@@ -28,12 +28,12 @@ baked-indexes
 string_buffer-id-to-offset
          ::= '#' key-data-offset value-data-offset table-offset num-entries key-data value-data table-data
 key-data
-         ::= vec_t-data                  
+         ::= vec-data                  
 value-data
-        ::= vec_t-data
+        ::= vec-data
 table-data
-         ::= vec_t-data
-vec_t-data
+         ::= vec-data
+vec-data
          ::= '|' element-size-32 num-elements-32 cap-elements-32 grow-factor byte+
 record-size
          ::= u64

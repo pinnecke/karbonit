@@ -35,7 +35,7 @@ typedef struct carbon_path_evaluator {
         arr_it root_it;
         carbon_path_status_e status;
         struct {
-                container_e container_type;
+                container_e container;
                 union {
                         struct {
                                 arr_it it;

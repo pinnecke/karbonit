@@ -264,11 +264,11 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
 
         uint_fast32_t num_elems;
         enum carbon_field_type type;
-        carbon_list_container_e container_type;
+        carbon_list_container_e container;
 
         char sep = '\0';
         const void *base = col_it_values(&type, &num_elems, it);
-        carbon_list_container_type_by_column_type(&container_type, type);
+        carbon_list_container_by_column_type(&container, type);
 
         if (UNLIKELY(num_elems == 0)) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
@@ -277,7 +277,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
                 string_buffer_add(str_buf, "[");
         }
 
-        switch (container_type) {
+        switch (container) {
                 case LIST_CONTAINER_COLUMN_U8:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u8, base, num_elems, sep, IS_NULL_U8)
                         break;

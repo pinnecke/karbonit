@@ -62,14 +62,14 @@ bool carbon_path_evaluator_has_result(carbon_path_evaluator *state)
 
 bool carbon_path_evaluator_end(carbon_path_evaluator *state)
 {
-        switch (state->result.container_type) {
-                case CARBON_OBJECT:
+        switch (state->result.container) {
+                case OBJECT:
                         carbon_object_drop(&state->result.containers.object.it);
                         break;
-                case CARBON_ARRAY:
+                case ARRAY:
                         arr_it_drop(&state->result.containers.array.it);
                         break;
-                case CARBON_COLUMN:
+                case COLUMN:
                         break;
                 default: error(ERR_NOTIMPLEMENTED, NULL);
         }
@@ -221,7 +221,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                         prop_key = internal_carbon_object_prop_name(it);
                         if (prop_key.length == needle_len && strncmp(prop_key.string, needle, needle_len) == 0) {
                                 if (next_path_pos == path_length) {
-                                        state->result.container_type = CARBON_OBJECT;
+                                        state->result.container = OBJECT;
                                         internal_carbon_object_clone(&state->result.containers.object.it, it);
                                         return CARBON_PATH_RESOLVED;
                                 } else {
@@ -470,7 +470,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                         }
                                                 } else {
                                                         /** path end is reached */
-                                                        state->result.container_type = CARBON_ARRAY;
+                                                        state->result.container = ARRAY;
                                                         internal_arr_it_clone(&state->result.containers.array.it, it);
                                                         return CARBON_PATH_RESOLVED;
                                                 }
@@ -532,7 +532,7 @@ static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
                         /** requested index does not exists in this column */
                         return CARBON_PATH_NOSUCHINDEX;
                 } else {
-                        state->result.container_type = CARBON_COLUMN;
+                        state->result.container = COLUMN;
                         col_it_clone(&state->result.containers.column.it, it);
                         state->result.containers.column.elem_pos = requested_idx;
                         return CARBON_PATH_RESOLVED;

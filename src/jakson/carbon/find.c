@@ -116,15 +116,15 @@ bool carbon_find_create(carbon_find *find, carbon_dot_path *path, rec *doc)
 
         carbon_path_evaluator_begin(&find->path_evaluater, path, doc);
         if (carbon_path_evaluator_has_result(&find->path_evaluater)) {
-                switch (find->path_evaluater.result.container_type) {
-                        case CARBON_ARRAY:
+                switch (find->path_evaluater.result.container) {
+                        case ARRAY:
                                 result_from_array(find, &find->path_evaluater.result.containers.array.it);
                                 break;
-                        case CARBON_COLUMN:
+                        case COLUMN:
                                 result_from_column(find, find->path_evaluater.result.containers.column.elem_pos,
                                                    &find->path_evaluater.result.containers.column.it);
                                 break;
-                        case CARBON_OBJECT:
+                        case OBJECT:
                                 result_from_object(find, &find->path_evaluater.result.containers.object.it);
                                 break;
                         default:
@@ -376,7 +376,7 @@ bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation)
 
                 derived_e derive_marker;
                 carbon_list_container_e list_container;
-                carbon_list_container_type_by_column_type(&list_container, it->field_type);
+                carbon_list_container_by_column_type(&list_container, it->field_type);
                 abstract_derive_list_to(&derive_marker, list_container, derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 

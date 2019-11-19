@@ -81,11 +81,11 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, internal_arr_it_u
         if (create(&updater, context, path)) {                                                                         \
                 if (resolve_path(&updater) && path_resolved(&updater)) {                                               \
                                                                                                                        \
-                        switch (updater.path_evaluater.result.container_type) {                                        \
-                        case CARBON_ARRAY:                                                                              \
+                        switch (updater.path_evaluater.result.container) {                                        \
+                        case ARRAY:                                                                              \
                                 array_exec;                                                                            \
                                 break;                                                                                 \
-                        case CARBON_COLUMN: {                                                                           \
+                        case COLUMN: {                                                                           \
                                 u32 elem_pos;                                                                          \
                                 col_it *it = column_iterator(&elem_pos, &updater);                     \
                                 column_exec;                                                                           \

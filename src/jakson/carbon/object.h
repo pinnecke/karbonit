@@ -15,8 +15,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CARBON_OBJECT_H
-#define CARBON_OBJECT_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>

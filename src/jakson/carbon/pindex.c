@@ -1277,7 +1277,7 @@ bool pindex_it_open(pindex_it *it, pindex *index,
                 ZERO_MEMORY(it, sizeof(pindex_it));
                 memfile_open(&it->memfile, index->memfile.memblock, READ_ONLY);
                 it->doc = doc;
-                it->container = CARBON_ARRAY;
+                it->container = ARRAY;
                 return true;
         } else {
                 return error(ERR_NOTINDEXED, NULL);

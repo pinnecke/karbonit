@@ -127,16 +127,16 @@ typedef enum carbon_field_type {
 } field_type_e;
 
 typedef enum col_it_type {
-        CARBON_COLUMN_TYPE_U8,
-        CARBON_COLUMN_TYPE_U16,
-        CARBON_COLUMN_TYPE_U32,
-        CARBON_COLUMN_TYPE_U64,
-        CARBON_COLUMN_TYPE_I8,
-        CARBON_COLUMN_TYPE_I16,
-        CARBON_COLUMN_TYPE_I32,
-        CARBON_COLUMN_TYPE_I64,
-        CARBON_COLUMN_TYPE_FLOAT,
-        CARBON_COLUMN_TYPE_BOOLEAN
+        COLUMN_TYPE_U8,
+        COLUMN_TYPE_U16,
+        COLUMN_TYPE_U32,
+        COLUMN_TYPE_U64,
+        COLUMN_TYPE_I8,
+        COLUMN_TYPE_I16,
+        COLUMN_TYPE_I32,
+        COLUMN_TYPE_I64,
+        COLUMN_TYPE_FLOAT,
+        COLUMN_TYPE_BOOLEAN
 } col_it_type_e;
 
 typedef enum carbon_field_class {

@@ -196,13 +196,13 @@ bool carbon_revise_remove(const char *dot_path, rev *context)
                 if (eval.status != CARBON_PATH_RESOLVED) {
                         result = false;
                 } else {
-                        switch (eval.result.container_type) {
-                                case CARBON_ARRAY: {
+                        switch (eval.result.container) {
+                                case ARRAY: {
                                         arr_it *it = &eval.result.containers.array.it;
                                         result = internal_arr_it_remove(it);
                                 }
                                         break;
-                                case CARBON_COLUMN: {
+                                case COLUMN: {
                                         col_it *it = &eval.result.containers.column.it;
                                         u32 elem_pos = eval.result.containers.column.elem_pos;
                                         result = col_it_remove(it, elem_pos);

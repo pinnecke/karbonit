@@ -13,7 +13,7 @@ int main (void)
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
 
-    nested_ins = carbon_insert_column_begin(&state, ins, CARBON_COLUMN_TYPE_U32, 1024);
+    nested_ins = carbon_insert_column_begin(&state, ins, COLUMN_TYPE_U32, 1024);
         carbon_insert_u32(nested_ins, 23);
         carbon_insert_null(nested_ins);
         carbon_insert_u32(nested_ins, 42);

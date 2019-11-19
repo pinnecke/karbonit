@@ -510,100 +510,100 @@ field_type_e carbon_field_type_for_column(list_type_e derivation, col_it_type_e 
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:
                         switch (type) {
-                                case CARBON_COLUMN_TYPE_U8:
+                                case COLUMN_TYPE_U8:
                                         return CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_U16:
+                                case COLUMN_TYPE_U16:
                                         return CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_U32:
+                                case COLUMN_TYPE_U32:
                                         return CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_U64:
+                                case COLUMN_TYPE_U64:
                                         return CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I8:
+                                case COLUMN_TYPE_I8:
                                         return CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I16:
+                                case COLUMN_TYPE_I16:
                                         return CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I32:
+                                case COLUMN_TYPE_I32:
                                         return CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I64:
+                                case COLUMN_TYPE_I64:
                                         return CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_FLOAT:
+                                case COLUMN_TYPE_FLOAT:
                                         return CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_SORTED_MULTISET:
                         switch (type) {
-                                case CARBON_COLUMN_TYPE_U8:
+                                case COLUMN_TYPE_U8:
                                         return CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_U16:
+                                case COLUMN_TYPE_U16:
                                         return CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_U32:
+                                case COLUMN_TYPE_U32:
                                         return CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_U64:
+                                case COLUMN_TYPE_U64:
                                         return CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I8:
+                                case COLUMN_TYPE_I8:
                                         return CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I16:
+                                case COLUMN_TYPE_I16:
                                         return CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I32:
+                                case COLUMN_TYPE_I32:
                                         return CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_I64:
+                                case COLUMN_TYPE_I64:
                                         return CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_FLOAT:
+                                case COLUMN_TYPE_FLOAT:
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET;
-                                case CARBON_COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_UNSORTED_SET:
                         switch (type) {
-                                case CARBON_COLUMN_TYPE_U8:
+                                case COLUMN_TYPE_U8:
                                         return CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_U16:
+                                case COLUMN_TYPE_U16:
                                         return CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_U32:
+                                case COLUMN_TYPE_U32:
                                         return CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_U64:
+                                case COLUMN_TYPE_U64:
                                         return CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_I8:
+                                case COLUMN_TYPE_I8:
                                         return CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_I16:
+                                case COLUMN_TYPE_I16:
                                         return CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_I32:
+                                case COLUMN_TYPE_I32:
                                         return CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_I64:
+                                case COLUMN_TYPE_I64:
                                         return CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_FLOAT:
+                                case COLUMN_TYPE_FLOAT:
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET;
-                                case CARBON_COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_SORTED_SET:
                         switch (type) {
-                                case CARBON_COLUMN_TYPE_U8:
+                                case COLUMN_TYPE_U8:
                                         return CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_U16:
+                                case COLUMN_TYPE_U16:
                                         return CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_U32:
+                                case COLUMN_TYPE_U32:
                                         return CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_U64:
+                                case COLUMN_TYPE_U64:
                                         return CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_I8:
+                                case COLUMN_TYPE_I8:
                                         return CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_I16:
+                                case COLUMN_TYPE_I16:
                                         return CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_I32:
+                                case COLUMN_TYPE_I32:
                                         return CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_I64:
+                                case COLUMN_TYPE_I64:
                                         return CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_FLOAT:
+                                case COLUMN_TYPE_FLOAT:
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET;
-                                case CARBON_COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;

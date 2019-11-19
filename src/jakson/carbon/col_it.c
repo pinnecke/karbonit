@@ -315,9 +315,9 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
         memfile_seek(&it->file, it->begin);
 
         derived_e derive_marker;
-        carbon_list_container_e container_type;
-        carbon_list_container_type_by_column_type(&container_type, it->field_type);
-        abstract_derive_list_to(&derive_marker, container_type, derivation);
+        carbon_list_container_e container;
+        carbon_list_container_by_column_type(&container, it->field_type);
+        abstract_derive_list_to(&derive_marker, container, derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 
         memfile_restore_position(&it->file);

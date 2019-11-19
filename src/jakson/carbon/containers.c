@@ -18,7 +18,7 @@
 #include <jakson/carbon/containers.h>
 #include <jakson/carbon/field.h>
 
-bool carbon_list_container_type_by_column_type(carbon_list_container_e *out, int field_type)
+bool carbon_list_container_by_column_type(carbon_list_container_e *out, int field_type)
 {
         switch (field_type) {
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:

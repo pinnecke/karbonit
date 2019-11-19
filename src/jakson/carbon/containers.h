@@ -20,8 +20,8 @@ extern "C" {
 //  container types (lists/maps)
 // ---------------------------------------------------------------------------------------------------------------------
 
-typedef enum container_type {
-    CARBON_OBJECT, CARBON_ARRAY, CARBON_COLUMN
+typedef enum container {
+    OBJECT, ARRAY, COLUMN
 } container_e;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ typedef enum carbon_list_container {
     LIST_CONTAINER_COLUMN_FLOAT = CARBON_MCOLUMN_FLOAT
 } carbon_list_container_e;
 
-bool carbon_list_container_type_by_column_type(carbon_list_container_e *out, int field_type);
+bool carbon_list_container_by_column_type(carbon_list_container_e *out, int field_type);
 
 #ifdef __cplusplus
 }

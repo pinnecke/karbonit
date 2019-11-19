@@ -41,9 +41,9 @@ if (UNLIKELY(inserter->context_type == CARBON_COLUMN && inserter->context.column
 static bool
 write_field_data(carbon_insert *inserter, u8 field_type_marker, const void *base, u64 nbytes);
 
-static bool push_in_column(carbon_insert *inserter, const void *base, carbon_field_type_e type);
+static bool push_in_column(carbon_insert *inserter, const void *base, field_type_e type);
 
-static bool push_media_type_for_array(carbon_insert *inserter, carbon_field_type_e type);
+static bool push_media_type_for_array(carbon_insert *inserter, field_type_e type);
 
 static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos);
 
@@ -587,7 +587,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
         error_if_and_return(inserter_in->context_type != CARBON_ARRAY && inserter_in->context_type != CARBON_OBJECT,
                      ERR_UNSUPPCONTAINER, NULL);
 
-        carbon_field_type_e field_type = carbon_field_type_for_column(derivation, type);
+        field_type_e field_type = carbon_field_type_for_column(derivation, type);
 
         *state_out = (carbon_insert_column_state) {
                 .parent_inserter = inserter_in,
@@ -931,7 +931,7 @@ write_field_data(carbon_insert *inserter, u8 field_type_marker, const void *base
         return memfile_write(&inserter->memfile, base, nbytes);
 }
 
-static bool push_in_column(carbon_insert *inserter, const void *base, carbon_field_type_e type)
+static bool push_in_column(carbon_insert *inserter, const void *base, field_type_e type)
 {
         JAK_ASSERT(inserter->context_type == CARBON_COLUMN);
 
@@ -974,7 +974,7 @@ static bool push_in_column(carbon_insert *inserter, const void *base, carbon_fie
         return true;
 }
 
-static bool push_media_type_for_array(carbon_insert *inserter, carbon_field_type_e type)
+static bool push_media_type_for_array(carbon_insert *inserter, field_type_e type)
 {
         memfile_ensure_space(&inserter->memfile, sizeof(media_type));
         return carbon_media_write(&inserter->memfile, type);

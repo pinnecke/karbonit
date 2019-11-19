@@ -65,7 +65,7 @@ typedef struct carbon_insert_object_state {
 
 typedef struct carbon_insert_column_state {
         carbon_insert *parent_inserter;
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_column *nested_column;
         carbon_insert nested_inserter;
         offset_t column_begin, column_end;
@@ -78,12 +78,12 @@ bool carbon_int_insert_column(memfile *memfile_in, list_derivable_e derivation, 
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.
  */
-size_t carbon_int_get_type_size_encoded(carbon_field_type_e type);
+size_t carbon_int_get_type_size_encoded(field_type_e type);
 
 /**
  * Returns the number of bytes required to store a field value of a particular type exclusing its type marker.
  */
-size_t carbon_int_get_type_value_size(carbon_field_type_e type);
+size_t carbon_int_get_type_value_size(field_type_e type);
 
 bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
 bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
@@ -116,7 +116,7 @@ bool carbon_int_field_auto_close(field_access *it);
 bool carbon_int_field_access_object_it_opened(field_access *field);
 bool carbon_int_field_access_array_opened(field_access *field);
 bool carbon_int_field_access_column_it_opened(field_access *field);
-bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field);
+bool carbon_int_field_access_field_type(field_type_e *type, field_access *field);
 bool carbon_int_field_access_bool_value(bool *value, field_access *field);
 bool carbon_int_field_access_is_null(bool *is_null, field_access *field);
 bool carbon_int_field_access_u8_value(u8 *value, field_access *field);
@@ -143,7 +143,7 @@ void carbon_int_auto_close_nested_array(field_access *field);
 void carbon_int_auto_close_nested_object_it(field_access *field);
 void carbon_int_auto_close_nested_column_it(field_access *field);
 
-bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type);
+bool carbon_int_field_remove(memfile *memfile, field_type_e type);
 
 /**
  * For <code>mode</code>, see <code>carbon_create_begin</code>

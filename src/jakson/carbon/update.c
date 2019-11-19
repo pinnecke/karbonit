@@ -24,7 +24,7 @@
 
 #define try_array_update(type_match, in_place_update_fn, insert_fn)                                                    \
 ({                                                                                                                     \
-        carbon_field_type_e type_is = 0;                                                                            \
+        field_type_e type_is = 0;                                                                            \
         carbon_array_field_type(&type_is, it);                                                                      \
         bool status = false;                                                                                           \
         switch (type_is) {                                                                                             \
@@ -388,7 +388,7 @@ bool carbon_update_set_array_end(carbon_insert_array_state *state_in)
 
 carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
                                                          carbon_insert_column_state *state_out,
-                                                         carbon_field_type_e type, u64 column_capacity)
+                                                         field_type_e type, u64 column_capacity)
 {
         // TODO: Implement
         UNUSED(state_out);
@@ -561,7 +561,7 @@ bool carbon_update_set_array_end_compiled(carbon_insert_array_state *state_in)
 carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
                                                                   const carbon_dot_path *path,
                                                                   carbon_insert_column_state *state_out,
-                                                                  carbon_field_type_e type,
+                                                                  field_type_e type,
                                                                   u64 column_capacity)
 {
         // TODO: Implement
@@ -697,7 +697,7 @@ bool carbon_update_one_set_array_end(carbon_insert_array_state *state_in)
 
 carbon_insert *carbon_update_one_set_column_begin(carbon_insert_column_state *state_out,
                                                              const char *dot_path, rec *rev_doc,
-                                                             rec *doc, carbon_field_type_e type,
+                                                             rec *doc, field_type_e type,
                                                              u64 column_capacity)
 {
         rev revise;
@@ -839,7 +839,7 @@ bool carbon_update_one_set_array_end_compiled(carbon_insert_array_state *state_i
 carbon_insert *carbon_update_one_set_column_begin_compiled(
         carbon_insert_column_state *state_out, const carbon_dot_path *path,
         rec *rev_doc,
-        rec *doc, carbon_field_type_e type, u64 column_capacity)
+        rec *doc, field_type_e type, u64 column_capacity)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);

@@ -35,7 +35,7 @@
 bool internal_carbon_array_update_##type_name(carbon_array *it, type_name value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
-        if (LIKELY(it->field_access.it_field_type == field_type)) {                                                    \
+        if (LIKELY(it->field_access.type == field_type)) {                                                    \
                 memfile_save_position(&it->memfile);                                                                   \
                 internal_carbon_array_offset(&datum, it);                                                                 \
                 memfile_seek(&it->memfile, datum + sizeof(u8));                                                        \
@@ -70,7 +70,7 @@ static bool update_in_place_constant(carbon_array *it, carbon_constant_e constan
 {
         memfile_save_position(&it->memfile);
 
-        if (carbon_field_type_is_constant(it->field_access.it_field_type)) {
+        if (carbon_field_type_is_constant(it->field_access.type)) {
                 u8 value;
                 switch (constant) {
                         case CARBON_CONSTANT_TRUE:
@@ -454,7 +454,7 @@ void carbon_array_insert_end(carbon_insert *inserter)
 
 bool internal_carbon_array_remove(carbon_array *it)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         if (carbon_array_field_type(&type, it)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
                 memfile_seek(&it->memfile, prev_off);
@@ -500,7 +500,7 @@ void carbon_array_update_type(carbon_array *it, list_derivable_e derivation)
         memfile_restore_position(&it->memfile);
 }
 
-bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it)
+bool carbon_array_field_type(field_type_e *type, carbon_array *it)
 {
         return carbon_int_field_access_field_type(type, &it->field_access);
 }

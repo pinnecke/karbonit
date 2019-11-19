@@ -143,7 +143,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                                                         carbon_array *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
-        carbon_field_type_e type;
+        field_type_e type;
         //const char *string;
         //carbon_binary binary;
         //u64 string_len;
@@ -322,7 +322,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                                          struct carbon_object *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
-        carbon_field_type_e type;
+        field_type_e type;
 
         string_buffer_add(str_buf, "{");
         char sep = '\0';

@@ -53,7 +53,7 @@ struct pindex_node {
                 } key;
         } entry;
 
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         offset_t field_offset;
 
         vector ofType(struct pindex_node) sub_entries;
@@ -137,7 +137,7 @@ static void pindex_node_new_object_prop(struct pindex_node *node, offset_t key_o
         node->field_offset = value_off;
 }
 
-static void pindex_node_set_field_type(struct pindex_node *node, carbon_field_type_e field_type)
+static void pindex_node_set_field_type(struct pindex_node *node, field_type_e field_type)
 {
         node->field_type = field_type;
 }
@@ -267,8 +267,8 @@ static void array_traverse(struct pindex_node *parent, carbon_array *it)
 
 static void column_traverse(struct pindex_node *parent, carbon_column *it)
 {
-        carbon_field_type_e column_type;
-        carbon_field_type_e entry_type;
+        field_type_e column_type;
+        field_type_e entry_type;
         u32 nvalues = 0;
 
         carbon_column_values_info(&column_type, &nvalues, it);
@@ -301,7 +301,7 @@ static void object_traverse(struct pindex_node *parent, carbon_object *it)
 
 static void object_build_index(struct pindex_node *parent, carbon_object *elem_it)
 {
-        carbon_field_type_e field_type = 0;;
+        field_type_e field_type = 0;;
         internal_carbon_object_prop_type(&field_type, elem_it);
         pindex_node_set_field_type(parent, field_type);
 
@@ -392,7 +392,7 @@ static void object_build_index(struct pindex_node *parent, carbon_object *elem_i
 
 static void array_build_index(struct pindex_node *parent, carbon_array *elem_it)
 {
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         carbon_array_field_type(&field_type, elem_it);
         pindex_node_set_field_type(parent, field_type);
 

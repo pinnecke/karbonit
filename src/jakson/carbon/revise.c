@@ -295,7 +295,7 @@ static bool internal_pack_array(carbon_array *it)
         /** shrink contained containers */
         {
                 while (carbon_array_next(it)) {
-                        carbon_field_type_e type;
+                        field_type_e type;
                         carbon_array_field_type(&type, it);
                         switch (type) {
                                 case CARBON_FIELD_NULL:
@@ -438,7 +438,7 @@ static bool internal_pack_object(carbon_object *it)
         /** shrink contained containers */
         {
                 while (carbon_object_next(it)) {
-                        carbon_field_type_e type;
+                        field_type_e type;
                         internal_carbon_object_prop_type(&type, it);
                         switch (type) {
                                 case CARBON_FIELD_NULL:

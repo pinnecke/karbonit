@@ -28,7 +28,7 @@
 
 #define safe_cast(builtin_type, nvalues, it, field_type_expr)                                                          \
 ({                                                                                                                     \
-        carbon_field_type_e type;                                                                                  \
+        field_type_e type;                                                                                  \
         const void *raw = carbon_column_values(&type, nvalues, it);                                             \
         error_if_and_return(!(field_type_expr), ERR_TYPEMISMATCH, NULL);                                              \
         (const builtin_type *) raw;                                                                                    \
@@ -54,7 +54,7 @@ bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_s
 
         u8 marker = *memfile_read(&it->memfile, sizeof(u8));
 
-        carbon_field_type_e type = (carbon_field_type_e) marker;
+        field_type_e type = (field_type_e) marker;
         it->type = type;
 
         it->num_and_capacity_start_offset = memfile_tell(&it->memfile);
@@ -118,7 +118,7 @@ offset_t carbon_column_tell(carbon_column *it, u32 elem_idx)
         }
 }
 
-bool carbon_column_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_column *it)
+bool carbon_column_values_info(field_type_e *type, u32 *nvalues, carbon_column *it)
 {
         if (nvalues) {
                 memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
@@ -133,7 +133,7 @@ bool carbon_column_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_c
 
 bool carbon_column_value_is_null(carbon_column *it, u32 pos)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         u32 nvalues = 0;
         carbon_column_values_info(&type, &nvalues, it);
         error_if_and_return(pos >= nvalues, ERR_OUTOFBOUNDS, NULL);
@@ -193,7 +193,7 @@ bool carbon_column_value_is_null(carbon_column *it, u32 pos)
         }
 }
 
-const void *carbon_column_values(carbon_field_type_e *type, u32 *nvalues, carbon_column *it)
+const void *carbon_column_values(field_type_e *type, u32 *nvalues, carbon_column *it)
 {
         memfile_seek(&it->memfile, it->num_and_capacity_start_offset);
         u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->memfile);
@@ -493,7 +493,7 @@ static bool rewrite_column_to_array(carbon_column *it)
         internal_carbon_array_create(&array, &it->memfile, array_marker_begin);
         carbon_array_insert_begin(&array_ins, &array);
 
-        carbon_field_type_e type;
+        field_type_e type;
         u32 num_values;
         const void *data = carbon_column_values(&type, &num_values, it);
         switch (type) {

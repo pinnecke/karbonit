@@ -45,7 +45,7 @@ bool carbon_find_begin(carbon_find *out, const char *dot_path, rec *doc)
 bool carbon_find_end(carbon_find *find)
 {
         if (carbon_find_has_result(find)) {
-                carbon_field_type_e type;
+                field_type_e type;
                 carbon_find_result_type(&type, find);
                 switch (type) {
                         case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -147,7 +147,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
         carbon_printer_by_type(&printer, print_type);
 
         if (carbon_find_has_result(find)) {
-                carbon_field_type_e result_type;
+                field_type_e result_type;
                 carbon_find_result_type(&result_type, find);
                 switch (result_type) {
                         case CARBON_FIELD_NULL:
@@ -312,7 +312,7 @@ char *carbon_find_result_to_json_compact_dup(carbon_find *find)
         return ret;
 }
 
-bool carbon_find_result_type(carbon_field_type_e *type, carbon_find *find)
+bool carbon_find_result_type(field_type_e *type, carbon_find *find)
 {
         if(!carbon_path_evaluator_has_result(&find->path_evaluater)) {
             return false;
@@ -324,7 +324,7 @@ bool carbon_find_result_type(carbon_field_type_e *type, carbon_find *find)
 
 bool carbon_find_update_array_type(carbon_find *find, list_derivable_e derivation)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 memfile mod;
@@ -343,7 +343,7 @@ bool carbon_find_update_array_type(carbon_find *find, list_derivable_e derivatio
 
 bool carbon_find_array_is_multiset(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 carbon_array *it = carbon_find_result_array(find);
@@ -355,7 +355,7 @@ bool carbon_find_array_is_multiset(carbon_find *find)
 
 bool carbon_find_array_is_sorted(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 carbon_array *it = carbon_find_result_array(find);
@@ -367,7 +367,7 @@ bool carbon_find_array_is_sorted(carbon_find *find)
 
 bool carbon_find_update_column_type(carbon_find *find, list_derivable_e derivation)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_column_or_subtype(type)) {
                 carbon_column *it = carbon_find_result_column(find);
@@ -389,7 +389,7 @@ bool carbon_find_update_column_type(carbon_find *find, list_derivable_e derivati
 
 bool carbon_find_column_is_multiset(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_column_or_subtype(type)) {
                 carbon_column *it = carbon_find_result_column(find);
@@ -401,7 +401,7 @@ bool carbon_find_column_is_multiset(carbon_find *find)
 
 bool carbon_find_column_is_sorted(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_column_or_subtype(type)) {
                 carbon_column *it = carbon_find_result_column(find);
@@ -413,7 +413,7 @@ bool carbon_find_column_is_sorted(carbon_find *find)
 
 bool carbon_find_update_object_type(carbon_find *find, map_derivable_e derivation)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
                 carbon_object *it = carbon_find_result_object(find);
@@ -434,7 +434,7 @@ bool carbon_find_update_object_type(carbon_find *find, map_derivable_e derivatio
 
 bool carbon_find_object_is_multimap(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
                 carbon_object *it = carbon_find_result_object(find);
@@ -446,7 +446,7 @@ bool carbon_find_object_is_multimap(carbon_find *find)
 
 bool carbon_find_object_is_sorted(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
                 carbon_object *it = carbon_find_result_object(find);
@@ -458,7 +458,7 @@ bool carbon_find_object_is_sorted(carbon_find *find)
 
 bool carbon_find_multimap(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_object_or_subtype(type)) {
                 return carbon_find_object_is_multimap(find);
@@ -469,7 +469,7 @@ bool carbon_find_multimap(carbon_find *find)
 
 bool carbon_find_multiset(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 return carbon_find_array_is_multiset(find);
@@ -482,7 +482,7 @@ bool carbon_find_multiset(carbon_find *find)
 
 bool carbon_find_sorted(carbon_find *find)
 {
-        carbon_field_type_e type;
+        field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 return carbon_find_array_is_sorted(find);
@@ -637,7 +637,7 @@ bool carbon_find_drop(carbon_find *find)
 
 static void result_from_array(carbon_find *find, carbon_array *it)
 {
-        find->type = it->field_access.it_field_type;
+        find->type = it->field_access.type;
         switch (find->type) {
                 case CARBON_FIELD_NULL:
                 case CARBON_FIELD_TRUE:

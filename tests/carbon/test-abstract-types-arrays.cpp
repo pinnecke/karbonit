@@ -119,7 +119,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         rec doc, doc2;
         carbon_insert_array_state s1;
         carbon_array it, *sub_it;
-        carbon_field_type_e ft;
+        field_type_e ft;
         rev rev_context;
 
         ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -248,7 +248,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
 
         rec doc, doc2, doc3, doc4, doc5;
         carbon_find find;
-        carbon_field_type_e ft;
+        field_type_e ft;
         rev revise;
 
         carbon_from_json(&doc, "{ x: [ { y: [1,\"b\",3] } ] }", CARBON_KEY_NOKEY, NULL);

@@ -87,7 +87,7 @@ bool carbon_path_exists(rec *doc, const char *path)
 bool carbon_path_is_array(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -102,7 +102,7 @@ bool carbon_path_is_array(rec *doc, const char *path)
 bool carbon_path_is_column(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -117,7 +117,7 @@ bool carbon_path_is_column(rec *doc, const char *path)
 bool carbon_path_is_object(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -138,7 +138,7 @@ bool carbon_path_is_container(rec *doc, const char *path)
 bool carbon_path_is_null(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -153,7 +153,7 @@ bool carbon_path_is_null(rec *doc, const char *path)
 bool carbon_path_is_number(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -168,7 +168,7 @@ bool carbon_path_is_number(rec *doc, const char *path)
 bool carbon_path_is_boolean(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -183,7 +183,7 @@ bool carbon_path_is_boolean(rec *doc, const char *path)
 bool carbon_path_is_string(rec *doc, const char *path)
 {
         carbon_find find;
-        carbon_field_type_e field_type;
+        field_type_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
@@ -228,7 +228,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                         /** path end not reached, traverse further if possible */
                                         JAK_ASSERT(next_path_pos < path_length);
 
-                                        carbon_field_type_e prop_type;
+                                        field_type_e prop_type;
                                         internal_carbon_object_prop_type(&prop_type, it);
 
                                         if (!carbon_field_type_is_traversable(prop_type)) {
@@ -375,7 +375,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
         JAK_ASSERT(it);
         JAK_ASSERT(current_path_pos < path->path_len);
 
-        DECLARE_AND_INIT(carbon_field_type_e, elem_type)
+        DECLARE_AND_INIT(field_type_e, elem_type)
         DECLARE_AND_INIT(carbon_dot_node_type_e, node_type)
         DECLARE_AND_INIT(u32, path_length)
         DECLARE_AND_INIT(carbon_path_status_e, status)
@@ -517,7 +517,7 @@ static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
         DECLARE_AND_INIT(u32, requested_idx)
         DECLARE_AND_INIT(u32, nun_values_contained)
         DECLARE_AND_INIT(carbon_dot_node_type_e, node_type)
-        DECLARE_AND_INIT(carbon_field_type_e, column_type)
+        DECLARE_AND_INIT(field_type_e, column_type)
         carbon_dot_path_len(&total_path_len, path);
         if (current_path_pos + 1 != total_path_len) {
                 /** a column cannot contain further containers; since the current path node is not

@@ -38,7 +38,7 @@ typedef struct carbon_column {
         offset_t num_and_capacity_start_offset;
         offset_t column_start_offset;
 
-        carbon_field_type_e type;
+        field_type_e type;
 
         list_derivable_e abstract_type;
 
@@ -58,8 +58,8 @@ bool carbon_column_fast_forward(carbon_column *it);
 offset_t carbon_column_memfilepos(carbon_column *it);
 offset_t carbon_column_tell(carbon_column *it, u32 elem_idx);
 
-const void *carbon_column_values(carbon_field_type_e *type, u32 *nvalues, carbon_column *it);
-bool carbon_column_values_info(carbon_field_type_e *type, u32 *nvalues, carbon_column *it);
+const void *carbon_column_values(field_type_e *type, u32 *nvalues, carbon_column *it);
+bool carbon_column_values_info(field_type_e *type, u32 *nvalues, carbon_column *it);
 
 bool carbon_column_value_is_null(carbon_column *it, u32 pos);
 

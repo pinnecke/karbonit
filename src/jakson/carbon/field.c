@@ -27,7 +27,7 @@
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/abstract.h>
 
-const char *carbon_field_type_str(carbon_field_type_e type)
+const char *carbon_field_type_str(field_type_e type)
 {
         switch (type) {
                 case CARBON_FIELD_NULL:
@@ -161,13 +161,13 @@ const char *carbon_field_type_str(carbon_field_type_e type)
         }
 }
 
-bool carbon_field_type_is_traversable(carbon_field_type_e type)
+bool carbon_field_type_is_traversable(field_type_e type)
 {
         return carbon_field_type_is_object_or_subtype(type) ||
                 carbon_field_type_is_list_or_subtype(type);
 }
 
-bool carbon_field_type_is_signed(carbon_field_type_e type)
+bool carbon_field_type_is_signed(field_type_e type)
 {
         return (type == CARBON_FIELD_NUMBER_I8 || type == CARBON_FIELD_NUMBER_I16 ||
                 type == CARBON_FIELD_NUMBER_I32 || type == CARBON_FIELD_NUMBER_I64 ||
@@ -189,7 +189,7 @@ bool carbon_field_type_is_signed(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET);
 }
 
-bool carbon_field_type_is_unsigned(carbon_field_type_e type)
+bool carbon_field_type_is_unsigned(field_type_e type)
 {
         return (type == CARBON_FIELD_NUMBER_U8 || type == CARBON_FIELD_NUMBER_U16 ||
                 type == CARBON_FIELD_NUMBER_U32 || type == CARBON_FIELD_NUMBER_U64 ||
@@ -211,7 +211,7 @@ bool carbon_field_type_is_unsigned(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET);
 }
 
-bool carbon_field_type_is_floating(carbon_field_type_e type)
+bool carbon_field_type_is_floating(field_type_e type)
 {
         return (type == CARBON_FIELD_NUMBER_FLOAT || type == CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||
@@ -219,22 +219,22 @@ bool carbon_field_type_is_floating(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET);
 }
 
-bool carbon_field_type_is_number(carbon_field_type_e type)
+bool carbon_field_type_is_number(field_type_e type)
 {
         return carbon_field_type_is_integer(type) || carbon_field_type_is_floating(type);
 }
 
-bool carbon_field_type_is_integer(carbon_field_type_e type)
+bool carbon_field_type_is_integer(field_type_e type)
 {
         return carbon_field_type_is_signed(type) || carbon_field_type_is_unsigned(type);
 }
 
-bool carbon_field_type_is_binary(carbon_field_type_e type)
+bool carbon_field_type_is_binary(field_type_e type)
 {
         return (type == CARBON_FIELD_BINARY || type == CARBON_FIELD_BINARY_CUSTOM);
 }
 
-bool carbon_field_type_is_boolean(carbon_field_type_e type)
+bool carbon_field_type_is_boolean(field_type_e type)
 {
         return (type == CARBON_FIELD_TRUE || type == CARBON_FIELD_FALSE ||
                 type == CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||
@@ -243,12 +243,12 @@ bool carbon_field_type_is_boolean(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET);
 }
 
-bool carbon_field_type_is_string(carbon_field_type_e type)
+bool carbon_field_type_is_string(field_type_e type)
 {
         return (type == CARBON_FIELD_STRING);
 }
 
-bool carbon_field_type_is_constant(carbon_field_type_e type)
+bool carbon_field_type_is_constant(field_type_e type)
 {
         return (carbon_field_type_is_null(type) || carbon_field_type_is_boolean(type));
 }
@@ -505,7 +505,7 @@ bool carbon_field_skip_64(memfile *file)
         return true;
 }
 
-carbon_field_type_e carbon_field_type_for_column(list_derivable_e derivation, carbon_column_type_e type)
+field_type_e carbon_field_type_for_column(list_derivable_e derivation, carbon_column_type_e type)
 {
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:
@@ -613,8 +613,8 @@ carbon_field_type_e carbon_field_type_for_column(list_derivable_e derivation, ca
         }
 }
 
-carbon_field_type_e
-carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is_null, bool is_true)
+field_type_e
+carbon_field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is_true)
 {
         if (is_null) {
                 return CARBON_FIELD_NULL;
@@ -676,7 +676,7 @@ carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is
         }
 }
 
-carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type)
+carbon_field_class_e carbon_field_type_get_class(field_type_e type)
 {
         switch (type) {
                 case CARBON_FIELD_NULL:
@@ -752,13 +752,13 @@ carbon_field_class_e carbon_field_type_get_class(carbon_field_type_e type)
         }
 }
 
-bool carbon_field_type_is_array_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_array_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_ARRAY_UNSORTED_MULTISET || type == CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET || type == CARBON_FIELD_DERIVED_ARRAY_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_u8_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_u8_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET ||
@@ -766,7 +766,7 @@ bool carbon_field_type_is_column_u8_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_u16_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_u16_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET ||
@@ -774,7 +774,7 @@ bool carbon_field_type_is_column_u16_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_u32_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_u32_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET ||
@@ -782,7 +782,7 @@ bool carbon_field_type_is_column_u32_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_u64_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_u64_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET ||
@@ -790,7 +790,7 @@ bool carbon_field_type_is_column_u64_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_i8_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_i8_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||
@@ -798,7 +798,7 @@ bool carbon_field_type_is_column_i8_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_i16_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_i16_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET ||
@@ -806,7 +806,7 @@ bool carbon_field_type_is_column_i16_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_i32_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_i32_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET ||
@@ -814,7 +814,7 @@ bool carbon_field_type_is_column_i32_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_i64_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_i64_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET ||
@@ -822,7 +822,7 @@ bool carbon_field_type_is_column_i64_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_float_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_float_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||
@@ -830,7 +830,7 @@ bool carbon_field_type_is_column_float_or_subtype(carbon_field_type_e type)
                 type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET);
 }
 
-bool carbon_field_type_is_column_bool_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_bool_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||
                 type == CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET ||
@@ -840,12 +840,12 @@ bool carbon_field_type_is_column_bool_or_subtype(carbon_field_type_e type)
 
 
 
-bool carbon_field_type_is_list_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_list_or_subtype(field_type_e type)
 {
         return carbon_field_type_is_array_or_subtype(type) || carbon_field_type_is_column_or_subtype(type);
 }
 
-bool carbon_field_type_is_column_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_column_or_subtype(field_type_e type)
 {
         return carbon_field_type_is_column_u8_or_subtype(type) ||
                 carbon_field_type_is_column_u16_or_subtype(type) ||
@@ -859,14 +859,14 @@ bool carbon_field_type_is_column_or_subtype(carbon_field_type_e type)
                 carbon_field_type_is_column_bool_or_subtype(type);
 }
 
-bool carbon_field_type_is_object_or_subtype(carbon_field_type_e type)
+bool carbon_field_type_is_object_or_subtype(field_type_e type)
 {
         return (type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP || type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
                         type == CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
                         type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP);
 }
 
-bool carbon_field_type_is_null(carbon_field_type_e type)
+bool carbon_field_type_is_null(field_type_e type)
 {
         return (type == CARBON_FIELD_NULL);
 }

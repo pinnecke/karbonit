@@ -28,13 +28,13 @@ extern "C" {
 // ---------------------------------------------------------------------------------------------------------------------
 
 typedef struct field_access {
-        carbon_field_type_e it_field_type;
+        field_type_e type;
 
-        const void *it_field_data;
-        u64 it_field_len;
+        const void *data;
+        u64 len;
 
-        const char *it_mime_type;
-        u64 it_mime_type_strlen;
+        const char *mime;
+        u64 mime_len;
 
         bool nested_array_is_created;
         bool nested_array_accessed;
@@ -163,7 +163,7 @@ bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_obj
 bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_column *src);
 
 
-bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it);
+bool carbon_array_field_type(field_type_e *type, carbon_array *it);
 
 offset_t internal_carbon_array_memfilepos(carbon_array *it);
 offset_t internal_carbon_array_tell(carbon_array *it);

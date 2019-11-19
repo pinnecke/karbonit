@@ -88,7 +88,7 @@ bool carbon_int_insert_column(memfile *memfile_in, list_derivable_e derivation, 
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
 
-        carbon_field_type_e column_type = carbon_field_type_for_column(derivation, type);
+        field_type_e column_type = carbon_field_type_for_column(derivation, type);
 
         memfile_ensure_space(memfile_in, sizeof(u8));
         marker_insert(memfile_in, column_type);
@@ -112,7 +112,7 @@ bool carbon_int_insert_column(memfile *memfile_in, list_derivable_e derivation, 
         return true;
 }
 
-size_t carbon_int_get_type_size_encoded(carbon_field_type_e type)
+size_t carbon_int_get_type_size_encoded(field_type_e type)
 {
         size_t type_size = sizeof(media_type); /** at least the media type marker is required */
         switch (type) {
@@ -146,7 +146,7 @@ size_t carbon_int_get_type_size_encoded(carbon_field_type_e type)
         return type_size;
 }
 
-size_t carbon_int_get_type_value_size(carbon_field_type_e type)
+size_t carbon_int_get_type_value_size(field_type_e type)
 {
         switch (type) {
                 case CARBON_FIELD_NULL:
@@ -250,7 +250,7 @@ bool carbon_int_object_it_prop_key_access(carbon_object *it)
         it->field.key.name = memfile_peek(&it->memfile, it->field.key.name_len);
         memfile_skip(&it->memfile, it->field.key.name_len);
         it->field.value.offset = memfile_tell(&it->memfile);
-        it->field.value.data.it_field_type = *MEMFILE_PEEK(&it->memfile, u8);
+        it->field.value.data.type = *MEMFILE_PEEK(&it->memfile, u8);
 
         return true;
 }
@@ -300,7 +300,7 @@ bool carbon_int_array_field_type_read(carbon_array *it)
         u8 media_type = *memfile_read(&it->memfile, 1);
         error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
         error_if_and_return(media_type == CARBON_MARRAY_END, ERR_OUTOFBOUNDS, NULL)
-        it->field_access.it_field_type = media_type;
+        it->field_access.type = media_type;
         memfile_restore_position(&it->memfile);
         return true;
 }
@@ -310,7 +310,7 @@ bool carbon_int_field_data_access(memfile *file, field_access *field_access)
         memfile_save_position(file);
         memfile_skip(file, sizeof(media_type));
 
-        switch (field_access->it_field_type) {
+        switch (field_access->type) {
                 case CARBON_FIELD_NULL:
                 case CARBON_FIELD_TRUE:
                 case CARBON_FIELD_FALSE:
@@ -327,7 +327,7 @@ bool carbon_int_field_data_access(memfile *file, field_access *field_access)
                 case CARBON_FIELD_STRING: {
                         u8 nbytes;
                         uintvar_stream_t len = (uintvar_stream_t) memfile_peek(file, 1);
-                        field_access->it_field_len = uintvar_stream_read(&nbytes, len);
+                        field_access->len = uintvar_stream_read(&nbytes, len);
 
                         memfile_skip(file, nbytes);
                 }
@@ -336,22 +336,22 @@ bool carbon_int_field_data_access(memfile *file, field_access *field_access)
                         /** read mime type with variable-length integer type */
                         u64 mime_type_id = memfile_read_uintvar_stream(NULL, file);
 
-                        field_access->it_mime_type = carbon_media_mime_type_by_id(mime_type_id);
-                        field_access->it_mime_type_strlen = strlen(field_access->it_mime_type);
+                        field_access->mime = carbon_media_mime_type_by_id(mime_type_id);
+                        field_access->mime_len = strlen(field_access->mime);
 
                         /** read blob length */
-                        field_access->it_field_len = memfile_read_uintvar_stream(NULL, file);
+                        field_access->len = memfile_read_uintvar_stream(NULL, file);
 
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                 }
                         break;
                 case CARBON_FIELD_BINARY_CUSTOM: {
                         /** read mime type string_buffer */
-                        field_access->it_mime_type_strlen = memfile_read_uintvar_stream(NULL, file);
-                        field_access->it_mime_type = memfile_read(file, field_access->it_mime_type_strlen);
+                        field_access->mime_len = memfile_read_uintvar_stream(NULL, file);
+                        field_access->mime = memfile_read(file, field_access->mime_len);
 
                         /** read blob length */
-                        field_access->it_field_len = memfile_read_uintvar_stream(NULL, file);
+                        field_access->len = memfile_read_uintvar_stream(NULL, file);
 
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                 }
@@ -424,7 +424,7 @@ bool carbon_int_field_data_access(memfile *file, field_access *field_access)
                         return error(ERR_CORRUPTED, NULL);
         }
 
-        field_access->it_field_data = memfile_peek(file, 1);
+        field_access->data = memfile_peek(file, 1);
         memfile_restore_position(file);
         return true;
 }
@@ -525,11 +525,11 @@ bool carbon_int_field_access_create(field_access *field)
 
 bool carbon_int_field_access_clone(field_access *dst, field_access *src)
 {
-        dst->it_field_type = src->it_field_type;
-        dst->it_field_data = src->it_field_data;
-        dst->it_field_len = src->it_field_len;
-        dst->it_mime_type = src->it_mime_type;
-        dst->it_mime_type_strlen = src->it_mime_type_strlen;
+        dst->type = src->type;
+        dst->data = src->data;
+        dst->len = src->len;
+        dst->mime = src->mime;
+        dst->mime_len = src->mime_len;
         dst->nested_array_is_created = src->nested_array_is_created;
         dst->nested_array_accessed = src->nested_array_accessed;
         dst->nested_object_it_is_created = src->nested_object_it_is_created;
@@ -622,16 +622,16 @@ bool carbon_int_field_auto_close(field_access *field)
         return true;
 }
 
-bool carbon_int_field_access_field_type(carbon_field_type_e *type, field_access *field)
+bool carbon_int_field_access_field_type(field_type_e *type, field_access *field)
 {
-        *type = field->it_field_type;
+        *type = field->type;
         return true;
 }
 
 bool carbon_int_field_access_bool_value(bool *value, field_access *field)
 {
-        bool is_true = field->it_field_type == CARBON_FIELD_TRUE;
-        bool is_false = field->it_field_type == CARBON_FIELD_FALSE;
+        bool is_true = field->type == CARBON_FIELD_TRUE;
+        bool is_false = field->type == CARBON_FIELD_FALSE;
         if (LIKELY(is_true || is_false)) {
                 *value = is_true;
                 return true;
@@ -643,78 +643,78 @@ bool carbon_int_field_access_bool_value(bool *value, field_access *field)
 
 bool carbon_int_field_access_is_null(bool *is_null, field_access *field)
 {
-        *is_null = field->it_field_type == CARBON_FIELD_NULL;
+        *is_null = field->type == CARBON_FIELD_NULL;
         return true;
 }
 
 bool carbon_int_field_access_u8_value(u8 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U8, ERR_TYPEMISMATCH, NULL);
-        *value = *(u8 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U8, ERR_TYPEMISMATCH, NULL);
+        *value = *(u8 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_u16_value(u16 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U16, ERR_TYPEMISMATCH, NULL);
-        *value = *(u16 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U16, ERR_TYPEMISMATCH, NULL);
+        *value = *(u16 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_u32_value(u32 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U32, ERR_TYPEMISMATCH, NULL);
-        *value = *(u32 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U32, ERR_TYPEMISMATCH, NULL);
+        *value = *(u32 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_u64_value(u64 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_U64, ERR_TYPEMISMATCH, NULL);
-        *value = *(u64 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U64, ERR_TYPEMISMATCH, NULL);
+        *value = *(u64 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_i8_value(i8 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I8, ERR_TYPEMISMATCH, NULL);
-        *value = *(i8 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I8, ERR_TYPEMISMATCH, NULL);
+        *value = *(i8 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_i16_value(i16 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I16, ERR_TYPEMISMATCH, NULL);
-        *value = *(i16 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I16, ERR_TYPEMISMATCH, NULL);
+        *value = *(i16 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_i32_value(i32 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I32, ERR_TYPEMISMATCH, NULL);
-        *value = *(i32 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I32, ERR_TYPEMISMATCH, NULL);
+        *value = *(i32 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_i64_value(i64 *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_I64, ERR_TYPEMISMATCH, NULL);
-        *value = *(i64 *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I64, ERR_TYPEMISMATCH, NULL);
+        *value = *(i64 *) field->data;
         return true;
 }
 
 bool carbon_int_field_access_float_value(float *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
-        *value = *(float *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
+        *value = *(float *) field->data;
         return true;
 }
 
 bool
 carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
-        float read_value = *(float *) field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
+        float read_value = *(float *) field->data;
         OPTIONAL_SET(value, read_value);
         OPTIONAL_SET(is_null_in, IS_NULL_FLOAT(read_value));
 
@@ -723,7 +723,7 @@ carbon_int_field_access_float_value_nullable(bool *is_null_in, float *value, fie
 
 bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value, field_access *field)
 {
-        switch (field->it_field_type) {
+        switch (field->type) {
                 case CARBON_FIELD_NUMBER_I8: {
                         i8 read_value;
                         carbon_int_field_access_i8_value(&read_value, field);
@@ -760,7 +760,7 @@ bool carbon_int_field_access_signed_value_nullable(bool *is_null_in, i64 *value,
 
 bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *value, field_access *field)
 {
-        switch (field->it_field_type) {
+        switch (field->type) {
                 case CARBON_FIELD_NUMBER_U8: {
                         u8 read_value;
                         carbon_int_field_access_u8_value(&read_value, field);
@@ -797,7 +797,7 @@ bool carbon_int_field_access_unsigned_value_nullable(bool *is_null_in, u64 *valu
 
 bool carbon_int_field_access_signed_value(i64 *value, field_access *field)
 {
-        switch (field->it_field_type) {
+        switch (field->type) {
                 case CARBON_FIELD_NUMBER_I8: {
                         i8 read_value;
                         carbon_int_field_access_i8_value(&read_value, field);
@@ -830,7 +830,7 @@ bool carbon_int_field_access_signed_value(i64 *value, field_access *field)
 
 bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field)
 {
-        switch (field->it_field_type) {
+        switch (field->type) {
                 case CARBON_FIELD_NUMBER_U8: {
                         u8 read_value;
                         carbon_int_field_access_u8_value(&read_value, field);
@@ -864,28 +864,28 @@ bool carbon_int_field_access_unsigned_value(u64 *value, field_access *field)
 const char *carbon_int_field_access_string_value(u64 *strlen, field_access *field)
 {
         error_if_and_return(field == NULL, ERR_NULLPTR, NULL);
-        error_if_and_return(field->it_field_type != CARBON_FIELD_STRING, ERR_TYPEMISMATCH, NULL);
-        *strlen = field->it_field_len;
-        return field->it_field_data;
+        error_if_and_return(field->type != CARBON_FIELD_STRING, ERR_TYPEMISMATCH, NULL);
+        *strlen = field->len;
+        return field->data;
 }
 
 bool
 carbon_int_field_access_binary_value(carbon_binary *out, field_access *field)
 {
-        error_if_and_return(field->it_field_type != CARBON_FIELD_BINARY &&
-                 field->it_field_type != CARBON_FIELD_BINARY_CUSTOM,
+        error_if_and_return(field->type != CARBON_FIELD_BINARY &&
+                 field->type != CARBON_FIELD_BINARY_CUSTOM,
                  ERR_TYPEMISMATCH, NULL);
-        out->blob = field->it_field_data;
-        out->blob_len = field->it_field_len;
-        out->mime_type = field->it_mime_type;
-        out->mime_type_strlen = field->it_mime_type_strlen;
+        out->blob = field->data;
+        out->blob_len = field->len;
+        out->mime_type = field->mime;
+        out->mime_type_strlen = field->mime_len;
         return true;
 }
 
 carbon_array *carbon_int_field_access_array_value(field_access *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!carbon_field_type_is_array_or_subtype(field->it_field_type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!carbon_field_type_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         field->nested_array_accessed = true;
         return field->nested_array;
 }
@@ -893,7 +893,7 @@ carbon_array *carbon_int_field_access_array_value(field_access *field)
 carbon_object *carbon_int_field_access_object_value(field_access *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!carbon_field_type_is_object_or_subtype(field->it_field_type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!carbon_field_type_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         field->nested_object_it_accessed = true;
         return field->nested_object_it;
 }
@@ -901,13 +901,13 @@ carbon_object *carbon_int_field_access_object_value(field_access *field)
 carbon_column *carbon_int_field_access_column_value(field_access *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!carbon_field_type_is_column_or_subtype(field->it_field_type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!carbon_field_type_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         return field->nested_column_it;
 }
 
-bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type)
+bool carbon_int_field_remove(memfile *memfile, field_type_e type)
 {
-        JAK_ASSERT((carbon_field_type_e) *memfile_peek(memfile, sizeof(u8)) == type);
+        JAK_ASSERT((field_type_e) *memfile_peek(memfile, sizeof(u8)) == type);
         offset_t start_off = memfile_tell(memfile);
         memfile_skip(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */

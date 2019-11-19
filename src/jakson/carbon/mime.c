@@ -38,7 +38,7 @@
         result;                                                                         \
 })
 
-bool carbon_media_write(memfile *dst, carbon_field_type_e type)
+bool carbon_media_write(memfile *dst, field_type_e type)
 {
         media_type t = type;
         memfile_write(dst, &t, sizeof(media_type));

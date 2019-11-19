@@ -524,7 +524,7 @@ bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
         }
 
         FILE *inputFile = fopen(carbonFilePath, "r");
-        area *stream;
+        memblock *stream;
         archive_load(&stream, inputFile);
         if (!archive_print(stdout, stream)) {
             error_print(stderr);

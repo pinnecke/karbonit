@@ -396,7 +396,7 @@ static void prop_iter_state_init(prop_iter *iter)
 }
 
 static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
-                                            area *memblock, offset_t object_offset)
+                                            memblock *memblock, offset_t object_offset)
 {
         iter->mask = mask;
         if (!memfile_open(&iter->record_table_memfile, memblock, READ_ONLY)) {

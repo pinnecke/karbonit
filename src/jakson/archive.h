@@ -76,11 +76,11 @@ typedef struct archive_callback {
 } archive_callback;
 
 bool archive_from_json(archive *out, const char *file, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_string_id_index, archive_callback *callback);
-bool archive_stream_from_json(area **stream, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_id_index, archive_callback *callback);
-bool archive_from_model(area **stream, column_doc *model, packer_e compressor, bool bake_string_id_index, archive_callback *callback);
-bool archive_write(FILE *file, const area *stream);
-bool archive_load(area **stream, FILE *file);
-bool archive_print(FILE *file, area *stream);
+bool archive_stream_from_json(memblock **stream, const char *json_string, packer_e compressor, str_dict_tag_e dictionary, size_t num_async_dic_threads, bool read_optimized, bool bake_id_index, archive_callback *callback);
+bool archive_from_model(memblock **stream, column_doc *model, packer_e compressor, bool bake_string_id_index, archive_callback *callback);
+bool archive_write(FILE *file, const memblock *stream);
+bool archive_load(memblock **stream, FILE *file);
+bool archive_print(FILE *file, memblock *stream);
 bool archive_open(archive *out, const char *file_path);
 bool archive_get_info(archive_info *info, const archive *archive);
 bool archive_close(archive *archive);

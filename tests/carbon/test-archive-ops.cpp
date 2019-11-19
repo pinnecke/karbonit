@@ -6,7 +6,7 @@
 
 TEST(CarbonArchiveOpsTest, CreateStreamFromJsonString)
 {
-    area *stream;
+    memblock *stream;
 
     const char        *json_string = "{ \"test\": 123 }";
     bool               read_optimized = false;

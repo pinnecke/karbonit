@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 typedef struct carbon_insert {
-        carbon_container_e context_type;
+        container_e context_type;
         union {
                 carbon_array *array;
                 carbon_column *column;

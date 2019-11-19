@@ -8636,7 +8636,7 @@ TEST(CarbonTest, ParseBooleanArray) {
 }
 
 TEST(CarbonTest, PathIndex) {
-        carbon_path_index index;
+        pindex index;
         rec doc;
 
         const char *json = "[\n"
@@ -8661,17 +8661,17 @@ TEST(CarbonTest, PathIndex) {
 //        const char *json = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
 
         carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
-        carbon_path_index_create(&index, &doc);
-        carbon_path_index_print(stdout, &index);
+        pindex_create(&index, &doc);
+        pindex_print(stdout, &index);
         carbon_hexdump_print(stdout, &doc);
-        carbon_path_index_hexdump(stdout, &index);
+        pindex_hexdump(stdout, &index);
 
         rec path_carbon;
-        carbon_path_index_to_carbon(&path_carbon, &index);
+        pindex_to_carbon(&path_carbon, &index);
         carbon_print(stdout, JSON_COMPACT, &path_carbon);
         carbon_drop(&path_carbon);
 
-        ASSERT_TRUE(carbon_path_index_indexes_doc(&index, &doc));
+        ASSERT_TRUE(pindex_indexes_doc(&index, &doc));
         carbon_drop(&doc);
 }
 

@@ -72,7 +72,7 @@ extern "C" {
  * creating a new revision but by altered the current revision (i.e., the commit hash remains the same). See patch.h
  * for more. */
 typedef struct rec {
-        area *area;
+        memblock *area;
         memfile file;
 } rec;
 

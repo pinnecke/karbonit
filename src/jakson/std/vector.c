@@ -320,7 +320,7 @@ const void *vector_data(const vector *vec)
 char *vector_string(const vector ofType(T) *vec,
                     void (*printerFunc)(memfile *dst, void ofType(T) *values, size_t num_elems))
 {
-        area *block;
+        memblock *block;
         memfile file;
         memblock_create(&block, vec->num_elems * vec->elem_size);
         memfile_open(&file, block, READ_WRITE);

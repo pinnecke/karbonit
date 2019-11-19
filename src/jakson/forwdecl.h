@@ -102,8 +102,8 @@ typedef struct carbon_insert_column_state carbon_insert_column_state;
 typedef struct carbon_object carbon_object;
 typedef struct carbon_prop carbon_prop;
 typedef struct carbon_path_evaluator carbon_path_evaluator;
-typedef struct carbon_path_index carbon_path_index;
-typedef struct carbon_path_index_it carbon_path_index_it;
+typedef struct pindex pindex;
+typedef struct pindex_it pindex_it;
 typedef struct carbon_printer carbon_printer;
 typedef struct rev rev;
 typedef struct carbon_binary carbon_binary;
@@ -135,7 +135,7 @@ typedef struct json_elements json_elements;
 typedef struct json_array json_array;
 typedef struct json_number json_number;
 
-typedef struct block area;
+typedef struct memblock memblock;
 typedef struct mfile memfile;
 
 typedef struct command_opt command_opt;

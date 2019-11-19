@@ -156,7 +156,7 @@ bool archive_from_json(archive *out, const char *file, const char *json_string,
 {
         OPTIONAL_CALL(callback, begin_create_from_json);
 
-        area *stream;
+        memblock *stream;
         FILE *out_file;
 
         if (!archive_stream_from_json(&stream,
@@ -205,11 +205,11 @@ bool archive_from_json(archive *out, const char *file, const char *json_string,
         return true;
 }
 
-bool archive_stream_from_json(area **stream, const char *json_string,
-                                  packer_e compressor, str_dict_tag_e dictionary,
-                                  size_t num_async_dic_threads,
-                                  bool read_optimized,
-                                  bool bake_id_index, archive_callback *callback)
+bool archive_stream_from_json(memblock **stream, const char *json_string,
+                              packer_e compressor, str_dict_tag_e dictionary,
+                              size_t num_async_dic_threads,
+                              bool read_optimized,
+                              bool bake_id_index, archive_callback *callback)
 {
         string_dict dic;
         json_parser parser;
@@ -291,7 +291,7 @@ bool archive_stream_from_json(area **stream, const char *json_string,
         return true;
 }
 
-static bool run_string_id_baking(area **stream)
+static bool run_string_id_baking(memblock **stream)
 {
         archive archive;
         char tmp_file_name[512];
@@ -367,8 +367,8 @@ static bool run_string_id_baking(area **stream)
         return true;
 }
 
-bool archive_from_model(area **stream, column_doc *model, packer_e compressor,
-                            bool bake_string_id_index, archive_callback *callback)
+bool archive_from_model(memblock **stream, column_doc *model, packer_e compressor,
+                        bool bake_string_id_index, archive_callback *callback)
 {
         OPTIONAL_CALL(callback, begin_create_from_model)
 
@@ -423,12 +423,12 @@ archive_io_context *archive_io_context_create(archive *archive)
         }
 }
 
-bool archive_write(FILE *file, const area *stream)
+bool archive_write(FILE *file, const memblock *stream)
 {
         return memblock_write_to_file(file, stream);
 }
 
-bool archive_load(area **stream, FILE *file)
+bool archive_load(memblock **stream, FILE *file)
 {
         long start = ftell(file);
         fseek(file, 0, SEEK_END);
@@ -439,7 +439,7 @@ bool archive_load(area **stream, FILE *file)
         return memblock_from_file(stream, file, fileSize);
 }
 
-bool archive_print(FILE *file, area *stream)
+bool archive_print(FILE *file, memblock *stream)
 {
         memfile memfile;
         memfile_open(&memfile, stream, READ_ONLY);

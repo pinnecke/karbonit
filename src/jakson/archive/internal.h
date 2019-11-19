@@ -366,7 +366,7 @@ typedef struct string_table {
 
 typedef struct record_table {
         record_flags flags;
-        area *record_db;
+        memblock *record_db;
 } record_table;
 
 typedef struct archive_info {

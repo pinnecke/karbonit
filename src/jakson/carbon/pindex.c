@@ -20,7 +20,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/hexdump.h>
-#include <jakson/carbon/path/index.h>
+#include <jakson/carbon/pindex.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/string.h>
@@ -31,7 +31,7 @@
 //  config
 // ---------------------------------------------------------------------------------------------------------------------
 
-#define PATH_INDEX_CAPACITY 1024
+#define pindex_CAPACITY 1024
 
 #define PATH_MARKER_PROP_NODE 'P'
 #define PATH_MARKER_ARRAY_NODE 'a'
@@ -41,8 +41,8 @@
 //  types
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct path_index_node {
-        path_index_node_e type;
+struct pindex_node {
+        pindex_node_e type;
 
         union {
                 u64 pos;
@@ -56,7 +56,7 @@ struct path_index_node {
         carbon_field_type_e field_type;
         offset_t field_offset;
 
-        vector ofType(struct path_index_node) sub_entries;
+        vector ofType(struct pindex_node) sub_entries;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -64,23 +64,23 @@ struct path_index_node {
 // ---------------------------------------------------------------------------------------------------------------------
 
 static void
-array_to_str(string_buffer *str, carbon_path_index *index, bool is_root, unsigned intent_level);
+array_to_str(string_buffer *str, pindex *index, bool is_root, unsigned intent_level);
 
-static void array_into_carbon(carbon_insert *ins, carbon_path_index *index, bool is_root);
+static void array_into_carbon(carbon_insert *ins, pindex *index, bool is_root);
 
-static void prop_to_str(string_buffer *str, carbon_path_index *index, unsigned intent_level);
+static void prop_to_str(string_buffer *str, pindex *index, unsigned intent_level);
 
-static void prop_into_carbon(carbon_insert *ins, carbon_path_index *index);
+static void prop_into_carbon(carbon_insert *ins, pindex *index);
 
-static void column_to_str(string_buffer *str, carbon_path_index *index, unsigned intent_level);
+static void column_to_str(string_buffer *str, pindex *index, unsigned intent_level);
 
-static void column_into_carbon(carbon_insert *ins, carbon_path_index *index);
+static void column_into_carbon(carbon_insert *ins, pindex *index);
 
-static void object_build_index(struct path_index_node *parent, carbon_object *elem_it);
+static void object_build_index(struct pindex_node *parent, carbon_object *elem_it);
 
-static void array_build_index(struct path_index_node *parent, carbon_array *elem_it);
+static void array_build_index(struct pindex_node *parent, carbon_array *elem_it);
 
-static void node_flat(memfile *file, struct path_index_node *node);
+static void node_flat(memfile *file, struct pindex_node *node);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  helper
@@ -94,97 +94,97 @@ static void intent(string_buffer *str, unsigned intent)
         }
 }
 
-static void path_index_node_init(struct path_index_node *node)
+static void pindex_node_init(struct pindex_node *node)
 {
-        ZERO_MEMORY(node, sizeof(struct path_index_node));
-        vector_create(&node->sub_entries, sizeof(struct path_index_node), 10);
-        node->type = PATH_ROOT;
+        ZERO_MEMORY(node, sizeof(struct pindex_node));
+        vector_create(&node->sub_entries, sizeof(struct pindex_node), 10);
+        node->type = PINDEX_ROOT;
 }
 
-static void path_index_node_drop(struct path_index_node *node)
+static void pindex_node_drop(struct pindex_node *node)
 {
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-                struct path_index_node *sub = VECTOR_GET(&node->sub_entries, i, struct path_index_node);
-                path_index_node_drop(sub);
+                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
+                pindex_node_drop(sub);
         }
         vector_drop(&node->sub_entries);
 }
 
-static void path_index_node_new_array_element(struct path_index_node *node, u64 pos, offset_t value_off)
+static void pindex_node_new_array_element(struct pindex_node *node, u64 pos, offset_t value_off)
 {
-        path_index_node_init(node);
-        node->type = PATH_INDEX_ARRAY_INDEX;
+        pindex_node_init(node);
+        node->type = PINDEX_ARRAY_INDEX;
         node->entry.pos = pos;
         node->field_offset = value_off;
 }
 
-static void path_index_node_new_column_element(struct path_index_node *node, u64 pos, offset_t value_off)
+static void pindex_node_new_column_element(struct pindex_node *node, u64 pos, offset_t value_off)
 {
-        path_index_node_init(node);
-        node->type = PATH_INDEX_COLUMN_INDEX;
+        pindex_node_init(node);
+        node->type = PINDEX_COLUMN_INDEX;
         node->entry.pos = pos;
         node->field_offset = value_off;
 }
 
-static void path_index_node_new_object_prop(struct path_index_node *node, offset_t key_off, const char *name,
+static void pindex_node_new_object_prop(struct pindex_node *node, offset_t key_off, const char *name,
                                             u64 name_len, offset_t value_off)
 {
-        path_index_node_init(node);
-        node->type = PATH_INDEX_PROP_KEY;
+        pindex_node_init(node);
+        node->type = PINDEX_PROP_KEY;
         node->entry.key.offset = key_off;
         node->entry.key.name = name;
         node->entry.key.name_len = name_len;
         node->field_offset = value_off;
 }
 
-static void path_index_node_set_field_type(struct path_index_node *node, carbon_field_type_e field_type)
+static void pindex_node_set_field_type(struct pindex_node *node, carbon_field_type_e field_type)
 {
         node->field_type = field_type;
 }
 
-static struct path_index_node *
-path_index_node_add_array_elem(struct path_index_node *parent, u64 pos, offset_t value_off)
+static struct pindex_node *
+pindex_node_add_array_elem(struct pindex_node *parent, u64 pos, offset_t value_off)
 {
         /** For elements in array, the type marker (e.g., [c]) is contained. That is needed since the element might
          * be a container */
-        struct path_index_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct path_index_node);
-        path_index_node_new_array_element(sub, pos, value_off);
+        struct pindex_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
+        pindex_node_new_array_element(sub, pos, value_off);
         return sub;
 }
 
-static struct path_index_node *
-path_index_node_add_column_elem(struct path_index_node *parent, u64 pos, offset_t value_off)
+static struct pindex_node *
+pindex_node_add_column_elem(struct pindex_node *parent, u64 pos, offset_t value_off)
 {
         /** For elements in column, there is no type marker since no value is allowed to be a container */
-        struct path_index_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct path_index_node);
-        path_index_node_new_column_element(sub, pos, value_off);
+        struct pindex_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
+        pindex_node_new_column_element(sub, pos, value_off);
         return sub;
 }
 
-static struct path_index_node *path_index_node_add_key_elem(struct path_index_node *parent, offset_t key_off,
+static struct pindex_node *pindex_node_add_key_elem(struct pindex_node *parent, offset_t key_off,
                                                             const char *name, u64 name_len, offset_t value_off)
 {
-        struct path_index_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct path_index_node);
-        path_index_node_new_object_prop(sub, key_off, name, name_len, value_off);
+        struct pindex_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
+        pindex_node_new_object_prop(sub, key_off, name, name_len, value_off);
         return sub;
 }
 
-static void path_index_node_print_level(FILE *file, struct path_index_node *node, unsigned level)
+static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsigned level)
 {
         for (unsigned i = 0; i < level; i++) {
                 fprintf(file, " ");
         }
-        if (node->type == PATH_ROOT) {
+        if (node->type == PINDEX_ROOT) {
                 fprintf(file, "root");
-        } else if (node->type == PATH_INDEX_ARRAY_INDEX) {
+        } else if (node->type == PINDEX_ARRAY_INDEX) {
                 fprintf(file, "array_idx(%"PRIu64"), ", node->entry.pos);
-        } else if (node->type == PATH_INDEX_COLUMN_INDEX) {
+        } else if (node->type == PINDEX_COLUMN_INDEX) {
                 fprintf(file, "column_idx(%"PRIu64"), ", node->entry.pos);
         } else {
                 fprintf(file, "key('%*.*s', offset: 0x%x), ", 0, (int) node->entry.key.name_len, node->entry.key.name,
                         (unsigned) node->entry.key.offset);
         }
-        if (node->type != PATH_ROOT) {
+        if (node->type != PINDEX_ROOT) {
                 fprintf(file, "field(type: %s, offset: 0x%x)\n", carbon_field_type_str(node->field_type),
                         (unsigned) node->field_offset);
         } else {
@@ -192,8 +192,8 @@ static void path_index_node_print_level(FILE *file, struct path_index_node *node
         }
 
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-                struct path_index_node *sub = VECTOR_GET(&node->sub_entries, i, struct path_index_node);
-                path_index_node_print_level(file, sub, level + 1);
+                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
+                pindex_node_print_level(file, sub, level + 1);
         }
 }
 
@@ -253,19 +253,19 @@ static void record_ref_create(memfile *memfile, rec *doc)
         memfile_write(memfile, &commit_hash, sizeof(u64));
 }
 
-static void array_traverse(struct path_index_node *parent, carbon_array *it)
+static void array_traverse(struct pindex_node *parent, carbon_array *it)
 {
         u64 sub_elem_pos = 0;
         while (carbon_array_next(it)) {
                 offset_t sub_elem_off = internal_carbon_array_tell(it);
-                struct path_index_node *elem_node = path_index_node_add_array_elem(parent, sub_elem_pos, sub_elem_off);
+                struct pindex_node *elem_node = pindex_node_add_array_elem(parent, sub_elem_pos, sub_elem_off);
                 array_build_index(elem_node, it);
 
                 sub_elem_pos++;
         }
 }
 
-static void column_traverse(struct path_index_node *parent, carbon_column *it)
+static void column_traverse(struct pindex_node *parent, carbon_column *it)
 {
         carbon_field_type_e column_type;
         carbon_field_type_e entry_type;
@@ -282,28 +282,28 @@ static void column_traverse(struct path_index_node *parent, carbon_column *it)
                 entry_type = carbon_field_type_column_entry_to_regular_type(column_type, is_null, is_true);
                 offset_t sub_elem_off = carbon_column_tell(it, i);
 
-                struct path_index_node *node = path_index_node_add_column_elem(parent, i, sub_elem_off);
-                path_index_node_set_field_type(node, entry_type);
+                struct pindex_node *node = pindex_node_add_column_elem(parent, i, sub_elem_off);
+                pindex_node_set_field_type(node, entry_type);
         }
 }
 
-static void object_traverse(struct path_index_node *parent, carbon_object *it)
+static void object_traverse(struct pindex_node *parent, carbon_object *it)
 {
         while (carbon_object_next(it)) {
                 offset_t key_off = 0, value_off = 0;
                 internal_carbon_object_tell(&key_off, &value_off, it);
                 carbon_string_field prop_key = internal_carbon_object_prop_name(it);
-                struct path_index_node *elem_node = path_index_node_add_key_elem(parent, key_off,
+                struct pindex_node *elem_node = pindex_node_add_key_elem(parent, key_off,
                                                                                  prop_key.string, prop_key.length, value_off);
                 object_build_index(elem_node, it);
         }
 }
 
-static void object_build_index(struct path_index_node *parent, carbon_object *elem_it)
+static void object_build_index(struct pindex_node *parent, carbon_object *elem_it)
 {
         carbon_field_type_e field_type = 0;;
         internal_carbon_object_prop_type(&field_type, elem_it);
-        path_index_node_set_field_type(parent, field_type);
+        pindex_node_set_field_type(parent, field_type);
 
         switch (field_type) {
                 case CARBON_FIELD_NULL:
@@ -390,11 +390,11 @@ static void object_build_index(struct path_index_node *parent, carbon_object *el
         }
 }
 
-static void array_build_index(struct path_index_node *parent, carbon_array *elem_it)
+static void array_build_index(struct pindex_node *parent, carbon_array *elem_it)
 {
         carbon_field_type_e field_type;
         carbon_array_field_type(&field_type, elem_it);
-        path_index_node_set_field_type(parent, field_type);
+        pindex_node_set_field_type(parent, field_type);
 
         switch (field_type) {
                 case CARBON_FIELD_NULL:
@@ -481,7 +481,7 @@ static void array_build_index(struct path_index_node *parent, carbon_array *elem
         }
 }
 
-static void field_ref_write(memfile *file, struct path_index_node *node)
+static void field_ref_write(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, node->field_type);
         if (node->field_type != CARBON_FIELD_NULL && node->field_type != CARBON_FIELD_TRUE &&
@@ -492,7 +492,7 @@ static void field_ref_write(memfile *file, struct path_index_node *node)
         }
 }
 
-static void container_contents_flat(memfile *file, struct path_index_node *node)
+static void container_contents_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_uintvar_stream(NULL, file, node->sub_entries.num_elems);
 
@@ -504,7 +504,7 @@ static void container_contents_flat(memfile *file, struct path_index_node *node)
 
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
                 offset_t node_off = memfile_tell(file);
-                struct path_index_node *sub = VECTOR_GET(&node->sub_entries, i, struct path_index_node);
+                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
                 node_flat(file, sub);
                 memfile_save_position(file);
                 memfile_seek(file, position_off_latest);
@@ -515,7 +515,7 @@ static void container_contents_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-static void container_field_flat(memfile *file, struct path_index_node *node)
+static void container_field_flat(memfile *file, struct pindex_node *node)
 {
         switch (node->field_type) {
                 case CARBON_FIELD_NULL:
@@ -592,7 +592,7 @@ static void container_field_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-static void prop_flat(memfile *file, struct path_index_node *node)
+static void prop_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_PROP_NODE);
         field_ref_write(file, node);
@@ -600,11 +600,11 @@ static void prop_flat(memfile *file, struct path_index_node *node)
         container_field_flat(file, node);
 }
 
-static void array_flat(memfile *file, struct path_index_node *node)
+static void array_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_ARRAY_NODE);
         field_ref_write(file, node);
-        if (UNLIKELY(node->type == PATH_ROOT)) {
+        if (UNLIKELY(node->type == PINDEX_ROOT)) {
                 container_contents_flat(file, node);
         } else {
                 container_field_flat(file, node);
@@ -612,7 +612,7 @@ static void array_flat(memfile *file, struct path_index_node *node)
 }
 
 MAYBE_UNUSED
-static void node_into_carbon(carbon_insert *ins, carbon_path_index *index)
+static void node_into_carbon(carbon_insert *ins, pindex *index)
 {
         u8 next = memfile_peek_byte(&index->memfile);
         switch (next) {
@@ -629,7 +629,7 @@ static void node_into_carbon(carbon_insert *ins, carbon_path_index *index)
         }
 }
 
-static void node_to_str(string_buffer *str, carbon_path_index *index, unsigned intent_level)
+static void node_to_str(string_buffer *str, pindex *index, unsigned intent_level)
 {
         u8 next = memfile_peek_byte(&index->memfile);
         intent_level++;
@@ -648,7 +648,7 @@ static void node_to_str(string_buffer *str, carbon_path_index *index, unsigned i
         }
 }
 
-static u8 field_ref_into_carbon(carbon_insert *ins, carbon_path_index *index, bool is_root)
+static u8 field_ref_into_carbon(carbon_insert *ins, pindex *index, bool is_root)
 {
         u8 field_type = memfile_read_byte(&index->memfile);
 
@@ -679,7 +679,7 @@ static u8 field_ref_into_carbon(carbon_insert *ins, carbon_path_index *index, bo
         return field_type;
 }
 
-static u8 field_ref_to_str(string_buffer *str, carbon_path_index *index)
+static u8 field_ref_to_str(string_buffer *str, pindex *index)
 {
         u8 field_type = memfile_read_byte(&index->memfile);
 
@@ -700,7 +700,7 @@ static u8 field_ref_to_str(string_buffer *str, carbon_path_index *index)
         return field_type;
 }
 
-static void column_to_str(string_buffer *str, carbon_path_index *index, unsigned intent_level)
+static void column_to_str(string_buffer *str, pindex *index, unsigned intent_level)
 {
         intent(str, intent_level);
         u8 marker = memfile_read_byte(&index->memfile);
@@ -711,7 +711,7 @@ static void column_to_str(string_buffer *str, carbon_path_index *index, unsigned
         field_ref_to_str(str, index);
 }
 
-static u8 _insert_field_ref(carbon_insert *ins, carbon_path_index *index, bool is_root)
+static u8 _insert_field_ref(carbon_insert *ins, pindex *index, bool is_root)
 {
         carbon_insert_object_state object;
         carbon_insert *oins = carbon_insert_prop_object_begin(&object, ins, "record-reference", 1024);
@@ -721,14 +721,14 @@ static u8 _insert_field_ref(carbon_insert *ins, carbon_path_index *index, bool i
 }
 
 MAYBE_UNUSED
-static void column_into_carbon(carbon_insert *ins, carbon_path_index *index)
+static void column_into_carbon(carbon_insert *ins, pindex *index)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
         carbon_insert_prop_string(ins, "type", "column");
         _insert_field_ref(ins, index, false);
 }
 
-static void container_contents_into_carbon(carbon_insert *ins, carbon_path_index *index)
+static void container_contents_into_carbon(carbon_insert *ins, pindex *index)
 {
         u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
         carbon_insert_prop_unsigned(ins, "element-count", num_elems);
@@ -761,7 +761,7 @@ static void container_contents_into_carbon(carbon_insert *ins, carbon_path_index
 }
 
 static void
-container_contents_to_str(string_buffer *str, carbon_path_index *index, unsigned intent_level)
+container_contents_to_str(string_buffer *str, pindex *index, unsigned intent_level)
 {
         u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
         string_buffer_add_char(str, '(');
@@ -781,7 +781,7 @@ container_contents_to_str(string_buffer *str, carbon_path_index *index, unsigned
 }
 
 static void
-container_to_str(string_buffer *str, carbon_path_index *index, u8 field_type, unsigned intent_level)
+container_to_str(string_buffer *str, pindex *index, u8 field_type, unsigned intent_level)
 {
         switch (field_type) {
                 case CARBON_FIELD_NULL:
@@ -857,7 +857,7 @@ container_to_str(string_buffer *str, carbon_path_index *index, u8 field_type, un
         }
 }
 
-static void container_into_carbon(carbon_insert *ins, carbon_path_index *index, u8 field_type)
+static void container_into_carbon(carbon_insert *ins, pindex *index, u8 field_type)
 {
         switch (field_type) {
                 case CARBON_FIELD_NULL:
@@ -933,7 +933,7 @@ static void container_into_carbon(carbon_insert *ins, carbon_path_index *index, 
         }
 }
 
-static void prop_to_str(string_buffer *str, carbon_path_index *index, unsigned intent_level)
+static void prop_to_str(string_buffer *str, pindex *index, unsigned intent_level)
 {
         intent(str, intent_level++);
 
@@ -954,7 +954,7 @@ static void prop_to_str(string_buffer *str, carbon_path_index *index, unsigned i
 }
 
 MAYBE_UNUSED
-static void prop_into_carbon(carbon_insert *ins, carbon_path_index *index)
+static void prop_into_carbon(carbon_insert *ins, pindex *index)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
         carbon_insert_prop_string(ins, "type", "key");
@@ -971,7 +971,7 @@ static void prop_into_carbon(carbon_insert *ins, carbon_path_index *index)
         container_into_carbon(ins, index, field_type);
 }
 
-static void array_into_carbon(carbon_insert *ins, carbon_path_index *index, bool is_root)
+static void array_into_carbon(carbon_insert *ins, pindex *index, bool is_root)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
         u8 field_type;
@@ -990,7 +990,7 @@ static void array_into_carbon(carbon_insert *ins, carbon_path_index *index, bool
 }
 
 static void
-array_to_str(string_buffer *str, carbon_path_index *index, bool is_root, unsigned intent_level)
+array_to_str(string_buffer *str, pindex *index, bool is_root, unsigned intent_level)
 {
         intent(str, intent_level++);
 
@@ -1008,23 +1008,23 @@ array_to_str(string_buffer *str, carbon_path_index *index, bool is_root, unsigne
         }
 }
 
-static void column_flat(memfile *file, struct path_index_node *node)
+static void column_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_COLUMN_NODE);
         field_ref_write(file, node);
         JAK_ASSERT(node->sub_entries.num_elems == 0);
 }
 
-static void node_flat(memfile *file, struct path_index_node *node)
+static void node_flat(memfile *file, struct pindex_node *node)
 {
         switch (node->type) {
-                case PATH_INDEX_PROP_KEY:
+                case PINDEX_PROP_KEY:
                         prop_flat(file, node);
                         break;
-                case PATH_INDEX_ARRAY_INDEX:
+                case PINDEX_ARRAY_INDEX:
                         array_flat(file, node);
                         break;
-                case PATH_INDEX_COLUMN_INDEX:
+                case PINDEX_COLUMN_INDEX:
                         column_flat(file, node);
                         break;
                 default: error(ERR_INTERNALERR, NULL);
@@ -1032,17 +1032,17 @@ static void node_flat(memfile *file, struct path_index_node *node)
         }
 }
 
-static void index_flat(memfile *file, struct path_index_node *root_array)
+static void index_flat(memfile *file, struct pindex_node *root_array)
 {
         array_flat(file, root_array);
 }
 
 static void index_build(memfile *file, rec *doc)
 {
-        struct path_index_node root_array;
+        struct pindex_node root_array;
 
         /** init */
-        path_index_node_init(&root_array);
+        pindex_node_init(&root_array);
 
         carbon_array it;
         u64 array_pos = 0;
@@ -1051,23 +1051,23 @@ static void index_build(memfile *file, rec *doc)
         /** build index as tree structure */
         while (carbon_array_next(&it)) {
                 offset_t entry_offset = internal_carbon_array_tell(&it);
-                struct path_index_node *node = path_index_node_add_array_elem(&root_array, array_pos, entry_offset);
+                struct pindex_node *node = pindex_node_add_array_elem(&root_array, array_pos, entry_offset);
                 array_build_index(node, &it);
                 array_pos++;
         }
         carbon_read_end(&it);
 
         /** for debug */
-        path_index_node_print_level(stdout, &root_array, 0); // TODO: Debug remove
+        pindex_node_print_level(stdout, &root_array, 0); // TODO: Debug remove
 
         index_flat(file, &root_array);
         memfile_shrink(file);
 
         /** cleanup */
-        path_index_node_drop(&root_array);
+        pindex_node_drop(&root_array);
 }
 
-static void record_ref_to_str(string_buffer *str, carbon_path_index *index)
+static void record_ref_to_str(string_buffer *str, pindex *index)
 {
         u8 key_type = memfile_read_byte(&index->memfile);
         string_buffer_add_char(str, '[');
@@ -1109,7 +1109,7 @@ static void record_ref_to_str(string_buffer *str, carbon_path_index *index)
         string_buffer_add_char(str, ']');
 }
 
-static void record_ref_to_carbon(carbon_insert *roins, carbon_path_index *index)
+static void record_ref_to_carbon(carbon_insert *roins, pindex *index)
 {
         char key_type = memfile_read_byte(&index->memfile);
         carbon_insert_prop_string(roins, "key-type", carbon_key_type_str(key_type));
@@ -1149,16 +1149,16 @@ static void record_ref_to_carbon(carbon_insert *roins, carbon_path_index *index)
 //  construction and deconstruction
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool carbon_path_index_create(carbon_path_index *index, rec *doc)
+bool pindex_create(pindex *index, rec *doc)
 {
-        memblock_create(&index->memblock, PATH_INDEX_CAPACITY);
+        memblock_create(&index->memblock, pindex_CAPACITY);
         memfile_open(&index->memfile, index->memblock, READ_WRITE);
         record_ref_create(&index->memfile, doc);
         index_build(&index->memfile, doc);
         return true;
 }
 
-bool carbon_path_index_drop(carbon_path_index *index)
+bool pindex_drop(pindex *index)
 {
         UNUSED(index)
         return false;
@@ -1168,7 +1168,7 @@ bool carbon_path_index_drop(carbon_path_index *index)
 //  index data access and meta information
 // ---------------------------------------------------------------------------------------------------------------------
 
-const void *carbon_path_index_raw_data(u64 *size, carbon_path_index *index)
+const void *pindex_raw_data(u64 *size, pindex *index)
 {
         if (size && index) {
                 const char *raw = memblock_raw_data(index->memfile.memblock);
@@ -1179,19 +1179,19 @@ const void *carbon_path_index_raw_data(u64 *size, carbon_path_index *index)
         }
 }
 
-bool carbon_path_index_commit_hash(u64 *commit_hash, carbon_path_index *index)
+bool pindex_commit_hash(u64 *commit_hash, pindex *index)
 {
         record_ref_read(NULL, NULL, commit_hash, &index->memfile);
         return true;
 }
 
-bool carbon_path_index_key_type(carbon_key_e *key_type, carbon_path_index *index)
+bool pindex_key_type(carbon_key_e *key_type, pindex *index)
 {
         record_ref_read(key_type, NULL, NULL, &index->memfile);
         return true;
 }
 
-bool carbon_path_index_key_unsigned_value(u64 *key, carbon_path_index *index)
+bool pindex_key_unsigned_value(u64 *key, pindex *index)
 {
         carbon_key_e key_type;
         u64 ret = *(u64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
@@ -1200,7 +1200,7 @@ bool carbon_path_index_key_unsigned_value(u64 *key, carbon_path_index *index)
         return true;
 }
 
-bool carbon_path_index_key_signed_value(i64 *key, carbon_path_index *index)
+bool pindex_key_signed_value(i64 *key, pindex *index)
 {
         carbon_key_e key_type;
         i64 ret = *(i64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
@@ -1209,7 +1209,7 @@ bool carbon_path_index_key_signed_value(i64 *key, carbon_path_index *index)
         return true;
 }
 
-const char *carbon_path_index_key_string_value(u64 *str_len, carbon_path_index *index)
+const char *pindex_key_string_value(u64 *str_len, pindex *index)
 {
         if (str_len && index) {
                 carbon_key_e key_type;
@@ -1222,14 +1222,14 @@ const char *carbon_path_index_key_string_value(u64 *str_len, carbon_path_index *
         }
 }
 
-bool carbon_path_index_indexes_doc(carbon_path_index *index, rec *doc)
+bool pindex_indexes_doc(pindex *index, rec *doc)
 {
         u64 index_hash = 0, doc_hash = 0;
-        carbon_path_index_commit_hash(&index_hash, index);
+        pindex_commit_hash(&index_hash, index);
         carbon_commit_hash(&doc_hash, doc);
         if (LIKELY(index_hash == doc_hash)) {
                 carbon_key_e index_key_type, doc_key_type;
-                carbon_path_index_key_type(&index_key_type, index);
+                pindex_key_type(&index_key_type, index);
                 carbon_key_type(&doc_key_type, doc);
                 if (LIKELY(index_key_type == doc_key_type)) {
                         switch (index_key_type) {
@@ -1238,19 +1238,19 @@ bool carbon_path_index_indexes_doc(carbon_path_index *index, rec *doc)
                                 case CARBON_KEY_AUTOKEY:
                                 case CARBON_KEY_UKEY: {
                                         u64 index_key, doc_key;
-                                        carbon_path_index_key_unsigned_value(&index_key, index);
+                                        pindex_key_unsigned_value(&index_key, index);
                                         carbon_key_unsigned_value(&doc_key, doc);
                                         return index_key == doc_key;
                                 }
                                 case CARBON_KEY_IKEY: {
                                         i64 index_key, doc_key;
-                                        carbon_path_index_key_signed_value(&index_key, index);
+                                        pindex_key_signed_value(&index_key, index);
                                         carbon_key_signed_value(&doc_key, doc);
                                         return index_key == doc_key;
                                 }
                                 case CARBON_KEY_SKEY: {
                                         u64 index_key_len, doc_key_len;
-                                        const char *index_key = carbon_path_index_key_string_value(&index_key_len,
+                                        const char *index_key = pindex_key_string_value(&index_key_len,
                                                                                                    index);
                                         const char *doc_key = carbon_key_string_value(&doc_key_len, doc);
                                         return (index_key_len == doc_key_len) && (strcmp(index_key, doc_key) == 0);
@@ -1270,14 +1270,14 @@ bool carbon_path_index_indexes_doc(carbon_path_index *index, rec *doc)
 //  index access and type information
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *index,
+bool pindex_it_open(pindex_it *it, pindex *index,
                                rec *doc)
 {
-        if (carbon_path_index_indexes_doc(index, doc)) {
-                ZERO_MEMORY(it, sizeof(carbon_path_index_it));
+        if (pindex_indexes_doc(index, doc)) {
+                ZERO_MEMORY(it, sizeof(pindex_it));
                 memfile_open(&it->memfile, index->memfile.memblock, READ_ONLY);
                 it->doc = doc;
-                it->container_type = CARBON_ARRAY;
+                it->container = CARBON_ARRAY;
                 return true;
         } else {
                 return error(ERR_NOTINDEXED, NULL);
@@ -1288,12 +1288,12 @@ bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *inde
 //  diagnostics
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool carbon_path_index_hexdump(FILE *file, carbon_path_index *index)
+bool pindex_hexdump(FILE *file, pindex *index)
 {
         return memfile_hexdump_printf(file, &index->memfile);
 }
 
-void carbon_path_index_to_carbon(rec *doc, carbon_path_index *index)
+void pindex_to_carbon(rec *doc, pindex *index)
 {
         rec_new context;
         carbon_insert_object_state object;
@@ -1321,7 +1321,7 @@ void carbon_path_index_to_carbon(rec *doc, carbon_path_index *index)
         carbon_create_end(&context);
 }
 
-const char *carbon_path_index_to_str(string_buffer *str, carbon_path_index *index)
+const char *pindex_to_str(string_buffer *str, pindex *index)
 {
         memfile_seek_to_start(&index->memfile);
         record_ref_to_str(str, index);
@@ -1329,13 +1329,13 @@ const char *carbon_path_index_to_str(string_buffer *str, carbon_path_index *inde
         return string_cstr(str);
 }
 
-bool carbon_path_index_print(FILE *file, carbon_path_index *index)
+bool pindex_print(FILE *file, pindex *index)
 {
         string_buffer str;
         string_buffer_create(&str);
         memfile_save_position(&index->memfile);
         memfile_seek_to_start(&index->memfile);
-        fprintf(file, "%s", carbon_path_index_to_str(&str, index));
+        fprintf(file, "%s", pindex_to_str(&str, index));
         memfile_restore_position(&index->memfile);
         string_buffer_drop(&str);
         return true;

@@ -35,7 +35,7 @@ extern "C" {
 
 typedef enum carbon_container_type {
     CARBON_OBJECT, CARBON_ARRAY, CARBON_COLUMN
-} carbon_container_e;
+} container_e;
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  implementation types (and marker) for list/map container types

@@ -19,7 +19,7 @@
 #include <jakson/carbon/printers/compact.h>
 #include <jakson/carbon/printers/extended.h>
 #include <jakson/carbon/object.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/column.h>
 
 bool carbon_printer_by_type(carbon_printer *printer, int impl)
@@ -388,7 +388,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                                 arr_it *array = carbon_item_get_array(&(it->prop.value));
                                 carbon_printer_array_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_array(array, printer, builder, false);
-                                carbon_array_drop(array);
+                                arr_it_drop(array);
                         }
                                 break;
                         case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -467,9 +467,9 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
 
         bool first_entry = true;
         bool has_entries = false;
-        bool is_single_entry_array = carbon_array_is_unit(it);
+        bool is_single_entry_array = arr_it_is_unit(it);
 
-        while (carbon_array_next(it)) {
+        while (arr_it_next(it)) {
                 bool is_null_value;
 
                 if (LIKELY(!first_entry)) {
@@ -483,7 +483,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         has_entries = true;
                 }
                 field_type_e type;
-                carbon_array_field_type(&type, it);
+                arr_it_field_type(&type, it);
                 switch (type) {
                         case CARBON_FIELD_NULL:
                                 carbon_printer_null(printer, builder);
@@ -539,7 +539,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                                 arr_it *array = carbon_item_get_array(&(it->item));
                                 carbon_printer_print_array(array, printer, builder, false);
-                                carbon_array_drop(array);
+                                arr_it_drop(array);
                         }
                                 break;
                         case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:

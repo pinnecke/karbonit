@@ -21,7 +21,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/carbon/column.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/internal.h>
@@ -490,8 +490,8 @@ static bool rewrite_column_to_array(col_it *it)
 
         size_t capacity = it->column_num_elements * carbon_int_get_type_value_size(it->type);
         carbon_int_insert_array(&it->memfile, list_type, capacity);
-        internal_carbon_array_create(&array, &it->memfile, array_marker_begin);
-        carbon_array_insert_begin(&array_ins, &array);
+        internal_arr_it_create(&array, &it->memfile, array_marker_begin);
+        arr_it_insert_begin(&array_ins, &array);
 
         field_type_e type;
         u32 num_values;
@@ -539,9 +539,9 @@ static bool rewrite_column_to_array(col_it *it)
                         return false;
         }
 
-        carbon_array_insert_end(&array_ins);
-        JAK_ASSERT(array_marker_begin < internal_carbon_array_memfilepos(&array));
-        carbon_array_drop(&array);
+        arr_it_insert_end(&array_ins);
+        JAK_ASSERT(array_marker_begin < internal_arr_it_memfilepos(&array));
+        arr_it_drop(&array);
 
         memfile_restore_position(&it->memfile);
         return true;

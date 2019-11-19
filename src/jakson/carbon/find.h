@@ -26,7 +26,7 @@
 #include <jakson/error.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/column.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/containers.h>
 #include <jakson/carbon/dot.h>

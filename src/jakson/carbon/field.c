@@ -23,7 +23,7 @@
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/mime.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/abstract.h>
 
@@ -371,10 +371,10 @@ bool carbon_field_skip_array(memfile *file)
 {
         if (abstract_is_instanceof_array(file)) {
                 arr_it skip_it;
-                internal_carbon_array_create(&skip_it, file, memfile_tell(file));
-                internal_carbon_array_fast_forward(&skip_it);
+                internal_arr_it_create(&skip_it, file, memfile_tell(file));
+                internal_arr_it_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.file));
-                carbon_array_drop(&skip_it);
+                arr_it_drop(&skip_it);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, "marker does not encode an array container or sub type");

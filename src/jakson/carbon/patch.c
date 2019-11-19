@@ -22,13 +22,13 @@
 void carbon_patch_begin(arr_it *it, rec *doc)
 {
         offset_t payload_start = carbon_int_payload_after_header(doc);
-        internal_carbon_array_create(it, &doc->file, payload_start);
-        internal_carbon_array_set_mode(it, READ_WRITE);
+        internal_arr_it_create(it, &doc->file, payload_start);
+        internal_arr_it_set_mode(it, READ_WRITE);
 }
 
 void carbon_patch_end(arr_it *it)
 {
-        carbon_array_drop(it);
+        arr_it_drop(it);
 }
 
 bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc)

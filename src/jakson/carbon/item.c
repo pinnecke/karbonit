@@ -16,7 +16,7 @@
  */
 
 #include <jakson/carbon/item.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/utils/numbers.h>

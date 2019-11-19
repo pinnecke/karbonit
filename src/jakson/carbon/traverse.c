@@ -17,7 +17,7 @@
 
 #include <jakson/carbon/traverse.h>
 #include <jakson/carbon/revise.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/object.h>
 

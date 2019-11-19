@@ -21,7 +21,7 @@
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/internal.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/key.h>
@@ -362,7 +362,7 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         carbon_int_field_create(field);
                         field->arr_it.created = true;
-                        internal_carbon_array_create(field->array, file,
+                        internal_arr_it_create(field->array, file,
                                                memfile_tell(file) - sizeof(u8));
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -544,7 +544,7 @@ bool carbon_int_field_clone(field *dst, field *src)
         } else if (carbon_int_field_column_it_opened(src)) {
                 carbon_column_clone(dst->column, src->column);
         } else if (carbon_int_field_array_opened(src)) {
-                internal_carbon_array_clone(dst->array, src->array);
+                internal_arr_it_clone(dst->array, src->array);
         }
         return true;
 }
@@ -582,7 +582,7 @@ bool carbon_int_field_column_it_opened(field *field)
 void carbon_int_auto_close_nested_array(field *field)
 {
         if (carbon_int_field_array_opened(field)) {
-                carbon_array_drop(field->array);
+                arr_it_drop(field->array);
                 ZERO_MEMORY(field->array, sizeof(arr_it));
         }
 }
@@ -982,10 +982,10 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         arr_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        internal_carbon_array_create(&it, memfile, begin_off - sizeof(u8));
-                        internal_carbon_array_fast_forward(&it);
-                        offset_t end_off = internal_carbon_array_memfilepos(&it);
-                        carbon_array_drop(&it);
+                        internal_arr_it_create(&it, memfile, begin_off - sizeof(u8));
+                        internal_arr_it_fast_forward(&it);
+                        offset_t end_off = internal_arr_it_memfilepos(&it);
+                        arr_it_drop(&it);
 
                         JAK_ASSERT(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);

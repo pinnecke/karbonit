@@ -256,8 +256,8 @@ static void record_ref_create(memfile *memfile, rec *doc)
 static void array_traverse(struct pindex_node *parent, arr_it *it)
 {
         u64 sub_elem_pos = 0;
-        while (carbon_array_next(it)) {
-                offset_t sub_elem_off = internal_carbon_array_tell(it);
+        while (arr_it_next(it)) {
+                offset_t sub_elem_off = internal_arr_it_tell(it);
                 struct pindex_node *elem_node = pindex_node_add_array_elem(parent, sub_elem_pos, sub_elem_off);
                 array_build_index(elem_node, it);
 
@@ -374,7 +374,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                         arr_it *it = carbon_item_get_array(&(elem_it->prop.value));
                         array_traverse(parent, it);
-                        carbon_array_drop(it);
+                        arr_it_drop(it);
                 }
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -393,7 +393,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
 static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
 {
         field_type_e field_type;
-        carbon_array_field_type(&field_type, elem_it);
+        arr_it_field_type(&field_type, elem_it);
         pindex_node_set_field_type(parent, field_type);
 
         switch (field_type) {
@@ -465,7 +465,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
                         arr_it *it = carbon_item_get_array(&elem_it->item);
                         array_traverse(parent, it);
-                        carbon_array_drop(it);
+                        arr_it_drop(it);
                 }
                         break;
                 case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -1049,8 +1049,8 @@ static void index_build(memfile *file, rec *doc)
         carbon_read_begin(&it, doc);
 
         /** build index as tree structure */
-        while (carbon_array_next(&it)) {
-                offset_t entry_offset = internal_carbon_array_tell(&it);
+        while (arr_it_next(&it)) {
+                offset_t entry_offset = internal_arr_it_tell(&it);
                 struct pindex_node *node = pindex_node_add_array_elem(&root_array, array_pos, entry_offset);
                 array_build_index(node, &it);
                 array_pos++;

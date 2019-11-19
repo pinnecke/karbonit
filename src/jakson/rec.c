@@ -25,7 +25,7 @@
 #include <jakson/forwdecl.h>
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/rec.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/printers.h>
@@ -76,7 +76,7 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                     error(ERR_OPPFAILED, "cannot open revision iterator");
                     return NULL;
                 }
-                carbon_array_insert_begin(context->inserter, context->content_it);
+                arr_it_insert_begin(context->inserter, context->content_it);
                 return context->inserter;
         } else {
                 return NULL;
@@ -85,7 +85,7 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
 
 void carbon_create_end(rec_new *context)
 {
-        carbon_array_insert_end(context->inserter);
+        arr_it_insert_end(context->inserter);
         carbon_revise_iterator_close(context->content_it);
         if (context->mode & CARBON_COMPACT) {
                 carbon_revise_pack(&context->revision_context);
@@ -258,7 +258,7 @@ bool carbon_is_multiset(rec *doc)
 {
         arr_it it;
         carbon_read_begin(&it, doc);
-        bool ret = carbon_array_is_multiset(&it);
+        bool ret = arr_it_is_multiset(&it);
         carbon_read_end(&it);
         return ret;
 }
@@ -267,7 +267,7 @@ bool carbon_is_sorted(rec *doc)
 {
         arr_it it;
         carbon_read_begin(&it, doc);
-        bool ret = carbon_array_is_sorted(&it);
+        bool ret = arr_it_is_sorted(&it);
         carbon_read_end(&it);
         return ret;
 }
@@ -313,7 +313,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
         carbon_read_begin(&it, doc);
 
         carbon_printer_print_array(&it, &p, &b, true);
-        carbon_array_drop(&it);
+        arr_it_drop(&it);
 
         carbon_printer_payload_end(&p, &b);
         carbon_printer_end(&p, &b);
@@ -359,7 +359,7 @@ char *carbon_to_json_compact_dup(rec *doc)
 void carbon_read_begin(arr_it *it, rec *doc)
 {
         carbon_patch_begin(it, doc);
-        internal_carbon_array_set_mode(it, READ_ONLY);
+        internal_arr_it_set_mode(it, READ_ONLY);
 }
 
 void carbon_read_end(arr_it *it)

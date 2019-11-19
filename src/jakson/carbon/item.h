@@ -140,23 +140,23 @@ typedef struct item
         INTERNAL_CARBON_ITEM_GET_VALUE(item, object, NULL)
 
 #define carbon_item_remove(item)                                                                                       \
-        ((item)->parent == CARBON_PARENT_ARRAY ? internal_carbon_array_remove((item)->parent.array) :                  \
+        ((item)->parent == CARBON_PARENT_ARRAY ? internal_arr_it_remove((item)->parent.array) :                  \
                                                  internal_carbon_object_remove((item)->parent.object))
 
 #define carbon_item_set_null(item)                                                                                     \
-        ((item)->parent == CARBON_PARENT_ARRAY ? internal_carbon_array_update_null((item)->parent.array) :             \
+        ((item)->parent == CARBON_PARENT_ARRAY ? internal_arr_it_update_null((item)->parent.array) :             \
                                                  internal_carbon_object_update_null((item)->parent.object))            \
 
 #define carbon_item_set_true(item)                                                                                     \
-        ((item)->parent == CARBON_PARENT_ARRAY ? internal_carbon_array_update_true((item)->parent.array) :             \
+        ((item)->parent == CARBON_PARENT_ARRAY ? internal_arr_it_update_true((item)->parent.array) :             \
                                                  internal_carbon_object_update_true((item)->parent.object))
 
 #define carbon_item_set_false(item)                                                                                    \
-        ((item)->parent == CARBON_PARENT_ARRAY ? internal_carbon_array_update_false((item)->parent.array) :            \
+        ((item)->parent == CARBON_PARENT_ARRAY ? internal_arr_it_update_false((item)->parent.array) :            \
                                                  internal_carbon_object_update_false((item)->parent.object)
 
 #define carbon_item_set_number_float(item, float_value)                                                                \
-        ((item)->parent == CARBON_PARENT_ARRAY ? internal_carbon_array_update_float((item)->parent.array, float_value):\
+        ((item)->parent == CARBON_PARENT_ARRAY ? internal_arr_it_update_float((item)->parent.array, float_value):\
                                                  internal_carbon_object_update_float((item)->parent.object, float_value))
 
 #define carbon_item_set_number_signed(item, i64_value)                                                                 \
@@ -165,22 +165,22 @@ typedef struct item
         switch (number_min_type_signed(value)) {                                                                       \
                 case NUMBER_I8:                                                                                        \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_i8(subj->parent.array, (i8) i64_value) :          \
+                                        internal_arr_it_update_i8(subj->parent.array, (i8) i64_value) :          \
                                         internal_carbon_object_update_i8(subj->parent.object, (i8) i64_value));        \
                 break;                                                                                                 \
                 case NUMBER_I16:                                                                                       \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_i16(subj->parent.array, (i16) i64_value) :        \
+                                        internal_arr_it_update_i16(subj->parent.array, (i16) i64_value) :        \
                                         internal_carbon_object_update_i16(subj->parent.object, (i16) i64_value));      \
                 break;                                                                                                 \
                 case NUMBER_I32:                                                                                       \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_i32(subj->parent.array, (i32) i64_value) :        \
+                                        internal_arr_it_update_i32(subj->parent.array, (i32) i64_value) :        \
                                         internal_carbon_object_update_i32(subj->parent.object, (i32) i64_value));      \
                 break;                                                                                                 \
                 case NUMBER_I64:                                                                                       \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_i64(subj->parent.array, i64_value) :              \
+                                        internal_arr_it_update_i64(subj->parent.array, i64_value) :              \
                                         internal_carbon_object_update_i64(subj->parent.ojbect, i64_value) :            \
                 break;                                                                                                 \
                 default:                                                                                               \
@@ -196,22 +196,22 @@ typedef struct item
         switch (number_min_type_unsigned(value)) {                                                                     \
                 case NUMBER_U8:                                                                                        \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_u8(subj->parent.array, (u8) u64_value) :          \
+                                        internal_arr_it_update_u8(subj->parent.array, (u8) u64_value) :          \
                                         internal_carbon_object_update_u8(subj->parent.object, (u8) u64_value));        \
                 break;                                                                                                 \
                 case NUMBER_U16:                                                                                       \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_u16(subj->parent.array, (u16) u64_value) :        \
+                                        internal_arr_it_update_u16(subj->parent.array, (u16) u64_value) :        \
                                         internal_carbon_object_update_u16(subj->parent.object, (u16) u64_value));      \
                 break;                                                                                                 \
                 case NUMBER_U32:                                                                                       \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_u32(subj->parent.array, (u32) u64_value) :        \
+                                        internal_arr_it_update_u32(subj->parent.array, (u32) u64_value) :        \
                                         internal_carbon_object_update_u32(subj->parent.object, (u32) u64_value));      \
                 break;                                                                                                 \
                 case NUMBER_U64:                                                                                       \
                         ret = ((item)->parent == CARBON_PARENT_ARRAY ?                                                 \
-                                        internal_carbon_array_update_u64(subj->parent.array, u64_value) :              \
+                                        internal_arr_it_update_u64(subj->parent.array, u64_value) :              \
                                         internal_carbon_object_update_u64(subj->parent.object, u64_value) :            \
                 break;                                                                                                 \
                 default:                                                                                               \
@@ -223,13 +223,13 @@ typedef struct item
 
 #define carbon_item_set_string(item, const_char_str)                                                                   \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_string((item)->parent.array, const_char_str) :            \
+                                internal_arr_it_update_string((item)->parent.array, const_char_str) :            \
                                 internal_carbon_object_update_string((item)->parent.object, const_char_str))
 
 #define carbon_item_set_binary(item, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext,                     \
                                const_char_ptr_user_type)                                                               \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_binary((item)->parent.array, const_void_ptr_value,        \
+                                internal_arr_it_update_binary((item)->parent.array, const_void_ptr_value,        \
                                                                     size_t_nbytes, const_char_ptr_file_ext,            \
                                                                     const_char_ptr_user_type) :                        \
                                 internal_carbon_object_update_binary((item)->parent.object, const_void_ptr_value,      \
@@ -238,56 +238,56 @@ typedef struct item
 
 #define carbon_item_set_array_begin(state, item)                                                                       \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_array_begin((state), (item)->parent.array) :              \
+                                internal_arr_it_update_array_begin((state), (item)->parent.array) :              \
                                 internal_carbon_object_update_array_begin((state), (item)->parent.object))             \
 
 #define carbon_item_set_array_end(state)                                                                               \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_array_end((state)) :                                      \
+                                internal_arr_it_update_array_end((state)) :                                      \
                                 internal_carbon_object_update_array_end((state)))
 
 #define carbon_item_set_column_begin(state, item)                                                                      \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_column_begin((state), (item)->parent.array) :             \
+                                internal_arr_it_update_column_begin((state), (item)->parent.array) :             \
                                 internal_carbon_object_update_column_begin((state), (item)->parent.object))
 
 #define carbon_item_set_column_end(state)                                                                              \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_column_end((state)) :                                     \
+                                internal_arr_it_update_column_end((state)) :                                     \
                                 internal_carbon_object_update_column_end((state)))
 
 #define carbon_item_set_object_begin(state, item)                                                                      \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_object_begin((state), (item)->parent.array) :             \
+                                internal_arr_it_update_object_begin((state), (item)->parent.array) :             \
                                 internal_carbon_object_update_object_begin((state), (item)->parent.object))
 
 #define carbon_item_set_object_end(state)                                                                              \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_object_end((state)) :                                     \
+                                internal_arr_it_update_object_end((state)) :                                     \
                                 internal_carbon_object_update_object_end((state))
 
 #define carbon_item_set_from_carbon(item, const_carbon_ptr_src)                                                        \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_from_carbon((item)->parent.array, const_carbon_ptr_src) : \
+                                internal_arr_it_update_from_carbon((item)->parent.array, const_carbon_ptr_src) : \
                                 internal_carbon_object_update_from_carbon((item)->parent.object, const_carbon_ptr_src))
 
-#define carbon_item_set_from_array(item, const_carbon_array_ptr_src)                                                   \
+#define carbon_item_set_from_array(item, const_arr_it_ptr_src)                                                   \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_from_array((item)->>parent.array,                         \
-                                                                        const_carbon_array_ptr_src) :                  \
+                                internal_arr_it_update_from_array((item)->>parent.array,                         \
+                                                                        const_arr_it_ptr_src) :                  \
                                 internal_carbon_object_update_from_array((item)->>parent.object,                       \
-                                                                        const_carbon_array_ptr_src))
+                                                                        const_arr_it_ptr_src))
 
 #define carbon_item_set_from_object(item, const_carbon_object_ptr_src)                                                 \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_from_object((item)->parent.array,                         \
+                                internal_arr_it_update_from_object((item)->parent.array,                         \
                                                                          const_carbon_object_ptr_src) :                \
                                 internal_carbon_object_update_from_object((item)->parent.object,                       \
                                                                          const_carbon_object_ptr_src))
 
 #define carbon_item_set_from_column(item, const_carbon_column_ptr_src)                                                 \
         ((item)->parent == CARBON_PARENT_ARRAY ?                                                                       \
-                                internal_carbon_array_update_from_column((item)->parent.array,                         \
+                                internal_arr_it_update_from_column((item)->parent.array,                         \
                                                                          const_carbon_column_ptr_src) :                \
                                 internal_carbon_object_update_from_column((item)->parent.object,                       \
                                                                          const_carbon_column_ptr_src))

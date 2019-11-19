@@ -22,7 +22,7 @@
 #include <jakson/error.h>
 #include <jakson/mem/file.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/prop.h>
 
 #ifdef __cplusplus

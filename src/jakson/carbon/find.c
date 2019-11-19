@@ -58,7 +58,7 @@ bool carbon_find_end(carbon_find *find)
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
-                                carbon_array_drop(find->value.array);
+                                arr_it_drop(find->value.array);
                                 break;
                         case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -347,7 +347,7 @@ bool carbon_find_array_is_multiset(carbon_find *find)
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 arr_it *it = carbon_find_result_array(find);
-                return carbon_array_is_multiset(it);
+                return arr_it_is_multiset(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
@@ -359,7 +359,7 @@ bool carbon_find_array_is_sorted(carbon_find *find)
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 arr_it *it = carbon_find_result_array(find);
-                return carbon_array_is_sorted(it);
+                return arr_it_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }

@@ -16,7 +16,7 @@
  */
 
 #include <jakson/std/uintvar/stream.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/column.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/mime.h>
@@ -535,8 +535,8 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
         carbon_int_insert_array(&inserter_in->memfile, derivation, array_capacity);
         u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
 
-        internal_carbon_array_create(state_out->array, &inserter_in->memfile, payload_start);
-        carbon_array_insert_begin(&state_out->nested_inserter, state_out->array);
+        internal_arr_it_create(state_out->array, &inserter_in->memfile, payload_start);
+        arr_it_insert_begin(&state_out->nested_inserter, state_out->array);
 
         return &state_out->nested_inserter;
 }
@@ -550,17 +550,17 @@ carbon_insert *carbon_insert_array_begin(carbon_insert_array_state *state_out,
 bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 {
         arr_it scan;
-        internal_carbon_array_create(&scan, &state_in->parent_inserter->memfile,
+        internal_arr_it_create(&scan, &state_in->parent_inserter->memfile,
                                memfile_tell(&state_in->parent_inserter->memfile) - 1);
 
-        internal_carbon_array_fast_forward(&scan);
+        internal_arr_it_fast_forward(&scan);
 
         state_in->array_end = memfile_tell(&scan.file);
         memfile_skip(&scan.file, 1);
 
         memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.file) - 1);
-        carbon_array_drop(&scan);
-        carbon_array_drop(state_in->array);
+        arr_it_drop(&scan);
+        arr_it_drop(state_in->array);
         free(state_in->array);
         return true;
 }

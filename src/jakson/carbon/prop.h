@@ -147,8 +147,8 @@ typedef struct carbon_prop
 #define carbon_prop_set_from_carbon(prop, const_carbon_ptr_src)                                                        \
         carbon_item_set_from_carbon((prop)->value, const_carbon_ptr_src)
 
-#define carbon_prop_set_from_array(prop, const_carbon_array_ptr_src)                                                   \
-        carbon_item_set_from_array((prop)->value, const_carbon_array_ptr_src)
+#define carbon_prop_set_from_array(prop, const_arr_it_ptr_src)                                                   \
+        carbon_item_set_from_array((prop)->value, const_arr_it_ptr_src)
 
 #define carbon_prop_set_from_object(prop, const_carbon_object_ptr_src)                                                 \
         carbon_item_set_from_object((prop)->value, const_carbon_object_ptr_src)

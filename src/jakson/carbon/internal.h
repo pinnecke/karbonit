@@ -30,7 +30,7 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/containers.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/array.h>
+#include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/abstract.h>
 
 #ifdef __cplusplus

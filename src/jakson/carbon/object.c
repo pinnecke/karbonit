@@ -44,7 +44,7 @@ bool internal_carbon_object_create(obj_it *it, memfile *memfile, offset_t payloa
         error_if_and_return(sub_type != CARBON_CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
         char marker = memfile_read_byte(&it->memfile);
-        it->abstract_type = (map_derivable_e) marker;
+        it->abstract_type = (map_type_e) marker;
 
         it->object_contents_off += sizeof(u8);
 
@@ -207,7 +207,7 @@ bool carbon_object_is_sorted(obj_it *it)
         return abstract_is_sorted(type_class);
 }
 
-void carbon_object_update_type(obj_it *it, map_derivable_e derivation)
+void carbon_object_update_type(obj_it *it, map_type_e derivation)
 {
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->object_start_off);

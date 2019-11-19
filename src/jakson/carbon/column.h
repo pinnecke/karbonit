@@ -40,7 +40,7 @@ typedef struct col_it {
 
         field_type_e type;
 
-        list_derivable_e list_type;
+        list_type_e list_type;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
@@ -78,7 +78,7 @@ bool carbon_column_remove(col_it *it, u32 pos);
 
 bool carbon_column_is_multiset(col_it *it);
 bool carbon_column_is_sorted(col_it *it);
-bool carbon_column_update_type(col_it *it, list_derivable_e derivation);
+bool carbon_column_update_type(col_it *it, list_type_e derivation);
 
 bool carbon_column_update_set_null(col_it *it, u32 pos);
 bool carbon_column_update_set_true(col_it *it, u32 pos);

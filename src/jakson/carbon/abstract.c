@@ -256,7 +256,7 @@ bool abstract_is_distinct(abstract_type_class_e type)
         }
 }
 
-bool abstract_class_to_list_derivable(list_derivable_e *out, abstract_type_class_e in)
+bool abstract_class_to_list_derivable(list_type_e *out, abstract_type_class_e in)
 {
         switch (in) {
                 case TYPE_UNSORTED_MULTISET:
@@ -277,7 +277,7 @@ bool abstract_class_to_list_derivable(list_derivable_e *out, abstract_type_class
         return true;
 }
 
-bool abstract_list_derivable_to_class(abstract_type_class_e *out, list_derivable_e in)
+bool abstract_list_derivable_to_class(abstract_type_class_e *out, list_type_e in)
 {
         switch (in) {
                 case LIST_UNSORTED_MULTISET:
@@ -298,7 +298,7 @@ bool abstract_list_derivable_to_class(abstract_type_class_e *out, list_derivable
         return true;
 }
 
-bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_derivable_e in)
+bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_type_e in)
 {
         switch (in) {
                 case MAP_UNSORTED_MULTIMAP:
@@ -521,7 +521,7 @@ bool abstract_is_instanceof_list(memfile *memfile)
 }
 
 bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
-                                         list_derivable_e should)
+                                         list_type_e should)
 {
         switch (is) {
                 case LIST_CONTAINER_ARRAY:
@@ -718,7 +718,7 @@ error_case:
         return error(ERR_INTERNALERR, "unknown list container type");
 }
 
-bool abstract_derive_map_to(derived_e *concrete, map_derivable_e should)
+bool abstract_derive_map_to(derived_e *concrete, map_type_e should)
 {
         switch (should) {
                 case MAP_UNSORTED_MULTIMAP:

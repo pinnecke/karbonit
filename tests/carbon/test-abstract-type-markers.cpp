@@ -450,7 +450,7 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
         drop_memfile(&memfile);
 }
 
-static void test_get_derive_from_list(carbon_list_container_e is, list_derivable_e should,
+static void test_get_derive_from_list(carbon_list_container_e is, list_type_e should,
                                       derived_e expected)
 {
         derived_e concrete;
@@ -560,7 +560,7 @@ TEST(TestAbstractTypeMarker, GetDeriveFromList)
                                   SORTED_SET_COL_BOOLEAN);
 }
 
-static void test_get_derive_from_list(map_derivable_e should, derived_e expected)
+static void test_get_derive_from_list(map_type_e should, derived_e expected)
 {
         derived_e concrete;
         ASSERT_TRUE(abstract_derive_map_to(&concrete, should));

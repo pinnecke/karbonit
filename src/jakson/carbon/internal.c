@@ -62,7 +62,7 @@ insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 c
         memfile_seek(memfile, payload_begin);
 }
 
-bool carbon_int_insert_object(memfile *memfile, map_derivable_e derivation, size_t nbytes)
+bool carbon_int_insert_object(memfile *memfile, map_type_e derivation, size_t nbytes)
 {
         assert(derivation == MAP_UNSORTED_MULTIMAP || derivation == MAP_SORTED_MULTIMAP ||
                derivation == MAP_UNSORTED_MAP || derivation == MAP_SORTED_MAP);
@@ -72,7 +72,7 @@ bool carbon_int_insert_object(memfile *memfile, map_derivable_e derivation, size
         return true;
 }
 
-bool carbon_int_insert_array(memfile *memfile, list_derivable_e derivation, size_t nbytes)
+bool carbon_int_insert_array(memfile *memfile, list_type_e derivation, size_t nbytes)
 {
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
@@ -82,7 +82,7 @@ bool carbon_int_insert_array(memfile *memfile, list_derivable_e derivation, size
         return true;
 }
 
-bool carbon_int_insert_column(memfile *memfile_in, list_derivable_e derivation, carbon_column_type_e type,
+bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, carbon_column_type_e type,
                               size_t capactity)
 {
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||

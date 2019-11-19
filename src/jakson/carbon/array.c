@@ -488,7 +488,7 @@ bool carbon_array_is_sorted(arr_it *it)
         return abstract_is_sorted(type_class);
 }
 
-void carbon_array_update_type(arr_it *it, list_derivable_e derivation)
+void carbon_array_update_type(arr_it *it, list_type_e derivation)
 {
         memfile_save_position(&it->file);
         memfile_seek(&it->file, it->begin);

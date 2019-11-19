@@ -167,8 +167,8 @@ typedef enum carbon_key_type {
  */
 carbon_insert * carbon_create_begin(rec_new *context, rec *doc, carbon_key_e type, int options);
 void carbon_create_end(rec_new *context);
-void carbon_create_empty(rec *doc, list_derivable_e derivation, carbon_key_e type);
-void carbon_create_empty_ex(rec *doc, list_derivable_e derivation, carbon_key_e type, u64 doc_cap, u64 array_cap);
+void carbon_create_empty(rec *doc, list_type_e derivation, carbon_key_e type);
+void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type, u64 doc_cap, u64 array_cap);
 
 bool carbon_from_json(rec *doc, const char *json, carbon_key_e type, const void *key);
 bool carbon_from_raw_data(rec *doc, const void *data, u64 len);
@@ -198,7 +198,7 @@ bool carbon_is_multiset(rec *doc);
 bool carbon_is_sorted(rec *doc);
 
 /** Changes the abstract type of the most-outer record array to the given abstract type */
-void carbon_update_list_type(rec *revised_doc, rec *doc, list_derivable_e derivation);
+void carbon_update_list_type(rec *revised_doc, rec *doc, list_type_e derivation);
 
 bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc);
 const char *carbon_to_json_extended(string_buffer *dst, rec *doc);

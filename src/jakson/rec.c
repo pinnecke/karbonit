@@ -58,7 +58,7 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                 context->mode = options;
 
                 /** get the annotation type for that records outer-most array from options*/
-                list_derivable_e derivation;
+                list_type_e derivation;
 
                 if (context->mode & SORTED_MULTISET) {
                         derivation = LIST_SORTED_MULTISET;
@@ -99,12 +99,12 @@ void carbon_create_end(rec_new *context)
         carbon_drop(&context->original);
 }
 
-void carbon_create_empty(rec *doc, list_derivable_e derivation, carbon_key_e type)
+void carbon_create_empty(rec *doc, list_type_e derivation, carbon_key_e type)
 {
         carbon_create_empty_ex(doc, derivation, type, 1024, 1);
 }
 
-void carbon_create_empty_ex(rec *doc, list_derivable_e derivation, carbon_key_e type,
+void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type,
                                 u64 doc_cap, u64 array_cap)
 {
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
@@ -272,7 +272,7 @@ bool carbon_is_sorted(rec *doc)
         return ret;
 }
 
-void carbon_update_list_type(rec *revised_doc, rec *doc, list_derivable_e derivation)
+void carbon_update_list_type(rec *revised_doc, rec *doc, list_type_e derivation)
 {
         rev context;
         carbon_revise_begin(&context, revised_doc, doc);

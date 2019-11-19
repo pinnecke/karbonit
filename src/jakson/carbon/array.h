@@ -49,7 +49,7 @@ typedef struct field {
 typedef struct arr_it {
         memfile file;
         offset_t begin;
-        list_derivable_e list_type;
+        list_type_e list_type;
         u64 pos;
         item item;
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
@@ -105,7 +105,7 @@ bool carbon_array_is_multiset(arr_it *it);
 bool carbon_array_is_sorted(arr_it *it);
 
 /** Updates this arrays abstract type to the given abstract type */
-void carbon_array_update_type(arr_it *it, list_derivable_e derivation);
+void carbon_array_update_type(arr_it *it, list_type_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

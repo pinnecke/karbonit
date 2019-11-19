@@ -134,7 +134,7 @@ bool carbon_revise_key_set_string(rev *context, const char *key_value)
         }
 }
 
-void carbon_revise_set_list_type(rev *context, list_derivable_e derivation)
+void carbon_revise_set_list_type(rev *context, list_type_e derivation)
 {
         arr_it it;
         carbon_revise_iterator_open(&it, context);

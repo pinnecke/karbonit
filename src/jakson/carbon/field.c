@@ -505,7 +505,7 @@ bool carbon_field_skip_64(memfile *file)
         return true;
 }
 
-field_type_e carbon_field_type_for_column(list_derivable_e derivation, carbon_column_type_e type)
+field_type_e carbon_field_type_for_column(list_type_e derivation, carbon_column_type_e type)
 {
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:

@@ -52,7 +52,7 @@ bool carbon_revise_key_set_unsigned(rev *context, u64 key_value);
 bool carbon_revise_key_set_signed(rev *context, i64 key_value);
 bool carbon_revise_key_set_string(rev *context, const char *key_value);
 
-void carbon_revise_set_list_type(rev *context, list_derivable_e derivation);
+void carbon_revise_set_list_type(rev *context, list_type_e derivation);
 
 bool carbon_revise_iterator_open(arr_it *it, rev *context);
 void carbon_revise_iterator_close(arr_it *it);

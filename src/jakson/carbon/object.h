@@ -55,7 +55,7 @@ typedef struct obj_it {
                 } value;
         } field;
 
-        map_derivable_e abstract_type;
+        map_type_e abstract_type;
         carbon_prop prop;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
@@ -75,7 +75,7 @@ bool carbon_object_prev(obj_it *it);
 
 bool carbon_object_is_multimap(obj_it *it);
 bool carbon_object_is_sorted(obj_it *it);
-void carbon_object_update_type(obj_it *it, map_derivable_e derivation);
+void carbon_object_update_type(obj_it *it, map_type_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

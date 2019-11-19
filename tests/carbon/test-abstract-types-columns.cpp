@@ -75,7 +75,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                col_it *column_it;
+                struct col_it *column_it;
 
                 carbon_revise_begin(&rev_context, &doc2, &doc);
                 carbon_revise_iterator_open(&it, &rev_context);

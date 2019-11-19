@@ -74,19 +74,19 @@ carbon_insert *carbon_insert_object_begin(carbon_insert_object_state *out, carbo
 bool carbon_insert_object_end(carbon_insert_object_state *state);
 
 carbon_insert *carbon_insert_object_map_begin(carbon_insert_object_state *out, carbon_insert *inserter,
-                                              map_derivable_e derivation, u64 object_capacity);
+                                              map_type_e derivation, u64 object_capacity);
 bool carbon_insert_object_map_end(carbon_insert_object_state *state);
 
 carbon_insert *carbon_insert_array_begin(carbon_insert_array_state *state_out, carbon_insert *inserter_in, u64 array_capacity);
 bool carbon_insert_array_end(carbon_insert_array_state *state_in);
 
-carbon_insert *carbon_insert_array_list_begin(carbon_insert_array_state *state_out, carbon_insert *inserter_in, list_derivable_e derivation, u64 array_capacity);
+carbon_insert *carbon_insert_array_list_begin(carbon_insert_array_state *state_out, carbon_insert *inserter_in, list_type_e derivation, u64 array_capacity);
 bool carbon_insert_array_list_end(carbon_insert_array_state *state_in);
 
 carbon_insert *carbon_insert_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, carbon_column_type_e type, u64 column_capacity);
 bool carbon_insert_column_end(carbon_insert_column_state *state_in);
 
-carbon_insert *carbon_insert_column_list_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, list_derivable_e derivation, carbon_column_type_e type, u64 column_capacity);
+carbon_insert *carbon_insert_column_list_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, list_type_e derivation, carbon_column_type_e type, u64 column_capacity);
 bool carbon_insert_column_list_end(carbon_insert_column_state *state_in);
 
 bool carbon_insert_prop_null(carbon_insert *inserter, const char *key);
@@ -115,7 +115,7 @@ bool carbon_insert_prop_from_column(); // TODO: Implement P2
 carbon_insert *carbon_insert_prop_object_begin(carbon_insert_object_state *out, carbon_insert *inserter, const char *key, u64 object_capacity);
 u64 carbon_insert_prop_object_end(carbon_insert_object_state *state);
 
-carbon_insert *carbon_insert_prop_map_begin(carbon_insert_object_state *out, carbon_insert *inserter, map_derivable_e derivation, const char *key, u64 object_capacity);
+carbon_insert *carbon_insert_prop_map_begin(carbon_insert_object_state *out, carbon_insert *inserter, map_type_e derivation, const char *key, u64 object_capacity);
 u64 carbon_insert_prop_map_end(carbon_insert_object_state *state);
 
 carbon_insert *carbon_insert_prop_array_begin(carbon_insert_array_state *state, carbon_insert *inserter, const char *key, u64 array_capacity);

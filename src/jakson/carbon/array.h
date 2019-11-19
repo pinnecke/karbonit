@@ -47,7 +47,7 @@ typedef struct field {
 } field;
 
 typedef struct arr_it {
-        memfile memfile;
+        memfile file;
         offset_t array_begin_off;
 
         list_derivable_e abstract_type;

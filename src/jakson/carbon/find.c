@@ -329,7 +329,7 @@ bool carbon_find_update_array_type(carbon_find *find, list_derivable_e derivatio
         if (carbon_field_type_is_array_or_subtype(type)) {
                 memfile mod;
                 arr_it *it = carbon_find_result_array(find);
-                memfile_clone(&mod, &it->memfile);
+                memfile_clone(&mod, &it->file);
                 memfile_seek_from_here(&mod, -sizeof(u8));
                 derived_e derive_marker;
                 abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
@@ -649,7 +649,7 @@ static void result_from_array(carbon_find *find, arr_it *it)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         find->value.array = carbon_item_get_array(&(it->item));
-                        find->value.array->memfile.mode = find->doc->file.mode;
+                        find->value.array->file.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -745,7 +745,7 @@ static void result_from_object(carbon_find *find, carbon_object *it)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         find->value.array = carbon_item_get_array(&(it->prop.value));
-                        find->value.array->memfile.mode = find->doc->file.mode;
+                        find->value.array->file.mode = find->doc->file.mode;
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:

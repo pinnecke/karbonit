@@ -215,7 +215,7 @@ size_t carbon_int_get_type_value_size(field_type_e type)
 bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
         if (carbon_int_array_refresh(is_empty_slot, is_array_end, it)) {
-                carbon_field_skip(&it->memfile);
+                carbon_field_skip(&it->file);
                 return true;
         } else {
                 return false;
@@ -285,7 +285,7 @@ bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *i
         carbon_int_field_drop(&it->field);
         if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_array_field_type_read(it);
-                carbon_int_field_data_access(&it->memfile, &it->field);
+                carbon_int_field_data_access(&it->file, &it->field);
                 return true;
         } else {
                 return false;
@@ -294,14 +294,14 @@ bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *i
 
 bool carbon_int_array_field_type_read(arr_it *it)
 {
-        error_if_and_return(memfile_remain_size(&it->memfile) < 1, ERR_ILLEGALOP, NULL);
-        memfile_save_position(&it->memfile);
-        it->field_offset = memfile_tell(&it->memfile);
-        u8 media_type = *memfile_read(&it->memfile, 1);
+        error_if_and_return(memfile_remain_size(&it->file) < 1, ERR_ILLEGALOP, NULL);
+        memfile_save_position(&it->file);
+        it->field_offset = memfile_tell(&it->file);
+        u8 media_type = *memfile_read(&it->file, 1);
         error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
         error_if_and_return(media_type == CARBON_MARRAY_END, ERR_OUTOFBOUNDS, NULL)
         it->field.type = media_type;
-        memfile_restore_position(&it->memfile);
+        memfile_restore_position(&it->file);
         return true;
 }
 
@@ -1622,7 +1622,7 @@ static void marker_insert(memfile *memfile, u8 marker)
 static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
         carbon_int_field_auto_close(&it->field);
-        return is_slot_occupied(is_empty_slot, is_array_end, &it->memfile, CARBON_MARRAY_END);
+        return is_slot_occupied(is_empty_slot, is_array_end, &it->file, CARBON_MARRAY_END);
 }
 
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, carbon_object *it)
@@ -1658,7 +1658,7 @@ static bool array_next_no_load(bool *is_empty_slot, bool *is_array_end, arr_it *
 {
         if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 carbon_int_array_field_type_read(it);
-                carbon_field_skip(&it->memfile);
+                carbon_field_skip(&it->file);
                 return true;
         } else {
                 return false;

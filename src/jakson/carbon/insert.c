@@ -57,12 +57,12 @@ void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context
 
         offset_t pos = 0;
         if (context->array_end_reached) {
-                pos = memfile_tell(&context->memfile);
+                pos = memfile_tell(&context->file);
         } else {
                 pos = carbon_int_history_has(&context->history) ? carbon_int_history_peek(&context->history) : 0;
         }
 
-        internal_create(inserter, &context->memfile, pos);
+        internal_create(inserter, &context->file, pos);
 }
 
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context)
@@ -555,10 +555,10 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 
         internal_carbon_array_fast_forward(&scan);
 
-        state_in->array_end = memfile_tell(&scan.memfile);
-        memfile_skip(&scan.memfile, 1);
+        state_in->array_end = memfile_tell(&scan.file);
+        memfile_skip(&scan.file, 1);
 
-        memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
+        memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.file) - 1);
         carbon_array_drop(&scan);
         carbon_array_drop(state_in->array);
         free(state_in->array);

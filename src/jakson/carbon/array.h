@@ -27,26 +27,23 @@ extern "C" {
 //  public structures
 // ---------------------------------------------------------------------------------------------------------------------
 
+typedef struct {
+        bool created;
+        bool accessed;
+} nested_it;
+
 typedef struct field {
         field_type_e type;
-
         const void *data;
         u64 len;
-
         const char *mime;
         u64 mime_len;
-
-        bool nested_array_is_created;
-        bool nested_array_accessed;
-
-        bool nested_object_it_is_created;
-        bool nested_object_it_accessed;
-
-        bool nested_column_it_is_created;
-
-        carbon_array *nested_array;
-        carbon_column *nested_column_it;
-        carbon_object *nested_object_it;
+        nested_it arr_it;
+        nested_it obj_it;
+        bool col_it_created;
+        carbon_array *array;
+        carbon_column *column;
+        carbon_object *object;
 } field;
 
 typedef struct carbon_array {

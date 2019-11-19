@@ -361,8 +361,8 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
                         carbon_int_field_create(field);
-                        field->nested_array_is_created = true;
-                        internal_carbon_array_create(field->nested_array, file,
+                        field->arr_it.created = true;
+                        internal_carbon_array_create(field->array, file,
                                                memfile_tell(file) - sizeof(u8));
                         break;
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -406,8 +406,8 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         carbon_int_field_create(field);
-                        field->nested_column_it_is_created = true;
-                        carbon_column_create(field->nested_column_it, file,
+                        field->col_it_created = true;
+                        carbon_column_create(field->column, file,
                                                 memfile_tell(file) - sizeof(u8));
                 }
                         break;
@@ -416,8 +416,8 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                 case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
                         carbon_int_field_create(field);
-                        field->nested_object_it_is_created = true;
-                        internal_carbon_object_create(field->nested_object_it, file,
+                        field->obj_it.created = true;
+                        internal_carbon_object_create(field->object, file,
                                                       memfile_tell(file) - sizeof(u8));
                         break;
                 default:
@@ -512,14 +512,14 @@ bool carbon_int_history_has(vector ofType(offset_t) *vec)
 
 bool carbon_int_field_create(field *field)
 {
-        field->nested_array_is_created = false;
-        field->nested_array_accessed = false;
-        field->nested_object_it_is_created = false;
-        field->nested_object_it_accessed = false;
-        field->nested_column_it_is_created = false;
-        field->nested_array = MALLOC(sizeof(carbon_array));
-        field->nested_object_it = MALLOC(sizeof(carbon_object));
-        field->nested_column_it = MALLOC(sizeof(carbon_column));
+        field->arr_it.created = false;
+        field->arr_it.accessed = false;
+        field->obj_it.created = false;
+        field->obj_it.accessed = false;
+        field->col_it_created = false;
+        field->array = MALLOC(sizeof(carbon_array));
+        field->object = MALLOC(sizeof(carbon_object));
+        field->column = MALLOC(sizeof(carbon_column));
         return true;
 }
 
@@ -530,21 +530,21 @@ bool carbon_int_field_clone(field *dst, field *src)
         dst->len = src->len;
         dst->mime = src->mime;
         dst->mime_len = src->mime_len;
-        dst->nested_array_is_created = src->nested_array_is_created;
-        dst->nested_array_accessed = src->nested_array_accessed;
-        dst->nested_object_it_is_created = src->nested_object_it_is_created;
-        dst->nested_object_it_accessed = src->nested_object_it_accessed;
-        dst->nested_column_it_is_created = src->nested_column_it_is_created;
-        dst->nested_array = MALLOC(sizeof(carbon_array));
-        dst->nested_object_it = MALLOC(sizeof(carbon_object));
-        dst->nested_column_it = MALLOC(sizeof(carbon_column));
+        dst->arr_it.created = src->arr_it.created;
+        dst->arr_it.accessed = src->arr_it.accessed;
+        dst->obj_it.created = src->obj_it.created;
+        dst->obj_it.accessed = src->obj_it.accessed;
+        dst->col_it_created = src->col_it_created;
+        dst->array = MALLOC(sizeof(carbon_array));
+        dst->object = MALLOC(sizeof(carbon_object));
+        dst->column = MALLOC(sizeof(carbon_column));
 
         if (carbon_int_field_object_it_opened(src)) {
-                internal_carbon_object_clone(dst->nested_object_it, src->nested_object_it);
+                internal_carbon_object_clone(dst->object, src->object);
         } else if (carbon_int_field_column_it_opened(src)) {
-                carbon_column_clone(dst->nested_column_it, src->nested_column_it);
+                carbon_column_clone(dst->column, src->column);
         } else if (carbon_int_field_array_opened(src)) {
-                internal_carbon_array_clone(dst->nested_array, src->nested_array);
+                internal_carbon_array_clone(dst->array, src->array);
         }
         return true;
 }
@@ -552,71 +552,71 @@ bool carbon_int_field_clone(field *dst, field *src)
 bool carbon_int_field_drop(field *field)
 {
         carbon_int_field_auto_close(field);
-        free(field->nested_array);
-        free(field->nested_object_it);
-        free(field->nested_column_it);
-        field->nested_array = NULL;
-        field->nested_object_it = NULL;
-        field->nested_column_it = NULL;
+        free(field->array);
+        free(field->object);
+        free(field->column);
+        field->array = NULL;
+        field->object = NULL;
+        field->column = NULL;
         return true;
 }
 
 bool carbon_int_field_object_it_opened(field *field)
 {
         JAK_ASSERT(field);
-        return field->nested_object_it_is_created && field->nested_object_it != NULL;
+        return field->obj_it.created && field->object != NULL;
 }
 
 bool carbon_int_field_array_opened(field *field)
 {
         JAK_ASSERT(field);
-        return field->nested_array_is_created && field->nested_array != NULL;
+        return field->arr_it.created && field->array != NULL;
 }
 
 bool carbon_int_field_column_it_opened(field *field)
 {
         JAK_ASSERT(field);
-        return field->nested_column_it_is_created && field->nested_column_it != NULL;
+        return field->col_it_created && field->column != NULL;
 }
 
 void carbon_int_auto_close_nested_array(field *field)
 {
         if (carbon_int_field_array_opened(field)) {
-                carbon_array_drop(field->nested_array);
-                ZERO_MEMORY(field->nested_array, sizeof(carbon_array));
+                carbon_array_drop(field->array);
+                ZERO_MEMORY(field->array, sizeof(carbon_array));
         }
 }
 
 void carbon_int_auto_close_nested_object_it(field *field)
 {
         if (carbon_int_field_object_it_opened(field)) {
-                carbon_object_drop(field->nested_object_it);
-                ZERO_MEMORY(field->nested_object_it, sizeof(carbon_object));
+                carbon_object_drop(field->object);
+                ZERO_MEMORY(field->object, sizeof(carbon_object));
         }
 }
 
 void carbon_int_auto_close_nested_column_it(field *field)
 {
         if (carbon_int_field_column_it_opened(field)) {
-                ZERO_MEMORY(field->nested_column_it, sizeof(carbon_column));
+                ZERO_MEMORY(field->column, sizeof(carbon_column));
         }
 }
 
 bool carbon_int_field_auto_close(field *field)
 {
-        if (field->nested_array_is_created && !field->nested_array_accessed) {
+        if (field->arr_it.created && !field->arr_it.accessed) {
                 carbon_int_auto_close_nested_array(field);
-                field->nested_array_is_created = false;
-                field->nested_array_accessed = false;
+                field->arr_it.created = false;
+                field->arr_it.accessed = false;
         }
-        if (field->nested_object_it_is_created && !field->nested_object_it_accessed) {
+        if (field->obj_it.created && !field->obj_it.accessed) {
                 carbon_int_auto_close_nested_object_it(field);
-                field->nested_object_it_is_created = false;
-                field->nested_object_it_accessed = false;
+                field->obj_it.created = false;
+                field->obj_it.accessed = false;
         }
-        if (field->nested_column_it_is_created) {
+        if (field->col_it_created) {
                 carbon_int_auto_close_nested_column_it(field);
-                field->nested_object_it_is_created = false;
+                field->obj_it.created = false;
         }
 
         return true;
@@ -886,23 +886,23 @@ carbon_array *carbon_int_field_array_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
         error_if_and_return(!carbon_field_type_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
-        field->nested_array_accessed = true;
-        return field->nested_array;
+        field->arr_it.accessed = true;
+        return field->array;
 }
 
 carbon_object *carbon_int_field_object_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
         error_if_and_return(!carbon_field_type_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
-        field->nested_object_it_accessed = true;
-        return field->nested_object_it;
+        field->obj_it.accessed = true;
+        return field->object;
 }
 
 carbon_column *carbon_int_field_column_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
         error_if_and_return(!carbon_field_type_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
-        return field->nested_column_it;
+        return field->column;
 }
 
 bool carbon_int_field_remove(memfile *memfile, field_type_e type)

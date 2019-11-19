@@ -51,7 +51,7 @@ typedef struct carbon_insert {
 
 typedef struct carbon_insert_array_state {
         carbon_insert *parent_inserter;
-        carbon_array *nested_array;
+        carbon_array *array;
         carbon_insert nested_inserter;
         offset_t array_begin, array_end;
 } carbon_insert_array_state;

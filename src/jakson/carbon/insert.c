@@ -527,7 +527,7 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
 
         *state_out = (carbon_insert_array_state) {
                 .parent_inserter = inserter_in,
-                .nested_array = MALLOC(sizeof(carbon_array)),
+                .array = MALLOC(sizeof(carbon_array)),
                 .array_begin = memfile_tell(&inserter_in->memfile),
                 .array_end = 0
         };
@@ -535,8 +535,8 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
         carbon_int_insert_array(&inserter_in->memfile, derivation, array_capacity);
         u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
 
-        internal_carbon_array_create(state_out->nested_array, &inserter_in->memfile, payload_start);
-        carbon_array_insert_begin(&state_out->nested_inserter, state_out->nested_array);
+        internal_carbon_array_create(state_out->array, &inserter_in->memfile, payload_start);
+        carbon_array_insert_begin(&state_out->nested_inserter, state_out->array);
 
         return &state_out->nested_inserter;
 }
@@ -560,8 +560,8 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 
         memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
         carbon_array_drop(&scan);
-        carbon_array_drop(state_in->nested_array);
-        free(state_in->nested_array);
+        carbon_array_drop(state_in->array);
+        free(state_in->array);
         return true;
 }
 

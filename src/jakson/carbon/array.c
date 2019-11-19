@@ -333,9 +333,9 @@ bool carbon_array_rewind(carbon_array *it)
 static void auto_adjust_pos_after_mod(carbon_array *it)
 {
         if (carbon_int_field_object_it_opened(&it->field)) {
-                memfile_skip(&it->memfile, it->field.nested_object_it->mod_size);
+                memfile_skip(&it->memfile, it->field.object->mod_size);
         } else if (carbon_int_field_array_opened(&it->field)) {
-                //memfile_skip(&it->mem, it->field.nested_array->mod_size);
+                //memfile_skip(&it->mem, it->field.array->mod_size);
                 //abort(); // TODO: implement!
         }
 }

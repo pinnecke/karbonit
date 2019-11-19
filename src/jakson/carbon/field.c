@@ -370,7 +370,7 @@ bool carbon_field_skip_object(memfile *file)
 bool carbon_field_skip_array(memfile *file)
 {
         if (abstract_is_instanceof_array(file)) {
-                carbon_array skip_it;
+                arr_it skip_it;
                 internal_carbon_array_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_array_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));

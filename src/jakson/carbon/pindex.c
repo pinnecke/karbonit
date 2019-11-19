@@ -78,7 +78,7 @@ static void column_into_carbon(carbon_insert *ins, pindex *index);
 
 static void object_build_index(struct pindex_node *parent, carbon_object *elem_it);
 
-static void array_build_index(struct pindex_node *parent, carbon_array *elem_it);
+static void array_build_index(struct pindex_node *parent, arr_it *elem_it);
 
 static void node_flat(memfile *file, struct pindex_node *node);
 
@@ -253,7 +253,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
         memfile_write(memfile, &commit_hash, sizeof(u64));
 }
 
-static void array_traverse(struct pindex_node *parent, carbon_array *it)
+static void array_traverse(struct pindex_node *parent, arr_it *it)
 {
         u64 sub_elem_pos = 0;
         while (carbon_array_next(it)) {
@@ -372,7 +372,7 @@ static void object_build_index(struct pindex_node *parent, carbon_object *elem_i
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        carbon_array *it = carbon_item_get_array(&(elem_it->prop.value));
+                        arr_it *it = carbon_item_get_array(&(elem_it->prop.value));
                         array_traverse(parent, it);
                         carbon_array_drop(it);
                 }
@@ -390,7 +390,7 @@ static void object_build_index(struct pindex_node *parent, carbon_object *elem_i
         }
 }
 
-static void array_build_index(struct pindex_node *parent, carbon_array *elem_it)
+static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
 {
         field_type_e field_type;
         carbon_array_field_type(&field_type, elem_it);
@@ -463,7 +463,7 @@ static void array_build_index(struct pindex_node *parent, carbon_array *elem_it)
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        carbon_array *it = carbon_item_get_array(&elem_it->item);
+                        arr_it *it = carbon_item_get_array(&elem_it->item);
                         array_traverse(parent, it);
                         carbon_array_drop(it);
                 }
@@ -1044,7 +1044,7 @@ static void index_build(memfile *file, rec *doc)
         /** init */
         pindex_node_init(&root_array);
 
-        carbon_array it;
+        arr_it it;
         u64 array_pos = 0;
         carbon_read_begin(&it, doc);
 

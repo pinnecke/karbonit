@@ -6,7 +6,7 @@
 int main (void)
 {
         rec record;
-        carbon_array it;
+        arr_it it;
         //string_buffer str;
 
         carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", CARBON_KEY_NOKEY, NULL);

@@ -6,7 +6,7 @@ TEST(TestCarbonPatch, CreatePatch) {
 
         rec doc;
         u64 hash_original, hash_patch_1, hash_patch_2;
-        carbon_array it, *arr;
+        arr_it it, *arr;
         carbon_object *obj;
         field_type_e type;
 
@@ -47,7 +47,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         {
                 carbon_find find;
                 carbon_patch_find_begin(&find, "x", &doc);
-                carbon_array *sub_it = carbon_find_result_array(&find);
+                arr_it *sub_it = carbon_find_result_array(&find);
                 carbon_array_next(sub_it); /* { ...: [42,...] } */
                 internal_carbon_array_update_u8(sub_it, 102);
                 carbon_patch_find_end(&find);

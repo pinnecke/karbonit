@@ -9,7 +9,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         carbon_insert *ins;
         rec doc, doc2;
         carbon_insert_object_state s1;
-        carbon_array it;
+        arr_it it;
         carbon_object *obj_it;
         field_type_e ft;
         rev rev_context;

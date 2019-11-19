@@ -60,7 +60,7 @@ static bool carbon_item_setup_value(carbon_item *item, field_type_e field_type, 
         return true;
 }
 
-bool internal_carbon_item_create_from_array(carbon_item *item, carbon_array *parent)
+bool internal_carbon_item_create_from_array(carbon_item *item, arr_it *parent)
 {
         item->parent_type = CARBON_PARENT_ARRAY;
         item->parent.array = parent;

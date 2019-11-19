@@ -87,7 +87,7 @@ typedef struct carbon_insert carbon_insert;
 typedef struct rec_new rec_new;
 typedef struct field field;
 
-typedef struct carbon_array carbon_array;
+typedef struct arr_it arr_it;
 typedef struct carbon_item carbon_item;
 typedef struct carbon_string_field carbon_string_field;
 struct carbon_traverse_extra;

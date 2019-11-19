@@ -4,7 +4,7 @@
 
 TEST(TestCarbonItem, CreateId) {
         rec doc;
-        carbon_array array;
+        arr_it array;
         carbon_item *item;
 
         carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", CARBON_KEY_NOKEY, NULL);
@@ -58,7 +58,7 @@ TEST(TestCarbonItem, CreateId) {
                 case 7:
                         EXPECT_TRUE(carbon_item_is_array(item));
                         {
-                                carbon_array *value = carbon_item_get_array(item);
+                                arr_it *value = carbon_item_get_array(item);
                                 EXPECT_TRUE(value != NULL);
                         }
                 break;

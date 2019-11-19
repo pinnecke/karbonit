@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-void carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context);
+void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context);
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context);
 bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object *context);
 

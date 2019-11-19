@@ -32,13 +32,13 @@ extern "C" {
 
 typedef struct carbon_path_evaluator {
         rec *doc;
-        carbon_array root_it;
+        arr_it root_it;
         carbon_path_status_e status;
         struct {
                 container_e container_type;
                 union {
                         struct {
-                                carbon_array it;
+                                arr_it it;
                         } array;
 
                         struct {

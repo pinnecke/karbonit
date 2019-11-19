@@ -41,7 +41,7 @@ typedef struct carbon_item
     carbon_parent_type_e     parent_type;
 
     union {
-        carbon_array        *array;
+        arr_it        *array;
         carbon_object       *object;
     }                        parent;
 
@@ -55,7 +55,7 @@ typedef struct carbon_item
         float                number_float;
         carbon_string_field  string;
         carbon_binary        binary;
-        carbon_array        *array;
+        arr_it        *array;
         carbon_column       *column;
         carbon_object       *object;
     }                        value;
@@ -296,7 +296,7 @@ typedef struct carbon_item
 //  for internal usage
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool internal_carbon_item_create_from_array(carbon_item *item, carbon_array *parent);
+bool internal_carbon_item_create_from_array(carbon_item *item, arr_it *parent);
 bool internal_carbon_item_create_from_object(carbon_item *item, carbon_object *parent);
 
 #ifdef __cplusplus

@@ -40,7 +40,7 @@ extern "C" {
 typedef struct carbon_insert {
         container_e context_type;
         union {
-                carbon_array *array;
+                arr_it *array;
                 carbon_column *column;
                 carbon_object *object;
         } context;
@@ -51,7 +51,7 @@ typedef struct carbon_insert {
 
 typedef struct carbon_insert_array_state {
         carbon_insert *parent_inserter;
-        carbon_array *array;
+        arr_it *array;
         carbon_insert nested_inserter;
         offset_t array_begin, array_end;
 } carbon_insert_array_state;
@@ -85,10 +85,10 @@ size_t carbon_int_get_type_size_encoded(field_type_e type);
  */
 size_t carbon_int_get_type_value_size(field_type_e type);
 
-bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
-bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
-bool carbon_int_array_field_type_read(carbon_array *it);
-bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, carbon_array *it);
+bool carbon_int_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it);
+bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it);
+bool carbon_int_array_field_type_read(arr_it *it);
+bool carbon_int_array_skip_contents(bool *is_empty_slot, bool *is_array_end, arr_it *it);
 
 bool carbon_int_object_it_next(bool *is_empty_slot, bool *is_object_end, carbon_object *it);
 bool carbon_int_object_it_refresh(bool *is_empty_slot, bool *is_object_end, carbon_object *it);
@@ -135,7 +135,7 @@ bool carbon_int_field_signed_value(i64 *value, field *field);
 bool carbon_int_field_unsigned_value(u64 *value, field *field);
 const char *carbon_int_field_string_value(u64 *strlen, field *field);
 bool carbon_int_field_binary_value(carbon_binary *out, field *field);
-carbon_array *carbon_int_field_array_value(field *field);
+arr_it *carbon_int_field_array_value(field *field);
 carbon_object *carbon_int_field_object_value(field *field);
 carbon_column *carbon_int_field_column_value(field *field);
 

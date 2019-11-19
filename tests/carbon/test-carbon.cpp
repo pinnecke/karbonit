@@ -212,7 +212,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
 TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
@@ -234,7 +234,7 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
 TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
@@ -257,7 +257,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
 TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
@@ -294,7 +294,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
 TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
         rec doc, rev_doc, rev_doc2;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
@@ -333,7 +333,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
 TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
         rec doc, rev_doc, rev_doc2;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY, 20, 1);
@@ -376,7 +376,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
 TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -416,7 +416,7 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
 TEST(CarbonTest, CarbonArrayIteratorStrings) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -449,7 +449,7 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
 TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -473,7 +473,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
 TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -498,7 +498,7 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
 TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -526,7 +526,7 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
 TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -555,7 +555,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
 TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -583,7 +583,7 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
 TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state;
 
@@ -612,7 +612,7 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
 TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state;
 
@@ -651,7 +651,7 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
 TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1, array_state_l2;
 
@@ -698,7 +698,7 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
 TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1;
 
@@ -743,7 +743,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
 TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1;
 
@@ -798,7 +798,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
 TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
@@ -837,7 +837,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
@@ -874,7 +874,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
@@ -911,7 +911,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
 TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
         carbon_insert *ins;
@@ -1014,7 +1014,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
@@ -1053,7 +1053,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
 TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
@@ -1095,7 +1095,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
 TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
@@ -1139,7 +1139,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
 TEST(CarbonTest, CarbonInsertNullTest) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
         carbon_insert *ins;
@@ -1241,7 +1241,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
 TEST(CarbonTest, CarbonShrinkColumnListTest) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
         carbon_insert *ins;
@@ -1341,7 +1341,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
 TEST(CarbonTest, CarbonShrinkArrayListTest) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state;
         carbon_insert *ins;
@@ -1393,7 +1393,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
 TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_array_state array_state, nested_array_state;
         carbon_insert *ins, *nested_ins;
@@ -1467,7 +1467,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
 TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         carbon_insert_column_state column_state;
         carbon_insert_array_state array_state, nested_array_state;
@@ -1640,7 +1640,7 @@ TEST(CarbonTest, CarbonDotNotationParsing) {
 TEST(CarbonTest, CarbonFind) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert ins;
         carbon_find finder;
         u64 result_unsigned;
@@ -1717,7 +1717,7 @@ TEST(CarbonTest, CarbonFind) {
 TEST(CarbonTest, CarbonFindTypes) {
         rec doc, rev_doc;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter, *ins, *nested_ins, *column_ins;
         carbon_insert_column_state column_state;
         carbon_insert_array_state array_state, nested_array_state;
@@ -1776,7 +1776,7 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_TRUE(carbon_find_has_result(&finder));
                 carbon_find_result_type(&type, &finder);
                 ASSERT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
-                carbon_array *retval = carbon_find_result_array(&finder);
+                arr_it *retval = carbon_find_result_array(&finder);
                 ASSERT_TRUE(retval != NULL);
                 carbon_find_end(&finder);
         }
@@ -1841,7 +1841,7 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_TRUE(carbon_find_has_result(&finder));
                 carbon_find_result_type(&type, &finder);
                 ASSERT_EQ(type, CARBON_FIELD_ARRAY_UNSORTED_MULTISET);
-                carbon_array *retval = carbon_find_result_array(&finder);
+                arr_it *retval = carbon_find_result_array(&finder);
                 ASSERT_TRUE(retval != NULL);
                 carbon_find_end(&finder);
         }
@@ -2032,7 +2032,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 {
         rec doc, rev_doc, rev_doc2, rev_doc3, rev_doc4;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         string_buffer sb;
         const char *json;
@@ -2126,7 +2126,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 {
         rec doc, rev_doc, rev_doc2;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         string_buffer sb;
         const char *json;
@@ -2218,7 +2218,7 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2267,7 +2267,7 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2320,7 +2320,7 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2372,7 +2372,7 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2429,7 +2429,7 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2478,7 +2478,7 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2531,7 +2531,7 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2583,7 +2583,7 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2641,7 +2641,7 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2690,7 +2690,7 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2743,7 +2743,7 @@ TEST(CarbonTest, CarbonRemoveLastString)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2795,7 +2795,7 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2856,7 +2856,7 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2906,7 +2906,7 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -2962,7 +2962,7 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3017,7 +3017,7 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3089,7 +3089,7 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3141,7 +3141,7 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3197,7 +3197,7 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3252,7 +3252,7 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3323,7 +3323,7 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         carbon_insert_array_state state;
         carbon_insert *array_ins;
@@ -3380,7 +3380,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3445,7 +3445,7 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3509,7 +3509,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3583,7 +3583,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -3839,7 +3839,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
 {
         rec doc, rev_doc, rev_doc2;
         rev revise;
-        carbon_array it;
+        arr_it it;
         carbon_insert inserter;
         string_buffer sb;
         const char *json;
@@ -5456,7 +5456,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 //{
 //        carbon doc;
 //        carbon_revise revise;
-//        carbon_array it;
+//        arr_it it;
 //        carbon_insert nested_ins, *array_ins, *col_ins, *nested_array_ins;
 //        carbon_insert_array_state array_state, nested_array_state;
 //        carbon_insert_column_state column_state;
@@ -5568,7 +5568,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -5658,7 +5658,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -5747,7 +5747,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -5825,7 +5825,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -5900,7 +5900,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -5975,7 +5975,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6051,7 +6051,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6128,7 +6128,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6206,7 +6206,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6279,7 +6279,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6359,7 +6359,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6438,7 +6438,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6518,7 +6518,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -6595,7 +6595,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        carbon_array rev_it;
+        arr_it rev_it;
         string_buffer sb;
         bool has_next;
         string_buffer_create(&sb);
@@ -7647,7 +7647,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
 
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
-        carbon_array it;
+        arr_it it;
         field_type_e field_type;
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(carbon_array_next(&it));
@@ -7687,7 +7687,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
-        carbon_array it;
+        arr_it it;
         field_type_e field_type;
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(carbon_array_next(&it));
@@ -7728,7 +7728,7 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
 
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
-        carbon_array it;
+        arr_it it;
         field_type_e field_type;
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(carbon_array_next(&it));

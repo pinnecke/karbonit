@@ -106,8 +106,8 @@ bool pindex_it_field_float_value(bool *is_null_in, float *value, pindex_it *it);
 bool pindex_it_field_signed_value(bool *is_null_in, i64 *value, pindex_it *it);
 bool pindex_it_field_unsigned_value(bool *is_null_in, u64 *value, pindex_it *it);
 const char *pindex_it_field_string_value(u64 *strlen, pindex_it *it);
-bool pindex_it_field_binary_value(carbon_binary *out, carbon_array *it);
-bool pindex_it_field_array_value(carbon_array *it_out, pindex_it *it_in);
+bool pindex_it_field_binary_value(carbon_binary *out, arr_it *it);
+bool pindex_it_field_array_value(arr_it *it_out, pindex_it *it_in);
 bool pindex_it_field_object_value(carbon_object *it_out, pindex_it *it_in);
 bool pindex_it_field_column_value(carbon_column *it_out, pindex_it *it_in);
 

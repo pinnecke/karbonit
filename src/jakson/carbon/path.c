@@ -25,7 +25,7 @@ static inline carbon_path_status_e traverse_column(carbon_path_evaluator *state,
 
 static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                      const carbon_dot_path *path, u32 current_path_pos,
-                                                     carbon_array *it, bool is_record);
+                                                     arr_it *it, bool is_record);
 
 void carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path,
                                  rec *doc)
@@ -299,7 +299,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                                                carbon_array *sub_it = carbon_item_get_array(&(it->prop.value));
+                                                                arr_it *sub_it = carbon_item_get_array(&(it->prop.value));
                                                                 carbon_path_status_e ret = traverse_array(state,
                                                                                                              path,
                                                                                                              next_path_pos,
@@ -368,7 +368,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
 
 static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                      const carbon_dot_path *path, u32 current_path_pos,
-                                                     carbon_array *it, bool is_record)
+                                                     arr_it *it, bool is_record)
 {
         JAK_ASSERT(state);
         JAK_ASSERT(path);
@@ -430,7 +430,7 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                         return CARBON_PATH_NOCONTAINER;
                                                                                 } else {
                                                                                         if (carbon_field_type_is_array_or_subtype(elem_type)) {
-                                                                                                carbon_array *sub_it = carbon_item_get_array(&(it->item));
+                                                                                                arr_it *sub_it = carbon_item_get_array(&(it->item));
                                                                                                 status = traverse_array(
                                                                                                         state,
                                                                                                         path,

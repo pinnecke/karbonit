@@ -19,14 +19,14 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/find.h>
 
-void carbon_patch_begin(carbon_array *it, rec *doc)
+void carbon_patch_begin(arr_it *it, rec *doc)
 {
         offset_t payload_start = carbon_int_payload_after_header(doc);
         internal_carbon_array_create(it, &doc->file, payload_start);
         internal_carbon_array_set_mode(it, READ_WRITE);
 }
 
-void carbon_patch_end(carbon_array *it)
+void carbon_patch_end(arr_it *it)
 {
         carbon_array_drop(it);
 }

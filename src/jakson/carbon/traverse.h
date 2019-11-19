@@ -35,13 +35,13 @@ typedef void (*carbon_traverse_clean_t)(struct carbon_traverse_extra *extra);
 typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struct rec *record);
 
 /* called when an array was found */
-typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, carbon_array *it);
+typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, arr_it *it);
 
 /* called when an array item was found */
 typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, carbon_item *it);
 
 /* called when an array was was passed */
-typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, carbon_array *it);
+typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, arr_it *it);
 
 /* called when an column was found */
 typedef bool (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct carbon_column *it);
@@ -114,11 +114,11 @@ void carbon_traverse_create(struct carbon_traverse *traverse, carbon_traverse_se
 void carbon_traverse_drop(struct carbon_traverse *traverse);
 
 void carbon_traverse_carbon(struct rec *rev_out, struct carbon_traverse *traverse, struct rec *record);
-void carbon_traverse_array(struct carbon_traverse *traverse, carbon_array *it);
+void carbon_traverse_array(struct carbon_traverse *traverse, arr_it *it);
 void carbon_traverse_column(struct carbon_traverse *traverse, struct carbon_column *it);
 void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_object *it);
 
-void carbon_traverse_continue_array(struct carbon_traverse_extra *context, carbon_array *it);
+void carbon_traverse_continue_array(struct carbon_traverse_extra *context, arr_it *it);
 void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct carbon_column *it);
 void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct carbon_object *it);
 

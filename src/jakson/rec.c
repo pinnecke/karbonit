@@ -53,7 +53,7 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                                            carbon_key_e type, int options)
 {
         if (context && doc) {
-                context->content_it = MALLOC(sizeof(carbon_array));
+                context->content_it = MALLOC(sizeof(arr_it));
                 context->inserter = MALLOC(sizeof(carbon_insert));
                 context->mode = options;
 
@@ -256,7 +256,7 @@ bool carbon_commit_hash(u64 *hash, rec *doc)
 
 bool carbon_is_multiset(rec *doc)
 {
-        carbon_array it;
+        arr_it it;
         carbon_read_begin(&it, doc);
         bool ret = carbon_array_is_multiset(&it);
         carbon_read_end(&it);
@@ -265,7 +265,7 @@ bool carbon_is_multiset(rec *doc)
 
 bool carbon_is_sorted(rec *doc)
 {
-        carbon_array it;
+        arr_it it;
         carbon_read_begin(&it, doc);
         bool ret = carbon_array_is_sorted(&it);
         carbon_read_end(&it);
@@ -309,7 +309,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
         carbon_printer_header_end(&p, &b);
         carbon_printer_payload_begin(&p, &b);
 
-        carbon_array it;
+        arr_it it;
         carbon_read_begin(&it, doc);
 
         carbon_printer_print_array(&it, &p, &b, true);
@@ -356,13 +356,13 @@ char *carbon_to_json_compact_dup(rec *doc)
         return result;
 }
 
-void carbon_read_begin(carbon_array *it, rec *doc)
+void carbon_read_begin(arr_it *it, rec *doc)
 {
         carbon_patch_begin(it, doc);
         internal_carbon_array_set_mode(it, READ_ONLY);
 }
 
-void carbon_read_end(carbon_array *it)
+void carbon_read_end(arr_it *it)
 {
         carbon_patch_end(it);
 }

@@ -85,7 +85,7 @@ typedef struct rev {
 typedef struct rec_new {
         rec original;
         rev revision_context;
-        carbon_array *content_it;
+        arr_it *content_it;
         carbon_insert *inserter;
         /** options shrink or compact (or both) documents, see
          * CARBON_KEEP, CARBON_SHRINK, CARBON_COMPACT, and CARBON_OPTIMIZE  */
@@ -216,10 +216,10 @@ char *carbon_to_json_compact_dup(rec *doc);
  *
  * An opened iterator must be closed by calling 'carbon_read_end'. Not closing an iterator leads to undefined
  * behavior. */
-void carbon_read_begin(carbon_array *it, rec *doc);
+void carbon_read_begin(arr_it *it, rec *doc);
 
 /* Closes a read-only iterator, which was previously opened via 'carbon_read_begin' */
-void carbon_read_end(carbon_array *it);
+void carbon_read_end(arr_it *it);
 
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc);
 bool carbon_hexdump_print(FILE *file, rec *doc);

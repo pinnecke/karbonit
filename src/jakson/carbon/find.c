@@ -26,7 +26,7 @@
 #include <stdint.h>
 #include "find.h"
 
-static void result_from_array(carbon_find *find, carbon_array *it);
+static void result_from_array(carbon_find *find, arr_it *it);
 
 static void result_from_object(carbon_find *find, carbon_object *it);
 
@@ -171,7 +171,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                carbon_array *sub_it = carbon_find_result_array(find);
+                                arr_it *sub_it = carbon_find_result_array(find);
                                 carbon_printer_print_array(sub_it, &printer, dst_str, false);
                         }
                                 break;
@@ -328,7 +328,7 @@ bool carbon_find_update_array_type(carbon_find *find, list_derivable_e derivatio
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
                 memfile mod;
-                carbon_array *it = carbon_find_result_array(find);
+                arr_it *it = carbon_find_result_array(find);
                 memfile_clone(&mod, &it->memfile);
                 memfile_seek_from_here(&mod, -sizeof(u8));
                 derived_e derive_marker;
@@ -346,7 +346,7 @@ bool carbon_find_array_is_multiset(carbon_find *find)
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
-                carbon_array *it = carbon_find_result_array(find);
+                arr_it *it = carbon_find_result_array(find);
                 return carbon_array_is_multiset(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
@@ -358,7 +358,7 @@ bool carbon_find_array_is_sorted(carbon_find *find)
         field_type_e type;
         carbon_find_result_type(&type, find);
         if (carbon_field_type_is_array_or_subtype(type)) {
-                carbon_array *it = carbon_find_result_array(find);
+                arr_it *it = carbon_find_result_array(find);
                 return carbon_array_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
@@ -504,7 +504,7 @@ bool __check_path_evaluator_has_result(carbon_find *find)
         }
 }
 
-carbon_array *carbon_find_result_array(carbon_find *find)
+arr_it *carbon_find_result_array(carbon_find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -635,7 +635,7 @@ bool carbon_find_drop(carbon_find *find)
         return carbon_path_evaluator_end(&find->path_evaluater);
 }
 
-static void result_from_array(carbon_find *find, carbon_array *it)
+static void result_from_array(carbon_find *find, arr_it *it)
 {
         find->type = it->field.type;
         switch (find->type) {

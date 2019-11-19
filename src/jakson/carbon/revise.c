@@ -25,7 +25,7 @@
 #include <jakson/carbon/commit.h>
 #include <jakson/carbon/object.h>
 
-static bool internal_pack_array(carbon_array *it);
+static bool internal_pack_array(arr_it *it);
 
 static bool internal_pack_object(carbon_object *it);
 
@@ -136,7 +136,7 @@ bool carbon_revise_key_set_string(rev *context, const char *key_value)
 
 void carbon_revise_set_list_type(rev *context, list_derivable_e derivation)
 {
-        carbon_array it;
+        arr_it it;
         carbon_revise_iterator_open(&it, context);
 
         memfile_seek_from_here(&it.memfile, -sizeof(u8));
@@ -147,7 +147,7 @@ void carbon_revise_set_list_type(rev *context, list_derivable_e derivation)
         carbon_revise_iterator_close(&it);
 }
 
-bool carbon_revise_iterator_open(carbon_array *it, rev *context)
+bool carbon_revise_iterator_open(arr_it *it, rev *context)
 {
         offset_t payload_start = carbon_int_payload_after_header(context->revised_doc);
         if (UNLIKELY(context->revised_doc->file.mode != READ_WRITE)) {
@@ -156,7 +156,7 @@ bool carbon_revise_iterator_open(carbon_array *it, rev *context)
         return internal_carbon_array_create(it, &context->revised_doc->file, payload_start);
 }
 
-void carbon_revise_iterator_close(carbon_array *it)
+void carbon_revise_iterator_close(arr_it *it)
 {
         carbon_array_drop(it);
 }
@@ -198,7 +198,7 @@ bool carbon_revise_remove(const char *dot_path, rev *context)
                 } else {
                         switch (eval.result.container_type) {
                                 case CARBON_ARRAY: {
-                                        carbon_array *it = &eval.result.containers.array.it;
+                                        arr_it *it = &eval.result.containers.array.it;
                                         result = internal_carbon_array_remove(it);
                                 }
                                         break;
@@ -222,7 +222,7 @@ bool carbon_revise_remove(const char *dot_path, rev *context)
 
 bool carbon_revise_pack(rev *context)
 {
-        carbon_array it;
+        arr_it it;
         carbon_revise_iterator_open(&it, context);
         internal_pack_array(&it);
         carbon_revise_iterator_close(&it);
@@ -231,7 +231,7 @@ bool carbon_revise_pack(rev *context)
 
 bool carbon_revise_shrink(rev *context)
 {
-        carbon_array it;
+        arr_it it;
         carbon_revise_iterator_open(&it, context);
         internal_carbon_array_fast_forward(&it);
         if (memfile_remain_size(&it.memfile) > 0) {
@@ -259,13 +259,13 @@ bool carbon_revise_abort(rev *context)
         return true;
 }
 
-static bool internal_pack_array(carbon_array *it)
+static bool internal_pack_array(arr_it *it)
 {
         JAK_ASSERT(it);
 
         /** shrink this array */
         {
-                carbon_array this_array;
+                arr_it this_array;
                 bool is_empty_slot, is_array_end;
 
                 internal_carbon_array_copy(&this_array, it);
@@ -319,7 +319,7 @@ static bool internal_pack_array(carbon_array *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                        carbon_array array;
+                                        arr_it array;
                                         internal_carbon_array_create(&array, &it->memfile,
                                                                      it->field.array->array_begin_off);
                                         internal_pack_array(&array);
@@ -462,7 +462,7 @@ static bool internal_pack_object(carbon_object *it)
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                 case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                        carbon_array array;
+                                        arr_it array;
                                         internal_carbon_array_create(&array, &it->memfile,
                                                                it->field.value.data.array->array_begin_off);
                                         internal_pack_array(&array);

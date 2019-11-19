@@ -60,7 +60,7 @@ void carbon_traverse_carbon(rec *rev_out, struct carbon_traverse *traverse, rec 
         assert(traverse);
         assert(record);
 
-        carbon_array it;
+        arr_it it;
 
         if (traverse->visit_record) {
                 traverse->visit_record(&traverse->extra, record);
@@ -83,7 +83,7 @@ void carbon_traverse_carbon(rec *rev_out, struct carbon_traverse *traverse, rec 
 
 }
 
-void carbon_traverse_array(struct carbon_traverse *traverse, carbon_array *it)
+void carbon_traverse_array(struct carbon_traverse *traverse, arr_it *it)
 {
         assert(traverse);
         assert(it);
@@ -113,7 +113,7 @@ void carbon_traverse_object(struct carbon_traverse *traverse, struct carbon_obje
         }
 }
 
-void carbon_traverse_continue_array(struct carbon_traverse_extra *context, carbon_array *it)
+void carbon_traverse_continue_array(struct carbon_traverse_extra *context, arr_it *it)
 {
         carbon_traverse_array(context->parent, it);
 }

@@ -54,8 +54,8 @@ bool carbon_revise_key_set_string(rev *context, const char *key_value);
 
 void carbon_revise_set_list_type(rev *context, list_derivable_e derivation);
 
-bool carbon_revise_iterator_open(carbon_array *it, rev *context);
-void carbon_revise_iterator_close(carbon_array *it);
+bool carbon_revise_iterator_open(arr_it *it, rev *context);
+void carbon_revise_iterator_close(arr_it *it);
 
 bool carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context);
 bool carbon_revise_find_end(carbon_find *find);

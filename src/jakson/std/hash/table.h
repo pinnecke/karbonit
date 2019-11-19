@@ -23,7 +23,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/std/spinlock.h>
 
 #ifdef __cplusplus
@@ -49,9 +49,9 @@ typedef struct hashtable_bucket {
  * lock implementation.
  */
 typedef struct hashtable {
-        vector key_data;
-        vector value_data;
-        vector ofType(hashtable_bucket) table;
+        vec_t key_data;
+        vec_t value_data;
+        vec_t ofType(hashtable_bucket) table;
         spinlock lock;
         u32 size;
 } hashtable;

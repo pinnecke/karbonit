@@ -23,14 +23,14 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct bitmap {
-        vector ofType(u64) data;
+        vec_t ofType(u64) data;
         u16 num_bits;
 } bitmap;
 

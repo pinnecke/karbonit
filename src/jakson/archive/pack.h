@@ -117,7 +117,7 @@ typedef struct packer {
          * @since 0.1.00.05
          * */
         bool (*write_extra)(packer *self, memfile *dst,
-                            const vector ofType (const char *) *strings);
+                            const vec_t ofType (const char *) *strings);
 
         /**
          * Function to reconstruct implementation-specific dictionary, book-keeping or extra data by deserialization (
@@ -237,7 +237,7 @@ u8 pack_flagbit_by_type(packer_e type);
 bool pack_by_flags(packer *strategy, u8 flags);
 bool pack_by_name(packer_e *type, const char *name);
 
-bool pack_write_extra(packer *self, memfile *dst, const vector ofType (const char *) *strings);
+bool pack_write_extra(packer *self, memfile *dst, const vec_t ofType (const char *) *strings);
 bool pack_read_extra(packer *self, FILE *src, size_t nbytes);
 bool pack_encode(packer *self, memfile *dst, const char *string);
 bool pack_decode(packer *self, char *dst, size_t strlen, FILE *src);

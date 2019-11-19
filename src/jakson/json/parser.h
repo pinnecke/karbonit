@@ -23,7 +23,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -143,12 +143,12 @@ typedef struct json_prop {
 
 typedef struct json_members {
         json_object *parent;
-        vector ofType(json_prop) members;
+        vec_t ofType(json_prop) members;
 } json_members;
 
 typedef struct json_elements {
         json_array *parent;
-        vector ofType(json_element) elements;
+        vec_t ofType(json_element) elements;
 } json_elements;
 
 typedef struct json_array {

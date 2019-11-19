@@ -37,7 +37,7 @@ typedef enum visit_policy {
         VISIT_INCLUDE, VISIT_EXCLUDE,
 } visit_policy_e;
 
-typedef const vector ofType(path_entry) *path_stack_t;
+typedef const vec_t ofType(path_entry) *path_stack_t;
 
 #define DEFINE_VISIT_BASIC_TYPE_PAIRS(name, built_in_type)                                                             \
 void (*visit_##name##_pairs) (archive *archive, path_stack_t path, unique_id_t id,                              \
@@ -135,8 +135,8 @@ typedef struct visitor {
 } archive_visitor;
 
 bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc, visitor *visitor, void *capture);
-bool archive_visitor_print_path(FILE *file, archive *archive, const vector ofType(path_entry) *path_stack);
-void archive_visitor_path_to_string(char path_buffer[2048], archive *archive, const vector ofType(path_entry) *path_stack);
-bool archive_visitor_path_compare(const vector ofType(path_entry) *path, archive_field_sid_t *group_name, const char *path_str, archive *archive);
+bool archive_visitor_print_path(FILE *file, archive *archive, const vec_t ofType(path_entry) *path_stack);
+void archive_visitor_path_to_string(char path_buffer[2048], archive *archive, const vec_t ofType(path_entry) *path_stack);
+bool archive_visitor_path_compare(const vec_t ofType(path_entry) *path, archive_field_sid_t *group_name, const char *path_str, archive *archive);
 
 #endif

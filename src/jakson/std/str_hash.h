@@ -29,10 +29,10 @@
  * and to ensure that the value is embedded in continuous memory rather than a pointer to another distant memory block.
  *
  * Internally, the str_hash is organized by paritions where each partition is assigned exclusively to
- * one thread. Each such parition contains of as a vector of length 'num_buckets' which contains of elements of a bucket
+ * one thread. Each such parition contains of as a vec_t of length 'num_buckets' which contains of elements of a bucket
  * type. A bucket type is an fixed-size array of entries, each containing a key and a value. In case of no collisions,
  * this array contains of exactly one element. In case of collisions, colliding keys are stored in this array of entries
- * in the same bucket. To speedup lookups, this entry vector may be additionally sorted and a (specialized) binary
+ * in the same bucket. To speedup lookups, this entry vec_t may be additionally sorted and a (specialized) binary
  * search is invoked to find the bucket entry associated to a particular key (if any). Other lookup strategies includes
  * both single and multi-threaded forward scans. Which strategy to use in which case is decided by the
  * str_hash itself, however. To satisfy user-specific memory limitations, some per-bucket elements may
@@ -49,7 +49,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/std/hash.h>
 #include <jakson/types.h>
 

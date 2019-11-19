@@ -37,7 +37,7 @@ struct lru_list {
 };
 
 struct string_cache {
-        vector ofType(struct lru_list) list_entries;
+        vec_t ofType(struct lru_list) list_entries;
         sid_cache_stats statistics;
         query query;
         size_t capacity;

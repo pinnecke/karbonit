@@ -41,7 +41,7 @@ bool pack_none_drop(packer *self)
 }
 
 bool pack_none_write_extra(packer *self, memfile *dst,
-                           const vector ofType (const char *) *strings)
+                           const vec_t ofType (const char *) *strings)
 {
         UNUSED(self);
         UNUSED(dst);

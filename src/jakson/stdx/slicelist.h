@@ -23,7 +23,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/std/bitmap.h>
 #include <jakson/std/spinlock.h>
 #include <jakson/std/bloom.h>
@@ -99,10 +99,10 @@ typedef struct slice_descriptor {
 typedef struct slice_list {
         spinlock lock;
 
-        vector ofType(slice) slices;
-        vector ofType(slice_descriptor) descriptors;
-        vector ofType(bloomfilter) filters;
-        vector ofType(hash_bounds) bounds;
+        vec_t ofType(slice) slices;
+        vec_t ofType(slice_descriptor) descriptors;
+        vec_t ofType(bloomfilter) filters;
+        vec_t ofType(hash_bounds) bounds;
 
         u32 appender_idx;
 } slice_list_t;

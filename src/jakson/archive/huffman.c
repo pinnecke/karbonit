@@ -107,7 +107,7 @@ bool huffman_dump_string_table_entry(FILE *file, memfile *memfile)
 }
 
 bool pack_huffman_write_extra(packer *self, memfile *dst,
-                              const vector ofType (const char *) *strings)
+                              const vec_t ofType (const char *) *strings)
 {
         huffman *encoder = (huffman *) self->extra;
 

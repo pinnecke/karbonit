@@ -23,7 +23,7 @@
 
 bool strid_iter_open(strid_iter *it, archive *archive)
 {
-        memset(&it->vector, 0, sizeof(it->vector));
+        memset(&it->vec_t, 0, sizeof(it->vec_t));
         it->disk_file = fopen(archive->disk_file_path, "r");
         if (!it->disk_file) {
                 it->is_open = false;
@@ -52,17 +52,17 @@ bool strid_iter_next(bool *success, strid_info **info, size_t *info_length,
                                 *success = false;
                                 return false;
                         } else {
-                                it->vector[vector_pos].id = header.string_id;
-                                it->vector[vector_pos].offset = ftell(it->disk_file);
-                                it->vector[vector_pos].strlen = header.string_len;
+                                it->vec_t[vector_pos].id = header.string_id;
+                                it->vec_t[vector_pos].offset = ftell(it->disk_file);
+                                it->vec_t[vector_pos].strlen = header.string_len;
                                 it->disk_offset = header.next_entry_off;
                                 vector_pos++;
                         }
-                } while (header.next_entry_off != 0 && vector_pos < ARRAY_LENGTH(it->vector));
+                } while (header.next_entry_off != 0 && vector_pos < ARRAY_LENGTH(it->vec_t));
 
                 *info_length = vector_pos;
                 *success = true;
-                *info = &it->vector[0];
+                *info = &it->vec_t[0];
                 return true;
         } else {
                 return false;

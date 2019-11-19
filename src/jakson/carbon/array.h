@@ -14,7 +14,7 @@
 #include <jakson/stdinc.h>
 #include <jakson/forwdecl.h>
 #include <jakson/error.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/item.h>
@@ -56,7 +56,7 @@ typedef struct arr_it {
         i64 mod_size;
         bool eof;
 
-        vector ofType(offset_t) history;
+        vec_t ofType(offset_t) history;
         field field;
         offset_t field_offset;
 } arr_it;

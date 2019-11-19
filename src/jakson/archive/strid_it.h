@@ -40,7 +40,7 @@ typedef struct strid_iter {
         FILE *disk_file;
         bool is_open;
         offset_t disk_offset;
-        strid_info vector[100000];
+        strid_info vec_t[100000];
 } strid_iter;
 
 bool strid_iter_open(strid_iter *it, archive *archive);

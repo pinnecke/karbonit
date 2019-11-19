@@ -31,7 +31,7 @@ static void create_typed_vector(doc_entries *entry);
 
 static void entries_drop(doc_entries *entry);
 
-static bool print_value(FILE *file, archive_field_e type, const vector ofType(<T>) *values);
+static bool print_value(FILE *file, archive_field_e type, const vec_t ofType(<T>) *values);
 
 static void _doc_print_object(FILE *file, const doc_obj *model);
 
@@ -60,14 +60,14 @@ doc_obj *doc_bulk_new_obj(doc *model)
         }
 }
 
-bool doc_bulk_get_dic_contents(vector ofType (const char *) **strings,
-                               vector ofType(archive_field_sid_t) **string_ids,
+bool doc_bulk_get_dic_contents(vec_t ofType (const char *) **strings,
+                               vec_t ofType(archive_field_sid_t) **string_ids,
                                const doc_bulk *context)
 {
         size_t num_distinct_values;
         string_dict_num_distinct(&num_distinct_values, context->dic);
-        vector ofType (const char *) *result_strings = MALLOC(sizeof(vector));
-        vector ofType (archive_field_sid_t) *resultstring_id_ts = MALLOC(sizeof(vector));
+        vec_t ofType (const char *) *result_strings = MALLOC(sizeof(vec_t));
+        vec_t ofType (archive_field_sid_t) *resultstring_id_ts = MALLOC(sizeof(vec_t));
         vector_create(result_strings, sizeof(const char *), num_distinct_values);
         vector_create(resultstring_id_ts, sizeof(archive_field_sid_t), num_distinct_values);
 
@@ -172,7 +172,7 @@ bool doc_print(FILE *file, const doc *doc)
         return true;
 }
 
-const vector ofType(doc_entries) *doc_get_entries(const doc_obj *model)
+const vec_t ofType(doc_entries) *doc_get_entries(const doc_obj *model)
 {
         return &model->entries;
 }
@@ -652,7 +652,7 @@ import_json(doc_obj *target, const json *json,
                         }
                         break;
                 case JSON_VALUE_ARRAY: {
-                        const vector ofType(json_element)
+                        const vec_t ofType(json_element)
                                 *arrayContent = &json->element->value.value.array->elements.elements;
                         if (!vector_is_empty(arrayContent)) {
                                 const json_element *first = VECTOR_GET(arrayContent, 0,
@@ -778,8 +778,8 @@ static void sort_nested_primitive_object(column_doc_obj *columndoc)
 #define DEFINE_ARRAY_TYPE_LQ_FUNC(type)                                                                         \
 static bool compare_##type##_array_leq(const void *lhs, const void *rhs)                                           \
 {                                                                                                                      \
-    vector ofType(archive_##type) *a = (vector *) lhs;                                                               \
-    vector ofType(archive_##type) *b = (vector *) rhs;                                                               \
+    vec_t ofType(archive_##type) *a = (vec_t *) lhs;                                                               \
+    vec_t ofType(archive_##type) *b = (vec_t *) rhs;                                                               \
     const archive_##type *aValues = VECTOR_ALL(a, archive_##type);                                                                  \
     const archive_##type *bValues = VECTOR_ALL(b, archive_##type);                                                                  \
     size_t max_compare_idx = a->num_elems < b->num_elems ? a->num_elems : b->num_elems;                                \
@@ -814,8 +814,8 @@ DEFINE_ARRAY_TYPE_LQ_FUNC(field_number_t)
 static bool compare_encoded_string_array_less_eq_func(const void *lhs, const void *rhs, void *args)
 {
         string_dict *dic = (string_dict *) args;
-        vector ofType(archive_field_sid_t) *a = (vector *) lhs;
-        vector ofType(archive_field_sid_t) *b = (vector *) rhs;
+        vec_t ofType(archive_field_sid_t) *a = (vec_t *) lhs;
+        vec_t ofType(archive_field_sid_t) *b = (vec_t *) rhs;
         const archive_field_sid_t *aValues = VECTOR_ALL(a, archive_field_sid_t);
         const archive_field_sid_t *bValues = VECTOR_ALL(b, archive_field_sid_t);
         size_t max_compare_idx = a->num_elems < b->num_elems ? a->num_elems : b->num_elems;
@@ -841,14 +841,14 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
                         for (size_t j = 0; j < array_columns->columns.num_elems; j++) {
                                 column_doc_column
                                         *column = VECTOR_GET(&array_columns->columns, j, column_doc_column);
-                                vector ofType(u32) *array_indices = &column->array_positions;
-                                vector ofType(
-                                        vector ofType(<T>)) *values_for_indicies = &column->values;
+                                vec_t ofType(u32) *array_indices = &column->array_positions;
+                                vec_t ofType(
+                                        vec_t ofType(<T>)) *values_for_indicies = &column->values;
                                 JAK_ASSERT (array_indices->num_elems == values_for_indicies->num_elems);
 
                                 for (size_t k = 0; k < array_indices->num_elems; k++) {
-                                        vector ofType(<T>)
-                                                *values_for_index = VECTOR_GET(values_for_indicies, k, vector);
+                                        vec_t ofType(<T>)
+                                                *values_for_index = VECTOR_GET(values_for_indicies, k, vec_t);
                                         if (column->type == FIELD_OBJECT) {
                                                 for (size_t l = 0; l < values_for_index->num_elems; l++) {
                                                         column_doc_obj *nested_object =
@@ -872,8 +872,8 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
             value_indicies[i] = i;                                                                                     \
         }                                                                                                              \
                                                                                                                        \
-        vector ofType(archive_field_sid_t) key_cpy;                                                               \
-        vector ofType(value_type) value_cpy;                                                                     \
+        vec_t ofType(archive_field_sid_t) key_cpy;                                                               \
+        vec_t ofType(value_type) value_cpy;                                                                     \
                                                                                                                        \
         vector_cpy(&key_cpy, &key_vector);                                                                         \
         vector_cpy(&value_cpy, &value_vector);                                                                     \
@@ -894,8 +894,8 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
     }                                                                                                                  \
 }
 
-static void sort_meta_model_string_values(vector ofType(archive_field_sid_t) *key_vector,
-                                          vector ofType(archive_field_sid_t) *value_vector,
+static void sort_meta_model_string_values(vec_t ofType(archive_field_sid_t) *key_vector,
+                                          vec_t ofType(archive_field_sid_t) *value_vector,
                                           string_dict *dic)
 {
         size_t num_elements = vector_length(key_vector);
@@ -906,8 +906,8 @@ static void sort_meta_model_string_values(vector ofType(archive_field_sid_t) *ke
                         value_indicies[i] = i;
                 }
 
-                vector ofType(archive_field_sid_t) key_cpy;
-                vector ofType(archive_field_sid_t) value_cpy;
+                vec_t ofType(archive_field_sid_t) key_cpy;
+                vec_t ofType(archive_field_sid_t) value_cpy;
 
                 vector_cpy(&key_cpy, key_vector);
                 vector_cpy(&value_cpy, value_vector);
@@ -942,19 +942,19 @@ static void sort_meta_model_string_values(vector ofType(archive_field_sid_t) *ke
             value_indicies[i] = i;                                                                                     \
         }                                                                                                              \
                                                                                                                        \
-        vector ofType(archive_field_sid_t) key_cpy;                                                               \
-        vector ofType(vector) value_cpy;                                                                   \
+        vec_t ofType(archive_field_sid_t) key_cpy;                                                               \
+        vec_t ofType(vec_t) value_cpy;                                                                   \
                                                                                                                        \
         vector_cpy(&key_cpy, &key_vector);                                                                         \
         vector_cpy(&value_cpy, &value_array_vector);                                                               \
                                                                                                                        \
-        const vector *values = VECTOR_ALL(&value_array_vector, vector);                             \
+        const vec_t *values = VECTOR_ALL(&value_array_vector, vec_t);                             \
                                                                                                                        \
-        sort_qsort_indicies(value_indicies, values, sizeof(vector), compare_func, num_elements);                                                                           \
+        sort_qsort_indicies(value_indicies, values, sizeof(vec_t), compare_func, num_elements);                                                                           \
                                                                                                                        \
         for (size_t i = 0; i < num_elements; i++) {                                                                    \
             vector_set(&key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
-            vector_set(&value_array_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], vector));    \
+            vector_set(&value_array_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], vec_t));    \
         }                                                                                                              \
                                                                                                                        \
         free(value_indicies);                                                                                          \
@@ -963,8 +963,8 @@ static void sort_meta_model_string_values(vector ofType(archive_field_sid_t) *ke
     }                                                                                                                  \
 }
 
-static void sort_columndoc_strings_arrays(vector ofType(archive_field_sid_t) *key_vector,
-                                          vector ofType(archive_field_sid_t) *value_array_vector,
+static void sort_columndoc_strings_arrays(vec_t ofType(archive_field_sid_t) *key_vector,
+                                          vec_t ofType(archive_field_sid_t) *value_array_vector,
                                           string_dict *dic)
 {
         size_t num_elements = vector_length(key_vector);
@@ -975,24 +975,24 @@ static void sort_columndoc_strings_arrays(vector ofType(archive_field_sid_t) *ke
                         value_indicies[i] = i;
                 }
 
-                vector ofType(archive_field_sid_t) key_cpy;
-                vector ofType(vector) value_cpy;
+                vec_t ofType(archive_field_sid_t) key_cpy;
+                vec_t ofType(vec_t) value_cpy;
 
                 vector_cpy(&key_cpy, key_vector);
                 vector_cpy(&value_cpy, value_array_vector);
 
-                const vector *values = VECTOR_ALL(value_array_vector, vector);
+                const vec_t *values = VECTOR_ALL(value_array_vector, vec_t);
 
                 sort_qsort_indicies_wargs(value_indicies,
                                           values,
-                                          sizeof(vector),
+                                          sizeof(vec_t),
                                           compare_encoded_string_array_less_eq_func,
                                           num_elements,
                                           dic);
 
                 for (size_t i = 0; i < num_elements; i++) {
                         vector_set(key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));
-                        vector_set(value_array_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], vector));
+                        vector_set(value_array_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], vec_t));
                 }
 
                 free(value_indicies);
@@ -1047,8 +1047,8 @@ struct com_column_leq_arg {
 
 static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *args)
 {
-        vector ofType(<T>) *a = (vector *) lhs;
-        vector ofType(<T>) *b = (vector *) rhs;
+        vec_t ofType(<T>) *a = (vec_t *) lhs;
+        vec_t ofType(<T>) *b = (vec_t *) rhs;
         struct com_column_leq_arg *func_arg = (struct com_column_leq_arg *) args;
 
         size_t max_num_elem = JAK_MIN(a->num_elems, b->num_elems);
@@ -1102,8 +1102,8 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
 static void sort_columndoc_column(column_doc_column *column, string_dict *dic)
 {
         /** Sort column by its value, and re-arrange the array position list according this new order */
-        vector ofType(u32) array_position_cpy;
-        vector ofType(vector ofType(<T>)) values_cpy;
+        vec_t ofType(u32) array_position_cpy;
+        vec_t ofType(vec_t ofType(<T>)) values_cpy;
 
         vector_cpy(&array_position_cpy, &column->array_positions);
         vector_cpy(&values_cpy, &column->values);
@@ -1138,7 +1138,7 @@ static void sort_columndoc_column(column_doc_column *column, string_dict *dic)
 
 static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
 {
-        vector ofType(column_doc_group) cpy;
+        vec_t ofType(column_doc_group) cpy;
         vector_cpy(&cpy, &columndoc->obj_array_props);
         size_t *indices = MALLOC(cpy.num_elems * sizeof(size_t));
         for (size_t i = 0; i < cpy.num_elems; i++) {
@@ -1159,7 +1159,7 @@ static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
                 column_doc_group *key_columns = VECTOR_GET(&columndoc->obj_array_props, i,
                                                                    column_doc_group);
                 size_t *columnIndices = MALLOC(key_columns->columns.num_elems * sizeof(size_t));
-                vector ofType(column_doc_column) columnCpy;
+                vec_t ofType(column_doc_column) columnCpy;
                 vector_cpy(&columnCpy, &key_columns->columns);
                 for (size_t i = 0; i < key_columns->columns.num_elems; i++) {
                         columnIndices[i] = i;
@@ -1385,7 +1385,7 @@ static void entries_drop(doc_entries *entry)
         vector_drop(&entry->values);
 }
 
-static bool print_value(FILE *file, archive_field_e type, const vector ofType(<T>) *values)
+static bool print_value(FILE *file, archive_field_e type, const vec_t ofType(<T>) *values)
 {
         size_t num_values = values->num_elems;
         if (num_values == 0) {

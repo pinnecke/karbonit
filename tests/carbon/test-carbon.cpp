@@ -4194,7 +4194,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
 
         u64 test_max = 10000;
 
-        vector ofType(carbon) files;
+        vec_t ofType(carbon) files;
         vector_create(&files, sizeof(rec), test_max);
         rec* old_f = &doc;
 

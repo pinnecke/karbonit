@@ -15,7 +15,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/std/spinlock.h>
 #include <jakson/std/str_hash.h>
 #include <jakson/archive/encode_sync.h>
@@ -32,8 +32,8 @@ struct entry {
 };
 
 struct sync_extra {
-        vector ofType(entry) contents;
-        vector ofType(string_id_t_t) freelist;
+        vec_t ofType(entry) contents;
+        vec_t ofType(string_id_t_t) freelist;
         str_hash index;
         spinlock _encode_sync_lock;
 };
@@ -63,8 +63,8 @@ static bool _encode_sync_counters(string_dict *self, str_hash_counters *counters
 
 static bool _encode_sync_num_distinct(string_dict *self, size_t *num);
 
-static bool _encode_sync_get_contents(string_dict *self, vector ofType (char *) *strings,
-                              vector ofType(archive_field_sid_t) *string_ids);
+static bool _encode_sync_get_contents(string_dict *self, vec_t ofType (char *) *strings,
+                              vec_t ofType(archive_field_sid_t) *string_ids);
 
 static void _encode_sync_lock(string_dict *self);
 
@@ -310,7 +310,7 @@ static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings,
         char **string_to_delete = MALLOC(num_strings * sizeof(char *));
         archive_field_sid_t *string_ids_to_delete = MALLOC(num_strings * sizeof(archive_field_sid_t));
 
-        /** remove strings from contents vector, and skip duplicates */
+        /** remove strings from contents vec_t, and skip duplicates */
         for (size_t i = 0; i < num_strings; i++) {
                 archive_field_sid_t archive_field_sid_t = strings[i];
                 struct entry *entry = (struct entry *) vector_data(&extra->contents) + archive_field_sid_t;
@@ -431,8 +431,8 @@ static bool _encode_sync_num_distinct(string_dict *self, size_t *num)
         return true;
 }
 
-static bool _encode_sync_get_contents(string_dict *self, vector ofType (char *) *strings,
-                              vector ofType(archive_field_sid_t) *string_ids)
+static bool _encode_sync_get_contents(string_dict *self, vec_t ofType (char *) *strings,
+                              vec_t ofType(archive_field_sid_t) *string_ids)
 {
         struct sync_extra *extra = this_extra(self);
 

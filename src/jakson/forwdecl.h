@@ -153,7 +153,7 @@ typedef struct slice_handle slice_handle;
 
 typedef struct spinlock spinlock;
 
-typedef struct vector vector;
+typedef struct vec_t vec_t;
 
 typedef struct str_hash str_hash;
 typedef struct str_hash_counters str_hash_counters;

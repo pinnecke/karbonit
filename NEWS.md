@@ -87,7 +87,7 @@
 - Implement query function to archives
     - *String Identifier Scan*: Iteration through all string_buffer ids (including offset and string_buffer length) 
       stored in an archives string_buffer table, see <code>carbon_query_scan_strids</code>. Iterator model 
-      is vector-based to minimize I/O calls to the underyling disk file, 
+      is vec_t-based to minimize I/O calls to the underyling disk file, 
       see [carbon-strid-iter_t](include/carbon/archive/strid-iter.h)
     - *String Fetch*: Fetch a stored (and potentially compressed) string_buffer in an archives string_buffer 
       table given its string_buffer identifier. For generic and safe calls, this fetch performs *full scan*
@@ -105,10 +105,10 @@
       user-defined predicates. There are already some [built-in predicates](include/carbon/string_buffer-pred),
       such as [equals](include/carbon/string_buffer-pred/carbon-string_buffer-pred-equals.h) or 
       [contains](include/carbon/string_buffer-pred/carbon-string_buffer-pred-contains.h). Internally, a string_buffer
-      identifier scan is invoked. For the entire vector for such an iteration step, a string_buffer
+      identifier scan is invoked. For the entire vec_t for such an iteration step, a string_buffer
       fetch with random access is invoked, yielding the corresponding uncompressed strings to the
-      string_buffer identifiers inside the vector. For all of these strings, the predicate is invoked
-      resulting in the indices inside the vector where the strings match the condition. Marked
+      string_buffer identifiers inside the vec_t. For all of these strings, the predicate is invoked
+      resulting in the indices inside the vec_t where the strings match the condition. Marked
       indices are added to the result set. Depending on the predicate and the users choice, a limit
       to the result set size can be set, stopping the fetch potentially earlier.
 - Implemented iterator model to iterate trough CARBON archives in order to fully exploit zero-cost access

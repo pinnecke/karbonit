@@ -25,7 +25,7 @@
 #include <stdatomic.h>
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 
 #ifdef __cplusplus
 extern "C" {

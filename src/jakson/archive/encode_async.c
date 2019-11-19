@@ -15,7 +15,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/archive/encode_sync.h>
 #include <jakson/archive/encode_async.h>
 #include <jakson/std/spinlock.h>
@@ -36,13 +36,13 @@ struct carrier {
 };
 
 struct async_extra {
-        vector ofType(carrier) carriers;
-        vector ofType(struct carrier *) carrier_mapping;
+        vec_t ofType(carrier) carriers;
+        vec_t ofType(struct carrier *) carrier_mapping;
         spinlock lock;
 };
 
 struct parallel_insert_arg {
-        vector ofType(char *) strings;
+        vec_t ofType(char *) strings;
         archive_field_sid_t *out;
         struct carrier *carrier;
         bool enable_write_out;
@@ -51,7 +51,7 @@ struct parallel_insert_arg {
 };
 
 struct parallel_remove_arg {
-        vector ofType(archive_field_sid_t) *local_ids;
+        vec_t ofType(archive_field_sid_t) *local_ids;
         struct carrier *carrier;
         int result;
         bool did_work;
@@ -62,13 +62,13 @@ struct parallel_locate_arg {
         archive_field_sid_t *ids_out;
         bool *found_mask_out;
         size_t num_not_found_out;
-        vector ofType(char *) keys_in;
+        vec_t ofType(char *) keys_in;
         int result;
         bool did_work;
 };
 
 struct parallel_extract_arg {
-        vector ofType(archive_field_sid_t) local_ids_in;
+        vec_t ofType(archive_field_sid_t) local_ids_in;
         char **strings_out;
         struct carrier *carrier;
         bool did_work;
@@ -107,8 +107,8 @@ static bool _encode_async_free(string_dict *self, void *ptr);
 
 static bool _encode_async_num_distinct(string_dict *self, size_t *num);
 
-static bool _encode_async_get_contents(string_dict *self, vector ofType (char *) *strings,
-                              vector ofType(archive_field_sid_t) *string_ids);
+static bool _encode_async_get_contents(string_dict *self, vec_t ofType (char *) *strings,
+                              vec_t ofType(archive_field_sid_t) *string_ids);
 
 static bool _encode_async_reset_counters(string_dict *self);
 
@@ -286,7 +286,7 @@ void *parallel_extract_function(void *args)
         return NULL;
 }
 
-static void synchronize(vector ofType(carrier) *carriers, size_t num_threads)
+static void synchronize(vec_t ofType(carrier) *carriers, size_t num_threads)
 {
         DEBUG(STRING_DIC_ASYNC_TAG, "barrier installed for %d threads", num_threads);
 
@@ -401,7 +401,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
                                  num_strings,
                                  num_threads);
 
-        vector ofType(struct parallel_insert_arg *) carrier_args;
+        vec_t ofType(struct parallel_insert_arg *) carrier_args;
         vector_create(&carrier_args, sizeof(struct parallel_insert_arg *), num_threads);
 
         /** compute which carrier is responsible for which string */
@@ -520,9 +520,9 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
         struct async_extra *extra = THIS_EXTRAS(self);
         uint_fast16_t num_threads = vector_length(&extra->carriers);
         size_t approx_num_strings_per_thread = JAK_MAX(1, num_strings / num_threads);
-        vector ofType(archive_field_sid_t) *string_map = MALLOC(num_threads * sizeof(vector));
+        vec_t ofType(archive_field_sid_t) *string_map = MALLOC(num_threads * sizeof(vec_t));
 
-        vector ofType(struct parallel_remove_arg) carrier_args;
+        vec_t ofType(struct parallel_remove_arg) carrier_args;
         vector_create(&carrier_args, sizeof(struct parallel_remove_arg), num_threads);
 
         /** prepare thread-local subset of string ids */
@@ -624,7 +624,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
                 /** store local index of string i inside the thread */
                 str_carrier_idx_mapping[i] = vector_length(&arg->keys_in);
 
-                /** push that string into the thread-local vector */
+                /** push that string into the thread-local vec_t */
                 vector_push(&arg->keys_in, &keys[i], 1);
         }
 
@@ -823,14 +823,14 @@ static bool _encode_async_num_distinct(string_dict *self, size_t *num)
         return true;
 }
 
-static bool _encode_async_get_contents(string_dict *self, vector ofType (char *) *strings,
-                              vector ofType(archive_field_sid_t) *string_ids)
+static bool _encode_async_get_contents(string_dict *self, vec_t ofType (char *) *strings,
+                              vec_t ofType(archive_field_sid_t) *string_ids)
 {
         this_lock(self);
         struct async_extra *extra = THIS_EXTRAS(self);
         size_t num_carriers = vector_length(&extra->carriers);
-        vector ofType (char *) local_string_results;
-        vector ofType (archive_field_sid_t) local_string_id_results;
+        vec_t ofType (char *) local_string_results;
+        vec_t ofType (archive_field_sid_t) local_string_id_results;
         size_t approx_num_distinct_local_values;
         _encode_async_num_distinct(self, &approx_num_distinct_local_values);
         approx_num_distinct_local_values = JAK_MAX(1, approx_num_distinct_local_values / extra->carriers.num_elems);

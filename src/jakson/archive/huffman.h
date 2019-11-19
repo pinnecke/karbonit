@@ -23,7 +23,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/std/vector.h>
+#include <jakson/std/vec.h>
 #include <jakson/mem/file.h>
 #include <jakson/types.h>
 
@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 typedef struct huffman {
-        vector ofType(pack_huffman_entry) table;
+        vec_t ofType(pack_huffman_entry) table;
 } huffman;
 
 typedef struct pack_huffman_entry {

@@ -281,7 +281,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM: {
-                                const carbon_binary *val = carbon_find_result_binary(find);
+                                const binary *val = carbon_find_result_binary(find);
                                 carbon_printer_binary(&printer, dst_str, val);
                         }
                                 break;
@@ -616,7 +616,7 @@ const char *carbon_find_result_string(u64 *str_len, carbon_find *find)
         return find->value.string.string;
 }
 
-carbon_binary *carbon_find_result_binary(carbon_find *find)
+binary *carbon_find_result_binary(carbon_find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -724,7 +724,7 @@ static void result_from_array(carbon_find *find, arr_it *it)
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
-                        find->value.binary = carbon_item_get_binary(&(it->item), CARBON_NULL_BINARY);
+                        find->value.binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
                         break;
                 default: error(ERR_INTERNALERR, NULL);
                         break;
@@ -820,7 +820,7 @@ static void result_from_object(carbon_find *find, obj_it *it)
                         break;
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
-                        find->value.binary = carbon_item_get_binary(&(it->prop.value), CARBON_NULL_BINARY);
+                        find->value.binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                         break;
                 default: error(ERR_INTERNALERR, NULL);
                         break;

@@ -428,10 +428,10 @@ static void insert_binary(carbon_insert *inserter, const void *value, size_t nby
                 push_media_type_for_array(inserter, CARBON_FIELD_BINARY);
 
                 /** write mime type with variable-length integer type */
-                u64 mime_type_id = carbon_media_mime_type_by_ext(file_ext);
+                u64 mime_id = carbon_media_mime_by_ext(file_ext);
 
                 /** write mime type id */
-                memfile_write_uintvar_stream(NULL, &inserter->memfile, mime_type_id);
+                memfile_write_uintvar_stream(NULL, &inserter->memfile, mime_id);
 
                 /** write binary blob */
                 write_binary_blob(inserter, value, nbytes);

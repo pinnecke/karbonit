@@ -134,7 +134,7 @@ bool carbon_int_field_unsigned_value_nullable(bool *is_null_in, u64 *value, fiel
 bool carbon_int_field_signed_value(i64 *value, field *field);
 bool carbon_int_field_unsigned_value(u64 *value, field *field);
 const char *carbon_int_field_string_value(u64 *strlen, field *field);
-bool carbon_int_field_binary_value(carbon_binary *out, field *field);
+bool carbon_int_field_binary_value(binary *out, field *field);
 arr_it *carbon_int_field_array_value(field *field);
 obj_it *carbon_int_field_object_value(field *field);
 col_it *carbon_int_field_column_value(field *field);

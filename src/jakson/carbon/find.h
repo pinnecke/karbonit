@@ -53,7 +53,7 @@ typedef struct carbon_find {
                 float float_number;
 
                 carbon_string_field string;
-                carbon_binary binary;
+                binary binary;
         } value;
 } carbon_find;
 
@@ -93,7 +93,7 @@ bool carbon_find_result_unsigned(u64 *out, carbon_find *find);
 bool carbon_find_result_signed(i64 *out, carbon_find *find);
 bool carbon_find_result_float(float *out, carbon_find *find);
 const char *carbon_find_result_string(u64 *str_len, carbon_find *find);
-carbon_binary *carbon_find_result_binary(carbon_find *find);
+binary *carbon_find_result_binary(carbon_find *find);
 
 #ifdef __cplusplus
 }

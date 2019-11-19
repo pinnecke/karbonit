@@ -400,8 +400,8 @@ bool carbon_field_skip_binary(memfile *file)
 
         error_if_and_return(type_marker != CARBON_FIELD_BINARY, ERR_TYPEMISMATCH, NULL);
         /** read and skip mime type with variable-length integer type */
-        u64 mime_type = memfile_read_uintvar_stream(NULL, file);
-        UNUSED(mime_type);
+        u64 mime = memfile_read_uintvar_stream(NULL, file);
+        UNUSED(mime);
 
         /** read blob length */
         u64 blob_len = memfile_read_uintvar_stream(NULL, file);

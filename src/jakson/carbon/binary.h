@@ -1,21 +1,22 @@
 /*
  * Copyright 2019 Marcus Pinnecke
  */
-#ifndef HAD_CARBON_BINARY_H
-#define HAD_CARBON_BINARY_H
+
+#ifndef HAD_BINARY_H
+#define HAD_BINARY_H
 
 #include <jakson/types.h>
 
-typedef struct carbon_binary {
-    const char *mime_type;
-    u64 mime_type_strlen;
+typedef struct binary {
+    const char *mime;
+    u64 mime_len;
     const void *blob;
     u64 blob_len;
-} carbon_binary;
+} binary;
 
-static carbon_binary CARBON_NULL_BINARY = {
-        .mime_type = NULL,
-        .mime_type_strlen = 0,
+static binary NULL_BINARY = {
+        .mime = NULL,
+        .mime_len = 0,
         .blob = 0,
         .blob_len = 0
 };

@@ -34,11 +34,11 @@ extern "C" {
 
 typedef u8 media_type; /** byte to determine type at hand (e.g., JSON array, string_buffer, null, ...) */
 
-static struct mime_type {
+static struct mime {
         const char *type;
         const char *ext;
 
-} global_mime_type_register[] = { /** the entries in this list must be sorted by extension! */
+} global_mime_register[] = { /** the entries in this list must be sorted by extension! */
         {"application/vnd.lotus-1-2-3",                                               "123"},
         {"text/vnd.in3d.3dml",                                                        "3dml"},
         {"video/3gpp2",                                                               "3g2"},
@@ -724,7 +724,7 @@ static struct mime_type {
         {"application/vnd.handheld-entertainment+xml",                                "zmm"},
 };
 
-static const u32 _global_mime_type_register = (u32) ARRAY_LENGTH(global_mime_type_register);
+static const u32 _global_mime_register = (u32) ARRAY_LENGTH(global_mime_register);
 
 bool carbon_media_write(memfile *dst, field_type_e type);
 
@@ -732,13 +732,13 @@ bool carbon_media_write(memfile *dst, field_type_e type);
  * Returns the mime type identifier for a file extension <code>ext</code>. If <code>ext</code> is not known,
  * the mime type application/octet-stream (.bin) is returned.
  */
-u32 carbon_media_mime_type_by_ext(const char *ext);
+u32 carbon_media_mime_by_ext(const char *ext);
 
 /**
  * Returns a human readable string representing the mime type for the mime type identifier <code>id</code>.
  * In case <code>id</code> is invalid, the mime type application/octet-stream is returned.
  */
-const char *carbon_media_mime_type_by_id(u32 id);
+const char *carbon_media_mime_by_id(u32 id);
 
 /**
  * Returns the file extension for the mime type identifier <code>id</code>.

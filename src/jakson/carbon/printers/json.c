@@ -145,7 +145,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
         struct string_buffer *str_buf = extra->capture.print_json.str;
         field_type_e type;
         //const char *string;
-        //carbon_binary binary;
+        //binary binary;
         //u64 string_len;
 
         if (UNLIKELY(!arr_it_has_next(it))) {
@@ -381,7 +381,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM: {
-                                carbon_binary binary = carbon_item_get_binary(&(it->prop.value), CARBON_NULL_BINARY);
+                                binary binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
                         } break;
                         default:

@@ -334,9 +334,9 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                         break;
                 case CARBON_FIELD_BINARY: {
                         /** read mime type with variable-length integer type */
-                        u64 mime_type_id = memfile_read_uintvar_stream(NULL, file);
+                        u64 mime_id = memfile_read_uintvar_stream(NULL, file);
 
-                        field->mime = carbon_media_mime_type_by_id(mime_type_id);
+                        field->mime = carbon_media_mime_by_id(mime_id);
                         field->mime_len = strlen(field->mime);
 
                         /** read blob length */
@@ -870,15 +870,15 @@ const char *carbon_int_field_string_value(u64 *strlen, field *field)
 }
 
 bool
-carbon_int_field_binary_value(carbon_binary *out, field *field)
+carbon_int_field_binary_value(binary *out, field *field)
 {
         error_if_and_return(field->type != CARBON_FIELD_BINARY &&
                  field->type != CARBON_FIELD_BINARY_CUSTOM,
                  ERR_TYPEMISMATCH, NULL);
         out->blob = field->data;
         out->blob_len = field->len;
-        out->mime_type = field->mime;
-        out->mime_type_strlen = field->mime_len;
+        out->mime = field->mime;
+        out->mime_len = field->mime_len;
         return true;
 }
 
@@ -946,17 +946,17 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                 }
                         break;
                 case CARBON_FIELD_BINARY: {
-                        u8 mime_type_nbytes; /** number of bytes for mime type */
+                        u8 mime_nbytes; /** number of bytes for mime type */
                         u8 blob_length_nbytes; /** number of bytes to store blob length */
                         u64 blob_nbytes; /** number of bytes to store actual blob data */
 
                         /** get bytes used for mime type id */
-                        memfile_read_uintvar_stream(&mime_type_nbytes, memfile);
+                        memfile_read_uintvar_stream(&mime_nbytes, memfile);
 
                         /** get bytes used for blob length info */
                         blob_nbytes = memfile_read_uintvar_stream(&blob_length_nbytes, memfile);
 
-                        rm_nbytes += mime_type_nbytes + blob_length_nbytes + blob_nbytes;
+                        rm_nbytes += mime_nbytes + blob_length_nbytes + blob_nbytes;
                 }
                         break;
                 case CARBON_FIELD_BINARY_CUSTOM: {

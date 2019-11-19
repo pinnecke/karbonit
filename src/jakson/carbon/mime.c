@@ -20,11 +20,11 @@
 #define find_mime_by_ext(needle_ext)                                                    \
 ({                                                                                      \
         register size_t l = 0;                                                          \
-        register size_t r = _global_mime_type_register - 1;                                   \
-        u32 result = _global_mime_type_register;                                              \
+        register size_t r = _global_mime_register - 1;                                   \
+        u32 result = _global_mime_register;                                              \
         while (l <= r && r < SIZE_MAX) {                                                \
                 register size_t m = l + (r - l) / 2;                                    \
-                register int comp = strcmp(global_mime_type_register[m].ext, needle_ext);      \
+                register int comp = strcmp(global_mime_register[m].ext, needle_ext);      \
                 if (comp == 0) {                                                        \
                         result = m;                                                     \
                         break;                                                          \
@@ -45,35 +45,35 @@ bool carbon_media_write(memfile *dst, field_type_e type)
         return true;
 }
 
-u32 carbon_media_mime_type_by_ext(const char *ext)
+u32 carbon_media_mime_by_ext(const char *ext)
 {
         u32 id;
         if (LIKELY(ext != NULL)) {
-                if (LIKELY((id = find_mime_by_ext(ext)) < (u32) _global_mime_type_register)) {
+                if (LIKELY((id = find_mime_by_ext(ext)) < (u32) _global_mime_register)) {
                         return id;
                 }
         }
         id = find_mime_by_ext("bin");
-        JAK_ASSERT(id < _global_mime_type_register);
+        JAK_ASSERT(id < _global_mime_register);
         return id;
 }
 
-const char *carbon_media_mime_type_by_id(u32 id)
+const char *carbon_media_mime_by_id(u32 id)
 {
-        if (UNLIKELY(id >= _global_mime_type_register)) {
+        if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
-                JAK_ASSERT(id < _global_mime_type_register);
+                JAK_ASSERT(id < _global_mime_register);
         }
-        return global_mime_type_register[id].type;
+        return global_mime_register[id].type;
 }
 
 const char *carbon_media_mime_ext_by_id(u32 id)
 {
-        if (UNLIKELY(id >= _global_mime_type_register)) {
+        if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
-                JAK_ASSERT(id < _global_mime_type_register);
+                JAK_ASSERT(id < _global_mime_register);
         }
-        return global_mime_type_register[id].ext;
+        return global_mime_register[id].ext;
 }
 
 

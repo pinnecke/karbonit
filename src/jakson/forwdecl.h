@@ -106,7 +106,7 @@ typedef struct pindex pindex;
 typedef struct pindex_it pindex_it;
 typedef struct carbon_printer carbon_printer;
 typedef struct rev rev;
-typedef struct carbon_binary carbon_binary;
+typedef struct binary binary;
 typedef struct carbon_update carbon_update;
 typedef struct packer packer;
 

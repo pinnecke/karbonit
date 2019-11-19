@@ -54,7 +54,7 @@ typedef struct item
         u64                  number_unsigned;
         float                number_float;
         carbon_string_field  string;
-        carbon_binary        binary;
+        binary        binary;
         arr_it        *array;
         col_it       *column;
         obj_it       *object;

@@ -229,7 +229,7 @@ bool carbon_printer_string(carbon_printer *printer, string_buffer *str, const ch
         return true;
 }
 
-bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const carbon_binary *binary)
+bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const binary *binary)
 {
         printer->val_binary(printer, str, binary);
         return true;
@@ -285,7 +285,7 @@ bool carbon_printer_prop_string(carbon_printer *printer, string_buffer *str,
 }
 
 bool carbon_printer_prop_binary(carbon_printer *printer, string_buffer *str,
-                                const char *key_name, u64 key_len, const carbon_binary *binary)
+                                const char *key_name, u64 key_len, const binary *binary)
 {
         printer->prop_binary(printer, str, key_name, key_len, binary);
         return true;
@@ -377,7 +377,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM: {
-                                carbon_binary binary = carbon_item_get_binary(&(it->prop.value), CARBON_NULL_BINARY);
+                                binary binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                                 carbon_printer_prop_binary(printer, builder, prop_key.string, prop_key.length, &binary);
                         }
                                 break;
@@ -529,7 +529,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                                 break;
                         case CARBON_FIELD_BINARY:
                         case CARBON_FIELD_BINARY_CUSTOM: {
-                                carbon_binary binary = carbon_item_get_binary(&(it->item), CARBON_NULL_BINARY);
+                                binary binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
                                 carbon_printer_binary(printer, builder, &binary);
                         }
                                 break;

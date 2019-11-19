@@ -65,11 +65,9 @@ DEFINE_PRINTER_FUNCTION(u64, "%"
 
 DEFINE_PRINTER_FUNCTION(size_t, "%zu")
 
-bool vector_create(vector *out, const allocator *alloc, size_t elem_size, size_t cap_elems)
+bool vector_create(vector *out, size_t elem_size, size_t cap_elems)
 {
-        out->allocator = MALLOC(sizeof(allocator));
-        alloc_this_or_std(out->allocator, alloc);
-        out->base = alloc_malloc(out->allocator, cap_elems * elem_size);
+        out->base = MALLOC(cap_elems * elem_size);
         out->num_elems = 0;
         out->cap_elems = cap_elems;
         out->elem_size = elem_size;
@@ -114,9 +112,7 @@ bool vector_deserialize(vector *vec, FILE *file)
                 goto error_handling;
         }
 
-        vec->allocator = MALLOC(sizeof(allocator));
-        alloc_this_or_std(vec->allocator, NULL);
-        vec->base = alloc_malloc(vec->allocator, header.cap_elems * header.elem_size);
+        vec->base = MALLOC(header.cap_elems * header.elem_size);
         vec->num_elems = header.num_elems;
         vec->cap_elems = header.cap_elems;
         vec->elem_size = header.elem_size;
@@ -155,8 +151,7 @@ bool vector_set_grow_factor(vector *vec, float factor)
 
 bool vector_drop(vector *vec)
 {
-        alloc_free(vec->allocator, vec->base);
-        free(vec->allocator);
+        free(vec->base);
         vec->base = NULL;
         return true;
 }
@@ -172,7 +167,7 @@ bool vector_push(vector *vec, const void *data, size_t num_elems)
         while (next_num > vec->cap_elems) {
                 size_t more = next_num - vec->cap_elems;
                 vec->cap_elems = (vec->cap_elems + more) * vec->grow_factor;
-                vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
+                vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         }
         memcpy(vec->base + vec->num_elems * vec->elem_size, data, num_elems * vec->elem_size);
         vec->num_elems += num_elems;
@@ -194,7 +189,7 @@ bool vector_repeated_push(vector *vec, const void *data, size_t how_often)
         while (next_num > vec->cap_elems) {
                 size_t more = next_num - vec->cap_elems;
                 vec->cap_elems = (vec->cap_elems + more) * vec->grow_factor;
-                vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
+                vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         }
         for (size_t i = 0; i < how_often; i++) {
                 memcpy(vec->base + (vec->num_elems + i) * vec->elem_size, data, vec->elem_size);
@@ -224,7 +219,7 @@ bool vector_shrink(vector *vec)
 {
         if (vec->num_elems < vec->cap_elems) {
                 vec->cap_elems = JAK_MAX(1, vec->num_elems);
-                vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
+                vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         }
         return true;
 }
@@ -234,7 +229,7 @@ bool vector_grow(size_t *numNewSlots, vector *vec)
         size_t freeSlotsBefore = vec->cap_elems - vec->num_elems;
 
         vec->cap_elems = (vec->cap_elems * vec->grow_factor) + 1;
-        vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
+        vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         size_t freeSlotsAfter = vec->cap_elems - vec->num_elems;
         if (LIKELY(numNewSlots != NULL)) {
                 *numNewSlots = freeSlotsAfter - freeSlotsBefore;
@@ -245,7 +240,7 @@ bool vector_grow(size_t *numNewSlots, vector *vec)
 bool vector_grow_to(vector *vec, size_t capacity)
 {
         vec->cap_elems = JAK_MAX(vec->cap_elems, capacity);
-        vec->base = alloc_realloc(vec->allocator, vec->base, vec->cap_elems * vec->elem_size);
+        vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         return true;
 }
 
@@ -293,7 +288,7 @@ bool vector_set(vector *vec, size_t pos, const void *data)
 
 bool vector_cpy(vector *dst, const vector *src)
 {
-        CHECK_SUCCESS(vector_create(dst, NULL, src->elem_size, src->num_elems));
+        CHECK_SUCCESS(vector_create(dst, src->elem_size, src->num_elems));
         dst->num_elems = src->num_elems;
         if (dst->num_elems > 0) {
                 memcpy(dst->base, src->base, src->elem_size * src->num_elems);

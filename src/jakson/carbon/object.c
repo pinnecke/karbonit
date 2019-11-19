@@ -32,7 +32,7 @@ bool internal_carbon_object_create(carbon_object *it, memfile *memfile, offset_t
         it->pos = 0;
         it->object_end_reached = false;
 
-        vector_create(&it->history, NULL, sizeof(offset_t), 40);
+        vector_create(&it->history, sizeof(offset_t), 40);
 
         memfile_open(&it->memfile, memfile->memblock, memfile->mode);
         memfile_seek(&it->memfile, payload_start);

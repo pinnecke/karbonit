@@ -247,7 +247,7 @@ bool internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t p
         it->field_offset = 0;
         it->pos = (u64) -1;
 
-        vector_create(&it->history, NULL, sizeof(offset_t), 40);
+        vector_create(&it->history, sizeof(offset_t), 40);
         memfile_open(&it->memfile, memfile->memblock, memfile->mode);
         memfile_seek(&it->memfile, payload_start);
 

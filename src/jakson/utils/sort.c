@@ -16,16 +16,17 @@
  */
 
 #include <jakson/utils/sort.h>
+#include <jakson/types.h>
 
 bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_eq_func_t comp,
-                         size_t nelemns, allocator *alloc)
+                         size_t nelemns)
 {
         if (nelemns <= 1) {
                 return true;
         }
 
         i64 h = nelemns - 1;
-        i64 *stack = (i64 *) alloc_malloc(alloc, (h + 1) * sizeof(i64));
+        i64 *stack = (i64 *) MALLOC((h + 1) * sizeof(i64));
         i64 top = -1;
         i64 l = 0;
 
@@ -49,19 +50,19 @@ bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_e
                 }
         }
 
-        CHECK_SUCCESS(alloc_free(alloc, stack));
+        free(stack);
         return true;
 }
 
 int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, less_eq_wargs_func_t comp,
-                              size_t nelemens, allocator *alloc, void *args)
+                              size_t nelemens, void *args)
 {
         if (nelemens <= 1) {
                 return true;
         }
 
         i64 h = nelemens - 1;
-        i64 *stack = alloc_malloc(alloc, (h + 1) * sizeof(i64));
+        i64 *stack = MALLOC((h + 1) * sizeof(i64));
         JAK_ASSERT (stack);
 
         i64 top = -1;
@@ -87,7 +88,7 @@ int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, l
                 }
         }
 
-        CHECK_SUCCESS(alloc_free(alloc, stack));
+        free(stack);
         return true;
 }
 

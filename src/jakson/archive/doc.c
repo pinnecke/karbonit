@@ -43,9 +43,9 @@ static void sort_columndoc_entries(column_doc_obj *columndoc);
 bool doc_bulk_create(doc_bulk *bulk, string_dict *dic)
 {
         bulk->dic = dic;
-        vector_create(&bulk->keys, NULL, sizeof(char *), 500);
-        vector_create(&bulk->values, NULL, sizeof(char *), 1000);
-        vector_create(&bulk->models, NULL, sizeof(doc), 50);
+        vector_create(&bulk->keys, sizeof(char *), 500);
+        vector_create(&bulk->values, sizeof(char *), 1000);
+        vector_create(&bulk->models, sizeof(doc), 50);
         return true;
 }
 
@@ -68,8 +68,8 @@ bool doc_bulk_get_dic_contents(vector ofType (const char *) **strings,
         string_dict_num_distinct(&num_distinct_values, context->dic);
         vector ofType (const char *) *result_strings = MALLOC(sizeof(vector));
         vector ofType (archive_field_sid_t) *resultstring_id_ts = MALLOC(sizeof(vector));
-        vector_create(result_strings, NULL, sizeof(const char *), num_distinct_values);
-        vector_create(resultstring_id_ts, NULL, sizeof(archive_field_sid_t), num_distinct_values);
+        vector_create(result_strings, sizeof(const char *), num_distinct_values);
+        vector_create(resultstring_id_ts, sizeof(archive_field_sid_t), num_distinct_values);
 
         int status = string_dict_get_contents(result_strings, resultstring_id_ts, context->dic);
         CHECK_SUCCESS(status);
@@ -92,7 +92,7 @@ doc *doc_bulk_new_doc(doc_bulk *context, archive_field_e type)
         model->context = context;
         model->type = type;
 
-        vector_create(&model->obj_model, NULL, sizeof(doc_obj), 500);
+        vector_create(&model->obj_model, sizeof(doc_obj), 500);
 
         return model;
 }
@@ -880,8 +880,7 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
                                                                                                                        \
         value_type *values = VECTOR_ALL(&value_cpy, value_type);                                                \
                                                                                                                        \
-        sort_qsort_indicies(value_indicies, values, sizeof(value_type), compareValueFunc, num_elements,         \
-                      key_vector.allocator);                                                                           \
+        sort_qsort_indicies(value_indicies, values, sizeof(value_type), compareValueFunc, num_elements);                                                                           \
                                                                                                                        \
         for (size_t i = 0; i < num_elements; i++) {                                                                    \
             vector_set(&key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
@@ -920,7 +919,6 @@ static void sort_meta_model_string_values(vector ofType(archive_field_sid_t) *ke
                                           sizeof(archive_field_sid_t),
                                           compare_encoded_string_less_eq_func,
                                           num_elements,
-                                          key_vector->allocator,
                                           dic);
 
                 for (size_t i = 0; i < num_elements; i++) {
@@ -952,8 +950,7 @@ static void sort_meta_model_string_values(vector ofType(archive_field_sid_t) *ke
                                                                                                                        \
         const vector *values = VECTOR_ALL(&value_array_vector, vector);                             \
                                                                                                                        \
-        sort_qsort_indicies(value_indicies, values, sizeof(vector), compare_func, num_elements,           \
-                      key_vector.allocator);                                                                           \
+        sort_qsort_indicies(value_indicies, values, sizeof(vector), compare_func, num_elements);                                                                           \
                                                                                                                        \
         for (size_t i = 0; i < num_elements; i++) {                                                                    \
             vector_set(&key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
@@ -991,7 +988,6 @@ static void sort_columndoc_strings_arrays(vector ofType(archive_field_sid_t) *ke
                                           sizeof(vector),
                                           compare_encoded_string_array_less_eq_func,
                                           num_elements,
-                                          key_vector->allocator,
                                           dic);
 
                 for (size_t i = 0; i < num_elements; i++) {
@@ -1128,7 +1124,6 @@ static void sort_columndoc_column(column_doc_column *column, string_dict *dic)
                                   values_cpy.elem_size,
                                   compare_column_less_eq_func,
                                   values_cpy.num_elems,
-                                  values_cpy.allocator,
                                   &func_arg);
 
         for (size_t i = 0; i < values_cpy.num_elems; i++) {
@@ -1154,7 +1149,6 @@ static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
                                   sizeof(column_doc_group),
                                   compare_object_array_key_columns_less_eq_func,
                                   cpy.num_elems,
-                                  cpy.allocator,
                                   columndoc->parent->dic);
         for (size_t i = 0; i < cpy.num_elems; i++) {
                 vector_set(&columndoc->obj_array_props, i, VECTOR_GET(&cpy, indices[i], column_doc_group));
@@ -1177,7 +1171,6 @@ static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
                                           sizeof(column_doc_column),
                                           compare_object_array_key_column_less_eq_func,
                                           key_columns->columns.num_elems,
-                                          key_columns->columns.allocator,
                                           columndoc->parent->dic);
                 for (size_t i = 0; i < key_columns->columns.num_elems; i++) {
                         vector_set(&key_columns->columns,
@@ -1328,7 +1321,7 @@ bool doc_entries_drop(doc_entries *partition)
 
 static void create_doc(doc_obj *model, doc *doc)
 {
-        vector_create(&model->entries, NULL, sizeof(doc_entries), 50);
+        vector_create(&model->entries, sizeof(doc_entries), 50);
         model->doc = doc;
 }
 
@@ -1378,7 +1371,7 @@ static void create_typed_vector(doc_entries *entry)
                 default: error(ERR_INTERNALERR, "unknown type"); /** unknown type */
                         return;
         }
-        vector_create(&entry->values, NULL, size, 50);
+        vector_create(&entry->values, size, 50);
 }
 
 static void entries_drop(doc_entries *entry)

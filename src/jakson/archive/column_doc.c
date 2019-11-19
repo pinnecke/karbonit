@@ -884,7 +884,7 @@ bool columndoc_drop(column_doc *doc)
 
 static void object_array_key_columns_create(vector ofType(column_doc_group) *columns)
 {
-        vector_create(columns, NULL, sizeof(column_doc_group), 20000);
+        vector_create(columns, sizeof(column_doc_group), 20000);
 }
 
 static void object_array_key_columns_drop(vector ofType(column_doc_group) *columns)
@@ -987,14 +987,14 @@ static column_doc_column *object_array_key_columns_find_or_new(
          * return that newly created column */
         key_columns = VECTOR_NEW_AND_GET(columns, column_doc_group);
         key_columns->key = array_key;
-        vector_create(&key_columns->columns, NULL, sizeof(column_doc_column), 10);
+        vector_create(&key_columns->columns, sizeof(column_doc_column), 10);
 
         objectArrayKeyColumnsNewColumn:
         new_column = VECTOR_NEW_AND_GET(&key_columns->columns, column_doc_column);
         new_column->key_name = nested_object_entry_key;
         new_column->type = nested_object_entry_type;
-        vector_create(&new_column->values, NULL, sizeof(vector), 10);
-        vector_create(&new_column->array_positions, NULL, sizeof(u32), 10);
+        vector_create(&new_column->values, sizeof(vector), 10);
+        vector_create(&new_column->array_positions, sizeof(u32), 10);
 
         return new_column;
 }
@@ -1009,7 +1009,7 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
         *entry_array_idx = array_idx;
 
         vector ofType(<T>) *values_for_entry = VECTOR_NEW_AND_GET(&col->values, vector);
-        vector_create(values_for_entry, NULL, GET_TYPE_SIZE(entry->type), entry->values.num_elems);
+        vector_create(values_for_entry, GET_TYPE_SIZE(entry->type), entry->values.num_elems);
 
         bool is_null_by_def = entry->values.num_elems == 0;
         u32 num_elements = (u32) entry->values.num_elems;
@@ -1076,83 +1076,83 @@ setup_object(column_doc_obj *model, column_doc *parent, archive_field_sid_t key,
         model->parent_key = key;
         model->index = idx;
 
-        vector_create(&model->bool_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int8_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int16_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int32_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int64_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint8_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint16_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uin32_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint64_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->string_prop_keys, NULL, sizeof(archive_field_sid_t), 50);
-        vector_create(&model->float_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->null_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->obj_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->bool_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int8_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int16_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int32_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int64_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint8_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint16_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uin32_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint64_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->string_prop_keys, sizeof(archive_field_sid_t), 50);
+        vector_create(&model->float_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->null_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->obj_prop_keys, sizeof(archive_field_sid_t), 10);
 
-        vector_create(&model->bool_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int8_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int16_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int32_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->int64_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint8_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint16_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint32_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->uint64_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->string_array_prop_keys, NULL, sizeof(archive_field_sid_t), 50);
-        vector_create(&model->float_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
-        vector_create(&model->null_array_prop_keys, NULL, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->bool_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int8_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int16_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int32_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->int64_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint8_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint16_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint32_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->uint64_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->string_array_prop_keys, sizeof(archive_field_sid_t), 50);
+        vector_create(&model->float_array_prop_keys, sizeof(archive_field_sid_t), 10);
+        vector_create(&model->null_array_prop_keys, sizeof(archive_field_sid_t), 10);
 
-        vector_create(&model->bool_prop_vals, NULL, sizeof(archive_field_boolean_t), 10);
-        vector_create(&model->int8_prop_vals, NULL, sizeof(archive_field_i8_t), 10);
-        vector_create(&model->int16_prop_vals, NULL, sizeof(archive_field_i16_t), 10);
-        vector_create(&model->int32_prop_vals, NULL, sizeof(archive_field_i32_t), 10);
-        vector_create(&model->int64_prop_vals, NULL, sizeof(archive_field_i64_t), 10);
-        vector_create(&model->uint8_prop_vals, NULL, sizeof(archive_field_u8_t), 10);
-        vector_create(&model->uint16_prop_vals, NULL, sizeof(archive_field_u16_t), 10);
-        vector_create(&model->uint32_prop_vals, NULL, sizeof(archive_field_u32_t), 10);
-        vector_create(&model->uint64_prop_vals, NULL, sizeof(archive_field_u64_t), 10);
-        vector_create(&model->float_prop_vals, NULL, sizeof(archive_field_number_t), 10);
-        vector_create(&model->string_prop_vals, NULL, sizeof(archive_field_sid_t), 50);
+        vector_create(&model->bool_prop_vals, sizeof(archive_field_boolean_t), 10);
+        vector_create(&model->int8_prop_vals, sizeof(archive_field_i8_t), 10);
+        vector_create(&model->int16_prop_vals, sizeof(archive_field_i16_t), 10);
+        vector_create(&model->int32_prop_vals, sizeof(archive_field_i32_t), 10);
+        vector_create(&model->int64_prop_vals, sizeof(archive_field_i64_t), 10);
+        vector_create(&model->uint8_prop_vals, sizeof(archive_field_u8_t), 10);
+        vector_create(&model->uint16_prop_vals, sizeof(archive_field_u16_t), 10);
+        vector_create(&model->uint32_prop_vals, sizeof(archive_field_u32_t), 10);
+        vector_create(&model->uint64_prop_vals, sizeof(archive_field_u64_t), 10);
+        vector_create(&model->float_prop_vals, sizeof(archive_field_number_t), 10);
+        vector_create(&model->string_prop_vals, sizeof(archive_field_sid_t), 50);
 
-        vector_create(&model->bool_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->int8_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->int16_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->int32_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->int64_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->uint8_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->uint16_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->uint32_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->ui64_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->float_array_prop_vals, NULL, sizeof(vector), 10);
-        vector_create(&model->string_array_prop_vals, NULL, sizeof(vector), 50);
-        vector_create(&model->null_array_prop_vals, NULL, sizeof(u16), 10);
+        vector_create(&model->bool_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->int8_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->int16_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->int32_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->int64_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->uint8_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->uint16_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->uint32_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->ui64_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->float_array_prop_vals, sizeof(vector), 10);
+        vector_create(&model->string_array_prop_vals, sizeof(vector), 50);
+        vector_create(&model->null_array_prop_vals, sizeof(u16), 10);
 
-        vector_create(&model->bool_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int8_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int16_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int32_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->int64_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint8_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint16_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint32_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->uint64_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->float_val_idxs, NULL, sizeof(u32), 10);
-        vector_create(&model->string_val_idxs, NULL, sizeof(u32), 50);
+        vector_create(&model->bool_val_idxs, sizeof(u32), 10);
+        vector_create(&model->int8_val_idxs, sizeof(u32), 10);
+        vector_create(&model->int16_val_idxs, sizeof(u32), 10);
+        vector_create(&model->int32_val_idxs, sizeof(u32), 10);
+        vector_create(&model->int64_val_idxs, sizeof(u32), 10);
+        vector_create(&model->uint8_val_idxs, sizeof(u32), 10);
+        vector_create(&model->uint16_val_idxs, sizeof(u32), 10);
+        vector_create(&model->uint32_val_idxs, sizeof(u32), 10);
+        vector_create(&model->uint64_val_idxs, sizeof(u32), 10);
+        vector_create(&model->float_val_idxs, sizeof(u32), 10);
+        vector_create(&model->string_val_idxs, sizeof(u32), 50);
 
-        vector_create(&model->bool_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->int8_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->int16_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->int32_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->int64_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->uint8_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->uint16_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->uint32_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->uint64_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->float_array_idxs, NULL, sizeof(vector), 10);
-        vector_create(&model->string_array_idxs, NULL, sizeof(vector), 50);
+        vector_create(&model->bool_array_idxs, sizeof(vector), 10);
+        vector_create(&model->int8_array_idxs, sizeof(vector), 10);
+        vector_create(&model->int16_array_idxs, sizeof(vector), 10);
+        vector_create(&model->int32_array_idxs, sizeof(vector), 10);
+        vector_create(&model->int64_array_idxs, sizeof(vector), 10);
+        vector_create(&model->uint8_array_idxs, sizeof(vector), 10);
+        vector_create(&model->uint16_array_idxs, sizeof(vector), 10);
+        vector_create(&model->uint32_array_idxs, sizeof(vector), 10);
+        vector_create(&model->uint64_array_idxs, sizeof(vector), 10);
+        vector_create(&model->float_array_idxs, sizeof(vector), 10);
+        vector_create(&model->string_array_idxs, sizeof(vector), 50);
 
-        vector_create(&model->obj_prop_vals, NULL, sizeof(column_doc_obj), 10);
+        vector_create(&model->obj_prop_vals, sizeof(column_doc_obj), 10);
 
         object_array_key_columns_create(&model->obj_array_props);
 }
@@ -1240,7 +1240,7 @@ static void object_push_array(vector ofType(Vector
         size_t idx = vector_length(values);
         vector_push(values, &template, 1);
         vector = VECTOR_GET(values, idx, struct vector);
-        vector_create(vector, NULL, TSize, num_elements);
+        vector_create(vector, TSize, num_elements);
         vector_push(vector, data, num_elements);
         vector_push(key_vector, &key_id, 1);
 }

@@ -64,15 +64,14 @@ static void _slicelist_lock(slice_list_t *list);
 
 static void _slicelist_unlock(slice_list_t *list);
 
-bool slice_list_create(slice_list_t *list, const allocator *alloc, size_t slice_capacity)
+bool slice_list_create(slice_list_t *list, size_t slice_capacity)
 {
-        alloc_this_or_std(&list->alloc, alloc);
         spinlock_init(&list->lock);
 
-        vector_create(&list->slices, &list->alloc, sizeof(slice), slice_capacity);
-        vector_create(&list->descriptors, &list->alloc, sizeof(slice_descriptor), slice_capacity);
-        vector_create(&list->filters, &list->alloc, sizeof(bitmap), slice_capacity);
-        vector_create(&list->bounds, &list->alloc, sizeof(hash_bounds), slice_capacity);
+        vector_create(&list->slices, sizeof(slice), slice_capacity);
+        vector_create(&list->descriptors, sizeof(slice_descriptor), slice_capacity);
+        vector_create(&list->filters, sizeof(bitmap), slice_capacity);
+        vector_create(&list->bounds, sizeof(hash_bounds), slice_capacity);
 
         ZERO_MEMORY(vector_data(&list->slices), slice_capacity * sizeof(slice));
         ZERO_MEMORY(vector_data(&list->descriptors), slice_capacity * sizeof(slice_descriptor));

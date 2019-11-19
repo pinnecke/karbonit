@@ -26,7 +26,7 @@ bool opt_manager_create(command_opt_mgr *manager, char *module_name, char *modul
         manager->module_desc = module_desc ? strdup(module_desc) : NULL;
         manager->policy = policy;
         manager->fallback = fallback;
-        CHECK_SUCCESS(vector_create(&manager->groups, NULL, sizeof(command_opt_group), 5));
+        CHECK_SUCCESS(vector_create(&manager->groups, sizeof(command_opt_group), 5));
         return true;
 }
 
@@ -77,7 +77,7 @@ bool opt_manager_create_group(command_opt_group **group, const char *desc, comma
 {
         command_opt_group *cmdGroup = VECTOR_NEW_AND_GET(&manager->groups, command_opt_group);
         cmdGroup->desc = strdup(desc);
-        CHECK_SUCCESS(vector_create(&cmdGroup->cmd_options, NULL, sizeof(command_opt), 10));
+        CHECK_SUCCESS(vector_create(&cmdGroup->cmd_options, sizeof(command_opt), 10));
         *group = cmdGroup;
         return true;
 }

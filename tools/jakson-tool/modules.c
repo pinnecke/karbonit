@@ -40,7 +40,7 @@ static int convertJs2Model(struct js_to_context *context, FILE *file, bool optim
 
     CONSOLE_WRITE(file, "  - Setup string_buffer dictionary%s", "");
 
-    encode_async_create(&context->dictionary, 1000, 1000, 1000, 8, NULL);
+    encode_async_create(&context->dictionary, 1000, 1000, 1000, 8);
     CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
 
     CONSOLE_WRITE(file, "  - Parse JSON file%s", "");

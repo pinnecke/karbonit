@@ -23,14 +23,13 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/stdx/alloc.h>
 #include <jakson/std/str_hash.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool str_hash_create_inmemory(str_hash *str_hash, const allocator *alloc, size_t num_buckets, size_t cap_buckets);
+bool str_hash_create_inmemory(str_hash *str_hash, size_t num_buckets, size_t cap_buckets);
 
 #ifdef __cplusplus
 }

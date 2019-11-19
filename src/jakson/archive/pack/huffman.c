@@ -32,7 +32,7 @@ static void huff_tree_create(vector ofType(pack_huffman_entry) *table,
 
 bool coding_huffman_create(huffman *dic)
 {
-        vector_create(&dic->table, NULL, sizeof(pack_huffman_entry), UCHAR_MAX / 4);
+        vector_create(&dic->table, sizeof(pack_huffman_entry), UCHAR_MAX / 4);
         return true;
 }
 
@@ -49,7 +49,7 @@ bool coding_huffman_cpy(huffman *dst, huffman *src)
 bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
 {
         vector ofType(u32) frequencies;
-        vector_create(&frequencies, NULL, sizeof(u32), UCHAR_MAX);
+        vector_create(&frequencies, sizeof(u32), UCHAR_MAX);
         vector_enlarge_size_to_capacity(&frequencies);
 
         u32 *freq_data = VECTOR_ALL(&frequencies, u32);
@@ -353,7 +353,7 @@ static void huff_tree_create(vector ofType(pack_huffman_entry) *table,
         JAK_ASSERT(UCHAR_MAX == frequencies->num_elems);
 
         vector ofType(HuffNode) candidates;
-        vector_create(&candidates, NULL, sizeof(struct huff_node), UCHAR_MAX * UCHAR_MAX);
+        vector_create(&candidates, sizeof(struct huff_node), UCHAR_MAX * UCHAR_MAX);
         size_t appender_idx = UCHAR_MAX;
 
         for (unsigned char i = 0; i < UCHAR_MAX; i++) {

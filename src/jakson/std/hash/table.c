@@ -29,9 +29,9 @@ bool hashtable_create(hashtable *map, size_t key_size, size_t value_size,
 
         map->size = 0;
 
-        SUCCESS_OR_JUMP(vector_create(&map->key_data, NULL, key_size, capacity), error_handling);
-        SUCCESS_OR_JUMP(vector_create(&map->value_data, NULL, value_size, capacity), cleanup_key_data_and_error);
-        SUCCESS_OR_JUMP(vector_create(&map->table, NULL, sizeof(hashtable_bucket), capacity),
+        SUCCESS_OR_JUMP(vector_create(&map->key_data, key_size, capacity), error_handling);
+        SUCCESS_OR_JUMP(vector_create(&map->value_data, value_size, capacity), cleanup_key_data_and_error);
+        SUCCESS_OR_JUMP(vector_create(&map->table, sizeof(hashtable_bucket), capacity),
                             cleanup_value_key_data_and_error);
         SUCCESS_OR_JUMP(vector_enlarge_size_to_capacity(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(vector_zero_memory(&map->table), cleanup_key_value_table_and_error);

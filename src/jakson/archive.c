@@ -223,9 +223,9 @@ bool archive_stream_from_json(area **stream, const char *json_string,
 
         OPTIONAL_CALL(callback, begin_setup_string_dict_ionary);
         if (dictionary == SYNC) {
-                encode_sync_create(&dic, 1000, 1000, 1000, 0, NULL);
+                encode_sync_create(&dic, 1000, 1000, 1000, 0);
         } else if (dictionary == ASYNC) {
-                encode_async_create(&dic, 1000, 1000, 1000, num_async_dic_threads, NULL);
+                encode_async_create(&dic, 1000, 1000, 1000, num_async_dic_threads);
         } else {
                 error(ERR_UNKNOWN_DIC_TYPE, NULL);
         }

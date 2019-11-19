@@ -27,8 +27,8 @@ bool hashset_create(hashset *map, size_t key_size, size_t capacity)
 
         map->size = 0;
 
-        SUCCESS_OR_JUMP(vector_create(&map->key_data, NULL, key_size, capacity), error_handling);
-        SUCCESS_OR_JUMP(vector_create(&map->table, NULL, sizeof(hashset_bucket), capacity),
+        SUCCESS_OR_JUMP(vector_create(&map->key_data, key_size, capacity), error_handling);
+        SUCCESS_OR_JUMP(vector_create(&map->table, sizeof(hashset_bucket), capacity),
                             cleanup_key_data_and_error);
         SUCCESS_OR_JUMP(vector_enlarge_size_to_capacity(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(vector_zero_memory(&map->table), cleanup_key_value_table_and_error);
@@ -67,7 +67,7 @@ vector *hashset_keys(hashset *map)
 {
         if (map) {
                 vector *result = MALLOC(sizeof(vector));
-                vector_create(result, NULL, map->key_data.elem_size, map->key_data.num_elems);
+                vector_create(result, map->key_data.elem_size, map->key_data.num_elems);
                 for (u32 i = 0; i < map->table.num_elems; i++) {
                         hashset_bucket *bucket = VECTOR_GET(&map->table, i, hashset_bucket);
                         if (bucket->in_use_flag) {

@@ -97,7 +97,7 @@ static void intent(string_buffer *str, unsigned intent)
 static void path_index_node_init(struct path_index_node *node)
 {
         ZERO_MEMORY(node, sizeof(struct path_index_node));
-        vector_create(&node->sub_entries, NULL, sizeof(struct path_index_node), 10);
+        vector_create(&node->sub_entries, sizeof(struct path_index_node), 10);
         node->type = PATH_ROOT;
 }
 

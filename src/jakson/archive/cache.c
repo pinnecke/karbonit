@@ -71,7 +71,7 @@ bool string_id_cache_create_lru_ex(struct string_cache **cache, archive *archive
         result->capacity = capacity;
 
         size_t num_buckets = JAK_MAX(1, capacity);
-        vector_create(&result->list_entries, NULL, sizeof(struct lru_list), num_buckets);
+        vector_create(&result->list_entries, sizeof(struct lru_list), num_buckets);
         for (size_t i = 0; i < num_buckets; i++) {
                 struct lru_list *list = VECTOR_NEW_AND_GET(&result->list_entries, struct lru_list);
                 ZERO_MEMORY(list, sizeof(struct lru_list));

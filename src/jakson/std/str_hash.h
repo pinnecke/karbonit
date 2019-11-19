@@ -49,7 +49,6 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/stdx/alloc.h>
 #include <jakson/std/vector.h>
 #include <jakson/std/hash.h>
 #include <jakson/types.h>
@@ -111,11 +110,6 @@ typedef struct str_hash {
          * <b>Note</b>: Implementation must maintain counters by itself
          */
         str_hash_counters counters;
-
-        /**
-        *  Memory allocator that is used to get memory for user data
-        */
-        allocator allocator;
 
         /**
          *  Frees resources bound to <code>self</code> via the allocator specified by the constructor

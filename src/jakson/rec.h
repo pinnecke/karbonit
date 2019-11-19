@@ -14,7 +14,6 @@
 #include <jakson/std/spinlock.h>
 #include <jakson/std/vector.h>
 #include <jakson/stdinc.h>
-#include <jakson/stdx/alloc.h>
 #include <jakson/std/bitmap.h>
 #include <jakson/std/bloom.h>
 #include <jakson/archive.h>
@@ -46,7 +45,6 @@
 #include <jakson/types.h>
 #include <jakson/archive/query.h>
 #include <jakson/std/vector.h>
-#include <jakson/stdx/alloc/trace.h>
 #include <jakson/archive/encode_async.h>
 #include <jakson/archive/encode_sync.h>
 #include <jakson/std/str_hash/mem.h>

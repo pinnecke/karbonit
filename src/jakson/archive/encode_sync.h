@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-int encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, size_t num_index_bucket_cap, size_t num_threads, const allocator *alloc);
+int encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, size_t num_index_bucket_cap, size_t num_threads);
 
 #ifdef __cplusplus
 }

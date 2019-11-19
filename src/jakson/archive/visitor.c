@@ -661,7 +661,7 @@ bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
         int mask = desc ? desc->visit_mask : ARCHIVE_ITER_MASK_ANY;
 
         if (archive_prop_iter_from_archive(&prop_iter, mask, archive)) {
-                vector_create(&path_stack, NULL, sizeof(path_entry), 100);
+                vector_create(&path_stack, sizeof(path_entry), 100);
                 OPTIONAL_CALL(visitor, before_visit_starts, archive, capture);
                 iterate_props(archive, &prop_iter, &path_stack, visitor, mask, capture, true, 0, 0);
                 OPTIONAL_CALL(visitor, after_visit_ends, archive, capture);

@@ -24,7 +24,7 @@ bool encoded_doc_collection_create(encoded_doc_list *collection, archive *archiv
         UNUSED(collection);
         UNUSED(archive);
 
-        vector_create(&collection->flat_object_collection, NULL, sizeof(encoded_doc), 5000000);
+        vector_create(&collection->flat_object_collection, sizeof(encoded_doc), 5000000);
         hashtable_create(&collection->index, sizeof(unique_id_t), sizeof(u32), 5000000);
         collection->archive = archive;
 
@@ -53,8 +53,8 @@ doc_create(unique_id_t object_id, encoded_doc_list *collection)
                         *new_doc = VECTOR_NEW_AND_GET(&collection->flat_object_collection, encoded_doc);
                 new_doc->context = collection;
                 new_doc->object_id = object_id;
-                vector_create(&new_doc->props, NULL, sizeof(encoded_doc_prop), 20);
-                vector_create(&new_doc->props_arrays, NULL, sizeof(encoded_doc_prop_array), 20);
+                vector_create(&new_doc->props, sizeof(encoded_doc_prop), 20);
+                vector_create(&new_doc->props_arrays, sizeof(encoded_doc_prop_array), 20);
                 hashtable_create(&new_doc->prop_array_index, sizeof(archive_field_sid_t), sizeof(u32), 20);
                 hashtable_insert_or_update(&collection->index, &object_id, &doc_position, 1);
                 return new_doc;
@@ -256,7 +256,7 @@ encoded_doc_add_prop_array_##name(encoded_doc *doc,                             
     array->header.key.key_id = key;                                                                                    \
     array->header.type = basic_type;                                                                                   \
     array->header.context = doc;                                                                                       \
-    vector_create(&array->values, NULL, sizeof(encoded_doc_value_u), 10);                                   \
+    vector_create(&array->values, sizeof(encoded_doc_value_u), 10);                                   \
     hashtable_insert_or_update(&doc->prop_array_index, &key, &new_array_pos, 1);                                \
     return true;                                                                                                       \
 }
@@ -271,7 +271,7 @@ encoded_doc_add_prop_array_##name##_decoded(encoded_doc *doc,                   
     array->header.key.key_str = strdup(key);                                                                           \
     array->header.type = basic_type;                                                                                   \
     array->header.context = doc;                                                                                       \
-    vector_create(&array->values, NULL, sizeof(encoded_doc_value_u), 10);                                   \
+    vector_create(&array->values, sizeof(encoded_doc_value_u), 10);                                   \
     return true;                                                                                                       \
 }
 

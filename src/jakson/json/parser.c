@@ -279,8 +279,8 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         int status;
 
         json_tokenizer_init(&parser->tokenizer, input);
-        vector_create(&brackets, NULL, sizeof(json_token_e), 15);
-        vector_create(&token_stream, NULL, sizeof(json_token), 200);
+        vector_create(&brackets, sizeof(json_token_e), 15);
+        vector_create(&token_stream, sizeof(json_token), 200);
 
         struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
 
@@ -413,7 +413,7 @@ bool parse_members(json_members *members,
                    vector ofType(json_token) *token_stream,
                    size_t *token_idx)
 {
-        vector_create(&members->members, NULL, sizeof(json_prop), 20);
+        vector_create(&members->members, sizeof(json_prop), 20);
         json_token delimiter_token;
 
         do {
@@ -505,7 +505,7 @@ static bool parse_object(json_object *object, vector ofType(json_token) *token_s
                         return false;
                 }
         } else {
-                vector_create(&object->value->members, NULL, sizeof(json_prop), 20);
+                vector_create(&object->value->members, sizeof(json_prop), 20);
         }
 
         NEXT_TOKEN(token_idx);  /** Skip '}' */
@@ -519,7 +519,7 @@ static bool parse_array(json_array *array, vector ofType(json_token) *token_stre
         JAK_ASSERT(token.type == ARRAY_OPEN);
         NEXT_TOKEN(token_idx); /** Skip '[' */
 
-        vector_create(&array->elements.elements, NULL, sizeof(json_element), 250);
+        vector_create(&array->elements.elements, sizeof(json_element), 250);
         if (!parse_elements(&array->elements, token_stream, token_idx)) {
                 return false;
         }

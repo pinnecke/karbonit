@@ -82,10 +82,8 @@ static int freelist_push(string_dict *self, archive_field_sid_t idx);
 
 int
 encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, size_t num_index_bucket_cap,
-                   size_t num_threads, const allocator *alloc)
+                   size_t num_threads)
 {
-        CHECK_SUCCESS(alloc_this_or_std(&dic->alloc, alloc));
-
         dic->tag = SYNC;
         dic->drop = _encode_sync_drop;
         dic->insert = _encode_sync_insert;
@@ -121,11 +119,11 @@ static int
 create_extra(string_dict *self, size_t capacity, size_t num_index_buckets, size_t num_index_bucket_cap,
              size_t num_threads)
 {
-        self->extra = alloc_malloc(&self->alloc, sizeof(struct sync_extra));
+        self->extra = MALLOC(sizeof(struct sync_extra));
         struct sync_extra *extra = this_extra(self);
         spinlock_init(&extra->_encode_sync_lock);
-        CHECK_SUCCESS(vector_create(&extra->contents, &self->alloc, sizeof(struct entry), capacity));
-        CHECK_SUCCESS(vector_create(&extra->freelist, &self->alloc, sizeof(archive_field_sid_t), capacity));
+        CHECK_SUCCESS(vector_create(&extra->contents, sizeof(struct entry), capacity));
+        CHECK_SUCCESS(vector_create(&extra->freelist, sizeof(archive_field_sid_t), capacity));
         struct entry empty = {.str    = NULL, .in_use = false};
         for (size_t i = 0; i < capacity; i++) {
                 CHECK_SUCCESS(vector_push(&extra->contents, &empty, 1));
@@ -133,15 +131,7 @@ create_extra(string_dict *self, size_t capacity, size_t num_index_buckets, size_
         }
         UNUSED(num_threads);
 
-        allocator hashtable_alloc;
-#if defined(CONFIG_TRACE_STRING_DIC_ALLOC) && !defined(NDEBUG)
-        CHECK_SUCCESS(allocatorTrace(&hashtable_alloc));
-#else
-        CHECK_SUCCESS(alloc_this_or_std(&hashtable_alloc, &self->alloc));
-#endif
-
         CHECK_SUCCESS(str_hash_create_inmemory(&extra->index,
-                                                  &hashtable_alloc,
                                                   num_index_buckets,
                                                   num_index_bucket_cap));
         return true;
@@ -191,7 +181,7 @@ static bool _encode_sync_drop(string_dict *self)
                 struct entry *entry = entries + i;
                 if (entry->in_use) {
                         JAK_ASSERT (entry->str);
-                        alloc_free(&self->alloc, entry->str);
+                        free(entry->str);
                         entry->str = NULL;
                 }
         }
@@ -199,7 +189,7 @@ static bool _encode_sync_drop(string_dict *self)
         vector_drop(&extra->freelist);
         vector_drop(&extra->contents);
         str_hash_drop(&extra->index);
-        alloc_free(&self->alloc, self->extra);
+        free(self->extra);
 
         return true;
 }
@@ -217,15 +207,7 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
 
         struct sync_extra *extra = this_extra(self);
 
-        allocator hashtable_alloc;
-#if defined(CONFIG_TRACE_STRING_DIC_ALLOC) && !defined(NDEBUG)
-        CHECK_SUCCESS(allocatorTrace(&hashtable_alloc));
-#else
-        CHECK_SUCCESS(alloc_this_or_std(&hashtable_alloc, &self->alloc));
-#endif
-
-        archive_field_sid_t *ids_out = alloc_malloc(&hashtable_alloc,
-                                                            num_strings * sizeof(archive_field_sid_t));
+        archive_field_sid_t *ids_out = MALLOC(num_strings * sizeof(archive_field_sid_t));
         bool *found_mask;
         archive_field_sid_t *values;
         size_t num_not_found;
@@ -300,11 +282,11 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
         }
 
         /** set potential non-null out parameters */
-        OPTIONAL_SET_OR_ELSE(out, ids_out, alloc_free(&self->alloc, ids_out));
+        OPTIONAL_SET_OR_ELSE(out, ids_out, free(ids_out));
 
         /** cleanup */
-        alloc_free(&hashtable_alloc, found_mask);
-        alloc_free(&hashtable_alloc, values);
+        free(found_mask);
+        free(values);
         bloom_drop(&bitmap);
 
         _encode_sync_unlock(self);
@@ -325,9 +307,8 @@ static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings,
         struct sync_extra *extra = this_extra(self);
 
         size_t num_strings_to_delete = 0;
-        char **string_to_delete = alloc_malloc(&self->alloc, num_strings * sizeof(char *));
-        archive_field_sid_t *string_ids_to_delete = alloc_malloc(&self->alloc,
-                                                                         num_strings * sizeof(archive_field_sid_t));
+        char **string_to_delete = MALLOC(num_strings * sizeof(char *));
+        archive_field_sid_t *string_ids_to_delete = MALLOC(num_strings * sizeof(archive_field_sid_t));
 
         /** remove strings from contents vector, and skip duplicates */
         for (size_t i = 0; i < num_strings; i++) {
@@ -352,8 +333,8 @@ static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings,
         }
 
         /** cleanup */
-        alloc_free(&self->alloc, string_to_delete);
-        alloc_free(&self->alloc, string_ids_to_delete);
+        free(string_to_delete);
+        free(string_ids_to_delete);
 
         _encode_sync_unlock(self);
         return true;
@@ -402,15 +383,8 @@ static char **_encode_sync_extract(string_dict *self, const archive_field_sid_t 
 
         _encode_sync_lock(self);
 
-        allocator hashtable_alloc;
-#if defined(CONFIG_TRACE_STRING_DIC_ALLOC) && !defined(NDEBUG)
-        allocatorTrace(&hashtable_alloc);
-#else
-        alloc_this_or_std(&hashtable_alloc, &self->alloc);
-#endif
-
         struct sync_extra *extra = this_extra(self);
-        char **result = alloc_malloc(&hashtable_alloc, num_ids * sizeof(char *));
+        char **result = MALLOC(num_ids * sizeof(char *));
         struct entry *entries = (struct entry *) vector_data(&extra->contents);
 
         /** Optimization: notify the kernel that the content list is accessed randomly (since hash based access)*/
@@ -432,15 +406,8 @@ static char **_encode_sync_extract(string_dict *self, const archive_field_sid_t 
 static bool _encode_sync_free(string_dict *self, void *ptr)
 {
         UNUSED(self);
-
-        allocator hashtable_alloc;
-#if defined(CONFIG_TRACE_STRING_DIC_ALLOC) && !defined(NDEBUG)
-        CHECK_SUCCESS(allocatorTrace(&hashtable_alloc));
-#else
-        CHECK_SUCCESS(alloc_this_or_std(&hashtable_alloc, &self->alloc));
-#endif
-
-        return alloc_free(&hashtable_alloc, ptr);
+        free(ptr);
+        return true;
 }
 
 static bool _encode_sync_reset_counters(string_dict *self)

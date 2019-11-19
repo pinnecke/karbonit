@@ -18,7 +18,6 @@
 #include <jakson/std/str_hash/mem.h>
 #include <jakson/std/spinlock.h>
 #include <jakson/utils/sort.h>
-#include <jakson/stdx/alloc/trace.h>
 #include <jakson/utils/time.h>
 #include <jakson/std/bloom.h>
 #include <jakson/stdx/slicelist.h>
@@ -67,17 +66,15 @@ static int _str_hash_mem_free(str_hash *self, void *ptr);
 static int this_insert_bulk(vector ofType(bucket) *buckets, char *const *restrict keys,
                             const archive_field_sid_t *restrict values, size_t *restrict bucket_idxs,
                             size_t num_pairs,
-                            allocator *alloc,
                             str_hash_counters *counter);
 
 static int
 this_insert_exact(vector ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
-                  size_t bucket_idx, allocator *alloc, str_hash_counters *counter);
+                  size_t bucket_idx, str_hash_counters *counter);
 
 static int
 this_fetch_bulk(vector ofType(bucket) *buckets, archive_field_sid_t *values_out, bool *key_found_mask,
                 size_t *num_keys_not_found, size_t *bucket_idxs, char *const *keys, size_t num_keys,
-                allocator *alloc,
                 str_hash_counters *counter);
 
 static int
@@ -88,20 +85,16 @@ static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t
 
 static struct mem_extra *this_get_exta(str_hash *self);
 
-static int bucket_create(struct bucket *buckets, size_t num_buckets, size_t bucket_cap, allocator *alloc);
+static int bucket_create(struct bucket *buckets, size_t num_buckets, size_t bucket_cap);
 
-static int bucket_drop(struct bucket *buckets, size_t num_buckets, allocator *alloc);
+static int bucket_drop(struct bucket *buckets, size_t num_buckets);
 
 static int bucket_insert(struct bucket *bucket, const char *restrict key, archive_field_sid_t value,
-                         allocator *alloc,
                          str_hash_counters *counter);
 
 bool
-str_hash_create_inmemory(str_hash *str_hash, const allocator *alloc, size_t num_buckets,
-                             size_t cap_buckets)
+str_hash_create_inmemory(str_hash *str_hash, size_t num_buckets, size_t cap_buckets)
 {
-        CHECK_SUCCESS(alloc_this_or_std(&str_hash->allocator, alloc));
-
         num_buckets = num_buckets < 1 ? 1 : num_buckets;
         cap_buckets = cap_buckets < 1 ? 1 : cap_buckets;
 
@@ -128,9 +121,9 @@ static int _str_hash_mem_drop(str_hash *self)
         JAK_ASSERT(self->tag == MEMORY_RESIDENT);
         struct mem_extra *extra = this_get_exta(self);
         struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
-        CHECK_SUCCESS(bucket_drop(data, extra->buckets.cap_elems, &self->allocator));
+        CHECK_SUCCESS(bucket_drop(data, extra->buckets.cap_elems));
         vector_drop(&extra->buckets);
-        alloc_free(&self->allocator, self->extra);
+        free(self->extra);
         return true;
 }
 
@@ -139,7 +132,7 @@ static int this_put_safe_bulk(str_hash *self, char *const *keys, const archive_f
 {
         JAK_ASSERT(self->tag == MEMORY_RESIDENT);
         struct mem_extra *extra = this_get_exta(self);
-        size_t *bucket_idxs = alloc_malloc(&self->allocator, num_pairs * sizeof(size_t));
+        size_t *bucket_idxs = MALLOC(num_pairs * sizeof(size_t));
 
         PREFETCH_WRITE(bucket_idxs);
 
@@ -158,9 +151,8 @@ static int this_put_safe_bulk(str_hash *self, char *const *keys, const archive_f
                                            values,
                                            bucket_idxs,
                                            num_pairs,
-                                           &self->allocator,
                                            &self->counters));
-        CHECK_SUCCESS(alloc_free(&self->allocator, bucket_idxs));
+        free(bucket_idxs);
         return true;
 }
 
@@ -178,7 +170,6 @@ static int this_put_safe_exact(str_hash *self, const char *key, archive_field_si
                                             key,
                                             value,
                                             bucket_idx,
-                                            &self->allocator,
                                             &self->counters));
 
         return true;
@@ -198,11 +189,9 @@ static int this_put_fast_bulk(str_hash *self, char *const *keys, const archive_f
 static int
 this_fetch_bulk(vector ofType(bucket) *buckets, archive_field_sid_t *values_out, bool *key_found_mask,
                 size_t *num_keys_not_found, size_t *bucket_idxs, char *const *keys, size_t num_keys,
-                allocator *alloc,
                 str_hash_counters *counter)
 {
-        UNUSED(counter);
-        UNUSED(alloc);
+        UNUSED(counter)
 
         slice_handle result_handle;
         size_t num_not_found = 0;
@@ -260,18 +249,10 @@ this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size
         timestamp begin = wallclock();
         TRACE(SMART_MAP_TAG, "'get_safe' function invoked for %zu strings", num_keys)
 
-        allocator hashtable_alloc;
-#if defined(CONFIG_TRACE_STRING_DIC_ALLOC) && !defined(NDEBUG)
-        CHECK_SUCCESS(allocator_TRACE(&hashtable_alloc));
-#else
-        CHECK_SUCCESS(alloc_this_or_std(&hashtable_alloc, &self->allocator));
-#endif
-
         struct mem_extra *extra = this_get_exta(self);
-        size_t *bucket_idxs = alloc_malloc(&self->allocator, num_keys * sizeof(size_t));
-        archive_field_sid_t *values_out = alloc_malloc(&self->allocator,
-                                                               num_keys * sizeof(archive_field_sid_t));
-        bool *found_mask_out = alloc_malloc(&self->allocator, num_keys * sizeof(bool));
+        size_t *bucket_idxs = MALLOC(num_keys * sizeof(size_t));
+        archive_field_sid_t *values_out = MALLOC(num_keys * sizeof(archive_field_sid_t));
+        bool *found_mask_out = MALLOC(num_keys * sizeof(bool));
 
         JAK_ASSERT(bucket_idxs != NULL);
         JAK_ASSERT(values_out != NULL);
@@ -292,9 +273,8 @@ this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size
                                           bucket_idxs,
                                           keys,
                                           num_keys,
-                                          &self->allocator,
                                           &self->counters));
-        CHECK_SUCCESS(alloc_free(&self->allocator, bucket_idxs));
+        free(bucket_idxs);
         TRACE(SMART_MAP_TAG, "'get_safe' function invok fetch: done for %zu strings", num_keys)
 
         JAK_ASSERT(values_out != NULL);
@@ -315,13 +295,6 @@ static int
 this_get_safe_exact(str_hash *self, archive_field_sid_t *out, bool *found_mask, const char *key)
 {
         JAK_ASSERT(self->tag == MEMORY_RESIDENT);
-
-        allocator hashtable_alloc;
-#if defined(CONFIG_TRACE_STRING_DIC_ALLOC) && !defined(NDEBUG)
-        CHECK_SUCCESS(allocator_TRACE(&hashtable_alloc));
-#else
-        CHECK_SUCCESS(alloc_this_or_std(&hashtable_alloc, &self->allocator));
-#endif
 
         struct mem_extra *extra = this_get_exta(self);
 
@@ -355,10 +328,9 @@ static int this_update_key_fast(str_hash *self, const archive_field_sid_t *value
 }
 
 static int simple_map_remove(struct mem_extra *extra, size_t *bucket_idxs, char *const *keys, size_t num_keys,
-                             allocator *alloc, str_hash_counters *counter)
+                             str_hash_counters *counter)
 {
-        UNUSED(counter);
-        UNUSED(alloc);
+        UNUSED(counter)
 
         slice_handle handle;
         struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
@@ -381,37 +353,37 @@ static int _str_hash_mem_remove(str_hash *self, char *const *keys, size_t num_ke
         JAK_ASSERT(self->tag == MEMORY_RESIDENT);
 
         struct mem_extra *extra = this_get_exta(self);
-        size_t *bucket_idxs = alloc_malloc(&self->allocator, num_keys * sizeof(size_t));
+        size_t *bucket_idxs = MALLOC(num_keys * sizeof(size_t));
         for (register size_t i = 0; i < num_keys; i++) {
                 const char *key = keys[i];
                 hash32_t hash = STR_HASH_MEM_HASHCODE_OF(key);
                 bucket_idxs[i] = hash % extra->buckets.cap_elems;
         }
 
-        CHECK_SUCCESS(simple_map_remove(extra, bucket_idxs, keys, num_keys, &self->allocator, &self->counters));
-        CHECK_SUCCESS(alloc_free(&self->allocator, bucket_idxs));
+        CHECK_SUCCESS(simple_map_remove(extra, bucket_idxs, keys, num_keys, &self->counters));
+        free(bucket_idxs);
         return true;
 }
 
 static int _str_hash_mem_free(str_hash *self, void *ptr)
 {
         JAK_ASSERT(self->tag == MEMORY_RESIDENT);
-        CHECK_SUCCESS(alloc_free(&self->allocator, ptr));
+        free(ptr);
         return true;
 }
 
 MAYBE_UNUSED
 static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t cap_buckets)
 {
-        if ((self->extra = alloc_malloc(&self->allocator, sizeof(struct mem_extra))) != NULL) {
+        if ((self->extra = MALLOC(sizeof(struct mem_extra))) != NULL) {
                 struct mem_extra *extra = this_get_exta(self);
-                vector_create(&extra->buckets, &self->allocator, sizeof(struct bucket), num_buckets);
+                vector_create(&extra->buckets, sizeof(struct bucket), num_buckets);
 
                 /** Optimization: notify the kernel that the list of buckets are accessed randomly (since hash based access)*/
                 vector_memadvice(&extra->buckets, MADV_RANDOM | MADV_WILLNEED);
 
                 struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
-                CHECK_SUCCESS(bucket_create(data, num_buckets, cap_buckets, &self->allocator));
+                CHECK_SUCCESS(bucket_create(data, num_buckets, cap_buckets));
                 return true;
         } else {
                 error(ERR_MALLOCERR, NULL);
@@ -427,20 +399,19 @@ static struct mem_extra *this_get_exta(str_hash *self)
 }
 
 MAYBE_UNUSED
-static int bucket_create(struct bucket *buckets, size_t num_buckets, size_t bucket_cap, allocator *alloc)
+static int bucket_create(struct bucket *buckets, size_t num_buckets, size_t bucket_cap)
 {
         // TODO: parallize this!
         while (num_buckets--) {
                 struct bucket *bucket = buckets++;
-                slice_list_create(&bucket->slice_list, alloc, bucket_cap);
+                slice_list_create(&bucket->slice_list, bucket_cap);
         }
 
         return true;
 }
 
-static int bucket_drop(struct bucket *buckets, size_t num_buckets, allocator *alloc)
+static int bucket_drop(struct bucket *buckets, size_t num_buckets)
 {
-        UNUSED(alloc);
         while (num_buckets--) {
                 struct bucket *bucket = buckets++;
                 slice_list_drop(&bucket->slice_list);
@@ -450,11 +421,9 @@ static int bucket_drop(struct bucket *buckets, size_t num_buckets, allocator *al
 }
 
 static int bucket_insert(struct bucket *bucket, const char *restrict key, archive_field_sid_t value,
-                         allocator *alloc,
                          str_hash_counters *counter)
 {
         UNUSED(counter);
-        UNUSED(alloc);
 
         slice_handle handle;
 
@@ -476,9 +445,7 @@ static int bucket_insert(struct bucket *bucket, const char *restrict key, archiv
 
 static int this_insert_bulk(vector ofType(bucket) *buckets, char *const *restrict keys,
                             const archive_field_sid_t *restrict values, size_t *restrict bucket_idxs,
-                            size_t num_pairs,
-                            allocator *alloc,
-                            str_hash_counters *counter)
+                            size_t num_pairs, str_hash_counters *counter)
 {
         struct bucket *buckets_data = (struct bucket *) vector_data(buckets);
         int status = true;
@@ -488,7 +455,7 @@ static int this_insert_bulk(vector ofType(bucket) *buckets, char *const *restric
                 archive_field_sid_t value = values[i];
 
                 struct bucket *bucket = buckets_data + bucket_idx;
-                status = bucket_insert(bucket, key, value, alloc, counter);
+                status = bucket_insert(bucket, key, value, counter);
         }
 
         return status;
@@ -496,9 +463,9 @@ static int this_insert_bulk(vector ofType(bucket) *buckets, char *const *restric
 
 static int
 this_insert_exact(vector ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
-                  size_t bucket_idx, allocator *alloc, str_hash_counters *counter)
+                  size_t bucket_idx, str_hash_counters *counter)
 {
         struct bucket *buckets_data = (struct bucket *) vector_data(buckets);
         struct bucket *bucket = buckets_data + bucket_idx;
-        return bucket_insert(bucket, key, value, alloc, counter);
+        return bucket_insert(bucket, key, value, counter);
 }

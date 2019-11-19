@@ -25,7 +25,6 @@
 #include <sys/mman.h>
 
 #include <jakson/stdinc.h>
-#include <jakson/stdx/alloc.h>
 #include <jakson/mem/file.h>
 
 #ifdef __cplusplus
@@ -71,11 +70,6 @@ DECLARE_PRINTER_FUNC(size_t)
  */
 typedef struct vector {
         /**
-        *  Memory allocator that is used to get memory for user data
-        */
-        allocator *allocator;
-
-        /**
          *  Fixed number of bytes for a single element that should be stored in the vector
          */
         size_t elem_size;
@@ -116,7 +110,7 @@ typedef vector ofType(const char *) string_vector_t;
  * @param cap_elems number of elements for which memory should be reserved
  * @return STATUS_OK if success, and STATUS_NULLPTR in case of NULL pointer parameters
  */
-bool vector_create(vector *out, const allocator *alloc, size_t elem_size, size_t cap_elems);
+bool vector_create(vector *out, size_t elem_size, size_t cap_elems);
 
 bool vector_serialize(FILE *file, vector *vec);
 

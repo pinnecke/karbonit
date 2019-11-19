@@ -23,7 +23,6 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/stdx/alloc.h>
 #include <jakson/types.h>
 #include <jakson/std/hash.h>
 #include <jakson/std/vector.h>
@@ -52,11 +51,6 @@ typedef struct string_dict {
          * Tag determining the current implementation
          */
         str_dict_tag_e tag;
-
-        /**
-         * Memory allocator that is used to get memory for user data
-         */
-        allocator alloc;
 
         /**
          * Frees up implementation-specific resources.

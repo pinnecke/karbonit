@@ -23,7 +23,6 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/stdx/alloc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,8 +79,8 @@ typedef bool (*less_func_t)(const void *lhs, const void *rhs);
     (i + 1);                                                                                                           \
 })
 
-bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_eq_func_t comp, size_t nelemns, allocator *alloc);
-int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, less_eq_wargs_func_t comp, size_t nelemens, allocator *alloc, void *args);
+bool sort_qsort_indicies(size_t *indices, const void *base, size_t width, less_eq_func_t comp, size_t nelemns);
+int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, less_eq_wargs_func_t comp, size_t nelemens, void *args);
 size_t sort_bsearch_indicies(const size_t *indicies, const void *base, size_t width, size_t nelemens, const void *neelde, eq_func_t compEq, less_func_t compLess);
 
 size_t sort_get_min(const size_t *elements, size_t nelemens);

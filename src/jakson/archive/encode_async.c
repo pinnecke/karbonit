@@ -15,7 +15,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/stdx/alloc.h>
 #include <jakson/std/vector.h>
 #include <jakson/archive/encode_sync.h>
 #include <jakson/archive/encode_async.h>
@@ -131,10 +130,8 @@ static bool this_setup_carriers(string_dict *self, size_t capacity, size_t num_i
 })
 
 int encode_async_create(string_dict *dic, size_t capacity, size_t num_index_buckets,
-                        size_t approx_num_unique_strs, size_t num_threads, const allocator *alloc)
+                        size_t approx_num_unique_strs, size_t num_threads)
 {
-        CHECK_SUCCESS(alloc_this_or_std(&dic->alloc, alloc));
-
         dic->tag = ASYNC;
         dic->drop = _encode_async_drop;
         dic->insert = _encode_async_insert;
@@ -157,12 +154,12 @@ static bool _encode_async_create_extra(string_dict *self, size_t capacity, size_
 {
         JAK_ASSERT(self);
 
-        self->extra = alloc_malloc(&self->alloc, sizeof(struct async_extra));
+        self->extra = MALLOC(sizeof(struct async_extra));
         struct async_extra *extra = THIS_EXTRAS(self);
         spinlock_init(&extra->lock);
-        vector_create(&extra->carriers, &self->alloc, sizeof(struct carrier), num_threads);
+        vector_create(&extra->carriers, sizeof(struct carrier), num_threads);
         this_setup_carriers(self, capacity, num_index_buckets, approx_num_unique_str, num_threads);
-        vector_create(&extra->carrier_mapping, &self->alloc, sizeof(struct carrier *), capacity);
+        vector_create(&extra->carrier_mapping, sizeof(struct carrier *), capacity);
 
         return true;
 }
@@ -176,7 +173,7 @@ static bool _encode_async_drop(string_dict *self)
         }
         CHECK_SUCCESS(vector_drop(&extra->carriers));
         CHECK_SUCCESS(vector_drop(&extra->carrier_mapping));
-        CHECK_SUCCESS(alloc_free(&self->alloc, extra));
+        free(extra);
         return true;
 }
 
@@ -310,29 +307,29 @@ static void synchronize(vector ofType(carrier) *carriers, size_t num_threads)
 }
 
 static void create_thread_assignment(atomic_uint_fast16_t **str_carrier_mapping, atomic_size_t **carrier_num_strings,
-                                     size_t **str_carrier_idx_mapping, allocator *alloc, size_t num_strings,
+                                     size_t **str_carrier_idx_mapping, size_t num_strings,
                                      size_t num_threads)
 {
         /** async_map_exec string depending on hash values to a particular carrier */
-        *str_carrier_mapping = alloc_malloc(alloc, num_strings * sizeof(atomic_uint_fast16_t));
+        *str_carrier_mapping = MALLOC(num_strings * sizeof(atomic_uint_fast16_t));
         memset(*str_carrier_mapping, 0, num_strings * sizeof(atomic_uint_fast16_t));
 
         /** counters to compute how many strings go to a particular carrier */
-        *carrier_num_strings = alloc_malloc(alloc, num_threads * sizeof(atomic_size_t));
+        *carrier_num_strings = MALLOC(num_threads * sizeof(atomic_size_t));
         memset(*carrier_num_strings, 0, num_threads * sizeof(atomic_size_t));
 
         /** an inverted index that contains the i-th position for string k that was assigned to carrier m.
          * With this, given a (global) string and and its carrier, one can have directly the position of the
          * string in the carriers "thread-local locate" args */
-        *str_carrier_idx_mapping = alloc_malloc(alloc, num_strings * sizeof(size_t));
+        *str_carrier_idx_mapping = MALLOC(num_strings * sizeof(size_t));
 }
 
-static void drop_thread_assignment(allocator *alloc, atomic_uint_fast16_t *str_carrier_mapping,
+static void drop_thread_assignment(atomic_uint_fast16_t *str_carrier_mapping,
                                    atomic_size_t *carrier_num_strings, size_t *str_carrier_idx_mapping)
 {
-        alloc_free(alloc, carrier_num_strings);
-        alloc_free(alloc, str_carrier_mapping);
-        alloc_free(alloc, str_carrier_idx_mapping);
+        free(carrier_num_strings);
+        free(str_carrier_mapping);
+        free(str_carrier_idx_mapping);
 }
 
 struct thread_assign_arg {
@@ -401,23 +398,22 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         create_thread_assignment(&str_carrier_mapping,
                                  &carrier_num_strings,
                                  &str_carrier_idx_mapping,
-                                 &self->alloc,
                                  num_strings,
                                  num_threads);
 
         vector ofType(struct parallel_insert_arg *) carrier_args;
-        vector_create(&carrier_args, &self->alloc, sizeof(struct parallel_insert_arg *), num_threads);
+        vector_create(&carrier_args, sizeof(struct parallel_insert_arg *), num_threads);
 
         /** compute which carrier is responsible for which string */
         compute_thread_assignment(str_carrier_mapping, carrier_num_strings, strings, num_strings, num_threads);
 
         /** prepare to move string subsets to carriers */
         for (uint_fast16_t i = 0; i < num_threads; i++) {
-                struct parallel_insert_arg *entry = alloc_malloc(&self->alloc, sizeof(struct parallel_insert_arg));
+                struct parallel_insert_arg *entry = MALLOC(sizeof(struct parallel_insert_arg));
                 entry->carrier = VECTOR_GET(&extra->carriers, i, struct carrier);
                 entry->insert_num_threads = num_threads;
 
-                vector_create(&entry->strings, &self->alloc, sizeof(char *), JAK_MAX(1, carrier_num_strings[i]));
+                vector_create(&entry->strings, sizeof(char *), JAK_MAX(1, carrier_num_strings[i]));
                 vector_push(&carrier_args, &entry, 1);
                 JAK_ASSERT (entry->strings.base != NULL);
 
@@ -470,8 +466,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
 
         /** parallelizing the following block makes no sense but waste of compute power and energy */
         if (LIKELY(out != NULL)) {
-                archive_field_sid_t *total_out = alloc_malloc(&self->alloc,
-                                                                      num_strings * sizeof(archive_field_sid_t));
+                archive_field_sid_t *total_out = MALLOC(num_strings * sizeof(archive_field_sid_t));
                 size_t currentOut = 0;
 
                 for (size_t string_idx = 0; string_idx < num_strings; string_idx++) {
@@ -497,11 +492,11 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
                         string_dict_free(&carrier_arg->carrier->local_dictionary, carrier_arg->out);
                 }
                 vector_drop(&carrier_arg->strings);
-                alloc_free(&self->alloc, carrier_arg);
+                free(carrier_arg);
         }
 
         /** cleanup */
-        drop_thread_assignment(&self->alloc, str_carrier_mapping, carrier_num_strings, str_carrier_idx_mapping);
+        drop_thread_assignment(str_carrier_mapping, carrier_num_strings, str_carrier_idx_mapping);
         vector_drop(&carrier_args);
 
         this_unlock(self);
@@ -525,17 +520,15 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
         struct async_extra *extra = THIS_EXTRAS(self);
         uint_fast16_t num_threads = vector_length(&extra->carriers);
         size_t approx_num_strings_per_thread = JAK_MAX(1, num_strings / num_threads);
-        vector ofType(archive_field_sid_t) *string_map = alloc_malloc(&self->alloc, num_threads *
-                                                                                                       sizeof(vector));
+        vector ofType(archive_field_sid_t) *string_map = MALLOC(num_threads * sizeof(vector));
 
         vector ofType(struct parallel_remove_arg) carrier_args;
-        vector_create(&carrier_args, &self->alloc, sizeof(struct parallel_remove_arg), num_threads);
+        vector_create(&carrier_args, sizeof(struct parallel_remove_arg), num_threads);
 
         /** prepare thread-local subset of string ids */
         vector_repeated_push(&carrier_args, &empty, num_threads);
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                vector_create(string_map + thread_id, &self->alloc, sizeof(archive_field_sid_t),
-                           approx_num_strings_per_thread);
+                vector_create(string_map + thread_id, sizeof(archive_field_sid_t), approx_num_strings_per_thread);
         }
 
         /** compute subset of string ids per thread  */
@@ -566,7 +559,7 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
                 vector_drop(string_map + thread_id);
         }
 
-        alloc_free(&self->alloc, string_map);
+        free(string_map);
         vector_data(&carrier_args);
 
         this_unlock(self);
@@ -592,8 +585,8 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         uint_fast16_t num_threads = vector_length(&extra->carriers);
 
         /** global result output */
-        ALLOC_MALLOC(archive_field_sid_t, global_out, num_keys, &self->alloc);
-        ALLOC_MALLOC(bool, global_found_mask, num_keys, &self->alloc);
+        archive_field_sid_t *global_out = MALLOC(num_keys * sizeof(archive_field_sid_t));
+        bool *global_found_mask = MALLOC(num_keys * sizeof(bool));
 
         size_t global_num_not_found = 0;
 
@@ -606,7 +599,6 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         create_thread_assignment(&str_carrier_mapping,
                                  &carrier_num_strings,
                                  &str_carrier_idx_mapping,
-                                 &self->alloc,
                                  num_keys,
                                  num_threads);
 
@@ -616,7 +608,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         /** prepare to move string subsets to carriers */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
-                vector_create(&arg->keys_in, &self->alloc, sizeof(char *), carrier_num_strings[thread_id]);
+                vector_create(&arg->keys_in, sizeof(char *), carrier_num_strings[thread_id]);
                 JAK_ASSERT (&arg->keys_in.base != NULL);
         }
 
@@ -683,7 +675,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         TRACE(STRING_DIC_ASYNC_TAG, "cleanup%s", "...")
 
         /** cleanup */
-        drop_thread_assignment(&self->alloc, str_carrier_mapping, carrier_num_strings, str_carrier_idx_mapping);
+        drop_thread_assignment(str_carrier_mapping, carrier_num_strings, str_carrier_idx_mapping);
 
         for (size_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
@@ -736,20 +728,19 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
 
         this_lock(self);
 
-        ALLOC_MALLOC(char *, globalResult, num_ids, &self->alloc);
+        char **globalResult = MALLOC(num_ids * sizeof(char *));
 
         struct async_extra *extra = (struct async_extra *) self->extra;
         uint_fast16_t num_threads = vector_length(&extra->carriers);
         size_t approx_num_strings_per_thread = JAK_MAX(1, num_ids / num_threads);
 
-        ALLOC_MALLOC(size_t, local_thread_idx, num_ids, &self->alloc);
-        ALLOC_MALLOC(uint_fast16_t, owning_thread_ids, num_ids, &self->alloc);
-        ALLOC_MALLOC(struct parallel_extract_arg, thread_args, num_threads, &self->alloc);
+        size_t *local_thread_idx = MALLOC(num_ids * sizeof(size_t));
+        uint_fast16_t *owning_thread_ids = MALLOC(num_ids * sizeof(uint_fast16_t));
+        struct parallel_extract_arg *thread_args = MALLOC(num_threads * sizeof(struct parallel_extract_arg));
 
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_extract_arg *arg = thread_args + thread_id;
-                vector_create(&arg->local_ids_in, &self->alloc, sizeof(archive_field_sid_t),
-                           approx_num_strings_per_thread);
+                vector_create(&arg->local_ids_in, sizeof(archive_field_sid_t), approx_num_strings_per_thread);
         }
 
         /** compute subset of string ids per thread  */
@@ -792,9 +783,9 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
                 }
         }
 
-        ALLOC_FREE(local_thread_idx, &self->alloc);
-        ALLOC_FREE(owning_thread_ids, &self->alloc);
-        ALLOC_FREE(thread_args, &self->alloc);
+        free(local_thread_idx);
+        free(owning_thread_ids);
+        free(thread_args);
 
         this_unlock(self);
 
@@ -808,7 +799,8 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
 
 static bool _encode_async_free(string_dict *self, void *ptr)
 {
-        alloc_free(&self->alloc, ptr);
+        UNUSED(self)
+        free(ptr);
         return true;
 }
 
@@ -844,8 +836,8 @@ static bool _encode_async_get_contents(string_dict *self, vector ofType (char *)
         approx_num_distinct_local_values = JAK_MAX(1, approx_num_distinct_local_values / extra->carriers.num_elems);
         approx_num_distinct_local_values *= 1.2f;
 
-        vector_create(&local_string_results, NULL, sizeof(char *), approx_num_distinct_local_values);
-        vector_create(&local_string_id_results, NULL, sizeof(archive_field_sid_t), approx_num_distinct_local_values);
+        vector_create(&local_string_results, sizeof(char *), approx_num_distinct_local_values);
+        vector_create(&local_string_id_results, sizeof(archive_field_sid_t), approx_num_distinct_local_values);
 
         for (size_t thread_id = 0; thread_id < num_carriers; thread_id++) {
                 vector_clear(&local_string_results);
@@ -930,8 +922,7 @@ static void parallel_create_carrier(const void *restrict start, size_t width, si
                                    createArgs->local_capacity,
                                    createArgs->local_bucket_num,
                                    createArgs->local_bucket_cap,
-                                   0,
-                                   createArgs->alloc);
+                                   0);
                 memset(&carrier->thread, 0, sizeof(pthread_t));
                 carrier++;
         }
@@ -948,8 +939,8 @@ static bool this_setup_carriers(string_dict *self, size_t capacity, size_t num_i
                                                                           capacity /
                                                                           num_threads), .local_bucket_num = local_bucket_num, .local_bucket_cap = JAK_MAX(
                 1,
-                approx_num_unique_str / num_threads / local_bucket_num / SLICE_KEY_COLUMN_MAX_ELEMS), .alloc = &self
-                ->alloc};
+                approx_num_unique_str / num_threads / local_bucket_num / SLICE_KEY_COLUMN_MAX_ELEMS)
+        };
 
         for (size_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 new_carrier.id = thread_id;

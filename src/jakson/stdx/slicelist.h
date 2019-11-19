@@ -97,7 +97,6 @@ typedef struct slice_descriptor {
 } slice_descriptor;
 
 typedef struct slice_list {
-        allocator alloc;
         spinlock lock;
 
         vector ofType(slice) slices;
@@ -115,7 +114,7 @@ typedef struct slice_handle {
         bool is_contained;
 } slice_handle;
 
-bool slice_list_create(slice_list_t *list, const allocator *alloc, size_t slice_capacity);
+bool slice_list_create(slice_list_t *list, size_t slice_capacity);
 bool slice_list_drop(slice_list_t *list);
 bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *needle);
 bool slice_list_is_empty(const slice_list_t *list);

@@ -23,9 +23,7 @@
 
 bool bitmap_create(bitmap *bitmap, u16 num_bits)
 {
-        allocator alloc;
-        alloc_create_std(&alloc);
-        vector_create(&bitmap->data, &alloc, sizeof(u32), ceil(num_bits / (double) BIT_NUM_OF(u32)));
+        vector_create(&bitmap->data, sizeof(u32), ceil(num_bits / (double) BIT_NUM_OF(u32)));
         size_t cap = vector_capacity(&bitmap->data);
         u32 zero = 0;
         vector_repeated_push(&bitmap->data, &zero, cap);

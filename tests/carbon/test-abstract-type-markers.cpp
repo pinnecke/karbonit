@@ -450,7 +450,7 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
         drop_memfile(&memfile);
 }
 
-static void test_get_derive_from_list(carbon_list_container_e is, carbon_list_derivable_e should,
+static void test_get_derive_from_list(carbon_list_container_e is, list_derivable_e should,
                                       derived_e expected)
 {
         derived_e concrete;
@@ -460,107 +460,107 @@ static void test_get_derive_from_list(carbon_list_container_e is, carbon_list_de
 
 TEST(TestAbstractTypeMarker, GetDeriveFromList)
 {
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_ARRAY, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_ARRAY);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_ARRAY, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_ARRAY);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_ARRAY, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_UNSORTED_SET,
                                   UNSORTED_SET_ARRAY);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_ARRAY, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_SORTED_SET,
                                   SORTED_SET_ARRAY);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U8, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U8);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U8, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U8);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U8, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U8);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U8, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_SORTED_SET,
                                   SORTED_SET_COL_U8);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U16, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U16);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U16, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U16);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U16, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U16);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U16, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_SORTED_SET,
                                   SORTED_SET_COL_U16);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U32, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U32);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U32, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U32);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U32, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U32);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U32, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_SORTED_SET,
                                   SORTED_SET_COL_U32);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U64, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U64);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U64, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U64);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U64, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U64);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_U64, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_SORTED_SET,
                                   SORTED_SET_COL_U64);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I8, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I8);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I8, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I8);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I8, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I8);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I8, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_SORTED_SET,
                                   SORTED_SET_COL_I8);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I16, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I16);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I16, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I16);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I16, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I16);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I16, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_SORTED_SET,
                                   SORTED_SET_COL_I16);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I32, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I32);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I32, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I32);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I32, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I32);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I32, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_SORTED_SET,
                                   SORTED_SET_COL_I32);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I64, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I64);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I64, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I64);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I64, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I64);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_I64, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_SORTED_SET,
                                   SORTED_SET_COL_I64);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_FLOAT, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_FLOAT);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_FLOAT, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_FLOAT);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_FLOAT, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_FLOAT);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_FLOAT, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_SORTED_SET,
                                   SORTED_SET_COL_FLOAT);
 
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_BOOLEAN, CARBON_LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_BOOLEAN);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_BOOLEAN, CARBON_LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_BOOLEAN);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_BOOLEAN, CARBON_LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_BOOLEAN);
-        test_get_derive_from_list(CARBON_LIST_CONTAINER_COLUMN_BOOLEAN, CARBON_LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_SORTED_SET,
                                   SORTED_SET_COL_BOOLEAN);
 }
 
-static void test_get_derive_from_list(carbon_map_derivable_e should, derived_e expected)
+static void test_get_derive_from_list(map_derivable_e should, derived_e expected)
 {
         derived_e concrete;
         ASSERT_TRUE(abstract_derive_map_to(&concrete, should));
@@ -569,10 +569,10 @@ static void test_get_derive_from_list(carbon_map_derivable_e should, derived_e e
 
 TEST(TestAbstractTypeMarker, GetDeriveFromMAP)
 {
-        test_get_derive_from_list(CARBON_MAP_UNSORTED_MULTIMAP, UNSORTED_MULTIMAP);
-        test_get_derive_from_list(CARBON_MAP_SORTED_MULTIMAP, SORTED_MULTIMAP);
-        test_get_derive_from_list(CARBON_MAP_UNSORTED_MAP, UNSORTED_MAP);
-        test_get_derive_from_list(CARBON_MAP_SORTED_MAP, SORTED_MAP);
+        test_get_derive_from_list(MAP_UNSORTED_MULTIMAP, UNSORTED_MULTIMAP);
+        test_get_derive_from_list(MAP_SORTED_MULTIMAP, SORTED_MULTIMAP);
+        test_get_derive_from_list(MAP_UNSORTED_MAP, UNSORTED_MAP);
+        test_get_derive_from_list(MAP_SORTED_MAP, SORTED_MAP);
 }
 
 int main(int argc, char **argv) {

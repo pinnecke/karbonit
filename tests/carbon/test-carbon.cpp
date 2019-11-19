@@ -13,7 +13,7 @@ TEST(CarbonTest, CreateCarbon) {
 
         string_buffer_create(&builder);
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
         //carbon_hexdump_print(stderr, &doc);
 
@@ -88,7 +88,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
 
         string_buffer_create(&builder);
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -122,7 +122,7 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
 
         string_buffer_create(&builder);
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -151,7 +151,7 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
 
         string_buffer_create(&builder);
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -185,7 +185,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
         rev revise;
         u64 commit_hash_old, commit_hash_new;
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
         carbon_key_unsigned_value(&oid, &doc);
         EXPECT_NE(oid, 0U);
@@ -214,7 +214,7 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
         rev revise;
         carbon_array it;
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_key_generate(NULL, &revise);
@@ -237,7 +237,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -260,7 +260,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -297,7 +297,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -336,7 +336,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY, 20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY, 20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -379,7 +379,7 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -419,7 +419,7 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -452,7 +452,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -476,7 +476,7 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -501,7 +501,7 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -529,7 +529,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -558,7 +558,7 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
         carbon_array it;
         carbon_insert inserter;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -587,7 +587,7 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
         carbon_insert inserter;
         carbon_insert_array_state array_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -616,7 +616,7 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
         carbon_insert inserter;
         carbon_insert_array_state array_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -655,7 +655,7 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1, array_state_l2;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -702,7 +702,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -747,7 +747,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         carbon_insert inserter;
         carbon_insert_array_state array_state_l1;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -802,7 +802,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -841,7 +841,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -878,7 +878,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -916,7 +916,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         carbon_insert_column_state column_state;
         carbon_insert *ins;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1018,7 +1018,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1057,7 +1057,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1099,7 +1099,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         carbon_insert inserter;
         carbon_insert_column_state column_state;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1144,7 +1144,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         carbon_insert_column_state column_state;
         carbon_insert *ins;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1246,7 +1246,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         carbon_insert_column_state column_state;
         carbon_insert *ins;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1346,7 +1346,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         carbon_insert_array_state array_state;
         carbon_insert *ins;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1398,7 +1398,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         carbon_insert_array_state array_state, nested_array_state;
         carbon_insert *ins, *nested_ins;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1473,7 +1473,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         carbon_insert_array_state array_state, nested_array_state;
         carbon_insert *ins, *nested_ins, *column_ins;
 
-        carbon_create_empty_ex(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -1645,7 +1645,7 @@ TEST(CarbonTest, CarbonFind) {
         carbon_find finder;
         u64 result_unsigned;
         carbon_field_type_e type;
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
 
@@ -1724,7 +1724,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         carbon_find finder;
         u64 result_unsigned;
         carbon_field_type_e type;
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
         carbon_revise_iterator_open(&it, &revise);
@@ -2038,7 +2038,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         const char *json;
 
         string_buffer_create(&sb);
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2132,7 +2132,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         const char *json;
 
         string_buffer_create(&sb);
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3845,7 +3845,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         const char *json;
 
         string_buffer_create(&sb);
-        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5461,7 +5461,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 //        carbon_insert_array_state array_state, nested_array_state;
 //        carbon_insert_column_state column_state;
 //
-//        carbon_create_empty(&doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+//        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 //        carbon_revise_begin(&revise, rev_doc, &doc);
 //        carbon_revise_iterator_open(&it, &revise);
 //

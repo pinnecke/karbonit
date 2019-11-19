@@ -65,7 +65,7 @@ typedef struct carbon_array {
         memfile memfile;
         offset_t array_begin_off;
 
-        carbon_list_derivable_e abstract_type;
+        list_derivable_e abstract_type;
         u64 pos;
 
         carbon_item item;
@@ -124,7 +124,7 @@ bool carbon_array_is_multiset(carbon_array *it);
 bool carbon_array_is_sorted(carbon_array *it);
 
 /** Updates this arrays abstract type to the given abstract type */
-void carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation);
+void carbon_array_update_type(carbon_array *it, list_derivable_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

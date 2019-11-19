@@ -305,7 +305,7 @@ bool carbon_column_is_sorted(carbon_column *it)
         return abstract_is_sorted(type_class);
 }
 
-bool carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation)
+bool carbon_column_update_type(carbon_column *it, list_derivable_e derivation)
 {
         if (!carbon_field_type_is_column_or_subtype(it->type)) {
                 return false;
@@ -474,7 +474,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
 static bool rewrite_column_to_array(carbon_column *it)
 {
         abstract_type_class_e type_class;
-        carbon_list_derivable_e list_type;
+        list_derivable_e list_type;
         carbon_array array;
         carbon_insert array_ins;
 

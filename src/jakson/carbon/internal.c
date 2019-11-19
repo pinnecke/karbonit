@@ -62,31 +62,31 @@ insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 c
         memfile_seek(memfile, payload_begin);
 }
 
-bool carbon_int_insert_object(memfile *memfile, carbon_map_derivable_e derivation, size_t nbytes)
+bool carbon_int_insert_object(memfile *memfile, map_derivable_e derivation, size_t nbytes)
 {
-        assert(derivation == CARBON_MAP_UNSORTED_MULTIMAP || derivation == CARBON_MAP_SORTED_MULTIMAP ||
-               derivation == CARBON_MAP_UNSORTED_MAP || derivation == CARBON_MAP_SORTED_MAP);
+        assert(derivation == MAP_UNSORTED_MULTIMAP || derivation == MAP_SORTED_MULTIMAP ||
+               derivation == MAP_UNSORTED_MAP || derivation == MAP_SORTED_MAP);
         derived_e begin_marker;
         abstract_derive_map_to(&begin_marker, derivation);
         insert_embedded_container(memfile, begin_marker, CARBON_MOBJECT_END, nbytes);
         return true;
 }
 
-bool carbon_int_insert_array(memfile *memfile, carbon_list_derivable_e derivation, size_t nbytes)
+bool carbon_int_insert_array(memfile *memfile, list_derivable_e derivation, size_t nbytes)
 {
-        assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
-               derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
+        assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
+               derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
         derived_e begin_marker;
-        abstract_derive_list_to(&begin_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+        abstract_derive_list_to(&begin_marker, LIST_CONTAINER_ARRAY, derivation);
         insert_embedded_container(memfile, begin_marker, CARBON_MARRAY_END, nbytes);
         return true;
 }
 
-bool carbon_int_insert_column(memfile *memfile_in, carbon_list_derivable_e derivation, carbon_column_type_e type,
+bool carbon_int_insert_column(memfile *memfile_in, list_derivable_e derivation, carbon_column_type_e type,
                               size_t capactity)
 {
-        assert(derivation == CARBON_LIST_UNSORTED_MULTISET || derivation == CARBON_LIST_SORTED_MULTISET ||
-               derivation == CARBON_LIST_UNSORTED_SET || derivation == CARBON_LIST_SORTED_SET);
+        assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
+               derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
 
         carbon_field_type_e column_type = carbon_field_type_for_column(derivation, type);
 

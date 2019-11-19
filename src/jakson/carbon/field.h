@@ -267,7 +267,7 @@ bool carbon_field_skip_16(memfile *file);
 bool carbon_field_skip_32(memfile *file);
 bool carbon_field_skip_64(memfile *file);
 
-carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivation, carbon_column_type_e type);
+carbon_field_type_e carbon_field_type_for_column(list_derivable_e derivation, carbon_column_type_e type);
 carbon_field_type_e carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is_null, bool is_true);
 
 #ifdef __cplusplus

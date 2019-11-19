@@ -55,7 +55,7 @@ typedef struct carbon_object {
                 } value;
         } field;
 
-        carbon_map_derivable_e abstract_type;
+        map_derivable_e abstract_type;
         carbon_prop prop;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
@@ -75,7 +75,7 @@ bool carbon_object_prev(carbon_object *it);
 
 bool carbon_object_is_multimap(carbon_object *it);
 bool carbon_object_is_sorted(carbon_object *it);
-void carbon_object_update_type(carbon_object *it, carbon_map_derivable_e derivation);
+void carbon_object_update_type(carbon_object *it, map_derivable_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage

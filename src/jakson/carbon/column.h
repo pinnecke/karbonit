@@ -40,7 +40,7 @@ typedef struct carbon_column {
 
         carbon_field_type_e type;
 
-        carbon_list_derivable_e abstract_type;
+        list_derivable_e abstract_type;
 
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
@@ -78,7 +78,7 @@ bool carbon_column_remove(carbon_column *it, u32 pos);
 
 bool carbon_column_is_multiset(carbon_column *it);
 bool carbon_column_is_sorted(carbon_column *it);
-bool carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation);
+bool carbon_column_update_type(carbon_column *it, list_derivable_e derivation);
 
 bool carbon_column_update_set_null(carbon_column *it, u32 pos);
 bool carbon_column_update_set_true(carbon_column *it, u32 pos);

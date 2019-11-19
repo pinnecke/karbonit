@@ -488,13 +488,13 @@ bool carbon_array_is_sorted(carbon_array *it)
         return abstract_is_sorted(type_class);
 }
 
-void carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation)
+void carbon_array_update_type(carbon_array *it, list_derivable_e derivation)
 {
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->array_begin_off);
 
         derived_e derive_marker;
-        abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+        abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
         abstract_write_derived_type(&it->memfile, derive_marker);
 
         memfile_restore_position(&it->memfile);

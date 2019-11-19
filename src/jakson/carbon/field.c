@@ -505,10 +505,10 @@ bool carbon_field_skip_64(memfile *file)
         return true;
 }
 
-carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivation, carbon_column_type_e type)
+carbon_field_type_e carbon_field_type_for_column(list_derivable_e derivation, carbon_column_type_e type)
 {
         switch (derivation) {
-                case CARBON_LIST_UNSORTED_MULTISET:
+                case LIST_UNSORTED_MULTISET:
                         switch (type) {
                                 case CARBON_COLUMN_TYPE_U8:
                                         return CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET;
@@ -533,7 +533,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
-                case CARBON_LIST_SORTED_MULTISET:
+                case LIST_SORTED_MULTISET:
                         switch (type) {
                                 case CARBON_COLUMN_TYPE_U8:
                                         return CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET;
@@ -558,7 +558,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
-                case CARBON_LIST_UNSORTED_SET:
+                case LIST_UNSORTED_SET:
                         switch (type) {
                                 case CARBON_COLUMN_TYPE_U8:
                                         return CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET;
@@ -583,7 +583,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
-                case CARBON_LIST_SORTED_SET:
+                case LIST_SORTED_SET:
                         switch (type) {
                                 case CARBON_COLUMN_TYPE_U8:
                                         return CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET;

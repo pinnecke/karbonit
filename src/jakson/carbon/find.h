@@ -69,15 +69,15 @@ char *carbon_find_result_to_json_compact_dup(carbon_find *find);
 
 bool carbon_find_result_type(carbon_field_type_e *type, carbon_find *find);
 
-bool carbon_find_update_array_type(carbon_find *find, carbon_list_derivable_e derivation);
+bool carbon_find_update_array_type(carbon_find *find, list_derivable_e derivation);
 bool carbon_find_array_is_multiset(carbon_find *find);
 bool carbon_find_array_is_sorted(carbon_find *find);
 
-bool carbon_find_update_column_type(carbon_find *find, carbon_list_derivable_e derivation);
+bool carbon_find_update_column_type(carbon_find *find, list_derivable_e derivation);
 bool carbon_find_column_is_multiset(carbon_find *find);
 bool carbon_find_column_is_sorted(carbon_find *find);
 
-bool carbon_find_update_object_type(carbon_find *find, carbon_map_derivable_e derivation);
+bool carbon_find_update_object_type(carbon_find *find, map_derivable_e derivation);
 bool carbon_find_object_is_multimap(carbon_find *find);
 bool carbon_find_object_is_sorted(carbon_find *find);
 

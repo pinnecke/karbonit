@@ -19,16 +19,16 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         carbon_insert_object_begin(&s1, ins, 100);
         carbon_insert_object_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, CARBON_MAP_UNSORTED_MULTIMAP, 100);
+        carbon_insert_object_map_begin(&s1, ins, MAP_UNSORTED_MULTIMAP, 100);
         carbon_insert_object_map_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, CARBON_MAP_SORTED_MULTIMAP, 100);
+        carbon_insert_object_map_begin(&s1, ins, MAP_SORTED_MULTIMAP, 100);
         carbon_insert_object_map_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, CARBON_MAP_UNSORTED_MAP, 100);
+        carbon_insert_object_map_begin(&s1, ins, MAP_UNSORTED_MAP, 100);
         carbon_insert_object_map_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, CARBON_MAP_SORTED_MAP, 100);
+        carbon_insert_object_map_begin(&s1, ins, MAP_SORTED_MAP, 100);
         carbon_insert_object_map_end(&s1);
 
         carbon_create_end(&context);
@@ -80,19 +80,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 carbon_array_next(&it);
                 obj_it = carbon_item_get_object(&(it.item));
-                carbon_object_update_type(obj_it, CARBON_MAP_SORTED_MULTIMAP);
+                carbon_object_update_type(obj_it, MAP_SORTED_MULTIMAP);
 
                 carbon_array_next(&it);
                 obj_it = carbon_item_get_object(&(it.item));
-                carbon_object_update_type(obj_it, CARBON_MAP_UNSORTED_MAP);
+                carbon_object_update_type(obj_it, MAP_UNSORTED_MAP);
 
                 carbon_array_next(&it);
                 obj_it = carbon_item_get_object(&(it.item));
-                carbon_object_update_type(obj_it, CARBON_MAP_SORTED_MAP);
+                carbon_object_update_type(obj_it, MAP_SORTED_MAP);
 
                 carbon_array_next(&it);
                 obj_it = carbon_item_get_object(&(it.item));
-                carbon_object_update_type(obj_it, CARBON_MAP_UNSORTED_MULTIMAP);
+                carbon_object_update_type(obj_it, MAP_UNSORTED_MULTIMAP);
 
                 carbon_revise_iterator_close(&it);
                 carbon_revise_end(&rev_context);
@@ -153,7 +153,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 carbon_object *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_object_type(&find, CARBON_MAP_SORTED_MAP);
+                carbon_find_update_object_type(&find, MAP_SORTED_MAP);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
@@ -170,7 +170,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 carbon_object *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_object_type(&find, CARBON_MAP_SORTED_MULTIMAP);
+                carbon_find_update_object_type(&find, MAP_SORTED_MULTIMAP);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
@@ -187,7 +187,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 carbon_object *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_object_type(&find, CARBON_MAP_UNSORTED_MULTIMAP);
+                carbon_find_update_object_type(&find, MAP_UNSORTED_MULTIMAP);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
@@ -204,7 +204,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 ASSERT_TRUE(carbon_field_type_is_object_or_subtype(ft));
                 carbon_object *find_result = carbon_find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_object_type(&find, CARBON_MAP_UNSORTED_MAP);
+                carbon_find_update_object_type(&find, MAP_UNSORTED_MAP);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 

@@ -134,14 +134,14 @@ bool carbon_revise_key_set_string(rev *context, const char *key_value)
         }
 }
 
-void carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation)
+void carbon_revise_set_list_type(rev *context, list_derivable_e derivation)
 {
         carbon_array it;
         carbon_revise_iterator_open(&it, context);
 
         memfile_seek_from_here(&it.memfile, -sizeof(u8));
         derived_e derive_marker;
-        abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+        abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
         abstract_write_derived_type(&it.memfile, derive_marker);
 
         carbon_revise_iterator_close(&it);

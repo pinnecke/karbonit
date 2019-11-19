@@ -278,34 +278,34 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
         }
 
         switch (container_type) {
-                case CARBON_LIST_CONTAINER_COLUMN_U8:
+                case LIST_CONTAINER_COLUMN_U8:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u8, base, num_elems, sep, IS_NULL_U8)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_U16:
+                case LIST_CONTAINER_COLUMN_U16:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u16, base, num_elems, sep, IS_NULL_U16)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_U32:
+                case LIST_CONTAINER_COLUMN_U32:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u32, base, num_elems, sep, IS_NULL_U32)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_U64:
+                case LIST_CONTAINER_COLUMN_U64:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, u64, base, num_elems, sep, IS_NULL_U64)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_I8:
+                case LIST_CONTAINER_COLUMN_I8:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i8, base, num_elems, sep, IS_NULL_I8)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_I16:
+                case LIST_CONTAINER_COLUMN_I16:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i16, base, num_elems, sep, IS_NULL_I16)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_I32:
+                case LIST_CONTAINER_COLUMN_I32:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i32, base, num_elems, sep, IS_NULL_I32)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_I64:
+                case LIST_CONTAINER_COLUMN_I64:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, i64, base, num_elems, sep, IS_NULL_I64)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_BOOLEAN:
+                case LIST_CONTAINER_COLUMN_BOOLEAN:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, boolean, base, num_elems, sep, IS_NULL_BOOLEAN)
                         break;
-                case CARBON_LIST_CONTAINER_COLUMN_FLOAT:
+                case LIST_CONTAINER_COLUMN_FLOAT:
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, float, base, num_elems, sep, IS_NULL_FLOAT)
                         break;
                 default:

@@ -58,16 +58,16 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                 context->mode = options;
 
                 /** get the annotation type for that records outer-most array from options*/
-                carbon_list_derivable_e derivation;
+                list_derivable_e derivation;
 
                 if (context->mode & SORTED_MULTISET) {
-                        derivation = CARBON_LIST_SORTED_MULTISET;
+                        derivation = LIST_SORTED_MULTISET;
                 } else if (context->mode & UNSORTED_SET) {
-                        derivation = CARBON_LIST_UNSORTED_SET;
+                        derivation = LIST_UNSORTED_SET;
                 } else if (context->mode & SORTED_SET) {
-                        derivation = CARBON_LIST_SORTED_SET;
+                        derivation = LIST_SORTED_SET;
                 } else { /** UNSORTED_MULTISET is default */
-                        derivation = CARBON_LIST_UNSORTED_MULTISET;
+                        derivation = LIST_UNSORTED_MULTISET;
                 }
 
                 carbon_create_empty(&context->original, derivation, type);
@@ -99,12 +99,12 @@ void carbon_create_end(rec_new *context)
         carbon_drop(&context->original);
 }
 
-void carbon_create_empty(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type)
+void carbon_create_empty(rec *doc, list_derivable_e derivation, carbon_key_e type)
 {
         carbon_create_empty_ex(doc, derivation, type, 1024, 1);
 }
 
-void carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type,
+void carbon_create_empty_ex(rec *doc, list_derivable_e derivation, carbon_key_e type,
                                 u64 doc_cap, u64 array_cap)
 {
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
@@ -272,7 +272,7 @@ bool carbon_is_sorted(rec *doc)
         return ret;
 }
 
-void carbon_update_list_type(rec *revised_doc, rec *doc, carbon_list_derivable_e derivation)
+void carbon_update_list_type(rec *revised_doc, rec *doc, list_derivable_e derivation)
 {
         rev context;
         carbon_revise_begin(&context, revised_doc, doc);

@@ -322,7 +322,7 @@ bool carbon_find_result_type(carbon_field_type_e *type, carbon_find *find)
         }
 }
 
-bool carbon_find_update_array_type(carbon_find *find, carbon_list_derivable_e derivation)
+bool carbon_find_update_array_type(carbon_find *find, list_derivable_e derivation)
 {
         carbon_field_type_e type;
         carbon_find_result_type(&type, find);
@@ -332,7 +332,7 @@ bool carbon_find_update_array_type(carbon_find *find, carbon_list_derivable_e de
                 memfile_clone(&mod, &it->memfile);
                 memfile_seek_from_here(&mod, -sizeof(u8));
                 derived_e derive_marker;
-                abstract_derive_list_to(&derive_marker, CARBON_LIST_CONTAINER_ARRAY, derivation);
+                abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
                 abstract_write_derived_type(&mod, derive_marker);
                 return true;
 
@@ -365,7 +365,7 @@ bool carbon_find_array_is_sorted(carbon_find *find)
         }
 }
 
-bool carbon_find_update_column_type(carbon_find *find, carbon_list_derivable_e derivation)
+bool carbon_find_update_column_type(carbon_find *find, list_derivable_e derivation)
 {
         carbon_field_type_e type;
         carbon_find_result_type(&type, find);
@@ -411,7 +411,7 @@ bool carbon_find_column_is_sorted(carbon_find *find)
         }
 }
 
-bool carbon_find_update_object_type(carbon_find *find, carbon_map_derivable_e derivation)
+bool carbon_find_update_object_type(carbon_find *find, map_derivable_e derivation)
 {
         carbon_field_type_e type;
         carbon_find_result_type(&type, find);

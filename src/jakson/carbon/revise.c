@@ -141,7 +141,7 @@ void carbon_revise_set_list_type(rev *context, list_type_e derivation)
 
         memfile_seek_from_here(&it.file, -sizeof(u8));
         derived_e derive_marker;
-        abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
+        abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
         abstract_write_derived_type(&it.file, derive_marker);
 
         carbon_revise_iterator_close(&it);

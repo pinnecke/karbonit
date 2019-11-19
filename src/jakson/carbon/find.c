@@ -332,7 +332,7 @@ bool carbon_find_update_array_type(carbon_find *find, list_type_e derivation)
                 memfile_clone(&mod, &it->file);
                 memfile_seek_from_here(&mod, -sizeof(u8));
                 derived_e derive_marker;
-                abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
+                abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
                 abstract_write_derived_type(&mod, derive_marker);
                 return true;
 
@@ -375,8 +375,8 @@ bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation)
                 memfile_seek(&it->file, it->begin);
 
                 derived_e derive_marker;
-                carbon_list_container_e list_container;
-                carbon_list_container_by_column_type(&list_container, it->field_type);
+                list_container_e list_container;
+                list_container_by_column_type(&list_container, it->field_type);
                 abstract_derive_list_to(&derive_marker, list_container, derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 

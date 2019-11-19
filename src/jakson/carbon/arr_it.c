@@ -494,7 +494,7 @@ void arr_it_update_type(arr_it *it, list_type_e derivation)
         memfile_seek(&it->file, it->begin);
 
         derived_e derive_marker;
-        abstract_derive_list_to(&derive_marker, LIST_CONTAINER_ARRAY, derivation);
+        abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 
         memfile_restore_position(&it->file);

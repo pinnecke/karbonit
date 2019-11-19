@@ -284,9 +284,9 @@ bool abstract_is_instanceof_column(memfile *memfile);
 bool abstract_is_instanceof_list(memfile *memfile);
 
 /** Returns the concrete derived type <code>concrete</code> (e.g., SORTED_SET_COL_BOOLEAN) for a
- * given list type <code>is</code> (e.g., LIST_CONTAINER_COLUMN_BOOLEAN) when deriving that
+ * given list type <code>is</code> (e.g., LIST_COLUMN_BOOLEAN) when deriving that
  * list type to a particular abstract type <code>should</code> (e.g., SORTED_SET) */
-bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
+bool abstract_derive_list_to(derived_e *concrete, list_container_e is,
                                          list_type_e should);
 
 /** Returns the concrete derived type <code>concrete</code> (e.g., MAP_SORTED_MULTIMAP) for a

@@ -18,68 +18,68 @@
 #include <jakson/carbon/containers.h>
 #include <jakson/carbon/field.h>
 
-bool carbon_list_container_by_column_type(carbon_list_container_e *out, int field_type)
+bool list_container_by_column_type(list_container_e *out, int field_type)
 {
         switch (field_type) {
                 case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_U8;
+                        *out = LIST_COLUMN_U8;
                         break;
                 case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_U16;
+                        *out = LIST_COLUMN_U16;
                         break;
                 case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_U32;
+                        *out = LIST_COLUMN_U32;
                         break;
                 case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_U64;
+                        *out = LIST_COLUMN_U64;
                         break;
                 case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_I8;
+                        *out = LIST_COLUMN_I8;
                         break;
                 case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_I16;
+                        *out = LIST_COLUMN_I16;
                         break;
                 case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_I32;
+                        *out = LIST_COLUMN_I32;
                         break;
                 case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_I64;
+                        *out = LIST_COLUMN_I64;
                         break;
                 case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_FLOAT;
+                        *out = LIST_COLUMN_FLOAT;
                         break;
                 case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        *out = LIST_CONTAINER_COLUMN_BOOLEAN;
+                        *out = LIST_COLUMN_BOOLEAN;
                         break;
                 default: error(ERR_TYPEMISMATCH, NULL);
                         return false;

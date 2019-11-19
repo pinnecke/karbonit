@@ -338,84 +338,84 @@ bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)
                 case SORTED_MULTIMAP:
                 case UNSORTED_MAP:
                 case SORTED_MAP:
-                        *type = CARBON_CONTAINER_OBJECT;
+                        *type = CONTAINER_OBJECT;
                         return true;
                 /** abstract types for array containers */
                 case UNSORTED_MULTISET_ARRAY:
                 case SORTED_MULTISET_ARRAY:
                 case UNSORTED_SET_ARRAY:
                 case SORTED_SET_ARRAY:
-                        *type = CARBON_CONTAINER_ARRAY;
+                        *type = CONTAINER_ARRAY;
                         return true;
                 /** abstract types for column-u8 containers */
                 case UNSORTED_MULTISET_COL_U8:
                 case SORTED_MULTISET_COL_U8:
                 case UNSORTED_SET_COL_U8:
                 case SORTED_SET_COL_U8:
-                        *type = CARBON_CONTAINER_COLUMN_U8;
+                        *type = CONTAINER_COLUMN_U8;
                         return true;
                 /** abstract types for column-u16 containers */
                 case UNSORTED_MULTISET_COL_U16:
                 case SORTED_MULTISET_COL_U16:
                 case UNSORTED_SET_COL_U16:
                 case SORTED_SET_COL_U16:
-                        *type = CARBON_CONTAINER_COLUMN_U16;
+                        *type = CONTAINER_COLUMN_U16;
                         return true;
                 /** abstract types for column-u32 containers */
                 case UNSORTED_MULTISET_COL_U32:
                 case SORTED_MULTISET_COL_U32:
                 case UNSORTED_SET_COL_U32:
                 case SORTED_SET_COL_U32:
-                        *type = CARBON_CONTAINER_COLUMN_U32;
+                        *type = CONTAINER_COLUMN_U32;
                         return true;
                 /** abstract types for column-u64 containers */
                 case UNSORTED_MULTISET_COL_U64:
                 case SORTED_MULTISET_COL_U64:
                 case UNSORTED_SET_COL_U64:
                 case SORTED_SET_COL_U64:
-                        *type = CARBON_CONTAINER_COLUMN_U64;
+                        *type = CONTAINER_COLUMN_U64;
                         return true;
                 /** abstract types for column-i8 containers */
                 case UNSORTED_MULTISET_COL_I8:
                 case SORTED_MULTISET_COL_I8:
                 case UNSORTED_SET_COL_I8:
                 case SORTED_SET_COL_I8:
-                        *type = CARBON_CONTAINER_COLUMN_I8;
+                        *type = CONTAINER_COLUMN_I8;
                         return true;
                 /** abstract types for column-i16 containers */
                 case UNSORTED_MULTISET_COL_I16:
                 case SORTED_MULTISET_COL_I16:
                 case UNSORTED_SET_COL_I16:
                 case SORTED_SET_COL_I16:
-                        *type = CARBON_CONTAINER_COLUMN_I16;
+                        *type = CONTAINER_COLUMN_I16;
                         return true;
                 /** abstract types for column-i32 containers */
                 case UNSORTED_MULTISET_COL_I32:
                 case SORTED_MULTISET_COL_I32:
                 case UNSORTED_SET_COL_I32:
                 case SORTED_SET_COL_I32:
-                        *type = CARBON_CONTAINER_COLUMN_I32;
+                        *type = CONTAINER_COLUMN_I32;
                         return true;
                 /** abstract types for column-i64 containers */
                 case UNSORTED_MULTISET_COL_I64:
                 case SORTED_MULTISET_COL_I64:
                 case UNSORTED_SET_COL_I64:
                 case SORTED_SET_COL_I64:
-                        *type = CARBON_CONTAINER_COLUMN_I64;
+                        *type = CONTAINER_COLUMN_I64;
                         return true;
                 /** abstract types for column-float containers */
                 case UNSORTED_MULTISET_COL_FLOAT:
                 case SORTED_MULTISET_COL_FLOAT:
                 case UNSORTED_SET_COL_FLOAT:
                 case SORTED_SET_COL_FLOAT:
-                        *type = CARBON_CONTAINER_COLUMN_FLOAT;
+                        *type = CONTAINER_COLUMN_FLOAT;
                         return true;
                 /** abstract types for column-boolean containers */
                 case UNSORTED_MULTISET_COL_BOOLEAN:
                 case SORTED_MULTISET_COL_BOOLEAN:
                 case UNSORTED_SET_COL_BOOLEAN:
                 case SORTED_SET_COL_BOOLEAN:
-                        *type = CARBON_CONTAINER_COLUMN_BOOLEAN;
+                        *type = CONTAINER_COLUMN_BOOLEAN;
                         return true;
                 default:
                         return error(ERR_MARKERMAPPING, "unknown marker encoding an abstract type");
@@ -434,62 +434,62 @@ static bool __abstract_is_instanceof(memfile *memfile, sub_type_e T)
 
 bool abstract_is_instanceof_object(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_OBJECT);
+        return __abstract_is_instanceof(memfile, CONTAINER_OBJECT);
 }
 
 bool abstract_is_instanceof_array(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_ARRAY);
+        return __abstract_is_instanceof(memfile, CONTAINER_ARRAY);
 }
 
 bool abstract_is_instanceof_column_u8(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U8);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U8);
 }
 
 bool abstract_is_instanceof_column_u16(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U16);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U16);
 }
 
 bool abstract_is_instanceof_column_u32(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U32);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U32);
 }
 
 bool abstract_is_instanceof_column_u64(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_U64);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U64);
 }
 
 bool abstract_is_instanceof_column_i8(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I8);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I8);
 }
 
 bool abstract_is_instanceof_column_i16(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I16);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I16);
 }
 
 bool abstract_is_instanceof_column_i32(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I32);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I32);
 }
 
 bool abstract_is_instanceof_column_i64(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_I64);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I64);
 }
 
 bool abstract_is_instanceof_column_float(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_FLOAT);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_FLOAT);
 }
 
 bool abstract_is_instanceof_column_boolean(memfile *memfile)
 {
-        return __abstract_is_instanceof(memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
+        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_BOOLEAN);
 }
 
 bool abstract_is_instanceof_column(memfile *memfile)
@@ -520,11 +520,11 @@ bool abstract_is_instanceof_list(memfile *memfile)
         }
 }
 
-bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
+bool abstract_derive_list_to(derived_e *concrete, list_container_e is,
                                          list_type_e should)
 {
         switch (is) {
-                case LIST_CONTAINER_ARRAY:
+                case LIST_ARRAY:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_ARRAY;
@@ -541,7 +541,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_U8:
+                case LIST_COLUMN_U8:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_U8;
@@ -558,7 +558,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_U16:
+                case LIST_COLUMN_U16:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_U16;
@@ -575,7 +575,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_U32:
+                case LIST_COLUMN_U32:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_U32;
@@ -592,7 +592,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_U64:
+                case LIST_COLUMN_U64:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_U64;
@@ -609,7 +609,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_I8:
+                case LIST_COLUMN_I8:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_I8;
@@ -626,7 +626,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_I16:
+                case LIST_COLUMN_I16:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_I16;
@@ -643,7 +643,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_I32:
+                case LIST_COLUMN_I32:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_I32;
@@ -660,7 +660,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_I64:
+                case LIST_COLUMN_I64:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_I64;
@@ -677,7 +677,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_BOOLEAN:
+                case LIST_COLUMN_BOOLEAN:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_BOOLEAN;
@@ -694,7 +694,7 @@ bool abstract_derive_list_to(derived_e *concrete, carbon_list_container_e is,
                                 default:
                                         goto error_case;
                         }
-                case LIST_CONTAINER_COLUMN_FLOAT:
+                case LIST_COLUMN_FLOAT:
                         switch (should) {
                                 case LIST_UNSORTED_MULTISET:
                                         *concrete = UNSORTED_MULTISET_COL_FLOAT;

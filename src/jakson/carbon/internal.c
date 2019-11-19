@@ -77,7 +77,7 @@ bool carbon_int_insert_array(memfile *memfile, list_type_e derivation, size_t nb
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
         derived_e begin_marker;
-        abstract_derive_list_to(&begin_marker, LIST_CONTAINER_ARRAY, derivation);
+        abstract_derive_list_to(&begin_marker, LIST_ARRAY, derivation);
         insert_embedded_container(memfile, begin_marker, CARBON_MARRAY_END, nbytes);
         return true;
 }

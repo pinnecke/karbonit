@@ -41,7 +41,7 @@ bool internal_carbon_object_create(obj_it *it, memfile *memfile, offset_t payloa
 
         sub_type_e sub_type;
         abstract_get_container_subtype(&sub_type, &it->memfile);
-        error_if_and_return(sub_type != CARBON_CONTAINER_OBJECT, ERR_ILLEGALOP,
+        error_if_and_return(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
         char marker = memfile_read_byte(&it->memfile);
         it->abstract_type = (map_type_e) marker;

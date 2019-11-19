@@ -20,7 +20,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
 
         /* object is base type */
         {
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_OBJECT);
+                abstract_write_base_type(&memfile, CONTAINER_OBJECT);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
@@ -28,7 +28,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
 
         /* array is base type */
         {
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_ARRAY);
+                abstract_write_base_type(&memfile, CONTAINER_ARRAY);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
@@ -36,52 +36,52 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
 
         /* column-... is base type */
         {
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U8);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_U8);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U16);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_U16);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U32);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_U32);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U64);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_U64);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I8);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_I8);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I16);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_I16);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I32);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_I32);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I64);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_I64);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_FLOAT);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_FLOAT);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
-                abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
+                abstract_write_base_type(&memfile, CONTAINER_COLUMN_BOOLEAN);
                 memfile_seek_from_here(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
@@ -376,81 +376,81 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
         make_memfile(&memfile);
 
         /* abstract types for object containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTIMAP, CARBON_CONTAINER_OBJECT);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTIMAP, CARBON_CONTAINER_OBJECT);
-        test_get_container_for_derived_type(&memfile, UNSORTED_MAP, CARBON_CONTAINER_OBJECT);
-        test_get_container_for_derived_type(&memfile, SORTED_MAP, CARBON_CONTAINER_OBJECT);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTIMAP, CONTAINER_OBJECT);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTIMAP, CONTAINER_OBJECT);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MAP, CONTAINER_OBJECT);
+        test_get_container_for_derived_type(&memfile, SORTED_MAP, CONTAINER_OBJECT);
 
         /* abstract types for array containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_ARRAY, CARBON_CONTAINER_ARRAY);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_ARRAY, CARBON_CONTAINER_ARRAY);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_ARRAY, CARBON_CONTAINER_ARRAY);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_ARRAY, CARBON_CONTAINER_ARRAY);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_ARRAY, CONTAINER_ARRAY);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_ARRAY, CONTAINER_ARRAY);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_ARRAY, CONTAINER_ARRAY);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_ARRAY, CONTAINER_ARRAY);
 
         /* abstract types for column-u8 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U8, CARBON_CONTAINER_COLUMN_U8);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U8, CONTAINER_COLUMN_U8);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U8, CONTAINER_COLUMN_U8);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U8, CONTAINER_COLUMN_U8);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U8, CONTAINER_COLUMN_U8);
 
         /* abstract types for column-u16 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U16, CARBON_CONTAINER_COLUMN_U16);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U16, CONTAINER_COLUMN_U16);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U16, CONTAINER_COLUMN_U16);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U16, CONTAINER_COLUMN_U16);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U16, CONTAINER_COLUMN_U16);
 
         /* abstract types for column-u32 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U32, CARBON_CONTAINER_COLUMN_U32);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U32, CONTAINER_COLUMN_U32);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U32, CONTAINER_COLUMN_U32);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U32, CONTAINER_COLUMN_U32);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U32, CONTAINER_COLUMN_U32);
 
         /* abstract types for column-u64 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U64, CARBON_CONTAINER_COLUMN_U64);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_U64, CONTAINER_COLUMN_U64);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_U64, CONTAINER_COLUMN_U64);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_U64, CONTAINER_COLUMN_U64);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_U64, CONTAINER_COLUMN_U64);
 
         /* abstract types for column-i8 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I8, CARBON_CONTAINER_COLUMN_I8);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I8, CONTAINER_COLUMN_I8);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I8, CONTAINER_COLUMN_I8);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I8, CONTAINER_COLUMN_I8);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I8, CONTAINER_COLUMN_I8);
 
         /* abstract types for column-i16 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I16, CARBON_CONTAINER_COLUMN_I16);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I16, CONTAINER_COLUMN_I16);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I16, CONTAINER_COLUMN_I16);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I16, CONTAINER_COLUMN_I16);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I16, CONTAINER_COLUMN_I16);
 
         /* abstract types for column-i32 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I32, CARBON_CONTAINER_COLUMN_I32);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I32, CONTAINER_COLUMN_I32);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I32, CONTAINER_COLUMN_I32);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I32, CONTAINER_COLUMN_I32);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I32, CONTAINER_COLUMN_I32);
 
         /* abstract types for column-i64 containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I64, CARBON_CONTAINER_COLUMN_I64);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I64, CARBON_CONTAINER_COLUMN_I64);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I64, CARBON_CONTAINER_COLUMN_I64);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I64, CARBON_CONTAINER_COLUMN_I64);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_I64, CONTAINER_COLUMN_I64);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_I64, CONTAINER_COLUMN_I64);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_I64, CONTAINER_COLUMN_I64);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_I64, CONTAINER_COLUMN_I64);
 
         /* abstract types for column-float containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_FLOAT, CARBON_CONTAINER_COLUMN_FLOAT);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_FLOAT, CARBON_CONTAINER_COLUMN_FLOAT);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_FLOAT, CARBON_CONTAINER_COLUMN_FLOAT);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_FLOAT, CARBON_CONTAINER_COLUMN_FLOAT);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_FLOAT, CONTAINER_COLUMN_FLOAT);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_FLOAT, CONTAINER_COLUMN_FLOAT);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_FLOAT, CONTAINER_COLUMN_FLOAT);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_FLOAT, CONTAINER_COLUMN_FLOAT);
 
         /* abstract types for column-boolean containers */
-        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_BOOLEAN, CARBON_CONTAINER_COLUMN_BOOLEAN);
-        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_BOOLEAN, CARBON_CONTAINER_COLUMN_BOOLEAN);
-        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_BOOLEAN, CARBON_CONTAINER_COLUMN_BOOLEAN);
-        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_BOOLEAN, CARBON_CONTAINER_COLUMN_BOOLEAN);
+        test_get_container_for_derived_type(&memfile, UNSORTED_MULTISET_COL_BOOLEAN, CONTAINER_COLUMN_BOOLEAN);
+        test_get_container_for_derived_type(&memfile, SORTED_MULTISET_COL_BOOLEAN, CONTAINER_COLUMN_BOOLEAN);
+        test_get_container_for_derived_type(&memfile, UNSORTED_SET_COL_BOOLEAN, CONTAINER_COLUMN_BOOLEAN);
+        test_get_container_for_derived_type(&memfile, SORTED_SET_COL_BOOLEAN, CONTAINER_COLUMN_BOOLEAN);
 
         drop_memfile(&memfile);
 }
 
-static void test_get_derive_from_list(carbon_list_container_e is, list_type_e should,
+static void test_get_derive_from_list(list_container_e is, list_type_e should,
                                       derived_e expected)
 {
         derived_e concrete;
@@ -460,103 +460,103 @@ static void test_get_derive_from_list(carbon_list_container_e is, list_type_e sh
 
 TEST(TestAbstractTypeMarker, GetDeriveFromList)
 {
-        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_ARRAY, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_ARRAY);
-        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_ARRAY, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_ARRAY);
-        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_ARRAY, LIST_UNSORTED_SET,
                                   UNSORTED_SET_ARRAY);
-        test_get_derive_from_list(LIST_CONTAINER_ARRAY, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_ARRAY, LIST_SORTED_SET,
                                   SORTED_SET_ARRAY);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U8, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U8);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U8, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U8);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U8, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U8);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U8, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U8, LIST_SORTED_SET,
                                   SORTED_SET_COL_U8);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U16, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U16);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U16, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U16);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U16, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U16);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U16, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U16, LIST_SORTED_SET,
                                   SORTED_SET_COL_U16);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U32, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U32);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U32, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U32);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U32, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U32);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U32, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U32, LIST_SORTED_SET,
                                   SORTED_SET_COL_U32);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U64, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_U64);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_U64, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_U64);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U64, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_U64);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_U64, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_U64, LIST_SORTED_SET,
                                   SORTED_SET_COL_U64);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I8, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I8);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I8, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I8);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I8, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I8);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I8, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I8, LIST_SORTED_SET,
                                   SORTED_SET_COL_I8);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I16, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I16);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I16, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I16);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I16, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I16);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I16, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I16, LIST_SORTED_SET,
                                   SORTED_SET_COL_I16);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I32, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I32);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I32, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I32);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I32, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I32);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I32, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I32, LIST_SORTED_SET,
                                   SORTED_SET_COL_I32);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I64, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_I64);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_I64, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_I64);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I64, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_I64);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_I64, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_I64, LIST_SORTED_SET,
                                   SORTED_SET_COL_I64);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_FLOAT, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_FLOAT);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_FLOAT, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_FLOAT);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_FLOAT, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_FLOAT);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_FLOAT, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_FLOAT, LIST_SORTED_SET,
                                   SORTED_SET_COL_FLOAT);
 
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_UNSORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_BOOLEAN, LIST_UNSORTED_MULTISET,
                                   UNSORTED_MULTISET_COL_BOOLEAN);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_SORTED_MULTISET,
+        test_get_derive_from_list(LIST_COLUMN_BOOLEAN, LIST_SORTED_MULTISET,
                                   SORTED_MULTISET_COL_BOOLEAN);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_UNSORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_BOOLEAN, LIST_UNSORTED_SET,
                                   UNSORTED_SET_COL_BOOLEAN);
-        test_get_derive_from_list(LIST_CONTAINER_COLUMN_BOOLEAN, LIST_SORTED_SET,
+        test_get_derive_from_list(LIST_COLUMN_BOOLEAN, LIST_SORTED_SET,
                                   SORTED_SET_COL_BOOLEAN);
 }
 

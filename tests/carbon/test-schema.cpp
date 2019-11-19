@@ -597,6 +597,19 @@ TEST(SchemaTest, ValidateIfThenElse)
     schema_test_validation(json_schema, expect_failure, expect_success);
 }
 
+TEST(SchemaTest, ValidateCombinedKeywords)
+{
+    const char* json_schema =
+        "{ \"type\": [\"array\"], \"minItems\": 5, \"format\": \"date\"}";
+
+    const test_cases expect_failure = {"[[\"2019-12-01\", \"2019-11-02\", \"2012-13-01\", \"2013-13-01\"]]", "2019-12-01", "[[\"foo\"]]", "{}",
+        "[[]]"};
+
+    const test_cases expect_success = {"[[\"2019-12-01\", \"2019-11-02\", \"2012-13-01\", \"2013-13-01\", \"2014-12-02\"]]"};
+
+    schema_test_validation(json_schema, expect_failure, expect_success);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

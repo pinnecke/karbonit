@@ -334,14 +334,14 @@ fn_result schema_generate_run(schema *s, carbon_object_it *oit)
     while (carbon_object_it_next(oit)) {
         u64 key_len;
         const char *_keyword = carbon_object_it_prop_name(&key_len, oit);
-        const char *keyword = strndup(_keyword, key_len);
+        char *keyword = strndup(_keyword, key_len);
 
         if (!(FN_IS_OK(schema_generate_handleKeyword(s, keyword, oit)))) {
             free(keyword);
             return FN_FAIL_FORWARD();
         }
+        free(keyword);
     }
-    free(keyword);
     return FN_OK();
 }
 
@@ -793,7 +793,7 @@ fn_result schema_generate_handleKeyword_ifThenElse(schema *s, carbon_object_it *
         carbon_object_it_next(oit);
         carbon_object_it_prop_type(&field_type, oit);
         const char *_key = carbon_object_it_prop_name(&keylen, oit);
-        const char *key = strndup(_key, keylen);
+        char *key = strndup(_key, keylen);
 
         if (!(carbon_field_type_is_object_or_subtype(field_type)) || strcmp(key, keys_needed[i])) {
             vector_drop(&(s->data.ifThenElse));
@@ -850,7 +850,7 @@ fn_result schema_generate_handleKeyword_type(schema *s, carbon_object_it *oit) {
         }
         u64 strlen;
         const char *_str = carbon_array_it_string_value(&strlen, ait);
-        const char *str = strndup(_str, strlen);
+        char *str = strndup(_str, strlen);
         if (strcmp(str, "number") == 0) {
             type = NUMBER;
         }
@@ -1011,7 +1011,7 @@ fn_result schema_generate_handleKeyword_properties(schema *s, carbon_object_it *
         u64 keylen;
         carbon_object_it *ssoit = carbon_object_it_object_value(soit);
         const char *_key = carbon_object_it_prop_name(&keylen, soit);
-        const char *key = strndup(_key, keylen);
+        char *key = strndup(_key, keylen);
 
         schema *item = (schema*) malloc(sizeof(schema));
         if (!(FN_IS_OK(schema_init(item, key)))) {
@@ -1106,8 +1106,7 @@ fn_result schema_generate_handleKeyword_required(schema *s, carbon_object_it *oi
         }
         u64 strlen;
         const char *_required = carbon_array_it_string_value(&strlen, ait); 
-        const char *required = (const char*) malloc(sizeof(char) * (strlen + 1));
-        required = strndup(_required, strlen);
+        char *required = strndup(_required, strlen);
         vector_push(&(s->data.required), required, 1);
         free(required);
     }
@@ -1217,8 +1216,7 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
 
             u64 keylen;
             const char *_key = carbon_object_it_prop_name(&keylen, soit);
-            const char *key = (const char*) malloc(sizeof(const char) * (keylen + 1));
-            key = strndup(_key, keylen);
+            char *key = strndup(_key, keylen);
 
             vector *item = VECTOR_NEW_AND_GET(&(s->data.dependencies), vector);
             vector_create(item, NULL, sizeof(const char*), 5);
@@ -1238,7 +1236,7 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
 
                 u64 strlen;
                 const char *_str = carbon_array_it_string_value(&strlen, ait);
-                const char *str = strndup(_str, strlen);
+                char *str = strndup(_str, strlen);
                 vector_push(item, str, 1);
                 free(str);
             }
@@ -1257,7 +1255,7 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
             schema *dependency = (schema*) malloc(sizeof(schema));
             u64 keylen;
             const char *_key = carbon_object_it_prop_name(&keylen, oit);
-            const char *key = strndup(_key, keylen);
+            char *key = strndup(_key, keylen);
 
             if (!(FN_IS_OK(schema_init(dependency, key)))) {
                 carbon_object_it_drop(soit);
@@ -1279,15 +1277,14 @@ fn_result schema_generate_handleKeyword_dependencies(schema *s, carbon_object_it
             }
             vector_push(&(s->data.dependencies), dependency, 1);
             carbon_object_it_drop(ssoit);      
+            free(key);
         }
         else {
             vector_drop(&(s->data.dependencies));
             carbon_object_it_drop(soit);
             vector_drop(&(s->data.dependencies));
-            free(key);
             return FN_FAIL(ERR_BADTYPE, "keyword \"dependencies\" expects a nested schemas or nested string arrays");
         }
-        free(key);
     }
     carbon_object_it_drop(soit);
 
@@ -1432,7 +1429,7 @@ fn_result schema_generate_handleKeyword_format(schema *s, carbon_object_it *oit)
     }
     u64 strlen;
     const char* _str = carbon_object_it_string_value(&strlen, oit);
-    const char *str = strndup(_str, strlen);
+    char *str = strndup(_str, strlen);
 
     if (strcmp(str, "date") == 0) {
         format = DATE;

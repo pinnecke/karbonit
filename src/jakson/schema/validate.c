@@ -148,446 +148,450 @@ fn_result schema_validate_run_handleKeyword_maxItems(schema *s, carbon_array_it 
     return FN_OK();
 }
 
-
-fn_result schema_validate_run_handleKeyword_uniqueItems_compColumns(carbon_column_it *cit1, carbon_column_it *cit2) {
-    FN_FAIL_IF_NULL(cit1, cit2);
-
-    carbon_field_type_e type1, type2;
-    u32 nvalues1, nvalues2;
-    carbon_column_it_values_info(&type1, &nvalues1, cit1);
-    carbon_column_it_values_info(&type2, &nvalues2, cit2);
-
-    if (type1 != type2) {
-        return FN_OK();
-    }
-
-    if (nvalues1 != nvalues2) {
-        return FN_OK();
-
-    if (carbon_field_type_is_signed(type1)) {
-        const i64 *vals1 = carbon_column_it_i64_values(&nvalues1, cit1);
-        const i64 *vals2 = carbon_column_it_i64_values(&nvalues2, cit2);
-
-        bool unique = false;
-        i64 val1, val2;
-        for (u32 i = 0; i < nvalues1; i++) {
-            val1 = vals1[i];
-            for (u32 j = 0; j < nvalues2; j++) {
-                val2 = vals2[i];
-                if (val1 == val2) {
-                    break;
-                }
-                if (j == (nvalues2 - 1)) {
-                    return FN_OK();
-                }
-            }
-        }
-    }
-        
-    else if (carbon_field_type_is_unsigned(type1)) {
-        const u64 *vals1 = carbon_column_it_u64_values(&nvalues1, cit1);
-        const u64 *vals2 = carbon_column_it_u64_values(&nvalues2, cit2);
-
-        bool unique = false;
-        u64 val1, val2;
-        for (u32 i = 0; i < nvalues1; i++) {
-            val1 = vals1[i];
-            for (u32 j = 0; j < nvalues2; j++) {
-                val2 = vals2[i];
-                if (val1 == val2) {
-                    break;
-                }
-                if (j == (nvalues2 - 1)) {
-                    return FN_OK();
-                }
-            }
-        }
-    }
-
-    else if (carbon_field_type_is_floating(type1)) {
-        const float *vals1 = carbon_column_it_float_values(&nvalues1, cit1);
-        const float *vals2 = carbon_column_it_float_values(&nvalues2, cit2);
-
-        bool unique = false;
-        float val1, val2;
-        for (u32 i = 0; i < nvalues1; i++) {
-            val1 = vals1[i];
-            for (u32 j = 0; j < nvalues2; j++) {
-                val2 = vals2[i];
-                if (val1 == val2) {
-                    break;
-                }
-                if (j == (nvalues2 - 1)) {
-                    return FN_OK();
-                }
-            }
-        }
-    }
-    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-}
-
-
-fn_result schema_validate_run_handleKeyword_uniqueItems_compObjects(carbon_object_it* oit1, carbon_object_it *oit2) {
-    FN_FAIL_IF_NULL(oit1, oit2);
-
-    u64 len1, len2;
-    carbon_object_it_length(&len1, oit1);
-    carbon_object_it_length(&len2, oit2);
-
-    if (len1 != len2) {
-        return FN_OK();
-    }
-
-    carbon_field_type_e type1;
-    carbon_field_type_e type2;
-
-    while (carbon_object_it_next(oit1)) {
-        carbon_object_it_field_type(&type1, oit1);
-        u64 keylen;
-        bool is_null;
-        field_access data;
-        const char *_key = carbon_object_it_prop_name(&keylen, oit1);
-        const char *key = strndup(_key, keylen);
-        carbon_object_it_data_from_key(&is_null, &type2, &data, key, oit2);
-        free(key); 
-
-        if (type1 != type2 || is_null) {
-            return FN_OK();
-        }
-
-        if (carbon_field_type_is_signed_atom(field_type)) {
-            i64 val1, val2;
-            carbon_int_field_access_signed_value(NULL, &val1, &data, NULL);
-            carbon_int_field_access_signed_value(NULL, &val2, &data, NULL);
-            
-            if (val1 != val2) {
-                return FN_OK();
-            }
-        }
-
-        else if (carbon_field_type_is_unsigned_atom(field_type)) {
-            u64 val1, val2;
-            carbon_int_field_access_unsigned_value(NULL, &val1, &data, NULL);
-            carbon_int_field_access_unsigned_value(NULL, &val2, &data, NULL);
-            
-            if (val1 != val2) {
-                return FN_OK();
-            }
-        }
-
-        else if (carbon_field_type_is_float_atom(field_type)) {
-            float val1, val2;
-            carbon_int_field_access_float_value(NULL, &val1, &data, NULL);
-            carbon_int_field_access_float_value(NULL, &val2, &data, NULL);
-            
-            if (val1 != val2) {
-                return FN_OK();
-            }
-        }
-
-        else if (carbon_field_type_is_string(field_type)) {
-            const char *_str1, _str2;
-            carbon_int_field_access_string_value(
-
-        else if (carbon_field_type_is_null(field_type)) {
-            continue;
-        }
-
-        else if (carbon_field_type_is_boolean_atom(field_type)) {
-            if (val != val) {
-                return FN_OK();
-            }
-        }
-    
-             
-
-
-
-
-
-
-
-
-
-
-    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-}
-
-
-fn_result schema_validate_run_handleKeyword_uniqueItems_compArrays(carbon_array_it* ait1, carbon_array_it *ait2) {
-    FN_FAIL_IF_NULL(ait1, ait2);
-
-    u64 len1, len2;
-    carbon_array_it_length(&len1, ait1);
-    carbon_array_it_length(&len2, ait2);
-
-    if (len1 != len2) {
-        return FN_OK();
-    }
-
-    carbon_field_type_e type1;
-    carbon_field_type_e type2;
-
-    while (carbon_array_it_next(ait1)) {
-        carbon_array_it_field_type(&type1, ait);
-        u64 pos = 0;
-        carbon_array_it_rewind(ait2);
-        while (carbon_array_it_next(ait2)) {
-            carbon_array_it_field_type(&type2, ait2);
-            
-            if (type1 != type2) {
-                continue;
-            }
-
-            if (carbon_field_type_is_signed_atom(type1)) {
-                i64 val1, val2;
-                carbon_array_it_signed_value(&val1, ait);
-                carbon_array_it_signed_value(&val2, ait);
-                if (val1 == val2) {
-                    break;
-                }
-            }
-                
-            else if (carbon_field_type_is_unsigned_atom(type1)) {
-                u64 val1, val2;
-                carbon_array_it_unsigned_value(&val1, ait);
-                carbon_array_it_unsigned_value(&val2, ait);
-                if (val1 == val2) {
-                    break;
-                }
-            }
-
-            else if (carbon_field_type_is_float_atom(type1)) {
-                float val1, val2;
-                carbon_array_it_float_value(&val1, ait);
-                carbon_array_it_float_value(&val2, ait);
-                if (val1 == val2) {
-                    break;
-                }
-            }
-
-            else if (carbon_field_type_is_bool_atom(type1)) {
-                bool val1, val2;
-                carbon_array_it_bool_value(&val1, ait);
-                carbon_array_it_bool_value(&val2, ait);
-                if (val1 == val2) {
-                    break;
-                }
-            }
-
-            else if (carbon_field_type_is_string(type1)) {
-                u64 strlen1, strlen2;
-                char *_val1 = carbon_array_it_string_value(&strlen1, ait);
-                char *_val2 = carbon_array_it_string_value(&strlen2, ait);
-                if (strlen1 != strlen2) {
-                    continue;
-                }
-                char *val1 = strndup(_val1, strlen1);
-                char *val2 = strndup(_val2, strlen2);
-                if (!(strcmp(val1, val2))) {
-                    free(val1);
-                    free(val2);
-                    break;
-                }
-                free(val1);
-                free(val2);
-            }
-
-            else if (carbon_field_type_is_null(type1)) {
-                break;
-            }
-
-            else if (carbon_field_type_is_array_or_subtype(type1)) {
-                carbon_array_it *sait1 = ait1;
-                carbon_array_it *sait2 = ait2;
-                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compArrays(sait1, sait2)))) {
-                    carbon_array_it_drop(sait1);
-                    carbon_array_it_drop(sait2);
-                    break;
-                }
-                carbon_array_it_drop(sait);
-                carbon_array_it_drop(sait2);
-            }
-
-            else if (carbon_field_type_is_column_or_subtype(type1)) {
-                carbon_array_it *cit1 = ait1;
-                carbon_array_it *cit2 = ait2;
-                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compColumns(cit1, cit2)))) {
-                    carbon_array_it_drop(cit1);
-                    carbon_array_it_drop(cit2);
-                    break;
-                }
-                carbon_array_it_drop(cit);
-                carbon_array_it_drop(cit2);
-            }
-
-            else if (carbon_field_type_is_object_or_subtype(type1)) {
-                carbon_array_it *oit1 = oit1;
-                carbon_array_it *oit2 = oit2;
-                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compObjects(oit1, oit2)))) {
-                    carbon_object_it_drop(oit1);
-                    carbon_object_it_drop(oit2);
-                    break;
-                }
-                carbon_object_it_drop(oit1);
-                carbon_object_it_drop(oit2);
-            }
-
-            if (pos == (len1 - 1)) {
-                return FN_OK();
-            }
-            pos++;
-        }
-    }
-    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-}
-
-
+//fn_result schema_validate_run_handleKeyword_uniqueItems_compColumns(carbon_column_it *cit1, carbon_column_it *cit2) {
+//    FN_FAIL_IF_NULL(cit1, cit2);
+//
+//    carbon_field_type_e type1, type2;
+//    u32 nvalues1, nvalues2;
+//    carbon_column_it_values_info(&type1, &nvalues1, cit1);
+//    carbon_column_it_values_info(&type2, &nvalues2, cit2);
+//
+//    if (type1 != type2) {
+//        return FN_OK();
+//    }
+//
+//    if (nvalues1 != nvalues2) {
+//        return FN_OK();
+//
+//    if (carbon_field_type_is_signed(type1)) {
+//        const i64 *vals1 = carbon_column_it_i64_values(&nvalues1, cit1);
+//        const i64 *vals2 = carbon_column_it_i64_values(&nvalues2, cit2);
+//
+//        bool unique = false;
+//        i64 val1, val2;
+//        for (u32 i = 0; i < nvalues1; i++) {
+//            val1 = vals1[i];
+//            for (u32 j = 0; j < nvalues2; j++) {
+//                val2 = vals2[i];
+//                if (val1 == val2) {
+//                    break;
+//                }
+//                if (j == (nvalues2 - 1)) {
+//                    return FN_OK();
+//                }
+//            }
+//        }
+//    }
+//        
+//    else if (carbon_field_type_is_unsigned(type1)) {
+//        const u64 *vals1 = carbon_column_it_u64_values(&nvalues1, cit1);
+//        const u64 *vals2 = carbon_column_it_u64_values(&nvalues2, cit2);
+//
+//        bool unique = false;
+//        u64 val1, val2;
+//        for (u32 i = 0; i < nvalues1; i++) {
+//            val1 = vals1[i];
+//            for (u32 j = 0; j < nvalues2; j++) {
+//                val2 = vals2[i];
+//                if (val1 == val2) {
+//                    break;
+//                }
+//                if (j == (nvalues2 - 1)) {
+//                    return FN_OK();
+//                }
+//            }
+//        }
+//    }
+//
+//    else if (carbon_field_type_is_floating(type1)) {
+//        const float *vals1 = carbon_column_it_float_values(&nvalues1, cit1);
+//        const float *vals2 = carbon_column_it_float_values(&nvalues2, cit2);
+//
+//        bool unique = false;
+//        float val1, val2;
+//        for (u32 i = 0; i < nvalues1; i++) {
+//            val1 = vals1[i];
+//            for (u32 j = 0; j < nvalues2; j++) {
+//                val2 = vals2[i];
+//                if (val1 == val2) {
+//                    break;
+//                }
+//                if (j == (nvalues2 - 1)) {
+//                    return FN_OK();
+//                }
+//            }
+//        }
+//    }
+//    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//}
+//
+//
+//fn_result schema_validate_run_handleKeyword_uniqueItems_compObjects(carbon_object_it* oit1, carbon_object_it *oit2) {
+//    FN_FAIL_IF_NULL(oit1, oit2);
+//
+//    u64 len1, len2;
+//    carbon_object_it_length(&len1, oit1);
+//    carbon_object_it_length(&len2, oit2);
+//
+//    if (len1 != len2) {
+//        return FN_OK();
+//    }
+//
+//    carbon_field_type_e type1;
+//    carbon_field_type_e type2;
+//
+//    while (carbon_object_it_next(oit1)) {
+//        carbon_object_it_field_type(&type1, oit1);
+//        u64 keylen;
+//        bool is_null;
+//        field_access data;
+//        const char *_key = carbon_object_it_prop_name(&keylen, oit1);
+//        const char *key = strndup(_key, keylen);
+//        carbon_object_it_data_from_key(&is_null, &type2, &data, key, oit2);
+//        free(key); 
+//
+//        if (type1 != type2 || is_null) {
+//            return FN_OK();
+//        }
+//
+//        if (carbon_field_type_is_signed_atom(field_type)) {
+//            i64 val1, val2;
+//            carbon_int_field_access_signed_value(NULL, &val1, &data, NULL);
+//            carbon_int_field_access_signed_value(NULL, &val2, &data, NULL);
+//            
+//            if (val1 != val2) {
+//                return FN_OK();
+//            }
+//        }
+//
+//        else if (carbon_field_type_is_unsigned_atom(field_type)) {
+//            u64 val1, val2;
+//            carbon_int_field_access_unsigned_value(NULL, &val1, &data, NULL);
+//            carbon_int_field_access_unsigned_value(NULL, &val2, &data, NULL);
+//            
+//            if (val1 != val2) {
+//                return FN_OK();
+//            }
+//        }
+//
+//        else if (carbon_field_type_is_float_atom(field_type)) {
+//            float val1, val2;
+//            carbon_int_field_access_float_value(NULL, &val1, &data, NULL);
+//            carbon_int_field_access_float_value(NULL, &val2, &data, NULL);
+//            
+//            if (val1 != val2) {
+//                return FN_OK();
+//            }
+//        }
+//
+//        else if (carbon_field_type_is_string(field_type)) {
+//            const char *_str1, _str2;
+//            carbon_int_field_access_string_value(
+//
+//        else if (carbon_field_type_is_null(field_type)) {
+//            continue;
+//        }
+//
+//        else if (carbon_field_type_is_boolean_atom(field_type)) {
+//            if (val != val) {
+//                return FN_OK();
+//            }
+//        }
+//    
+//             
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//}
+//
+//
+//fn_result schema_validate_run_handleKeyword_uniqueItems_compArrays(carbon_array_it* ait1, carbon_array_it *ait2) {
+//    FN_FAIL_IF_NULL(ait1, ait2);
+//
+//    u64 len1, len2;
+//    carbon_array_it_length(&len1, ait1);
+//    carbon_array_it_length(&len2, ait2);
+//
+//    if (len1 != len2) {
+//        return FN_OK();
+//    }
+//
+//    carbon_field_type_e type1;
+//    carbon_field_type_e type2;
+//
+//    while (carbon_array_it_next(ait1)) {
+//        carbon_array_it_field_type(&type1, ait);
+//        u64 pos = 0;
+//        carbon_array_it_rewind(ait2);
+//        while (carbon_array_it_next(ait2)) {
+//            carbon_array_it_field_type(&type2, ait2);
+//            
+//            if (type1 != type2) {
+//                continue;
+//            }
+//
+//            if (carbon_field_type_is_signed_atom(type1)) {
+//                i64 val1, val2;
+//                carbon_array_it_signed_value(&val1, ait);
+//                carbon_array_it_signed_value(&val2, ait);
+//                if (val1 == val2) {
+//                    break;
+//                }
+//            }
+//                
+//            else if (carbon_field_type_is_unsigned_atom(type1)) {
+//                u64 val1, val2;
+//                carbon_array_it_unsigned_value(&val1, ait);
+//                carbon_array_it_unsigned_value(&val2, ait);
+//                if (val1 == val2) {
+//                    break;
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_float_atom(type1)) {
+//                float val1, val2;
+//                carbon_array_it_float_value(&val1, ait);
+//                carbon_array_it_float_value(&val2, ait);
+//                if (val1 == val2) {
+//                    break;
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_bool_atom(type1)) {
+//                bool val1, val2;
+//                carbon_array_it_bool_value(&val1, ait);
+//                carbon_array_it_bool_value(&val2, ait);
+//                if (val1 == val2) {
+//                    break;
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_string(type1)) {
+//                u64 strlen1, strlen2;
+//                char *_val1 = carbon_array_it_string_value(&strlen1, ait);
+//                char *_val2 = carbon_array_it_string_value(&strlen2, ait);
+//                if (strlen1 != strlen2) {
+//                    continue;
+//                }
+//                char *val1 = strndup(_val1, strlen1);
+//                char *val2 = strndup(_val2, strlen2);
+//                if (!(strcmp(val1, val2))) {
+//                    free(val1);
+//                    free(val2);
+//                    break;
+//                }
+//                free(val1);
+//                free(val2);
+//            }
+//
+//            else if (carbon_field_type_is_null(type1)) {
+//                break;
+//            }
+//
+//            else if (carbon_field_type_is_array_or_subtype(type1)) {
+//                carbon_array_it *sait1 = ait1;
+//                carbon_array_it *sait2 = ait2;
+//                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compArrays(sait1, sait2)))) {
+//                    carbon_array_it_drop(sait1);
+//                    carbon_array_it_drop(sait2);
+//                    break;
+//                }
+//                carbon_array_it_drop(sait);
+//                carbon_array_it_drop(sait2);
+//            }
+//
+//            else if (carbon_field_type_is_column_or_subtype(type1)) {
+//                carbon_array_it *cit1 = ait1;
+//                carbon_array_it *cit2 = ait2;
+//                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compColumns(cit1, cit2)))) {
+//                    carbon_array_it_drop(cit1);
+//                    carbon_array_it_drop(cit2);
+//                    break;
+//                }
+//                carbon_array_it_drop(cit);
+//                carbon_array_it_drop(cit2);
+//            }
+//
+//            else if (carbon_field_type_is_object_or_subtype(type1)) {
+//                carbon_array_it *oit1 = oit1;
+//                carbon_array_it *oit2 = oit2;
+//                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compObjects(oit1, oit2)))) {
+//                    carbon_object_it_drop(oit1);
+//                    carbon_object_it_drop(oit2);
+//                    break;
+//                }
+//                carbon_object_it_drop(oit1);
+//                carbon_object_it_drop(oit2);
+//            }
+//
+//            if (pos == (len1 - 1)) {
+//                return FN_OK();
+//            }
+//            pos++;
+//        }
+//    }
+//    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//}
+//
+//
 fn_result schema_validate_run_handleKeyword_uniqueItems(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-
-    if (!(&(s->data.uniqueItems))) {
-        return FN_OK();
-    }
-
-    u64 array_len;
-    carbon_array_it_length(&array_len, ait);
-    if (array_len < 2) {
-        return FN_OK();
-    }
-
-    carbon_array_it clone;
-    carbon_array_it_clone(&clone, ait);
-    carbon_field_type_e type1; 
-    carbon_field_type_e type2; 
-    
-    carbon_array_it_next(&clone);
-
-    while (carbon_array_it_next(ait)) {
-        carbon_array_it_field_type(&type1, ait);
-        
-        while (carbon_array_it_next(&clone)) {
-            carbon_array_it saved_pos;
-            carbon_array_it_copy(&saved_pos, &clone);
-            carbon_array_it_field_type(&type2, &clone);
-            
-            if (type1 != type2) {
-                continue;
-            }
-            
-            if (carbon_field_type_is_null(type1)) {
-                carbon_array_it_drop(&clone);
-                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-            }
-            
-            else if (carbon_field_type_is_signed_atom(type1)) {
-                i64 val1, val2;
-                carbon_array_it_signed_value(&val1, ait);
-                carbon_array_it_signed_value(&val2, &clone);
-                if (val1 == val2) {
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-            }
-
-            else if (carbon_field_type_is_unsigned_atom(type1)) {
-                u64 val1, val2;
-                carbon_array_it_unsigned_value(&val1, ait);
-                carbon_array_it_unsigned_value(&val2, &clone);
-                if (val1 == val2) {
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-            }
-
-            else if (carbon_field_type_is_floating_atom(type1)) {
-                float val1, val2;
-                carbon_array_it_float_value(&val1, ait);
-                carbon_array_it_float_value(&val2, &clone);
-                if (val1 == val2) {
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-            }
-
-            else if (carbon_field_type_is_boolean_atom(type1)) {
-                bool val1, val2;
-                carbon_array_it_bool_value(&val1, ait);
-                carbon_array_it_bool_value(&val2, &clone);
-                if (val1 == val2) {
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-            }
-
-            else if (carbon_field_type_is_string(type1)) {
-                u64 strlen1, strlen2;
-                const char *_val1 = carbon_array_it_string_value(val1, ait);
-                const char *_val2 = carbon_array_it_string_value(val2, &clone);
-                if (strlen1 != strlen2) {
-                    continue;
-                }
-                const char *val1 = strndup(_val1, strlen1);
-                const char *val2 = strndup(_val2, strlen2);
-                if (!(strcmp(val1, val2))) {
-                    free(val1);
-                    free(val2);
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-            }
-
-            else if (carbon_field_type_is_binary(type1)) {
-                carbon_array_it_drop(&clone);
-                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met. Cannot compare binary types");
-            }
-
-            else if (carbon_field_type_is_array_or_subtype(type1)) {
-                carbon_array_it *sait = carbon_array_it_array_value(ait);
-                carbon_array_it *sclone = carbon_array_it_array_value(&clone);
-                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compArrays(sait, sclone)))) {
-                    carbon_array_it_drop(sait);
-                    carbon_array_it_drop(sclone);
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-                carbon_array_it_drop(sait);
-                carbon_array_it_drop(sclone);
-            }
-
-            else if (carbon_field_type_is_column_or_subtype(type1)) {
-                carbon_column_it *cit = carbon_array_it_column_value(ait);
-                carbon_column_it *cclone = carbon_array_it_column_value(&clone);
-                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compColumns(cit, cclone)))) {
-                    carbon_column_it_drop(cit);
-                    carbon_column_it_drop(sclone);
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-                carbon_column_it_drop(cit);
-                carbon_column_it_drop(sclone);
-            }
-
-            else if (carbon_field_type_is_object_or_subtype(type1)) {
-                carbon_object_it *oit = carbon_array_it_object_value(ait);
-                carbon_object_it *oclone = carbon_array_it_object_value(&clone);
-                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compObjects(oit, oclone)))) {
-                    carbon_column_it_drop(cit);
-                    carbon_column_it_drop(sclone);
-                    carbon_array_it_drop(&clone);
-                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
-                }
-                carbon_column_it_drop(cit);
-                carbon_column_it_drop(sclone);
-            }
-            //TODO
-            &clone 
-            carbon_array_it_copy(&saved_pos, &clone);
-        }
-    }
-    carbon_array_it_drop(&clone);
+    UNUSED(s);
+    UNUSED(ait);
     return FN_OK();
 }
+
+//    FN_FAIL_IF_NULL(s, ait);
+//
+//    if (!(&(s->data.uniqueItems))) {
+//        return FN_OK();
+//    }
+//
+//    u64 array_len;
+//    carbon_array_it_length(&array_len, ait);
+//    if (array_len < 2) {
+//        return FN_OK();
+//    }
+//
+//    carbon_array_it clone;
+//    carbon_array_it_clone(&clone, ait);
+//    carbon_field_type_e type1; 
+//    carbon_field_type_e type2; 
+//    
+//    carbon_array_it_next(&clone);
+//
+//    while (carbon_array_it_next(ait)) {
+//        carbon_array_it_field_type(&type1, ait);
+//        
+//        while (carbon_array_it_next(&clone)) {
+//            carbon_array_it saved_pos;
+//            carbon_array_it_copy(&saved_pos, &clone);
+//            carbon_array_it_field_type(&type2, &clone);
+//            
+//            if (type1 != type2) {
+//                continue;
+//            }
+//            
+//            if (carbon_field_type_is_null(type1)) {
+//                carbon_array_it_drop(&clone);
+//                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//            }
+//            
+//            else if (carbon_field_type_is_signed_atom(type1)) {
+//                i64 val1, val2;
+//                carbon_array_it_signed_value(&val1, ait);
+//                carbon_array_it_signed_value(&val2, &clone);
+//                if (val1 == val2) {
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_unsigned_atom(type1)) {
+//                u64 val1, val2;
+//                carbon_array_it_unsigned_value(&val1, ait);
+//                carbon_array_it_unsigned_value(&val2, &clone);
+//                if (val1 == val2) {
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_floating_atom(type1)) {
+//                float val1, val2;
+//                carbon_array_it_float_value(&val1, ait);
+//                carbon_array_it_float_value(&val2, &clone);
+//                if (val1 == val2) {
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_boolean_atom(type1)) {
+//                bool val1, val2;
+//                carbon_array_it_bool_value(&val1, ait);
+//                carbon_array_it_bool_value(&val2, &clone);
+//                if (val1 == val2) {
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_string(type1)) {
+//                u64 strlen1, strlen2;
+//                const char *_val1 = carbon_array_it_string_value(val1, ait);
+//                const char *_val2 = carbon_array_it_string_value(val2, &clone);
+//                if (strlen1 != strlen2) {
+//                    continue;
+//                }
+//                const char *val1 = strndup(_val1, strlen1);
+//                const char *val2 = strndup(_val2, strlen2);
+//                if (!(strcmp(val1, val2))) {
+//                    free(val1);
+//                    free(val2);
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//            }
+//
+//            else if (carbon_field_type_is_binary(type1)) {
+//                carbon_array_it_drop(&clone);
+//                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met. Cannot compare binary types");
+//            }
+//
+//            else if (carbon_field_type_is_array_or_subtype(type1)) {
+//                carbon_array_it *sait = carbon_array_it_array_value(ait);
+//                carbon_array_it *sclone = carbon_array_it_array_value(&clone);
+//                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compArrays(sait, sclone)))) {
+//                    carbon_array_it_drop(sait);
+//                    carbon_array_it_drop(sclone);
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//                carbon_array_it_drop(sait);
+//                carbon_array_it_drop(sclone);
+//            }
+//
+//            else if (carbon_field_type_is_column_or_subtype(type1)) {
+//                carbon_column_it *cit = carbon_array_it_column_value(ait);
+//                carbon_column_it *cclone = carbon_array_it_column_value(&clone);
+//                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compColumns(cit, cclone)))) {
+//                    carbon_column_it_drop(cit);
+//                    carbon_column_it_drop(sclone);
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//                carbon_column_it_drop(cit);
+//                carbon_column_it_drop(sclone);
+//            }
+//
+//            else if (carbon_field_type_is_object_or_subtype(type1)) {
+//                carbon_object_it *oit = carbon_array_it_object_value(ait);
+//                carbon_object_it *oclone = carbon_array_it_object_value(&clone);
+//                if (!(FN_IS_OK(schema_validate_run_handleKeyword_uniqueItems_compObjects(oit, oclone)))) {
+//                    carbon_column_it_drop(cit);
+//                    carbon_column_it_drop(sclone);
+//                    carbon_array_it_drop(&clone);
+//                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"uniqueItems\" not met");
+//                }
+//                carbon_column_it_drop(cit);
+//                carbon_column_it_drop(sclone);
+//            }
+//            //TODO
+//            &clone 
+//            carbon_array_it_copy(&saved_pos, &clone);
+//        }
+//    }
+//    carbon_array_it_drop(&clone);
+//    return FN_OK();
+//}
 
                 
 fn_result schema_validate_run_handleKeyword_additionalItems(schema *s, carbon_array_it *ait) {
@@ -1118,7 +1122,6 @@ fn_result schema_validate_run_handleKeyword_additionalProperties(schema *s, carb
 }
 
 
-// TODO: implement
 fn_result schema_validate_run_handleKeyword_dependencies(schema *s, carbon_array_it *ait) {
     FN_FAIL_IF_NULL(s, ait);
 
@@ -1170,7 +1173,7 @@ fn_result schema_validate_run_handleKeyword_propertyNames(schema *s, carbon_arra
     while (carbon_object_it_next(oit)) {
         u64 keylen;
         const char *_key = carbon_object_it_prop_name(&keylen, oit);
-        const char *key = strndup(_key, keylen);
+        char *key = strndup(_key, keylen);
         carbon_insert_string(ins, key);
         free(key);
     }
@@ -1216,6 +1219,7 @@ fn_result schema_validate_run_handleKeyword_patternRequired(schema *s, carbon_ar
             char *key = strndup(_key, keylen);
 
             reti = regexec(&regex, key, 0, NULL, 0);
+            free(key);
             if (!reti) {
                 exists = true;
                 break;
@@ -1330,6 +1334,7 @@ fn_result schema_validate_run_handleKeyword_pattern(schema *s, carbon_array_it *
     }
 
     reti = regexec(&regex, str, 0, NULL, 0);
+    free(str);
     if (!reti) {
         regfree(&regex);
         return FN_OK();
@@ -1345,54 +1350,48 @@ fn_result schema_validate_run_handleKeyword_pattern(schema *s, carbon_array_it *
     }
 }
 
+fn_result schema_validate_regex(u8 *format, const char *str) {
+    FN_FAIL_IF_NULL(format);
 
-fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *ait) {
-    FN_FAIL_IF_NULL(s, ait);
-
+    const char *regex_in;
     regex_t regex;
     int reti;
-    const char *format;
-    u64 strlen;
-    const char *_str = carbon_array_it_string_value(&strlen, ait);
-    const char *str = strndup(_str, strlen);
-
-    switch(s->data.format) {
+    switch(*format) {
+        // TODO: there is no POSIX compatible regex for email validation, as email val. needs lookahead. Maybe reimplement as PCRE expr?
         case DATE :
-            format = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])";
+            regex_in = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])";
             break;
         case DATETIME :
-            format = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]";
+            regex_in = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]";
             break;
         case URI :
-            format = "\\w+:(\\/?\\/?)[^\\s]+";
+            regex_in = "\\w+:(\\/?\\/?)[^\\s]+";
             break;
-        //case EMAIL : 
-        //    // TODO: there is no POSIX compatible regex for email validation, as email val. needs lookahead. Maybe reimplement as PCRE expr?
-        //    format = "/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
-        //    break;
         case HOSTNAME :
-            format = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
+            regex_in = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
             break;
         case IPV4 :
-            format = "^([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$";
+            regex_in = "^([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$";
             break;
         case IPV6 :
-            format = "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}\%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))";
+            regex_in = "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}\%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))";
             break;
         case REGEX :
-            format = str;
-            reti = regcomp(&regex, format, REG_EXTENDED);
-            if (reti) {
-                return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "keyword \"format\" failed. Not a POSIX regex");
+            if (str) {
+                regex_in = str;
+                reti = regcomp(&regex, regex_in, REG_EXTENDED);
+                if (reti) {
+                    return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "regcomp failed on custom regex. Not a POSIX regex");
+                }
+                return FN_OK();
             }
-            return FN_OK();    
+            return FN_FAIL(ERR_BADTYPE, "regcomp on custom regex expects a regex. got NULL");
         default :
-            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "unknown \"format\" keyword");
+            return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "unknown format in regex comparison");
     }
-
-    reti = regcomp(&regex, format, REG_EXTENDED);
+    reti = regcomp(&regex, regex_in, REG_EXTENDED);
     if (reti) {
-        return FN_FAIL(ERR_ERRINTERNAL, "could not initiate \"format\" constraint");
+        return FN_FAIL(ERR_ERRINTERNAL, "could not initiate format constraint");
     }
     reti = regexec(&regex, str, 0, NULL, 0);
     if (!reti) {
@@ -1401,13 +1400,29 @@ fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *a
     }
     if (reti == REG_NOMATCH) {
         regfree(&regex);
-        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "\"format\" constraint not met");
+        return FN_FAIL(ERR_SCHEMA_VALIDATION_FAILED, "regex validation failed");
     }
     else {
         char msgbuf[100];
         regerror(reti, &regex, msgbuf, sizeof(msgbuf));
         return FN_FAIL(ERR_ERRINTERNAL, msgbuf);
     }
+}
+
+
+fn_result schema_validate_run_handleKeyword_format(schema *s, carbon_array_it *ait) {
+    FN_FAIL_IF_NULL(s, ait);
+
+    u64 strlen;
+    const char *_str = carbon_array_it_string_value(&strlen, ait);
+    char *str = strndup(_str, strlen);
+
+    if (!(FN_IS_OK(schema_validate_regex(&(s->data.format), str)))) {
+        free(str);
+        return FN_FAIL_FORWARD();
+    }
+    free(str);
+    return FN_OK();
 }
 
 

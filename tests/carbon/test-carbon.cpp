@@ -1531,7 +1531,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
 }
 
 TEST(CarbonTest, CarbonDotNotation) {
-        dot_path path;
+        dot path;
         string_buffer sb;
         string_buffer_create(&sb);
 
@@ -1576,7 +1576,7 @@ TEST(CarbonTest, CarbonDotNotation) {
 }
 
 TEST(CarbonTest, CarbonDotNotationParsing) {
-        dot_path path;
+        dot path;
         string_buffer sb;
         string_buffer_create(&sb);
 
@@ -8044,7 +8044,7 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}}";
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
-        dot_path path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11, path12,
+        dot path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11, path12,
                 path13, path14, path15, path16, path17, path18, path19, path20, path21;
 
         ASSERT_TRUE(dot_from_string(&path1, "0"));

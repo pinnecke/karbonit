@@ -31,8 +31,8 @@ bool carbon_printer_by_type(carbon_printer *printer, int impl)
                 case JSON_COMPACT:
                         json_compact_printer_create(printer);
                         break;
-                default: error(ERR_NOTFOUND, NULL)
-                        return false;
+                default:
+                        return error(ERR_NOTFOUND, NULL);
         }
         return true;
 }

@@ -135,8 +135,7 @@ bool internal_carbon_array_update_string(carbon_array *it, const char *str)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(str)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_carbon_array_update_binary(carbon_array *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type)
@@ -147,8 +146,7 @@ bool internal_carbon_array_update_binary(carbon_array *it, const void *value, si
         UNUSED(nbytes)
         UNUSED(file_ext)
         UNUSED(user_type)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 carbon_insert *internal_carbon_array_update_array_begin(carbon_insert_array_state *state, carbon_array *it)
@@ -156,16 +154,15 @@ carbon_insert *internal_carbon_array_update_array_begin(carbon_insert_array_stat
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        error(ERR_NOTIMPLEMENTED, NULL);
+        return NULL;
 }
 
 bool internal_carbon_array_update_array_end(carbon_insert_array_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 carbon_insert *internal_carbon_array_update_column_begin(carbon_insert_column_state *state, carbon_array *it)
@@ -173,16 +170,15 @@ carbon_insert *internal_carbon_array_update_column_begin(carbon_insert_column_st
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        error(ERR_NOTIMPLEMENTED, NULL);
+        return NULL;
 }
 
 bool internal_carbon_array_update_column_end(carbon_insert_column_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 carbon_insert *internal_carbon_array_update_object_begin(carbon_insert_object_state *state, carbon_array *it)
@@ -190,16 +186,15 @@ carbon_insert *internal_carbon_array_update_object_begin(carbon_insert_object_st
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        error(ERR_NOTIMPLEMENTED, NULL);
+        return NULL;
 }
 
 bool internal_carbon_array_update_object_end(carbon_insert_object_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_carbon_array_update_from_carbon(carbon_array *it, const rec *src)
@@ -207,8 +202,7 @@ bool internal_carbon_array_update_from_carbon(carbon_array *it, const rec *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_carbon_array_update_from_array(carbon_array *it, const carbon_array *src)
@@ -216,8 +210,7 @@ bool internal_carbon_array_update_from_array(carbon_array *it, const carbon_arra
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_object *src)
@@ -225,8 +218,7 @@ bool internal_carbon_array_update_from_object(carbon_array *it, const carbon_obj
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_column *src)
@@ -234,8 +226,7 @@ bool internal_carbon_array_update_from_column(carbon_array *it, const carbon_col
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 
@@ -246,7 +237,7 @@ static void __carbon_array_load_abstract_type(carbon_array *it)
         carbon_abstract_class_to_list_derivable(&it->abstract_type, type_class);
 }
 
-fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start)
+bool internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start)
 {
         ZERO_MEMORY(it, sizeof(carbon_array));
 
@@ -261,17 +252,11 @@ fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, offse
         memfile_seek(&it->memfile, payload_start);
 
         if (memfile_remain_size(&it->memfile) < sizeof(u8)) {
-                error(ERR_CORRUPTED, NULL)
-                return FN_FAIL(ERR_FAILED, "");
+                return error(ERR_CORRUPTED, NULL);
         }
 
-        fn_result ofType(bool) instance = carbon_abstract_is_instanceof_array(&it->memfile);
-        if (!FN_IS_OK(instance)) {
-                return FN_FAIL_FORWARD();
-        } else {
-                if (!FN_BOOL(instance)) {
-                        return FN_FAIL(ERR_MARKERMAPPING, "expected array or sub type marker");
-                }
+        if (!carbon_abstract_is_instanceof_array(&it->memfile)) {
+            return error(ERR_MARKERMAPPING, "expected array or sub type marker");
         }
 
         __carbon_array_load_abstract_type(it);
@@ -282,7 +267,7 @@ fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, offse
 
         carbon_array_rewind(it);
 
-        return FN_OK();
+        return true;
 }
 
 bool internal_carbon_array_copy(carbon_array *dst, carbon_array *src)
@@ -330,12 +315,11 @@ bool carbon_array_is_empty(carbon_array *it)
         return carbon_array_next(it);
 }
 
-fn_result carbon_array_drop(carbon_array *it)
+void carbon_array_drop(carbon_array *it)
 {
         carbon_int_field_auto_close(&it->field_access);
         carbon_int_field_access_drop(&it->field_access);
         vector_drop(&it->history);
-        return FN_OK();
 }
 
 bool carbon_array_rewind(carbon_array *it)
@@ -457,16 +441,15 @@ bool internal_carbon_array_fast_forward(carbon_array *it)
         return true;
 }
 
-fn_result carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it)
+void carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it)
 {
-        FN_FAIL_IF_NULL(inserter, it)
-        return carbon_int_insert_create_for_array(inserter, it);
+        carbon_int_insert_create_for_array(inserter, it);
 }
 
-fn_result carbon_array_insert_end(carbon_insert *inserter)
+void carbon_array_insert_end(carbon_insert *inserter)
 {
-        FN_FAIL_IF_NULL(inserter)
-        return carbon_insert_drop(inserter);
+        UNUSED(inserter)
+        /* nothing to do */
 }
 
 bool internal_carbon_array_remove(carbon_array *it)
@@ -489,9 +472,8 @@ bool internal_carbon_array_remove(carbon_array *it)
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_is_multiset(carbon_array *it)
+bool carbon_array_is_multiset(carbon_array *it)
 {
-        FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
         carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
         return carbon_abstract_is_multiset(type_class);
@@ -499,18 +481,15 @@ fn_result ofType(bool) carbon_array_is_multiset(carbon_array *it)
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
  * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_is_sorted(carbon_array *it)
+bool carbon_array_is_sorted(carbon_array *it)
 {
-        FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
         carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
         return carbon_abstract_is_sorted(type_class);
 }
 
-fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation)
+void carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation)
 {
-        FN_FAIL_IF_NULL(it)
-
         memfile_save_position(&it->memfile);
         memfile_seek(&it->memfile, it->array_begin_off);
 
@@ -519,7 +498,6 @@ fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e der
         carbon_abstract_write_derived_type(&it->memfile, derive_marker);
 
         memfile_restore_position(&it->memfile);
-        return FN_OK();
 }
 
 bool carbon_array_field_type(carbon_field_type_e *type, carbon_array *it)

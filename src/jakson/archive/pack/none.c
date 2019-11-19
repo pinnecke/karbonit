@@ -97,8 +97,7 @@ bool pack_none_encode_string(packer *self, memfile *dst, const char *string)
         return true;
 
         error_handling:
-        error(ERR_IO, NULL)
-        return false;
+        return error(ERR_IO, NULL);
 }
 
 bool pack_none_decode_string(packer *self, char *dst, size_t strlen, FILE *src)

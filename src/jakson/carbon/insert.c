@@ -49,9 +49,8 @@ static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos)
 
 static void write_binary_blob(carbon_insert *inserter, const void *value, size_t nbytes);
 
-fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context)
+void carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context)
 {
-        FN_FAIL_IF_NULL(inserter, context)
         inserter->context_type = CARBON_ARRAY;
         inserter->context.array = context;
         inserter->position = 0;
@@ -64,7 +63,6 @@ fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_arr
         }
 
         internal_create(inserter, &context->memfile, pos);
-        return FN_OK();
 }
 
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context)
@@ -173,8 +171,8 @@ bool carbon_insert_null(carbon_insert *inserter)
                                         u8 value = CARBON_BOOLEAN_COLUMN_NULL;
                                         return push_in_column(inserter, &value, inserter->context.column->type);
                                 }
-                                default: error(ERR_INTERNALERR, NULL)
-                                        return false;
+                                default:
+                                        return error(ERR_INTERNALERR, NULL);
                         }
                 }
                 default: error(ERR_INTERNALERR, NULL);
@@ -499,7 +497,6 @@ bool carbon_insert_object_end(carbon_insert_object_state *state)
 
         memfile_seek(&state->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
         carbon_object_drop(&scan);
-        carbon_insert_drop(&state->inserter);
         carbon_object_drop(state->it);
         free(state->it);
         return true;
@@ -563,7 +560,6 @@ bool carbon_insert_array_end(carbon_insert_array_state *state_in)
 
         memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
         carbon_array_drop(&scan);
-        carbon_insert_drop(&state_in->nested_inserter);
         carbon_array_drop(state_in->nested_array);
         free(state_in->nested_array);
         return true;
@@ -629,7 +625,6 @@ bool carbon_insert_column_end(carbon_insert_column_state *state_in)
         state_in->column_end = memfile_tell(&scan.memfile);
         memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.memfile));
 
-        carbon_insert_drop(&state_in->nested_inserter);
         free(state_in->nested_column);
         return true;
 }
@@ -924,12 +919,6 @@ u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in)
 {
         carbon_insert_column_end(state_in);
         return state_in->column_end - state_in->column_begin;
-}
-
-fn_result carbon_insert_drop(carbon_insert *inserter)
-{
-        FN_FAIL_IF_NULL(inserter)
-        return FN_OK();
 }
 
 static bool

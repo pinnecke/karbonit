@@ -86,7 +86,7 @@ typedef struct carbon_array {
 /**
  * Drops the iterator.
  */
-fn_result carbon_array_drop(carbon_array *it);
+void carbon_array_drop(carbon_array *it);
 
 /**
  * Positions the iterator at the beginning of this array.
@@ -112,19 +112,19 @@ bool carbon_array_prev(carbon_array *it);
 /**
  * Inserts a new element at the current position of the iterator.
  */
-fn_result carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it);
-fn_result carbon_array_insert_end(carbon_insert *inserter);
+void carbon_array_insert_begin(carbon_insert *inserter, carbon_array *it);
+void carbon_array_insert_end(carbon_insert *inserter);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_is_multiset(carbon_array *it);
+bool carbon_array_is_multiset(carbon_array *it);
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
  * otherwise false. In case of any error, a failure is returned. */
-fn_result ofType(bool) carbon_array_is_sorted(carbon_array *it);
+bool carbon_array_is_sorted(carbon_array *it);
 
 /** Updates this arrays abstract type to the given abstract type */
-fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation);
+void carbon_array_update_type(carbon_array *it, carbon_list_derivable_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage
@@ -135,7 +135,7 @@ fn_result carbon_array_update_type(carbon_array *it, carbon_list_derivable_e der
  * that starts with the first (potentially empty) array entry. If there is some data before the array contents
  * (e.g., a header), <code>payload_start</code> must not include this data.
  */
-fn_result internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start);
+bool internal_carbon_array_create(carbon_array *it, memfile *memfile, offset_t payload_start);
 bool internal_carbon_array_copy(carbon_array *dst, carbon_array *src);
 bool internal_carbon_array_clone(carbon_array *dst, carbon_array *src);
 bool internal_carbon_array_set_mode(carbon_array *it, access_mode_e mode);

@@ -20,70 +20,70 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
 
         /* object is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_OBJECT)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_OBJECT);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* array is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_ARRAY)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_ARRAY);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* column-... is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U8)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U16)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U32)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U64)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_U64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I8)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I16)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I32)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I64)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_I64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_FLOAT)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_FLOAT);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
 
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_BOOLEAN)));
+                carbon_abstract_write_base_type(&memfile, CARBON_CONTAINER_COLUMN_BOOLEAN);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
         drop_memfile(&memfile);
@@ -98,125 +98,120 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
 
         /* CARBON_UNSORTED_MULTIMAP is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTIMAP)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTIMAP);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_ARRAY is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_ARRAY)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_ARRAY);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U8 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U8)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U16 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U16)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U32 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U32)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_U64 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U64)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_U64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I8 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I8)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I8);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I16 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I16)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I16);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I32 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I32 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I32);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_I64 is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I64)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_I64);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_FLOAT is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_FLOAT)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_FLOAT);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         /* CARBON_UNSORTED_MULTISET_COL_BOOLEAN is base type */
         {
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_BOOLEAN)));
+                carbon_abstract_write_derived_type(&memfile, CARBON_UNSORTED_MULTISET_COL_BOOLEAN);
                 memfile_seek_from_here(&memfile, -1);
-                ASSERT_TRUE(FN_IS_OK(carbon_abstract_type(&abstract_type, &memfile)));
+                ASSERT_TRUE(carbon_abstract_type(&abstract_type, &memfile));
                 ASSERT_EQ(abstract_type, CARBON_ABSTRACT_BASE);
         }
 
         drop_memfile(&memfile);
 }
 
-static fn_result gtest_helper_get_bool(bool *value, fn_result result)
-{
-        *value = FN_BOOL(result);
-        return FN_OK();
-}
 
 static void test_derived_is_base(memfile *memfile, carbon_derived_e type, bool is_base)
 {
-        bool status;
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(memfile, type)));
+        bool result;
+        carbon_abstract_write_derived_type(memfile, type);
         memfile_seek_from_here(memfile, -1);
-        fn_result result = carbon_abstract_is_base(memfile);
-        ASSERT_TRUE(FN_IS_OK(result)); gtest_helper_get_bool(&status, result);
-        ASSERT_EQ(status, is_base);
+        bool status = carbon_abstract_is_base(&result, memfile);
+        ASSERT_EQ(status, true);
+        ASSERT_EQ(result, is_base);
 }
 
 TEST(TestAbstractTypeMarker, DetectNonBaseTypeByDerivedType) {
@@ -291,9 +286,9 @@ static void test_get_class_of_concrete_derived(memfile *file, carbon_derived_e c
         carbon_abstract_type_class_e expected)
 {
         carbon_abstract_type_class_e clazz;
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(file, concrete)));
+        carbon_abstract_write_derived_type(file, concrete);
         memfile_seek_from_here(file, -1);
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_get_class(&clazz, file)));
+        ASSERT_TRUE(carbon_abstract_get_class(&clazz, file));
         ASSERT_EQ(clazz, expected);
 }
 
@@ -369,9 +364,9 @@ static void test_get_container_for_derived_type(memfile *memfile, carbon_derived
                                                 carbon_container_sub_type_e expected)
 {
         carbon_container_sub_type_e sub_type;
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_write_derived_type(memfile, derived)));
+        carbon_abstract_write_derived_type(memfile, derived);
         memfile_seek_from_here(memfile, -1);
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_get_container_subtype(&sub_type, memfile)));
+        ASSERT_TRUE(carbon_abstract_get_container_subtype(&sub_type, memfile));
         ASSERT_EQ(sub_type, expected);
 }
 
@@ -459,7 +454,7 @@ static void test_get_derive_from_list(carbon_list_container_e is, carbon_list_de
                                       carbon_derived_e expected)
 {
         carbon_derived_e concrete;
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_derive_list_to(&concrete, is, should)));
+        ASSERT_TRUE(carbon_abstract_derive_list_to(&concrete, is, should));
         ASSERT_EQ(concrete, expected);
 }
 
@@ -568,7 +563,7 @@ TEST(TestAbstractTypeMarker, GetDeriveFromList)
 static void test_get_derive_from_list(carbon_map_derivable_e should, carbon_derived_e expected)
 {
         carbon_derived_e concrete;
-        ASSERT_TRUE(FN_IS_OK(carbon_abstract_derive_map_to(&concrete, should)));
+        ASSERT_TRUE(carbon_abstract_derive_map_to(&concrete, should));
         ASSERT_EQ(concrete, expected);
 }
 

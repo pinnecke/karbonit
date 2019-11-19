@@ -99,7 +99,7 @@ u64 carbon_commit_hash_from_str(const char *commit_str)
                         return ret;
                 }
         } else {
-                error(ERR_ILLEGALARG, NULL)
+                error(ERR_ILLEGALARG, NULL);
                 return 0;
         }
 }

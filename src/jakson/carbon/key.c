@@ -97,8 +97,7 @@ bool carbon_key_write_unsigned(memfile *file, u64 key)
                 memfile_write(file, &key, sizeof(u64));
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -111,8 +110,7 @@ bool carbon_key_write_signed(memfile *file, i64 key)
                 memfile_write(file, &key, sizeof(i64));
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -129,8 +127,7 @@ bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t leng
                 carbon_string_update_wnchar(file, key, length);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -143,8 +140,7 @@ bool carbon_key_write_string(memfile *file, const char *key)
                 carbon_string_write(file, key);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -172,8 +168,8 @@ bool carbon_key_read_type(carbon_key_e *out, memfile *file)
                 case CARBON_MSKEY:
                         OPTIONAL_SET(out, CARBON_KEY_SKEY)
                         break;
-                default: error(ERR_INTERNALERR, NULL)
-                        return false;
+                default:
+                        return error(ERR_INTERNALERR, NULL);
         }
         return true;
 }
@@ -200,7 +196,7 @@ const void *carbon_key_read(u64 *len, carbon_key_e *out, memfile *file)
                         return MEMFILE_READ_TYPE(file, i64);
                 case CARBON_KEY_SKEY:
                         return carbon_string_read(len, file);
-                default: error(ERR_INTERNALERR, NULL)
+                default: error(ERR_INTERNALERR, NULL);
                         return NULL;
         }
 }

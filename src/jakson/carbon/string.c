@@ -54,8 +54,7 @@ bool carbon_string_remove(memfile *file)
                 memfile_inplace_remove(file, sizeof(u8));
                 return carbon_string_nomarker_remove(file);
         } else {
-                error(ERR_MARKERMAPPING, NULL)
-                return false;
+                return error(ERR_MARKERMAPPING, NULL);
         }
 }
 
@@ -91,8 +90,7 @@ bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_l
                 write_payload(file, string, str_len);
                 return true;
         } else {
-                error(ERR_MARKERMAPPING, NULL)
-                return false;
+                return error(ERR_MARKERMAPPING, NULL);
         }
 }
 
@@ -112,8 +110,8 @@ const char *carbon_string_read(u64 *len, memfile *file)
         if (LIKELY(marker == CARBON_FIELD_STRING)) {
                 return carbon_string_nomarker_read(len, file);
         } else {
-                error(ERR_MARKERMAPPING, NULL)
-                return false;
+                error(ERR_MARKERMAPPING, NULL);
+                return NULL;
         }
 }
 

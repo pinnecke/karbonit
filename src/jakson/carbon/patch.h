@@ -26,14 +26,14 @@ extern "C" {
 #endif
 
 /* Opens a read-write enabled iterator for patching a record revision without creating a new one. */
-fn_result carbon_patch_begin(carbon_array *it, rec *doc);
+void carbon_patch_begin(carbon_array *it, rec *doc);
 
 /* Closes a read-write ennabled iterator , which was previously opened via 'carbon_patch_end' */
-fn_result carbon_patch_end(carbon_array *it);
+void carbon_patch_end(carbon_array *it);
 
 bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc);
 
-fn_result carbon_patch_find_end(carbon_find *find);
+bool carbon_patch_find_end(carbon_find *find);
 
 #ifdef __cplusplus
 }

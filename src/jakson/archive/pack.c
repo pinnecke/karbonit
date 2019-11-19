@@ -38,8 +38,7 @@ bool pack_by_type(packer *strategy, packer_e type)
                         return create_strategy(i, strategy);
                 }
         }
-        error(ERR_NOCOMPRESSOR, NULL)
-        return false;
+        return error(ERR_NOCOMPRESSOR, NULL);
 }
 
 u8 pack_flagbit_by_type(packer_e type)

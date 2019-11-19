@@ -6,4 +6,3 @@ set (CMAKE_CXX_STANDARD 11)
 link_directories("/usr/local/lib/")
 
 CreateTest(test-thread-pool)
-CreateTest(test-fn-result)

@@ -78,8 +78,7 @@ index_string_id_to_offset_open_file(struct sid_to_offset *index, const char *fil
 {
         index->disk_file = fopen(file, "r");
         if (!index->disk_file) {
-                error(ERR_FOPEN_FAILED, NULL)
-                return false;
+                return error(ERR_FOPEN_FAILED, NULL);
         } else {
                 fseek(index->disk_file, 0, SEEK_END);
                 index->disk_file_size = ftell(index->disk_file);
@@ -159,15 +158,13 @@ bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, const ch
 
         FILE *index_reader_file = fopen(file_path, "r");
         if (!index_reader_file) {
-                error(ERR_FOPEN_FAILED, NULL)
-                return false;
+                return error(ERR_FOPEN_FAILED, NULL);
         } else {
                 fseek(index_reader_file, 0, SEEK_END);
                 offset_t file_size = ftell(index_reader_file);
 
                 if (offset >= file_size) {
-                        error(ERR_INTERNALERR, NULL)
-                        return false;
+                        return error(ERR_INTERNALERR, NULL);
                 }
 
                 fseek(index_reader_file, offset, SEEK_SET);

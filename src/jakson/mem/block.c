@@ -26,8 +26,7 @@ typedef struct block {
 bool memblock_create(area **block, size_t size)
 {
         if (UNLIKELY(size == 0)) {
-                error(ERR_ILLEGALARG, NULL)
-                return false;
+                return error(ERR_ILLEGALARG, NULL);
         }
 
         area *result = MALLOC(sizeof(area));
@@ -95,8 +94,7 @@ const char *memblock_raw_data(const area *block)
 bool memblock_resize(area *block, size_t size)
 {
         if (UNLIKELY(size == 0)) {
-                error(ERR_ILLEGALARG, NULL)
-                return false;
+                return error(ERR_ILLEGALARG, NULL);
         }
 
         block->base = realloc(block->base, size);

@@ -444,8 +444,7 @@ bool async_shuffle(void *dst, const void *src, size_t width, const size_t *dst_i
         UNUSED(dst_idx);
         UNUSED(src_idx);
         UNUSED(idx_len);
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool int_sync_filter_late(size_t *positions, size_t *num_positions, const void *source,

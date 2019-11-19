@@ -468,8 +468,7 @@ bool hashtable_rehash(hashtable *map)
                         const void *old_key = _hash_table_get_bucket_key(bucket, cpy);
                         const void *old_value = get_bucket_value(bucket, cpy);
                         if (!hashtable_insert_or_update(map, old_key, old_value, 1)) {
-                                error(ERR_REHASH_NOROLLBACK, NULL)
-                                return false;
+                                return error(ERR_REHASH_NOROLLBACK, NULL);
                         }
                 }
         }

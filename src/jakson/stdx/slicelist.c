@@ -197,8 +197,8 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
                                                 case SLICE_LOOKUP_BESEARCH:
                                                         pairPosition = SLICE_BESEARCH(slice, keyHash, needle);
                                                         break;
-                                                default: error(ERR_UNSUPFINDSTRAT, NULL)
-                                                        return false;
+                                                default:
+                                                        return error(ERR_UNSUPFINDSTRAT, NULL);
                                         }
 
                                         DEBUG(SLICE_LIST_TAG,
@@ -237,8 +237,7 @@ bool slice_list_remove(slice_list_t *list, slice_handle *handle)
 {
         UNUSED(list);
         UNUSED(handle);
-        error(ERR_NOTIMPLEMENTED, NULL)
-        return false;
+        return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
 static void appenderNew(slice_list_t *list)

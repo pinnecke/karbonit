@@ -418,7 +418,7 @@ archive_io_context *archive_io_context_create(archive *archive)
         if (io_context_create(&context, archive->disk_file_path)) {
                 return context;
         } else {
-                error(ERR_IO, NULL)
+                error(ERR_IO, NULL);
                 return NULL;
         }
 }
@@ -490,7 +490,7 @@ static const char *array_value_type_to_string(archive_field_e type)
                 case FIELD_OBJECT:
                         return "Object Array";
                 default: {
-                        error(ERR_NOVALUESTR, NULL)
+                        error(ERR_NOVALUESTR, NULL);
                         return NULL;
                 }
         }
@@ -594,11 +594,10 @@ static bool __write_array_len_column(memfile *memfile, archive_field_e type,
                                 memfile_write(memfile, &arrays->num_elems, sizeof(u32));
                         }
                         break;
-                case FIELD_OBJECT: error(ERR_ILLEGALIMPL, NULL)
-                        return false;
-                        break;
-                default: error(ERR_NOTYPE, NULL);
-                        return false;
+                case FIELD_OBJECT:
+                        return error(ERR_ILLEGALIMPL, NULL);
+                default:
+                        return error(ERR_NOTYPE, NULL);
         }
         return true;
 }
@@ -632,10 +631,10 @@ static bool write_array_value_column(memfile *memfile, archive_field_e type,
                         break;
                 case FIELD_STRING: WRITE_ARRAY_VALUES(memfile, values_vec, archive_field_sid_t);
                         break;
-                case FIELD_OBJECT: error(ERR_NOTIMPL, NULL)
-                        return false;
-                default: error(ERR_NOTYPE, NULL)
-                        return false;
+                case FIELD_OBJECT:
+                        return error(ERR_NOTIMPL, NULL);
+                default:
+                        return error(ERR_NOTYPE, NULL);
         }
         return true;
 }
@@ -980,8 +979,8 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
                         }
                 }
                         break;
-                default: error(ERR_NOTYPE, NULL)
-                        return false;
+                default:
+                        return error(ERR_NOTYPE, NULL);
         }
         return true;
 }
@@ -1479,8 +1478,7 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
         if (header->marker != MARKER_SYMBOL_COLUMN) {
                 char buffer[256];
                 sprintf(buffer, "expected marker [%c] but found [%c]", MARKER_SYMBOL_COLUMN, header->marker);
-                error(ERR_CORRUPTED, buffer)
-                return false;
+                return error(ERR_CORRUPTED, buffer);
         }
         fprintf(file, "0x%04x ", (unsigned) offset);
         INTENT_LINE(nesting_level);
@@ -1580,8 +1578,8 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
                                 fprintf(file, "   ]\n");
                         }
                                 break;
-                        default: error(ERR_NOTYPE, NULL)
-                                return false;
+                        default:
+                                return error(ERR_NOTYPE, NULL);
                 }
         }
         return true;
@@ -2196,8 +2194,7 @@ static bool print_header_from_memfile(FILE *file, memfile *memfile)
         JAK_ASSERT(memfile_size(memfile) > sizeof(archive_header));
         archive_header *header = MEMFILE_READ_TYPE(memfile, archive_header);
         if (!is_valid_file(header)) {
-                error(ERR_NOARCHIVEFILE, NULL)
-                return false;
+                return error(ERR_NOARCHIVEFILE, NULL);
         }
 
         fprintf(file, "0x%04x ", offset);
@@ -2239,8 +2236,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
         free(flagsStr);
 
         if (pack_by_flags(&strategy, flags.value) != true) {
-                error(ERR_NOCOMPRESSOR, NULL)
-                return false;
+                return error(ERR_NOCOMPRESSOR, NULL);
         }
 
         pack_print_extra(&strategy, file, memfile);
@@ -2496,12 +2492,10 @@ static bool read_stringtable(string_table *table, FILE *disk_file)
 
         size_t num_read = fread(&header, sizeof(string_table_header), 1, disk_file);
         if (num_read != 1) {
-                error(ERR_IO, NULL)
-                return false;
+                return error(ERR_IO, NULL);
         }
         if (header.marker != global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC].symbol) {
-                error(ERR_CORRUPTED, NULL)
-                return false;
+                return error(ERR_CORRUPTED, NULL);
         }
 
         flags.value = header.flags;

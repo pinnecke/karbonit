@@ -146,8 +146,7 @@ bool vector_memadvice(vector *vec, int madviseAdvice)
 bool vector_set_grow_factor(vector *vec, float factor)
 {
         if (UNLIKELY(factor <= 1.01f)) {
-                error(ERR_ILLEGALARG, NULL)
-                return false;
+                return error(ERR_ILLEGALARG, NULL);
         }
 
         vec->grow_factor = factor;
@@ -314,8 +313,7 @@ bool vector_cpy_to(vector *dst, vector *src)
                 memcpy(dst->base, src->base, src->cap_elems * src->elem_size);
                 return true;
         } else {
-                error(ERR_HARDCOPYFAILED, NULL)
-                return false;
+                return error(ERR_HARDCOPYFAILED, NULL);
         }
 }
 

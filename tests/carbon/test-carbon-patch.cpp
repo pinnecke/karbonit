@@ -47,7 +47,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         {
                 carbon_find find;
                 carbon_patch_find_begin(&find, "x", &doc);
-                carbon_array *sub_it = FN_GET_PTR(carbon_array, carbon_find_result_array(&find));
+                carbon_array *sub_it = carbon_find_result_array(&find);
                 carbon_array_next(sub_it); /* { ...: [42,...] } */
                 internal_carbon_array_update_u8(sub_it, 102);
                 carbon_patch_find_end(&find);

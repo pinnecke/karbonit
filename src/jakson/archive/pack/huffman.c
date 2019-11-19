@@ -130,7 +130,7 @@ static pack_huffman_entry *find_dic_entry(huffman *dic, unsigned char c)
                         return entry;
                 }
         }
-        error(ERR_HUFFERR, NULL)
+        error(ERR_HUFFERR, NULL);
         return NULL;
 }
 

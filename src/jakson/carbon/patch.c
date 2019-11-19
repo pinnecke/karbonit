@@ -15,24 +15,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/fn_result.h>
 #include <jakson/carbon/patch.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/find.h>
 
-fn_result carbon_patch_begin(carbon_array *it, rec *doc)
+void carbon_patch_begin(carbon_array *it, rec *doc)
 {
-        FN_FAIL_IF_NULL(it, doc);
         offset_t payload_start = carbon_int_payload_after_header(doc);
         internal_carbon_array_create(it, &doc->file, payload_start);
         internal_carbon_array_set_mode(it, READ_WRITE);
-        return FN_OK();
 }
 
-fn_result carbon_patch_end(carbon_array *it)
+void carbon_patch_end(carbon_array *it)
 {
-        FN_FAIL_IF_NULL(it);
-        return carbon_array_drop(it);
+        carbon_array_drop(it);
 }
 
 bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc)
@@ -41,7 +37,7 @@ bool carbon_patch_find_begin(carbon_find *out, const char *dot_path, rec *doc)
         return carbon_find_begin(out, dot_path, doc);
 }
 
-fn_result carbon_patch_find_end(carbon_find *find)
+bool carbon_patch_find_end(carbon_find *find)
 {
         find->doc->file.mode = READ_ONLY;
         return carbon_find_end(find);

@@ -614,8 +614,7 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
             printf("\n");
             encoded_doc_collection_drop(&collection);
         } else {
-            error(ERR_FAILED, NULL)
-            return false;
+            return error(ERR_FAILED, NULL);
         }
 
         archive_close(&archive);

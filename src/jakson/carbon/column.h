@@ -76,9 +76,9 @@ const float *carbon_column_float_values(u32 *nvalues, carbon_column *it);
 
 bool carbon_column_remove(carbon_column *it, u32 pos);
 
-fn_result ofType(bool) carbon_column_is_multiset(carbon_column *it);
-fn_result ofType(bool) carbon_column_is_sorted(carbon_column *it);
-fn_result carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation);
+bool carbon_column_is_multiset(carbon_column *it);
+bool carbon_column_is_sorted(carbon_column *it);
+bool carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation);
 
 bool carbon_column_update_set_null(carbon_column *it, u32 pos);
 bool carbon_column_update_set_true(carbon_column *it, u32 pos);

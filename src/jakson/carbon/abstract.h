@@ -25,7 +25,6 @@
 #include <jakson/stdinc.h>
 #include <jakson/carbon/markers.h>
 #include <jakson/carbon/containers.h>
-#include <jakson/fn_result.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +46,7 @@ typedef enum carbon_abstract {
 /** Reads the abstract type from the memory file without moving the memory file cursors. This function translates
  * from a particular derived container (e.g., CARBON_UNSORTED_MULTISET_COL_U8, or CARBON_SORTED_MULTIMAP)
  * to its abstract type (e.g., CARBON_ABSTRACT_BASE resp. CARBON_ABSTRACT_DERIVED) */
-fn_result carbon_abstract_type(carbon_abstract_e *type, memfile *memfile);
+bool carbon_abstract_type(carbon_abstract_e *type, memfile *memfile);
 
 /** Calls carbon_abstract_type and returns true in case of an abstract base type for a particular
  * derived container marker that is read from the current position of the mem without moving
@@ -58,10 +57,10 @@ fn_result carbon_abstract_type(carbon_abstract_e *type, memfile *memfile);
  *
  * In case of any failure (such as the read maker does not belong to any known derived container), the function
  * returns an err. */
-fn_result ofType(bool) carbon_abstract_is_base(memfile *memfile);
+bool carbon_abstract_is_base(bool *result, memfile *memfile);
 
 /** Calls carbon_abstract_is_base and negates its result */
-fn_result ofType(bool) carbon_abstract_is_derived(memfile *memfile);
+bool carbon_abstract_is_derived(bool *result, memfile *memfile);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  abstract type (multiset, set, sorted or unsorted)
@@ -84,31 +83,31 @@ typedef enum carbon_abstract_type_class {
 
 /** Returns the abstract type class for a particular abstract derived container marker that is read from
  * the current position in the memory file without moving the memory files cursor. */
-fn_result carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memfile);
+bool carbon_abstract_get_class(carbon_abstract_type_class_e *type, memfile *memfile);
 
 /** Returns true if the abstract type class is of multiset (i.e., if the class is CARBON_TYPE_UNSORTED_MULTISET, or
  * CARBON_TYPE_SORTED_MULTISET. */
-fn_result ofType(bool) carbon_abstract_is_multiset(carbon_abstract_type_class_e type);
+bool carbon_abstract_is_multiset(carbon_abstract_type_class_e type);
 
 /** Returns true if the abstract type class is of set (i.e., if the class is CARBON_TYPE_UNSORTED_SET, or
  * CARBON_TYPE_SORTED_SET. */
-fn_result ofType(bool) carbon_abstract_is_set(carbon_abstract_type_class_e type);
+bool carbon_abstract_is_set(carbon_abstract_type_class_e type);
 
 /** Returns true if the abstract type class is of multimap (i.e., if the class is CARBON_TYPE_UNSORTED_MULTIMAP, or
  * CARBON_TYPE_SORTED_MULTIMAP. */
-fn_result ofType(bool) carbon_abstract_is_multimap(carbon_abstract_type_class_e type);
+bool carbon_abstract_is_multimap(carbon_abstract_type_class_e type);
 
 /** Returns true if the abstract type class is of map (i.e., if the class is CARBON_TYPE_SORTED_MAP, or
  * CARBON_TYPE_UNSORTED_MAP. */
-fn_result ofType(bool) carbon_abstract_is_map(carbon_abstract_type_class_e type);
+bool carbon_abstract_is_map(carbon_abstract_type_class_e type);
 
 /** Returns true if the abstract type class is sorted (i.e., if the class is CARBON_TYPE_SORTED_MULTISET,
  * CARBON_TYPE_SORTED_SET, CARBON_TYPE_SORTED_MAP, or CARBON_TYPE_SORTED_MULTIMAP */
-fn_result ofType(bool) carbon_abstract_is_sorted(carbon_abstract_type_class_e type);
+bool carbon_abstract_is_sorted(carbon_abstract_type_class_e type);
 
 /** Returns true if the abstract type class does not contain duplicate entries (i.e., if the class is
  * CARBON_TYPE_UNSORTED_SET, CARBON_TYPE_SORTED_SET, CARBON_TYPE_SORTED_MAP, or CARBON_TYPE_UNSORTED_MAP) */
-fn_result ofType(bool) carbon_abstract_is_distinct(carbon_abstract_type_class_e type);
+bool carbon_abstract_is_distinct(carbon_abstract_type_class_e type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  derived type (actual abstract type and which container is used)
@@ -217,99 +216,99 @@ typedef enum carbon_map_derivable
 
 /** Converts an abstract type class to a list derivable type. In case the abstract type class does not define
  * a list type, the function fails */
-fn_result carbon_abstract_class_to_list_derivable(carbon_list_derivable_e *out, carbon_abstract_type_class_e in);
+bool carbon_abstract_class_to_list_derivable(carbon_list_derivable_e *out, carbon_abstract_type_class_e in);
 
 /** Converts a list derivable type to an abstract type class. In case of error, the function fails. */
-fn_result carbon_abstract_list_derivable_to_class(carbon_abstract_type_class_e *out, carbon_list_derivable_e in);
+bool carbon_abstract_list_derivable_to_class(carbon_abstract_type_class_e *out, carbon_list_derivable_e in);
 
-fn_result carbon_abstract_map_derivable_to_class(carbon_abstract_type_class_e *out, carbon_map_derivable_e in);
+bool carbon_abstract_map_derivable_to_class(carbon_abstract_type_class_e *out, carbon_map_derivable_e in);
 
 /** Writes the marker for a particular base type to the actual position in the memory file, and steps
  * the memory file cursor one byte towards the end. */
-fn_result carbon_abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type);
+void carbon_abstract_write_base_type(memfile *memfile, carbon_container_sub_type_e type);
 
 /** Writes the marker for the particular derived abstract type to the actual position in the memory file, and
  * steps the memory file cursor one byte towards the end. */
-fn_result carbon_abstract_write_derived_type(memfile *memfile, carbon_derived_e type);
+void carbon_abstract_write_derived_type(memfile *memfile, carbon_derived_e type);
 
 /** Peeks a byte from the memory file and returns the encoded container sub type. This is either an object
  * container, an array container, or and particular column container. In case a derived type is found, the
  * actual container type that implements that derived type is returned. For instance, if '[1]' is read,
  * a column-u8 container type is returned, and if [SOH] is read (which is CARBON_MSORTED_MULTISET_U8),
  * a column-u8 container type is returned, too. */
-fn_result carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile);
+bool carbon_abstract_get_container_subtype(carbon_container_sub_type_e *type, memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an object container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_object(memfile *memfile);
+bool carbon_abstract_is_instanceof_object(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an array container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_array(memfile *memfile);
+bool carbon_abstract_is_instanceof_array(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-u8 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u8(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_u8(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-u16 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u16(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_u16(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-u32 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u32(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_u32(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-u64 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_u64(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_u64(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-i8 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i8(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_i8(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-i16 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i16(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_i16(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-i32 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i32(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_i32(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-i64 container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_i64(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_i64(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-float container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_float(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_float(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets an column-boolean container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column_boolean(memfile *memfile);
+bool carbon_abstract_is_instanceof_column_boolean(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets a type of column container (u8, u16,...) or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_column(memfile *memfile);
+bool carbon_abstract_is_instanceof_column(memfile *memfile);
 
 /** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
  * marker sets a type of column container or array container or a derived type of that container type. */
-fn_result ofType(bool) carbon_abstract_is_instanceof_list(memfile *memfile);
+bool carbon_abstract_is_instanceof_list(memfile *memfile);
 
 /** Returns the concrete derived type <code>concrete</code> (e.g., CARBON_SORTED_SET_COL_BOOLEAN) for a
  * given list type <code>is</code> (e.g., CARBON_LIST_CONTAINER_COLUMN_BOOLEAN) when deriving that
  * list type to a particular abstract type <code>should</code> (e.g., CARBON_SORTED_SET) */
-fn_result carbon_abstract_derive_list_to(carbon_derived_e *concrete, carbon_list_container_e is,
+bool carbon_abstract_derive_list_to(carbon_derived_e *concrete, carbon_list_container_e is,
                                          carbon_list_derivable_e should);
 
 /** Returns the concrete derived type <code>concrete</code> (e.g., CARBON_MAP_SORTED_MULTIMAP) for a
  * given map when deriving that map type to a particular abstract type <code>should</code>
  * (e.g., CARBON_SORTED_MULTIMAP) */
-fn_result carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_derivable_e should);
+bool carbon_abstract_derive_map_to(carbon_derived_e *concrete, carbon_map_derivable_e should);
 
 /** Reads a marker from the memory file, and returns the particular abstract derived container (including
  * the marker) without moving the memory files cursor. In case of an failure (e.g., the read marker is not known),
  * the function returns an err. */
-fn_result carbon_abstract_get_derived_type(carbon_derived_e *type, memfile *memfile);
+bool carbon_abstract_get_derived_type(carbon_derived_e *type, memfile *memfile);
 
 #ifdef __cplusplus
 }

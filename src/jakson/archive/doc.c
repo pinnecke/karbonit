@@ -430,10 +430,10 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                         case JSON_VALUE_NULL:
                                 field_type = FIELD_NULL;
                                 break;
-                        case JSON_VALUE_ARRAY: error(ERR_ERRINTERNAL, NULL) /** array type is illegal here */
-                                return false;
-                        default: error(ERR_NOTYPE, NULL)
-                                return false;
+                        case JSON_VALUE_ARRAY:
+                                return error(ERR_ERRINTERNAL, NULL) /** array type is illegal here */;
+                        default:
+                                return error(ERR_NOTYPE, NULL);
                 }
 
                 doc_obj_add_key(&entry, target, key, field_type);
@@ -553,15 +553,14 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                                 } else if (element_number_type == JSON_NUMBER_SIGNED) {
                                                                         value = element->value.value.number->value.signed_integer;
                                                                 } else {
-                                                                        error(ERR_INTERNALERR, NULL) /** type mismatch */
-                                                                        return false;
+                                                                        return error(ERR_INTERNALERR, NULL) /** type mismatch */;
                                                                 }
                                                         }
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                default: error(ERR_INTERNALERR, NULL) /** not a number type  */
-                                                        return false;
+                                                default:
+                                                        return error(ERR_INTERNALERR, NULL) /** not a number type  */;
                                         }
                                 }
                                         break;
@@ -582,8 +581,8 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                         JAK_ASSERT(ast_node_data_type == array_data_type);
                                         doc_obj_push_primtive(entry, NULL);
                                         break;
-                                default: error(ERR_NOTYPE, NULL)
-                                        return false;
+                                default:
+                                        return error(ERR_NOTYPE, NULL);
                         }
                 }
         } else {
@@ -680,8 +679,7 @@ import_json(doc_obj *target, const json *json,
                                         case JSON_VALUE_TRUE:
                                         case JSON_VALUE_FALSE:
                                         case JSON_VALUE_NULL:
-                                        default: error(ERR_INTERNALERR, NULL) /** Unsupported operation in arrays */
-                                                break;
+                                        default: return error(ERR_INTERNALERR, NULL); /** Unsupported operation in arrays */
                                 }
                         }
                 }
@@ -691,8 +689,7 @@ import_json(doc_obj *target, const json *json,
                 case JSON_VALUE_TRUE:
                 case JSON_VALUE_FALSE:
                 case JSON_VALUE_NULL:
-                default: error(ERR_JSONTYPE, NULL);
-                        return false;
+                default: return error(ERR_JSONTYPE, NULL);
         }
         return true;
 }
@@ -1101,8 +1098,8 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
                 case FIELD_OBJECT:
                         return true;
                         break;
-                default: error(ERR_NOTYPE, NULL)
-                        return false;
+                default:
+                        return error(ERR_NOTYPE, NULL);
         }
 }
 
@@ -1378,7 +1375,7 @@ static void create_typed_vector(doc_entries *entry)
                 case FIELD_OBJECT:
                         size = sizeof(doc_obj);
                         break;
-                default: error(ERR_INTERNALERR, "unknown type") /** unknown type */
+                default: error(ERR_INTERNALERR, "unknown type"); /** unknown type */
                         return;
         }
         vector_create(&entry->values, NULL, size, 50);

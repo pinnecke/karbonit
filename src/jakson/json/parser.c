@@ -480,8 +480,8 @@ bool parse_members(json_members *members,
                                 member->value.value.value_type = JSON_VALUE_NULL;
                                 NEXT_TOKEN(token_idx);
                                 break;
-                        default: error(ERR_PARSETYPE, NULL)
-                                return false;
+                        default:
+                                return error(ERR_PARSETYPE, NULL);
                 }
 
                 delimiter_token = get_token(token_stream, *token_idx);
@@ -841,8 +841,8 @@ static int process_token(json_err *error_desc, const json_token *token,
                                 return set_error(error_desc, token, "Unexpected token");
                         }
                         break;
-                default: error(ERR_NOJSONTOKEN, NULL)
-                        return false;
+                default:
+                        return error(ERR_NOJSONTOKEN, NULL);
         }
 
         token_mem->type = token->type;
@@ -1048,8 +1048,8 @@ static bool json_ast_node_value_drop(json_node_value *value)
                 case JSON_VALUE_FALSE:
                 case JSON_VALUE_NULL:
                         break;
-                default: error(ERR_NOTYPE, NULL)
-                        return false;
+                default:
+                        return error(ERR_NOTYPE, NULL);
 
         }
         return true;
@@ -1327,7 +1327,7 @@ static json_list_type_e number_type_to_list_type(number_min_type_e type)
                         return JSON_LIST_FIXED_I32;
                 case NUMBER_I64:
                         return JSON_LIST_FIXED_I64;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL);
                         return JSON_LIST_EMPTY;
 
         }

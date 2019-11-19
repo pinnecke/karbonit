@@ -148,7 +148,7 @@ bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type);
 /**
  * For <code>mode</code>, see <code>carbon_create_begin</code>
  */
-fn_result carbon_int_from_json(rec *doc, const json *data, carbon_key_e key_type, const void *primary_key, int mode);
+void carbon_int_from_json(rec *doc, const json *data, carbon_key_e key_type, const void *primary_key, int mode);
 
 #ifdef __cplusplus
 }

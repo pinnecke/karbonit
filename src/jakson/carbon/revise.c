@@ -37,20 +37,16 @@ static bool carbon_header_rev_inc(rec *doc);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fn_result carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc)
+void carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc)
 {
-        FN_FAIL_IF_NULL(context, doc)
-        return carbon_revise_begin(context, revised_doc, doc);
+        carbon_revise_begin(context, revised_doc, doc);
 }
 
-fn_result carbon_revise_begin(rev *context, rec *revised_doc, rec *original)
+void carbon_revise_begin(rev *context, rec *revised_doc, rec *original)
 {
-        FN_FAIL_IF_NULL(context, original)
-
         context->original = original;
         context->revised_doc = revised_doc;
         carbon_clone(context->revised_doc, context->original);
-        return FN_OK();
 }
 
 
@@ -98,8 +94,7 @@ bool carbon_revise_key_generate(unique_id_t *out, rev *context)
                 OPTIONAL_SET(out, oid);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -111,8 +106,7 @@ bool carbon_revise_key_set_unsigned(rev *context, u64 key_value)
                 key_unsigned_set(context->revised_doc, key_value);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -124,8 +118,7 @@ bool carbon_revise_key_set_signed(rev *context, i64 key_value)
                 key_signed_set(context->revised_doc, key_value);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -137,14 +130,12 @@ bool carbon_revise_key_set_string(rev *context, const char *key_value)
                 key_string_set(context->revised_doc, key_value);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL)
-                return false;
+                return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
-fn_result carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation)
+void carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation)
 {
-        FN_FAIL_IF_NULL(context)
         carbon_array it;
         carbon_revise_iterator_open(&it, context);
 
@@ -154,38 +145,33 @@ fn_result carbon_revise_set_list_type(rev *context, carbon_list_derivable_e deri
         carbon_abstract_write_derived_type(&it.memfile, derive_marker);
 
         carbon_revise_iterator_close(&it);
-        return FN_OK();
 }
 
-fn_result carbon_revise_iterator_open(carbon_array *it, rev *context)
+bool carbon_revise_iterator_open(carbon_array *it, rev *context)
 {
-        FN_FAIL_IF_NULL(it, context);
         offset_t payload_start = carbon_int_payload_after_header(context->revised_doc);
         if (UNLIKELY(context->revised_doc->file.mode != READ_WRITE)) {
-                return FN_FAIL(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
+                return error(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
         return internal_carbon_array_create(it, &context->revised_doc->file, payload_start);
 }
 
-fn_result carbon_revise_iterator_close(carbon_array *it)
+void carbon_revise_iterator_close(carbon_array *it)
 {
-        FN_FAIL_IF_NULL(it);
-        return carbon_array_drop(it);
+        carbon_array_drop(it);
 }
 
-fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context)
+bool carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context)
 {
-        FN_FAIL_IF_NULL(out, dot_path, context)
         carbon_dot_path path;
         carbon_dot_path_from_string(&path, dot_path);
-        fn_result status = carbon_find_create(out, &path, context->revised_doc);
+        bool status = carbon_find_create(out, &path, context->revised_doc);
         carbon_dot_path_drop(&path);
         return status;
 }
 
-fn_result carbon_revise_find_end(carbon_find *find)
+bool carbon_revise_find_end(carbon_find *find)
 {
-        FN_FAIL_IF_NULL(find)
         return carbon_find_drop(find);
 }
 
@@ -261,13 +247,10 @@ bool carbon_revise_shrink(rev *context)
         return true;
 }
 
-fn_result ofType(const rec *) carbon_revise_end(rev *context)
+const rec *carbon_revise_end(rev *context)
 {
-        FN_FAIL_IF_NULL(context)
-
         internal_commit_update(context->revised_doc);
-
-        return FN_OK_PTR(context->revised_doc);
+        return context->revised_doc;
 }
 
 bool carbon_revise_abort(rev *context)

@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-fn_result carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context);
+void carbon_int_insert_create_for_array(carbon_insert *inserter, carbon_array *context);
 bool carbon_int_insert_create_for_column(carbon_insert *inserter, carbon_column *context);
 bool carbon_int_insert_create_for_object(carbon_insert *inserter, carbon_object *context);
 
@@ -123,8 +123,6 @@ u64 carbon_insert_prop_array_end(carbon_insert_array_state *state);
 
 carbon_insert *carbon_insert_prop_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, const char *key, carbon_column_type_e type, u64 column_capacity);
 u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in);
-
-fn_result carbon_insert_drop(carbon_insert *inserter);
 
 #ifdef __cplusplus
 }

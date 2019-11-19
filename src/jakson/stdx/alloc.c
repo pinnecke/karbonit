@@ -94,8 +94,8 @@ static void *_alloc_invoke_realloc(allocator *self, void *ptr, size_t size)
         void *result;
 
         if ((result = realloc(ptr, size)) == NULL) {
-                error(ERR_MALLOCERR, NULL)
-                return ptr;
+                error(ERR_MALLOCERR, NULL);
+                return NULL;
         } else {
                 return result;
         }

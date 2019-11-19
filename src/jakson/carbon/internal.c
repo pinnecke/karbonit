@@ -420,8 +420,8 @@ bool carbon_int_field_data_access(memfile *file, field_access *field_access)
                         internal_carbon_object_create(field_access->nested_object_it, file, 
                                                       memfile_tell(file) - sizeof(u8));
                         break;
-                default: error(ERR_CORRUPTED, NULL)
-                        return false;
+                default:
+                        return error(ERR_CORRUPTED, NULL);
         }
 
         field_access->it_field_data = memfile_peek(file, 1);
@@ -1058,8 +1058,8 @@ bool carbon_int_field_remove(memfile *memfile, carbon_field_type_e type)
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL)
-                        return false;
+                default:
+                        return error(ERR_INTERNALERR, NULL);
         }
         memfile_seek(memfile, start_off);
         memfile_inplace_remove(memfile, rm_nbytes);
@@ -1096,7 +1096,7 @@ static void int_insert_array_number(carbon_insert *array_ins, json_number *numbe
                 case JSON_NUMBER_SIGNED:
                         carbon_insert_signed(array_ins, number->value.signed_integer);
                         break;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL);
         }
 }
 
@@ -1147,7 +1147,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
                         case JSON_VALUE_NULL:
                                 int_insert_array_null(array_ins);
                                 break;
-                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                 break;
                 }
         }
@@ -1333,7 +1333,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 carbon_insert_prop_column_end(&state);
                                         }
                                                 break;
-                                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                                 break;
                                 }
                         }
@@ -1368,7 +1368,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                         case JSON_VALUE_NULL:
                                 carbon_insert_prop_null(oins, prop->key.value);
                                 break;
-                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                 break;
                 }
         }
@@ -1559,7 +1559,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         }
                                 }
                                         break;
-                                default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                                default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                         break;
                         }
                 }
@@ -1578,7 +1578,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                 case JSON_NUMBER_SIGNED:
                                         carbon_insert_signed(ins, elem->value.value.number->value.signed_integer);
                                         break;
-                                default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                                default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                         break;
                         }
                         break;
@@ -1591,12 +1591,12 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                 case JSON_VALUE_NULL:
                         carbon_insert_null(ins);
                         break;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                default: error(ERR_UNSUPPORTEDTYPE, NULL);
                         break;
         }
 }
 
-fn_result carbon_int_from_json(rec *doc, const json *data,
+void carbon_int_from_json(rec *doc, const json *data,
                           carbon_key_e key_type, const void *primary_key, int mode)
 {
         UNUSED(data)
@@ -1607,8 +1607,6 @@ fn_result carbon_int_from_json(rec *doc, const json *data,
         int_carbon_from_json_elem(ins, data->element, true);
 
         carbon_create_end(&context);
-
-        return FN_OK();
 }
 
 static void marker_insert(memfile *memfile, u8 marker)

@@ -105,7 +105,7 @@ inline static offset_t offset_by_state(prop_iter *iter)
                 case PROP_ITER_OBJECT_ARRAYS:
                         return iter->object.prop_offsets.object_arrays;
                 default: {
-                        error(ERR_INTERNALERR, NULL)
+                        error(ERR_INTERNALERR, NULL);
                         return 0;
                 }
         }
@@ -400,16 +400,13 @@ static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
 {
         iter->mask = mask;
         if (!memfile_open(&iter->record_table_memfile, memblock, READ_ONLY)) {
-                error(ERR_MEMFILEOPEN_FAILED, NULL)
-                return false;
+                return error(ERR_MEMFILEOPEN_FAILED, NULL);
         }
         if (!memfile_seek(&iter->record_table_memfile, object_offset)) {
-                error(ERR_MEMFILESEEK_FAILED, NULL)
-                return false;
+                return error(ERR_MEMFILESEEK_FAILED, NULL);
         }
         if (!init_object_from_memfile(&iter->object, &iter->record_table_memfile)) {
-                error(ERR_INTERNALERR, NULL);
-                return false;
+                return error(ERR_INTERNALERR, NULL);
         }
 
         prop_iter_state_init(iter);
@@ -510,8 +507,7 @@ static bool is_array_type(prop_iter_state_e state)
                 case PROP_ITER_OBJECT_ARRAYS:
                         return true;
                 default:
-                        error(ERR_INTERNALERR, NULL)
-                        return false;
+                        return error(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -654,11 +650,11 @@ archive_column_entry_get_##name(u32 *array_length, independent_iter_state *entry
             *array_length =  entry->state.current_column_group.current_column.current_entry.array_length;              \
             return (const built_in_type *) entry->state.current_column_group.current_column.current_entry.array_base;  \
         } else {                                                                                                       \
-            error(ERR_TYPEMISMATCH, NULL)                                                        \
+            error(ERR_TYPEMISMATCH, NULL);                                                        \
             return NULL;                                                                                               \
         }                                                                                                              \
     } else {                                                                                                           \
-        error(ERR_NULLPTR, NULL)                                                                 \
+        error(ERR_NULLPTR, NULL);                                                                 \
         return NULL;                                                                                                   \
     }                                                                                                                  \
 }
@@ -745,7 +741,7 @@ archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
                 *num_keys = iter->value_max_idx;
                 return iter->keys;
         } else {
-                error(ERR_NULLPTR, NULL)
+                error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -874,7 +870,7 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
                                 MEMFILE_PEEK(&value->record_table_memfile, archive_field_boolean_t);
                         break;
                 default: {
-                        error(ERR_INTERNALERR, NULL)
+                        error(ERR_INTERNALERR, NULL);
                         return false;
                 }
         }
@@ -902,20 +898,18 @@ static void value_vector_init_object(archive_value_vector *value)
 bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter)
 {
         if (prop_iter->mode != PROP_ITER_MODE_OBJECT) {
-                error(ERR_ITER_OBJECT_NEEDED, NULL)
-                return false;
+                return error(ERR_ITER_OBJECT_NEEDED, NULL);
         }
         value->prop_iter = prop_iter;
         value->data_off = prop_iter->mode_object.prop_data_off;
         value->object_id = prop_iter->object.object_id;
 
         if (!memfile_open(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY)) {
-                error(ERR_MEMFILEOPEN_FAILED, NULL)
+                error(ERR_MEMFILEOPEN_FAILED, NULL);
                 return false;
         }
         if (!memfile_skip(&value->record_table_memfile, value->data_off)) {
-                error(ERR_MEMFILESKIP_FAILED, NULL)
-                return false;
+                return error(ERR_MEMFILESKIP_FAILED, NULL);
         }
 
         value->prop_type = prop_iter->mode_object.type;
@@ -982,8 +976,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                                                 archive_value_vector *value)
 {
         if (idx >= value->value_max_idx) {
-                error(ERR_OUTOFBOUNDS, NULL)
-                return false;
+                return error(ERR_OUTOFBOUNDS, NULL);
         }
 
         bool is_object;
@@ -996,8 +989,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                 *object = value->data.object.object;
                 return true;
         } else {
-                error(ERR_ITER_NOOBJ, NULL)
-                return false;
+                return error(ERR_ITER_NOOBJ, NULL);
         }
 }
 

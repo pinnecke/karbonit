@@ -193,8 +193,7 @@ bool carbon_dot_path_add_nkey(carbon_dot_path *dst, const char *key, size_t len)
                 JAK_ASSERT(!strings_is_enquoted(node->identifier.string));
                 return true;
         } else {
-                error(ERR_OUTOFBOUNDS, NULL)
-                return false;
+                return error(ERR_OUTOFBOUNDS, NULL);
         }
 }
 
@@ -206,8 +205,7 @@ bool carbon_dot_path_add_idx(carbon_dot_path *dst, u32 idx)
                 node->identifier.idx = idx;
                 return true;
         } else {
-                error(ERR_OUTOFBOUNDS, NULL)
-                return false;
+                return error(ERR_OUTOFBOUNDS, NULL);
         }
 }
 
@@ -227,8 +225,7 @@ bool carbon_dot_path_type_at(carbon_dot_node_type_e *type_out, u32 pos, const ca
         if (LIKELY(pos < ARRAY_LENGTH(path->nodes))) {
                 *type_out = path->nodes[pos].type;
         } else {
-                error(ERR_OUTOFBOUNDS, NULL)
-                return false;
+                return error(ERR_OUTOFBOUNDS, NULL);
         }
         return true;
 }

@@ -683,8 +683,7 @@ static bool print_array_objects(FILE *file, const char *type_name,
                                                 fprintf(file, "%s", column->num_elems > 1 ? "]" : "");
                                         }
                                                 break;
-                                        default: error(ERR_NOTYPE, NULL)
-                                                return false;
+                                        default: return error(ERR_NOTYPE, NULL);
                                 }
                                 fprintf(file, array_idx + 1 < columnTable->values.num_elems ? ", " : "");
                         }
@@ -1226,8 +1225,7 @@ object_put_primitive(column_doc_obj *columndoc, const doc_entries *entry,
                         }
                 } break;
                 default:
-                        error(ERR_NOTYPE, NULL)
-                        return false;
+                        return error(ERR_NOTYPE, NULL);
         }
         return true;
 }
@@ -1377,8 +1375,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                 }
                         break;
                 default: {
-                        error(ERR_NOTYPE, NULL)
-                        return false;
+                        return error(ERR_NOTYPE, NULL);
                 }
                         break;
         }
@@ -1413,8 +1410,8 @@ static bool object_put(column_doc_obj *model, const doc_entries *entry,
                                 return false;
                         }
                         break;
-                default: error(ERR_NOTYPE, NULL)
-                        return false;
+                default:
+                        return error(ERR_NOTYPE, NULL);
         }
 
         string_dict_free(dic, key_id);

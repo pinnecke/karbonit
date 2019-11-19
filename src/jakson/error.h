@@ -205,7 +205,12 @@ extern _Thread_local struct err_info {
         char *details;
 } g_err;
 
-#define error(code, msg) error_set(code, __FILE__, __LINE__, msg);
+#define error(code, msg)                        \
+({                                              \
+    error_set(code, __FILE__, __LINE__, msg);   \
+    false;                                      \
+})
+
 #define error_if_and_return(expr, code, msg) { if ((expr)) { error(code, msg); return false; }}
 #define panic(code) { error(code, "panic condition"); abort(); }
 

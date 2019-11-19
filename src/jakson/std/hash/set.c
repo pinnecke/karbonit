@@ -389,9 +389,8 @@ bool hashset_rehash(hashset *map)
                 if (bucket->in_use_flag) {
                         const void *old_key = _hash_set_get_bucket_key(bucket, cpy);
                         if (!hashset_insert_or_update(map, old_key, 1)) {
-                                error(ERR_REHASH_NOROLLBACK, NULL)
                                 hashset_unlock(map);
-                                return false;
+                                return error(ERR_REHASH_NOROLLBACK, NULL);
                         }
                 }
         }

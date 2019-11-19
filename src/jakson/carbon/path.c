@@ -27,29 +27,26 @@ static inline carbon_path_status_e traverse_array(carbon_path_evaluator *state,
                                                      const carbon_dot_path *path, u32 current_path_pos,
                                                      carbon_array *it, bool is_record);
 
-fn_result carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path,
+void carbon_path_evaluator_begin(carbon_path_evaluator *eval, carbon_dot_path *path,
                                  rec *doc)
 {
-        FN_FAIL_IF_NULL(eval, path, doc)
-
         ZERO_MEMORY(eval, sizeof(carbon_path_evaluator));
         eval->doc = doc;
-        FN_FAIL_FORWARD_IF_NOT_OK(carbon_read_begin(&eval->root_it, eval->doc));
+        carbon_read_begin(&eval->root_it, eval->doc);
         eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
-        FN_FAIL_FORWARD_IF_NOT_OK(carbon_read_end(&eval->root_it));
-        return FN_OK();
+        carbon_read_end(&eval->root_it);
 }
 
-fn_result carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const carbon_dot_path *path,
+bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const carbon_dot_path *path,
                                          rev *context)
 {
-        FN_FAIL_IF_NULL(eval, path, context)
-
         eval->doc = context->revised_doc;
-        FN_FAIL_FORWARD_IF_NOT_OK(carbon_revise_iterator_open(&eval->root_it, context));
+        if (!carbon_revise_iterator_open(&eval->root_it, context)) {
+            return error(ERR_OPPFAILED, "revise iterator cannot be opened");
+        }
         eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
-        FN_FAIL_FORWARD_IF_NOT_OK(carbon_read_end(&eval->root_it));
-        return FN_OK();
+        carbon_read_end(&eval->root_it);
+        return true;
 }
 
 bool carbon_path_evaluator_status(carbon_path_status_e *status, carbon_path_evaluator *state)
@@ -58,10 +55,9 @@ bool carbon_path_evaluator_status(carbon_path_status_e *status, carbon_path_eval
         return true;
 }
 
-fn_result ofType(bool) carbon_path_evaluator_has_result(carbon_path_evaluator *state)
+bool carbon_path_evaluator_has_result(carbon_path_evaluator *state)
 {
-        FN_FAIL_IF_NULL(state)
-        return FN_OK_BOOL(state->status == CARBON_PATH_RESOLVED);
+        return (state->status == CARBON_PATH_RESOLVED);
 }
 
 bool carbon_path_evaluator_end(carbon_path_evaluator *state)
@@ -358,7 +354,7 @@ static inline carbon_path_status_e traverse_object(carbon_path_evaluator *state,
                                                                                        next_path_pos,
                                                                                        sub_it);
                                                         }
-                                                        default: error(ERR_UNSUPPORTEDTYPE, NULL)
+                                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                                                 return CARBON_PATH_INTERNAL;
                                                 }
                                         }

@@ -73,9 +73,9 @@ carbon_prop *carbon_object_next(carbon_object *it);
 bool carbon_object_has_next(carbon_object *it);
 bool carbon_object_prev(carbon_object *it);
 
-fn_result ofType(bool) carbon_object_is_multimap(carbon_object *it);
-fn_result ofType(bool) carbon_object_is_sorted(carbon_object *it);
-fn_result carbon_object_update_type(carbon_object *it, carbon_map_derivable_e derivation);
+bool carbon_object_is_multimap(carbon_object *it);
+bool carbon_object_is_sorted(carbon_object *it);
+void carbon_object_update_type(carbon_object *it, carbon_map_derivable_e derivation);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage
@@ -95,7 +95,7 @@ bool internal_carbon_object_remove(carbon_object *it);
 bool internal_carbon_object_prop_type(carbon_field_type_e *type, carbon_object *it);
 
 bool internal_carbon_object_insert_begin(carbon_insert *inserter, carbon_object *it);
-fn_result internal_carbon_object_insert_end(carbon_insert *inserter);
+void internal_carbon_object_insert_end(carbon_insert *inserter);
 
 bool internal_carbon_object_update_name(carbon_object *it, const char *key);
 bool internal_carbon_object_update_u8(carbon_object *it, u8 value);

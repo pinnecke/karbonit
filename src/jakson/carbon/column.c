@@ -44,10 +44,9 @@ bool carbon_column_create(carbon_column *it, memfile *memfile, offset_t column_s
 
         error_if_and_return(memfile_remain_size(&it->memfile) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
 
-        bool is_instance_of_column = FN_STATUS(carbon_abstract_is_instanceof_column(&it->memfile));
-
-        error_if_and_return(!is_instance_of_column, ERR_ILLEGALOP, "column begin marker or sub type expected");
-
+        if (!carbon_abstract_is_instanceof_column(&it->memfile)) {
+            return error(ERR_ILLEGALOP, "column begin marker or sub type expected");
+        }
 
         carbon_abstract_type_class_e type_class;
         carbon_abstract_get_class(&type_class, &it->memfile);
@@ -189,8 +188,8 @@ bool carbon_column_value_is_null(carbon_column *it, u32 pos)
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         return IS_NULL_BOOLEAN(carbon_column_boolean_values(NULL, it)[pos]);
-                default: error(ERR_UNSUPPCONTAINER, NULL)
-                        return false;
+                default:
+                        return error(ERR_UNSUPPCONTAINER, NULL);
         }
 }
 
@@ -292,28 +291,24 @@ bool carbon_column_remove(carbon_column *it, u32 pos)
         return true;
 }
 
-fn_result ofType(bool) carbon_column_is_multiset(carbon_column *it)
+bool carbon_column_is_multiset(carbon_column *it)
 {
-        FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
         carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
         return carbon_abstract_is_multiset(type_class);
 }
 
-fn_result ofType(bool) carbon_column_is_sorted(carbon_column *it)
+bool carbon_column_is_sorted(carbon_column *it)
 {
-        FN_FAIL_IF_NULL(it)
         carbon_abstract_type_class_e type_class;
         carbon_abstract_list_derivable_to_class(&type_class, it->abstract_type);
         return carbon_abstract_is_sorted(type_class);
 }
 
-fn_result carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation)
+bool carbon_column_update_type(carbon_column *it, carbon_list_derivable_e derivation)
 {
-        FN_FAIL_IF_NULL(it)
-
         if (!carbon_field_type_is_column_or_subtype(it->type)) {
-                return FN_FAIL_FORWARD();
+                return false;
         }
 
         memfile_save_position(&it->memfile);
@@ -327,7 +322,7 @@ fn_result carbon_column_update_type(carbon_column *it, carbon_list_derivable_e d
 
         memfile_restore_position(&it->memfile);
 
-        return FN_OK();
+        return true;
 }
 
 bool carbon_column_update_set_null(carbon_column *it, u32 pos)
@@ -444,8 +439,7 @@ bool carbon_column_update_set_null(carbon_column *it, u32 pos)
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
                         memfile_restore_position(&it->memfile);
-                        error(ERR_UNSUPPCONTAINER, NULL)
-                        return false;
+                        return error(ERR_UNSUPPCONTAINER, NULL);
                 default:
                         memfile_restore_position(&it->memfile);
                         error(ERR_INTERNALERR, NULL);
@@ -670,8 +664,7 @@ bool carbon_column_update_set_true(carbon_column *it, u32 pos)
                 case CARBON_FIELD_BINARY:
                 case CARBON_FIELD_BINARY_CUSTOM:
                         memfile_restore_position(&it->memfile);
-                        error(ERR_UNSUPPCONTAINER, NULL)
-                        return false;
+                        return error(ERR_UNSUPPCONTAINER, NULL);
                 default:
                         memfile_restore_position(&it->memfile);
                         error(ERR_INTERNALERR, NULL);

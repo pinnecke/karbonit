@@ -353,33 +353,31 @@ bool carbon_field_skip(memfile *file)
         return true;
 }
 
-fn_result carbon_field_skip_object(memfile *file)
+bool carbon_field_skip_object(memfile *file)
 {
-        fn_result result = carbon_abstract_is_instanceof_object(file);
-        if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
+        if (carbon_abstract_is_instanceof_object(file)) {
                 carbon_object skip_it;
                 internal_carbon_object_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_object_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
                 carbon_object_drop(&skip_it);
-                return FN_OK();
+                return true;
         } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "marker does not encode an object container or sub type");
+                return error(ERR_TYPEMISMATCH, "marker does not encode an object container or sub type");
         }
 }
 
-fn_result carbon_field_skip_array(memfile *file)
+bool carbon_field_skip_array(memfile *file)
 {
-        fn_result result = carbon_abstract_is_instanceof_array(file);
-        if (LIKELY(FN_IS_OK(result) && FN_BOOL(result))) {
+        if (carbon_abstract_is_instanceof_array(file)) {
                 carbon_array skip_it;
                 internal_carbon_array_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_array_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.memfile));
                 carbon_array_drop(&skip_it);
-                return FN_OK();
+                return true;
         } else {
-                return FN_FAIL(ERR_TYPEMISMATCH, "marker does not encode an array container or sub type");
+                return error(ERR_TYPEMISMATCH, "marker does not encode an array container or sub type");
         }
 }
 
@@ -532,7 +530,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET;
-                                default: error(ERR_INTERNALERR, NULL)
+                                default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case CARBON_LIST_SORTED_MULTISET:
@@ -557,7 +555,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET;
-                                default: error(ERR_INTERNALERR, NULL)
+                                default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case CARBON_LIST_UNSORTED_SET:
@@ -582,7 +580,7 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET;
-                                default: error(ERR_INTERNALERR, NULL)
+                                default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case CARBON_LIST_SORTED_SET:
@@ -607,10 +605,10 @@ carbon_field_type_e carbon_field_type_for_column(carbon_list_derivable_e derivat
                                         return CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET;
                                 case CARBON_COLUMN_TYPE_BOOLEAN:
                                         return CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET;
-                                default: error(ERR_INTERNALERR, NULL)
+                                default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
-                default: error(ERR_INTERNALERR, NULL)
+                default: error(ERR_INTERNALERR, NULL);
                         return 0;
         }
 }
@@ -672,7 +670,7 @@ carbon_field_type_column_entry_to_regular_type(carbon_field_type_e type, bool is
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                 return is_true ? CARBON_FIELD_TRUE : CARBON_FIELD_FALSE;
-                        default: error(ERR_INTERNALERR, NULL)
+                        default: error(ERR_INTERNALERR, NULL);
                                 return 0;
                 }
         }

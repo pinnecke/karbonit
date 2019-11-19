@@ -246,7 +246,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
                         carbon_key_update_string_wnchar(memfile, key, len);
                 }
                         break;
-                default: error(ERR_TYPEMISMATCH, NULL)
+                default: error(ERR_TYPEMISMATCH, NULL);
         }
 
         /** write record version */
@@ -625,7 +625,7 @@ static void node_into_carbon(carbon_insert *ins, carbon_path_index *index)
                 case PATH_MARKER_COLUMN_NODE:
                         column_into_carbon(ins, index);
                         break;
-                default: error(ERR_CORRUPTED, NULL)
+                default: error(ERR_CORRUPTED, NULL);
         }
 }
 
@@ -644,7 +644,7 @@ static void node_to_str(string_buffer *str, carbon_path_index *index, unsigned i
                 case PATH_MARKER_COLUMN_NODE:
                         column_to_str(str, index, intent_level);
                         break;
-                default: error(ERR_CORRUPTED, NULL)
+                default: error(ERR_CORRUPTED, NULL);
         }
 }
 
@@ -1255,8 +1255,8 @@ bool carbon_path_index_indexes_doc(carbon_path_index *index, rec *doc)
                                         const char *doc_key = carbon_key_string_value(&doc_key_len, doc);
                                         return (index_key_len == doc_key_len) && (strcmp(index_key, doc_key) == 0);
                                 }
-                                default: error(ERR_TYPEMISMATCH, NULL)
-                                        return false;
+                                default:
+                                        return error(ERR_TYPEMISMATCH, NULL);
                         }
                 } else {
                         return false;
@@ -1280,8 +1280,7 @@ bool carbon_path_index_it_open(carbon_path_index_it *it, carbon_path_index *inde
                 it->container_type = CARBON_ARRAY;
                 return true;
         } else {
-                error(ERR_NOTINDEXED, NULL)
-                return false;
+                return error(ERR_NOTINDEXED, NULL);
         }
 }
 
@@ -1294,7 +1293,7 @@ bool carbon_path_index_hexdump(FILE *file, carbon_path_index *index)
         return memfile_hexdump_printf(file, &index->memfile);
 }
 
-fn_result carbon_path_index_to_carbon(rec *doc, carbon_path_index *index)
+void carbon_path_index_to_carbon(rec *doc, carbon_path_index *index)
 {
         rec_new context;
         carbon_insert_object_state object;
@@ -1320,7 +1319,6 @@ fn_result carbon_path_index_to_carbon(rec *doc, carbon_path_index *index)
 
         carbon_insert_object_end(&object);
         carbon_create_end(&context);
-        return FN_OK();
 }
 
 const char *carbon_path_index_to_str(string_buffer *str, carbon_path_index *index)

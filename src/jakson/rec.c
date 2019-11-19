@@ -70,49 +70,43 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                         derivation = CARBON_LIST_UNSORTED_MULTISET;
                 }
 
-                FN_IF_NOT_OK_RETURN(carbon_create_empty(&context->original, derivation, type), NULL);
-                FN_IF_NOT_OK_RETURN(carbon_revise_begin(&context->revision_context, doc, &context->original), NULL);
-                FN_IF_NOT_OK_RETURN(carbon_revise_iterator_open(context->content_it, &context->revision_context), NULL);
-                FN_IF_NOT_OK_RETURN(carbon_array_insert_begin(context->inserter, context->content_it), NULL);
+                carbon_create_empty(&context->original, derivation, type);
+                carbon_revise_begin(&context->revision_context, doc, &context->original);
+                if (!carbon_revise_iterator_open(context->content_it, &context->revision_context)) {
+                    error(ERR_OPPFAILED, "cannot open revision iterator");
+                    return NULL;
+                }
+                carbon_array_insert_begin(context->inserter, context->content_it);
                 return context->inserter;
         } else {
                 return NULL;
         }
 }
 
-fn_result carbon_create_end(rec_new *context)
+void carbon_create_end(rec_new *context)
 {
-        FN_FAIL_IF_NULL(context);
-
-        fn_result ins_end = carbon_array_insert_end(context->inserter);
-        fn_result it_close = carbon_revise_iterator_close(context->content_it);
+        carbon_array_insert_end(context->inserter);
+        carbon_revise_iterator_close(context->content_it);
         if (context->mode & CARBON_COMPACT) {
                 carbon_revise_pack(&context->revision_context);
         }
         if (context->mode & CARBON_SHRINK) {
                 carbon_revise_shrink(&context->revision_context);
         }
-        fn_result rev_end = carbon_revise_end(&context->revision_context);
+        carbon_revise_end(&context->revision_context);
         free(context->content_it);
         free(context->inserter);
         carbon_drop(&context->original);
-        if (UNLIKELY(!FN_IS_OK(ins_end) || !FN_IS_OK(it_close) || !FN_IS_OK(rev_end))) {
-                return FN_FAIL_FORWARD();
-        } else {
-                return FN_OK();
-        }
 }
 
-fn_result carbon_create_empty(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type)
+void carbon_create_empty(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type)
 {
-        return carbon_create_empty_ex(doc, derivation, type, 1024, 1);
+        carbon_create_empty_ex(doc, derivation, type, 1024, 1);
 }
 
-fn_result carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type,
+void carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, carbon_key_e type,
                                 u64 doc_cap, u64 array_cap)
 {
-        FN_FAIL_IF_NULL(doc);
-
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
 
         memblock_create(&doc->area, doc_cap);
@@ -121,8 +115,6 @@ fn_result carbon_create_empty_ex(rec *doc, carbon_list_derivable_e derivation, c
 
         carbon_header_init(doc, type);
         carbon_int_insert_array(&doc->file, derivation, array_cap);
-
-        return FN_OK();
 }
 
 bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
@@ -133,22 +125,7 @@ bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
         json_parser parser;
 
         if (!(json_parse(&data, &status, &parser, json))) {
-                string_buffer sb;
-                string_buffer_create(&sb);
-
-                if (status.token) {
-                        string_buffer_add(&sb, status.msg);
-                        string_buffer_add(&sb, "in line ");
-                        string_buffer_add_u32(&sb, status.token->line);
-                        string_buffer_add(&sb, ", column ");
-                        string_buffer_add_u32(&sb, status.token->column);
-                } else {
-                        string_buffer_add(&sb, status.msg);
-                }
-
-                error(ERR_JSONPARSEERR, string_cstr(&sb));
-                string_buffer_drop(&sb);
-
+                error(ERR_JSONPARSEERR, "parsing JSON file failed");
                 return false;
         } else {
                 carbon_int_from_json(doc, &data, type, key, CARBON_OPTIMIZE);
@@ -277,38 +254,30 @@ bool carbon_commit_hash(u64 *hash, rec *doc)
         return true;
 }
 
-fn_result ofType(bool) carbon_is_multiset(rec *doc)
+bool carbon_is_multiset(rec *doc)
 {
-        FN_FAIL_IF_NULL(doc)
-
         carbon_array it;
         carbon_read_begin(&it, doc);
-        fn_result ofType(bool) ret = carbon_array_is_multiset(&it);
+        bool ret = carbon_array_is_multiset(&it);
         carbon_read_end(&it);
-
-        return FN_IS_OK(ret) ? ret : FN_FAIL_FORWARD();
+        return ret;
 }
 
-fn_result ofType(bool) carbon_is_sorted(rec *doc)
+bool carbon_is_sorted(rec *doc)
 {
-        FN_FAIL_IF_NULL(doc)
-
         carbon_array it;
         carbon_read_begin(&it, doc);
-        fn_result ofType(bool) ret = carbon_array_is_sorted(&it);
+        bool ret = carbon_array_is_sorted(&it);
         carbon_read_end(&it);
-
-        return FN_IS_OK(ret) ? ret : FN_FAIL_FORWARD();
+        return ret;
 }
 
-fn_result carbon_update_list_type(rec *revised_doc, rec *doc, carbon_list_derivable_e derivation)
+void carbon_update_list_type(rec *revised_doc, rec *doc, carbon_list_derivable_e derivation)
 {
-        FN_FAIL_IF_NULL(revised_doc, doc);
         rev context;
         carbon_revise_begin(&context, revised_doc, doc);
         carbon_revise_set_list_type(&context, derivation);
         carbon_revise_end(&context);
-        return FN_OK();
 }
 
 bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
@@ -387,16 +356,15 @@ char *carbon_to_json_compact_dup(rec *doc)
         return result;
 }
 
-fn_result carbon_read_begin(carbon_array *it, rec *doc)
+void carbon_read_begin(carbon_array *it, rec *doc)
 {
-        fn_result ret = carbon_patch_begin(it, doc);
+        carbon_patch_begin(it, doc);
         internal_carbon_array_set_mode(it, READ_ONLY);
-        return ret;
 }
 
-fn_result carbon_read_end(carbon_array *it)
+void carbon_read_end(carbon_array *it)
 {
-        return carbon_patch_end(it);
+        carbon_patch_end(it);
 }
 
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc)

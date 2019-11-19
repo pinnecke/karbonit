@@ -309,8 +309,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
                         CARBON_PRINT_JSON_COLUMN_VALUES(str_buf, float, base, num_elems, sep, IS_NULL_FLOAT)
                         break;
                 default:
-                        error(ERR_INTERNALERR, NULL)
-                        return false;
+                        return error(ERR_INTERNALERR, NULL);
         }
 
         if (LIKELY(num_elems > 1)) {

@@ -42,9 +42,9 @@ extern "C" {
  * @return <code>false</code> in case of an already running revision. Otherwise returns value of
  *                            <code>carbon_revise_begin</code>
  */
-fn_result carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc);
-fn_result carbon_revise_begin(rev *context, rec *revised_doc, rec *original);
-fn_result ofType(const rec *) carbon_revise_end(rev *context);
+void carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc);
+void carbon_revise_begin(rev *context, rec *revised_doc, rec *original);
+const rec *carbon_revise_end(rev *context);
 
 bool carbon_revise_key_generate(unique_id_t *out, rev *context);
 
@@ -52,13 +52,13 @@ bool carbon_revise_key_set_unsigned(rev *context, u64 key_value);
 bool carbon_revise_key_set_signed(rev *context, i64 key_value);
 bool carbon_revise_key_set_string(rev *context, const char *key_value);
 
-fn_result carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation);
+void carbon_revise_set_list_type(rev *context, carbon_list_derivable_e derivation);
 
-fn_result carbon_revise_iterator_open(carbon_array *it, rev *context);
-fn_result carbon_revise_iterator_close(carbon_array *it);
+bool carbon_revise_iterator_open(carbon_array *it, rev *context);
+void carbon_revise_iterator_close(carbon_array *it);
 
-fn_result carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context);
-fn_result carbon_revise_find_end(carbon_find *find);
+bool carbon_revise_find_begin(carbon_find *out, const char *dot_path, rev *context);
+bool carbon_revise_find_end(carbon_find *find);
 
 bool carbon_revise_remove(const char *dot_path, rev *context);
 bool carbon_revise_remove_one(const char *dot_path, rec *rev_doc, rec *doc);

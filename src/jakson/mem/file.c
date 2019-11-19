@@ -48,8 +48,7 @@ bool memfile_seek(memfile *file, offset_t pos)
                         offset_t new_size = pos + 1;
                         memblock_resize(file->memblock, new_size);
                 } else {
-                        error(ERR_MEMSTATE, NULL)
-                        return false;
+                        return error(ERR_MEMSTATE, NULL);
                 }
         }
         file->pos = pos;
@@ -127,8 +126,7 @@ bool memfile_shrink(memfile *file)
                 JAK_ASSERT(size == file->pos);
                 return status;
         } else {
-                error(ERR_WRITEPROT, NULL)
-                return false;
+                return error(ERR_WRITEPROT, NULL);
         }
 }
 
@@ -322,7 +320,8 @@ offset_t memfile_save_position(memfile *file)
         if (LIKELY(file->saved_pos_ptr < (i8) (ARRAY_LENGTH(file->saved_pos)))) {
                 file->saved_pos[file->saved_pos_ptr++] = pos;
         } else {
-                error(ERR_STACK_OVERFLOW, NULL)
+                error(ERR_STACK_OVERFLOW, NULL);
+                return 0;
         }
         return pos;
 }
@@ -334,8 +333,7 @@ bool memfile_restore_position(memfile *file)
                 memfile_seek(file, pos);
                 return true;
         } else {
-                error(ERR_STACK_UNDERFLOW, NULL)
-                return false;
+                return error(ERR_STACK_UNDERFLOW, NULL);
         }
 }
 

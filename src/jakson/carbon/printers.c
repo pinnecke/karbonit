@@ -331,17 +331,17 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                 internal_obj_it_prop_type(&type, it);
                 switch (type) {
                         case FIELD_NULL:
-                                printer_prop_null(printer, buffer, prop_key.string, prop_key.length);
+                                printer_prop_null(printer, buffer, prop_key.str, prop_key.len);
                                 break;
                         case FIELD_TRUE:
                                 /** in an array, there is no TRUE constant that is set to NULL because it will be replaced with
                                  * a constant NULL. In columns, there might be a NULL-encoded value */
-                                printer_prop_true(printer, buffer, prop_key.string, prop_key.length);
+                                printer_prop_true(printer, buffer, prop_key.str, prop_key.len);
                                 break;
                         case FIELD_FALSE:
                                 /** in an array, there is no FALSE constant that is set to NULL because it will be replaced with
                                  * a constant NULL. In columns, there might be a NULL-encoded value */
-                                printer_prop_false(printer, buffer, prop_key.string, prop_key.length);
+                                printer_prop_false(printer, buffer, prop_key.str, prop_key.len);
                                 break;
                         case FIELD_NUMBER_U8:
                         case FIELD_NUMBER_U16:
@@ -349,7 +349,7 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                         case FIELD_NUMBER_U64: {
                                 u64 value = item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
                                 is_null_value = IS_NULL_UNSIGNED(value);
-                                printer_prop_unsigned(printer, buffer, prop_key.string, prop_key.length,
+                                printer_prop_unsigned(printer, buffer, prop_key.str, prop_key.len,
                                                              is_null_value ? NULL : &value);
                         }
                                 break;
@@ -359,26 +359,26 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                         case FIELD_NUMBER_I64: {
                                 i64 value = item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
                                 is_null_value = IS_NULL_SIGNED(value);
-                                printer_prop_signed(printer, buffer, prop_key.string, prop_key.length,
+                                printer_prop_signed(printer, buffer, prop_key.str, prop_key.len,
                                                            is_null_value ? NULL : &value);
                         }
                                 break;
                         case FIELD_NUMBER_FLOAT: {
                                 float value = item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
                                 is_null_value = IS_NULL_FLOAT(value);
-                                printer_prop_float(printer, buffer, prop_key.string, prop_key.length,
+                                printer_prop_float(printer, buffer, prop_key.str, prop_key.len,
                                                           is_null_value ? NULL : &value);
                         }
                                 break;
                         case FIELD_STRING: {
                                 string_field value = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
-                                printer_prop_string(printer, buffer, prop_key.string, prop_key.length, value.string, value.length);
+                                printer_prop_string(printer, buffer, prop_key.str, prop_key.len, value.str, value.len);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
                                 binary_field binary = item_get_binary(&(it->prop.value), NULL_BINARY);
-                                printer_prop_binary(printer, buffer, prop_key.string, prop_key.length, &binary);
+                                printer_prop_binary(printer, buffer, prop_key.str, prop_key.len, &binary);
                         }
                                 break;
                         case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -386,7 +386,7 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                 arr_it *array = item_get_array(&(it->prop.value));
-                                printer_array_prop_name(printer, buffer, prop_key.string, prop_key.length);
+                                printer_array_prop_name(printer, buffer, prop_key.str, prop_key.len);
                                 printer_print_array(array, printer, buffer, false);
                                 arr_it_drop(array);
                         }
@@ -432,7 +432,7 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                 col_it *column = item_get_column(&(it->prop.value));
-                                printer_column_prop_name(printer, buffer, prop_key.string, prop_key.length);
+                                printer_column_prop_name(printer, buffer, prop_key.str, prop_key.len);
                                 printer_print_column(column, printer, buffer);
                         }
                                 break;
@@ -441,7 +441,7 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 obj_it *object = item_get_object(&(it->prop.value));
-                                printer_object_prop_name(printer, buffer, prop_key.string, prop_key.length);
+                                printer_object_prop_name(printer, buffer, prop_key.str, prop_key.len);
                                 printer_print_object(object, printer, buffer);
                                 obj_it_drop(object);
                         }
@@ -524,7 +524,7 @@ bool printer_print_array(arr_it *it, printer *printer, str_buf *buffer,
                                 break;
                         case FIELD_STRING: {
                                 string_field string = item_get_string(&(it->item), CARBON_NULL_STRING);
-                                printer_string(printer, buffer, string.string, string.length);
+                                printer_string(printer, buffer, string.str, string.len);
                         }
                                 break;
                         case FIELD_BINARY:

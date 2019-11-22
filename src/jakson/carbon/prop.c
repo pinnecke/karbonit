@@ -16,7 +16,7 @@
  */
 
 #include <jakson/carbon/prop.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/obj-it.h>
 
@@ -24,8 +24,8 @@ bool internal_prop_create(prop *dst, obj_it *parent)
 {
         dst->parent = parent;
         dst->idx = parent->pos;
-        dst->key.string = parent->field.key.name;
-        dst->key.length = parent->field.key.name_len;
+        dst->key.str = parent->field.key.name;
+        dst->key.len = parent->field.key.name_len;
         internal_item_create_from_object(&dst->value, parent);
         return true;
 }

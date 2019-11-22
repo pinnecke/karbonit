@@ -36,17 +36,11 @@ static bool internal_commit_update(rec *doc);
 static bool carbon_header_rev_inc(rec *doc);
 
 // ---------------------------------------------------------------------------------------------------------------------
-
-void carbon_revise_try_begin(rev *context, rec *revised_doc, rec *doc)
-{
-        carbon_revise_begin(context, revised_doc, doc);
-}
-
-void carbon_revise_begin(rev *context, rec *revised_doc, rec *original)
+void revise_begin(rev *context, rec *revised, rec *original)
 {
         context->original = original;
-        context->revised_doc = revised_doc;
-        carbon_clone(context->revised_doc, context->original);
+        context->revised = revised;
+        carbon_clone(context->revised, context->original);
 }
 
 
@@ -83,14 +77,14 @@ static void key_string_set(rec *doc, const char *key)
         memfile_restore_position(&doc->file);
 }
 
-bool carbon_revise_key_generate(unique_id_t *out, rev *context)
+bool revise_key_generate(unique_id_t *out, rev *context)
 {
         key_e type;
-        key_type(&type, context->revised_doc);
+        key_type(&type, context->revised);
         if (type == CARBON_KEY_AUTOKEY) {
                 unique_id_t oid;
                 unique_id_create(&oid);
-                key_unsigned_set(context->revised_doc, oid);
+                key_unsigned_set(context->revised, oid);
                 OPTIONAL_SET(out, oid);
                 return true;
         } else {
@@ -98,93 +92,93 @@ bool carbon_revise_key_generate(unique_id_t *out, rev *context)
         }
 }
 
-bool carbon_revise_key_set_unsigned(rev *context, u64 key_value)
+bool revise_key_set_unsigned(rev *context, u64 key_value)
 {
         key_e type;
-        key_type(&type, context->revised_doc);
+        key_type(&type, context->revised);
         if (type == CARBON_KEY_UKEY) {
-                key_unsigned_set(context->revised_doc, key_value);
+                key_unsigned_set(context->revised, key_value);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
-bool carbon_revise_key_set_signed(rev *context, i64 key_value)
+bool revise_key_set_signed(rev *context, i64 key_value)
 {
         key_e type;
-        key_type(&type, context->revised_doc);
+        key_type(&type, context->revised);
         if (type == CARBON_KEY_IKEY) {
-                key_signed_set(context->revised_doc, key_value);
+                key_signed_set(context->revised, key_value);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
-bool carbon_revise_key_set_string(rev *context, const char *key_value)
+bool revise_key_set_string(rev *context, const char *key_value)
 {
         key_e type;
-        key_type(&type, context->revised_doc);
+        key_type(&type, context->revised);
         if (type == CARBON_KEY_SKEY) {
-                key_string_set(context->revised_doc, key_value);
+                key_string_set(context->revised, key_value);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
         }
 }
 
-void carbon_revise_set_list_type(rev *context, list_type_e derivation)
+void revise_set_list_type(rev *context, list_type_e derivation)
 {
         arr_it it;
-        carbon_revise_iterator_open(&it, context);
+        revise_iterator_open(&it, context);
 
         memfile_seek_from_here(&it.file, -sizeof(u8));
         derived_e derive_marker;
         abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
         abstract_write_derived_type(&it.file, derive_marker);
 
-        carbon_revise_iterator_close(&it);
+        revise_iterator_close(&it);
 }
 
-bool carbon_revise_iterator_open(arr_it *it, rev *context)
+bool revise_iterator_open(arr_it *it, rev *context)
 {
-        offset_t payload_start = internal_payload_after_header(context->revised_doc);
-        if (UNLIKELY(context->revised_doc->file.mode != READ_WRITE)) {
+        offset_t payload_start = internal_payload_after_header(context->revised);
+        if (UNLIKELY(context->revised->file.mode != READ_WRITE)) {
                 return error(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
-        return internal_arr_it_create(it, &context->revised_doc->file, payload_start);
+        return internal_arr_it_create(it, &context->revised->file, payload_start);
 }
 
-void carbon_revise_iterator_close(arr_it *it)
+void revise_iterator_close(arr_it *it)
 {
         arr_it_drop(it);
 }
 
-bool carbon_revise_find_begin(find *out, const char *dot, rev *context)
+bool revise_find_begin(find *out, const char *dot, rev *context)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        bool status = find_create(out, &path, context->revised_doc);
+        bool status = find_create(out, &path, context->revised);
         dot_drop(&path);
         return status;
 }
 
-bool carbon_revise_find_end(find *find)
+bool revise_find_end(find *find)
 {
         return find_drop(find);
 }
 
-bool carbon_revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
+bool revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
 {
         rev revise;
-        carbon_revise_begin(&revise, rev_doc, doc);
-        bool status = carbon_revise_remove(dot, &revise);
-        carbon_revise_end(&revise);
+        revise_begin(&revise, rev_doc, doc);
+        bool status = revise_remove(dot, &revise);
+        revise_end(&revise);
         return status;
 }
 
-bool carbon_revise_remove(const char *path, rev *context)
+bool revise_remove(const char *path, rev *context)
 {
         struct dot dot;
         dot_eval eval;
@@ -220,19 +214,19 @@ bool carbon_revise_remove(const char *path, rev *context)
         }
 }
 
-bool carbon_revise_pack(rev *context)
+bool revise_pack(rev *context)
 {
         arr_it it;
-        carbon_revise_iterator_open(&it, context);
+        revise_iterator_open(&it, context);
         internal_pack_array(&it);
-        carbon_revise_iterator_close(&it);
+        revise_iterator_close(&it);
         return true;
 }
 
-bool carbon_revise_shrink(rev *context)
+bool revise_shrink(rev *context)
 {
         arr_it it;
-        carbon_revise_iterator_open(&it, context);
+        revise_iterator_open(&it, context);
         internal_arr_it_fast_forward(&it);
         if (memfile_remain_size(&it.file) > 0) {
                 offset_t first_empty_slot = memfile_tell(&it.file);
@@ -243,19 +237,19 @@ bool carbon_revise_shrink(rev *context)
 
         offset_t size;
         memblock_size(&size, it.file.memblock);
-        carbon_revise_iterator_close(&it);
+        revise_iterator_close(&it);
         return true;
 }
 
-const rec *carbon_revise_end(rev *context)
+const rec *revise_end(rev *context)
 {
-        internal_commit_update(context->revised_doc);
-        return context->revised_doc;
+        internal_commit_update(context->revised);
+        return context->revised;
 }
 
-bool carbon_revise_abort(rev *context)
+bool revise_abort(rev *context)
 {
-        carbon_drop(context->revised_doc);
+        carbon_drop(context->revised);
         return true;
 }
 

@@ -16,7 +16,7 @@
  */
 
 #include <jakson/carbon/key.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 #include <jakson/stdx/unique_id.h>
 
 static void write_nokey(memfile *file)

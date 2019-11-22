@@ -49,7 +49,7 @@ static bool item_setup_value(item *item, field_e field_type, field *field)
         } else if (field_is_null(field_type)) {
                 item->value_type = ITEM_NULL;
         } else if (field_is_string(field_type)) {
-                item->value.string.string = internal_field_string_value(&item->value.string.length, field);
+                item->value.string.str = internal_field_string_value(&item->value.string.len, field);
                 item->value_type = ITEM_STRING;
         } else {
                 item->value_type = ITEM_UNDEF;

@@ -12,7 +12,7 @@
 #include <jakson/forwdecl.h>
 #include <jakson/carbon/container.h>
 #include <jakson/carbon/binary.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 
 #ifdef __cplusplus
 extern "C" {

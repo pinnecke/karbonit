@@ -64,7 +64,7 @@ extern "C" {
  * operate on a single file at a certain point in time. A per-file history is managed by a sequence of revisions
  * that result from revising an existing record. Each revision has a commit hash that identifies that particular version
  * of the record. Revising is an atomic modification operation on a record, which may span multiple manipulations
- * (inserts, updates, deletes) at once in one bulk. By the concept of revisions (see 'carbon_revise_begin()' and
+ * (inserts, updates, deletes) at once in one bulk. By the concept of revisions (see 'revise_begin()' and
  * 'carbon_revision_close()') readers are never blocked by a writer because a writer modifies a copy of the record
  * eventually swapping the old one with the revised record. However, for single-threaded environments, setting up a
  * new revision may be to much overhead. Therefore, a revision can be patched. Carbon file patching is, in a nut shell,
@@ -79,7 +79,7 @@ typedef struct rec {
 /* record revision context */
 typedef struct rev {
         rec *original;
-        rec *revised_doc;
+        rec *revised;
 } rev;
 
 typedef struct rec_new {
@@ -198,7 +198,7 @@ bool carbon_is_multiset(rec *doc);
 bool carbon_is_sorted(rec *doc);
 
 /** Changes the abstract type of the most-outer record array to the given abstract type */
-void carbon_update_list_type(rec *revised_doc, rec *doc, list_type_e derivation);
+void carbon_update_list_type(rec *revised, rec *doc, list_type_e derivation);
 
 bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc);
 const char *carbon_to_json_extended(str_buf *dst, rec *doc);
@@ -208,7 +208,7 @@ char *carbon_to_json_compact_dup(rec *doc);
 
 /* Opens a read-only iterator for navigating though the records contents.
  *
- * For readers, use 'carbon_read_begin', and 'carbon_revise_begin()' for writers.
+ * For readers, use 'carbon_read_begin', and 'revise_begin()' for writers.
  *
  * In case a single record must be updated while the upfront costs for the entire revision process is not sustainable,
  * a record might be patched using a patch iterator, see

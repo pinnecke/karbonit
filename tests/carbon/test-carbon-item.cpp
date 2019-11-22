@@ -27,8 +27,8 @@ TEST(TestCarbonItem, CreateId) {
                         EXPECT_TRUE(item_is_string(item));
                         {
                                 string_field value = item_get_string(item, CARBON_NULL_STRING);
-                                EXPECT_TRUE(value.length = strlen("Hello World"));
-                                EXPECT_TRUE(strncmp(value.string, "Hello World", value.length) == 0);
+                                EXPECT_TRUE(value.len = strlen("Hello World"));
+                                EXPECT_TRUE(strncmp(value.str, "Hello World", value.len) == 0);
                         }
                 break;
                 case 4:

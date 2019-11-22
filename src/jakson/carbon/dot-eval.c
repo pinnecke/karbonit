@@ -40,8 +40,8 @@ void dot_eval_begin(dot_eval *eval, dot *path,
 bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
                                          rev *context)
 {
-        eval->doc = context->revised_doc;
-        if (!carbon_revise_iterator_open(&eval->root_it, context)) {
+        eval->doc = context->revised;
+        if (!revise_iterator_open(&eval->root_it, context)) {
             return error(ERR_OPPFAILED, "revise iterator cannot be opened");
         }
         eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
@@ -219,7 +219,7 @@ static inline pstatus_e traverse_object(dot_eval *state,
                 string_field prop_key;
                 do {
                         prop_key = internal_obj_it_prop_name(it);
-                        if (prop_key.length == needle_len && strncmp(prop_key.string, needle, needle_len) == 0) {
+                        if (prop_key.len == needle_len && strncmp(prop_key.str, needle, needle_len) == 0) {
                                 if (next_path_pos == length) {
                                         state->result.container = OBJECT;
                                         internal_obj_it_clone(&state->result.containers.object, it);

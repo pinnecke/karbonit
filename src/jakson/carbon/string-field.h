@@ -1,0 +1,46 @@
+/**
+ * string-field - low-level string field for Carbon records
+ *
+ * Copyright 2019 Marcus Pinnecke
+ */
+
+#ifndef HAD_STRING_FIELD_H
+#define HAD_STRING_FIELD_H
+
+#include <jakson/stdinc.h>
+#include <jakson/error.h>
+#include <jakson/mem/file.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct string_field
+{
+        const char *str;
+        u64 len;
+} string_field;
+
+static string_field CARBON_NULL_STRING = {
+        .str = NULL,
+        .len = 0
+};
+
+bool carbon_string_write(memfile *file, const char *string);
+bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len);
+bool carbon_string_nomarker_write(memfile *file, const char *string);
+bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len);
+bool carbon_string_nomarker_remove(memfile *file);
+bool carbon_string_remove(memfile *file);
+bool carbon_string_update(memfile *file, const char *string);
+bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_len);
+bool carbon_string_skip(memfile *file);
+bool carbon_string_nomarker_skip(memfile *file);
+const char *carbon_string_read(u64 *len, memfile *file);
+const char *carbon_string_nomarker_read(u64 *len, memfile *file);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

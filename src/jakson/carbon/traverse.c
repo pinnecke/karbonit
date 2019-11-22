@@ -70,11 +70,11 @@ void carbon_traverse_carbon(rec *rev_out, struct carbon_traverse *traverse, rec 
                 assert(rev_out);
                 
                 rev context;
-                carbon_revise_begin(&context, rev_out, record);
-                carbon_revise_iterator_open(&it, &context);
+                revise_begin(&context, rev_out, record);
+                revise_iterator_open(&it, &context);
                 carbon_traverse_array(traverse, &it);
-                carbon_revise_iterator_close(&it);
-                carbon_revise_end(&context);
+                revise_iterator_close(&it);
+                revise_end(&context);
         } else {
                 carbon_read_begin(&it, record);
                 carbon_traverse_array(traverse, &it);

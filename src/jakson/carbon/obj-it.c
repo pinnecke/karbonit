@@ -19,7 +19,7 @@
 #include <jakson/carbon/obj-it.h>
 #include <jakson/carbon/col-it.h>
 #include <jakson/carbon/insert.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 #include <jakson/carbon/prop.h>
 
 bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start)
@@ -154,8 +154,8 @@ string_field internal_obj_it_prop_name(obj_it *it)
 {
         string_field ret = CARBON_NULL_STRING;
         if (LIKELY(it != NULL)) {
-                ret.length = it->field.key.name_len;
-                ret.string = it->field.key.name;
+                ret.len = it->field.key.name_len;
+                ret.str = it->field.key.name;
         }
         return ret;
 }

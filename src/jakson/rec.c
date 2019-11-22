@@ -34,7 +34,7 @@
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/revise.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
 #include <jakson/carbon/patch.h>
@@ -71,8 +71,8 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
                 }
 
                 carbon_create_empty(&context->original, derivation, type);
-                carbon_revise_begin(&context->revision_context, doc, &context->original);
-                if (!carbon_revise_iterator_open(context->content_it, &context->revision_context)) {
+                revise_begin(&context->revision_context, doc, &context->original);
+                if (!revise_iterator_open(context->content_it, &context->revision_context)) {
                     error(ERR_OPPFAILED, "cannot open revision iterator");
                     return NULL;
                 }
@@ -86,14 +86,14 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
 void carbon_create_end(rec_new *context)
 {
         arr_it_insert_end(context->in);
-        carbon_revise_iterator_close(context->content_it);
+        revise_iterator_close(context->content_it);
         if (context->mode & CARBON_COMPACT) {
-                carbon_revise_pack(&context->revision_context);
+                revise_pack(&context->revision_context);
         }
         if (context->mode & CARBON_SHRINK) {
-                carbon_revise_shrink(&context->revision_context);
+                revise_shrink(&context->revision_context);
         }
-        carbon_revise_end(&context->revision_context);
+        revise_end(&context->revision_context);
         free(context->content_it);
         free(context->in);
         carbon_drop(&context->original);
@@ -272,12 +272,12 @@ bool carbon_is_sorted(rec *doc)
         return ret;
 }
 
-void carbon_update_list_type(rec *revised_doc, rec *doc, list_type_e derivation)
+void carbon_update_list_type(rec *revised, rec *doc, list_type_e derivation)
 {
         rev context;
-        carbon_revise_begin(&context, revised_doc, doc);
-        carbon_revise_set_list_type(&context, derivation);
-        carbon_revise_end(&context);
+        revise_begin(&context, revised, doc);
+        revise_set_list_type(&context, derivation);
+        revise_end(&context);
 }
 
 bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc)

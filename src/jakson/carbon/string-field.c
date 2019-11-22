@@ -18,7 +18,7 @@
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 
 static void write_payload(memfile *file, const char *string, size_t str_len)
 {

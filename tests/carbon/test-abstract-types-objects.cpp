@@ -75,8 +75,8 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                carbon_revise_begin(&rev_context, &doc2, &doc);
-                carbon_revise_iterator_open(&it, &rev_context);
+                revise_begin(&rev_context, &doc2, &doc);
+                revise_iterator_open(&it, &rev_context);
 
                 arr_it_next(&it);
                 obj_it = item_get_object(&(it.item));
@@ -94,8 +94,8 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 obj_it = item_get_object(&(it.item));
                 obj_it_update_type(obj_it, MAP_UNSORTED_MULTIMAP);
 
-                carbon_revise_iterator_close(&it);
-                carbon_revise_end(&rev_context);
+                revise_iterator_close(&it);
+                revise_end(&rev_context);
         }
 
         {
@@ -147,15 +147,15 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
         carbon_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", CARBON_KEY_NOKEY, NULL);
 
         {
-                carbon_revise_begin(&revise, &doc2, &doc);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
+                revise_begin(&revise, &doc2, &doc);
+                revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_SORTED_MAP);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_find_end(&find);
+                revise_end(&revise);
 
                 find_begin(&find, "x.0.y", &doc2);
                 ASSERT_FALSE(find_object_is_multimap(&find));
@@ -164,15 +164,15 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
         }
 
         {
-                carbon_revise_begin(&revise, &doc3, &doc2);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
+                revise_begin(&revise, &doc3, &doc2);
+                revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_SORTED_MULTIMAP);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_find_end(&find);
+                revise_end(&revise);
 
                 find_begin(&find, "x.0.y", &doc3);
                 ASSERT_TRUE(find_object_is_multimap(&find));
@@ -181,15 +181,15 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
         }
 
         {
-                carbon_revise_begin(&revise, &doc4, &doc3);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
+                revise_begin(&revise, &doc4, &doc3);
+                revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_UNSORTED_MULTIMAP);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_find_end(&find);
+                revise_end(&revise);
 
                 find_begin(&find, "x.0.y", &doc4);
                 ASSERT_TRUE(find_object_is_multimap(&find));
@@ -198,15 +198,15 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
         }
 
         {
-                carbon_revise_begin(&revise, &doc5, &doc4);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
+                revise_begin(&revise, &doc5, &doc4);
+                revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_UNSORTED_MAP);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_find_end(&find);
+                revise_end(&revise);
 
                 find_begin(&find, "x.0.y", &doc5);
                 ASSERT_FALSE(find_object_is_multimap(&find));

@@ -586,9 +586,9 @@ bool carbon_update_set_column_end_compiled(col_state *state_in)
 #define revision_context_delegate_func(rev_doc, doc, func, ...)                                                        \
 ({                                                                                                                     \
         rev revise;                                                                                    \
-        carbon_revise_begin(&revise, rev_doc, doc);                                                                     \
+        revise_begin(&revise, rev_doc, doc);                                                                     \
         bool status = func(&revise, __VA_ARGS__);                                                                      \
-        carbon_revise_end(&revise);                                                                                     \
+        revise_end(&revise);                                                                                     \
         status;                                                                                                        \
 })
 
@@ -682,7 +682,7 @@ insert *carbon_update_one_set_array_begin(arr_state *state_out,
                                                             rec *doc, u64 array_capacity)
 {
         rev revise;
-        carbon_revise_begin(&revise, rev_doc, doc);
+        revise_begin(&revise, rev_doc, doc);
         insert *result = carbon_update_set_array_begin(&revise, dot, state_out, array_capacity);
         // ... TODO: add revision to context
         return result;
@@ -701,7 +701,7 @@ insert *carbon_update_one_set_column_begin(col_state *state_out,
                                                              u64 cap)
 {
         rev revise;
-        carbon_revise_begin(&revise, rev_doc, doc);
+        revise_begin(&revise, rev_doc, doc);
         insert *result = carbon_update_set_column_begin(&revise, dot, state_out, type,
                                                                           cap);
         // ... TODO: add revision to context
@@ -822,7 +822,7 @@ insert *carbon_update_one_set_array_begin_compiled(arr_state *state_out,
                                                                      u64 array_capacity)
 {
         rev revise;
-        carbon_revise_begin(&revise, rev_doc, doc);
+        revise_begin(&revise, rev_doc, doc);
         insert *result = carbon_update_set_array_begin_compiled(&revise, path, state_out,
                                                                                   array_capacity);
         // ... TODO: add revision to context
@@ -842,7 +842,7 @@ insert *carbon_update_one_set_column_begin_compiled(
         rec *doc, field_e type, u64 cap)
 {
         rev revise;
-        carbon_revise_begin(&revise, rev_doc, doc);
+        revise_begin(&revise, rev_doc, doc);
         insert *result = carbon_update_set_column_begin_compiled(&revise, path, state_out, type,
                                                                                    cap);
         // ... TODO: add revision to context

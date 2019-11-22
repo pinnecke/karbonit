@@ -23,7 +23,7 @@
 #include <jakson/carbon/pindex.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/internal.h>
-#include <jakson/carbon/string.h>
+#include <jakson/carbon/string-field.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/commit.h>
 
@@ -294,7 +294,7 @@ static void object_traverse(struct pindex_node *parent, obj_it *it)
                 internal_obj_it_tell(&key_off, &value_off, it);
                 string_field prop_key = internal_obj_it_prop_name(it);
                 struct pindex_node *elem_node = pindex_node_add_key_elem(parent, key_off,
-                                                                                 prop_key.string, prop_key.length, value_off);
+                                                                         prop_key.str, prop_key.len, value_off);
                 object_build_index(elem_node, it);
         }
 }

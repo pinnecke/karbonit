@@ -611,8 +611,8 @@ const char *find_result_string(u64 *str_len, find *find)
                 error(ERR_TYPEMISMATCH, "result value must be of string type");
                 return NULL;
         }
-        *str_len = find->value.string.length;
-        return find->value.string.string;
+        *str_len = find->value.string.len;
+        return find->value.string.str;
 }
 
 binary_field *find_result_binary(find *find)

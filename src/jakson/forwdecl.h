@@ -90,7 +90,7 @@ typedef struct field field;
 typedef struct arr_it arr_it;
 typedef struct item item;
 typedef struct string_field string_field;
-struct carbon_traverse_extra;
+struct traverse_extra;
 
 typedef struct col_it col_it;
 typedef struct dot_node dot_node;

@@ -1,22 +1,11 @@
 /**
+ * traverse - traversal framework for Carbon records and containers
+ *
  * Copyright 2019 Marcus Pinnecke
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef HAD_CARBON_TRAVERSE_H
-#define HAD_CARBON_TRAVERSE_H
+#ifndef HAD_TRAVERSE_H
+#define HAD_TRAVERSE_H
 
 #include <jakson/stdinc.h>
 #include <jakson/forwdecl.h>
@@ -26,55 +15,55 @@ extern "C" {
 #endif
 
 /* called before traversing is started; used to allocate 'extra' allocated memory */
-typedef void (*carbon_traverse_setup_t)(struct carbon_traverse_extra *extra);
+typedef void (*traverse_setup_t)(struct traverse_extra *extra);
 
 /* called when traversing has ended; used to free 'extra' allocated memory */
-typedef void (*carbon_traverse_clean_t)(struct carbon_traverse_extra *extra);
+typedef void (*traverse_clean_t)(struct traverse_extra *extra);
 
 /* called when traversing just had started; accesses the record itself */
-typedef void (*carbon_visit_record_t)(struct carbon_traverse_extra *extra, struct rec *record);
+typedef void (*visit_record_t)(struct traverse_extra *extra, struct rec *record);
 
 /* called when an array was found */
-typedef void (*carbon_visit_array_enter_t)(struct carbon_traverse_extra *extra, arr_it *it);
+typedef void (*visit_array_enter_t)(struct traverse_extra *extra, arr_it *it);
 
 /* called when an array item was found */
-typedef void (*carbon_visit_item_t)(struct carbon_traverse_extra *extra, item *it);
+typedef void (*visit_item_t)(struct traverse_extra *extra, item *it);
 
 /* called when an array was was passed */
-typedef void (*carbon_visit_array_exit_t)(struct carbon_traverse_extra *extra, arr_it *it);
+typedef void (*visit_array_exit_t)(struct traverse_extra *extra, arr_it *it);
 
 /* called when an column was found */
-typedef bool (*carbon_visit_column_t)(struct carbon_traverse_extra *extra, struct col_it *it);
+typedef bool (*visit_column_t)(struct traverse_extra *extra, struct col_it *it);
 
 /* called when an object was found */
-typedef void (*carbon_visit_object_enter_t)(struct carbon_traverse_extra *extra, struct obj_it *it);
+typedef void (*visit_object_enter_t)(struct traverse_extra *extra, struct obj_it *it);
 
 /* called when an object property item was found */
-typedef void (*carbon_visit_prop_t)(struct carbon_traverse_extra *extra, item *it);
+typedef void (*visit_prop_t)(struct traverse_extra *extra, item *it);
 
 /* called when an object was passed */
-typedef void (*carbon_visit_object_exit_t)(struct carbon_traverse_extra *extra, struct obj_it *it);
+typedef void (*visit_object_exit_t)(struct traverse_extra *extra, struct obj_it *it);
 
 
 /* built-in or user-defined extra data for operation */
-enum  carbon_traverse_tag {
-        CARBON_TRAVERSE_UNKNOWN,
-        CARBON_TRAVERSE_PRINT_JSON
+enum  traverse_tag {
+        TRAVERSE_UNKNOWN,
+        TRAVERSE_PRINT_JSON
 };
 
-enum carbon_print_json_collection_convert {
-        CARBON_PRINT_JSON_CONVERT_TO_NULL,
-        CARBON_PRINT_JSON_CONVERT_REMAIN,
-        CARBON_PRINT_JSON_CONVERT_TO_ELEMENT
+enum json_convert {
+        JSON_TO_NULL,
+        JSON_REMAIN,
+        JSON_ELEMENT
 };
 
-struct carbon_traverse_extra {
+struct traverse_extra {
         struct carbon_traverse *parent;
         union {
             struct {
                 struct str_buf *str;
                 struct carbon_json_from_opts *config;
-                enum carbon_print_json_collection_convert convert;
+                enum json_convert convert;
             } print_json;
             struct {
                 void *data;
@@ -84,43 +73,43 @@ struct carbon_traverse_extra {
 
 struct carbon_traverse
 {
-        enum  carbon_traverse_tag tag;
+        enum  traverse_tag tag;
 
         bool read_write;
 
-        carbon_traverse_setup_t setup;
-        carbon_traverse_clean_t cleanup;
+        traverse_setup_t setup;
+        traverse_clean_t cleanup;
 
-        carbon_visit_record_t visit_record;
+        visit_record_t visit_record;
 
-        carbon_visit_array_enter_t visit_array_begin;
-        carbon_visit_item_t visit_item;
-        carbon_visit_array_exit_t visit_array_end;
+        visit_array_enter_t visit_array_begin;
+        visit_item_t visit_item;
+        visit_array_exit_t visit_array_end;
 
-        carbon_visit_column_t visit_column;
+        visit_column_t visit_column;
 
-        carbon_visit_object_enter_t visit_object_begin;
-        carbon_visit_object_exit_t visit_object_end;
+        visit_object_enter_t visit_object_begin;
+        visit_object_exit_t visit_object_end;
 
-        struct carbon_traverse_extra extra;
+        struct traverse_extra extra;
 };
 
-void carbon_traverse_create(struct carbon_traverse *traverse, carbon_traverse_setup_t begin, carbon_traverse_clean_t end,
-                            carbon_visit_record_t visit_record, carbon_visit_array_enter_t visit_array_begin,
-                            carbon_visit_array_exit_t visit_array_end, carbon_visit_column_t visit_column,
-                            carbon_visit_object_enter_t visit_object_begin, carbon_visit_object_exit_t visit_object_end,
-                            enum carbon_traverse_tag tag, bool read_write);
+void traverse_create(struct carbon_traverse *traverse, traverse_setup_t begin, traverse_clean_t end,
+                            visit_record_t visit_record, visit_array_enter_t visit_array_begin,
+                            visit_array_exit_t visit_array_end, visit_column_t visit_column,
+                            visit_object_enter_t visit_object_begin, visit_object_exit_t visit_object_end,
+                            enum traverse_tag tag, bool read_write);
 
-void carbon_traverse_drop(struct carbon_traverse *traverse);
+void traverse_drop(struct carbon_traverse *traverse);
 
-void carbon_traverse_carbon(struct rec *rev_out, struct carbon_traverse *traverse, struct rec *record);
-void carbon_traverse_array(struct carbon_traverse *traverse, arr_it *it);
-void carbon_traverse_column(struct carbon_traverse *traverse, struct col_it *it);
-void carbon_traverse_object(struct carbon_traverse *traverse, struct obj_it *it);
+void traverse_carbon(struct rec *rev_out, struct carbon_traverse *traverse, struct rec *record);
+void traverse_array(struct carbon_traverse *traverse, arr_it *it);
+void traverse_column(struct carbon_traverse *traverse, struct col_it *it);
+void traverse_object(struct carbon_traverse *traverse, struct obj_it *it);
 
-void carbon_traverse_continue_array(struct carbon_traverse_extra *context, arr_it *it);
-void carbon_traverse_continue_column(struct carbon_traverse_extra *context, struct col_it *it);
-void carbon_traverse_continue_object(struct carbon_traverse_extra *context, struct obj_it *it);
+void traverse_continue_array(struct traverse_extra *context, arr_it *it);
+void traverse_continue_column(struct traverse_extra *context, struct col_it *it);
+void traverse_continue_object(struct traverse_extra *context, struct obj_it *it);
 
 #ifdef __cplusplus
 }

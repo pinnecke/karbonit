@@ -594,8 +594,8 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
         arr_it_insert_begin(&in, &it);
         //carbon_hexdump_print(stdout, &rev_doc);
 
-        insert *nested_inserter = insert_array_begin(&array_state, &in, 10);
-        ASSERT_TRUE(nested_inserter != NULL);
+        insert *nested = insert_array_begin(&array_state, &in, 10);
+        ASSERT_TRUE(nested != NULL);
         insert_array_end(&array_state);
 
         //carbon_hexdump_print(stdout, &rev_doc);
@@ -626,11 +626,11 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
         insert_null(&in);
         insert_null(&in);
 
-        insert *nested_inserter = insert_array_begin(&array_state, &in, 10);
-        ASSERT_TRUE(nested_inserter != NULL);
-        insert_true(nested_inserter);
-        insert_true(nested_inserter);
-        insert_true(nested_inserter);
+        insert *nested = insert_array_begin(&array_state, &in, 10);
+        ASSERT_TRUE(nested != NULL);
+        insert_true(nested);
+        insert_true(nested);
+        insert_true(nested);
         insert_array_end(&array_state);
 
         insert_false(&in);

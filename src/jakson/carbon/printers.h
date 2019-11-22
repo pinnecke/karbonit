@@ -48,7 +48,7 @@ typedef struct carbon_printer
         void (*unit_array_begin)(carbon_printer *self, string_buffer *builder);
         void (*unit_array_end)(carbon_printer *self, string_buffer *builder);
         void (*array_begin)(carbon_printer *self, string_buffer *builder);
-        void (*array_end)(carbon_printer *self, string_buffer *builder);
+        void (*end)(carbon_printer *self, string_buffer *builder);
         void (*const_null)(carbon_printer *self, string_buffer *builder);
         void (*const_true)(carbon_printer *self, bool is_null, string_buffer *builder);
         void (*const_false)(carbon_printer *self, bool is_null, string_buffer *builder);

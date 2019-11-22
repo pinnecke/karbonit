@@ -322,7 +322,7 @@ bool json_compact_printer_create(carbon_printer *printer)
         printer->unit_array_end = _json_printer_compact_nop;
 
         printer->array_begin = _json_printer_compact_array_begin;
-        printer->array_end = _json_printer_compact_array_end;
+        printer->end = _json_printer_compact_array_end;
 
         printer->const_null = _json_printer_compact_const_null;
         printer->const_true = _json_printer_compact_const_true;

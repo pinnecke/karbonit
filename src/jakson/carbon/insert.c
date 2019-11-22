@@ -459,8 +459,8 @@ insert *__insert_map_begin(obj_state *out,
         *out = (obj_state) {
                 .parent = in,
                 .it = MALLOC(sizeof(obj_it)),
-                .object_begin = memfile_tell(&in->memfile),
-                .object_end = 0
+                .begin = memfile_tell(&in->memfile),
+                .end = 0
         };
 
 
@@ -489,7 +489,7 @@ bool insert_object_end(obj_state *state)
         JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == MOBJECT_END);
         memfile_read(&scan.memfile, sizeof(char));
 
-        state->object_end = memfile_tell(&scan.memfile);
+        state->end = memfile_tell(&scan.memfile);
 
         memfile_skip(&scan.memfile, 1);
 
@@ -526,17 +526,17 @@ insert *__insert_array_list_begin(arr_state *state_out,
         *state_out = (arr_state) {
                 .parent = inserter_in,
                 .array = MALLOC(sizeof(arr_it)),
-                .array_begin = memfile_tell(&inserter_in->memfile),
-                .array_end = 0
+                .begin = memfile_tell(&inserter_in->memfile),
+                .end = 0
         };
 
         internal_insert_array(&inserter_in->memfile, derivation, array_capacity);
         u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
 
         internal_arr_it_create(state_out->array, &inserter_in->memfile, payload_start);
-        arr_it_insert_begin(&state_out->nested_inserter, state_out->array);
+        arr_it_insert_begin(&state_out->nested, state_out->array);
 
-        return &state_out->nested_inserter;
+        return &state_out->nested;
 }
 
 insert *insert_array_begin(arr_state *state_out,
@@ -553,7 +553,7 @@ bool insert_array_end(arr_state *state_in)
 
         internal_arr_it_fast_forward(&scan);
 
-        state_in->array_end = memfile_tell(&scan.file);
+        state_in->end = memfile_tell(&scan.file);
         memfile_skip(&scan.file, 1);
 
         memfile_seek(&state_in->parent->memfile, memfile_tell(&scan.file) - 1);
@@ -591,8 +591,8 @@ insert *__insert_column_list_begin(col_state *state_out,
                 .parent = inserter_in,
                 .nested_column = MALLOC(sizeof(col_it)),
                 .type = field_type,
-                .column_begin = memfile_tell(&inserter_in->memfile),
-                .column_end = 0
+                .begin = memfile_tell(&inserter_in->memfile),
+                .end = 0
         };
 
         u64 container_start_off = memfile_tell(&inserter_in->memfile);
@@ -600,9 +600,9 @@ insert *__insert_column_list_begin(col_state *state_out,
 
         col_it_create(state_out->nested_column, &inserter_in->memfile,
                                     container_start_off);
-        col_it_insert(&state_out->nested_inserter, state_out->nested_column);
+        col_it_insert(&state_out->nested, state_out->nested_column);
 
-        return &state_out->nested_inserter;
+        return &state_out->nested;
 }
 
 insert *insert_column_begin(col_state *state_out,
@@ -620,7 +620,7 @@ bool insert_column_end(col_state *state_in)
                                 state_in->nested_column->begin);
         col_it_fast_forward(&scan);
 
-        state_in->column_end = memfile_tell(&scan.file);
+        state_in->end = memfile_tell(&scan.file);
         memfile_seek(&state_in->parent->memfile, memfile_tell(&scan.file));
 
         free(state_in->nested_column);
@@ -875,7 +875,7 @@ insert *insert_prop_object_begin(obj_state *out,
 u64 insert_prop_object_end(obj_state *state)
 {
         insert_object_end(state);
-        return state->object_end - state->object_begin;
+        return state->end - state->begin;
 }
 
 insert *insert_prop_map_begin(obj_state *out, insert *in, map_type_e derivation, const char *key, u64 object_capacity)
@@ -901,7 +901,7 @@ insert *insert_prop_array_begin(arr_state *state,
 u64 insert_prop_array_end(arr_state *state)
 {
         insert_array_end(state);
-        return state->array_end - state->array_begin;
+        return state->end - state->begin;
 }
 
 insert *insert_prop_column_begin(col_state *state_out,
@@ -916,7 +916,7 @@ insert *insert_prop_column_begin(col_state *state_out,
 u64 insert_prop_column_end(col_state *state_in)
 {
         insert_column_end(state_in);
-        return state_in->column_end - state_in->column_begin;
+        return state_in->end - state_in->begin;
 }
 
 static bool

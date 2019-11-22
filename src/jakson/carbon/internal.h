@@ -40,23 +40,23 @@ typedef struct insert {
 typedef struct arr_state {
         insert *parent;
         arr_it *array;
-        insert nested_inserter;
-        offset_t array_begin, array_end;
+        insert nested;
+        offset_t begin, end;
 } arr_state;
 
 typedef struct obj_state {
         insert *parent;
         obj_it *it;
         insert in;
-        offset_t object_begin, object_end;
+        offset_t begin, end;
 } obj_state;
 
 typedef struct col_state {
         insert *parent;
         field_e type;
         col_it *nested_column;
-        insert nested_inserter;
-        offset_t column_begin, column_end;
+        insert nested;
+        offset_t begin, end;
 } col_state;
 
 bool internal_insert_object(memfile *memfile, map_type_e derivation, size_t nbytes);

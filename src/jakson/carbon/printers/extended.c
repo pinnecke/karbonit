@@ -366,7 +366,7 @@ bool json_extended_printer_create(carbon_printer *printer)
         printer->unit_array_end = _json_printer_extended_array_end;
 
         printer->array_begin = _json_printer_extended_array_begin;
-        printer->array_end = _json_printer_extended_array_end;
+        printer->end = _json_printer_extended_array_end;
 
         printer->const_null = _json_printer_extended_const_null;
         printer->const_true = _json_printer_extended_const_true;

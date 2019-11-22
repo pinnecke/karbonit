@@ -101,7 +101,7 @@ bool carbon_printer_array_begin(carbon_printer *printer, string_buffer *str)
 
 bool carbon_printer_array_end(carbon_printer *printer, string_buffer *str)
 {
-        printer->array_end(printer, str);
+        printer->end(printer, str);
         return true;
 }
 

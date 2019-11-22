@@ -79,9 +79,9 @@ bool col_it_clone(col_it *dst, col_it *src)
         return true;
 }
 
-bool col_it_insert(carbon_insert *inserter, col_it *it)
+bool col_it_insert(insert *in, col_it *it)
 {
-        return internal_insert_create_for_column(inserter, it);
+        return internal_insert_create_for_column(in, it);
 }
 
 bool col_it_fast_forward(col_it *it)
@@ -476,7 +476,7 @@ static bool rewrite_column_to_array(col_it *it)
         abstract_type_class_e type_class;
         list_type_e list_type;
         arr_it array;
-        carbon_insert array_ins;
+        insert array_ins;
 
         memfile_save_position(&it->file);
         assert(field_is_column_or_subtype(memfile_peek_byte(&it->file)));

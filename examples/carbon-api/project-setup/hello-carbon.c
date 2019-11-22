@@ -7,7 +7,7 @@ int main (void)
 {
     rec_new context;
     rec record;
-    carbon_insert *ins;
+    insert *ins;
     char *as_json;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);

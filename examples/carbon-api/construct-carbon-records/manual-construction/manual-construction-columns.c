@@ -7,7 +7,7 @@ int main (void)
 {
     rec_new context;
     rec record;
-    carbon_insert *ins, *nested_ins;
+    insert *ins, *nested_ins;
     insert_column_state state;
     char *as_json;
 

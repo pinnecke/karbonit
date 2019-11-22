@@ -41,9 +41,9 @@ static bool array_next_no_load(bool *is_empty_slot, bool *is_array_end, arr_it *
 
 static bool object_it_next_no_load(bool *is_empty_slot, bool *is_array_end, obj_it *it);
 
-static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *elem, bool is_root);
+static void int_carbon_from_json_elem(insert *ins, const json_element *elem, bool is_root);
 
-static void int_insert_prop_object(carbon_insert *oins, json_object *obj);
+static void int_insert_prop_object(insert *oins, json_object *obj);
 
 static void
 insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 capacity)
@@ -1067,10 +1067,10 @@ bool internal_field_remove(memfile *memfile, field_e type)
         return true;
 }
 
-static void int_insert_array_array(carbon_insert *array_ins, json_array *array)
+static void int_insert_array_array(insert *array_ins, json_array *array)
 {
         insert_array_state state;
-        carbon_insert *sub_ins = insert_array_begin(&state, array_ins,
+        insert *sub_ins = insert_array_begin(&state, array_ins,
                                                                       array->elements.elements.num_elems * 256);
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
@@ -1079,12 +1079,12 @@ static void int_insert_array_array(carbon_insert *array_ins, json_array *array)
         insert_array_end(&state);
 }
 
-static void int_insert_array_string(carbon_insert *array_ins, json_string *string)
+static void int_insert_array_string(insert *array_ins, json_string *string)
 {
         insert_string(array_ins, string->value);
 }
 
-static void int_insert_array_number(carbon_insert *array_ins, json_number *number)
+static void int_insert_array_number(insert *array_ins, json_number *number)
 {
         switch (number->value_type) {
                 case JSON_NUMBER_FLOAT:
@@ -1100,29 +1100,29 @@ static void int_insert_array_number(carbon_insert *array_ins, json_number *numbe
         }
 }
 
-static void int_insert_array_true(carbon_insert *array_ins)
+static void int_insert_array_true(insert *array_ins)
 {
         insert_true(array_ins);
 }
 
-static void int_insert_array_false(carbon_insert *array_ins)
+static void int_insert_array_false(insert *array_ins)
 {
         insert_false(array_ins);
 }
 
-static void int_insert_array_null(carbon_insert *array_ins)
+static void int_insert_array_null(insert *array_ins)
 {
         insert_null(array_ins);
 }
 
-static void int_insert_array_elements(carbon_insert *array_ins, json_array *array)
+static void int_insert_array_elements(insert *array_ins, json_array *array)
 {
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
                 json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
                 switch (elem->value.value_type) {
                         case JSON_VALUE_OBJECT: {
                                 insert_object_state state;
-                                carbon_insert *sub_obj = insert_object_begin(&state, array_ins,
+                                insert *sub_obj = insert_object_begin(&state, array_ins,
                                                                                                elem->value.value.object->value->members.num_elems *
                                                                                                256);
                                 int_insert_prop_object(sub_obj, elem->value.value.object);
@@ -1171,7 +1171,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
         insert_column_state state;                                                                       \
         u64 approx_cap_nbytes = elem->value.value.array->elements.elements.num_elems *                                 \
                                 internal_get_type_value_size(field_type);                                            \
-        carbon_insert *cins = insert_column_begin(&state, ins,                                           \
+        insert *cins = insert_column_begin(&state, ins,                                           \
                                                                 column_type, approx_cap_nbytes);                       \
         for (u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
                 json_element *array_elem = VECTOR_GET(&elem->value.value.array->elements.elements,                 \
@@ -1190,7 +1190,7 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
         insert_column_state state;                                                                       \
         u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems *                                 \
                                 internal_get_type_value_size(field_type);                                            \
-        carbon_insert *cins = insert_prop_column_begin(&state, ins, key,                                          \
+        insert *cins = insert_prop_column_begin(&state, ins, key,                                          \
                                                                 column_type, approx_cap_nbytes);                       \
         for (u32 k = 0; k < prop->value.value.value.array->elements.elements.num_elems; k++) {                               \
                 json_element *array_elem = VECTOR_GET(&prop->value.value.value.array->elements.elements,                 \
@@ -1204,14 +1204,14 @@ static void int_insert_array_elements(carbon_insert *array_ins, json_array *arra
         insert_prop_column_end(&state);                                                                              \
 })
 
-static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
+static void int_insert_prop_object(insert *oins, json_object *obj)
 {
         for (u32 i = 0; i < obj->value->members.num_elems; i++) {
                 json_prop *prop = VECTOR_GET(&obj->value->members, i, json_prop);
                 switch (prop->value.value.value_type) {
                         case JSON_VALUE_OBJECT: {
                                 insert_object_state state;
-                                carbon_insert *sub_obj = insert_prop_object_begin(&state, oins,
+                                insert *sub_obj = insert_prop_object_begin(&state, oins,
                                                                                                     prop->key.value,
                                                                                                     prop->value.value.value.object->value->members.num_elems *
                                                                                                     256);
@@ -1234,7 +1234,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 u64 approx_cap_nbytes =
                                                         prop->value.value.value.array->elements.elements.num_elems *
                                                         256;
-                                                carbon_insert *array_ins = insert_prop_array_begin(
+                                                insert *array_ins = insert_prop_array_begin(
                                                         &state, oins,
                                                         prop->key.value, approx_cap_nbytes);
                                                 int_insert_array_elements(array_ins, prop->value.value.value.array);
@@ -1298,7 +1298,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                         case JSON_LIST_FIXED_NULL: {
                                                 insert_array_state state;
                                                 u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems;
-                                                carbon_insert *array_ins = insert_prop_array_begin(
+                                                insert *array_ins = insert_prop_array_begin(
                                                         &state, oins, prop->key.value,
                                                         approx_cap_nbytes);
                                                 for (u32 k = 0; k <
@@ -1311,7 +1311,7 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                         case JSON_LIST_FIXED_BOOLEAN: {
                                                 insert_column_state state;
                                                 u64 cap_nbytes = prop->value.value.value.array->elements.elements.num_elems;
-                                                carbon_insert *array_ins = insert_prop_column_begin(
+                                                insert *array_ins = insert_prop_column_begin(
                                                         &state, oins,
                                                         prop->key.value,
                                                         COLUMN_BOOLEAN, cap_nbytes);
@@ -1374,12 +1374,12 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
         }
 }
 
-static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *elem, bool is_root)
+static void int_carbon_from_json_elem(insert *ins, const json_element *elem, bool is_root)
 {
         switch (elem->value.value_type) {
                 case JSON_VALUE_OBJECT: {
                         insert_object_state state;
-                        carbon_insert *oins = insert_object_begin(&state, ins,
+                        insert *oins = insert_object_begin(&state, ins,
                                                                                     elem->value.value.object->value->members.num_elems *
                                                                                     256);
                         int_insert_prop_object(oins, elem->value.value.object);
@@ -1407,7 +1407,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                                 int_insert_array_elements(ins, elem->value.value.array);
                                         } else {
                                                 insert_array_state state;
-                                                carbon_insert *array_ins = insert_array_begin(&state,
+                                                insert *array_ins = insert_array_begin(&state,
                                                                                                                 ins,
                                                                                                                 approx_cap_nbytes);
                                                 int_insert_array_elements(array_ins, elem->value.value.array);
@@ -1505,7 +1505,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                                 }
                                         } else {
                                                 insert_array_state state;
-                                                carbon_insert *array_ins = insert_array_begin(&state,
+                                                insert *array_ins = insert_array_begin(&state,
                                                                                                                 ins,
                                                                                                                 approx_cap_nbytes);
                                                 for (u32 i = 0;
@@ -1536,7 +1536,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         } else {
                                                 insert_column_state state;
                                                 u64 cap_nbytes = elem->value.value.array->elements.elements.num_elems;
-                                                carbon_insert *array_ins = insert_column_begin(&state,
+                                                insert *array_ins = insert_column_begin(&state,
                                                                                                                  ins,
                                                                                                                  COLUMN_BOOLEAN,
                                                                                                                  cap_nbytes);
@@ -1603,7 +1603,7 @@ void internal_from_json(rec *doc, const json *data,
         UNUSED(primary_key)
 
         rec_new context;
-        carbon_insert *ins = carbon_create_begin(&context, doc, key_type, mode);
+        insert *ins = carbon_create_begin(&context, doc, key_type, mode);
         int_carbon_from_json_elem(ins, data->element, true);
 
         carbon_create_end(&context);

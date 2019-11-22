@@ -83,7 +83,7 @@ typedef struct gather_scatter_args gather_scatter_args;
 typedef struct bitmap bitmap;
 
 typedef struct rec rec;
-typedef struct carbon_insert carbon_insert;
+typedef struct insert insert;
 typedef struct rec_new rec_new;
 typedef struct field field;
 

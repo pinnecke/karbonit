@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-typedef struct carbon_insert {
+typedef struct insert {
         container_e context_type;
         union {
                 arr_it *array;
@@ -47,27 +47,27 @@ typedef struct carbon_insert {
 
         memfile memfile;
         offset_t position;
-} carbon_insert;
+} insert;
 
 typedef struct insert_array_state {
-        carbon_insert *parent_inserter;
+        insert *parent_inserter;
         arr_it *array;
-        carbon_insert nested_inserter;
+        insert nested_inserter;
         offset_t array_begin, array_end;
 } insert_array_state;
 
 typedef struct insert_object_state {
-        carbon_insert *parent_inserter;
+        insert *parent_inserter;
         obj_it *it;
-        carbon_insert inserter;
+        insert in;
         offset_t object_begin, object_end;
 } insert_object_state;
 
 typedef struct insert_column_state {
-        carbon_insert *parent_inserter;
+        insert *parent_inserter;
         field_e type;
         col_it *nested_column;
-        carbon_insert nested_inserter;
+        insert nested_inserter;
         offset_t column_begin, column_end;
 } insert_column_state;
 

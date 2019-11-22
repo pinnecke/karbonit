@@ -32,12 +32,12 @@
                         status = in_place_update_fn(it, value);                                                        \
                 break;                                                                                                 \
                 default: {                                                                                             \
-                        carbon_insert inserter;                                                                 \
+                        insert in;                                                                 \
                         internal_arr_it_remove(it);                                                                    \
                         arr_it_next(it);                                                                      \
-                        arr_it_insert_begin(&inserter, it);                                                   \
-                        status = insert_fn(&inserter, value);                                                          \
-                        arr_it_insert_end(&inserter);                                                         \
+                        arr_it_insert_begin(&in, it);                                                   \
+                        status = insert_fn(&in, value);                                                          \
+                        arr_it_insert_end(&in);                                                         \
                 break;                                                                                                 \
                 }                                                                                                      \
         }                                                                                                              \
@@ -366,7 +366,7 @@ bool carbon_update_set_binary(rev *context, const char *path, const void *value,
         return error(ERR_NOTIMPLEMENTED, "carbon_update_set_binary");
 }
 
-carbon_insert *carbon_update_set_array_begin(rev *context, const char *path,
+insert *carbon_update_set_array_begin(rev *context, const char *path,
                                                         insert_array_state *state_out,
                                                         u64 array_capacity)
 {
@@ -386,7 +386,7 @@ bool carbon_update_set_array_end(insert_array_state *state_in)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
+insert *carbon_update_set_column_begin(rev *context, const char *path,
                                                          insert_column_state *state_out,
                                                          field_e type, u64 cap)
 {
@@ -537,7 +537,7 @@ bool carbon_update_set_binary_compiled(rev *context, const dot *path,
         return error(ERR_NOTIMPLEMENTED, "carbon_update_set_binary_compiled");
 }
 
-carbon_insert *carbon_update_set_array_begin_compiled(rev *context,
+insert *carbon_update_set_array_begin_compiled(rev *context,
                                                                  const dot *path,
                                                                  insert_array_state *state_out,
                                                                  u64 array_capacity)
@@ -558,7 +558,7 @@ bool carbon_update_set_array_end_compiled(insert_array_state *state_in)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
+insert *carbon_update_set_column_begin_compiled(rev *context,
                                                                   const dot *path,
                                                                   insert_column_state *state_out,
                                                                   field_e type,
@@ -677,13 +677,13 @@ bool carbon_update_one_set_binary(const char *dot, rec *rev_doc, rec *doc,
                                               file_ext, user_type);
 }
 
-carbon_insert *carbon_update_one_set_array_begin(insert_array_state *state_out,
+insert *carbon_update_one_set_array_begin(insert_array_state *state_out,
                                                             const char *dot, rec *rev_doc,
                                                             rec *doc, u64 array_capacity)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
-        carbon_insert *result = carbon_update_set_array_begin(&revise, dot, state_out, array_capacity);
+        insert *result = carbon_update_set_array_begin(&revise, dot, state_out, array_capacity);
         // ... TODO: add revision to context
         return result;
 }
@@ -695,14 +695,14 @@ bool carbon_update_one_set_array_end(insert_array_state *state_in)
         return status;
 }
 
-carbon_insert *carbon_update_one_set_column_begin(insert_column_state *state_out,
+insert *carbon_update_one_set_column_begin(insert_column_state *state_out,
                                                              const char *dot, rec *rev_doc,
                                                              rec *doc, field_e type,
                                                              u64 cap)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
-        carbon_insert *result = carbon_update_set_column_begin(&revise, dot, state_out, type,
+        insert *result = carbon_update_set_column_begin(&revise, dot, state_out, type,
                                                                           cap);
         // ... TODO: add revision to context
         return result;
@@ -816,14 +816,14 @@ bool carbon_update_one_set_binary_compiled(const dot *path, rec *rev_doc,
                                               file_ext, user_type);
 }
 
-carbon_insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out,
+insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out,
                                                                      const dot *path,
                                                                      rec *rev_doc, rec *doc,
                                                                      u64 array_capacity)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
-        carbon_insert *result = carbon_update_set_array_begin_compiled(&revise, path, state_out,
+        insert *result = carbon_update_set_array_begin_compiled(&revise, path, state_out,
                                                                                   array_capacity);
         // ... TODO: add revision to context
         return result;
@@ -836,14 +836,14 @@ bool carbon_update_one_set_array_end_compiled(insert_array_state *state_in)
         return status;
 }
 
-carbon_insert *carbon_update_one_set_column_begin_compiled(
+insert *carbon_update_one_set_column_begin_compiled(
         insert_column_state *state_out, const dot *path,
         rec *rev_doc,
         rec *doc, field_e type, u64 cap)
 {
         rev revise;
         carbon_revise_begin(&revise, rev_doc, doc);
-        carbon_insert *result = carbon_update_set_column_begin_compiled(&revise, path, state_out, type,
+        insert *result = carbon_update_set_column_begin_compiled(&revise, path, state_out, type,
                                                                                    cap);
         // ... TODO: add revision to context
         return result;

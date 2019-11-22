@@ -88,8 +88,8 @@ bool arr_it_prev(arr_it *it);
 /**
  * Inserts a new element at the current position of the iterator.
  */
-void arr_it_insert_begin(carbon_insert *inserter, arr_it *it);
-void arr_it_insert_end(carbon_insert *inserter);
+void arr_it_insert_begin(insert *in, arr_it *it);
+void arr_it_insert_end(insert *in);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
  * it is a set. In case of any error, a failure is returned. */
@@ -136,13 +136,13 @@ bool internal_arr_it_update_false(arr_it *it);
 bool internal_arr_it_update_null(arr_it *it);
 bool internal_arr_it_update_string(arr_it *it, const char *str);
 bool internal_arr_it_update_binary(arr_it *it, const void *base, size_t nbytes, const char *file_ext, const char *type);
-carbon_insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it);
+insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it);
 bool internal_arr_it_update_array_end(insert_array_state *state);
 
-carbon_insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *it);
+insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *it);
 bool internal_arr_it_update_column_end(insert_column_state *state);
 
-carbon_insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *it);
+insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *it);
 bool internal_arr_it_update_object_end(insert_object_state *state);
 
 bool internal_arr_it_update_from_carbon(arr_it *it, const rec *src);

@@ -27,22 +27,22 @@ extern "C" {
 //  public interface
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool insert_null(carbon_insert *inserter);
-bool insert_true(carbon_insert *inserter);
-bool insert_false(carbon_insert *inserter);
-bool insert_u8(carbon_insert *inserter, u8 value);
-bool insert_u16(carbon_insert *inserter, u16 value);
-bool insert_u32(carbon_insert *inserter, u32 value);
-bool insert_u64(carbon_insert *inserter, u64 value);
-bool insert_i8(carbon_insert *inserter, i8 value);
-bool insert_i16(carbon_insert *inserter, i16 value);
-bool insert_i32(carbon_insert *inserter, i32 value);
-bool insert_i64(carbon_insert *inserter, i64 value);
-bool insert_unsigned(carbon_insert *inserter, u64 value);
-bool insert_signed(carbon_insert *inserter, i64 value);
-bool insert_float(carbon_insert *inserter, float value);
-bool insert_string(carbon_insert *inserter, const char *value);
-bool insert_nchar(carbon_insert *inserter, const char *value, u64 value_len);
+bool insert_null(insert *in);
+bool insert_true(insert *in);
+bool insert_false(insert *in);
+bool insert_u8(insert *in, u8 value);
+bool insert_u16(insert *in, u16 value);
+bool insert_u32(insert *in, u32 value);
+bool insert_u64(insert *in, u64 value);
+bool insert_i8(insert *in, i8 value);
+bool insert_i16(insert *in, i16 value);
+bool insert_i32(insert *in, i32 value);
+bool insert_i64(insert *in, i64 value);
+bool insert_unsigned(insert *in, u64 value);
+bool insert_signed(insert *in, i64 value);
+bool insert_float(insert *in, float value);
+bool insert_string(insert *in, const char *value);
+bool insert_nchar(insert *in, const char *value, u64 value_len);
 
 bool insert_from_carbon(); // TODO: Implement P2
 bool insert_from_array(); // TODO: Implement P2
@@ -56,69 +56,69 @@ bool insert_from_column(); // TODO: Implement P2
  * <code>user_type</code> is null (or empty) and <code>file_ext</code> is null (or not known), the mime type is set to
  * <code>application/octet-stream</code>, which encodes arbitrary binary data.
  */
-bool insert_binary(carbon_insert *inserter, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
+bool insert_binary(insert *in, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 
-carbon_insert *insert_object_begin(insert_object_state *out, carbon_insert *inserter, u64 object_capacity);
+insert *insert_object_begin(insert_object_state *out, insert *in, u64 object_capacity);
 bool insert_object_end(insert_object_state *state);
 
-carbon_insert *insert_object_map_begin(insert_object_state *out, carbon_insert *inserter,
+insert *insert_object_map_begin(insert_object_state *out, insert *in,
                                               map_type_e derivation, u64 object_capacity);
 bool insert_object_map_end(insert_object_state *state);
 
-carbon_insert *insert_array_begin(insert_array_state *state_out, carbon_insert *inserter_in, u64 array_capacity);
+insert *insert_array_begin(insert_array_state *state_out, insert *inserter_in, u64 array_capacity);
 bool insert_array_end(insert_array_state *state_in);
 
-carbon_insert *insert_array_list_begin(insert_array_state *state_out, carbon_insert *inserter_in, list_type_e derivation, u64 array_capacity);
+insert *insert_array_list_begin(insert_array_state *state_out, insert *inserter_in, list_type_e derivation, u64 array_capacity);
 bool insert_array_list_end(insert_array_state *state_in);
 
-carbon_insert *insert_column_begin(insert_column_state *state_out, carbon_insert *inserter_in, col_it_type_e type, u64 cap);
+insert *insert_column_begin(insert_column_state *state_out, insert *inserter_in, col_it_type_e type, u64 cap);
 bool insert_column_end(insert_column_state *state_in);
 
-carbon_insert *insert_column_list_begin(insert_column_state *state_out, carbon_insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap);
+insert *insert_column_list_begin(insert_column_state *state_out, insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap);
 bool insert_column_list_end(insert_column_state *state_in);
 
-bool insert_prop_null(carbon_insert *inserter, const char *key);
-bool insert_prop_true(carbon_insert *inserter, const char *key);
-bool insert_prop_false(carbon_insert *inserter, const char *key);
-bool insert_prop_u8(carbon_insert *inserter, const char *key, u8 value);
-bool insert_prop_u16(carbon_insert *inserter, const char *key, u16 value);
-bool insert_prop_u32(carbon_insert *inserter, const char *key, u32 value);
-bool insert_prop_u64(carbon_insert *inserter, const char *key, u64 value);
-bool insert_prop_i8(carbon_insert *inserter, const char *key, i8 value);
-bool insert_prop_i16(carbon_insert *inserter, const char *key, i16 value);
-bool insert_prop_i32(carbon_insert *inserter, const char *key, i32 value);
-bool insert_prop_i64(carbon_insert *inserter, const char *key, i64 value);
-bool insert_prop_unsigned(carbon_insert *inserter, const char *key, u64 value);
-bool insert_prop_signed(carbon_insert *inserter, const char *key, i64 value);
-bool insert_prop_float(carbon_insert *inserter, const char *key, float value);
-bool insert_prop_string(carbon_insert *inserter, const char *key, const char *value);
-bool insert_prop_nchar(carbon_insert *inserter, const char *key, const char *value, u64 value_len);
-bool insert_prop_binary(carbon_insert *inserter, const char *key, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
+bool insert_prop_null(insert *in, const char *key);
+bool insert_prop_true(insert *in, const char *key);
+bool insert_prop_false(insert *in, const char *key);
+bool insert_prop_u8(insert *in, const char *key, u8 value);
+bool insert_prop_u16(insert *in, const char *key, u16 value);
+bool insert_prop_u32(insert *in, const char *key, u32 value);
+bool insert_prop_u64(insert *in, const char *key, u64 value);
+bool insert_prop_i8(insert *in, const char *key, i8 value);
+bool insert_prop_i16(insert *in, const char *key, i16 value);
+bool insert_prop_i32(insert *in, const char *key, i32 value);
+bool insert_prop_i64(insert *in, const char *key, i64 value);
+bool insert_prop_unsigned(insert *in, const char *key, u64 value);
+bool insert_prop_signed(insert *in, const char *key, i64 value);
+bool insert_prop_float(insert *in, const char *key, float value);
+bool insert_prop_string(insert *in, const char *key, const char *value);
+bool insert_prop_nchar(insert *in, const char *key, const char *value, u64 value_len);
+bool insert_prop_binary(insert *in, const char *key, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 
 bool insert_prop_from_carbon(); // TODO: Implement P2
 bool insert_prop_from_array(); // TODO: Implement P2
 bool insert_prop_from_object(); // TODO: Implement P2
 bool insert_prop_from_column(); // TODO: Implement P2
 
-carbon_insert *insert_prop_object_begin(insert_object_state *out, carbon_insert *inserter, const char *key, u64 object_capacity);
+insert *insert_prop_object_begin(insert_object_state *out, insert *in, const char *key, u64 object_capacity);
 u64 insert_prop_object_end(insert_object_state *state);
 
-carbon_insert *insert_prop_map_begin(insert_object_state *out, carbon_insert *inserter, map_type_e derivation, const char *key, u64 object_capacity);
+insert *insert_prop_map_begin(insert_object_state *out, insert *in, map_type_e derivation, const char *key, u64 object_capacity);
 u64 insert_prop_map_end(insert_object_state *state);
 
-carbon_insert *insert_prop_array_begin(insert_array_state *state, carbon_insert *inserter, const char *key, u64 array_capacity);
+insert *insert_prop_array_begin(insert_array_state *state, insert *in, const char *key, u64 array_capacity);
 u64 insert_prop_array_end(insert_array_state *state);
 
-carbon_insert *insert_prop_column_begin(insert_column_state *state_out, carbon_insert *inserter_in, const char *key, col_it_type_e type, u64 cap);
+insert *insert_prop_column_begin(insert_column_state *state_out, insert *inserter_in, const char *key, col_it_type_e type, u64 cap);
 u64 insert_prop_column_end(insert_column_state *state_in);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage only
 // ---------------------------------------------------------------------------------------------------------------------
 
-void internal_insert_create_for_array(carbon_insert *inserter, arr_it *context);
-bool internal_insert_create_for_column(carbon_insert *inserter, col_it *context);
-bool internal_insert_create_for_object(carbon_insert *inserter, obj_it *context);
+void internal_insert_create_for_array(insert *in, arr_it *context);
+bool internal_insert_create_for_column(insert *in, col_it *context);
+bool internal_insert_create_for_object(insert *in, obj_it *context);
 
 
 #ifdef __cplusplus

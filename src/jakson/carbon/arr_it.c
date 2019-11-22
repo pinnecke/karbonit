@@ -90,7 +90,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
                 memfile_seek(&it->file, datum);
                 memfile_write(&it->file, &value, sizeof(u8));
         } else {
-                carbon_insert ins;
+                insert ins;
                 internal_arr_it_remove(it);
                 arr_it_insert_begin(&ins, it);
 
@@ -149,7 +149,7 @@ bool internal_arr_it_update_binary(arr_it *it, const void *base, size_t nbytes, 
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it)
+insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -165,7 +165,7 @@ bool internal_arr_it_update_array_end(insert_array_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *it)
+insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -181,7 +181,7 @@ bool internal_arr_it_update_column_end(insert_column_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *it)
+insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -441,14 +441,14 @@ bool internal_arr_it_fast_forward(arr_it *it)
         return true;
 }
 
-void arr_it_insert_begin(carbon_insert *inserter, arr_it *it)
+void arr_it_insert_begin(insert *in, arr_it *it)
 {
-        internal_insert_create_for_array(inserter, it);
+        internal_insert_create_for_array(in, it);
 }
 
-void arr_it_insert_end(carbon_insert *inserter)
+void arr_it_insert_end(insert *in)
 {
-        UNUSED(inserter)
+        UNUSED(in)
         /* nothing to do */
 }
 

@@ -94,8 +94,8 @@ string_field internal_carbon_object_prop_name(obj_it *it);
 bool internal_carbon_object_remove(obj_it *it);
 bool internal_carbon_object_prop_type(field_e *type, obj_it *it);
 
-bool internal_carbon_object_insert_begin(carbon_insert *inserter, obj_it *it);
-void internal_carbon_object_insert_end(carbon_insert *inserter);
+bool internal_carbon_object_insert_begin(insert *in, obj_it *it);
+void internal_carbon_object_insert_end(insert *in);
 
 bool internal_carbon_object_update_name(obj_it *it, const char *key);
 bool internal_carbon_object_update_u8(obj_it *it, u8 value);
@@ -112,13 +112,13 @@ bool internal_carbon_object_update_false(obj_it *it);
 bool internal_carbon_object_update_null(obj_it *it);
 bool internal_carbon_object_update_string(obj_it *it, const char *str);
 bool internal_carbon_object_update_binary(obj_it *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
-carbon_insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj_it *it);
+insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj_it *it);
 bool internal_carbon_object_update_array_end(insert_array_state *state);
 
-carbon_insert *internal_carbon_object_update_column_begin(insert_column_state *state, obj_it *it);
+insert *internal_carbon_object_update_column_begin(insert_column_state *state, obj_it *it);
 bool internal_carbon_object_update_column_end(insert_column_state *state);
 
-carbon_insert *internal_carbon_object_update_object_begin(insert_object_state *state, obj_it *it);
+insert *internal_carbon_object_update_object_begin(insert_object_state *state, obj_it *it);
 bool internal_carbon_object_update_object_end(insert_object_state *state);
 
 bool internal_carbon_object_update_from_carbon(obj_it *it, const rec *src);

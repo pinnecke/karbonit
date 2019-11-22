@@ -49,12 +49,12 @@ static void carbon_header_init(rec *doc, carbon_key_e key_type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
+insert * carbon_create_begin(rec_new *context, rec *doc,
                                            carbon_key_e type, int options)
 {
         if (context && doc) {
                 context->content_it = MALLOC(sizeof(arr_it));
-                context->inserter = MALLOC(sizeof(carbon_insert));
+                context->in = MALLOC(sizeof(insert));
                 context->mode = options;
 
                 /** get the annotation type for that records outer-most array from options*/
@@ -76,8 +76,8 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
                     error(ERR_OPPFAILED, "cannot open revision iterator");
                     return NULL;
                 }
-                arr_it_insert_begin(context->inserter, context->content_it);
-                return context->inserter;
+                arr_it_insert_begin(context->in, context->content_it);
+                return context->in;
         } else {
                 return NULL;
         }
@@ -85,7 +85,7 @@ carbon_insert * carbon_create_begin(rec_new *context, rec *doc,
 
 void carbon_create_end(rec_new *context)
 {
-        arr_it_insert_end(context->inserter);
+        arr_it_insert_end(context->in);
         carbon_revise_iterator_close(context->content_it);
         if (context->mode & CARBON_COMPACT) {
                 carbon_revise_pack(&context->revision_context);
@@ -95,7 +95,7 @@ void carbon_create_end(rec_new *context)
         }
         carbon_revise_end(&context->revision_context);
         free(context->content_it);
-        free(context->inserter);
+        free(context->in);
         carbon_drop(&context->original);
 }
 

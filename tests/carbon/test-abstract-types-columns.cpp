@@ -6,7 +6,7 @@
 TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
         rec_new context;
-        carbon_insert *ins;
+        insert *ins;
         rec doc, doc2;
         insert_column_state s1;
         arr_it it;

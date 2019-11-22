@@ -217,14 +217,14 @@ void carbon_object_update_type(obj_it *it, map_type_e derivation)
         memfile_restore_position(&it->memfile);
 }
 
-bool internal_carbon_object_insert_begin(carbon_insert *inserter, obj_it *it)
+bool internal_carbon_object_insert_begin(insert *in, obj_it *it)
 {
-        return internal_insert_create_for_object(inserter, it);
+        return internal_insert_create_for_object(in, it);
 }
 
-void internal_carbon_object_insert_end(carbon_insert *inserter)
+void internal_carbon_object_insert_end(insert *in)
 {
-        UNUSED(inserter)
+        UNUSED(in)
         /* nothing to do */
 }
 
@@ -357,7 +357,7 @@ bool internal_carbon_object_update_binary(obj_it *it, const void *value, size_t 
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj_it *it)
+insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -373,7 +373,7 @@ bool internal_carbon_object_update_array_end(insert_array_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_carbon_object_update_column_begin(insert_column_state *state, obj_it *it)
+insert *internal_carbon_object_update_column_begin(insert_column_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -389,7 +389,7 @@ bool internal_carbon_object_update_column_end(insert_column_state *state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_carbon_object_update_object_begin(insert_object_state *state, obj_it *it)
+insert *internal_carbon_object_update_object_begin(insert_object_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)

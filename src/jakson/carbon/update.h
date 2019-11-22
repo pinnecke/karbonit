@@ -60,10 +60,10 @@ bool carbon_update_set_signed(rev *context, const char *path, i64 value);
 bool carbon_update_set_string(rev *context, const char *path, const char *value);
 bool carbon_update_set_binary(rev *context, const char *path, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 
-carbon_insert *carbon_update_set_array_begin(rev *context, const char *path, insert_array_state *state_out, u64 array_capacity);
+insert *carbon_update_set_array_begin(rev *context, const char *path, insert_array_state *state_out, u64 array_capacity);
 bool carbon_update_set_array_end(insert_array_state *state_in);
 
-carbon_insert *carbon_update_set_column_begin(rev *context, const char *path, insert_column_state *state_out, field_e type, u64 cap);
+insert *carbon_update_set_column_begin(rev *context, const char *path, insert_column_state *state_out, field_e type, u64 cap);
 bool carbon_update_set_column_end(insert_column_state *state_in);
 
 bool carbon_update_set_null_compiled(rev *context, const dot *path);
@@ -83,9 +83,9 @@ bool carbon_update_set_unsigned_compiled(rev *context, const dot *path, u64 valu
 bool carbon_update_set_signed_compiled(rev *context, const dot *path, i64 value);
 bool carbon_update_set_string_compiled(rev *context, const dot *path, const char *value);
 bool carbon_update_set_binary_compiled(rev *context, const dot *path, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
-carbon_insert * carbon_update_set_array_begin_compiled(rev *context, const dot *path, insert_array_state *state_out, u64 array_capacity);
+insert * carbon_update_set_array_begin_compiled(rev *context, const dot *path, insert_array_state *state_out, u64 array_capacity);
 bool carbon_update_set_array_end_compiled(insert_array_state *state_in);
-carbon_insert *carbon_update_set_column_begin_compiled(rev *context, const dot *path, insert_column_state *state_out, field_e type, u64 cap);
+insert *carbon_update_set_column_begin_compiled(rev *context, const dot *path, insert_column_state *state_out, field_e type, u64 cap);
 bool carbon_update_set_column_end_compiled(insert_column_state *state_in);
 
 bool carbon_update_one_set_null(const char *dot, rec *rev_doc, rec *doc);
@@ -104,10 +104,10 @@ bool carbon_update_one_set_unsigned(const char *dot, rec *rev_doc, rec *doc, u64
 bool carbon_update_one_set_signed(const char *dot, rec *rev_doc, rec *doc, i64 value);
 bool carbon_update_one_set_string(const char *dot, rec *rev_doc, rec *doc, const char *value);
 bool carbon_update_one_set_binary(const char *dot, rec *rev_doc, rec *doc, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
-carbon_insert *carbon_update_one_set_array_begin(insert_array_state *state_out, const char *dot, rec *rev_doc, rec *doc, u64 array_capacity);
+insert *carbon_update_one_set_array_begin(insert_array_state *state_out, const char *dot, rec *rev_doc, rec *doc, u64 array_capacity);
 bool carbon_update_one_set_array_end(insert_array_state *state_in);
 
-carbon_insert *carbon_update_one_set_column_begin(insert_column_state *state_out, const char *dot, rec *rev_doc, rec *doc, field_e type, u64 cap);
+insert *carbon_update_one_set_column_begin(insert_column_state *state_out, const char *dot, rec *rev_doc, rec *doc, field_e type, u64 cap);
 bool carbon_update_one_set_column_end(insert_column_state *state_in);
 
 bool carbon_update_one_set_null_compiled(const dot *path, rec *rev_doc, rec *doc);
@@ -126,10 +126,10 @@ bool carbon_update_one_set_unsigned_compiled(const dot *path, rec *rev_doc, rec 
 bool carbon_update_one_set_signed_compiled(const dot *path, rec *rev_doc, rec *doc, i64 value);
 bool carbon_update_one_set_string_compiled(const dot *path, rec *rev_doc, rec *doc, const char *value);
 bool carbon_update_one_set_binary_compiled(const dot *path, rec *rev_doc, rec *doc, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
-carbon_insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out, const dot *path, rec *rev_doc, rec *doc, u64 array_capacity);
+insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out, const dot *path, rec *rev_doc, rec *doc, u64 array_capacity);
 bool carbon_update_one_set_array_end_compiled(insert_array_state *state_in);
 
-carbon_insert *carbon_update_one_set_column_begin_compiled(insert_column_state *state_out, const dot *path, rec *rev_doc, rec *doc, field_e type, u64 cap);
+insert *carbon_update_one_set_column_begin_compiled(insert_column_state *state_out, const dot *path, rec *rev_doc, rec *doc, field_e type, u64 cap);
 bool carbon_update_one_set_column_end_compiled(insert_column_state *state_in);
 
 #ifdef __cplusplus

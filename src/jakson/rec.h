@@ -86,7 +86,7 @@ typedef struct rec_new {
         rec original;
         rev revision_context;
         arr_it *content_it;
-        carbon_insert *inserter;
+        insert *in;
         /** options shrink or compact (or both) documents, see
          * CARBON_KEEP, CARBON_SHRINK, CARBON_COMPACT, and CARBON_OPTIMIZE  */
         int mode;
@@ -165,7 +165,7 @@ typedef enum carbon_key_type {
  *  deduplication and sorting work. Instead, the annotation stores the semantics of that particular container, which
  *  functionality must be effectively implemented at caller site.
  */
-carbon_insert * carbon_create_begin(rec_new *context, rec *doc, carbon_key_e type, int options);
+insert * carbon_create_begin(rec_new *context, rec *doc, carbon_key_e type, int options);
 void carbon_create_end(rec_new *context);
 void carbon_create_empty(rec *doc, list_type_e derivation, carbon_key_e type);
 void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type, u64 doc_cap, u64 array_cap);

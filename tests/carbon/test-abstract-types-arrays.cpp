@@ -115,7 +115,7 @@ TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
 TEST(TestAbstractTypes, ArraySetAbstractType) {
 
         rec_new context;
-        carbon_insert *ins;
+        insert *ins;
         rec doc, doc2;
         insert_array_state s1;
         arr_it it, *sub_it;

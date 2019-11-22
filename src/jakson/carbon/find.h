@@ -29,13 +29,10 @@ typedef struct find {
         rec *doc;
         field_e type;
         dot_eval eval;
-
-        bool value_is_nulled;
-
         union {
                 arr_it *array;
-                col_it *column_it;
-                obj_it *object_it;
+                col_it *column;
+                obj_it *object;
                 bool boolean;
                 u64 unsigned_number;
                 i64 signed_number;

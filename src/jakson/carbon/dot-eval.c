@@ -19,13 +19,13 @@
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/revise.h>
 
-static inline pstatus_e traverse_column(dot_eval *state,
-                                                      const dot *path, u32 current_path_pos,
-                                                      col_it *it);
+static inline pstatus_e _dot_eval_traverse_column(dot_eval *state,
+                                                  const dot *path, u32 current_path_pos,
+                                                  col_it *it);
 
-static inline pstatus_e traverse_array(dot_eval *state,
-                                                     const dot *path, u32 current_path_pos,
-                                                     arr_it *it, bool is_record);
+static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
+                                                 const dot *path, u32 current_path_pos,
+                                                 arr_it *it, bool is_record);
 
 void dot_eval_begin(dot_eval *eval, dot *path,
                                  rec *doc)
@@ -33,7 +33,7 @@ void dot_eval_begin(dot_eval *eval, dot *path,
         ZERO_MEMORY(eval, sizeof(dot_eval));
         eval->doc = doc;
         carbon_read_begin(&eval->root_it, eval->doc);
-        eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
+        eval->status = _dot_eval_traverse_array(eval, path, 0, &eval->root_it, true);
         carbon_read_end(&eval->root_it);
 }
 
@@ -44,7 +44,7 @@ bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
         if (!revise_iterator_open(&eval->root_it, context)) {
             return error(ERR_OPPFAILED, "revise iterator cannot be opened");
         }
-        eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
+        eval->status = _dot_eval_traverse_array(eval, path, 0, &eval->root_it, true);
         carbon_read_end(&eval->root_it);
         return true;
 }
@@ -195,9 +195,9 @@ bool carbon_path_is_string(rec *doc, const char *path)
         return result;
 }
 
-static inline pstatus_e traverse_object(dot_eval *state,
-                                                      const dot *path, u32 current_path_pos,
-                                                      obj_it *it)
+static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
+                                                  const dot *path, u32 current_path_pos,
+                                                  obj_it *it)
 {
         DECLARE_AND_INIT(dot_node_type_e, node_type)
         DECLARE_AND_INIT(u32, length)
@@ -288,10 +288,10 @@ static inline pstatus_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                                                 obj_it *sub_it = item_get_object(&(it->prop.value));
-                                                                pstatus_e ret = traverse_object(state,
-                                                                                                              path,
-                                                                                                              next_path_pos,
-                                                                                                              sub_it);
+                                                                pstatus_e ret = _dot_eval_traverse_object(state,
+                                                                                                          path,
+                                                                                                          next_path_pos,
+                                                                                                          sub_it);
                                                                 obj_it_drop(sub_it);
                                                                 return ret;
                                                         }
@@ -300,11 +300,11 @@ static inline pstatus_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                                                 arr_it *sub_it = item_get_array(&(it->prop.value));
-                                                                pstatus_e ret = traverse_array(state,
-                                                                                                             path,
-                                                                                                             next_path_pos,
-                                                                                                             sub_it,
-                                                                                                             false);
+                                                                pstatus_e ret = _dot_eval_traverse_array(state,
+                                                                                                         path,
+                                                                                                         next_path_pos,
+                                                                                                         sub_it,
+                                                                                                         false);
                                                                 arr_it_drop(sub_it);
                                                                 return ret;
                                                         }
@@ -349,10 +349,10 @@ static inline pstatus_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                                                 col_it *sub_it = item_get_column(&(it->prop.value));
-                                                                return traverse_column(state,
-                                                                                       path,
-                                                                                       next_path_pos,
-                                                                                       sub_it);
+                                                                return _dot_eval_traverse_column(state,
+                                                                                                 path,
+                                                                                                 next_path_pos,
+                                                                                                 sub_it);
                                                         }
                                                         default: error(ERR_UNSUPPORTEDTYPE, NULL);
                                                                 return PATH_INTERNAL;
@@ -366,7 +366,7 @@ static inline pstatus_e traverse_object(dot_eval *state,
         return PATH_NOSUCHKEY;
 }
 
-static inline pstatus_e traverse_array(dot_eval *state,
+static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                      const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record)
 {
@@ -407,10 +407,10 @@ static inline pstatus_e traverse_array(dot_eval *state,
                                         if (is_unit_array && is_record &&
                                                 field_is_column_or_subtype(elem_type)) {
                                                 col_it *sub_it = item_get_column(&(it->item));
-                                                return traverse_column(state,
-                                                                       path,
-                                                                       next_path_pos,
-                                                                       sub_it);
+                                                return _dot_eval_traverse_column(state,
+                                                                                 path,
+                                                                                 next_path_pos,
+                                                                                 sub_it);
                                         } else {
                                                 if (next_path_pos < length) {
                                                         /** path must be further evaluated in the next step, which requires a container
@@ -431,7 +431,7 @@ static inline pstatus_e traverse_array(dot_eval *state,
                                                                                 } else {
                                                                                         if (field_is_array_or_subtype(elem_type)) {
                                                                                                 arr_it *sub_it = item_get_array(&(it->item));
-                                                                                                status = traverse_array(
+                                                                                                status = _dot_eval_traverse_array(
                                                                                                         state,
                                                                                                         path,
                                                                                                         next_path_pos,
@@ -442,7 +442,7 @@ static inline pstatus_e traverse_array(dot_eval *state,
                                                                                         } else {
                                                                                                 JAK_ASSERT(field_is_column_or_subtype(elem_type));
                                                                                                 col_it *sub_it = item_get_column(&(it->item));
-                                                                                                return traverse_column(
+                                                                                                return _dot_eval_traverse_column(
                                                                                                         state,
                                                                                                         path,
                                                                                                         next_path_pos,
@@ -457,10 +457,11 @@ static inline pstatus_e traverse_array(dot_eval *state,
                                                                                         return PATH_NOTANOBJECT;
                                                                                 } else {
                                                                                         obj_it *sub_it = item_get_object(&(it->item));
-                                                                                        status = traverse_object(state,
-                                                                                                                 path,
-                                                                                                                 next_path_pos,
-                                                                                                                 sub_it);
+                                                                                        status = _dot_eval_traverse_object(
+                                                                                                state,
+                                                                                                path,
+                                                                                                next_path_pos,
+                                                                                                sub_it);
                                                                                         obj_it_drop(sub_it);
                                                                                         return status;
                                                                                 }
@@ -491,10 +492,10 @@ static inline pstatus_e traverse_array(dot_eval *state,
                                         } else {
                                                 if (is_unit_array && is_record) {
                                                         obj_it *sub_it = item_get_object(&(it->item));
-                                                        status = traverse_object(state,
-                                                                                 path,
-                                                                                 current_path_pos,
-                                                                                 sub_it);
+                                                        status = _dot_eval_traverse_object(state,
+                                                                                           path,
+                                                                                           current_path_pos,
+                                                                                           sub_it);
                                                         obj_it_drop(sub_it);
                                                         return status;
                                                 } else {
@@ -509,7 +510,7 @@ static inline pstatus_e traverse_array(dot_eval *state,
         }
 }
 
-static inline pstatus_e traverse_column(dot_eval *state,
+static inline pstatus_e _dot_eval_traverse_column(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       col_it *it)
 {

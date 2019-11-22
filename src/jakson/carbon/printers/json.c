@@ -19,9 +19,9 @@
 
 #include <jakson/carbon/printers/json.h>
 #include <jakson/carbon/traverse.h>
-#include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/col_it.h>
-#include <jakson/carbon/obj_it.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/col-it.h>
+#include <jakson/carbon/obj-it.h>
 #include <jakson/jakson.h>
 
 #define CARBON_PRINT_JSON_NULL "null"

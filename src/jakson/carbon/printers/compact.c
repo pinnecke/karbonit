@@ -19,7 +19,7 @@
 
 #include <libs/libb64/libb64.h>
 #include <jakson/carbon/printers/extended.h>
-#include <jakson/carbon/arr_it.h>
+#include <jakson/carbon/arr-it.h>
 
 // ---------------------------------------------------------------------------------------------------------------------
 

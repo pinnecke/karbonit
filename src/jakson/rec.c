@@ -25,9 +25,9 @@
 #include <jakson/forwdecl.h>
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/rec.h>
-#include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/col_it.h>
-#include <jakson/carbon/obj_it.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/col-it.h>
+#include <jakson/carbon/obj-it.h>
 #include <jakson/carbon/printers.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/dot.h>

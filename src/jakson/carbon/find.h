@@ -14,12 +14,12 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/rec.h>
-#include <jakson/carbon/col_it.h>
-#include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/obj_it.h>
+#include <jakson/carbon/col-it.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/obj-it.h>
 #include <jakson/carbon/container.h>
 #include <jakson/carbon/dot.h>
-#include <jakson/carbon/path.h>
+#include <jakson/carbon/dot-eval.h>
 
 #ifdef __cplusplus
 extern "C" {

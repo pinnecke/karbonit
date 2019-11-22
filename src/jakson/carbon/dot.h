@@ -15,9 +15,9 @@
 #include <jakson/error.h>
 #include <jakson/types.h>
 #include <jakson/std/string.h>
-#include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/col_it.h>
-#include <jakson/carbon/obj_it.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/col-it.h>
+#include <jakson/carbon/obj-it.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +41,7 @@ typedef struct dot {
         u32 len;
 } dot;
 
-typedef enum path_status {
+typedef enum pstatus {
         PATH_RESOLVED,
         PATH_EMPTY_DOC,
         PATH_NOSUCHINDEX,
@@ -51,7 +51,7 @@ typedef enum path_status {
         PATH_NOTANOBJECT,
         PATH_NONESTING,
         PATH_INTERNAL
-} path_status_e;
+} pstatus_e;
 
 bool dot_create(dot *path);
 bool dot_from_string(dot *path, const char *path_string);

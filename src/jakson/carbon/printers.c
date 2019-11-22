@@ -18,9 +18,9 @@
 #include <jakson/carbon/printers.h>
 #include <jakson/carbon/printers/compact.h>
 #include <jakson/carbon/printers/extended.h>
-#include <jakson/carbon/obj_it.h>
-#include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/col_it.h>
+#include <jakson/carbon/obj-it.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/col-it.h>
 
 bool carbon_printer_by_type(carbon_printer *printer, int impl)
 {

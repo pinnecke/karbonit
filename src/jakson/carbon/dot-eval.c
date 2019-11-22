@@ -15,15 +15,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/carbon/path.h>
+#include <jakson/carbon/dot-eval.h>
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/revise.h>
 
-static inline path_status_e traverse_column(dot_eval *state,
+static inline pstatus_e traverse_column(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       col_it *it);
 
-static inline path_status_e traverse_array(dot_eval *state,
+static inline pstatus_e traverse_array(dot_eval *state,
                                                      const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record);
 
@@ -49,7 +49,7 @@ bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
         return true;
 }
 
-bool dot_eval_status(path_status_e *status, dot_eval *state)
+bool dot_eval_status(pstatus_e *status, dot_eval *state)
 {
         *status = state->status;
         return true;
@@ -195,7 +195,7 @@ bool carbon_path_is_string(rec *doc, const char *path)
         return result;
 }
 
-static inline path_status_e traverse_object(dot_eval *state,
+static inline pstatus_e traverse_object(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       obj_it *it)
 {
@@ -288,7 +288,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                                                 obj_it *sub_it = item_get_object(&(it->prop.value));
-                                                                path_status_e ret = traverse_object(state,
+                                                                pstatus_e ret = traverse_object(state,
                                                                                                               path,
                                                                                                               next_path_pos,
                                                                                                               sub_it);
@@ -300,7 +300,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                                                 arr_it *sub_it = item_get_array(&(it->prop.value));
-                                                                path_status_e ret = traverse_array(state,
+                                                                pstatus_e ret = traverse_array(state,
                                                                                                              path,
                                                                                                              next_path_pos,
                                                                                                              sub_it,
@@ -366,7 +366,7 @@ static inline path_status_e traverse_object(dot_eval *state,
         return PATH_NOSUCHKEY;
 }
 
-static inline path_status_e traverse_array(dot_eval *state,
+static inline pstatus_e traverse_array(dot_eval *state,
                                                      const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record)
 {
@@ -378,7 +378,7 @@ static inline path_status_e traverse_array(dot_eval *state,
         DECLARE_AND_INIT(field_e, elem_type)
         DECLARE_AND_INIT(dot_node_type_e, node_type)
         DECLARE_AND_INIT(u32, length)
-        DECLARE_AND_INIT(path_status_e, status)
+        DECLARE_AND_INIT(pstatus_e, status)
         DECLARE_AND_INIT(u32, requested_array_idx)
         DECLARE_AND_INIT(u32, current_array_idx)
         bool is_unit_array = arr_it_is_unit(it);
@@ -509,7 +509,7 @@ static inline path_status_e traverse_array(dot_eval *state,
         }
 }
 
-static inline path_status_e traverse_column(dot_eval *state,
+static inline pstatus_e traverse_column(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       col_it *it)
 {

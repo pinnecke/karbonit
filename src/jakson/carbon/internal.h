@@ -18,7 +18,7 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/container.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/arr_it.h>
+#include <jakson/carbon/arr-it.h>
 #include <jakson/carbon/abstract.h>
 
 #ifdef __cplusplus

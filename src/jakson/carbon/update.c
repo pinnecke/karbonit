@@ -15,8 +15,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/carbon/path.h>
-#include <jakson/carbon/path.h>
+#include <jakson/carbon/dot-eval.h>
+#include <jakson/carbon/dot-eval.h>
 #include <jakson/carbon/update.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/revise.h>

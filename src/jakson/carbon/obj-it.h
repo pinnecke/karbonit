@@ -11,7 +11,7 @@
 #include <jakson/error.h>
 #include <jakson/mem/file.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/arr_it.h>
+#include <jakson/carbon/arr-it.h>
 #include <jakson/carbon/prop.h>
 
 #ifdef __cplusplus

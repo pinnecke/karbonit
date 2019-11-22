@@ -17,13 +17,13 @@
 
 #include <jakson/rec.h>
 #include <jakson/carbon/revise.h>
-#include <jakson/carbon/arr_it.h>
+#include <jakson/carbon/arr-it.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
-#include <jakson/carbon/obj_it.h>
+#include <jakson/carbon/obj-it.h>
 
 static bool internal_pack_array(arr_it *it);
 

@@ -29,7 +29,7 @@
 #include <jakson/std/spinlock.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/dot.h>
-#include <jakson/carbon/path.h>
+#include <jakson/carbon/dot-eval.h>
 #include <jakson/carbon/internal.h>
 
 #ifdef __cplusplus

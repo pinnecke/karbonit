@@ -21,10 +21,10 @@
 
 #include <jakson/mem/file.h>
 #include <jakson/carbon/field.h>
-#include <jakson/carbon/col_it.h>
+#include <jakson/carbon/col-it.h>
 #include <jakson/carbon/mime.h>
-#include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/obj_it.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/obj-it.h>
 #include <jakson/carbon/abstract.h>
 
 const char *field_str(field_e type)

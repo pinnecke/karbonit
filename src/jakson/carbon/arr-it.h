@@ -1,5 +1,5 @@
 /*
- * arr_it - array iterator implementation
+ * arr-it - array iterator implementation
  *
  * Copyright 2019 Marcus Pinnecke
  */

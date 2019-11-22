@@ -255,7 +255,7 @@ bool field_is_constant(field_e type)
 
 bool carbon_field_skip(memfile *file)
 {
-        u8 type_marker = *MEMFILE_PEEK(file, u8);
+        u8 type_marker = *memfile_peek_type(file, u8);
 
         switch (type_marker) {
                 case FIELD_NULL:
@@ -383,7 +383,7 @@ bool carbon_field_skip_array(memfile *file)
 
 bool carbon_field_skip_column(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(!field_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
@@ -396,7 +396,7 @@ bool carbon_field_skip_column(memfile *file)
 
 bool carbon_field_skip_binary(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_BINARY, ERR_TYPEMISMATCH, NULL);
         /** read and skip mime type with variable-length integer type */
@@ -413,7 +413,7 @@ bool carbon_field_skip_binary(memfile *file)
 
 bool carbon_field_skip_custom_binary(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
         /** read custom type str_buf length, and skip the type str_buf */
@@ -428,7 +428,7 @@ bool carbon_field_skip_custom_binary(memfile *file)
 
 bool carbon_field_skip_string(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         u64 strlen = memfile_read_uintvar_stream(NULL, file);
@@ -438,7 +438,7 @@ bool carbon_field_skip_string(memfile *file)
 
 bool carbon_field_skip_float(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         memfile_skip(file, sizeof(float));
@@ -447,7 +447,7 @@ bool carbon_field_skip_float(memfile *file)
 
 bool carbon_field_skip_boolean(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_TRUE && type_marker != FIELD_FALSE, ERR_TYPEMISMATCH, NULL);
         return true;
@@ -455,7 +455,7 @@ bool carbon_field_skip_boolean(memfile *file)
 
 bool carbon_field_skip_null(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_NULL, ERR_TYPEMISMATCH, NULL);
         return true;
@@ -463,7 +463,7 @@ bool carbon_field_skip_null(memfile *file)
 
 bool carbon_field_skip_8(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_NUMBER_I8 && type_marker != FIELD_NUMBER_U8,
                  ERR_TYPEMISMATCH, NULL);
@@ -474,7 +474,7 @@ bool carbon_field_skip_8(memfile *file)
 
 bool carbon_field_skip_16(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_NUMBER_I16 && type_marker != FIELD_NUMBER_U16,
                  ERR_TYPEMISMATCH, NULL);
@@ -485,7 +485,7 @@ bool carbon_field_skip_16(memfile *file)
 
 bool carbon_field_skip_32(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_NUMBER_I32 && type_marker != FIELD_NUMBER_U32,
                  ERR_TYPEMISMATCH, NULL);
@@ -496,7 +496,7 @@ bool carbon_field_skip_32(memfile *file)
 
 bool carbon_field_skip_64(memfile *file)
 {
-        u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_NUMBER_I64 && type_marker != FIELD_NUMBER_U64,
                  ERR_TYPEMISMATCH, NULL);

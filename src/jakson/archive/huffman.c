@@ -61,7 +61,7 @@ bool huffman_dump_dictionary(FILE *file, memfile *memfile)
         DECLARE_AND_INIT(pack_huffman_info, entry_info)
         DECLARE_AND_INIT(offset_t, offset);
 
-        while ((*MEMFILE_PEEK(memfile, char)) == MARKER_SYMBOL_HUFFMAN_DIC_ENTRY) {
+        while ((*memfile_peek_type(memfile, char)) == MARKER_SYMBOL_HUFFMAN_DIC_ENTRY) {
                 memfile_get_offset(&offset, memfile);
                 coding_huffman_read_entry(&entry_info, memfile, MARKER_SYMBOL_HUFFMAN_DIC_ENTRY);
 

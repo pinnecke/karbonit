@@ -30,7 +30,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
         object_flags_u flags;
 
         object_off = memfile_tell(memfile);
-        header = MEMFILE_READ_TYPE(memfile, object_header);
+        header = memfile_read_type(memfile, object_header);
         if (UNLIKELY(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
                 return false;
         }
@@ -40,7 +40,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
 
         obj->object_id = header->oid;
         obj->offset = object_off;
-        obj->next_obj_off = *MEMFILE_READ_TYPE(memfile, offset_t);
+        obj->next_obj_off = *memfile_read_type(memfile, offset_t);
         memfile_open(&obj->memfile, memfile->memblock, READ_ONLY);
 
         return true;
@@ -120,9 +120,9 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *me
         offset_t entry_off = state->current_column_group.current_column.elem_offsets[current_idx];
         memfile_seek(memfile, entry_off);
 
-        state->current_column_group.current_column.current_entry.array_length = *MEMFILE_READ_TYPE(memfile,
+        state->current_column_group.current_column.current_entry.array_length = *memfile_read_type(memfile,
                                                                                                        u32);
-        state->current_column_group.current_column.current_entry.array_base = MEMFILE_PEEK(memfile, void);
+        state->current_column_group.current_column.current_entry.array_base = memfile_peek_type(memfile, void);
 
         return (++state->current_column_group.current_column.current_entry.idx)
                < state->current_column_group.current_column.num_elem;
@@ -135,7 +135,7 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
         u32 current_idx = state->current_column_group.current_column.idx;
         offset_t column_off = state->current_column_group.column_offs[current_idx];
         memfile_seek(memfile, column_off);
-        const column_header *header = MEMFILE_READ_TYPE(memfile, column_header);
+        const column_header *header = memfile_read_type(memfile, column_header);
 
         assert(header->marker == MARKER_SYMBOL_COLUMN);
         state->current_column_group.current_column.name = header->column_name;
@@ -143,9 +143,9 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
 
         state->current_column_group.current_column.num_elem = header->num_entries;
         state->current_column_group.current_column.elem_offsets =
-                MEMFILE_READ_TYPE_LIST(memfile, offset_t, header->num_entries);
+                memfile_read_type_list(memfile, offset_t, header->num_entries);
         state->current_column_group.current_column.elem_positions =
-                MEMFILE_READ_TYPE_LIST(memfile, u32, header->num_entries);
+                memfile_read_type_list(memfile, u32, header->num_entries);
         state->current_column_group.current_column.current_entry.idx = 0;
 
         return (++state->current_column_group.current_column.idx) < state->current_column_group.num_columns;
@@ -155,13 +155,13 @@ static bool collection_iter_read_next_column_group(collection_iter_state *state,
 {
         assert(state->current_column_group_idx < state->num_column_groups);
         memfile_seek(memfile, state->column_group_offsets[state->current_column_group_idx]);
-        const column_group_header *header = MEMFILE_READ_TYPE(memfile, column_group_header);
+        const column_group_header *header = memfile_read_type(memfile, column_group_header);
         assert(header->marker == MARKER_SYMBOL_COLUMN_GROUP);
         state->current_column_group.num_columns = header->num_columns;
         state->current_column_group.num_objects = header->num_objects;
-        state->current_column_group.object_ids = MEMFILE_READ_TYPE_LIST(memfile, unique_id_t,
+        state->current_column_group.object_ids = memfile_read_type_list(memfile, unique_id_t,
                                                                             header->num_objects);
-        state->current_column_group.column_offs = MEMFILE_READ_TYPE_LIST(memfile, offset_t,
+        state->current_column_group.column_offs = memfile_read_type_list(memfile, offset_t,
                                                                              header->num_columns);
         state->current_column_group.current_column.idx = 0;
 
@@ -201,13 +201,13 @@ static void prop_iter_cursor_init(prop_iter *iter)
                 iter->mode_collection.collection_start_off = offset_by_state(iter);
                 memfile_seek(&iter->record_table_memfile, iter->mode_collection.collection_start_off);
                 const object_array_header
-                        *header = MEMFILE_READ_TYPE(&iter->record_table_memfile, object_array_header);
+                        *header = memfile_read_type(&iter->record_table_memfile, object_array_header);
                 iter->mode_collection.num_column_groups = header->num_entries;
                 iter->mode_collection.current_column_group_idx = 0;
-                iter->mode_collection.column_group_keys = MEMFILE_READ_TYPE_LIST(&iter->record_table_memfile,
+                iter->mode_collection.column_group_keys = memfile_read_type_list(&iter->record_table_memfile,
                                                                                      archive_field_sid_t,
                                                                                      iter->mode_collection.num_column_groups);
-                iter->mode_collection.column_group_offsets = MEMFILE_READ_TYPE_LIST(&iter->record_table_memfile,
+                iter->mode_collection.column_group_offsets = memfile_read_type_list(&iter->record_table_memfile,
                                                                                         offset_t,
                                                                                         iter->mode_collection.num_column_groups);
 
@@ -747,7 +747,7 @@ archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
 static void value_vector_init_object_basic(archive_value_vector *value)
 {
         value->data.object.offsets =
-                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, offset_t, value->value_max_idx);
+                memfile_read_type_list(&value->record_table_memfile, offset_t, value->value_max_idx);
 }
 
 static bool value_vector_init_fixed_length_types_basic(archive_value_vector *value)
@@ -756,47 +756,47 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_INT8:
-                        value->data.basic.values.int8s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.int8s = memfile_peek_type(&value->record_table_memfile,
                                                                           archive_field_i8_t);
                         break;
                 case ARCHIVE_FIELD_INT16:
-                        value->data.basic.values.int16s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.int16s = memfile_peek_type(&value->record_table_memfile,
                                                                            archive_field_i16_t);
                         break;
                 case ARCHIVE_FIELD_INT32:
-                        value->data.basic.values.int32s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.int32s = memfile_peek_type(&value->record_table_memfile,
                                                                            archive_field_i32_t);
                         break;
                 case ARCHIVE_FIELD_INT64:
-                        value->data.basic.values.int64s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.int64s = memfile_peek_type(&value->record_table_memfile,
                                                                            archive_field_i64_t);
                         break;
                 case ARCHIVE_FIELD_UINT8:
-                        value->data.basic.values.uint8s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.uint8s = memfile_peek_type(&value->record_table_memfile,
                                                                            archive_field_u8_t);
                         break;
                 case ARCHIVE_FIELD_UINT16:
-                        value->data.basic.values.uint16s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.uint16s = memfile_peek_type(&value->record_table_memfile,
                                                                             archive_field_u16_t);
                         break;
                 case ARCHIVE_FIELD_UINT32:
-                        value->data.basic.values.uint32s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.uint32s = memfile_peek_type(&value->record_table_memfile,
                                                                             archive_field_u32_t);
                         break;
                 case ARCHIVE_FIELD_UINT64:
-                        value->data.basic.values.uint64s = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.uint64s = memfile_peek_type(&value->record_table_memfile,
                                                                             archive_field_u64_t);
                         break;
                 case ARCHIVE_FIELD_FLOAT:
-                        value->data.basic.values.numbers = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.numbers = memfile_peek_type(&value->record_table_memfile,
                                                                             archive_field_number_t);
                         break;
                 case ARCHIVE_FIELD_STRING:
-                        value->data.basic.values.strings = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.strings = memfile_peek_type(&value->record_table_memfile,
                                                                             archive_field_sid_t);
                         break;
                 case ARCHIVE_FIELD_BOOLEAN:
-                        value->data.basic.values.booleans = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.basic.values.booleans = memfile_peek_type(&value->record_table_memfile,
                                                                              archive_field_boolean_t);
                         break;
                 default: {
@@ -812,7 +812,7 @@ static void value_vector_init_fixed_length_types_null_arrays(archive_value_vecto
         assert(value->is_array);
         assert(value->prop_type == ARCHIVE_FIELD_NULL);
         value->data.arrays.meta.num_nulls_contained =
-                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
+                memfile_read_type_list(&value->record_table_memfile, u32, value->value_max_idx);
 }
 
 static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
@@ -820,52 +820,52 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
         assert (value->is_array);
 
         value->data.arrays.meta.array_lengths =
-                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
+                memfile_read_type_list(&value->record_table_memfile, u32, value->value_max_idx);
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_INT8:
-                        value->data.arrays.values.int8s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.int8s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                 archive_field_i8_t);
                         break;
                 case ARCHIVE_FIELD_INT16:
-                        value->data.arrays.values.int16s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.int16s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                  archive_field_i16_t);
                         break;
                 case ARCHIVE_FIELD_INT32:
-                        value->data.arrays.values.int32s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.int32s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                  archive_field_i32_t);
                         break;
                 case ARCHIVE_FIELD_INT64:
-                        value->data.arrays.values.int64s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.int64s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                  archive_field_i64_t);
                         break;
                 case ARCHIVE_FIELD_UINT8:
-                        value->data.arrays.values.uint8s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.uint8s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                  archive_field_u8_t);
                         break;
                 case ARCHIVE_FIELD_UINT16:
-                        value->data.arrays.values.uint16s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.uint16s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                   archive_field_u16_t);
                         break;
                 case ARCHIVE_FIELD_UINT32:
-                        value->data.arrays.values.uint32s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.uint32s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                   archive_field_u32_t);
                         break;
                 case ARCHIVE_FIELD_UINT64:
-                        value->data.arrays.values.uint64s_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.uint64s_base = memfile_peek_type(&value->record_table_memfile,
                                                                                   archive_field_u64_t);
                         break;
                 case ARCHIVE_FIELD_FLOAT:
-                        value->data.arrays.values.numbers_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.numbers_base = memfile_peek_type(&value->record_table_memfile,
                                                                                   archive_field_number_t);
                         break;
                 case ARCHIVE_FIELD_STRING:
-                        value->data.arrays.values.strings_base = MEMFILE_PEEK(&value->record_table_memfile,
+                        value->data.arrays.values.strings_base = memfile_peek_type(&value->record_table_memfile,
                                                                                   archive_field_sid_t);
                         break;
                 case ARCHIVE_FIELD_BOOLEAN:
                         value->data.arrays.values.booleans_base =
-                                MEMFILE_PEEK(&value->record_table_memfile, archive_field_boolean_t);
+                                memfile_peek_type(&value->record_table_memfile, archive_field_boolean_t);
                         break;
                 default: {
                         error(ERR_INTERNALERR, NULL);

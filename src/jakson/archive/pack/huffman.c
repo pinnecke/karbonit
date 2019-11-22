@@ -191,19 +191,19 @@ bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
 
 bool coding_huffman_read_string(pack_huffman_str_info *info, memfile *src)
 {
-        info->nbytes_encoded = *MEMFILE_READ_TYPE(src, u32);
-        info->encoded_bytes = MEMFILE_READ(src, info->nbytes_encoded);
+        info->nbytes_encoded = *memfile_read_type(src, u32);
+        info->encoded_bytes = memfile_read(src, info->nbytes_encoded);
         return true;
 }
 
 bool coding_huffman_read_entry(pack_huffman_info *info, memfile *file, char marker_symbol)
 {
-        char marker = *MEMFILE_PEEK(file, char);
+        char marker = *memfile_peek_type(file, char);
         if (marker == marker_symbol) {
                 memfile_skip(file, sizeof(char));
-                info->letter = *MEMFILE_READ_TYPE(file, unsigned char);
-                info->nbytes_prefix = *MEMFILE_READ_TYPE(file, u8);
-                info->prefix_code = MEMFILE_PEEK(file, char);
+                info->letter = *memfile_read_type(file, unsigned char);
+                info->nbytes_prefix = *memfile_read_type(file, u8);
+                info->prefix_code = memfile_peek_type(file, char);
 
                 memfile_skip(file, info->nbytes_prefix);
 

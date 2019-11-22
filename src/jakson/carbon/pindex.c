@@ -203,7 +203,7 @@ record_ref_read(key_e *key_type, u64 *key_length, u64 *commit_hash, memfile *mem
         memfile_save_position(memfile);
         memfile_seek(memfile, 0);
         const void *ret = key_read(key_length, key_type, memfile);
-        u64 *hash = MEMFILE_READ_TYPE(memfile, u64);
+        u64 *hash = memfile_read_type(memfile, u64);
         OPTIONAL_SET(commit_hash, *hash);
         memfile_restore_position(memfile);
         return ret;

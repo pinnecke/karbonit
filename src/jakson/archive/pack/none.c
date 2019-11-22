@@ -73,7 +73,7 @@ bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src,
 {
         UNUSED(self);
 
-        const char *string = MEMFILE_READ(src, decompressed_strlen);
+        const char *string = memfile_read(src, decompressed_strlen);
 
         char *printableString = MALLOC(decompressed_strlen + 1);
         memcpy(printableString, string, decompressed_strlen);

@@ -250,7 +250,7 @@ bool internal_object_it_prop_key_access(obj_it *it)
         it->field.key.name = memfile_peek(&it->file, it->field.key.name_len);
         memfile_skip(&it->file, it->field.key.name_len);
         it->field.value.start = memfile_tell(&it->file);
-        it->field.value.data.type = *MEMFILE_PEEK(&it->file, u8);
+        it->field.value.data.type = *memfile_peek_type(&it->file, u8);
 
         return true;
 }

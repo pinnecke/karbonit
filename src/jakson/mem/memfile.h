@@ -26,36 +26,31 @@ typedef struct memfile {
         access_mode_e mode;
 } memfile;
 
-#define MEMFILE_PEEK(file, type)                                                                                   \
+#define memfile_peek_type(file, type)                                                                                  \
 ({                                                                                                                     \
-    assert (memfile_remain_size((file)) >= sizeof(type));                                                                \
-    type* ret = (type*) memfile_peek((file), sizeof(type));                                                                          \
-    ret;                                                                                                                    \
+        assert (memfile_remain_size((file)) >= sizeof(type));                                                          \
+        type* ret = (type*) memfile_peek((file), sizeof(type));                                                        \
+        ret;                                                                                                           \
 })
 
-#define MEMFILE_READ_TYPE(file, type)                                                                              \
+#define memfile_read_type(file, type)                                                                                  \
 ({                                                                                                                     \
-    assert (memfile_remain_size(file) >= sizeof(type));                                                                \
-    (type *) memfile_read(file, sizeof(type));                                                                          \
+        assert (memfile_remain_size(file) >= sizeof(type));                                                            \
+        (type *) memfile_read(file, sizeof(type));                                                                     \
 })
 
-#define MEMFILE_READ_TYPE_LIST(file, type, how_many)                                                               \
-    (const type *) MEMFILE_READ(file, how_many * sizeof(type))
-
-#define MEMFILE_READ(file, nbytes)                                                                                 \
-({                                                                                                                     \
-    assert (memfile_remain_size(file) >= nbytes);                                                                      \
-    memfile_read(file, nbytes);                                                                                        \
-})
+#define memfile_read_type_list(file, type, how_many)                                                                   \
+     (const type *) memfile_read(file, how_many * sizeof(type))
 
 #define memfile_tell(file)                                                                                             \
 ({                                                                                                                     \
-    offset_t __offset = 0;                                                                                               \
-    memfile_get_offset(&__offset, (file));                                                                                 \
-    __offset;                                                                                                            \
+        offset_t __offset = 0;                                                                                         \
+        memfile_get_offset(&__offset, (file));                                                                         \
+        __offset;                                                                                                      \
 })
 
-#define MEMFILE_SKIP_BYTE(file) memfile_skip(file, sizeof(u8))
+#define MEMFILE_SKIP_BYTE(file)                                                                                        \
+        memfile_skip(file, sizeof(u8))
 
 #define memfile_write(file, data, nbytes)																		       \
 ({		                                                                                                               \
@@ -83,236 +78,236 @@ typedef struct memfile {
         status;                                                                                                        \
 })
 
-#define memfile_save_position(file)										\
-({										\
-        offset_t pos = memfile_tell((file));										\
-        if (LIKELY((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {										\
-                (file)->saved_pos[(file)->saved_pos_ptr++] = pos;										\
-        } else {										\
-                error(ERR_STACK_OVERFLOW, NULL);										\
-                pos = 0;										\
-        }										\
-        pos;										\
+#define memfile_save_position(file)										                                               \
+({										                                                                               \
+        offset_t pos = memfile_tell((file));										                                   \
+        if (LIKELY((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {								   \
+                (file)->saved_pos[(file)->saved_pos_ptr++] = pos;										               \
+        } else {										                                                               \
+                error(ERR_STACK_OVERFLOW, NULL);										                               \
+                pos = 0;										                                                       \
+        }										                                                                       \
+        pos;										                                                                   \
 })
 
-#define memfile_restore_position(file)												\
-({												\
-		bool status;												\
-        if (LIKELY((file)->saved_pos_ptr >= 0)) {												\
-                offset_t pos = (file)->saved_pos[--(file)->saved_pos_ptr];												\
-                memfile_seek((file), pos);												\
-                status = true;												\
-        } else {												\
-                status = error(ERR_STACK_UNDERFLOW, NULL);												\
-        }												\
-        status;												\
+#define memfile_restore_position(file)												                                   \
+({												                                                                       \
+		bool status;												                                                   \
+        if (LIKELY((file)->saved_pos_ptr >= 0)) {												                       \
+                offset_t pos = (file)->saved_pos[--(file)->saved_pos_ptr];											   \
+                memfile_seek((file), pos);												                               \
+                status = true;												                                           \
+        } else {												                                                       \
+                status = error(ERR_STACK_UNDERFLOW, NULL);												               \
+        }												                                                               \
+        status;												                                                           \
 })
 
-#define memfile_ensure_space(file, nbytes)											\
-({											\
-        DECLARE_AND_INIT(offset_t, block_size);											\
-        memblock_size(&block_size, (file)->memblock);											\
-        assert((file)->pos < block_size);											\
-        size_t diff = block_size - (file)->pos;											\
-        if (diff < (nbytes)) {											\
-                memfile_grow((file), (nbytes) - diff);											\
-        }											\
-        memfile_save_position((file));											\
-        offset_t current_off = memfile_tell((file));											\
-        signed_offset_t shift = 0;											\
-        for (u32 i = 0; i < (nbytes); i++) {											\
-                char c = *memfile_read((file), 1);											\
-                if (UNLIKELY(c != 0)) {											\
-                        memfile_seek((file), current_off);											\
-                        memfile_inplace_insert((file), (nbytes) - i);											\
-                        shift += (nbytes) - i;											\
-                        break;											\
-                }											\
-        }											\
-        memfile_restore_position((file));											\
-        shift;											\
+#define memfile_ensure_space(file, nbytes)											                                   \
+({											                                                                           \
+        DECLARE_AND_INIT(offset_t, block_size);											                               \
+        memblock_size(&block_size, (file)->memblock);											                       \
+        assert((file)->pos < block_size);											                                   \
+        size_t diff = block_size - (file)->pos;											                               \
+        if (diff < (nbytes)) {											                                               \
+                memfile_grow((file), (nbytes) - diff);											                       \
+        }											                                                                   \
+        memfile_save_position((file));											                                       \
+        offset_t current_off = memfile_tell((file));											                       \
+        signed_offset_t shift = 0;											                                           \
+        for (u32 i = 0; i < (nbytes); i++) {											                               \
+                char c = *memfile_read((file), 1);											                           \
+                if (UNLIKELY(c != 0)) {											                                       \
+                        memfile_seek((file), current_off);											                   \
+                        memfile_inplace_insert((file), (nbytes) - i);											       \
+                        shift += (nbytes) - i;											                               \
+                        break;											                                               \
+                }											                                                           \
+        }											                                                                   \
+        memfile_restore_position((file));											                                   \
+        shift;											                                                               \
 })
 
-#define memfile_read_uintvar_stream(nbytes, file)													\
-({													\
-        u8 nbytes_read;													\
-        u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) memfile_peek((file), sizeof(char)));													\
-        memfile_skip((file), nbytes_read);													\
-        if ((nbytes) != NULL) { u8 *assign_nbytes = (nbytes); *assign_nbytes = nbytes_read; }													\
-        result;													\
+#define memfile_read_uintvar_stream(nbytes, file)													                   \
+({													                                                                   \
+        u8 nbytes_read;													                                               \
+        u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) memfile_peek((file), sizeof(char)));		   \
+        memfile_skip((file), nbytes_read);													                           \
+        if ((nbytes) != NULL) { u8 *assign_nbytes = (nbytes); *assign_nbytes = nbytes_read; }						   \
+        result;													                                                       \
 })
 
-#define memfile_skip_uintvar_stream(file)						\
+#define memfile_skip_uintvar_stream(file)						                                                       \
         memfile_read_uintvar_stream(NULL, (file));
 
-#define memfile_peek_uintvar_stream(nbytes, file)									\
-({									                                        \
-        memfile_save_position((file));									\
-        u64 result = memfile_read_uintvar_stream((nbytes), (file));									\
-        memfile_restore_position((file));									\
-        result;									\
+#define memfile_peek_uintvar_stream(nbytes, file)									                                   \
+({									                                                                                   \
+        memfile_save_position((file));									                                               \
+        u64 result = memfile_read_uintvar_stream((nbytes), (file));									                   \
+        memfile_restore_position((file));									                                           \
+        result;									                                                                       \
 })
 
-#define memfile_write_uintvar_stream(nbytes_moved, file, value)												\
-({												\
-        u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												\
-        signed_offset_t shift = memfile_ensure_space((file), required_blocks);												\
-        uintvar_stream_t dst = (uintvar_stream_t) memfile_peek((file), sizeof(char));												\
-        uintvar_stream_write(dst, (value));												\
-        memfile_skip((file), required_blocks);												\
-        if ((nbytes_moved) != NULL) { signed_offset_t *assign = nbytes_moved; *assign = shift; }												\
-        required_blocks;												\
+#define memfile_write_uintvar_stream(nbytes_moved, file, value)												           \
+({												                                                                       \
+        u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   \
+        signed_offset_t shift = memfile_ensure_space((file), required_blocks);										   \
+        uintvar_stream_t dst = (uintvar_stream_t) memfile_peek((file), sizeof(char));								   \
+        uintvar_stream_write(dst, (value));												                               \
+        memfile_skip((file), required_blocks);												                           \
+        if ((nbytes_moved) != NULL) { signed_offset_t *assign = nbytes_moved; *assign = shift; }					   \
+        required_blocks;												                                               \
 })
 
-#define memfile_update_uintvar_stream(file, value)															\
-({															\
-        u8 bytes_used_now, bytes_used_then;															\
-        memfile_peek_uintvar_stream(&bytes_used_now, (file));															\
-        bytes_used_then = UINTVAR_STREAM_REQUIRED_BLOCKS((value));															\
-        if (bytes_used_now < bytes_used_then) {															\
-                u8 inc = bytes_used_then - bytes_used_now;															\
-                memfile_inplace_insert((file), inc);															\
-        } else if (bytes_used_now > bytes_used_then) {															\
-                u8 dec = bytes_used_now - bytes_used_then;															\
-                memfile_inplace_remove((file), dec);															\
-        }															\
-        uintvar_stream_t dst = (uintvar_stream_t) memfile_peek((file), sizeof(char));															\
-        u8 required_blocks = uintvar_stream_write(dst, (value));															\
-        memfile_skip((file), required_blocks);															\
-        (bytes_used_then - bytes_used_now);															\
+#define memfile_update_uintvar_stream(file, value)															           \
+({															                                                           \
+        u8 bytes_used_now, bytes_used_then;															                   \
+        memfile_peek_uintvar_stream(&bytes_used_now, (file));														   \
+        bytes_used_then = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   	   \
+        if (bytes_used_now < bytes_used_then) {															               \
+                u8 inc = bytes_used_then - bytes_used_now;															   \
+                memfile_inplace_insert((file), inc);															       \
+        } else if (bytes_used_now > bytes_used_then) {															       \
+                u8 dec = bytes_used_now - bytes_used_then;															   \
+                memfile_inplace_remove((file), dec);															       \
+        }															                                                   \
+        uintvar_stream_t dst = (uintvar_stream_t) memfile_peek((file), sizeof(char));								   \
+        u8 required_blocks = uintvar_stream_write(dst, (value));													   \
+        memfile_skip((file), required_blocks);															               \
+        (bytes_used_then - bytes_used_now);															                   \
 })
 
 
-#define memfile_open(file, block, access_mode_e_mode)								\
-{								\
-        ZERO_MEMORY((file), sizeof(memfile))								\
-        (file)->memblock = (block);								\
-        (file)->pos = 0;								\
-        (file)->bit_mode = false;								\
-        (file)->mode = (access_mode_e_mode);								\
-        (file)->saved_pos_ptr = 0;								\
+#define memfile_open(file, block, access_mode_e_mode)								                                   \
+{								                                                                                       \
+        ZERO_MEMORY((file), sizeof(memfile))								                                           \
+        (file)->memblock = (block);								                                                       \
+        (file)->pos = 0;								                                                               \
+        (file)->bit_mode = false;								                                                       \
+        (file)->mode = (access_mode_e_mode);								                                           \
+        (file)->saved_pos_ptr = 0;								                                                       \
 }
 
-#define memfile_clone(dst, src)																\
-{															\
-        memfile_open((dst), (src)->memblock, (src)->mode);															\
-        memfile_seek((dst), memfile_tell((src)));															\
-        (dst)->bit_mode = (src)->bit_mode;															\
-        (dst)->saved_pos_ptr = (src)->saved_pos_ptr;															\
-        memcpy(&(dst)->saved_pos, &(src)->saved_pos, ARRAY_LENGTH((src)->saved_pos));															\
+#define memfile_clone(dst, src)																                           \
+{															                                                           \
+        memfile_open((dst), (src)->memblock, (src)->mode);															   \
+        memfile_seek((dst), memfile_tell((src)));															           \
+        (dst)->bit_mode = (src)->bit_mode;															                   \
+        (dst)->saved_pos_ptr = (src)->saved_pos_ptr;															       \
+        memcpy(&(dst)->saved_pos, &(src)->saved_pos, ARRAY_LENGTH((src)->saved_pos));								   \
 }
 
-#define memfile_seek(file, position)												\
-({												\
-        offset_t file_size = 0;												\
-        bool status = true;												\
-        memblock_size(&file_size, (file)->memblock);												\
-        if (UNLIKELY((position) >= file_size)) {												\
-                if ((file)->mode == READ_WRITE) {												\
-                        offset_t new_size = (position) + 1;												\
-                        memblock_resize((file)->memblock, new_size);												\
-                } else {												\
-                        status = error(ERR_MEMSTATE, NULL);												\
-                }												\
-        }												\
-        (file)->pos = (position);												\
-        status;												\
+#define memfile_seek(file, position)												                                   \
+({												                                                                       \
+        offset_t file_size = 0;												                                           \
+        bool status = true;												                                               \
+        memblock_size(&file_size, (file)->memblock);												                   \
+        if (UNLIKELY((position) >= file_size)) {												                       \
+                if ((file)->mode == READ_WRITE) {												                       \
+                        offset_t new_size = (position) + 1;												               \
+                        memblock_resize((file)->memblock, new_size);												   \
+                } else {												                                               \
+                        status = error(ERR_MEMSTATE, NULL);												               \
+                }												                                                       \
+        }												                                                               \
+        (file)->pos = (position);												                                       \
+        status;												                                                           \
 })
 
-#define memfile_seek_from_here(file, where)				\
-{				\
-        offset_t now = memfile_tell((file));				\
-        offset_t then = now + (where);				\
-        memfile_seek((file), then);				\
+#define memfile_seek_from_here(file, where)				                                                               \
+{				                                                                                                       \
+        offset_t now = memfile_tell((file));				                                                           \
+        offset_t then = now + (where);				                                                                   \
+        memfile_seek((file), then);				                                                                       \
 }
 
-#define memfile_rewind(file)					\
+#define memfile_rewind(file)					                                                                       \
         (file)->pos = 0;
 
-#define memfile_grow(file_in, grow_by_bytes)									\
-{									\
-        if (LIKELY((grow_by_bytes) > 0)) {									\
-                offset_t block_size = 0;									\
-                memblock_size(&block_size, (file_in)->memblock);									\
-                memblock_resize((file_in)->memblock, (block_size + (grow_by_bytes)));									\
-        }									\
+#define memfile_grow(file_in, grow_by_bytes)									                                       \
+{									                                                                                   \
+        if (LIKELY((grow_by_bytes) > 0)) {									                                           \
+                offset_t block_size = 0;									                                           \
+                memblock_size(&block_size, (file_in)->memblock);									                   \
+                memblock_resize((file_in)->memblock, (block_size + (grow_by_bytes)));								   \
+        }									                                                                           \
 }
 
-#define memfile_get_offset(position, file)							\
-{							\
-        *(position) = file->pos;							\
+#define memfile_get_offset(position, file)							                                                   \
+{							                                                                                           \
+        *(position) = file->pos;							                                                           \
 }
 
-#define memfile_size(file)							\
-({							\
-		u64 ret;							\
-        if (!(file) || !(file)->memblock) {							\
-                ret = 0;							\
-        } else {							\
-                memblock_size(&ret, (file)->memblock);							\
-        }							\
-        ret;							\
+#define memfile_size(file)							                                                                   \
+({							                                                                                           \
+		u64 ret;							                                                                           \
+        if (!(file) || !(file)->memblock) {							                                                   \
+                ret = 0;							                                                                   \
+        } else {							                                                                           \
+                memblock_size(&ret, (file)->memblock);							                                       \
+        }							                                                                                   \
+        ret;							                                                                               \
 })
 
-#define memfile_cut(file, how_many_bytes)							\
-({							\
-        offset_t block_size = 0;							\
-        memblock_size(&block_size, (file)->memblock);							\
-        bool status;							\
-        if ((how_many_bytes) > 0 && block_size > (how_many_bytes)) {							\
-                size_t new_block_size = block_size - (how_many_bytes);							\
-                memblock_resize((file)->memblock, new_block_size);							\
-                (file)->pos = JAK_MIN((file)->pos, new_block_size);							\
-                status = true;							\
-        } else {							\
-                status = error(ERR_ILLEGALARG, NULL);							\
-        }							\
-        status;							\
+#define memfile_cut(file, how_many_bytes)							                                                   \
+({							                                                                                           \
+        offset_t block_size = 0;							                                                           \
+        memblock_size(&block_size, (file)->memblock);							                                       \
+        bool status;							                                                                       \
+        if ((how_many_bytes) > 0 && block_size > (how_many_bytes)) {							                       \
+                size_t new_block_size = block_size - (how_many_bytes);							                       \
+                memblock_resize((file)->memblock, new_block_size);							                           \
+                (file)->pos = JAK_MIN((file)->pos, new_block_size);							                           \
+                status = true;							                                                               \
+        } else {							                                                                           \
+                status = error(ERR_ILLEGALARG, NULL);							                                       \
+        }							                                                                                   \
+        status;							                                                                               \
 })
 
-#define memfile_remain_size(file)														\
-({														\
-        assert((file)->pos <= memfile_size((file)));														\
-        (memfile_size((file)) - (file)->pos);														\
+#define memfile_remain_size(file)														                               \
+({														                                                               \
+        assert((file)->pos <= memfile_size((file)));														           \
+        (memfile_size((file)) - (file)->pos);														                   \
 })
 
-#define memfile_shrink(file)														\
-({														\
-		bool status;														\
-        if ((file)->mode == READ_WRITE) {														\
-                memblock_shrink((file)->memblock);														\
-                u64 size;														\
-                memblock_size(&size, (file)->memblock);														\
-                assert(size == (file)->pos);														\
-                status = true;														\
-        } else {														\
-                status = error(ERR_WRITEPROT, NULL);														\
-        }														\
-        status;														\
+#define memfile_shrink(file)														                                   \
+({														                                                               \
+		bool status;														                                           \
+        if ((file)->mode == READ_WRITE) {														                       \
+                memblock_shrink((file)->memblock);														               \
+                u64 size;														                                       \
+                memblock_size(&size, (file)->memblock);														           \
+                assert(size == (file)->pos);														                   \
+                status = true;														                                   \
+        } else {														                                               \
+                status = error(ERR_WRITEPROT, NULL);														           \
+        }														                                                       \
+        status;														                                                   \
 })
 
-#define memfile_read(file, nbytes)											\
-({											\
-        const char *result = memfile_peek((file), (nbytes));											\
-        (file)->pos += (nbytes);											\
-        result;											\
+#define memfile_read(file, nbytes)											                                           \
+({											                                                                           \
+        const char *result = memfile_peek((file), (nbytes));											               \
+        (file)->pos += (nbytes);											                                           \
+        result;											                                                               \
 })
 
-#define memfile_read_byte(file)								\
-        *MEMFILE_READ_TYPE((file), u8)
+#define memfile_read_byte(file)								                                                           \
+        *memfile_read_type((file), u8)
 
-#define memfile_peek_byte(file)								\
-        *MEMFILE_PEEK(file, u8)
+#define memfile_peek_byte(file)								                                                           \
+        *memfile_peek_type(file, u8)
 
-#define memfile_read_u64(file)								\
-        *MEMFILE_READ_TYPE((file), u64)
+#define memfile_read_u64(file)								                                                           \
+        *memfile_read_type((file), u64)
 
-#define memfile_read_i64(file)						\
-		*MEMFILE_READ_TYPE((file), i64)
+#define memfile_read_i64(file)						                                                                   \
+		*memfile_read_type((file), i64)
 
 
-#define memfile_skip(file, nbytes)															\
-({															\
+#define memfile_skip(file, nbytes)															                           \
+({															                                                           \
         offset_t required_size = (file)->pos + (nbytes);															\
         (file)->pos += (nbytes);															\
         offset_t file_size = 0;															\

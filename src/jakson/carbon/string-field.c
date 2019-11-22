@@ -49,7 +49,7 @@ bool string_field_nomarker_remove(memfile *file)
 
 bool string_field_remove(memfile *file)
 {
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 marker = *memfile_read_type(file, u8);
         if (LIKELY(marker == FIELD_STRING)) {
                 memfile_inplace_remove(file, sizeof(u8));
                 return string_field_nomarker_remove(file);
@@ -78,7 +78,7 @@ bool string_field_update(memfile *file, const char *string)
 
 bool string_field_update_wnchar(memfile *file, const char *string, size_t str_len)
 {
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 marker = *memfile_read_type(file, u8);
         if (LIKELY(marker == FIELD_STRING)) {
                 offset_t payload_start = memfile_tell(file);
                 u32 old_len = memfile_read_uintvar_stream(NULL, file);
@@ -106,7 +106,7 @@ bool string_field_nomarker_skip(memfile *file)
 
 const char *string_field_read(u64 *len, memfile *file)
 {
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 marker = *memfile_read_type(file, u8);
         if (LIKELY(marker == FIELD_STRING)) {
                 return string_field_nomarker_read(len, file);
         } else {

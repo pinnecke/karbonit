@@ -146,7 +146,7 @@ bool key_write_string(memfile *file, const char *key)
 
 bool key_read_type(key_e *out, memfile *file)
 {
-        u8 marker = *MEMFILE_READ_TYPE(file, u8);
+        u8 marker = *memfile_read_type(file, u8);
 
         assert(marker == MNOKEY || marker == MAUTOKEY || marker ==
                                                                                                        MUKEY ||
@@ -187,13 +187,13 @@ const void *key_read(u64 *len, key_e *out, memfile *file)
                         return NULL;
                 case CARBON_KEY_AUTOKEY:
                         OPTIONAL_SET(len, sizeof(unique_id_t))
-                        return MEMFILE_READ_TYPE(file, unique_id_t);
+                        return memfile_read_type(file, unique_id_t);
                 case CARBON_KEY_UKEY:
                         OPTIONAL_SET(len, sizeof(u64))
-                        return MEMFILE_READ_TYPE(file, u64);
+                        return memfile_read_type(file, u64);
                 case CARBON_KEY_IKEY:
                         OPTIONAL_SET(len, sizeof(i64))
-                        return MEMFILE_READ_TYPE(file, i64);
+                        return memfile_read_type(file, i64);
                 case CARBON_KEY_SKEY:
                         return string_field_read(len, file);
                 default: error(ERR_INTERNALERR, NULL);

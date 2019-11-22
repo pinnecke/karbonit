@@ -42,13 +42,13 @@ bool commit_skip(memfile *file)
 
 bool commit_read(u64 *commit_hash, memfile *file)
 {
-        *commit_hash = *MEMFILE_READ_TYPE(file, u64);
+        *commit_hash = *memfile_read_type(file, u64);
         return true;
 }
 
 bool commit_peek(u64 *commit_hash, memfile *file)
 {
-        *commit_hash = *MEMFILE_PEEK(file, u64);
+        *commit_hash = *memfile_peek_type(file, u64);
         return true;
 }
 

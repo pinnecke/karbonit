@@ -510,100 +510,100 @@ field_type_e field_type_for_column(list_type_e derivation, col_it_type_e type)
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:
                         switch (type) {
-                                case COLUMN_TYPE_U8:
+                                case COLUMN_U8:
                                         return FIELD_COLUMN_U8_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_U16:
+                                case COLUMN_U16:
                                         return FIELD_COLUMN_U16_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_U32:
+                                case COLUMN_U32:
                                         return FIELD_COLUMN_U32_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_U64:
+                                case COLUMN_U64:
                                         return FIELD_COLUMN_U64_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_I8:
+                                case COLUMN_I8:
                                         return FIELD_COLUMN_I8_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_I16:
+                                case COLUMN_I16:
                                         return FIELD_COLUMN_I16_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_I32:
+                                case COLUMN_I32:
                                         return FIELD_COLUMN_I32_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_I64:
+                                case COLUMN_I64:
                                         return FIELD_COLUMN_I64_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_FLOAT:
+                                case COLUMN_FLOAT:
                                         return FIELD_COLUMN_FLOAT_UNSORTED_MULTISET;
-                                case COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_BOOLEAN:
                                         return FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_SORTED_MULTISET:
                         switch (type) {
-                                case COLUMN_TYPE_U8:
+                                case COLUMN_U8:
                                         return FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET;
-                                case COLUMN_TYPE_U16:
+                                case COLUMN_U16:
                                         return FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET;
-                                case COLUMN_TYPE_U32:
+                                case COLUMN_U32:
                                         return FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET;
-                                case COLUMN_TYPE_U64:
+                                case COLUMN_U64:
                                         return FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET;
-                                case COLUMN_TYPE_I8:
+                                case COLUMN_I8:
                                         return FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET;
-                                case COLUMN_TYPE_I16:
+                                case COLUMN_I16:
                                         return FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET;
-                                case COLUMN_TYPE_I32:
+                                case COLUMN_I32:
                                         return FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET;
-                                case COLUMN_TYPE_I64:
+                                case COLUMN_I64:
                                         return FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET;
-                                case COLUMN_TYPE_FLOAT:
+                                case COLUMN_FLOAT:
                                         return FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET;
-                                case COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_BOOLEAN:
                                         return FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_UNSORTED_SET:
                         switch (type) {
-                                case COLUMN_TYPE_U8:
+                                case COLUMN_U8:
                                         return FIELD_DERIVED_COLUMN_U8_UNSORTED_SET;
-                                case COLUMN_TYPE_U16:
+                                case COLUMN_U16:
                                         return FIELD_DERIVED_COLUMN_U16_UNSORTED_SET;
-                                case COLUMN_TYPE_U32:
+                                case COLUMN_U32:
                                         return FIELD_DERIVED_COLUMN_U32_UNSORTED_SET;
-                                case COLUMN_TYPE_U64:
+                                case COLUMN_U64:
                                         return FIELD_DERIVED_COLUMN_U64_UNSORTED_SET;
-                                case COLUMN_TYPE_I8:
+                                case COLUMN_I8:
                                         return FIELD_DERIVED_COLUMN_I8_UNSORTED_SET;
-                                case COLUMN_TYPE_I16:
+                                case COLUMN_I16:
                                         return FIELD_DERIVED_COLUMN_I16_UNSORTED_SET;
-                                case COLUMN_TYPE_I32:
+                                case COLUMN_I32:
                                         return FIELD_DERIVED_COLUMN_I32_UNSORTED_SET;
-                                case COLUMN_TYPE_I64:
+                                case COLUMN_I64:
                                         return FIELD_DERIVED_COLUMN_I64_UNSORTED_SET;
-                                case COLUMN_TYPE_FLOAT:
+                                case COLUMN_FLOAT:
                                         return FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET;
-                                case COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_BOOLEAN:
                                         return FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_SORTED_SET:
                         switch (type) {
-                                case COLUMN_TYPE_U8:
+                                case COLUMN_U8:
                                         return FIELD_DERIVED_COLUMN_U8_SORTED_SET;
-                                case COLUMN_TYPE_U16:
+                                case COLUMN_U16:
                                         return FIELD_DERIVED_COLUMN_U16_SORTED_SET;
-                                case COLUMN_TYPE_U32:
+                                case COLUMN_U32:
                                         return FIELD_DERIVED_COLUMN_U32_SORTED_SET;
-                                case COLUMN_TYPE_U64:
+                                case COLUMN_U64:
                                         return FIELD_DERIVED_COLUMN_U64_SORTED_SET;
-                                case COLUMN_TYPE_I8:
+                                case COLUMN_I8:
                                         return FIELD_DERIVED_COLUMN_I8_SORTED_SET;
-                                case COLUMN_TYPE_I16:
+                                case COLUMN_I16:
                                         return FIELD_DERIVED_COLUMN_I16_SORTED_SET;
-                                case COLUMN_TYPE_I32:
+                                case COLUMN_I32:
                                         return FIELD_DERIVED_COLUMN_I32_SORTED_SET;
-                                case COLUMN_TYPE_I64:
+                                case COLUMN_I64:
                                         return FIELD_DERIVED_COLUMN_I64_SORTED_SET;
-                                case COLUMN_TYPE_FLOAT:
+                                case COLUMN_FLOAT:
                                         return FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET;
-                                case COLUMN_TYPE_BOOLEAN:
+                                case COLUMN_BOOLEAN:
                                         return FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET;
                                 default: error(ERR_INTERNALERR, NULL);
                                         return 0;

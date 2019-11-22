@@ -112,14 +112,14 @@ bool internal_carbon_object_update_false(obj_it *it);
 bool internal_carbon_object_update_null(obj_it *it);
 bool internal_carbon_object_update_string(obj_it *it, const char *str);
 bool internal_carbon_object_update_binary(obj_it *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
-insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj_it *it);
-bool internal_carbon_object_update_array_end(insert_array_state *state);
+insert *internal_carbon_object_update_array_begin(arr_state *state, obj_it *it);
+bool internal_carbon_object_update_array_end(arr_state *state);
 
-insert *internal_carbon_object_update_column_begin(insert_column_state *state, obj_it *it);
-bool internal_carbon_object_update_column_end(insert_column_state *state);
+insert *internal_carbon_object_update_column_begin(col_state *state, obj_it *it);
+bool internal_carbon_object_update_column_end(col_state *state);
 
-insert *internal_carbon_object_update_object_begin(insert_object_state *state, obj_it *it);
-bool internal_carbon_object_update_object_end(insert_object_state *state);
+insert *internal_carbon_object_update_object_begin(obj_state *state, obj_it *it);
+bool internal_carbon_object_update_object_end(obj_state *state);
 
 bool internal_carbon_object_update_from_carbon(obj_it *it, const rec *src);
 bool internal_carbon_object_update_from_array(obj_it *it, const obj_it *src);

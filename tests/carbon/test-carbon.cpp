@@ -585,7 +585,7 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state;
+        arr_state array_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -614,7 +614,7 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state;
+        arr_state array_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -653,7 +653,7 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state_l1, array_state_l2;
+        arr_state array_state_l1, array_state_l2;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -700,7 +700,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state_l1;
+        arr_state array_state_l1;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -745,7 +745,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state_l1;
+        arr_state array_state_l1;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -800,7 +800,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -839,7 +839,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -876,7 +876,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
 
@@ -913,7 +913,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
         insert *ins;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -1016,7 +1016,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
 
@@ -1055,7 +1055,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
 
@@ -1097,7 +1097,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
 
@@ -1141,7 +1141,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
         insert *ins;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -1243,7 +1243,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
+        col_state column_state;
         insert *ins;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -1343,7 +1343,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state;
+        arr_state array_state;
         insert *ins;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -1395,7 +1395,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         rev revise;
         arr_it it;
         insert in;
-        insert_array_state array_state, nested_array_state;
+        arr_state array_state, nested_array_state;
         insert *ins, *nested_ins;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -1469,8 +1469,8 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         rev revise;
         arr_it it;
         insert in;
-        insert_column_state column_state;
-        insert_array_state array_state, nested_array_state;
+        col_state column_state;
+        arr_state array_state, nested_array_state;
         insert *ins, *nested_ins, *column_ins;
 
         carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
@@ -1719,8 +1719,8 @@ TEST(CarbonTest, CarbonFindTypes) {
         rev revise;
         arr_it it;
         insert in, *ins, *nested_ins, *column_ins;
-        insert_column_state column_state;
-        insert_array_state array_state, nested_array_state;
+        col_state column_state;
+        arr_state array_state, nested_array_state;
         find finder;
         u64 result_unsigned;
         field_e type;
@@ -3325,7 +3325,7 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         rev revise;
         arr_it rev_it;
         string_buffer sb;
-        insert_array_state state;
+        arr_state state;
         insert *array_ins;
         bool has_next;
         string_buffer_create(&sb);
@@ -3385,7 +3385,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_array_state state;
+        arr_state state;
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3450,7 +3450,7 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_array_state state;
+        arr_state state;
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3514,7 +3514,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_array_state state;
+        arr_state state;
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3590,7 +3590,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         bool status;
         const u16 *values;
 
-        insert_column_state state;
+        col_state state;
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3682,8 +3682,8 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
         string_buffer sb;
         string_buffer_create(&sb);
 
-        insert_array_state state, state2, state3;
-        insert_column_state cstate;
+        arr_state state, state2, state3;
+        col_state cstate;
         insert *array_ins, *array_ins2, *array_ins3, *column_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -4299,7 +4299,7 @@ TEST(CarbonTest, CarbonObjectInsertEmpty)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4326,7 +4326,7 @@ TEST(CarbonTest, CarbonObjectInsertNull)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4354,7 +4354,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4383,7 +4383,7 @@ TEST(CarbonTest, CarbonObjectInsertU8)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4411,7 +4411,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4441,7 +4441,7 @@ TEST(CarbonTest, CarbonObjectInsertU16)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4469,7 +4469,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4499,7 +4499,7 @@ TEST(CarbonTest, CarbonObjectInsertU32)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4527,7 +4527,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4557,7 +4557,7 @@ TEST(CarbonTest, CarbonObjectInsertU64)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4585,7 +4585,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4615,7 +4615,7 @@ TEST(CarbonTest, CarbonObjectInsertI8)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4643,7 +4643,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4673,7 +4673,7 @@ TEST(CarbonTest, CarbonObjectInsertI16)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4701,7 +4701,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4731,7 +4731,7 @@ TEST(CarbonTest, CarbonObjectInsertI32)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4759,7 +4759,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4789,7 +4789,7 @@ TEST(CarbonTest, CarbonObjectInsertI64)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4817,7 +4817,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4847,7 +4847,7 @@ TEST(CarbonTest, CarbonObjectInsertFloat)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4875,7 +4875,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4905,7 +4905,7 @@ TEST(CarbonTest, CarbonObjectInsertTrue)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4933,7 +4933,7 @@ TEST(CarbonTest, CarbonObjectInsertFalse)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4961,7 +4961,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -4991,7 +4991,7 @@ TEST(CarbonTest, CarbonObjectInsertMixed)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5031,7 +5031,7 @@ TEST(CarbonTest, CarbonObjectInsertString)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5061,7 +5061,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleString)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5093,7 +5093,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5138,7 +5138,7 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5168,7 +5168,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5215,7 +5215,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5247,7 +5247,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
 {
         rec doc;
         rec_new context;
-        insert_object_state state, nested;
+        obj_state state, nested;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5278,7 +5278,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
 {
         rec doc;
         rec_new context;
-        insert_object_state state, nested;
+        obj_state state, nested;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5332,8 +5332,8 @@ TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
-        insert_array_state array_state;
+        obj_state state;
+        arr_state array_state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5364,9 +5364,9 @@ TEST(CarbonTest, CarbonObjectInsertArrayData)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
-        insert_array_state array_state, nested_array_state;
-        insert_column_state column_state;
+        obj_state state;
+        arr_state array_state, nested_array_state;
+        col_state column_state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5421,8 +5421,8 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 {
         rec doc;
         rec_new context;
-        insert_object_state state;
-        insert_column_state column_state;
+        obj_state state;
+        col_state column_state;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5458,8 +5458,8 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 //        carbon_revise revise;
 //        arr_it it;
 //        insert nested_ins, *array_ins, *col_ins, *nested_array_ins;
-//        insert_array_state array_state, nested_array_state;
-//        insert_column_state column_state;
+//        arr_state array_state, nested_array_state;
+//        col_state column_state;
 //
 //        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 //        carbon_revise_begin(&revise, rev_doc, &doc);
@@ -5573,7 +5573,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -5663,7 +5663,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -5752,7 +5752,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5830,7 +5830,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5905,7 +5905,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5980,7 +5980,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6056,7 +6056,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6133,7 +6133,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
@@ -6211,7 +6211,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
+        obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -6284,8 +6284,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
-        insert_object_state nested_obj;
+        obj_state state;
+        obj_state nested_obj;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -6364,8 +6364,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
-        insert_array_state nested_arr;
+        obj_state state;
+        arr_state nested_arr;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -6443,8 +6443,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
-        insert_array_state nested_arr;
+        obj_state state;
+        arr_state nested_arr;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -6523,8 +6523,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
-        insert_column_state nested_col;
+        obj_state state;
+        col_state nested_col;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -6600,8 +6600,8 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         bool has_next;
         string_buffer_create(&sb);
 
-        insert_object_state state;
-        insert_object_state nested_obj;
+        obj_state state;
+        obj_state nested_obj;
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
@@ -7756,7 +7756,7 @@ TEST(CarbonTest, CarbonColumnOptimizeFix)
 {
         rec_new context;
         rec doc;
-        insert_column_state state_out;
+        col_state state_out;
 
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
         insert *cins = insert_column_begin(&state_out, ins, COLUMN_U8, 4);

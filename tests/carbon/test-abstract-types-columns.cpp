@@ -8,7 +8,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec_new context;
         insert *ins;
         rec doc, doc2;
-        insert_column_state s1;
+        col_state s1;
         arr_it it;
         col_it *col_it;
         field_e ft;

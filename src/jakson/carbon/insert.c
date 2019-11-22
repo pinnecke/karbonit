@@ -446,7 +446,7 @@ bool insert_binary(insert *in, const void *value, size_t nbytes,
         return true;
 }
 
-insert *__insert_map_begin(insert_object_state *out,
+insert *__insert_map_begin(obj_state *out,
                                                   insert *in, map_type_e derivation,
                                                   u64 object_capacity)
 {
@@ -456,8 +456,8 @@ insert *__insert_map_begin(insert_object_state *out,
                 return false;
         }
 
-        *out = (insert_object_state) {
-                .parent_inserter = in,
+        *out = (obj_state) {
+                .parent = in,
                 .it = MALLOC(sizeof(obj_it)),
                 .object_begin = memfile_tell(&in->memfile),
                 .object_end = 0
@@ -473,17 +473,17 @@ insert *__insert_map_begin(insert_object_state *out,
         return &out->in;
 }
 
-insert *insert_object_begin(insert_object_state *out,
+insert *insert_object_begin(obj_state *out,
                                                   insert *in,
                                                   u64 object_capacity)
 {
         return __insert_map_begin(out, in, MAP_UNSORTED_MULTIMAP, object_capacity);
 }
 
-bool insert_object_end(insert_object_state *state)
+bool insert_object_end(obj_state *state)
 {
         obj_it scan;
-        internal_carbon_object_create(&scan, &state->parent_inserter->memfile, memfile_tell(&state->parent_inserter->memfile) - 1);
+        internal_carbon_object_create(&scan, &state->parent->memfile, memfile_tell(&state->parent->memfile) - 1);
         while (carbon_object_next(&scan)) {}
 
         JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == MOBJECT_END);
@@ -493,25 +493,25 @@ bool insert_object_end(insert_object_state *state)
 
         memfile_skip(&scan.memfile, 1);
 
-        memfile_seek(&state->parent_inserter->memfile, memfile_tell(&scan.memfile) - 1);
+        memfile_seek(&state->parent->memfile, memfile_tell(&scan.memfile) - 1);
         carbon_object_drop(&scan);
         carbon_object_drop(state->it);
         free(state->it);
         return true;
 }
 
-insert *insert_object_map_begin(insert_object_state *out, insert *in,
+insert *insert_object_map_begin(obj_state *out, insert *in,
                                               map_type_e derivation, u64 object_capacity)
 {
         return __insert_map_begin(out, in, derivation, object_capacity);
 }
 
-bool insert_object_map_end(insert_object_state *state)
+bool insert_object_map_end(obj_state *state)
 {
         return insert_object_end(state);
 }
 
-insert *__insert_array_list_begin(insert_array_state *state_out,
+insert *__insert_array_list_begin(arr_state *state_out,
                                                  insert *inserter_in, list_type_e derivation, u64 array_capacity)
 {
         error_if_and_return(!state_out, ERR_NULLPTR, NULL);
@@ -523,8 +523,8 @@ insert *__insert_array_list_begin(insert_array_state *state_out,
         error_if_and_return(inserter_in->context_type != ARRAY && inserter_in->context_type != OBJECT,
                      ERR_UNSUPPCONTAINER, NULL);
 
-        *state_out = (insert_array_state) {
-                .parent_inserter = inserter_in,
+        *state_out = (arr_state) {
+                .parent = inserter_in,
                 .array = MALLOC(sizeof(arr_it)),
                 .array_begin = memfile_tell(&inserter_in->memfile),
                 .array_end = 0
@@ -539,42 +539,42 @@ insert *__insert_array_list_begin(insert_array_state *state_out,
         return &state_out->nested_inserter;
 }
 
-insert *insert_array_begin(insert_array_state *state_out,
+insert *insert_array_begin(arr_state *state_out,
                                                     insert *inserter_in, u64 array_capacity)
 {
         return __insert_array_list_begin(state_out, inserter_in, LIST_UNSORTED_MULTISET, array_capacity);
 }
 
-bool insert_array_end(insert_array_state *state_in)
+bool insert_array_end(arr_state *state_in)
 {
         arr_it scan;
-        internal_arr_it_create(&scan, &state_in->parent_inserter->memfile,
-                               memfile_tell(&state_in->parent_inserter->memfile) - 1);
+        internal_arr_it_create(&scan, &state_in->parent->memfile,
+                               memfile_tell(&state_in->parent->memfile) - 1);
 
         internal_arr_it_fast_forward(&scan);
 
         state_in->array_end = memfile_tell(&scan.file);
         memfile_skip(&scan.file, 1);
 
-        memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.file) - 1);
+        memfile_seek(&state_in->parent->memfile, memfile_tell(&scan.file) - 1);
         arr_it_drop(&scan);
         arr_it_drop(state_in->array);
         free(state_in->array);
         return true;
 }
 
-insert *insert_array_list_begin(insert_array_state *state_out, insert *inserter_in, list_type_e derivation, u64 array_capacity)
+insert *insert_array_list_begin(arr_state *state_out, insert *inserter_in, list_type_e derivation, u64 array_capacity)
 {
         return __insert_array_list_begin(state_out, inserter_in, derivation, array_capacity);
 }
 
-bool insert_array_list_end(insert_array_state *state_in)
+bool insert_array_list_end(arr_state *state_in)
 {
         return insert_array_end(state_in);
 }
 
 
-insert *__insert_column_list_begin(insert_column_state *state_out,
+insert *__insert_column_list_begin(col_state *state_out,
                                                      insert *inserter_in,
                                                      list_type_e derivation,
                                                      col_it_type_e type,
@@ -587,8 +587,8 @@ insert *__insert_column_list_begin(insert_column_state *state_out,
 
         field_e field_type = field_for_column(derivation, type);
 
-        *state_out = (insert_column_state) {
-                .parent_inserter = inserter_in,
+        *state_out = (col_state) {
+                .parent = inserter_in,
                 .nested_column = MALLOC(sizeof(col_it)),
                 .type = field_type,
                 .column_begin = memfile_tell(&inserter_in->memfile),
@@ -605,7 +605,7 @@ insert *__insert_column_list_begin(insert_column_state *state_out,
         return &state_out->nested_inserter;
 }
 
-insert *insert_column_begin(insert_column_state *state_out,
+insert *insert_column_begin(col_state *state_out,
                                                      insert *inserter_in,
                                                      col_it_type_e type,
                                                      u64 cap)
@@ -613,26 +613,26 @@ insert *insert_column_begin(insert_column_state *state_out,
         return __insert_column_list_begin(state_out, inserter_in, LIST_UNSORTED_MULTISET, type, cap);
 }
 
-bool insert_column_end(insert_column_state *state_in)
+bool insert_column_end(col_state *state_in)
 {
         col_it scan;
-        col_it_create(&scan, &state_in->parent_inserter->memfile,
+        col_it_create(&scan, &state_in->parent->memfile,
                                 state_in->nested_column->begin);
         col_it_fast_forward(&scan);
 
         state_in->column_end = memfile_tell(&scan.file);
-        memfile_seek(&state_in->parent_inserter->memfile, memfile_tell(&scan.file));
+        memfile_seek(&state_in->parent->memfile, memfile_tell(&scan.file));
 
         free(state_in->nested_column);
         return true;
 }
 
-insert *insert_column_list_begin(insert_column_state *state_out, insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap)
+insert *insert_column_list_begin(col_state *state_out, insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap)
 {
         return __insert_column_list_begin(state_out, inserter_in, derivation, type, cap);
 }
 
-bool insert_column_list_end(insert_column_state *state_in)
+bool insert_column_list_end(col_state *state_in)
 {
         return insert_column_end(state_in);
 }
@@ -855,7 +855,7 @@ bool insert_prop_binary(insert *in, const char *key, const void *value,
         return true;
 }
 
-static insert *__insert_prop_object_container_begin(insert_object_state *out,
+static insert *__insert_prop_object_container_begin(obj_state *out,
                                                        insert *in, map_type_e derivation, const char *key,
                                                        u64 object_capacity)
 {
@@ -864,7 +864,7 @@ static insert *__insert_prop_object_container_begin(insert_object_state *out,
         return insert_object_map_begin(out, in, derivation, object_capacity);
 }
 
-insert *insert_prop_object_begin(insert_object_state *out,
+insert *insert_prop_object_begin(obj_state *out,
                                                           insert *in, const char *key,
                                                           u64 object_capacity)
 {
@@ -872,24 +872,24 @@ insert *insert_prop_object_begin(insert_object_state *out,
                                                            key, object_capacity);
 }
 
-u64 insert_prop_object_end(insert_object_state *state)
+u64 insert_prop_object_end(obj_state *state)
 {
         insert_object_end(state);
         return state->object_end - state->object_begin;
 }
 
-insert *insert_prop_map_begin(insert_object_state *out, insert *in, map_type_e derivation, const char *key, u64 object_capacity)
+insert *insert_prop_map_begin(obj_state *out, insert *in, map_type_e derivation, const char *key, u64 object_capacity)
 {
         return __insert_prop_object_container_begin(out, in, derivation,
                                                            key, object_capacity);
 }
 
-u64 insert_prop_map_end(insert_object_state *state)
+u64 insert_prop_map_end(obj_state *state)
 {
         return insert_prop_object_end(state);
 }
 
-insert *insert_prop_array_begin(insert_array_state *state,
+insert *insert_prop_array_begin(arr_state *state,
                                                          insert *in, const char *key,
                                                          u64 array_capacity)
 {
@@ -898,13 +898,13 @@ insert *insert_prop_array_begin(insert_array_state *state,
         return insert_array_begin(state, in, array_capacity);
 }
 
-u64 insert_prop_array_end(insert_array_state *state)
+u64 insert_prop_array_end(arr_state *state)
 {
         insert_array_end(state);
         return state->array_end - state->array_begin;
 }
 
-insert *insert_prop_column_begin(insert_column_state *state_out,
+insert *insert_prop_column_begin(col_state *state_out,
                                                           insert *inserter_in, const char *key,
                                                           col_it_type_e type, u64 cap)
 {
@@ -913,7 +913,7 @@ insert *insert_prop_column_begin(insert_column_state *state_out,
         return insert_column_begin(state_out, inserter_in, type, cap);
 }
 
-u64 insert_prop_column_end(insert_column_state *state_in)
+u64 insert_prop_column_end(col_state *state_in)
 {
         insert_column_end(state_in);
         return state_in->column_end - state_in->column_begin;

@@ -117,7 +117,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         rec_new context;
         insert *ins;
         rec doc, doc2;
-        insert_array_state s1;
+        arr_state s1;
         arr_it it, *sub_it;
         field_e ft;
         rev rev_context;

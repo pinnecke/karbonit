@@ -58,24 +58,24 @@ bool insert_from_column(); // TODO: Implement P2
  */
 bool insert_binary(insert *in, const void *value, size_t nbytes, const char *file_ext, const char *user_type);
 
-insert *insert_object_begin(insert_object_state *out, insert *in, u64 object_capacity);
-bool insert_object_end(insert_object_state *state);
+insert *insert_object_begin(obj_state *out, insert *in, u64 object_capacity);
+bool insert_object_end(obj_state *state);
 
-insert *insert_object_map_begin(insert_object_state *out, insert *in,
+insert *insert_object_map_begin(obj_state *out, insert *in,
                                               map_type_e derivation, u64 object_capacity);
-bool insert_object_map_end(insert_object_state *state);
+bool insert_object_map_end(obj_state *state);
 
-insert *insert_array_begin(insert_array_state *state_out, insert *inserter_in, u64 array_capacity);
-bool insert_array_end(insert_array_state *state_in);
+insert *insert_array_begin(arr_state *state_out, insert *inserter_in, u64 array_capacity);
+bool insert_array_end(arr_state *state_in);
 
-insert *insert_array_list_begin(insert_array_state *state_out, insert *inserter_in, list_type_e derivation, u64 array_capacity);
-bool insert_array_list_end(insert_array_state *state_in);
+insert *insert_array_list_begin(arr_state *state_out, insert *inserter_in, list_type_e derivation, u64 array_capacity);
+bool insert_array_list_end(arr_state *state_in);
 
-insert *insert_column_begin(insert_column_state *state_out, insert *inserter_in, col_it_type_e type, u64 cap);
-bool insert_column_end(insert_column_state *state_in);
+insert *insert_column_begin(col_state *state_out, insert *inserter_in, col_it_type_e type, u64 cap);
+bool insert_column_end(col_state *state_in);
 
-insert *insert_column_list_begin(insert_column_state *state_out, insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap);
-bool insert_column_list_end(insert_column_state *state_in);
+insert *insert_column_list_begin(col_state *state_out, insert *inserter_in, list_type_e derivation, col_it_type_e type, u64 cap);
+bool insert_column_list_end(col_state *state_in);
 
 bool insert_prop_null(insert *in, const char *key);
 bool insert_prop_true(insert *in, const char *key);
@@ -100,17 +100,17 @@ bool insert_prop_from_array(); // TODO: Implement P2
 bool insert_prop_from_object(); // TODO: Implement P2
 bool insert_prop_from_column(); // TODO: Implement P2
 
-insert *insert_prop_object_begin(insert_object_state *out, insert *in, const char *key, u64 object_capacity);
-u64 insert_prop_object_end(insert_object_state *state);
+insert *insert_prop_object_begin(obj_state *out, insert *in, const char *key, u64 object_capacity);
+u64 insert_prop_object_end(obj_state *state);
 
-insert *insert_prop_map_begin(insert_object_state *out, insert *in, map_type_e derivation, const char *key, u64 object_capacity);
-u64 insert_prop_map_end(insert_object_state *state);
+insert *insert_prop_map_begin(obj_state *out, insert *in, map_type_e derivation, const char *key, u64 object_capacity);
+u64 insert_prop_map_end(obj_state *state);
 
-insert *insert_prop_array_begin(insert_array_state *state, insert *in, const char *key, u64 array_capacity);
-u64 insert_prop_array_end(insert_array_state *state);
+insert *insert_prop_array_begin(arr_state *state, insert *in, const char *key, u64 array_capacity);
+u64 insert_prop_array_end(arr_state *state);
 
-insert *insert_prop_column_begin(insert_column_state *state_out, insert *inserter_in, const char *key, col_it_type_e type, u64 cap);
-u64 insert_prop_column_end(insert_column_state *state_in);
+insert *insert_prop_column_begin(col_state *state_out, insert *inserter_in, const char *key, col_it_type_e type, u64 cap);
+u64 insert_prop_column_end(col_state *state_in);
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  for internal usage only

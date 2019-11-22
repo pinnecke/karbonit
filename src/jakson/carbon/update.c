@@ -367,7 +367,7 @@ bool carbon_update_set_binary(rev *context, const char *path, const void *value,
 }
 
 insert *carbon_update_set_array_begin(rev *context, const char *path,
-                                                        insert_array_state *state_out,
+                                                        arr_state *state_out,
                                                         u64 array_capacity)
 {
         // TODO: Implement
@@ -379,7 +379,7 @@ insert *carbon_update_set_array_begin(rev *context, const char *path,
         return NULL;
 }
 
-bool carbon_update_set_array_end(insert_array_state *state_in)
+bool carbon_update_set_array_end(arr_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -387,7 +387,7 @@ bool carbon_update_set_array_end(insert_array_state *state_in)
 }
 
 insert *carbon_update_set_column_begin(rev *context, const char *path,
-                                                         insert_column_state *state_out,
+                                                         col_state *state_out,
                                                          field_e type, u64 cap)
 {
         // TODO: Implement
@@ -400,7 +400,7 @@ insert *carbon_update_set_column_begin(rev *context, const char *path,
         return NULL;
 }
 
-bool carbon_update_set_column_end(insert_column_state *state_in)
+bool carbon_update_set_column_end(col_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -539,7 +539,7 @@ bool carbon_update_set_binary_compiled(rev *context, const dot *path,
 
 insert *carbon_update_set_array_begin_compiled(rev *context,
                                                                  const dot *path,
-                                                                 insert_array_state *state_out,
+                                                                 arr_state *state_out,
                                                                  u64 array_capacity)
 {
         // TODO: Implement
@@ -551,7 +551,7 @@ insert *carbon_update_set_array_begin_compiled(rev *context,
         return NULL;
 }
 
-bool carbon_update_set_array_end_compiled(insert_array_state *state_in)
+bool carbon_update_set_array_end_compiled(arr_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -560,7 +560,7 @@ bool carbon_update_set_array_end_compiled(insert_array_state *state_in)
 
 insert *carbon_update_set_column_begin_compiled(rev *context,
                                                                   const dot *path,
-                                                                  insert_column_state *state_out,
+                                                                  col_state *state_out,
                                                                   field_e type,
                                                                   u64 cap)
 {
@@ -574,7 +574,7 @@ insert *carbon_update_set_column_begin_compiled(rev *context,
         return NULL;
 }
 
-bool carbon_update_set_column_end_compiled(insert_column_state *state_in)
+bool carbon_update_set_column_end_compiled(col_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -677,7 +677,7 @@ bool carbon_update_one_set_binary(const char *dot, rec *rev_doc, rec *doc,
                                               file_ext, user_type);
 }
 
-insert *carbon_update_one_set_array_begin(insert_array_state *state_out,
+insert *carbon_update_one_set_array_begin(arr_state *state_out,
                                                             const char *dot, rec *rev_doc,
                                                             rec *doc, u64 array_capacity)
 {
@@ -688,14 +688,14 @@ insert *carbon_update_one_set_array_begin(insert_array_state *state_out,
         return result;
 }
 
-bool carbon_update_one_set_array_end(insert_array_state *state_in)
+bool carbon_update_one_set_array_end(arr_state *state_in)
 {
         bool status = carbon_update_set_array_end(state_in);
         // ... TODO: drop revision from context
         return status;
 }
 
-insert *carbon_update_one_set_column_begin(insert_column_state *state_out,
+insert *carbon_update_one_set_column_begin(col_state *state_out,
                                                              const char *dot, rec *rev_doc,
                                                              rec *doc, field_e type,
                                                              u64 cap)
@@ -708,7 +708,7 @@ insert *carbon_update_one_set_column_begin(insert_column_state *state_out,
         return result;
 }
 
-bool carbon_update_one_set_column_end(insert_column_state *state_in)
+bool carbon_update_one_set_column_end(col_state *state_in)
 {
         bool status = carbon_update_set_column_end(state_in);
         // ... TODO: drop revision from context
@@ -816,7 +816,7 @@ bool carbon_update_one_set_binary_compiled(const dot *path, rec *rev_doc,
                                               file_ext, user_type);
 }
 
-insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out,
+insert *carbon_update_one_set_array_begin_compiled(arr_state *state_out,
                                                                      const dot *path,
                                                                      rec *rev_doc, rec *doc,
                                                                      u64 array_capacity)
@@ -829,7 +829,7 @@ insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out
         return result;
 }
 
-bool carbon_update_one_set_array_end_compiled(insert_array_state *state_in)
+bool carbon_update_one_set_array_end_compiled(arr_state *state_in)
 {
         bool status = carbon_update_set_array_end_compiled(state_in);
         // ... TODO: drop revision from context
@@ -837,7 +837,7 @@ bool carbon_update_one_set_array_end_compiled(insert_array_state *state_in)
 }
 
 insert *carbon_update_one_set_column_begin_compiled(
-        insert_column_state *state_out, const dot *path,
+        col_state *state_out, const dot *path,
         rec *rev_doc,
         rec *doc, field_e type, u64 cap)
 {
@@ -849,7 +849,7 @@ insert *carbon_update_one_set_column_begin_compiled(
         return result;
 }
 
-bool carbon_update_one_set_column_end_compiled(insert_column_state *state_in)
+bool carbon_update_one_set_column_end_compiled(col_state *state_in)
 {
         bool status = carbon_update_set_column_end_compiled(state_in);
         // ... TODO: drop revision from context

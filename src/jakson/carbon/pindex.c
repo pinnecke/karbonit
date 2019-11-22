@@ -713,7 +713,7 @@ static void column_to_str(string_buffer *str, pindex *index, unsigned intent_lev
 
 static u8 _insert_field_ref(insert *ins, pindex *index, bool is_root)
 {
-        insert_object_state object;
+        obj_state object;
         insert *oins = insert_prop_object_begin(&object, ins, "record-reference", 1024);
         u8 ret = field_ref_into_carbon(oins, index, is_root);
         insert_prop_object_end(&object);
@@ -733,7 +733,7 @@ static void container_contents_into_carbon(insert *ins, pindex *index)
         u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
         insert_prop_unsigned(ins, "element-count", num_elems);
 
-        insert_array_state array;
+        arr_state array;
         insert *ains = insert_prop_array_begin(&array, ins, "element-offsets", 1024);
 
         string_buffer str;
@@ -751,7 +751,7 @@ static void container_contents_into_carbon(insert *ins, pindex *index)
         ains = insert_prop_array_begin(&array, ins, "elements", 1024);
         UNUSED(ains)
         for (u32 i = 0; i < num_elems; i++) {
-                insert_object_state node_obj;
+                obj_state node_obj;
                 insert *node_obj_ins = insert_object_begin(&node_obj, ains, 1024);
                 node_into_carbon(node_obj_ins, index);
                 insert_object_end(&node_obj);
@@ -979,7 +979,7 @@ static void array_into_carbon(insert *ins, pindex *index, bool is_root)
         insert_prop_string(ins, "parent", is_root ? "record" : "array");
         field_type = _insert_field_ref(ins, index, is_root);
 
-        insert_object_state object;
+        obj_state object;
         insert *oins = insert_prop_object_begin(&object, ins, "nodes", 1024);
         if (UNLIKELY(is_root)) {
                 container_contents_into_carbon(oins, index);
@@ -1296,7 +1296,7 @@ bool pindex_hexdump(FILE *file, pindex *index)
 void pindex_to_carbon(rec *doc, pindex *index)
 {
         rec_new context;
-        insert_object_state object;
+        obj_state object;
 
         memfile_seek_to_start(&index->memfile);
 
@@ -1304,14 +1304,14 @@ void pindex_to_carbon(rec *doc, pindex *index)
         insert *oins = insert_object_begin(&object, ins, 1024);
 
         {
-                insert_object_state ref_object;
+                obj_state ref_object;
                 insert *roins = insert_prop_object_begin(&ref_object, oins,
                                                                                   "record-association", 1024);
                 record_ref_to_carbon(roins, index);
                 insert_prop_object_end(&ref_object);
         }
         {
-                insert_object_state root_object;
+                obj_state root_object;
                 insert *roins = insert_prop_object_begin(&root_object, oins, "index", 1024);
                 array_into_carbon(roins, index, true);
                 insert_prop_object_end(&root_object);

@@ -357,7 +357,7 @@ bool internal_carbon_object_update_binary(obj_it *it, const void *value, size_t 
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj_it *it)
+insert *internal_carbon_object_update_array_begin(arr_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -366,14 +366,14 @@ insert *internal_carbon_object_update_array_begin(insert_array_state *state, obj
         return NULL;
 }
 
-bool internal_carbon_object_update_array_end(insert_array_state *state)
+bool internal_carbon_object_update_array_end(arr_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-insert *internal_carbon_object_update_column_begin(insert_column_state *state, obj_it *it)
+insert *internal_carbon_object_update_column_begin(col_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -382,14 +382,14 @@ insert *internal_carbon_object_update_column_begin(insert_column_state *state, o
         return NULL;
 }
 
-bool internal_carbon_object_update_column_end(insert_column_state *state)
+bool internal_carbon_object_update_column_end(col_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-insert *internal_carbon_object_update_object_begin(insert_object_state *state, obj_it *it)
+insert *internal_carbon_object_update_object_begin(obj_state *state, obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -398,7 +398,7 @@ insert *internal_carbon_object_update_object_begin(insert_object_state *state, o
         return NULL;
 }
 
-bool internal_carbon_object_update_object_end(insert_object_state *state)
+bool internal_carbon_object_update_object_end(obj_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)

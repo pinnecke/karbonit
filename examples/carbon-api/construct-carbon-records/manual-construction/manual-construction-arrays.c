@@ -8,7 +8,7 @@ int main (void)
     rec_new context;
     rec record;
     insert *ins, *nested_ins;
-    insert_array_state state;
+    arr_state state;
     char *as_json;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);

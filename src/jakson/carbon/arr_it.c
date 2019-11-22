@@ -149,7 +149,7 @@ bool internal_arr_it_update_binary(arr_it *it, const void *base, size_t nbytes, 
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it)
+insert *internal_arr_it_update_array_begin(arr_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -158,14 +158,14 @@ insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it
         return NULL;
 }
 
-bool internal_arr_it_update_array_end(insert_array_state *state)
+bool internal_arr_it_update_array_end(arr_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *it)
+insert *internal_arr_it_update_column_begin(col_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -174,14 +174,14 @@ insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *
         return NULL;
 }
 
-bool internal_arr_it_update_column_end(insert_column_state *state)
+bool internal_arr_it_update_column_end(col_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *it)
+insert *internal_arr_it_update_object_begin(obj_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -190,7 +190,7 @@ insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *
         return NULL;
 }
 
-bool internal_arr_it_update_object_end(insert_object_state *state)
+bool internal_arr_it_update_object_end(obj_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)

@@ -8,7 +8,7 @@ int main (void)
     rec_new context;
     rec record;
     insert *ins, *nested_ins, *prop_ins;
-    insert_object_state state, as_prop_state;
+    obj_state state, as_prop_state;
     char *as_json;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);

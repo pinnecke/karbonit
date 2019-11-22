@@ -17,7 +17,7 @@ TEST(TestCarbonPatch, CreatePatch) {
 
         /* patching via patch iterators */
         {
-                carbon_patch_begin(&it, &doc);
+                patch_begin(&it, &doc);
                 arr_it_next(&it);
                 {
                         arr_it_field_type(&type, &it);
@@ -37,7 +37,7 @@ TEST(TestCarbonPatch, CreatePatch) {
                                 }
                         }
                 }
-                carbon_patch_end(&it);
+                patch_end(&it);
         }
 
         char *json_patch_1 = carbon_to_json_compact_dup(&doc);
@@ -46,11 +46,11 @@ TEST(TestCarbonPatch, CreatePatch) {
         /* patching via patch find */
         {
                 find find;
-                carbon_patch_find_begin(&find, "x", &doc);
+                patch_find_begin(&find, "x", &doc);
                 arr_it *sub_it = find_result_array(&find);
                 arr_it_next(sub_it); /* { ...: [42,...] } */
                 internal_arr_it_update_u8(sub_it, 102);
-                carbon_patch_find_end(&find);
+                patch_find_end(&find);
         }
 
         char *json_patch_2 = carbon_to_json_compact_dup(&doc);

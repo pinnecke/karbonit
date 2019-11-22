@@ -358,13 +358,13 @@ char *carbon_to_json_compact_dup(rec *doc)
 
 void carbon_read_begin(arr_it *it, rec *doc)
 {
-        carbon_patch_begin(it, doc);
+        patch_begin(it, doc);
         internal_arr_it_set_mode(it, READ_ONLY);
 }
 
 void carbon_read_end(arr_it *it)
 {
-        carbon_patch_end(it);
+        patch_end(it);
 }
 
 bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc)

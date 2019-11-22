@@ -19,25 +19,25 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/find.h>
 
-void carbon_patch_begin(arr_it *it, rec *doc)
+void patch_begin(arr_it *it, rec *doc)
 {
         offset_t payload_start = internal_payload_after_header(doc);
         internal_arr_it_create(it, &doc->file, payload_start);
         internal_arr_it_set_mode(it, READ_WRITE);
 }
 
-void carbon_patch_end(arr_it *it)
+void patch_end(arr_it *it)
 {
         arr_it_drop(it);
 }
 
-bool carbon_patch_find_begin(find *out, const char *dot, rec *doc)
+bool patch_find_begin(find *out, const char *dot, rec *doc)
 {
         doc->file.mode = READ_WRITE;
         return find_begin(out, dot, doc);
 }
 
-bool carbon_patch_find_end(find *find)
+bool patch_find_end(find *find)
 {
         find->doc->file.mode = READ_ONLY;
         return find_end(find);

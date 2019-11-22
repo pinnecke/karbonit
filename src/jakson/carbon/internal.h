@@ -59,9 +59,9 @@ typedef struct col_state {
         offset_t begin, end;
 } col_state;
 
-bool internal_insert_object(memfile *memfile, map_type_e derivation, size_t nbytes);
-bool internal_insert_array(memfile *memfile, list_type_e derivation, size_t nbytes);
-bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_type_e type, size_t capactity);
+bool internal_insert_object(memfile *file, map_type_e derivation, size_t nbytes);
+bool internal_insert_array(memfile *file, list_type_e derivation, size_t nbytes);
+bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e type, size_t capactity);
 
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.

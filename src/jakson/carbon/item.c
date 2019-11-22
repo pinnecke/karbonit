@@ -38,7 +38,7 @@ static bool carbon_item_setup_value(item *item, field_type_e field_type, field *
                 carbon_int_field_binary_value(&item->value.binary, field);
                 item->value_type = CARBON_ITEM_BINARY;
         } else if (field_type_is_boolean(field_type) && !field_type_is_list_or_subtype(field_type)) {
-                item->value_type = field_type == CARBON_FIELD_TRUE ? CARBON_ITEM_TRUE : CARBON_ITEM_FALSE;
+                item->value_type = field_type == FIELD_TRUE ? CARBON_ITEM_TRUE : CARBON_ITEM_FALSE;
         } else if (field_type_is_array_or_subtype(field_type)) {
                 item->value.array = carbon_int_field_array_value(field);
                 item->value_type = CARBON_ITEM_ARRAY;

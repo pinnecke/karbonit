@@ -298,27 +298,27 @@ static bool internal_pack_array(arr_it *it)
                         field_type_e type;
                         arr_it_field_type(&type, it);
                         switch (type) {
-                                case CARBON_FIELD_NULL:
-                                case CARBON_FIELD_TRUE:
-                                case CARBON_FIELD_FALSE:
-                                case CARBON_FIELD_STRING:
-                                case CARBON_FIELD_NUMBER_U8:
-                                case CARBON_FIELD_NUMBER_U16:
-                                case CARBON_FIELD_NUMBER_U32:
-                                case CARBON_FIELD_NUMBER_U64:
-                                case CARBON_FIELD_NUMBER_I8:
-                                case CARBON_FIELD_NUMBER_I16:
-                                case CARBON_FIELD_NUMBER_I32:
-                                case CARBON_FIELD_NUMBER_I64:
-                                case CARBON_FIELD_NUMBER_FLOAT:
-                                case CARBON_FIELD_BINARY:
-                                case CARBON_FIELD_BINARY_CUSTOM:
+                                case FIELD_NULL:
+                                case FIELD_TRUE:
+                                case FIELD_FALSE:
+                                case FIELD_STRING:
+                                case FIELD_NUMBER_U8:
+                                case FIELD_NUMBER_U16:
+                                case FIELD_NUMBER_U32:
+                                case FIELD_NUMBER_U64:
+                                case FIELD_NUMBER_I8:
+                                case FIELD_NUMBER_I16:
+                                case FIELD_NUMBER_I32:
+                                case FIELD_NUMBER_I64:
+                                case FIELD_NUMBER_FLOAT:
+                                case FIELD_BINARY:
+                                case FIELD_BINARY_CUSTOM:
                                         /** nothing to shrink, because there are no padded zeros here */
                                         break;
-                                case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
+                                case FIELD_ARRAY_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                                case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         arr_it array;
                                         internal_arr_it_create(&array, &it->file,
                                                                      it->field.array->begin);
@@ -330,55 +330,55 @@ static bool internal_pack_array(arr_it *it)
                                         arr_it_drop(&array);
                                 }
                                         break;
-                                case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
+                                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                         col_it_rewind(it->field.column);
                                         internal_pack_column(it->field.column);
                                         memfile_seek(&it->file,
                                                      memfile_tell(&it->field.column->file));
                                         break;
-                                case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                                case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         obj_it object;
                                         internal_carbon_object_create(&object, &it->file,
                                                                       it->field.object->object_contents_off -
@@ -441,27 +441,27 @@ static bool internal_pack_object(obj_it *it)
                         field_type_e type;
                         internal_carbon_object_prop_type(&type, it);
                         switch (type) {
-                                case CARBON_FIELD_NULL:
-                                case CARBON_FIELD_TRUE:
-                                case CARBON_FIELD_FALSE:
-                                case CARBON_FIELD_STRING:
-                                case CARBON_FIELD_NUMBER_U8:
-                                case CARBON_FIELD_NUMBER_U16:
-                                case CARBON_FIELD_NUMBER_U32:
-                                case CARBON_FIELD_NUMBER_U64:
-                                case CARBON_FIELD_NUMBER_I8:
-                                case CARBON_FIELD_NUMBER_I16:
-                                case CARBON_FIELD_NUMBER_I32:
-                                case CARBON_FIELD_NUMBER_I64:
-                                case CARBON_FIELD_NUMBER_FLOAT:
-                                case CARBON_FIELD_BINARY:
-                                case CARBON_FIELD_BINARY_CUSTOM:
+                                case FIELD_NULL:
+                                case FIELD_TRUE:
+                                case FIELD_FALSE:
+                                case FIELD_STRING:
+                                case FIELD_NUMBER_U8:
+                                case FIELD_NUMBER_U16:
+                                case FIELD_NUMBER_U32:
+                                case FIELD_NUMBER_U64:
+                                case FIELD_NUMBER_I8:
+                                case FIELD_NUMBER_I16:
+                                case FIELD_NUMBER_I32:
+                                case FIELD_NUMBER_I64:
+                                case FIELD_NUMBER_FLOAT:
+                                case FIELD_BINARY:
+                                case FIELD_BINARY_CUSTOM:
                                         /** nothing to shrink, because there are no padded zeros here */
                                         break;
-                                case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
+                                case FIELD_ARRAY_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                                case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         arr_it array;
                                         internal_arr_it_create(&array, &it->memfile,
                                                                it->field.value.data.array->begin);
@@ -473,55 +473,55 @@ static bool internal_pack_object(obj_it *it)
                                         arr_it_drop(&array);
                                 }
                                         break;
-                                case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                                case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
+                                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                         col_it_rewind(it->field.value.data.column);
                                         internal_pack_column(it->field.value.data.column);
                                         memfile_seek(&it->memfile,
                                                      memfile_tell(&it->field.value.data.column->file));
                                         break;
-                                case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                                case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         obj_it object;
                                         internal_carbon_object_create(&object, &it->memfile,
                                                                       it->field.value.data.object->object_contents_off -

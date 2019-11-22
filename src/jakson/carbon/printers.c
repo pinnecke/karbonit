@@ -330,116 +330,116 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
 
                 internal_carbon_object_prop_type(&type, it);
                 switch (type) {
-                        case CARBON_FIELD_NULL:
+                        case FIELD_NULL:
                                 carbon_printer_prop_null(printer, builder, prop_key.string, prop_key.length);
                                 break;
-                        case CARBON_FIELD_TRUE:
+                        case FIELD_TRUE:
                                 /** in an array, there is no TRUE constant that is set to NULL because it will be replaced with
                                  * a constant NULL. In columns, there might be a NULL-encoded value */
                                 carbon_printer_prop_true(printer, builder, prop_key.string, prop_key.length);
                                 break;
-                        case CARBON_FIELD_FALSE:
+                        case FIELD_FALSE:
                                 /** in an array, there is no FALSE constant that is set to NULL because it will be replaced with
                                  * a constant NULL. In columns, there might be a NULL-encoded value */
                                 carbon_printer_prop_false(printer, builder, prop_key.string, prop_key.length);
                                 break;
-                        case CARBON_FIELD_NUMBER_U8:
-                        case CARBON_FIELD_NUMBER_U16:
-                        case CARBON_FIELD_NUMBER_U32:
-                        case CARBON_FIELD_NUMBER_U64: {
+                        case FIELD_NUMBER_U8:
+                        case FIELD_NUMBER_U16:
+                        case FIELD_NUMBER_U32:
+                        case FIELD_NUMBER_U64: {
                                 u64 value = carbon_item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
                                 is_null_value = IS_NULL_UNSIGNED(value);
                                 carbon_printer_prop_unsigned(printer, builder, prop_key.string, prop_key.length,
                                                              is_null_value ? NULL : &value);
                         }
                                 break;
-                        case CARBON_FIELD_NUMBER_I8:
-                        case CARBON_FIELD_NUMBER_I16:
-                        case CARBON_FIELD_NUMBER_I32:
-                        case CARBON_FIELD_NUMBER_I64: {
+                        case FIELD_NUMBER_I8:
+                        case FIELD_NUMBER_I16:
+                        case FIELD_NUMBER_I32:
+                        case FIELD_NUMBER_I64: {
                                 i64 value = carbon_item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
                                 is_null_value = IS_NULL_SIGNED(value);
                                 carbon_printer_prop_signed(printer, builder, prop_key.string, prop_key.length,
                                                            is_null_value ? NULL : &value);
                         }
                                 break;
-                        case CARBON_FIELD_NUMBER_FLOAT: {
+                        case FIELD_NUMBER_FLOAT: {
                                 float value = carbon_item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
                                 is_null_value = IS_NULL_FLOAT(value);
                                 carbon_printer_prop_float(printer, builder, prop_key.string, prop_key.length,
                                                           is_null_value ? NULL : &value);
                         }
                                 break;
-                        case CARBON_FIELD_STRING: {
+                        case FIELD_STRING: {
                                 carbon_string_field value = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                                 carbon_printer_prop_string(printer, builder, prop_key.string, prop_key.length, value.string, value.length);
                         }
                                 break;
-                        case CARBON_FIELD_BINARY:
-                        case CARBON_FIELD_BINARY_CUSTOM: {
+                        case FIELD_BINARY:
+                        case FIELD_BINARY_CUSTOM: {
                                 binary binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                                 carbon_printer_prop_binary(printer, builder, prop_key.string, prop_key.length, &binary);
                         }
                                 break;
-                        case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
+                        case FIELD_ARRAY_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                        case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                        case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                 arr_it *array = carbon_item_get_array(&(it->prop.value));
                                 carbon_printer_array_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_array(array, printer, builder, false);
                                 arr_it_drop(array);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                 col_it *column = carbon_item_get_column(&(it->prop.value));
                                 carbon_printer_column_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_column(column, printer, builder);
                         }
                                 break;
-                        case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                        case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                        case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                        case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                        case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 obj_it *object = carbon_item_get_object(&(it->prop.value));
                                 carbon_printer_object_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_object(object, printer, builder);
@@ -485,111 +485,111 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                 field_type_e type;
                 arr_it_field_type(&type, it);
                 switch (type) {
-                        case CARBON_FIELD_NULL:
+                        case FIELD_NULL:
                                 carbon_printer_null(printer, builder);
                                 break;
-                        case CARBON_FIELD_TRUE:
+                        case FIELD_TRUE:
                                 /** in an array, there is no TRUE constant that is set to NULL because it will be replaced with
                                  * a constant NULL. In columns, there might be a NULL-encoded value */
                                 carbon_printer_true(printer, false, builder);
                                 break;
-                        case CARBON_FIELD_FALSE:
+                        case FIELD_FALSE:
                                 /** in an array, there is no FALSE constant that is set to NULL because it will be replaced with
                                  * a constant NULL. In columns, there might be a NULL-encoded value */
                                 carbon_printer_false(printer, false, builder);
                                 break;
-                        case CARBON_FIELD_NUMBER_U8:
-                        case CARBON_FIELD_NUMBER_U16:
-                        case CARBON_FIELD_NUMBER_U32:
-                        case CARBON_FIELD_NUMBER_U64: {
+                        case FIELD_NUMBER_U8:
+                        case FIELD_NUMBER_U16:
+                        case FIELD_NUMBER_U32:
+                        case FIELD_NUMBER_U64: {
                                 u64 value = carbon_item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
                                 is_null_value = false;
                                 carbon_printer_unsigned_nonull(printer, builder, is_null_value ? NULL : &value);
                         }
                                 break;
-                        case CARBON_FIELD_NUMBER_I8:
-                        case CARBON_FIELD_NUMBER_I16:
-                        case CARBON_FIELD_NUMBER_I32:
-                        case CARBON_FIELD_NUMBER_I64: {
+                        case FIELD_NUMBER_I8:
+                        case FIELD_NUMBER_I16:
+                        case FIELD_NUMBER_I32:
+                        case FIELD_NUMBER_I64: {
                                 i64 value = carbon_item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
                                 is_null_value = false;
                                 carbon_printer_signed_nonull(printer, builder, is_null_value ? NULL : &value);
                         }
                                 break;
-                        case CARBON_FIELD_NUMBER_FLOAT: {
+                        case FIELD_NUMBER_FLOAT: {
                                 float value = carbon_item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
                                 is_null_value = false;
                                 carbon_printer_float(printer, builder, is_null_value ? NULL : &value);
                         }
                                 break;
-                        case CARBON_FIELD_STRING: {
+                        case FIELD_STRING: {
                                 carbon_string_field string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
                                 carbon_printer_string(printer, builder, string.string, string.length);
                         }
                                 break;
-                        case CARBON_FIELD_BINARY:
-                        case CARBON_FIELD_BINARY_CUSTOM: {
+                        case FIELD_BINARY:
+                        case FIELD_BINARY_CUSTOM: {
                                 binary binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
                                 carbon_printer_binary(printer, builder, &binary);
                         }
                                 break;
-                        case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
+                        case FIELD_ARRAY_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                        case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                        case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                 arr_it *array = carbon_item_get_array(&(it->item));
                                 carbon_printer_print_array(array, printer, builder, false);
                                 arr_it_drop(array);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                 col_it *column = carbon_item_get_column(&(it->item));
                                 carbon_printer_print_column(column, printer, builder);
                         }
                                 break;
-                        case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                        case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                        case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                        case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                        case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 obj_it *object = carbon_item_get_object(&(it->item));
                                 carbon_printer_print_object(object, printer, builder);
                                 carbon_object_drop(object);
@@ -630,10 +630,10 @@ bool carbon_printer_print_column(col_it *it, carbon_printer *printer, string_buf
         carbon_printer_array_begin(printer, builder);
         for (u32 i = 0; i < nvalues; i++) {
                 switch (type) {
-                        case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                 u8 value = ((u8 *) values)[i];
                                 if (IS_NULL_BOOLEAN(value)) {
                                         carbon_printer_null(printer, builder);
@@ -644,74 +644,74 @@ bool carbon_printer_print_column(col_it *it, carbon_printer *printer, string_buf
                                 }
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
+                        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
                                 u64 number = ((u8 *) values)[i];
                                 carbon_printer_unsigned_nonull(printer, builder, IS_NULL_U8(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
+                        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
                                 u64 number = ((u16 *) values)[i];
                                 carbon_printer_unsigned_nonull(printer, builder, IS_NULL_U16(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
+                        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
                                 u64 number = ((u32 *) values)[i];
                                 carbon_printer_unsigned_nonull(printer, builder, IS_NULL_U32(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
+                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
                                 u64 number = ((u64 *) values)[i];
                                 carbon_printer_unsigned_nonull(printer, builder, IS_NULL_U64(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
+                        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
                                 i64 number = ((i8 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I8(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
+                        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
                                 i64 number = ((i16 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I16(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
+                        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
                                 i64 number = ((i32 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I32(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
+                        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
                                 i64 number = ((i64 *) values)[i];
                                 carbon_printer_signed_nonull(printer, builder, IS_NULL_I64(number) ? NULL : &number);
                         }
                                 break;
-                        case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
+                        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
                                 float number = ((float *) values)[i];
                                 carbon_printer_float(printer, builder, IS_NULL_FLOAT(number) ? NULL : &number);
                         }

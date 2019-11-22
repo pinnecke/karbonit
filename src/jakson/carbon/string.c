@@ -50,7 +50,7 @@ bool carbon_string_nomarker_remove(memfile *file)
 bool carbon_string_remove(memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
-        if (LIKELY(marker == CARBON_FIELD_STRING)) {
+        if (LIKELY(marker == FIELD_STRING)) {
                 memfile_inplace_remove(file, sizeof(u8));
                 return carbon_string_nomarker_remove(file);
         } else {
@@ -66,7 +66,7 @@ bool carbon_string_write(memfile *file, const char *string)
 bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
 {
         memfile_ensure_space(file, sizeof(media_type));
-        carbon_media_write(file, CARBON_FIELD_STRING);
+        carbon_media_write(file, FIELD_STRING);
         carbon_string_nomarker_nchar_write(file, string, str_len);
         return true;
 }
@@ -79,7 +79,7 @@ bool carbon_string_update(memfile *file, const char *string)
 bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_len)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
-        if (LIKELY(marker == CARBON_FIELD_STRING)) {
+        if (LIKELY(marker == FIELD_STRING)) {
                 offset_t payload_start = memfile_tell(file);
                 u32 old_len = memfile_read_uintvar_stream(NULL, file);
                 memfile_skip(file, old_len);
@@ -107,7 +107,7 @@ bool carbon_string_nomarker_skip(memfile *file)
 const char *carbon_string_read(u64 *len, memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
-        if (LIKELY(marker == CARBON_FIELD_STRING)) {
+        if (LIKELY(marker == FIELD_STRING)) {
                 return carbon_string_nomarker_read(len, file);
         } else {
                 error(ERR_MARKERMAPPING, NULL);

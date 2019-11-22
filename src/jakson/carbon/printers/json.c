@@ -169,48 +169,48 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                 arr_it_field_type(&type, it);
 
 //                switch (type) {
-//                        case CARBON_FIELD_NULL:
+//                        case FIELD_NULL:
 //                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
 //                                break;
-//                        case CARBON_FIELD_TRUE:
+//                        case FIELD_TRUE:
 //                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_TRUE);
 //                                break;
-//                        case CARBON_FIELD_FALSE:
+//                        case FIELD_FALSE:
 //                                __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
 //                                break;
-//                        case CARBON_FIELD_STRING:
+//                        case FIELD_STRING:
 //                                string = internal_arr_it_string_value(&string_len, it);
 //                                __carbon_print_json_string(str_buf, string, string_len);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_U8:
+//                        case FIELD_NUMBER_U8:
 //                                __carbon_print_json_u8_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_U16:
+//                        case FIELD_NUMBER_U16:
 //                                __carbon_print_json_u16_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_U32:
+//                        case FIELD_NUMBER_U32:
 //                                __carbon_print_json_u32_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_U64:
+//                        case FIELD_NUMBER_U64:
 //                                __carbon_print_json_u64_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_I8:
+//                        case FIELD_NUMBER_I8:
 //                                __carbon_print_json_i8_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_I16:
+//                        case FIELD_NUMBER_I16:
 //                                __carbon_print_json_i16_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_I32:
+//                        case FIELD_NUMBER_I32:
 //                                __carbon_print_json_i32_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_I64:
+//                        case FIELD_NUMBER_I64:
 //                                __carbon_print_json_i64_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_NUMBER_FLOAT:
+//                        case FIELD_NUMBER_FLOAT:
 //                                __carbon_print_json_float_from_array(str_buf, it);
 //                                break;
-//                        case CARBON_FIELD_BINARY:
-//                        case CARBON_FIELD_BINARY_CUSTOM:
+//                        case FIELD_BINARY:
+//                        case FIELD_BINARY_CUSTOM:
 //                                internal_arr_it_binary_value(&binary, it);
 //                                __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
 //                                break;
@@ -339,48 +339,48 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
 
                 internal_carbon_object_prop_type(&type, it);
                 switch (type) {
-                        case CARBON_FIELD_NULL:
+                        case FIELD_NULL:
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
                                 break;
-                        case CARBON_FIELD_TRUE:
+                        case FIELD_TRUE:
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_TRUE);
                                 break;
-                        case CARBON_FIELD_FALSE:
+                        case FIELD_FALSE:
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
-                        case CARBON_FIELD_STRING: {
+                        case FIELD_STRING: {
                                 carbon_string_field string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                                 __carbon_print_json_string(str_buf, string.string, string.length);
                         } break;
-                        case CARBON_FIELD_NUMBER_U8:
+                        case FIELD_NUMBER_U8:
                                 __carbon_print_json_u8_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_U16:
+                        case FIELD_NUMBER_U16:
                                 __carbon_print_json_u16_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_U32:
+                        case FIELD_NUMBER_U32:
                                 __carbon_print_json_u32_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_U64:
+                        case FIELD_NUMBER_U64:
                                 __carbon_print_json_u64_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_I8:
+                        case FIELD_NUMBER_I8:
                                 __carbon_print_json_i8_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_I16:
+                        case FIELD_NUMBER_I16:
                                 __carbon_print_json_i16_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_I32:
+                        case FIELD_NUMBER_I32:
                                 __carbon_print_json_i32_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_I64:
+                        case FIELD_NUMBER_I64:
                                 __carbon_print_json_i64_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_NUMBER_FLOAT:
+                        case FIELD_NUMBER_FLOAT:
                                 __carbon_print_json_float_from_prop_value(str_buf, it);
                                 break;
-                        case CARBON_FIELD_BINARY:
-                        case CARBON_FIELD_BINARY_CUSTOM: {
+                        case FIELD_BINARY:
+                        case FIELD_BINARY_CUSTOM: {
                                 binary binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
                         } break;

@@ -234,59 +234,59 @@ static inline path_status_e traverse_object(carbon_path_evaluator *state,
                                         if (!field_type_is_traversable(prop_type)) {
                                                 return PATH_NOTTRAVERSABLE;
                                         } else {
-                                                JAK_ASSERT(prop_type == CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP ||
-                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
-                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
-                                                           prop_type == CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP ||
-                                                           prop_type == CARBON_FIELD_ARRAY_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_ARRAY_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET ||
-                                                           prop_type == CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET ||
-                                                           prop_type == CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET);
+                                                JAK_ASSERT(prop_type == FIELD_OBJECT_UNSORTED_MULTIMAP ||
+                                                           prop_type == FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
+                                                           prop_type == FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
+                                                           prop_type == FIELD_DERIVED_OBJECT_SORTED_MAP ||
+                                                           prop_type == FIELD_ARRAY_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_ARRAY_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_ARRAY_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_ARRAY_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U8_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U8_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_U16_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U16_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U16_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_U32_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U32_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U32_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_U64_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U64_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_U64_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_I8_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I8_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I8_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_I16_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I16_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I16_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_I32_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I32_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I32_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_I64_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I64_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_I64_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET ||
+                                                           prop_type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET ||
+                                                           prop_type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET);
                                                 switch (prop_type) {
-                                                        case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                                                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                                        case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                                                        case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                                                        case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                                                        case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                                                        case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                                        case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                                                 obj_it *sub_it = carbon_item_get_object(&(it->prop.value));
                                                                 path_status_e ret = traverse_object(state,
                                                                                                               path,
@@ -295,10 +295,10 @@ static inline path_status_e traverse_object(carbon_path_evaluator *state,
                                                                 carbon_object_drop(sub_it);
                                                                 return ret;
                                                         }
-                                                        case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
+                                                        case FIELD_ARRAY_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                                                        case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                                                 arr_it *sub_it = carbon_item_get_array(&(it->prop.value));
                                                                 path_status_e ret = traverse_array(state,
                                                                                                              path,
@@ -308,46 +308,46 @@ static inline path_status_e traverse_object(carbon_path_evaluator *state,
                                                                 arr_it_drop(sub_it);
                                                                 return ret;
                                                         }
-                                                        case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                                                        case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                                                        case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                                                        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                                                        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                                                        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                                                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                                                        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                                                        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                                                        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                                                        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                                                        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                                                        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                                                        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                                                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                                                 col_it *sub_it = carbon_item_get_column(&(it->prop.value));
                                                                 return traverse_column(state,
                                                                                        path,

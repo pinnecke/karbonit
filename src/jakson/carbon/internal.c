@@ -116,28 +116,28 @@ size_t carbon_int_get_type_size_encoded(field_type_e type)
 {
         size_t type_size = sizeof(media_type); /** at least the media type marker is required */
         switch (type) {
-                case CARBON_FIELD_NULL:
-                case CARBON_FIELD_TRUE:
-                case CARBON_FIELD_FALSE:
+                case FIELD_NULL:
+                case FIELD_TRUE:
+                case FIELD_FALSE:
                         /** only media type marker is required */
                         break;
-                case CARBON_FIELD_NUMBER_U8:
-                case CARBON_FIELD_NUMBER_I8:
+                case FIELD_NUMBER_U8:
+                case FIELD_NUMBER_I8:
                         type_size += sizeof(u8);
                         break;
-                case CARBON_FIELD_NUMBER_U16:
-                case CARBON_FIELD_NUMBER_I16:
+                case FIELD_NUMBER_U16:
+                case FIELD_NUMBER_I16:
                         type_size += sizeof(u16);
                         break;
-                case CARBON_FIELD_NUMBER_U32:
-                case CARBON_FIELD_NUMBER_I32:
+                case FIELD_NUMBER_U32:
+                case FIELD_NUMBER_I32:
                         type_size += sizeof(u32);
                         break;
-                case CARBON_FIELD_NUMBER_U64:
-                case CARBON_FIELD_NUMBER_I64:
+                case FIELD_NUMBER_U64:
+                case FIELD_NUMBER_I64:
                         type_size += sizeof(u64);
                         break;
-                case CARBON_FIELD_NUMBER_FLOAT:
+                case FIELD_NUMBER_FLOAT:
                         type_size += sizeof(float);
                         break;
                 default: error(ERR_INTERNALERR, NULL);
@@ -149,63 +149,63 @@ size_t carbon_int_get_type_size_encoded(field_type_e type)
 size_t carbon_int_get_type_value_size(field_type_e type)
 {
         switch (type) {
-                case CARBON_FIELD_NULL:
-                case CARBON_FIELD_TRUE:
-                case CARBON_FIELD_FALSE:
-                case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
+                case FIELD_NULL:
+                case FIELD_TRUE:
+                case FIELD_FALSE:
+                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         return sizeof(media_type); /** these constant values are determined by their media type markers */
-                case CARBON_FIELD_NUMBER_U8:
-                case CARBON_FIELD_NUMBER_I8:
-                case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                case FIELD_NUMBER_U8:
+                case FIELD_NUMBER_I8:
+                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
                         return sizeof(u8);
-                case CARBON_FIELD_NUMBER_U16:
-                case CARBON_FIELD_NUMBER_I16:
-                case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                case FIELD_NUMBER_U16:
+                case FIELD_NUMBER_I16:
+                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
                         return sizeof(u16);
-                case CARBON_FIELD_NUMBER_U32:
-                case CARBON_FIELD_NUMBER_I32:
-                case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                case FIELD_NUMBER_U32:
+                case FIELD_NUMBER_I32:
+                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
                         return sizeof(u32);
-                case CARBON_FIELD_NUMBER_U64:
-                case CARBON_FIELD_NUMBER_I64:
-                case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                case FIELD_NUMBER_U64:
+                case FIELD_NUMBER_I64:
+                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
                         return sizeof(u64);
-                case CARBON_FIELD_NUMBER_FLOAT:
-                case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                case FIELD_NUMBER_FLOAT:
+                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
                         return sizeof(float);
                 default: error(ERR_INTERNALERR, NULL);
                         return 0;
@@ -311,20 +311,20 @@ bool carbon_int_field_data_access(memfile *file, field *field)
         memfile_skip(file, sizeof(media_type));
 
         switch (field->type) {
-                case CARBON_FIELD_NULL:
-                case CARBON_FIELD_TRUE:
-                case CARBON_FIELD_FALSE:
-                case CARBON_FIELD_NUMBER_U8:
-                case CARBON_FIELD_NUMBER_U16:
-                case CARBON_FIELD_NUMBER_U32:
-                case CARBON_FIELD_NUMBER_U64:
-                case CARBON_FIELD_NUMBER_I8:
-                case CARBON_FIELD_NUMBER_I16:
-                case CARBON_FIELD_NUMBER_I32:
-                case CARBON_FIELD_NUMBER_I64:
-                case CARBON_FIELD_NUMBER_FLOAT:
+                case FIELD_NULL:
+                case FIELD_TRUE:
+                case FIELD_FALSE:
+                case FIELD_NUMBER_U8:
+                case FIELD_NUMBER_U16:
+                case FIELD_NUMBER_U32:
+                case FIELD_NUMBER_U64:
+                case FIELD_NUMBER_I8:
+                case FIELD_NUMBER_I16:
+                case FIELD_NUMBER_I32:
+                case FIELD_NUMBER_I64:
+                case FIELD_NUMBER_FLOAT:
                         break;
-                case CARBON_FIELD_STRING: {
+                case FIELD_STRING: {
                         u8 nbytes;
                         uintvar_stream_t len = (uintvar_stream_t) memfile_peek(file, 1);
                         field->len = uintvar_stream_read(&nbytes, len);
@@ -332,7 +332,7 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                         memfile_skip(file, nbytes);
                 }
                         break;
-                case CARBON_FIELD_BINARY: {
+                case FIELD_BINARY: {
                         /** read mime type with variable-length integer type */
                         u64 mime_id = memfile_read_uintvar_stream(NULL, file);
 
@@ -345,7 +345,7 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                 }
                         break;
-                case CARBON_FIELD_BINARY_CUSTOM: {
+                case FIELD_BINARY_CUSTOM: {
                         /** read mime type string_buffer */
                         field->mime_len = memfile_read_uintvar_stream(NULL, file);
                         field->mime = memfile_read(file, field->mime_len);
@@ -356,65 +356,65 @@ bool carbon_int_field_data_access(memfile *file, field *field)
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                 }
                         break;
-                case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET:
+                case FIELD_ARRAY_UNSORTED_MULTISET:
+                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                case FIELD_DERIVED_ARRAY_SORTED_SET:
                         carbon_int_field_create(field);
                         field->arr_it.created = true;
                         internal_arr_it_create(field->array, file,
                                                memfile_tell(file) - sizeof(u8));
                         break;
-                case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         carbon_int_field_create(field);
                         field->col_it_created = true;
                         col_it_create(field->column, file,
                                                 memfile_tell(file) - sizeof(u8));
                 }
                         break;
-                case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP:
+                case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case FIELD_DERIVED_OBJECT_SORTED_MAP:
                         carbon_int_field_create(field);
                         field->obj_it.created = true;
                         internal_carbon_object_create(field->object, file,
@@ -630,8 +630,8 @@ bool carbon_int_field_field_type(field_type_e *type, field *field)
 
 bool carbon_int_field_bool_value(bool *value, field *field)
 {
-        bool is_true = field->type == CARBON_FIELD_TRUE;
-        bool is_false = field->type == CARBON_FIELD_FALSE;
+        bool is_true = field->type == FIELD_TRUE;
+        bool is_false = field->type == FIELD_FALSE;
         if (LIKELY(is_true || is_false)) {
                 *value = is_true;
                 return true;
@@ -643,69 +643,69 @@ bool carbon_int_field_bool_value(bool *value, field *field)
 
 bool carbon_int_field_is_null(bool *is_null, field *field)
 {
-        *is_null = field->type == CARBON_FIELD_NULL;
+        *is_null = field->type == FIELD_NULL;
         return true;
 }
 
 bool carbon_int_field_u8_value(u8 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U8, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_U8, ERR_TYPEMISMATCH, NULL);
         *value = *(u8 *) field->data;
         return true;
 }
 
 bool carbon_int_field_u16_value(u16 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U16, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_U16, ERR_TYPEMISMATCH, NULL);
         *value = *(u16 *) field->data;
         return true;
 }
 
 bool carbon_int_field_u32_value(u32 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U32, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_U32, ERR_TYPEMISMATCH, NULL);
         *value = *(u32 *) field->data;
         return true;
 }
 
 bool carbon_int_field_u64_value(u64 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_U64, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_U64, ERR_TYPEMISMATCH, NULL);
         *value = *(u64 *) field->data;
         return true;
 }
 
 bool carbon_int_field_i8_value(i8 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I8, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_I8, ERR_TYPEMISMATCH, NULL);
         *value = *(i8 *) field->data;
         return true;
 }
 
 bool carbon_int_field_i16_value(i16 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I16, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_I16, ERR_TYPEMISMATCH, NULL);
         *value = *(i16 *) field->data;
         return true;
 }
 
 bool carbon_int_field_i32_value(i32 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I32, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_I32, ERR_TYPEMISMATCH, NULL);
         *value = *(i32 *) field->data;
         return true;
 }
 
 bool carbon_int_field_i64_value(i64 *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_I64, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_I64, ERR_TYPEMISMATCH, NULL);
         *value = *(i64 *) field->data;
         return true;
 }
 
 bool carbon_int_field_float_value(float *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         *value = *(float *) field->data;
         return true;
 }
@@ -713,7 +713,7 @@ bool carbon_int_field_float_value(float *value, field *field)
 bool
 carbon_int_field_float_value_nullable(bool *is_null_in, float *value, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         float read_value = *(float *) field->data;
         OPTIONAL_SET(value, read_value);
         OPTIONAL_SET(is_null_in, IS_NULL_FLOAT(read_value));
@@ -724,28 +724,28 @@ carbon_int_field_float_value_nullable(bool *is_null_in, float *value, field *fie
 bool carbon_int_field_signed_value_nullable(bool *is_null_in, i64 *value, field *field)
 {
         switch (field->type) {
-                case CARBON_FIELD_NUMBER_I8: {
+                case FIELD_NUMBER_I8: {
                         i8 read_value;
                         carbon_int_field_i8_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I8(read_value));
                 }
                         break;
-                case CARBON_FIELD_NUMBER_I16: {
+                case FIELD_NUMBER_I16: {
                         i16 read_value;
                         carbon_int_field_i16_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I16(read_value));
                 }
                         break;
-                case CARBON_FIELD_NUMBER_I32: {
+                case FIELD_NUMBER_I32: {
                         i32 read_value;
                         carbon_int_field_i32_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_I32(read_value));
                 }
                         break;
-                case CARBON_FIELD_NUMBER_I64: {
+                case FIELD_NUMBER_I64: {
                         i64 read_value;
                         carbon_int_field_i64_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
@@ -761,28 +761,28 @@ bool carbon_int_field_signed_value_nullable(bool *is_null_in, i64 *value, field 
 bool carbon_int_field_unsigned_value_nullable(bool *is_null_in, u64 *value, field *field)
 {
         switch (field->type) {
-                case CARBON_FIELD_NUMBER_U8: {
+                case FIELD_NUMBER_U8: {
                         u8 read_value;
                         carbon_int_field_u8_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U8(read_value));
                 }
                         break;
-                case CARBON_FIELD_NUMBER_U16: {
+                case FIELD_NUMBER_U16: {
                         u16 read_value;
                         carbon_int_field_u16_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U16(read_value));
                 }
                         break;
-                case CARBON_FIELD_NUMBER_U32: {
+                case FIELD_NUMBER_U32: {
                         u32 read_value;
                         carbon_int_field_u32_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
                         OPTIONAL_SET(is_null_in, IS_NULL_U32(read_value));
                 }
                         break;
-                case CARBON_FIELD_NUMBER_U64: {
+                case FIELD_NUMBER_U64: {
                         u64 read_value;
                         carbon_int_field_u64_value(&read_value, field);
                         OPTIONAL_SET(value, read_value);
@@ -798,25 +798,25 @@ bool carbon_int_field_unsigned_value_nullable(bool *is_null_in, u64 *value, fiel
 bool carbon_int_field_signed_value(i64 *value, field *field)
 {
         switch (field->type) {
-                case CARBON_FIELD_NUMBER_I8: {
+                case FIELD_NUMBER_I8: {
                         i8 read_value;
                         carbon_int_field_i8_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                case CARBON_FIELD_NUMBER_I16: {
+                case FIELD_NUMBER_I16: {
                         i16 read_value;
                         carbon_int_field_i16_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                case CARBON_FIELD_NUMBER_I32: {
+                case FIELD_NUMBER_I32: {
                         i32 read_value;
                         carbon_int_field_i32_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                case CARBON_FIELD_NUMBER_I64: {
+                case FIELD_NUMBER_I64: {
                         i64 read_value;
                         carbon_int_field_i64_value(&read_value, field);
                         *value = read_value;
@@ -831,25 +831,25 @@ bool carbon_int_field_signed_value(i64 *value, field *field)
 bool carbon_int_field_unsigned_value(u64 *value, field *field)
 {
         switch (field->type) {
-                case CARBON_FIELD_NUMBER_U8: {
+                case FIELD_NUMBER_U8: {
                         u8 read_value;
                         carbon_int_field_u8_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                case CARBON_FIELD_NUMBER_U16: {
+                case FIELD_NUMBER_U16: {
                         u16 read_value;
                         carbon_int_field_u16_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                case CARBON_FIELD_NUMBER_U32: {
+                case FIELD_NUMBER_U32: {
                         u32 read_value;
                         carbon_int_field_u32_value(&read_value, field);
                         *value = read_value;
                 }
                         break;
-                case CARBON_FIELD_NUMBER_U64: {
+                case FIELD_NUMBER_U64: {
                         u64 read_value;
                         carbon_int_field_u64_value(&read_value, field);
                         *value = read_value;
@@ -864,7 +864,7 @@ bool carbon_int_field_unsigned_value(u64 *value, field *field)
 const char *carbon_int_field_string_value(u64 *strlen, field *field)
 {
         error_if_and_return(field == NULL, ERR_NULLPTR, NULL);
-        error_if_and_return(field->type != CARBON_FIELD_STRING, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(field->type != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         *strlen = field->len;
         return field->data;
 }
@@ -872,8 +872,8 @@ const char *carbon_int_field_string_value(u64 *strlen, field *field)
 bool
 carbon_int_field_binary_value(binary *out, field *field)
 {
-        error_if_and_return(field->type != CARBON_FIELD_BINARY &&
-                 field->type != CARBON_FIELD_BINARY_CUSTOM,
+        error_if_and_return(field->type != FIELD_BINARY &&
+                 field->type != FIELD_BINARY_CUSTOM,
                  ERR_TYPEMISMATCH, NULL);
         out->blob = field->data;
         out->blob_len = field->len;
@@ -912,31 +912,31 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
         memfile_skip(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
         switch (type) {
-                case CARBON_FIELD_NULL:
-                case CARBON_FIELD_TRUE:
-                case CARBON_FIELD_FALSE:
+                case FIELD_NULL:
+                case FIELD_TRUE:
+                case FIELD_FALSE:
                         /** nothing to do */
                         break;
-                case CARBON_FIELD_NUMBER_U8:
-                case CARBON_FIELD_NUMBER_I8:
+                case FIELD_NUMBER_U8:
+                case FIELD_NUMBER_I8:
                         rm_nbytes += sizeof(u8);
                         break;
-                case CARBON_FIELD_NUMBER_U16:
-                case CARBON_FIELD_NUMBER_I16:
+                case FIELD_NUMBER_U16:
+                case FIELD_NUMBER_I16:
                         rm_nbytes += sizeof(u16);
                         break;
-                case CARBON_FIELD_NUMBER_U32:
-                case CARBON_FIELD_NUMBER_I32:
+                case FIELD_NUMBER_U32:
+                case FIELD_NUMBER_I32:
                         rm_nbytes += sizeof(u32);
                         break;
-                case CARBON_FIELD_NUMBER_U64:
-                case CARBON_FIELD_NUMBER_I64:
+                case FIELD_NUMBER_U64:
+                case FIELD_NUMBER_I64:
                         rm_nbytes += sizeof(u64);
                         break;
-                case CARBON_FIELD_NUMBER_FLOAT:
+                case FIELD_NUMBER_FLOAT:
                         rm_nbytes += sizeof(float);
                         break;
-                case CARBON_FIELD_STRING: {
+                case FIELD_STRING: {
                         u8 len_nbytes;  /** number of bytes used to store string_buffer length */
                         u64 str_len; /** the number of characters of the string_buffer field */
 
@@ -945,7 +945,7 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         rm_nbytes += len_nbytes + str_len;
                 }
                         break;
-                case CARBON_FIELD_BINARY: {
+                case FIELD_BINARY: {
                         u8 mime_nbytes; /** number of bytes for mime type */
                         u8 blob_length_nbytes; /** number of bytes to store blob length */
                         u64 blob_nbytes; /** number of bytes to store actual blob data */
@@ -959,7 +959,7 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         rm_nbytes += mime_nbytes + blob_length_nbytes + blob_nbytes;
                 }
                         break;
-                case CARBON_FIELD_BINARY_CUSTOM: {
+                case FIELD_BINARY_CUSTOM: {
                         u8 custom_type_strlen_nbytes; /** number of bytes for type name string_buffer length info */
                         u8 custom_type_strlen; /** number of characters to encode type name string_buffer */
                         u8 blob_length_nbytes; /** number of bytes to store blob length */
@@ -975,10 +975,10 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         rm_nbytes += custom_type_strlen_nbytes + custom_type_strlen + blob_length_nbytes + blob_nbytes;
                 }
                         break;
-                case CARBON_FIELD_ARRAY_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_ARRAY_SORTED_SET: {
+                case FIELD_ARRAY_UNSORTED_MULTISET:
+                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                case FIELD_DERIVED_ARRAY_SORTED_SET: {
                         arr_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
@@ -991,46 +991,46 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;
-                case CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                case CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                case CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                case CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                case CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                case CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                case CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         col_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
@@ -1042,10 +1042,10 @@ bool carbon_int_field_remove(memfile *memfile, field_type_e type)
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;
-                case CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                case CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         obj_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
@@ -1243,55 +1243,55 @@ static void int_insert_prop_object(carbon_insert *oins, json_object *obj)
                                                 break;
                                         case JSON_LIST_FIXED_U8:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_U8,
+                                                                        FIELD_NUMBER_U8,
                                                                         COLUMN_TYPE_U8,
                                                                         u8, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U16:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_U16,
+                                                                        FIELD_NUMBER_U16,
                                                                         COLUMN_TYPE_U16,
                                                                         u16, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U32:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_U32,
+                                                                        FIELD_NUMBER_U32,
                                                                         COLUMN_TYPE_U32,
                                                                         u32, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_U64:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_U64,
+                                                                        FIELD_NUMBER_U64,
                                                                         COLUMN_TYPE_U64,
                                                                         u64, unsigned_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I8:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_I8,
+                                                                        FIELD_NUMBER_I8,
                                                                         COLUMN_TYPE_I8,
                                                                         i8, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I16:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_I16,
+                                                                        FIELD_NUMBER_I16,
                                                                         COLUMN_TYPE_I16,
                                                                         i16, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I32:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_I32,
+                                                                        FIELD_NUMBER_I32,
                                                                         COLUMN_TYPE_I32,
                                                                         i32, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_I64:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_I64,
+                                                                        FIELD_NUMBER_I64,
                                                                         COLUMN_TYPE_I64,
                                                                         i64, signed_integer);
                                                 break;
                                         case JSON_LIST_FIXED_FLOAT:
                                                 prop_insert_into_column(oins, prop, prop->key.value,
-                                                                        CARBON_FIELD_NUMBER_FLOAT,
+                                                                        FIELD_NUMBER_FLOAT,
                                                                         COLUMN_TYPE_FLOAT,
                                                                         float, float_number);
                                                 break;
@@ -1419,7 +1419,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, unsigned, unsigned_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U8,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_U8,
                                                                    COLUMN_TYPE_U8,
                                                                    u8, unsigned_integer);
                                         }
@@ -1428,7 +1428,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, unsigned, unsigned_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U16,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_U16,
                                                                    COLUMN_TYPE_U16,
                                                                    u16, unsigned_integer);
                                         }
@@ -1437,7 +1437,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, unsigned, unsigned_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U32,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_U32,
                                                                    COLUMN_TYPE_U32,
                                                                    u32, unsigned_integer);
                                         }
@@ -1446,7 +1446,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, unsigned, unsigned_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_U64,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_U64,
                                                                    COLUMN_TYPE_U64,
                                                                    u64, unsigned_integer);
                                         }
@@ -1455,7 +1455,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, signed, signed_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I8,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_I8,
                                                                    COLUMN_TYPE_I8,
                                                                    i8, signed_integer);
                                         }
@@ -1464,7 +1464,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, signed, signed_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I16,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_I16,
                                                                    COLUMN_TYPE_I16,
                                                                    u16, signed_integer);
                                         }
@@ -1473,7 +1473,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, signed, signed_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I32,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_I32,
                                                                    COLUMN_TYPE_I32,
                                                                    u32, signed_integer);
                                         }
@@ -1482,7 +1482,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, signed, signed_integer)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_I64,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_I64,
                                                                    COLUMN_TYPE_I64,
                                                                    u64, signed_integer);
                                         }
@@ -1491,7 +1491,7 @@ static void int_carbon_from_json_elem(carbon_insert *ins, const json_element *el
                                         if (is_root) {
                                                 insert_into_array(ins, elem, float, float_number)
                                         } else {
-                                                insert_into_column(ins, elem, CARBON_FIELD_NUMBER_FLOAT,
+                                                insert_into_column(ins, elem, FIELD_NUMBER_FLOAT,
                                                                    COLUMN_TYPE_FLOAT,
                                                                    float, float_number);
                                         }

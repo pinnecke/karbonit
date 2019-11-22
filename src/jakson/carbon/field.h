@@ -16,101 +16,101 @@
 
 typedef enum field_type {
         /** constants */
-        CARBON_FIELD_NULL = MNULL, /** null */
-        CARBON_FIELD_TRUE = MTRUE, /** true */
-        CARBON_FIELD_FALSE = MFALSE, /** false */
+        FIELD_NULL = MNULL, /** null */
+        FIELD_TRUE = MTRUE, /** true */
+        FIELD_FALSE = MFALSE, /** false */
 
         /** containers / abstract base types */
-        CARBON_FIELD_OBJECT_UNSORTED_MULTIMAP = UNSORTED_MULTIMAP, /** object */
-        CARBON_FIELD_ARRAY_UNSORTED_MULTISET = UNSORTED_MULTISET_ARRAY, /** variable-type array of elements of varying type */
-        CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U8, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_U16_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U16, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_U32_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U32, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_U64_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U64, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_I8_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I8, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_I16_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I16, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_I32_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I32, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_I64_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I64, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_FLOAT_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_FLOAT, /** fixed-type array of elements of particular type */
-        CARBON_FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_BOOLEAN, /** fixed-type array of elements of particular type */
+        FIELD_OBJECT_UNSORTED_MULTIMAP = UNSORTED_MULTIMAP, /** object */
+        FIELD_ARRAY_UNSORTED_MULTISET = UNSORTED_MULTISET_ARRAY, /** variable-type array of elements of varying type */
+        FIELD_COLUMN_U8_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U8, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_U16_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U16, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_U32_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U32, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_U64_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_U64, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_I8_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I8, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_I16_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I16, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_I32_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I32, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_I64_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_I64, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_FLOAT_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_FLOAT, /** fixed-type array of elements of particular type */
+        FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET = UNSORTED_MULTISET_COL_BOOLEAN, /** fixed-type array of elements of particular type */
 
         /** abstract derived types for object containers */
-        CARBON_FIELD_DERIVED_OBJECT_SORTED_MULTIMAP = SORTED_MULTIMAP,
-        CARBON_FIELD_DERIVED_OBJECT_UNSORTED_MAP = UNSORTED_MAP,
-        CARBON_FIELD_DERIVED_OBJECT_SORTED_MAP = SORTED_MAP,
+        FIELD_DERIVED_OBJECT_SORTED_MULTIMAP = SORTED_MULTIMAP,
+        FIELD_DERIVED_OBJECT_UNSORTED_MAP = UNSORTED_MAP,
+        FIELD_DERIVED_OBJECT_SORTED_MAP = SORTED_MAP,
 
         /** abstract derived types for array containers */
-        CARBON_FIELD_DERIVED_ARRAY_SORTED_MULTISET = SORTED_MULTISET_ARRAY,
-        CARBON_FIELD_DERIVED_ARRAY_UNSORTED_SET = UNSORTED_SET_ARRAY,
-        CARBON_FIELD_DERIVED_ARRAY_SORTED_SET = SORTED_SET_ARRAY,
+        FIELD_DERIVED_ARRAY_SORTED_MULTISET = SORTED_MULTISET_ARRAY,
+        FIELD_DERIVED_ARRAY_UNSORTED_SET = UNSORTED_SET_ARRAY,
+        FIELD_DERIVED_ARRAY_SORTED_SET = SORTED_SET_ARRAY,
 
         /** abstract derived types for column-u8 containers */
-        CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET = SORTED_MULTISET_COL_U8,
-        CARBON_FIELD_DERIVED_COLUMN_U8_UNSORTED_SET = UNSORTED_SET_COL_U8,
-        CARBON_FIELD_DERIVED_COLUMN_U8_SORTED_SET = SORTED_SET_COL_U8,
+        FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET = SORTED_MULTISET_COL_U8,
+        FIELD_DERIVED_COLUMN_U8_UNSORTED_SET = UNSORTED_SET_COL_U8,
+        FIELD_DERIVED_COLUMN_U8_SORTED_SET = SORTED_SET_COL_U8,
 
         /** abstract derived types for column-u16 containers */
-        CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET = SORTED_MULTISET_COL_U16,
-        CARBON_FIELD_DERIVED_COLUMN_U16_UNSORTED_SET = UNSORTED_SET_COL_U16,
-        CARBON_FIELD_DERIVED_COLUMN_U16_SORTED_SET = SORTED_SET_COL_U16,
+        FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET = SORTED_MULTISET_COL_U16,
+        FIELD_DERIVED_COLUMN_U16_UNSORTED_SET = UNSORTED_SET_COL_U16,
+        FIELD_DERIVED_COLUMN_U16_SORTED_SET = SORTED_SET_COL_U16,
 
         /** abstract derived types for column-u32 containers */
-        CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET = SORTED_MULTISET_COL_U32,
-        CARBON_FIELD_DERIVED_COLUMN_U32_UNSORTED_SET = UNSORTED_SET_COL_U32,
-        CARBON_FIELD_DERIVED_COLUMN_U32_SORTED_SET = SORTED_SET_COL_U32,
+        FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET = SORTED_MULTISET_COL_U32,
+        FIELD_DERIVED_COLUMN_U32_UNSORTED_SET = UNSORTED_SET_COL_U32,
+        FIELD_DERIVED_COLUMN_U32_SORTED_SET = SORTED_SET_COL_U32,
 
         /** abstract derived types for column-u64 containers */
-        CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET = SORTED_MULTISET_COL_U64,
-        CARBON_FIELD_DERIVED_COLUMN_U64_UNSORTED_SET = UNSORTED_SET_COL_U64,
-        CARBON_FIELD_DERIVED_COLUMN_U64_SORTED_SET = SORTED_SET_COL_U64,
+        FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET = SORTED_MULTISET_COL_U64,
+        FIELD_DERIVED_COLUMN_U64_UNSORTED_SET = UNSORTED_SET_COL_U64,
+        FIELD_DERIVED_COLUMN_U64_SORTED_SET = SORTED_SET_COL_U64,
 
         /** abstract derived types for column-i8 containers */
-        CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET = SORTED_MULTISET_COL_I8,
-        CARBON_FIELD_DERIVED_COLUMN_I8_UNSORTED_SET = UNSORTED_SET_COL_I8,
-        CARBON_FIELD_DERIVED_COLUMN_I8_SORTED_SET = SORTED_SET_COL_I8,
+        FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET = SORTED_MULTISET_COL_I8,
+        FIELD_DERIVED_COLUMN_I8_UNSORTED_SET = UNSORTED_SET_COL_I8,
+        FIELD_DERIVED_COLUMN_I8_SORTED_SET = SORTED_SET_COL_I8,
 
         /** abstract derived types for column-i16 containers */
-        CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET = SORTED_MULTISET_COL_I16,
-        CARBON_FIELD_DERIVED_COLUMN_I16_UNSORTED_SET = UNSORTED_SET_COL_I16,
-        CARBON_FIELD_DERIVED_COLUMN_I16_SORTED_SET = SORTED_SET_COL_I16,
+        FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET = SORTED_MULTISET_COL_I16,
+        FIELD_DERIVED_COLUMN_I16_UNSORTED_SET = UNSORTED_SET_COL_I16,
+        FIELD_DERIVED_COLUMN_I16_SORTED_SET = SORTED_SET_COL_I16,
 
         /** abstract derived types for column-i32 containers */
-        CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET = SORTED_MULTISET_COL_I32,
-        CARBON_FIELD_DERIVED_COLUMN_I32_UNSORTED_SET = UNSORTED_SET_COL_I32,
-        CARBON_FIELD_DERIVED_COLUMN_I32_SORTED_SET = SORTED_SET_COL_I32,
+        FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET = SORTED_MULTISET_COL_I32,
+        FIELD_DERIVED_COLUMN_I32_UNSORTED_SET = UNSORTED_SET_COL_I32,
+        FIELD_DERIVED_COLUMN_I32_SORTED_SET = SORTED_SET_COL_I32,
 
         /** abstract derived types for column-i64 containers */
-        CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET = SORTED_MULTISET_COL_I64,
-        CARBON_FIELD_DERIVED_COLUMN_I64_UNSORTED_SET = UNSORTED_SET_COL_I64,
-        CARBON_FIELD_DERIVED_COLUMN_I64_SORTED_SET = SORTED_SET_COL_I64,
+        FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET = SORTED_MULTISET_COL_I64,
+        FIELD_DERIVED_COLUMN_I64_UNSORTED_SET = UNSORTED_SET_COL_I64,
+        FIELD_DERIVED_COLUMN_I64_SORTED_SET = SORTED_SET_COL_I64,
 
         /** abstract derived types for column-float containers */
-        CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET = SORTED_MULTISET_COL_FLOAT,
-        CARBON_FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET = UNSORTED_SET_COL_FLOAT,
-        CARBON_FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET = SORTED_SET_COL_FLOAT,
+        FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET = SORTED_MULTISET_COL_FLOAT,
+        FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET = UNSORTED_SET_COL_FLOAT,
+        FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET = SORTED_SET_COL_FLOAT,
 
         /** abstract derived types for column-boolean containers */
-        CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET = SORTED_MULTISET_COL_BOOLEAN,
-        CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET = UNSORTED_SET_COL_BOOLEAN,
-        CARBON_FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET = SORTED_SET_COL_BOOLEAN,
+        FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET = SORTED_MULTISET_COL_BOOLEAN,
+        FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET = UNSORTED_SET_COL_BOOLEAN,
+        FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET = SORTED_SET_COL_BOOLEAN,
 
         /** character strings */
-        CARBON_FIELD_STRING = MSTRING, /** UTF-8 string_buffer */
+        FIELD_STRING = MSTRING, /** UTF-8 string_buffer */
 
         /** numbers */
-        CARBON_FIELD_NUMBER_U8 = MU8, /** 8bit unsigned integer */
-        CARBON_FIELD_NUMBER_U16 = MU16, /** 16bit unsigned integer */
-        CARBON_FIELD_NUMBER_U32 = MU32, /** 32bit unsigned integer */
-        CARBON_FIELD_NUMBER_U64 = MU64, /** 64bit unsigned integer */
-        CARBON_FIELD_NUMBER_I8 = MI8, /** 8bit signed integer */
-        CARBON_FIELD_NUMBER_I16 = MI16, /** 16bit signed integer */
-        CARBON_FIELD_NUMBER_I32 = MI32, /** 32bit signed integer */
-        CARBON_FIELD_NUMBER_I64 = MI64, /** 64bit signed integer */
-        CARBON_FIELD_NUMBER_FLOAT = MFLOAT, /** 32bit float */
+        FIELD_NUMBER_U8 = MU8, /** 8bit unsigned integer */
+        FIELD_NUMBER_U16 = MU16, /** 16bit unsigned integer */
+        FIELD_NUMBER_U32 = MU32, /** 32bit unsigned integer */
+        FIELD_NUMBER_U64 = MU64, /** 64bit unsigned integer */
+        FIELD_NUMBER_I8 = MI8, /** 8bit signed integer */
+        FIELD_NUMBER_I16 = MI16, /** 16bit signed integer */
+        FIELD_NUMBER_I32 = MI32, /** 32bit signed integer */
+        FIELD_NUMBER_I64 = MI64, /** 64bit signed integer */
+        FIELD_NUMBER_FLOAT = MFLOAT, /** 32bit float */
 
         /** binary data */
-        CARBON_FIELD_BINARY = MBINARY, /** arbitrary binary object with known mime type */
-        CARBON_FIELD_BINARY_CUSTOM = MCUSTOM_BINARY, /** arbitrary binary object with unknown mime type*/
+        FIELD_BINARY = MBINARY, /** arbitrary binary object with known mime type */
+        FIELD_BINARY_CUSTOM = MCUSTOM_BINARY, /** arbitrary binary object with unknown mime type*/
 } field_type_e;
 
 typedef enum col_it_type {
@@ -127,11 +127,11 @@ typedef enum col_it_type {
 } col_it_type_e;
 
 typedef enum carbon_field_class {
-        CARBON_FIELD_CLASS_CONSTANT,
-        CARBON_FIELD_CLASS_NUMBER,
-        CARBON_FIELD_CLASS_CHARACTER_STRING,
-        CARBON_FIELD_CLASS_BINARY_STRING,
-        CARBON_FIELD_CLASS_CONTAINER
+        FIELD_CLASS_CONSTANT,
+        FIELD_CLASS_NUMBER,
+        FIELD_CLASS_CHARACTER_STRING,
+        FIELD_CLASS_BINARY_STRING,
+        FIELD_CLASS_CONTAINER
 } carbon_field_class_e;
 
 typedef enum carbon_constant {
@@ -140,68 +140,68 @@ typedef enum carbon_constant {
         CARBON_CONSTANT_NULL
 } carbon_constant_e;
 
-#define CARBON_FIELD_TYPE_NULL_STR "null"
-#define CARBON_FIELD_TYPE_TRUE_STR "boolean-true"
-#define CARBON_FIELD_TYPE_FALSE_STR "boolean-false"
-#define CARBON_FIELD_TYPE_OBJECT_UNSORTED_MULTIMAP_STR "unsorted-multimap"
-#define CARBON_FIELD_TYPE_OBJECT_SORTED_MULTIMAP_STR "sorted-multimap"
-#define CARBON_FIELD_TYPE_OBJECT_UNSORTED_MAP_STR "unsorted-map"
-#define CARBON_FIELD_TYPE_OBJECT_SORTED_MAP_STR "sorted-map"
-#define CARBON_FIELD_TYPE_ARRAY_UNSORTED_MULTISET_STR "array-unsorted-multiset"
-#define CARBON_FIELD_TYPE_ARRAY_SORTED_MULTISET_STR "array-sorted-multiset"
-#define CARBON_FIELD_TYPE_ARRAY_UNSORTED_SET_STR "array-unsorted-set"
-#define CARBON_FIELD_TYPE_ARRAY_SORTED_SET_STR "array-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U8_UNSORTED_MULTISET_STR "column-u8-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U8_SORTED_MULTISET_STR "column-u8-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U8_UNSORTED_SET_STR "column-u8-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U8_SORTED_SET_STR "column-u8-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U16_UNSORTED_MULTISET_STR "column-u16-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U16_SORTED_MULTISET_STR "column-u16-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U16_UNSORTED_SET_STR "column-u16-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U16_SORTED_SET_STR "column-u16-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U32_UNSORTED_MULTISET_STR "column-u32-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U32_SORTED_MULTISET_STR "column-u32-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U32_UNSORTED_SET_STR "column-u32-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U32_SORTED_SET_STR "column-u32-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U64_UNSORTED_MULTISET_STR "column-u64-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U64_SORTED_MULTISET_STR "column-u64-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_U64_UNSORTED_SET_STR "column-u64-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_U64_SORTED_SET_STR "column-u64-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I8_UNSORTED_MULTISET_STR "column-i8-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I8_SORTED_MULTISET_STR "column-i8-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I8_UNSORTED_SET_STR "column-i8-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I8_SORTED_SET_STR "column-i8-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I16_UNSORTED_MULTISET_STR "column-i16-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I16_SORTED_MULTISET_STR "column-i16-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I16_UNSORTED_SET_STR "column-i16-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I16_SORTED_SET_STR "column-i16-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I32_UNSORTED_MULTISET_STR "column-i32-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I32_SORTED_MULTISET_STR "column-i32-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I32_UNSORTED_SET_STR "column-i32-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I32_SORTED_SET_STR "column-i32-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I64_UNSORTED_MULTISET_STR "column-i64-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I64_SORTED_MULTISET_STR "column-i64-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_I64_UNSORTED_SET_STR "column-i64-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_I64_SORTED_SET_STR "column-i64-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_FLOAT_UNSORTED_MULTISET_STR "column-float-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_FLOAT_SORTED_MULTISET_STR "column-float-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_FLOAT_UNSORTED_SET_STR "column-float-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_FLOAT_SORTED_SET_STR "column-float-sorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_BOOLEAN_UNSORTED_MULTISET_STR "column-boolean-unsorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_BOOLEAN_SORTED_MULTISET_STR "column-boolean-sorted-multiset"
-#define CARBON_FIELD_TYPE_COLUMN_BOOLEAN_UNSORTED_SET_STR "column-boolean-unsorted-set"
-#define CARBON_FIELD_TYPE_COLUMN_BOOLEAN_SORTED_SET_STR "column-boolean-sorted-set"
-#define CARBON_FIELD_TYPE_STRING_STR "string"
-#define CARBON_FIELD_TYPE_BINARY_STR "binary"
-#define CARBON_FIELD_TYPE_NUMBER_U8_STR "number-u8"
-#define CARBON_FIELD_TYPE_NUMBER_U16_STR "number-u16"
-#define CARBON_FIELD_TYPE_NUMBER_U32_STR "number-u32"
-#define CARBON_FIELD_TYPE_NUMBER_U64_STR "number-u64"
-#define CARBON_FIELD_TYPE_NUMBER_I8_STR "number-i8"
-#define CARBON_FIELD_TYPE_NUMBER_I16_STR "number-i16"
-#define CARBON_FIELD_TYPE_NUMBER_I32_STR "number-i32"
-#define CARBON_FIELD_TYPE_NUMBER_I64_STR "number-i64"
-#define CARBON_FIELD_TYPE_NUMBER_FLOAT_STR "number-float"
+#define FIELD_TYPE_NULL_STR "null"
+#define FIELD_TYPE_TRUE_STR "boolean-true"
+#define FIELD_TYPE_FALSE_STR "boolean-false"
+#define FIELD_TYPE_OBJECT_UNSORTED_MULTIMAP_STR "unsorted-multimap"
+#define FIELD_TYPE_OBJECT_SORTED_MULTIMAP_STR "sorted-multimap"
+#define FIELD_TYPE_OBJECT_UNSORTED_MAP_STR "unsorted-map"
+#define FIELD_TYPE_OBJECT_SORTED_MAP_STR "sorted-map"
+#define FIELD_TYPE_ARRAY_UNSORTED_MULTISET_STR "array-unsorted-multiset"
+#define FIELD_TYPE_ARRAY_SORTED_MULTISET_STR "array-sorted-multiset"
+#define FIELD_TYPE_ARRAY_UNSORTED_SET_STR "array-unsorted-set"
+#define FIELD_TYPE_ARRAY_SORTED_SET_STR "array-sorted-set"
+#define FIELD_TYPE_COLUMN_U8_UNSORTED_MULTISET_STR "column-u8-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_U8_SORTED_MULTISET_STR "column-u8-sorted-multiset"
+#define FIELD_TYPE_COLUMN_U8_UNSORTED_SET_STR "column-u8-unsorted-set"
+#define FIELD_TYPE_COLUMN_U8_SORTED_SET_STR "column-u8-sorted-set"
+#define FIELD_TYPE_COLUMN_U16_UNSORTED_MULTISET_STR "column-u16-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_U16_SORTED_MULTISET_STR "column-u16-sorted-multiset"
+#define FIELD_TYPE_COLUMN_U16_UNSORTED_SET_STR "column-u16-unsorted-set"
+#define FIELD_TYPE_COLUMN_U16_SORTED_SET_STR "column-u16-sorted-set"
+#define FIELD_TYPE_COLUMN_U32_UNSORTED_MULTISET_STR "column-u32-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_U32_SORTED_MULTISET_STR "column-u32-sorted-multiset"
+#define FIELD_TYPE_COLUMN_U32_UNSORTED_SET_STR "column-u32-unsorted-set"
+#define FIELD_TYPE_COLUMN_U32_SORTED_SET_STR "column-u32-sorted-set"
+#define FIELD_TYPE_COLUMN_U64_UNSORTED_MULTISET_STR "column-u64-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_U64_SORTED_MULTISET_STR "column-u64-sorted-multiset"
+#define FIELD_TYPE_COLUMN_U64_UNSORTED_SET_STR "column-u64-unsorted-set"
+#define FIELD_TYPE_COLUMN_U64_SORTED_SET_STR "column-u64-sorted-set"
+#define FIELD_TYPE_COLUMN_I8_UNSORTED_MULTISET_STR "column-i8-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_I8_SORTED_MULTISET_STR "column-i8-sorted-multiset"
+#define FIELD_TYPE_COLUMN_I8_UNSORTED_SET_STR "column-i8-unsorted-set"
+#define FIELD_TYPE_COLUMN_I8_SORTED_SET_STR "column-i8-sorted-set"
+#define FIELD_TYPE_COLUMN_I16_UNSORTED_MULTISET_STR "column-i16-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_I16_SORTED_MULTISET_STR "column-i16-sorted-multiset"
+#define FIELD_TYPE_COLUMN_I16_UNSORTED_SET_STR "column-i16-unsorted-set"
+#define FIELD_TYPE_COLUMN_I16_SORTED_SET_STR "column-i16-sorted-set"
+#define FIELD_TYPE_COLUMN_I32_UNSORTED_MULTISET_STR "column-i32-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_I32_SORTED_MULTISET_STR "column-i32-sorted-multiset"
+#define FIELD_TYPE_COLUMN_I32_UNSORTED_SET_STR "column-i32-unsorted-set"
+#define FIELD_TYPE_COLUMN_I32_SORTED_SET_STR "column-i32-sorted-set"
+#define FIELD_TYPE_COLUMN_I64_UNSORTED_MULTISET_STR "column-i64-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_I64_SORTED_MULTISET_STR "column-i64-sorted-multiset"
+#define FIELD_TYPE_COLUMN_I64_UNSORTED_SET_STR "column-i64-unsorted-set"
+#define FIELD_TYPE_COLUMN_I64_SORTED_SET_STR "column-i64-sorted-set"
+#define FIELD_TYPE_COLUMN_FLOAT_UNSORTED_MULTISET_STR "column-float-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_FLOAT_SORTED_MULTISET_STR "column-float-sorted-multiset"
+#define FIELD_TYPE_COLUMN_FLOAT_UNSORTED_SET_STR "column-float-unsorted-set"
+#define FIELD_TYPE_COLUMN_FLOAT_SORTED_SET_STR "column-float-sorted-set"
+#define FIELD_TYPE_COLUMN_BOOLEAN_UNSORTED_MULTISET_STR "column-boolean-unsorted-multiset"
+#define FIELD_TYPE_COLUMN_BOOLEAN_SORTED_MULTISET_STR "column-boolean-sorted-multiset"
+#define FIELD_TYPE_COLUMN_BOOLEAN_UNSORTED_SET_STR "column-boolean-unsorted-set"
+#define FIELD_TYPE_COLUMN_BOOLEAN_SORTED_SET_STR "column-boolean-sorted-set"
+#define FIELD_TYPE_STRING_STR "string"
+#define FIELD_TYPE_BINARY_STR "binary"
+#define FIELD_TYPE_NUMBER_U8_STR "number-u8"
+#define FIELD_TYPE_NUMBER_U16_STR "number-u16"
+#define FIELD_TYPE_NUMBER_U32_STR "number-u32"
+#define FIELD_TYPE_NUMBER_U64_STR "number-u64"
+#define FIELD_TYPE_NUMBER_I8_STR "number-i8"
+#define FIELD_TYPE_NUMBER_I16_STR "number-i16"
+#define FIELD_TYPE_NUMBER_I32_STR "number-i32"
+#define FIELD_TYPE_NUMBER_I64_STR "number-i64"
+#define FIELD_TYPE_NUMBER_FLOAT_STR "number-float"
 
 #ifdef __cplusplus
 extern "C" {

@@ -50,29 +50,29 @@ static bool array_update_##type_name(arr_it *it, type_name value)               
         return try_array_update(type_match, in_place_update_fn, insert_fn);                                            \
 }
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u8, CARBON_FIELD_NUMBER_U8, internal_arr_it_update_u8, carbon_insert_u8)
+DEFINE_ARRAY_UPDATE_FUNCTION(u8, FIELD_NUMBER_U8, internal_arr_it_update_u8, carbon_insert_u8)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u16, CARBON_FIELD_NUMBER_U16, internal_arr_it_update_u16,
+DEFINE_ARRAY_UPDATE_FUNCTION(u16, FIELD_NUMBER_U16, internal_arr_it_update_u16,
                              carbon_insert_u16)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u32, CARBON_FIELD_NUMBER_U32, internal_arr_it_update_u32,
+DEFINE_ARRAY_UPDATE_FUNCTION(u32, FIELD_NUMBER_U32, internal_arr_it_update_u32,
                              carbon_insert_u32)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u64, CARBON_FIELD_NUMBER_U64, internal_arr_it_update_u64,
+DEFINE_ARRAY_UPDATE_FUNCTION(u64, FIELD_NUMBER_U64, internal_arr_it_update_u64,
                              carbon_insert_u64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i8, CARBON_FIELD_NUMBER_I8, internal_arr_it_update_i8, carbon_insert_i8)
+DEFINE_ARRAY_UPDATE_FUNCTION(i8, FIELD_NUMBER_I8, internal_arr_it_update_i8, carbon_insert_i8)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i16, CARBON_FIELD_NUMBER_I16, internal_arr_it_update_i16,
+DEFINE_ARRAY_UPDATE_FUNCTION(i16, FIELD_NUMBER_I16, internal_arr_it_update_i16,
                              carbon_insert_i16)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i32, CARBON_FIELD_NUMBER_I32, internal_arr_it_update_i32,
+DEFINE_ARRAY_UPDATE_FUNCTION(i32, FIELD_NUMBER_I32, internal_arr_it_update_i32,
                              carbon_insert_i32)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i64, CARBON_FIELD_NUMBER_I64, internal_arr_it_update_i64,
+DEFINE_ARRAY_UPDATE_FUNCTION(i64, FIELD_NUMBER_I64, internal_arr_it_update_i64,
                              carbon_insert_i64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(float, CARBON_FIELD_NUMBER_FLOAT, internal_arr_it_update_float,
+DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_float,
                              carbon_insert_float)
 
 #define try_update_generic(context, path, array_exec, column_exec)                                                     \

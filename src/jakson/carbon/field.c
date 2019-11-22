@@ -676,13 +676,13 @@ field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is
         }
 }
 
-carbon_field_class_e field_type_get_class(field_type_e type)
+field_class_e field_type_get_class(field_type_e type)
 {
         switch (type) {
                 case FIELD_NULL:
                 case FIELD_TRUE:
                 case FIELD_FALSE:
-                        return FIELD_CLASS_CONSTANT;
+                        return CLASS_CONSTANT;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
@@ -731,9 +731,9 @@ carbon_field_class_e field_type_get_class(field_type_e type)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        return FIELD_CLASS_CONTAINER;
+                        return CLASS_CONTAINER;
                 case FIELD_STRING:
-                        return FIELD_CLASS_CHARACTER_STRING;
+                        return CLASS_CHARACTER_STRING;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
@@ -743,10 +743,10 @@ carbon_field_class_e field_type_get_class(field_type_e type)
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
                 case FIELD_NUMBER_FLOAT:
-                        return FIELD_CLASS_NUMBER;
+                        return CLASS_NUMBER;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        return FIELD_CLASS_BINARY_STRING;
+                        return CLASS_BINARY_STRING;
                 default: error(ERR_INTERNALERR, NULL);
                         return 0;
         }

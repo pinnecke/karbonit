@@ -126,13 +126,13 @@ typedef enum col_it_type {
         COLUMN_BOOLEAN
 } col_it_type_e;
 
-typedef enum carbon_field_class {
-        FIELD_CLASS_CONSTANT,
-        FIELD_CLASS_NUMBER,
-        FIELD_CLASS_CHARACTER_STRING,
-        FIELD_CLASS_BINARY_STRING,
-        FIELD_CLASS_CONTAINER
-} carbon_field_class_e;
+typedef enum field_class {
+        CLASS_CONSTANT,
+        CLASS_NUMBER,
+        CLASS_CHARACTER_STRING,
+        CLASS_BINARY_STRING,
+        CLASS_CONTAINER
+} field_class_e;
 
 typedef enum carbon_constant {
         CARBON_CONSTANT_TRUE,
@@ -235,7 +235,7 @@ bool field_type_is_null(field_type_e type);
 bool field_type_is_string(field_type_e type);
 bool field_type_is_constant(field_type_e type);
 
-carbon_field_class_e field_type_get_class(field_type_e type);
+field_class_e field_type_get_class(field_type_e type);
 
 bool carbon_field_skip(memfile *file);
 

@@ -28,12 +28,12 @@
 #include <jakson/utils/numbers.h>
 
 #define check_type_if_container_is_column(in, expr)                                                              \
-if (UNLIKELY(in->context_type == COLUMN && !(expr))) {                                            \
+if (unlikely(in->context_type == COLUMN && !(expr))) {                                            \
         error(ERR_TYPEMISMATCH, "Element type does not match container type");        \
 }
 
 #define check_type_range_if_container_is_column(in, expected1, expected2, expected3)                             \
-if (UNLIKELY(in->context_type == COLUMN && in->context.column->type != expected1 &&                 \
+if (unlikely(in->context_type == COLUMN && in->context.column->type != expected1 &&                 \
         in->context.column->type != expected2 && in->context.column->type != expected3)) {                 \
         ERROR_WDETAILS(&in->err, ERR_TYPEMISMATCH, "Element type does not match container type");        \
 }
@@ -91,7 +91,7 @@ bool internal_insert_create_for_object(insert *in, obj_it *context)
 
 bool insert_null(insert *in)
 {
-        if (UNLIKELY(in->context_type == COLUMN &&
+        if (unlikely(in->context_type == COLUMN &&
                 !field_is_column_or_subtype(in->context.column->field_type))) {
                 error(ERR_TYPEMISMATCH, "Element type does not match container type");
         }
@@ -946,7 +946,7 @@ static bool push_in_column(insert *in, const void *base, field_e type)
 
         u32 capacity = memfile_read_uintvar_stream(NULL, &in->file);
 
-        if (UNLIKELY(num_elems > capacity)) {
+        if (unlikely(num_elems > capacity)) {
                 memfile_save_position(&in->file);
 
                 u32 new_capacity = (capacity + 1) * 1.7f;

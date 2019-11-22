@@ -21,7 +21,7 @@
 bool abstract_type(abstract_e *type, memfile *memfile)
 {
         derived_e derived;
-        if (LIKELY(abstract_get_derived_type(&derived, memfile))) {
+        if (likely(abstract_get_derived_type(&derived, memfile))) {
                 switch (derived) {
                         case UNSORTED_MULTIMAP:
                         case UNSORTED_MULTISET_ARRAY:
@@ -88,7 +88,7 @@ return_true:
 bool abstract_is_base(bool *result, memfile *memfile)
 {
         abstract_e type;
-        if (LIKELY(abstract_type(&type, memfile))) {
+        if (likely(abstract_type(&type, memfile))) {
                 *result = type == ABSTRACT_BASE;
                 return true;
         } else {
@@ -110,7 +110,7 @@ bool abstract_is_derived(bool *result, memfile *memfile)
 bool abstract_get_class(abstract_type_class_e *type, memfile *memfile)
 {
         derived_e derived;
-        if (LIKELY(abstract_get_derived_type(&derived, memfile))) {
+        if (likely(abstract_get_derived_type(&derived, memfile))) {
                 switch (derived) {
                         case SORTED_MAP:
                                 *type = TYPE_SORTED_MAP;
@@ -425,7 +425,7 @@ bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)
 static bool __abstract_is_instanceof(memfile *memfile, sub_type_e T)
 {
         sub_type_e type;
-        if (LIKELY(abstract_get_container_subtype(&type, memfile))) {
+        if (likely(abstract_get_container_subtype(&type, memfile))) {
                 return type == T;
         } else {
                 return false;

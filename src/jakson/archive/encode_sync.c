@@ -147,7 +147,7 @@ static int freelist_pop(archive_field_sid_t *out, string_dict *self)
 {
         assert (self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
-        if (UNLIKELY(vector_is_empty(&extra->freelist))) {
+        if (unlikely(vector_is_empty(&extra->freelist))) {
                 size_t num_new_pos;
                 CHECK_SUCCESS(vector_grow(&num_new_pos, &extra->freelist));
                 CHECK_SUCCESS(vector_grow(NULL, &extra->contents));
@@ -314,7 +314,7 @@ static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings,
         for (size_t i = 0; i < num_strings; i++) {
                 archive_field_sid_t archive_field_sid_t = strings[i];
                 struct entry *entry = (struct entry *) vector_data(&extra->contents) + archive_field_sid_t;
-                if (LIKELY(entry->in_use)) {
+                if (likely(entry->in_use)) {
                         string_to_delete[num_strings_to_delete] = entry->str;
                         string_ids_to_delete[num_strings_to_delete] = strings[i];
                         entry->str = NULL;
@@ -377,7 +377,7 @@ _encode_sync_locate_fast(string_dict *self, archive_field_sid_t **out, char *con
 
 static char **_encode_sync_extract(string_dict *self, const archive_field_sid_t *ids, size_t num_ids)
 {
-        if (UNLIKELY(!self || !ids || num_ids == 0 || self->tag != SYNC)) {
+        if (unlikely(!self || !ids || num_ids == 0 || self->tag != SYNC)) {
                 return NULL;
         }
 

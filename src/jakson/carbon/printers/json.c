@@ -95,7 +95,7 @@ static inline void __carbon_print_json_binary(struct str_buf *restrict buf, cons
         for (register uint_fast64_t i = 0; i < nbyte; i++) {
                 const u8 byte = *(const u8 *)(data + nbyte);
                 str_buf_add_u8(buf, byte);
-                if (LIKELY(i + 1 < nbyte)) {
+                if (likely(i + 1 < nbyte)) {
                         str_buf_add_char(buf, ',');
                 }
         }
@@ -148,11 +148,11 @@ static inline void __carbon_print_json_enter_array_fast(struct traverse_extra *r
         //binary binary;
         //u64 string_len;
 
-        if (UNLIKELY(!arr_it_has_next(it))) {
+        if (unlikely(!arr_it_has_next(it))) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
                 extra->capture.print_json.convert = JSON_TO_NULL;
                 return;
-        } else if (LIKELY(!arr_it_is_unit(it))) {
+        } else if (likely(!arr_it_is_unit(it))) {
                 extra->capture.print_json.convert = JSON_REMAIN;
                 str_buf_add(str_buf, "[");
         } else {
@@ -248,7 +248,7 @@ static inline void __carbon_print_json_exit_array_fast(struct traverse_extra *re
         for (register uint_fast32_t i = 0; i < num_elems; i++) {                                                       \
                 str_buf_add_char(str_buf, sep);                                                                  \
                 const type elem = values[i];                                                                           \
-                if (UNLIKELY(null_test(elem))) {                                                                       \
+                if (unlikely(null_test(elem))) {                                                                       \
                         str_buf_add(str_buf, CARBON_PRINT_JSON_NULL);                                            \
                 } else {                                                                                               \
                         str_buf_add_##type(str_buf, values[i]);                                                  \
@@ -270,10 +270,10 @@ static inline bool __carbon_print_json_column_fast(struct traverse_extra *restri
         const void *base = col_it_values(&type, &num_elems, it);
         list_by_column_type(&container, type);
 
-        if (UNLIKELY(num_elems == 0)) {
+        if (unlikely(num_elems == 0)) {
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
                 return false;
-        } else if (LIKELY(num_elems > 1)) {
+        } else if (likely(num_elems > 1)) {
                 str_buf_add(str_buf, "[");
         }
 
@@ -312,7 +312,7 @@ static inline bool __carbon_print_json_column_fast(struct traverse_extra *restri
                         return error(ERR_INTERNALERR, NULL);
         }
 
-        if (LIKELY(num_elems > 1)) {
+        if (likely(num_elems > 1)) {
                 str_buf_add(str_buf, "]");
         }
         return true;

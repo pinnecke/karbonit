@@ -168,7 +168,7 @@ static void _json_printer_extended_const_false(printer *self, bool is_null, str_
 static void _json_printer_extended_val_signed(printer *self, str_buf *buffer, const i64 *value)
 {
         UNUSED(self);
-        if (LIKELY(value != NULL)) {
+        if (likely(value != NULL)) {
                 str_buf_add_i64(buffer, *value);
         } else {
                 str_buf_add(buffer, NULL_STR);
@@ -179,7 +179,7 @@ static void _json_printer_extended_val_signed(printer *self, str_buf *buffer, co
 static void _json_printer_extended_val_unsigned(printer *self, str_buf *buffer, const u64 *value)
 {
         UNUSED(self);
-        if (LIKELY(value != NULL)) {
+        if (likely(value != NULL)) {
                 str_buf_add_u64(buffer, *value);
         } else {
                 str_buf_add(buffer, NULL_STR);
@@ -189,7 +189,7 @@ static void _json_printer_extended_val_unsigned(printer *self, str_buf *buffer, 
 static void _json_printer_extended_val_float(printer *self, str_buf *buffer, const float *value)
 {
         UNUSED(self);
-        if (LIKELY(value != NULL)) {
+        if (likely(value != NULL)) {
                 str_buf_add_float(buffer, *value);
         } else {
                 str_buf_add(buffer, NULL_STR);

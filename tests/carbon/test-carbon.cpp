@@ -8076,8 +8076,8 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
         ASSERT_TRUE(dot_from_string(&path25, "0.array.750"));
 
         printf("ops/sec\n");
-        for (int j = 0; j < 15; j++) {
-            u32 max = 10000;
+        for (int j = 0; j < 1; j++) {
+            u32 max = 1000;
             timestamp t1 = wallclock();
             for (u32 i = 0; i < max; i++) {
                 ASSERT_TRUE(find_create(&find, &path1, &doc));

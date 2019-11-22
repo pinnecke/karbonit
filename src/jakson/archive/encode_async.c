@@ -465,7 +465,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
          * none of the carrier threads allocated thread-local 'out's which mean that no cleanup must be done */
 
         /** parallelizing the following block makes no sense but waste of compute power and energy */
-        if (LIKELY(out != NULL)) {
+        if (likely(out != NULL)) {
                 archive_field_sid_t *total_out = MALLOC(num_strings * sizeof(archive_field_sid_t));
                 size_t currentOut = 0;
 
@@ -666,7 +666,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
                 global_num_not_found += arg->num_not_found_out;
 
                 /** cleanup */
-                if (LIKELY(arg->did_work)) {
+                if (likely(arg->did_work)) {
                         string_dict_free(&arg->carrier->local_dictionary, arg->found_mask_out);
                         string_dict_free(&arg->carrier->local_dictionary, arg->ids_out);
                 }
@@ -778,7 +778,7 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_extract_arg *carrier_arg = thread_args + thread_id;
                 vector_drop(&carrier_arg->local_ids_in);
-                if (LIKELY(carrier_arg->did_work)) {
+                if (likely(carrier_arg->did_work)) {
                         string_dict_free(&carrier_arg->carrier->local_dictionary, carrier_arg->strings_out);
                 }
         }

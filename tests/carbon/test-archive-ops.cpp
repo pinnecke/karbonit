@@ -83,7 +83,7 @@ TEST(CarbonArchiveOpsTest, CreateArchiveStringHandling)
         for (size_t i = 0; i < vector_len; i++) {
             /* Note, that 'info[i].id' cannot be tested based on its value because it is not deterministic generated;
              * all ids must be unique. In case we read something wrong, we may find some duplicate
-             * (which is UNLIKELY, however) */
+             * (which is unlikely, however) */
             auto result = haystack.find(info[i].id);
             if (result != haystack.end()) {
                 FAIL() << "id collision for { \"id\": " << info[i].id << " }!\n";

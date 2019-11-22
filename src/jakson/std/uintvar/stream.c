@@ -26,7 +26,7 @@
 
 u8 uintvar_stream_write(uintvar_stream_t dst, u64 value)
 {
-        if (LIKELY(dst != NULL)) {
+        if (likely(dst != NULL)) {
                 u8 num_bytes = 0;
                 for (i8 i = 9; i > 0; i--) {
                         char block_data = extract_data(value, i * 7);

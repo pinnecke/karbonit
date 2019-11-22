@@ -181,7 +181,7 @@ bool key_signed_value(i64 *key, rec *doc)
         memfile_seek(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (LIKELY(key_is_signed(type))) {
+        if (likely(key_is_signed(type))) {
                 *key = *((const i64 *) result);
                 return true;
         } else {
@@ -197,7 +197,7 @@ bool key_unsigned_value(u64 *key, rec *doc)
         memfile_seek(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (LIKELY(key_is_unsigned(type))) {
+        if (likely(key_is_unsigned(type))) {
                 *key = *((const u64 *) result);
                 return true;
         } else {
@@ -213,7 +213,7 @@ const char *key_string_value(u64 *len, rec *doc)
         memfile_seek(&doc->file, 0);
         const void *result = key_read(len, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (LIKELY(key_is_string(type))) {
+        if (likely(key_is_string(type))) {
                 return result;
         } else {
                 error(ERR_TYPEMISMATCH, NULL);

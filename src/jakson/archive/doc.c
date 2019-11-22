@@ -357,7 +357,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                         const json_element
                                                 *element = VECTOR_GET(&array->elements.elements, i,
                                                                    json_element);
-                                        if (UNLIKELY(element->value.value_type == JSON_VALUE_NULL)) {
+                                        if (unlikely(element->value.value_type == JSON_VALUE_NULL)) {
                                                 continue;
                                         } else {
                                                 bool success;
@@ -376,7 +376,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                            || element_number_type == ARCHIVE_FIELD_UINT32
                                                            || element_number_type == ARCHIVE_FIELD_UINT64
                                                            || element_number_type == ARCHIVE_FIELD_FLOAT);
-                                                if (UNLIKELY(array_number_type == ARCHIVE_FIELD_NULL)) {
+                                                if (unlikely(array_number_type == ARCHIVE_FIELD_NULL)) {
                                                         array_number_type = element_number_type;
                                                 } else {
                                                         if (array_number_type == ARCHIVE_FIELD_INT8) {
@@ -565,7 +565,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                 }
                                         break;
                                 case ARCHIVE_FIELD_BOOLEAN:
-                                        if (LIKELY(ast_node_data_type == JSON_VALUE_TRUE
+                                        if (likely(ast_node_data_type == JSON_VALUE_TRUE
                                                        || ast_node_data_type == JSON_VALUE_FALSE)) {
                                                 archive_field_boolean_t value =
                                                         ast_node_data_type == JSON_VALUE_TRUE ? BOOLEAN_TRUE

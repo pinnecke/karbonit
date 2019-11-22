@@ -358,7 +358,7 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
 archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                                             const string_pred *pred, void *capture, i64 limit)
 {
-        if (UNLIKELY(string_pred_validate(pred) == false)) {
+        if (unlikely(string_pred_validate(pred) == false)) {
                 return NULL;
         }
         i64 pred_limit;
@@ -381,35 +381,35 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         size_t result_cap = pred_limit < 0 ? str_cap : (size_t) pred_limit;
         bool success = false;
 
-        if (UNLIKELY(pred_limit == 0)) {
+        if (unlikely(pred_limit == 0)) {
                 *num_found = 0;
                 return NULL;
         }
 
-        if (UNLIKELY(!num_found || !query || !pred)) {
+        if (unlikely(!num_found || !query || !pred)) {
                 error(ERR_NULLPTR, NULL);
                 return NULL;
         }
 
-        if (UNLIKELY((step_ids = MALLOC(str_cap * sizeof(archive_field_sid_t))) == NULL)) {
+        if (unlikely((step_ids = MALLOC(str_cap * sizeof(archive_field_sid_t))) == NULL)) {
                 error(ERR_MALLOCERR, NULL);
                 return NULL;
         }
 
-        if (UNLIKELY((str_offs = MALLOC(str_cap * sizeof(offset_t))) == NULL)) {
+        if (unlikely((str_offs = MALLOC(str_cap * sizeof(offset_t))) == NULL)) {
                 error(ERR_MALLOCERR, NULL);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
-        if (UNLIKELY((str_lens = MALLOC(str_cap * sizeof(u32))) == NULL)) {
+        if (unlikely((str_lens = MALLOC(str_cap * sizeof(u32))) == NULL)) {
                 error(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
-        if (UNLIKELY((idxs_matching = MALLOC(str_cap * sizeof(size_t))) == NULL)) {
+        if (unlikely((idxs_matching = MALLOC(str_cap * sizeof(size_t))) == NULL)) {
                 error(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 free(str_lens);
@@ -417,14 +417,14 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                 return NULL;
         }
 
-        if (UNLIKELY(query_scan_strids(&it, query) == false)) {
+        if (unlikely(query_scan_strids(&it, query) == false)) {
                 free(str_offs);
                 free(str_lens);
                 free(idxs_matching);
                 goto cleanup_result_and_error;
         }
 
-        if (UNLIKELY((result_ids = MALLOC(result_cap * sizeof(archive_field_sid_t))) == NULL)) {
+        if (unlikely((result_ids = MALLOC(result_cap * sizeof(archive_field_sid_t))) == NULL)) {
                 error(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 free(str_lens);
@@ -435,19 +435,19 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         }
 
         while (strid_iter_next(&success, &info, &info_len, &it)) {
-                if (UNLIKELY(info_len > str_cap)) {
+                if (unlikely(info_len > str_cap)) {
                         str_cap = (info_len + 1) * 1.7f;
-                        if (UNLIKELY((tmp = realloc(str_offs, str_cap * sizeof(offset_t))) == NULL)) {
+                        if (unlikely((tmp = realloc(str_offs, str_cap * sizeof(offset_t))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 str_offs = tmp;
                         }
-                        if (UNLIKELY((tmp = realloc(str_lens, str_cap * sizeof(u32))) == NULL)) {
+                        if (unlikely((tmp = realloc(str_lens, str_cap * sizeof(u32))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 str_lens = tmp;
                         }
-                        if (UNLIKELY((tmp = realloc(idxs_matching, str_cap * sizeof(size_t))) == NULL)) {
+                        if (unlikely((tmp = realloc(idxs_matching, str_cap * sizeof(size_t))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 idxs_matching = tmp;
@@ -465,7 +465,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                                                                    str_lens,
                                                                    step_len); // TODO: buffer + cleanup buffer
 
-                if (UNLIKELY(
+                if (unlikely(
                         string_pred_eval(pred, idxs_matching, &num_matching, strings, step_len, capture) ==
                         false)) {
                         error(ERR_PREDEVAL_FAILED, NULL);
@@ -484,9 +484,9 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                         if (pred_limit > 0 && result_len == (size_t) pred_limit) {
                                 goto stop_search_and_return;
                         }
-                        if (UNLIKELY(result_len > result_cap)) {
+                        if (unlikely(result_len > result_cap)) {
                                 result_cap = (result_len + 1) * 1.7f;
-                                if (UNLIKELY(
+                                if (unlikely(
                                         (tmp = realloc(result_ids, result_cap * sizeof(archive_field_sid_t))) ==
                                         NULL)) {
                                         strid_iter_close(&it);
@@ -499,7 +499,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         }
 
         stop_search_and_return:
-        if (UNLIKELY(success == false)) {
+        if (unlikely(success == false)) {
                 strid_iter_close(&it);
                 goto cleanup_intermediate;
         }

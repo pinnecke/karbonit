@@ -56,15 +56,15 @@ typedef struct memfile {
 ({		                                                                                                               \
         bool status = false;																                           \
         if ((file)->mode == READ_WRITE) {																		       \
-                if (LIKELY(nbytes != 0)) {																		       \
+                if (likely(nbytes != 0)) {																		       \
                         offset_t file_size = 0;																		   \
                         memblock_size(&file_size, (file)->memblock);												   \
                         offset_t required_size = (file)->pos + nbytes;												   \
-                        if (UNLIKELY(required_size >= file_size)) {													   \
+                        if (unlikely(required_size >= file_size)) {													   \
                                 memblock_resize((file)->memblock, required_size * 1.7f);							   \
                         }																		                       \
 																		                                               \
-                        if (UNLIKELY(!memblock_write((file)->memblock, (file)->pos, ((char *)data), nbytes))) {		   \
+                        if (unlikely(!memblock_write((file)->memblock, (file)->pos, ((char *)data), nbytes))) {		   \
                                 status = false;																		   \
                         } else {	 																	               \
                                 (file)->pos += nbytes;																   \
@@ -81,7 +81,7 @@ typedef struct memfile {
 #define memfile_save_position(file)										                                               \
 ({										                                                                               \
         offset_t pos = memfile_tell((file));										                                   \
-        if (LIKELY((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {								   \
+        if (likely((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {								   \
                 (file)->saved_pos[(file)->saved_pos_ptr++] = pos;										               \
         } else {										                                                               \
                 error(ERR_STACK_OVERFLOW, NULL);										                               \
@@ -93,7 +93,7 @@ typedef struct memfile {
 #define memfile_restore_position(file)												                                   \
 ({												                                                                       \
 		bool status;												                                                   \
-        if (LIKELY((file)->saved_pos_ptr >= 0)) {												                       \
+        if (likely((file)->saved_pos_ptr >= 0)) {												                       \
                 offset_t pos = (file)->saved_pos[--(file)->saved_pos_ptr];											   \
                 memfile_seek((file), pos);												                               \
                 status = true;												                                           \
@@ -117,7 +117,7 @@ typedef struct memfile {
         signed_offset_t shift = 0;											                                           \
         for (u32 i = 0; i < (nbytes); i++) {											                               \
                 char c = *memfile_read((file), 1);											                           \
-                if (UNLIKELY(c != 0)) {											                                       \
+                if (unlikely(c != 0)) {											                                       \
                         memfile_seek((file), current_off);											                   \
                         memfile_inplace_insert((file), (nbytes) - i);											       \
                         shift += (nbytes) - i;											                               \
@@ -202,7 +202,7 @@ typedef struct memfile {
         offset_t file_size = 0;												                                           \
         bool status = true;												                                               \
         memblock_size(&file_size, (file)->memblock);												                   \
-        if (UNLIKELY((position) >= file_size)) {												                       \
+        if (unlikely((position) >= file_size)) {												                       \
                 if ((file)->mode == READ_WRITE) {												                       \
                         offset_t new_size = (position) + 1;												               \
                         memblock_resize((file)->memblock, new_size);												   \
@@ -226,7 +226,7 @@ typedef struct memfile {
 
 #define memfile_grow(file_in, grow_by_bytes)									                                       \
 {									                                                                                   \
-        if (LIKELY((grow_by_bytes) > 0)) {									                                           \
+        if (likely((grow_by_bytes) > 0)) {									                                           \
                 offset_t block_size = 0;									                                           \
                 memblock_size(&block_size, (file_in)->memblock);									                   \
                 memblock_resize((file_in)->memblock, (block_size + (grow_by_bytes)));								   \
@@ -308,74 +308,65 @@ typedef struct memfile {
 
 #define memfile_skip(file, nbytes)															                           \
 ({															                                                           \
-        offset_t required_size = (file)->pos + (nbytes);															\
-        (file)->pos += (nbytes);															\
-        offset_t file_size = 0;															\
-        memblock_size(&file_size, (file)->memblock);															\
-        bool status = true;															\
-        if (UNLIKELY(required_size >= file_size)) {															\
-                if ((file)->mode == READ_WRITE) {															\
-                        memblock_resize((file)->memblock, required_size * 1.7f);															\
-                } else {															\
-                        error(ERR_WRITEPROT, NULL);															\
-                        status = false;															\
-                }															\
-        }															\
-        if (LIKELY(status)) {															\
-        	memfile_update_last_byte((file)->memblock, (file)->pos);															\
-        }															\
-        assert((file)->pos < memfile_size((file)));															\
-        status;															\
+        offset_t required_size = (file)->pos + (nbytes);															   \
+        (file)->pos += (nbytes);															                           \
+        offset_t file_size = 0;															                               \
+        memblock_size(&file_size, (file)->memblock);															       \
+        bool status = true;															                                   \
+        if (unlikely(required_size >= file_size)) {															           \
+                if ((file)->mode == READ_WRITE) {															           \
+                        memblock_resize((file)->memblock, required_size * 1.7f);									   \
+                } else {															                                   \
+                        error(ERR_WRITEPROT, NULL);															           \
+                        status = false;															                       \
+                }															                                           \
+        }															                                                   \
+        if (likely(status)) {															                               \
+        	memfile_update_last_byte((file)->memblock, (file)->pos);												   \
+        }															                                                   \
+        assert((file)->pos < memfile_size((file)));															           \
+        status;															                                               \
 })
 
-#define memfile_peek(file, nbytes)												\
-({												\
-        offset_t file_size = 0;												\
-        memblock_size(&file_size, (file)->memblock);												\
-        const char *result = NULL;												\
-        if (UNLIKELY((file)->pos + (nbytes) > file_size)) {												\
-                error(ERR_READOUTOFBOUNDS, NULL);												\
-                result = NULL;												\
-        } else {												\
-        		char *ptr = (char *) memblock_raw_data((file)->memblock);												\
-        		if (ptr) {																				\
-                	result = ptr + (file)->pos;												\
-        		}														\
-        }												\
-        result;												\
+#define memfile_peek(file, nbytes)												                                       \
+({												                                                                       \
+        offset_t file_size = 0;												                                           \
+        memblock_size(&file_size, (file)->memblock);												                   \
+        const char *result = NULL;												                                       \
+        if (unlikely((file)->pos + (nbytes) > file_size)) {												               \
+                error(ERR_READOUTOFBOUNDS, NULL);												                       \
+                result = NULL;												                                           \
+        } else {												                                                       \
+        		char *ptr = (char *) memblock_raw_data((file)->memblock);											   \
+        		if (ptr) {																				               \
+                	result = ptr + (file)->pos;												                           \
+        		}														                                               \
+        }												                                                               \
+        result;												                                                           \
 })
 
-#define memfile_write_byte(file, data)							\
-{																\
-		u8 byte = data;												\
-		memfile_write((file), &(byte), sizeof(u8));												\
+#define memfile_write_byte(file, data)							                                                       \
+{																                                                       \
+		u8 byte = data;												                                                   \
+		memfile_write((file), &(byte), sizeof(u8));												                       \
 }
 
-
-#define memfile_write_zero(file, how_many)									\
-{									\
-        char empty = 0;									\
-        while ((how_many)--) {									\
-                memfile_write((file), &empty, sizeof(char));									\
-        }									\
-}
-
-#define memfile_begin_bit_mode(file)													\
-({													\
-		bool status = true;													\
-        if ((file)->mode == READ_WRITE) {													\
-                (file)->bit_mode = true;													\
-                (file)->current_read_bit = (file)->current_write_bit = (file)->bytes_completed = 0;													\
-                (file)->bytes_completed = 0;													\
-                offset_t offset;													\
-                char empty = '\0';													\
-                memfile_get_offset(&offset, (file));													\
-                memfile_write((file), &empty, sizeof(char));													\
-                memfile_seek((file), offset);													\
-        } else {													\
-                status = error(ERR_WRITEPROT, NULL);													\
-        }													\
-        status;													\
+#define memfile_begin_bit_mode(file)													                               \
+({													                                                                   \
+		bool status = true;													                                           \
+        if ((file)->mode == READ_WRITE) {													                           \
+                (file)->bit_mode = true;													                           \
+                (file)->current_read_bit = (file)->current_write_bit = (file)->bytes_completed = 0;					   \
+                (file)->bytes_completed = 0;													                       \
+                offset_t offset;													                                   \
+                char empty = '\0';													                                   \
+                memfile_get_offset(&offset, (file));													               \
+                memfile_write((file), &empty, sizeof(char));													       \
+                memfile_seek((file), offset);													                       \
+        } else {													                                                   \
+                status = error(ERR_WRITEPROT, NULL);													               \
+        }													                                                           \
+        status;													                                                       \
 })
 
 static inline bool memfile_write_bit(memfile *file, bool flag)
@@ -416,103 +407,101 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
         }
 }
 
-
-#define memfile_read_bit(file)																		\
-({																		\
-		bool status = true;																		\
-        if (!(file)) {																		\
-                status = false;																		\
-        } else {																		\
-			(file)->current_write_bit = 0;																		\
-			if ((file)->bit_mode) {																		\
-			        if ((file)->current_read_bit < 8) {																		\
-			                offset_t offset;																		\
-			                memfile_get_offset(&offset, (file));																		\
-			                char mask = 1 << (file)->current_read_bit;																		\
-			                char byte = *memfile_read((file), sizeof(char));																		\
-			                memfile_seek((file), offset);																		\
-			                bool result = ((byte & mask) >> (file)->current_read_bit) == true;																		\
-			                (file)->current_read_bit++;																		\
-			                status = result;																		\
-			        } else {																		\
-			                (file)->current_read_bit = 0;																		\
-			                memfile_skip((file), sizeof(char));																		\
-			                status = memfile_read_bit((file));																		\
-			        }																		\
-			} else {																		\
-			        error(ERR_NOBITMODE, NULL);																		\
-			        status = false;																		\
-			}																		\
-        }																		\
-        status;																		\
+#define memfile_read_bit(file)																		                   \
+({																		                                               \
+		bool status = true;																		                       \
+        if (!(file)) {																		                           \
+                status = false;																		                   \
+        } else {																		                               \
+			(file)->current_write_bit = 0;																		       \
+			if ((file)->bit_mode) {																		               \
+			        if ((file)->current_read_bit < 8) {																   \
+			                offset_t offset;																		   \
+			                memfile_get_offset(&offset, (file));													   \
+			                char mask = 1 << (file)->current_read_bit;												   \
+			                char byte = *memfile_read((file), sizeof(char));										   \
+			                memfile_seek((file), offset);															   \
+			                bool result = ((byte & mask) >> (file)->current_read_bit) == true;						   \
+			                (file)->current_read_bit++;																   \
+			                status = result;																		   \
+			        } else {																		                   \
+			                (file)->current_read_bit = 0;															   \
+			                memfile_skip((file), sizeof(char));														   \
+			                status = memfile_read_bit((file));														   \
+			        }																		                           \
+			} else {																		                           \
+			        error(ERR_NOBITMODE, NULL);																		   \
+			        status = false;																		               \
+			}																		                                   \
+        }																		                                       \
+        status;																		                                   \
 })
 
-#define memfile_seek_to_start(file)											\
+#define memfile_seek_to_start(file)											                                           \
         memfile_seek((file), 0)
 
-#define memfile_seek_to_end(file)											\
-({											\
-        size_t size = memblock_last_used_byte((file)->memblock);											\
-        memfile_seek((file), size);											\
+#define memfile_seek_to_end(file)											                                           \
+({											                                                                           \
+        size_t size = memblock_last_used_byte((file)->memblock);											           \
+        memfile_seek((file), size);											                                           \
 })
 
-#define memfile_inplace_insert(file, nbytes)											\
+#define memfile_inplace_insert(file, nbytes)											                               \
         memblock_move_right((file)->memblock, (file)->pos, (nbytes));
 
-#define memfile_inplace_remove(file, nbytes_from_here)											\
+#define memfile_inplace_remove(file, nbytes_from_here)											                       \
         memblock_move_left((file)->memblock, (file)->pos, (nbytes_from_here));
 
-#define memfile_end_bit_mode(num_bytes_written, file)											\
-{											\
-        (file)->bit_mode = false;											\
-        if ((file)->current_write_bit <= 8) {											\
-                memfile_skip((file), 1);											\
-                (file)->bytes_completed++;											\
-        }											\
-        if ((num_bytes_written) != NULL) { 											\
-        	size_t *assign = (num_bytes_written);											\
-        	*assign = (file)->bytes_completed;											\
-        }											\
-        (file)->current_write_bit = (file)->bytes_completed = 0;											\
+#define memfile_end_bit_mode(num_bytes_written, file)											                       \
+{											                                                                           \
+        (file)->bit_mode = false;											                                           \
+        if ((file)->current_write_bit <= 8) {											                               \
+                memfile_skip((file), 1);											                                   \
+                (file)->bytes_completed++;											                                   \
+        }											                                                                   \
+        if ((num_bytes_written) != NULL) { 											                                   \
+        	size_t *assign = (num_bytes_written);											                           \
+        	*assign = (file)->bytes_completed;											                               \
+        }											                                                                   \
+        (file)->current_write_bit = (file)->bytes_completed = 0;											           \
 }
 
-#define memfile_current_pos(file, nbytes)																\
-({																\
-		void *data = NULL;																\
-        if ((file) && (nbytes) > 0) {																\
-                offset_t file_size = 0;																\
-                memblock_size(&file_size, (file)->memblock);																\
-                offset_t required_size = (file)->pos + (nbytes);																\
-                if (UNLIKELY((file)->pos + (nbytes) >= file_size)) {																\
-                        if ((file)->mode == READ_WRITE) {																\
-                                memblock_resize((file)->memblock, required_size * 1.7f);																\
-                        } else {																\
-                                error(ERR_WRITEPROT, NULL);																\
-                                data = NULL;																\
-                        }																\
-                }																\
-                data = (void *) memfile_peek((file), (nbytes));																\
-        }																\
-        data;																\
+#define memfile_current_pos(file, nbytes)																               \
+({																                                                       \
+		void *data = NULL;																                               \
+        if ((file) && (nbytes) > 0) {																                   \
+                offset_t file_size = 0;																                   \
+                memblock_size(&file_size, (file)->memblock);														   \
+                offset_t required_size = (file)->pos + (nbytes);													   \
+                if (unlikely((file)->pos + (nbytes) >= file_size)) {												   \
+                        if ((file)->mode == READ_WRITE) {															   \
+                                memblock_resize((file)->memblock, required_size * 1.7f);							   \
+                        } else {																                       \
+                                error(ERR_WRITEPROT, NULL);															   \
+                                data = NULL;																           \
+                        }																                               \
+                }																                                       \
+                data = (void *) memfile_peek((file), (nbytes));														   \
+        }																                                               \
+        data;																                                           \
 })
 
-#define memfile_hexdump(str_buf_sb, file)																\
-{																\
-        DECLARE_AND_INIT(offset_t, block_size)																\
-        memblock_size(&block_size, (file)->memblock);																\
-        hexdump((str_buf_sb), memblock_raw_data((file)->memblock), block_size);																\
+#define memfile_hexdump(str_buf_sb, file)																               \
+{																                                                       \
+        DECLARE_AND_INIT(offset_t, block_size)																           \
+        memblock_size(&block_size, (file)->memblock);																   \
+        hexdump((str_buf_sb), memblock_raw_data((file)->memblock), block_size);										   \
 }
 
-#define memfile_hexdump_printf(cfile, memfile)													\
-({													\
-        DECLARE_AND_INIT(offset_t, block_size)													\
-        memblock_size(&block_size, (memfile)->memblock);													\
-        hexdump_print((cfile), memblock_raw_data((memfile)->memblock), block_size);													\
+#define memfile_hexdump_printf(cfile, memfile)													                       \
+({													                                                                   \
+        DECLARE_AND_INIT(offset_t, block_size)													                       \
+        memblock_size(&block_size, (memfile)->memblock);													           \
+        hexdump_print((cfile), memblock_raw_data((memfile)->memblock), block_size);									   \
 })
 
-#define memfile_hexdump_print(memfile)						\
+#define memfile_hexdump_print(memfile)						                                                           \
         memfile_hexdump_printf(stdout, (memfile));
-
 
 #ifdef __cplusplus
 }

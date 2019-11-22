@@ -269,21 +269,21 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 
 #define CHECK_SUCCESS(x)                                                                                           \
 {                                                                                                                      \
-    if (UNLIKELY(!x)) {                                                                                                \
+    if (unlikely(!x)) {                                                                                                \
         return x;                                                                                                      \
     }                                                                                                                  \
 }
 
 #define SUCCESS_OR_JUMP(expr, label)                                                                               \
 {                                                                                                                      \
-    if (UNLIKELY(!expr)) {                                                                                             \
+    if (unlikely(!expr)) {                                                                                             \
         goto label;                                                                                                    \
     }                                                                                                                  \
 }
 
-#define LIKELY(x)                                                                                                      \
+#define likely(x)                                                                                                      \
     __builtin_expect((x), 1)
-#define UNLIKELY(x)                                                                                                    \
+#define unlikely(x)                                                                                                    \
     __builtin_expect((x), 0)
 
 #define PREFETCH_READ(adr)                                                                                             \

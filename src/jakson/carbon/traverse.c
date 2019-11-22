@@ -88,27 +88,27 @@ void traverse_array(struct traverse *traverse, arr_it *it)
         assert(traverse);
         assert(it);
 
-        if (LIKELY(traverse->visit_array_begin != NULL)) {
+        if (likely(traverse->visit_array_begin != NULL)) {
                 traverse->visit_array_begin(&traverse->extra, it);
         }
-        if (LIKELY(traverse->visit_array_end != NULL)) {
+        if (likely(traverse->visit_array_end != NULL)) {
                 traverse->visit_array_end(&traverse->extra, it);
         }
 }
 
 void traverse_column(struct traverse *traverse, struct col_it *it)
 {
-        if (LIKELY(traverse->visit_column != NULL)) {
+        if (likely(traverse->visit_column != NULL)) {
                 traverse->visit_column(&traverse->extra, it);
         }
 }
 
 void traverse_object(struct traverse *traverse, struct obj_it *it)
 {
-        if (LIKELY(traverse->visit_object_begin != NULL)) {
+        if (likely(traverse->visit_object_begin != NULL)) {
                 traverse->visit_object_begin(&traverse->extra, it);
         }
-        if (LIKELY(traverse->visit_object_end != NULL)) {
+        if (likely(traverse->visit_object_end != NULL)) {
                 traverse->visit_object_end(&traverse->extra, it);
         }
 }

@@ -92,7 +92,7 @@ bool col_it_fast_forward(col_it *it)
 
 offset_t col_it_memfilepos(col_it *it)
 {
-        if (LIKELY(it != NULL)) {
+        if (likely(it != NULL)) {
                 return memfile_tell(&it->file);
         } else {
                 error(ERR_NULLPTR, NULL);
@@ -454,7 +454,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
 #define push_array_element(num_values, data, data_cast_type, null_check, insert_func)                                  \
 for (u32 i = 0; i < num_values; i++) {                                                                                 \
         data_cast_type datum = ((data_cast_type *)data)[i];                                                            \
-        if (LIKELY(null_check(datum) == false)) {                                                                      \
+        if (likely(null_check(datum) == false)) {                                                                      \
                 insert_func(&array_ins);                                                                               \
         } else {                                                                                                       \
                 insert_null(&array_ins);                                                                         \
@@ -464,7 +464,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
 #define push_array_element_wvalue(num_values, data, data_cast_type, null_check, insert_func)                           \
 for (u32 i = 0; i < num_values; i++) {                                                                                 \
         data_cast_type datum = ((data_cast_type *)data)[i];                                                            \
-        if (LIKELY(null_check(datum) == false)) {                                                                      \
+        if (likely(null_check(datum) == false)) {                                                                      \
                 insert_func(&array_ins, datum);                                                                        \
         } else {                                                                                                       \
                 insert_null(&array_ins);                                                                         \

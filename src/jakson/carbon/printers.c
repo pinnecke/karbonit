@@ -322,7 +322,7 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
         printer_object_begin(printer, buffer);
 
         while (obj_it_next(it)) {
-                if (LIKELY(!first_entry)) {
+                if (likely(!first_entry)) {
                         printer_comma(printer, buffer);
                 }
                 DECLARE_AND_INIT(field_e, type)
@@ -472,7 +472,7 @@ bool printer_print_array(arr_it *it, printer *printer, str_buf *buffer,
         while (arr_it_next(it)) {
                 bool is_null_value;
 
-                if (LIKELY(!first_entry)) {
+                if (likely(!first_entry)) {
                         printer_comma(printer, buffer);
                 } else {
                         if (is_single_entry_array && is_record_container) {

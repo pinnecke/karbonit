@@ -496,7 +496,7 @@ bool find_sorted(find *find)
 bool __check_path_evaluator_has_result(find *find)
 {
         assert(find);
-        if (UNLIKELY(!(dot_eval_has_result(&find->eval)))) {
+        if (unlikely(!(dot_eval_has_result(&find->eval)))) {
                 return error(ERR_ILLEGALSTATE, "no path evaluation result available");
         } else {
                 return true;
@@ -509,7 +509,7 @@ arr_it *find_result_array(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_array_or_subtype(find->type))) {
+        if (unlikely(!field_is_array_or_subtype(find->type))) {
                 error(ERR_TYPEMISMATCH, "container must be array or sub type");
                 return NULL;
         }
@@ -523,7 +523,7 @@ obj_it *find_result_object(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_object_or_subtype(find->type))) {
+        if (unlikely(!field_is_object_or_subtype(find->type))) {
                 error(ERR_TYPEMISMATCH, "container must be object or sub type");
                 return NULL;
         }
@@ -537,7 +537,7 @@ col_it *find_result_column(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_column_or_subtype(find->type))) {
+        if (unlikely(!field_is_column_or_subtype(find->type))) {
                 error(ERR_TYPEMISMATCH, "container must be column or sub type");
                 return NULL;
         }
@@ -551,7 +551,7 @@ bool find_result_boolean(bool *result, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_boolean(find->type))) {
+        if (unlikely(!field_is_boolean(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of boolean type");
         }
 
@@ -565,7 +565,7 @@ bool find_result_unsigned(u64 *out, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_unsigned(find->type))) {
+        if (unlikely(!field_is_unsigned(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of unsigned type");
         }
 
@@ -579,7 +579,7 @@ bool find_result_signed(i64 *out, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_signed(find->type))) {
+        if (unlikely(!field_is_signed(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of signed type");
         }
 
@@ -593,7 +593,7 @@ bool find_result_float(float *out, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_floating(find->type))) {
+        if (unlikely(!field_is_floating(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of float type");
         }
 
@@ -607,7 +607,7 @@ const char *find_result_string(u64 *str_len, find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_string(find->type))) {
+        if (unlikely(!field_is_string(find->type))) {
                 error(ERR_TYPEMISMATCH, "result value must be of string type");
                 return NULL;
         }
@@ -621,7 +621,7 @@ binary_field *find_result_binary(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_binary(find->type))) {
+        if (unlikely(!field_is_binary(find->type))) {
                 error(ERR_TYPEMISMATCH, "result value must be of binary type");
                 return NULL;
         }

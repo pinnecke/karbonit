@@ -36,7 +36,7 @@ void *async_for_proxy_function(void *args)
 
 #define ASYNC_MATCH(forSingle, forMulti)                                                                            \
 {                                                                                                                      \
-    if (LIKELY(hint == THREADING_HINT_MULTI)) {                                             \
+    if (likely(hint == THREADING_HINT_MULTI)) {                                             \
         return (forMulti);                                                                                             \
     } else if (hint == THREADING_HINT_SINGLE) {                                                           \
         return (forSingle);                                                                                            \
@@ -472,7 +472,7 @@ void *int_sync_filter_procy_func(void *args)
 bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t width, size_t len,
                            pred_func_t pred, void *args, size_t num_threads)
 {
-        if (UNLIKELY(len == 0)) {
+        if (unlikely(len == 0)) {
                 *num_pos = 0;
                 return true;
         }
@@ -491,7 +491,7 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
         PREFETCH_READ(args);
 
         /** run f on NTHREADS_FOR additional threads */
-        if (LIKELY(chunk_len > 0)) {
+        if (likely(chunk_len > 0)) {
                 for (register uint_fast16_t tid = 0; tid < num_threads; tid++) {
                         filter_arg *arg = thread_args + tid;
                         arg->num_positions = 0;
@@ -523,7 +523,7 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
 
         size_t total_num_matching_positions = 0;
 
-        if (LIKELY(chunk_len > 0)) {
+        if (likely(chunk_len > 0)) {
                 for (register uint_fast16_t tid = 0; tid < num_threads; tid++) {
                         pthread_join(threads[tid], NULL);
                         const filter_arg *thread_arg = (thread_args + tid);
@@ -537,7 +537,7 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
                 }
         }
 
-        if (LIKELY(main_num_positions > 0)) {
+        if (likely(main_num_positions > 0)) {
                 memcpy(pos + total_num_matching_positions, main_src_positions, main_num_positions * sizeof(size_t));
                 total_num_matching_positions += main_num_positions;
         }
@@ -622,7 +622,7 @@ bool int_async_filter_early(void *result, size_t *result_size, const void *src, 
         for (register uint_fast16_t tid = 0; tid < num_threads; tid++) {
                 const filter_arg *thread_arg = (thread_args + tid);
 
-                if (LIKELY(thread_arg->num_positions > 0)) {
+                if (likely(thread_arg->num_positions > 0)) {
                         gather(result + partial_num_matching_positions * width,
                                    src,
                                    width,
@@ -636,7 +636,7 @@ bool int_async_filter_early(void *result, size_t *result_size, const void *src, 
                 free(thread_arg->src_positions);
         }
 
-        if (LIKELY(main_num_positions > 0)) {
+        if (likely(main_num_positions > 0)) {
                 gather(result + partial_num_matching_positions * width,
                            src,
                            width,

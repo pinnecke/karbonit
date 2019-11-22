@@ -31,7 +31,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
 
         object_off = memfile_tell(memfile);
         header = memfile_read_type(memfile, object_header);
-        if (UNLIKELY(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
+        if (unlikely(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
                 return false;
         }
 

@@ -43,7 +43,7 @@ bool str_buf_add(str_buf *buffer, const char *str)
 bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen)
 {
         /** resize if needed */
-        if (UNLIKELY(buffer->end + strlen >= buffer->cap)) {
+        if (unlikely(buffer->end + strlen >= buffer->cap)) {
                 size_t new_cap = (buffer->end + strlen) * 1.7f;
                 buffer->data = realloc(buffer->data, new_cap);
                 error_if_and_return(!buffer->data, ERR_REALLOCERR, false);
@@ -173,7 +173,7 @@ bool str_buf_clear(str_buf *buffer)
 bool str_buf_ensure_capacity(str_buf *buffer, u64 cap)
 {
         /** resize if needed */
-        if (UNLIKELY(cap > buffer->cap)) {
+        if (unlikely(cap > buffer->cap)) {
                 size_t new_cap = cap * 1.7f;
                 buffer->data = realloc(buffer->data, new_cap);
                 error_if_and_return(!buffer->data, ERR_REALLOCERR, false);

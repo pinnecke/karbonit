@@ -35,7 +35,7 @@
 bool internal_arr_it_update_##type_name(arr_it *it, type_name value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
-        if (LIKELY(it->field.type == field_type)) {                                                    \
+        if (likely(it->field.type == field_type)) {                                                    \
                 memfile_save_position(&it->file);                                                                   \
                 internal_arr_it_offset(&datum, it);                                                                 \
                 memfile_seek(&it->file, datum + sizeof(u8));                                                        \
@@ -410,7 +410,7 @@ bool arr_it_prev(arr_it *it)
 
 offset_t internal_arr_it_memfilepos(arr_it *it)
 {
-        if (LIKELY(it != NULL)) {
+        if (likely(it != NULL)) {
                 return memfile_tell(&it->file);
         } else {
                 error(ERR_NULLPTR, NULL);

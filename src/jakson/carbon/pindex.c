@@ -604,7 +604,7 @@ static void array_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_ARRAY_NODE);
         field_ref_write(file, node);
-        if (UNLIKELY(node->type == PINDEX_ROOT)) {
+        if (unlikely(node->type == PINDEX_ROOT)) {
                 container_contents_flat(file, node);
         } else {
                 container_field_flat(file, node);
@@ -981,7 +981,7 @@ static void array_into_record(insert *ins, pindex *index, bool is_root)
 
         obj_state object;
         insert *oins = insert_prop_object_begin(&object, ins, "nodes", 1024);
-        if (UNLIKELY(is_root)) {
+        if (unlikely(is_root)) {
                 container_contents_into_record(oins, index);
         } else {
                 container_into_record(oins, index, field_type);
@@ -1001,7 +1001,7 @@ array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level)
 
         u8 field_type = field_ref_to_str(str, index);
 
-        if (UNLIKELY(is_root)) {
+        if (unlikely(is_root)) {
                 container_contents_to_str(str, index, intent_level);
         } else {
                 container_to_str(str, index, field_type, intent_level);
@@ -1227,11 +1227,11 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
         u64 index_hash = 0, doc_hash = 0;
         pindex_commit_hash(&index_hash, index);
         carbon_commit_hash(&doc_hash, doc);
-        if (LIKELY(index_hash == doc_hash)) {
+        if (likely(index_hash == doc_hash)) {
                 key_e index_key_type, doc_key_type;
                 pindex_key_type(&index_key_type, index);
                 key_type(&doc_key_type, doc);
-                if (LIKELY(index_key_type == doc_key_type)) {
+                if (likely(index_key_type == doc_key_type)) {
                         switch (index_key_type) {
                                 case CARBON_KEY_NOKEY:
                                         return true;

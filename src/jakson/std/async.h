@@ -87,7 +87,7 @@ void *async_for_proxy_function(void *args);
 
 #define ASYNC_MATCH(forSingle, forMulti)                                                                            \
 {                                                                                                                      \
-    if (LIKELY(hint == THREADING_HINT_MULTI)) {                                             \
+    if (likely(hint == THREADING_HINT_MULTI)) {                                             \
         return (forMulti);                                                                                             \
     } else if (hint == THREADING_HINT_SINGLE) {                                                           \
         return (forSingle);                                                                                            \

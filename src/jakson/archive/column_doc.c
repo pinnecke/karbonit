@@ -495,7 +495,7 @@ static void print_array_strings(FILE *file, const char *type_name,
                         for (size_t j = 0; j < values->num_elems; j++) {
                                 archive_field_sid_t value = *VECTOR_GET(values, j, archive_field_sid_t);
 
-                                if (LIKELY(value != NULL_ENCODED_STRING)) {
+                                if (likely(value != NULL_ENCODED_STRING)) {
                                         char **decoded = string_dict_extract(dic, &value, 1);
                                         fprintf(file, "\"%s\"%s", *decoded, j + 1 < values->num_elems ? ", " : "");
                                         string_dict_free(dic, decoded);

@@ -448,7 +448,7 @@ offset_t internal_payload_after_header(rec *doc)
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        if (LIKELY(key_skip(&key_type, &doc->file))) {
+        if (likely(key_skip(&key_type, &doc->file))) {
                 if (key_type != CARBON_KEY_NOKEY) {
                         commit_skip(&doc->file);
                 }
@@ -632,7 +632,7 @@ bool internal_field_bool_value(bool *value, field *field)
 {
         bool is_true = field->type == FIELD_TRUE;
         bool is_false = field->type == FIELD_FALSE;
-        if (LIKELY(is_true || is_false)) {
+        if (likely(is_true || is_false)) {
                 *value = is_true;
                 return true;
         } else {

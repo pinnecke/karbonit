@@ -38,11 +38,11 @@ bool hexdump(str_buf *dst, const void *base, u64 nbytes)
                         }
                 }
 
-                if (UNLIKELY(step == 7)) {
+                if (unlikely(step == 7)) {
                         str_buf_add_char(dst, ' ');
                 }
 
-                if (UNLIKELY(step < 16)) {
+                if (unlikely(step < 16)) {
                         for (u8 pad = 0; pad < 16 - step; pad++) {
                                 sprintf(buffer, "   ");
                                 str_buf_add(dst, buffer);
@@ -62,7 +62,7 @@ bool hexdump(str_buf *dst, const void *base, u64 nbytes)
                         str_buf_add(dst, buffer);
                 }
 
-                if (UNLIKELY(step < 16)) {
+                if (unlikely(step < 16)) {
                         for (u8 pad = 0; pad < 16 - step; pad++) {
                                 sprintf(buffer, " ");
                                 str_buf_add(dst, buffer);
@@ -72,7 +72,7 @@ bool hexdump(str_buf *dst, const void *base, u64 nbytes)
                 str_buf_add_char(dst, '|');
 
 
-                if (LIKELY(hex_block_id + step < nbytes)) {
+                if (likely(hex_block_id + step < nbytes)) {
                         str_buf_add(dst, "\n");
                         sprintf(buffer, "%08x  ", ((u32) hex_block_id + 16));
                         str_buf_add(dst, buffer);

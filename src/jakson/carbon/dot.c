@@ -180,7 +180,7 @@ bool dot_add_key(dot *dst, const char *key)
 
 bool dot_add_nkey(dot *dst, const char *key, size_t len)
 {
-        if (LIKELY(dst->len < ARRAY_LENGTH(dst->nodes))) {
+        if (likely(dst->len < ARRAY_LENGTH(dst->nodes))) {
                 dot_node *node = dst->nodes + dst->len++;
                 bool enquoted = strings_is_enquoted_wlen(key, len);
                 node->type = DOT_NODE_KEY;
@@ -199,7 +199,7 @@ bool dot_add_nkey(dot *dst, const char *key, size_t len)
 
 bool dot_add_idx(dot *dst, u32 idx)
 {
-        if (LIKELY(dst->len < ARRAY_LENGTH(dst->nodes))) {
+        if (likely(dst->len < ARRAY_LENGTH(dst->nodes))) {
                 dot_node *node = dst->nodes + dst->len++;
                 node->type = DOT_NODE_IDX;
                 node->name.idx = idx;
@@ -222,7 +222,7 @@ bool dot_is_empty(const dot *path)
 
 bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path)
 {
-        if (LIKELY(pos < ARRAY_LENGTH(path->nodes))) {
+        if (likely(pos < ARRAY_LENGTH(path->nodes))) {
                 *type_out = path->nodes[pos].type;
         } else {
                 return error(ERR_OUTOFBOUNDS, NULL);

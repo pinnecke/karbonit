@@ -966,7 +966,7 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
                         offset_t preObjectNext = 0;
                         for (size_t i = 0; i < column->num_elems; i++) {
                                 column_doc_obj *object = VECTOR_GET(column, i, column_doc_obj);
-                                if (LIKELY(preObjectNext != 0)) {
+                                if (likely(preObjectNext != 0)) {
                                         offset_t continuePos = memfile_tell(memfile);
                                         offset_t relativeContinuePos = continuePos - root_object_header_offset;
                                         memfile_seek(memfile, preObjectNext);

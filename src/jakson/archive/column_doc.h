@@ -35,7 +35,7 @@ extern "C" {
 /**
  * Transformation of an JSON-like array of objects to a columnar representation of key values.
  *
- * The assumption is that an array of objects is LIKELY to have elements of the same (well yet unknown) schema. The
+ * The assumption is that an array of objects is likely to have elements of the same (well yet unknown) schema. The
  * following structure captures a particular key (with its data type) found in one or more elements inside this array,
  * and stores the value assigned to this key along with with the object position in the array in which this mapping
  * occurs. Note that a keys name might have different data types inside objects embedded in arrays, and a key is not

@@ -79,7 +79,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                 last_2_c = last_1_c;
                 last_1_c = c;
                 c = *(++tokenizer->cursor);
-                if (UNLIKELY(c == '\\' && last_1_c == '\\')) {
+                if (unlikely(c == '\\' && last_1_c == '\\')) {
                         goto next_char;
                 }
                 escapeQuote = c == '"' && last_1_c == '\\'
@@ -99,7 +99,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
 
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
 {
-        if (LIKELY(*tokenizer->cursor != '\0')) {
+        if (likely(*tokenizer->cursor != '\0')) {
                 char c = *tokenizer->cursor;
                 tokenizer->token.string = tokenizer->cursor;
                 tokenizer->token.column += tokenizer->token.length;
@@ -285,7 +285,7 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
 
         while ((token = json_tokenizer_next(&parser->tokenizer))) {
-                if (LIKELY(
+                if (likely(
                         (status = process_token(error_desc, token, &brackets, &token_mem)) == true)) {
                         json_token *newToken = VECTOR_NEW_AND_GET(&token_stream, json_token);
                         json_token_dup(newToken, token);
@@ -535,7 +535,7 @@ static void parse_string(json_string *string, vec ofType(json_token) *token_stre
         assert(token.type == LITERAL_STRING);
 
         string->value = MALLOC(token.length + 1);
-        if (LIKELY(token.length > 0)) {
+        if (likely(token.length > 0)) {
                 strncpy(string->value, token.string, token.length);
         }
         string->value[token.length] = '\0';

@@ -145,7 +145,7 @@ bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *
                         appenderBounds->max_hash = appenderBounds->max_hash > keyHash ? appenderBounds->max_hash : keyHash;
                         BLOOM_SET(appenderFilter, &keyHash, sizeof(hash32_t));
                         appender->num_elems++;
-                        if (UNLIKELY(appender->num_elems == SLICE_KEY_COLUMN_MAX_ELEMS)) {
+                        if (unlikely(appender->num_elems == SLICE_KEY_COLUMN_MAX_ELEMS)) {
                                 appenderSeal(appender);
                                 appenderNew(list);
                         }

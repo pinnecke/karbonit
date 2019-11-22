@@ -141,7 +141,7 @@ bool vector_memadvice(vec *vec, int madviseAdvice)
 
 bool vector_set_grow_factor(vec *vec, float factor)
 {
-        if (UNLIKELY(factor <= 1.01f)) {
+        if (unlikely(factor <= 1.01f)) {
                 return error(ERR_ILLEGALARG, NULL);
         }
 
@@ -202,7 +202,7 @@ bool vector_repeated_push(vec *vec, const void *data, size_t how_often)
 const void *vector_pop(vec *vec)
 {
         void *result;
-        if (LIKELY((result = (vec ? (vec->num_elems > 0 ? vec->base + (vec->num_elems - 1) * vec->elem_size : NULL)
+        if (likely((result = (vec ? (vec->num_elems > 0 ? vec->base + (vec->num_elems - 1) * vec->elem_size : NULL)
                                       : NULL)) != NULL)) {
                 vec->num_elems--;
         }
@@ -231,7 +231,7 @@ bool vector_grow(size_t *numNewSlots, vec *vec)
         vec->cap_elems = (vec->cap_elems * vec->grow_factor) + 1;
         vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         size_t freeSlotsAfter = vec->cap_elems - vec->num_elems;
-        if (LIKELY(numNewSlots != NULL)) {
+        if (likely(numNewSlots != NULL)) {
                 *numNewSlots = freeSlotsAfter - freeSlotsBefore;
         }
         return true;

@@ -202,7 +202,7 @@ this_fetch_bulk(vec ofType(bucket) *buckets, archive_field_sid_t *values_out, bo
         for (size_t i = 0; i < num_keys; i++) {
                 struct bucket *bucket = data + bucket_idxs[i];
                 const char *key = keys[i];
-                if (LIKELY(key != NULL)) {
+                if (likely(key != NULL)) {
                         slice_list_lookup(&result_handle, &bucket->slice_list, key);
                 } else {
                         result_handle.is_contained = true;
@@ -341,7 +341,7 @@ static int simple_map_remove(struct mem_extra *extra, size_t *bucket_idxs, char 
 
                 /** Optimization 1/5: EMPTY GUARD (but before "find" call); if this bucket has no occupied slots, do not perform any lookup and comparison */
                 slice_list_lookup(&handle, &bucket->slice_list, key);
-                if (LIKELY(handle.is_contained)) {
+                if (likely(handle.is_contained)) {
                         slice_list_remove(&bucket->slice_list, &handle);
                 }
         }

@@ -107,7 +107,7 @@ bool unique_id_create(unique_id_t *out)
         }
 
         bool capacity_left = (thread_local_counter != thread_local_counter_limit);
-        if (LIKELY(capacity_left)) {
+        if (likely(capacity_left)) {
                 union global_id internal =
                         {.global_wallclock  = wallclock(),
                                 .global_build_date = global_build_date_bit,

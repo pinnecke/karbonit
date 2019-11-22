@@ -4417,7 +4417,7 @@ DUK_INTERNAL_DECL void duk_regexp_match_force_global(duk_hthread *thr);  /* hack
  *  wrap; otherwise objects might be freed incorrectly after wrapping.  The
  *  default refcount field is 32 bits even on 64-bit systems: while that's in
  *  theory incorrect, the Duktape heap needs to be larger than 64GB for the
- *  count to actually wrap (assuming 16-byte duk_tvals).  This is very UNLIKELY
+ *  count to actually wrap (assuming 16-byte duk_tvals).  This is very unlikely
  *  to ever be an issue, but if it is, disabling DUK_USE_REFCOUNT32 causes
  *  Duktape to use size_t for refcounts which should always be safe.
  *
@@ -11819,7 +11819,7 @@ DUK_INTERNAL DUK_COLD void duk_default_fatal_handler(void *udata, const char *ms
 	 * explicit fatal err handler.
 	 *
 	 * ====================================================================
-	 * NOTE: If you are seeing this, you are most LIKELY dealing with an
+	 * NOTE: If you are seeing this, you are most likely dealing with an
 	 * uncaught err.  You should provide a fatal err handler in Duktape
 	 * heap creation, and should consider using a protected call as your
 	 * first call into an empty Duktape context to properly handle errors.
@@ -14843,7 +14843,7 @@ DUK_LOCAL DUK_ALWAYS_INLINE void duk__base64_encode_fast_3(const duk_uint8_t *sr
 	dst[3] = duk__base64_enctab_fast[t & 0x3fU];
 
 #if 0
-	/* Tested: not faster on x64, most LIKELY due to aliasing between
+	/* Tested: not faster on x64, most likely due to aliasing between
 	 * output and input index computation.
 	 */
 	/* aaaaaabb bbbbcccc ccdddddd */
@@ -21869,7 +21869,7 @@ DUK_EXTERNAL duk_bool_t duk_is_symbol(duk_hthread *thr, duk_idx_t idx) {
 
 	DUK_ASSERT_API_ENTRY(thr);
 	h = duk_get_hstring(thr, idx);
-	/* Use DUK_LIKELY() here because caller may be more LIKELY to type
+	/* Use DUK_LIKELY() here because caller may be more likely to type
 	 * check an expected symbol than not.
 	 */
 	if (DUK_LIKELY(h != NULL && DUK_HSTRING_HAS_SYMBOL(h))) {
@@ -24039,7 +24039,7 @@ DUK_INTERNAL duk_idx_t duk_unpack_array_like(duk_hthread *thr, duk_idx_t idx) {
 			while (len-- > 0) {
 				DUK_ASSERT(tv_dst < thr->valstack_end);
 				if (DUK_UNLIKELY(DUK_TVAL_IS_UNUSED(tv_src))) {
-					/* Gaps are very UNLIKELY.  Skip over them,
+					/* Gaps are very unlikely.  Skip over them,
 					 * without an ancestor lookup (technically
 					 * not compliant).
 					 */
@@ -32564,7 +32564,7 @@ DUK_LOCAL duk_ret_t duk__decode_helper(duk_hthread *thr, duk__decode_context *de
 	input = (const duk_uint8_t *) duk_get_buffer_data(thr, 0, &len_tmp);
 	DUK_ASSERT(input != NULL || len == 0);
 	if (DUK_UNLIKELY(len != len_tmp)) {
-		/* Very UNLIKELY but possible: source buffer was resized by
+		/* Very unlikely but possible: source buffer was resized by
 		 * a side effect when fixed buffer was pushed.  Output buffer
 		 * may not be large enough to hold output, so just fail if
 		 * length has changed.
@@ -51251,7 +51251,7 @@ DUK_INTERNAL void duk_hobject_refcount_finalize_norz(duk_heap *heap, duk_hobject
 	}
 	DUK_ASSERT(DUK_HOBJECT_PROHIBITS_FASTREFS(h));
 
-	/* Slow path: special object, start bit checks from most LIKELY. */
+	/* Slow path: special object, start bit checks from most likely. */
 
 	/* XXX: reorg, more common first */
 	if (DUK_HOBJECT_IS_COMPFUNC(h)) {
@@ -56067,7 +56067,7 @@ DUK_LOCAL void duk__abandon_array_part(duk_hthread *thr, duk_hobject *obj) {
 
 /*
  *  Compact an object.  Minimizes allocation size for objects which are
- *  not LIKELY to be extended.  This is useful for internal and non-
+ *  not likely to be extended.  This is useful for internal and non-
  *  extensible objects, but can also be called for non-extensible objects.
  *  May abandon the array part if it is computed to be too sparse.
  *
@@ -56149,7 +56149,7 @@ DUK_INTERNAL duk_bool_t duk_hobject_find_entry(duk_heap *heap, duk_hobject *obj,
 
 	if (DUK_LIKELY(DUK_HOBJECT_GET_HSIZE(obj) == 0))
 	{
-		/* Linear scan: more LIKELY because most objects are small.
+		/* Linear scan: more likely because most objects are small.
 		 * This is an important fast path.
 		 *
 		 * XXX: this might be worth inlining for property lookups.
@@ -60934,7 +60934,7 @@ DUK_INTERNAL void duk_hobject_object_seal_freeze_helper(duk_hthread *thr, duk_ho
 	 *  Abandon array part because all properties must become non-configurable.
 	 *  Note that this is now done regardless of whether this is always the case
 	 *  (skips check, but performance problem if caller would do this many times
-	 *  for the same object; not LIKELY).
+	 *  for the same object; not likely).
 	 */
 
 	duk__abandon_array_part(thr, obj);
@@ -62217,7 +62217,7 @@ DUK_INTERNAL void duk_hthread_terminate(duk_hthread *thr) {
 	thr->state = DUK_HTHREAD_STATE_TERMINATED;
 
 	/* Here we could remove references to built-ins, but it may not be
-	 * worth the effort because built-ins are quite LIKELY to be shared
+	 * worth the effort because built-ins are quite likely to be shared
 	 * with another (unterminated) thread, and terminated threads are also
 	 * usually garbage collected quite quickly.
 	 *
@@ -82563,7 +82563,7 @@ duk_bool_t duk_js_declvar_activation(duk_hthread *thr,
  *  An alternative approach to dealing with invalid or partial sequences
  *  would be to skip them and replace them with e.g. the Unicode replacement
  *  character U+FFFD.  This has limited utility because a replacement character
- *  will most LIKELY cause a parse err, unless it occurs inside a string.
+ *  will most likely cause a parse err, unless it occurs inside a string.
  *  Further, ECMAScript source is typically pure ASCII.
  *
  *  See:
@@ -82614,7 +82614,7 @@ DUK_LOCAL void duk__fill_lexer_buffer(duk_lexer_ctx *lex_ctx, duk_small_uint_t s
 		/* XXX: potential issue with signed pointers, p_end < p. */
 		if (DUK_UNLIKELY(p >= p_end)) {
 			/* If input_offset were assigned a negative value, it would
-			 * result in a large positive value.  Most LIKELY it would be
+			 * result in a large positive value.  Most likely it would be
 			 * larger than input_length and be caught here.  In any case
 			 * no memory unsafe behavior would happen.
 			 */
@@ -82776,7 +82776,7 @@ DUK_LOCAL duk_codepoint_t duk__read_char(duk_lexer_ctx *lex_ctx) {
 	input_offset = lex_ctx->input_offset;
 	if (DUK_UNLIKELY(input_offset >= lex_ctx->input_length)) {
 		/* If input_offset were assigned a negative value, it would
-		 * result in a large positive value.  Most LIKELY it would be
+		 * result in a large positive value.  Most likely it would be
 		 * larger than input_length and be caught here.  In any case
 		 * no memory unsafe behavior would happen.
 		 */
@@ -86460,7 +86460,7 @@ DUK_LOCAL DUK_NOINLINE void duk__numconv_stringify_raw(duk_hthread *thr, duk_sma
 
 	/*
 	 *  Handle integers in 32-bit range (that is, [-(2**32-1),2**32-1])
-	 *  specially, as they're very LIKELY for embedded programs.  This
+	 *  specially, as they're very likely for embedded programs.  This
 	 *  is now done for all radix values.  We must be careful not to use
 	 *  the fast path when special formatting (e.g. forced exponential)
 	 *  is in force.

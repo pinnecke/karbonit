@@ -58,11 +58,11 @@ enum json_convert {
 };
 
 struct traverse_extra {
-        struct carbon_traverse *parent;
+        struct traverse *parent;
         union {
             struct {
                 struct str_buf *str;
-                struct carbon_json_from_opts *config;
+                struct to_json_opts *config;
                 enum json_convert convert;
             } print_json;
             struct {
@@ -71,41 +71,34 @@ struct traverse_extra {
         } capture;
 };
 
-struct carbon_traverse
+struct traverse
 {
-        enum  traverse_tag tag;
-
+        enum traverse_tag tag;
         bool read_write;
-
         traverse_setup_t setup;
         traverse_clean_t cleanup;
-
         visit_record_t visit_record;
-
         visit_array_enter_t visit_array_begin;
         visit_item_t visit_item;
         visit_array_exit_t visit_array_end;
-
         visit_column_t visit_column;
-
         visit_object_enter_t visit_object_begin;
         visit_object_exit_t visit_object_end;
-
         struct traverse_extra extra;
 };
 
-void traverse_create(struct carbon_traverse *traverse, traverse_setup_t begin, traverse_clean_t end,
+void traverse_create(struct traverse *traverse, traverse_setup_t begin, traverse_clean_t end,
                             visit_record_t visit_record, visit_array_enter_t visit_array_begin,
                             visit_array_exit_t visit_array_end, visit_column_t visit_column,
                             visit_object_enter_t visit_object_begin, visit_object_exit_t visit_object_end,
                             enum traverse_tag tag, bool read_write);
 
-void traverse_drop(struct carbon_traverse *traverse);
+void traverse_drop(struct traverse *traverse);
 
-void traverse_carbon(struct rec *rev_out, struct carbon_traverse *traverse, struct rec *record);
-void traverse_array(struct carbon_traverse *traverse, arr_it *it);
-void traverse_column(struct carbon_traverse *traverse, struct col_it *it);
-void traverse_object(struct carbon_traverse *traverse, struct obj_it *it);
+void traverse_record(struct rec *rev_out, struct traverse *traverse, struct rec *record);
+void traverse_array(struct traverse *traverse, arr_it *it);
+void traverse_column(struct traverse *traverse, struct col_it *it);
+void traverse_object(struct traverse *traverse, struct obj_it *it);
 
 void traverse_continue_array(struct traverse_extra *context, arr_it *it);
 void traverse_continue_column(struct traverse_extra *context, struct col_it *it);

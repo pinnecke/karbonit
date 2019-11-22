@@ -28,10 +28,10 @@ extern "C" {
 struct array;
 struct column_it;
 struct object_it;
-struct carbon_json_from_opts;
+struct to_json_opts;
 
 /* built-in json formatter configuration */
-static struct carbon_json_from_opts
+static struct to_json_opts
 {
     /* ignores all format options below and uses a specialized, fast formatter */
     bool force_fast_formatter: 1;
@@ -146,16 +146,16 @@ static struct carbon_json_from_opts
  * into a nice human readable form. */
 
 void carbon_json_from_carbon(struct str_buf *str, struct rec *record,
-                             struct carbon_json_from_opts *config);
+                             struct to_json_opts *config);
 
 void carbon_json_from_array(struct str_buf *str, arr_it *it,
-                            struct carbon_json_from_opts *config);
+                            struct to_json_opts *config);
 
 void carbon_json_from_column(struct str_buf *str, struct col_it *it,
-                             struct carbon_json_from_opts *config);
+                             struct to_json_opts *config);
 
 void carbon_json_from_object(struct str_buf *str, struct obj_it *it,
-                             struct carbon_json_from_opts *config);
+                             struct to_json_opts *config);
 
 #ifdef __cplusplus
 }

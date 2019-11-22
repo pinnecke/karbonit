@@ -415,8 +415,8 @@ static inline void __carbon_print_json_exit_object_fast(struct traverse_extra *r
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse, struct str_buf *str,
-                                                struct carbon_json_from_opts *config)
+static void __carbon_print_json_traverse_create(struct traverse *traverse, struct str_buf *str,
+                                                struct to_json_opts *config)
 {
         bool use_fast_formatter = !config || config->force_fast_formatter;
         visit_record_t visit_record = use_fast_formatter ? NULL /* no meta information for fast printing */:
@@ -451,27 +451,27 @@ static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse
 // ---------------------------------------------------------------------------------------------------------------------
 
 void carbon_json_from_carbon(struct str_buf *str, rec *record,
-                             struct carbon_json_from_opts *config)
+                             struct to_json_opts *config)
 {
         assert(str);
         assert(record);
 
-        struct carbon_traverse traverse;
+        struct traverse traverse;
 
         str_buf_ensure_capacity(str, 2 * memfile_size(&record->file));
         __carbon_print_json_traverse_create(&traverse, str, config);
-        traverse_carbon(NULL, &traverse, record);
+        traverse_record(NULL, &traverse, record);
         traverse_drop(&traverse);
 
 }
 
 void carbon_json_from_array(struct str_buf *str, arr_it *it,
-                            struct carbon_json_from_opts *config)
+                            struct to_json_opts *config)
 {
         assert(str);
         assert(it);
 
-        struct carbon_traverse traverse;
+        struct traverse traverse;
 
         __carbon_print_json_traverse_create(&traverse, str, config);
         traverse_array(&traverse, it);
@@ -479,12 +479,12 @@ void carbon_json_from_array(struct str_buf *str, arr_it *it,
 }
 
 void carbon_json_from_column(struct str_buf *str, struct col_it *it,
-                             struct carbon_json_from_opts *config)
+                             struct to_json_opts *config)
 {
         assert(str);
         assert(it);
 
-        struct carbon_traverse traverse;
+        struct traverse traverse;
 
         __carbon_print_json_traverse_create(&traverse, str, config);
         traverse_column(&traverse, it);
@@ -492,12 +492,12 @@ void carbon_json_from_column(struct str_buf *str, struct col_it *it,
 }
 
 void carbon_json_from_object(struct str_buf *str, struct obj_it *it,
-                             struct carbon_json_from_opts *config)
+                             struct to_json_opts *config)
 {
         assert(str);
         assert(it);
 
-        struct carbon_traverse traverse;
+        struct traverse traverse;
 
         __carbon_print_json_traverse_create(&traverse, str, config);
         traverse_object(&traverse, it);

@@ -21,13 +21,13 @@
 #include <jakson/carbon/col-it.h>
 #include <jakson/carbon/obj-it.h>
 
-void traverse_create(struct carbon_traverse *traverse, traverse_setup_t begin, traverse_clean_t end,
+void traverse_create(struct traverse *traverse, traverse_setup_t begin, traverse_clean_t end,
                             visit_record_t visit_record, visit_array_enter_t visit_array_begin,
                             visit_array_exit_t visit_array_end, visit_column_t visit_column,
                             visit_object_enter_t visit_object_begin, visit_object_exit_t visit_object_end,
                             enum traverse_tag tag, bool read_write)
 {
-        ZERO_MEMORY(traverse, sizeof(struct carbon_traverse))
+        ZERO_MEMORY(traverse, sizeof(struct traverse))
 
         traverse->tag = tag;
         traverse->read_write = read_write;
@@ -48,14 +48,14 @@ void traverse_create(struct carbon_traverse *traverse, traverse_setup_t begin, t
         
 }
 
-void traverse_drop(struct carbon_traverse *traverse)
+void traverse_drop(struct traverse *traverse)
 {
         if (traverse->cleanup) {
                 traverse->cleanup(&traverse->extra);
         }
 }
 
-void traverse_carbon(rec *rev_out, struct carbon_traverse *traverse, rec *record)
+void traverse_record(rec *rev_out, struct traverse *traverse, rec *record)
 {
         assert(traverse);
         assert(record);
@@ -83,7 +83,7 @@ void traverse_carbon(rec *rev_out, struct carbon_traverse *traverse, rec *record
 
 }
 
-void traverse_array(struct carbon_traverse *traverse, arr_it *it)
+void traverse_array(struct traverse *traverse, arr_it *it)
 {
         assert(traverse);
         assert(it);
@@ -96,14 +96,14 @@ void traverse_array(struct carbon_traverse *traverse, arr_it *it)
         }
 }
 
-void traverse_column(struct carbon_traverse *traverse, struct col_it *it)
+void traverse_column(struct traverse *traverse, struct col_it *it)
 {
         if (LIKELY(traverse->visit_column != NULL)) {
                 traverse->visit_column(&traverse->extra, it);
         }
 }
 
-void traverse_object(struct carbon_traverse *traverse, struct obj_it *it)
+void traverse_object(struct traverse *traverse, struct obj_it *it)
 {
         if (LIKELY(traverse->visit_object_begin != NULL)) {
                 traverse->visit_object_begin(&traverse->extra, it);

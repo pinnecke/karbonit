@@ -56,7 +56,7 @@ static void key_unsigned_set(rec *doc, u64 key)
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        carbon_key_write_unsigned(&doc->file, key);
+        key_write_unsigned(&doc->file, key);
 
         memfile_restore_position(&doc->file);
 }
@@ -67,7 +67,7 @@ static void key_signed_set(rec *doc, i64 key)
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        carbon_key_write_signed(&doc->file, key);
+        key_write_signed(&doc->file, key);
 
         memfile_restore_position(&doc->file);
 }
@@ -78,16 +78,16 @@ static void key_string_set(rec *doc, const char *key)
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        carbon_key_update_string(&doc->file, key);
+        key_update_string(&doc->file, key);
 
         memfile_restore_position(&doc->file);
 }
 
 bool carbon_revise_key_generate(unique_id_t *out, rev *context)
 {
-        carbon_key_e key_type;
-        carbon_key_type(&key_type, context->revised_doc);
-        if (key_type == CARBON_KEY_AUTOKEY) {
+        key_e type;
+        key_type(&type, context->revised_doc);
+        if (type == CARBON_KEY_AUTOKEY) {
                 unique_id_t oid;
                 unique_id_create(&oid);
                 key_unsigned_set(context->revised_doc, oid);
@@ -100,9 +100,9 @@ bool carbon_revise_key_generate(unique_id_t *out, rev *context)
 
 bool carbon_revise_key_set_unsigned(rev *context, u64 key_value)
 {
-        carbon_key_e key_type;
-        carbon_key_type(&key_type, context->revised_doc);
-        if (key_type == CARBON_KEY_UKEY) {
+        key_e type;
+        key_type(&type, context->revised_doc);
+        if (type == CARBON_KEY_UKEY) {
                 key_unsigned_set(context->revised_doc, key_value);
                 return true;
         } else {
@@ -112,9 +112,9 @@ bool carbon_revise_key_set_unsigned(rev *context, u64 key_value)
 
 bool carbon_revise_key_set_signed(rev *context, i64 key_value)
 {
-        carbon_key_e key_type;
-        carbon_key_type(&key_type, context->revised_doc);
-        if (key_type == CARBON_KEY_IKEY) {
+        key_e type;
+        key_type(&type, context->revised_doc);
+        if (type == CARBON_KEY_IKEY) {
                 key_signed_set(context->revised_doc, key_value);
                 return true;
         } else {
@@ -124,9 +124,9 @@ bool carbon_revise_key_set_signed(rev *context, i64 key_value)
 
 bool carbon_revise_key_set_string(rev *context, const char *key_value)
 {
-        carbon_key_e key_type;
-        carbon_key_type(&key_type, context->revised_doc);
-        if (key_type == CARBON_KEY_SKEY) {
+        key_e type;
+        key_type(&type, context->revised_doc);
+        if (type == CARBON_KEY_SKEY) {
                 key_string_set(context->revised_doc, key_value);
                 return true;
         } else {
@@ -581,10 +581,10 @@ static bool carbon_header_rev_inc(rec *doc)
 {
         JAK_ASSERT(doc);
 
-        carbon_key_e key_type;
+        key_e key_type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
-        carbon_key_read(NULL, &key_type, &doc->file);
+        key_read(NULL, &key_type, &doc->file);
         if (carbon_has_key(key_type)) {
                 u64 raw_data_len = 0;
                 const void *raw_data = carbon_raw_data(&raw_data_len, doc);

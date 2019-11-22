@@ -17,7 +17,7 @@ TEST(CarbonTest, CreateCarbon) {
 
         //carbon_hexdump_print(stderr, &doc);
 
-        status = carbon_key_unsigned_value(&oid, &doc);
+        status = key_unsigned_value(&oid, &doc);
         EXPECT_TRUE(status);
         EXPECT_NE(oid, 0U);
 
@@ -187,7 +187,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
-        carbon_key_unsigned_value(&oid, &doc);
+        key_unsigned_value(&oid, &doc);
         EXPECT_NE(oid, 0U);
 
         carbon_commit_hash(&commit_hash_old, &doc);
@@ -200,7 +200,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
         carbon_commit_hash(&commit_hash_new, &rev_doc);
         EXPECT_NE(commit_hash_old, commit_hash_new);
 
-        carbon_key_unsigned_value(&oid, &rev_doc);
+        key_unsigned_value(&oid, &rev_doc);
         EXPECT_EQ(oid, new_oid);
 
         // carbon_print(stdout, &rev_doc);
@@ -4042,7 +4042,7 @@ TEST(CarbonTest, CarbonKeyTypeAutoKeyUpdate)
         carbon_revise_key_generate(&id, &revise);
         carbon_revise_end(&revise);
 
-        carbon_key_unsigned_value(&id_read, &rev_doc);
+        key_unsigned_value(&id_read, &rev_doc);
         ASSERT_NE(id, 0U);
         ASSERT_EQ(id, id_read);
 
@@ -4078,7 +4078,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
         carbon_revise_key_set_unsigned(&revise, 42);
         carbon_revise_end(&revise);
 
-        carbon_key_unsigned_value(&id_read, &rev_doc);
+        key_unsigned_value(&id_read, &rev_doc);
         ASSERT_EQ(id_read, 42U);
 
         carbon_drop(&doc);
@@ -4112,7 +4112,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
         carbon_revise_key_set_signed(&revise, 42);
         carbon_revise_end(&revise);
 
-        carbon_key_signed_value(&id_read, &rev_doc);
+        key_signed_value(&id_read, &rev_doc);
         ASSERT_EQ(id_read, 42U);
 
         carbon_drop(&doc);
@@ -4145,7 +4145,7 @@ TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
         carbon_revise_key_set_string(&revise, "my_unique_id");
         carbon_revise_end(&revise);
 
-        const char *key = carbon_key_string_value(&key_len, &rev_doc);
+        const char *key = key_string_value(&key_len, &rev_doc);
         ASSERT_TRUE(strncmp(key, "my_unique_id", strlen("my_unique_id")) == 0);
 
         carbon_drop(&doc);
@@ -4168,9 +4168,9 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        carbon_key_e key_type;
-        carbon_key_type(&key_type, &doc);
-        ASSERT_EQ(key_type, CARBON_KEY_UKEY);
+        key_e type;
+        key_type(&type, &doc);
+        ASSERT_EQ(type, CARBON_KEY_UKEY);
 
         carbon_drop(&doc);
 }
@@ -4263,9 +4263,9 @@ TEST(CarbonTest, CarbonKeyTypeSignedKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        carbon_key_e key_type;
-        carbon_key_type(&key_type, &doc);
-        ASSERT_EQ(key_type, CARBON_KEY_IKEY);
+        key_e type;
+        key_type(&type, &doc);
+        ASSERT_EQ(type, CARBON_KEY_IKEY);
 
         carbon_drop(&doc);
 }

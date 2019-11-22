@@ -1,26 +1,9 @@
-/**
- * Columnar Binary JSON -- Copyright 2019 Marcus Pinnecke
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+/*
+ * Copyright 2019 Marcus Pinnecke
  */
 
-#ifndef CARBON_MEDIA_H
-#define CARBON_MEDIA_H
-
-// ---------------------------------------------------------------------------------------------------------------------
-//  includes
-// ---------------------------------------------------------------------------------------------------------------------
+#ifndef HAD_MIME_H
+#define HAD_MIME_H
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
@@ -726,25 +709,25 @@ static struct mime {
 
 static const u32 _global_mime_register = (u32) ARRAY_LENGTH(global_mime_register);
 
-bool carbon_media_write(memfile *dst, field_e type);
+bool mime_write(memfile *dst, field_e type);
 
 /**
  * Returns the mime type identifier for a file extension <code>ext</code>. If <code>ext</code> is not known,
  * the mime type application/octet-stream (.bin) is returned.
  */
-u32 carbon_media_mime_by_ext(const char *ext);
+u32 mime_by_ext(const char *ext);
 
 /**
  * Returns a human readable string representing the mime type for the mime type identifier <code>id</code>.
  * In case <code>id</code> is invalid, the mime type application/octet-stream is returned.
  */
-const char *carbon_media_mime_by_id(u32 id);
+const char *mime_by_id(u32 id);
 
 /**
  * Returns the file extension for the mime type identifier <code>id</code>.
  * In case <code>id</code> is invalid, the file extension "bin" is returned.
  */
-const char *carbon_media_mime_ext_by_id(u32 id);
+const char *mime_ext_by_id(u32 id);
 
 #ifdef __cplusplus
 }

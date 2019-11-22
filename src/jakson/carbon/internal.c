@@ -336,7 +336,7 @@ bool internal_field_data_access(memfile *file, field *field)
                         /** read mime type with variable-length integer type */
                         u64 mime_id = memfile_read_uintvar_stream(NULL, file);
 
-                        field->mime = carbon_media_mime_by_id(mime_id);
+                        field->mime = mime_by_id(mime_id);
                         field->mime_len = strlen(field->mime);
 
                         /** read blob length */
@@ -443,12 +443,12 @@ offset_t internal_column_get_payload_off(col_it *it)
 offset_t internal_payload_after_header(rec *doc)
 {
         offset_t result = 0;
-        carbon_key_e key_type;
+        key_e key_type;
 
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        if (LIKELY(carbon_key_skip(&key_type, &doc->file))) {
+        if (LIKELY(key_skip(&key_type, &doc->file))) {
                 if (key_type != CARBON_KEY_NOKEY) {
                         commit_skip(&doc->file);
                 }
@@ -464,12 +464,12 @@ u64 internal_header_get_commit_hash(rec *doc)
 {
         JAK_ASSERT(doc);
         u64 rev = 0;
-        carbon_key_e key_type;
+        key_e key_type;
 
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        carbon_key_skip(&key_type, &doc->file);
+        key_skip(&key_type, &doc->file);
         if (key_type != CARBON_KEY_NOKEY) {
                 commit_read(&rev, &doc->file);
         }
@@ -1597,7 +1597,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
 }
 
 void internal_from_json(rec *doc, const json *data,
-                          carbon_key_e key_type, const void *primary_key, int mode)
+                          key_e key_type, const void *primary_key, int mode)
 {
         UNUSED(data)
         UNUSED(primary_key)

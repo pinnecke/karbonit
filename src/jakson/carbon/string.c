@@ -66,7 +66,7 @@ bool carbon_string_write(memfile *file, const char *string)
 bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
 {
         memfile_ensure_space(file, sizeof(media_type));
-        carbon_media_write(file, FIELD_STRING);
+        mime_write(file, FIELD_STRING);
         carbon_string_nomarker_nchar_write(file, string, str_len);
         return true;
 }

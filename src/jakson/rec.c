@@ -45,12 +45,12 @@
 
 static bool internal_drop(rec *doc);
 
-static void carbon_header_init(rec *doc, carbon_key_e key_type);
+static void carbon_header_init(rec *doc, key_e key_type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 insert * carbon_create_begin(rec_new *context, rec *doc,
-                                           carbon_key_e type, int options)
+                                           key_e type, int options)
 {
         if (context && doc) {
                 context->content_it = MALLOC(sizeof(arr_it));
@@ -99,12 +99,12 @@ void carbon_create_end(rec_new *context)
         carbon_drop(&context->original);
 }
 
-void carbon_create_empty(rec *doc, list_type_e derivation, carbon_key_e type)
+void carbon_create_empty(rec *doc, list_type_e derivation, key_e type)
 {
         carbon_create_empty_ex(doc, derivation, type, 1024, 1);
 }
 
-void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type,
+void carbon_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
                                 u64 doc_cap, u64 array_cap)
 {
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
@@ -117,7 +117,7 @@ void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type,
         internal_insert_array(&doc->file, derivation, array_cap);
 }
 
-bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
+bool carbon_from_json(rec *doc, const char *json, key_e type,
                       const void *key)
 {
         struct json data;
@@ -157,31 +157,31 @@ const void *carbon_raw_data(u64 *len, rec *doc)
         }
 }
 
-bool carbon_key_type(carbon_key_e *out, rec *doc)
+bool key_type(key_e *out, rec *doc)
 {
         memfile_save_position(&doc->file);
-        carbon_key_skip(out, &doc->file);
+        key_skip(out, &doc->file);
         memfile_restore_position(&doc->file);
         return true;
 }
 
-const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, rec *doc)
+const void *key_raw_value(u64 *len, key_e *type, rec *doc)
 {
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
-        const void *result = carbon_key_read(len, type, &doc->file);
+        const void *result = key_read(len, type, &doc->file);
         memfile_restore_position(&doc->file);
         return result;
 }
 
-bool carbon_key_signed_value(i64 *key, rec *doc)
+bool key_signed_value(i64 *key, rec *doc)
 {
-        carbon_key_e type;
+        key_e type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
-        const void *result = carbon_key_read(NULL, &type, &doc->file);
+        const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (LIKELY(carbon_key_is_signed(type))) {
+        if (LIKELY(key_is_signed(type))) {
                 *key = *((const i64 *) result);
                 return true;
         } else {
@@ -190,14 +190,14 @@ bool carbon_key_signed_value(i64 *key, rec *doc)
         }
 }
 
-bool carbon_key_unsigned_value(u64 *key, rec *doc)
+bool key_unsigned_value(u64 *key, rec *doc)
 {
-        carbon_key_e type;
+        key_e type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
-        const void *result = carbon_key_read(NULL, &type, &doc->file);
+        const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (LIKELY(carbon_key_is_unsigned(type))) {
+        if (LIKELY(key_is_unsigned(type))) {
                 *key = *((const u64 *) result);
                 return true;
         } else {
@@ -206,14 +206,14 @@ bool carbon_key_unsigned_value(u64 *key, rec *doc)
         }
 }
 
-const char *carbon_key_string_value(u64 *len, rec *doc)
+const char *key_string_value(u64 *len, rec *doc)
 {
-        carbon_key_e type;
+        key_e type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
-        const void *result = carbon_key_read(len, &type, &doc->file);
+        const void *result = key_read(len, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (LIKELY(carbon_key_is_string(type))) {
+        if (LIKELY(key_is_string(type))) {
                 return result;
         } else {
                 error(ERR_TYPEMISMATCH, NULL);
@@ -221,22 +221,22 @@ const char *carbon_key_string_value(u64 *len, rec *doc)
         }
 }
 
-bool carbon_key_is_unsigned(carbon_key_e type)
+bool key_is_unsigned(key_e type)
 {
         return type == CARBON_KEY_UKEY || type == CARBON_KEY_AUTOKEY;
 }
 
-bool carbon_key_is_signed(carbon_key_e type)
+bool key_is_signed(key_e type)
 {
         return type == CARBON_KEY_IKEY;
 }
 
-bool carbon_key_is_string(carbon_key_e type)
+bool key_is_string(key_e type)
 {
         return type == CARBON_KEY_SKEY;
 }
 
-bool carbon_has_key(carbon_key_e type)
+bool carbon_has_key(key_e type)
 {
         return type != CARBON_KEY_NOKEY;
 }
@@ -284,7 +284,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
 {
         carbon_printer p;
         string_buffer b;
-        carbon_key_e key_type;
+        key_e key_type;
         u64 key_len;
         u64 rev;
 
@@ -303,7 +303,7 @@ bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
         carbon_printer_begin(&p, &b);
         carbon_printer_header_begin(&p, &b);
 
-        const void *key = carbon_key_raw_value(&key_len, &key_type, doc);
+        const void *key = key_raw_value(&key_len, &key_type, doc);
         carbon_printer_header_contents(&p, &b, key_type, key, key_len, rev);
 
         carbon_printer_header_end(&p, &b);
@@ -396,12 +396,12 @@ static bool internal_drop(rec *doc)
         return true;
 }
 
-static void carbon_header_init(rec *doc, carbon_key_e key_type)
+static void carbon_header_init(rec *doc, key_e key_type)
 {
         JAK_ASSERT(doc);
 
         memfile_seek(&doc->file, 0);
-        carbon_key_create(&doc->file, key_type);
+        key_create(&doc->file, key_type);
 
         if (key_type != CARBON_KEY_NOKEY) {
                 commit_create(&doc->file);

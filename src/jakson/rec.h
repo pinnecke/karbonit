@@ -98,7 +98,7 @@ typedef enum carbon_printer_impl {
 
 #define CARBON_NIL_STR "_nil"
 
-typedef enum carbon_key_type {
+typedef enum key_type {
         /** no key, no revision number */
         CARBON_KEY_NOKEY = MNOKEY,
         /** auto-generated 64bit unsigned integer key */
@@ -109,7 +109,7 @@ typedef enum carbon_key_type {
         CARBON_KEY_IKEY = MIKEY,
         /** user-defined n-char string_buffer key */
         CARBON_KEY_SKEY = MSKEY
-} carbon_key_e;
+} key_e;
 
 #define CARBON_KEEP              0x00 /** do not shrink, do not compact, use UNSORTED_MULTISET (equiv. JSON array) */
 #define CARBON_SHRINK            0x01 /** perform shrinking, i.e., remove tail-buffer from carbon file */
@@ -165,27 +165,27 @@ typedef enum carbon_key_type {
  *  deduplication and sorting work. Instead, the annotation stores the semantics of that particular container, which
  *  functionality must be effectively implemented at caller site.
  */
-insert * carbon_create_begin(rec_new *context, rec *doc, carbon_key_e type, int options);
+insert * carbon_create_begin(rec_new *context, rec *doc, key_e type, int options);
 void carbon_create_end(rec_new *context);
-void carbon_create_empty(rec *doc, list_type_e derivation, carbon_key_e type);
-void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type, u64 doc_cap, u64 array_cap);
+void carbon_create_empty(rec *doc, list_type_e derivation, key_e type);
+void carbon_create_empty_ex(rec *doc, list_type_e derivation, key_e type, u64 doc_cap, u64 array_cap);
 
-bool carbon_from_json(rec *doc, const char *json, carbon_key_e type, const void *key);
+bool carbon_from_json(rec *doc, const char *json, key_e type, const void *key);
 bool carbon_from_raw_data(rec *doc, const void *data, u64 len);
 
 bool carbon_drop(rec *doc);
 
 const void *carbon_raw_data(u64 *len, rec *doc);
 
-bool carbon_key_type(carbon_key_e *out, rec *doc);
-const void *carbon_key_raw_value(u64 *len, carbon_key_e *type, rec *doc);
-bool carbon_key_signed_value(i64 *key, rec *doc);
-bool carbon_key_unsigned_value(u64 *key, rec *doc);
-const char *carbon_key_string_value(u64 *len, rec *doc);
-bool carbon_has_key(carbon_key_e type);
-bool carbon_key_is_unsigned(carbon_key_e type);
-bool carbon_key_is_signed(carbon_key_e type);
-bool carbon_key_is_string(carbon_key_e type);
+bool key_type(key_e *out, rec *doc);
+const void *key_raw_value(u64 *len, key_e *type, rec *doc);
+bool key_signed_value(i64 *key, rec *doc);
+bool key_unsigned_value(u64 *key, rec *doc);
+const char *key_string_value(u64 *len, rec *doc);
+bool carbon_has_key(key_e type);
+bool key_is_unsigned(key_e type);
+bool key_is_signed(key_e type);
+bool key_is_string(key_e type);
 bool carbon_clone(rec *clone, rec *doc);
 bool carbon_commit_hash(u64 *hash, rec *doc);
 

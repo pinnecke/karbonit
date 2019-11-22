@@ -39,7 +39,7 @@ typedef struct carbon_printer
         void (*record_begin)(carbon_printer *self, string_buffer *builder);
         void (*record_end)(carbon_printer *self, string_buffer *builder);
         void (*meta_begin)(carbon_printer *self, string_buffer *builder);
-        /** type is of carbon_key_e */
+        /** type is of key_e */
         bool (*meta_data)(carbon_printer *self, string_buffer *builder, int key_type, const void *key, u64 key_length, u64 commit_hash);
         void (*meta_end)(carbon_printer *self, string_buffer *builder);
         void (*doc_begin)(carbon_printer *self, string_buffer *builder);
@@ -83,7 +83,7 @@ bool carbon_printer_by_type(carbon_printer *printer, int impl);
 bool carbon_printer_begin(carbon_printer *printer, string_buffer *str);
 bool carbon_printer_end(carbon_printer *printer, string_buffer *str);
 bool carbon_printer_header_begin(carbon_printer *printer, string_buffer *str);
-/** 'key_type' is of carbon_key_e */
+/** 'key_type' is of key_e */
 bool carbon_printer_header_contents(carbon_printer *printer, string_buffer *str, int key_type, const void *key, u64 key_length, u64 rev);
 bool carbon_printer_header_end(carbon_printer *printer, string_buffer *str);
 bool carbon_printer_payload_begin(carbon_printer *printer, string_buffer *str);

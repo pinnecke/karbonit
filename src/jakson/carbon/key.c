@@ -58,7 +58,7 @@ static void write_skey(memfile *file)
         carbon_string_write(file, key);
 }
 
-bool carbon_key_create(memfile *file, carbon_key_e type)
+bool key_create(memfile *file, key_e type)
 {
         switch (type) {
                 case CARBON_KEY_NOKEY:
@@ -82,18 +82,18 @@ bool carbon_key_create(memfile *file, carbon_key_e type)
         return true;
 }
 
-bool carbon_key_skip(carbon_key_e *out, memfile *file)
+bool key_skip(key_e *out, memfile *file)
 {
-        carbon_key_read(NULL, out, file);
+        key_read(NULL, out, file);
         return true;
 }
 
-bool carbon_key_write_unsigned(memfile *file, u64 key)
+bool key_write_unsigned(memfile *file, u64 key)
 {
-        DECLARE_AND_INIT(carbon_key_e, key_type)
+        DECLARE_AND_INIT(key_e, key_type)
 
-        carbon_key_read_type(&key_type, file);
-        if (carbon_key_is_unsigned(key_type)) {
+        key_read_type(&key_type, file);
+        if (key_is_unsigned(key_type)) {
                 memfile_write(file, &key, sizeof(u64));
                 return true;
         } else {
@@ -101,12 +101,12 @@ bool carbon_key_write_unsigned(memfile *file, u64 key)
         }
 }
 
-bool carbon_key_write_signed(memfile *file, i64 key)
+bool key_write_signed(memfile *file, i64 key)
 {
-        DECLARE_AND_INIT(carbon_key_e, key_type)
+        DECLARE_AND_INIT(key_e, key_type)
 
-        carbon_key_read_type(&key_type, file);
-        if (carbon_key_is_signed(key_type)) {
+        key_read_type(&key_type, file);
+        if (key_is_signed(key_type)) {
                 memfile_write(file, &key, sizeof(i64));
                 return true;
         } else {
@@ -114,16 +114,16 @@ bool carbon_key_write_signed(memfile *file, i64 key)
         }
 }
 
-bool carbon_key_update_string(memfile *file, const char *key)
+bool key_update_string(memfile *file, const char *key)
 {
-        return carbon_key_update_string_wnchar(file, key, strlen(key));
+        return key_update_string_wnchar(file, key, strlen(key));
 }
 
-bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t length)
+bool key_update_string_wnchar(memfile *file, const char *key, size_t length)
 {
-        DECLARE_AND_INIT(carbon_key_e, key_type)
-        carbon_key_read_type(&key_type, file);
-        if (carbon_key_is_string(key_type)) {
+        DECLARE_AND_INIT(key_e, key_type)
+        key_read_type(&key_type, file);
+        if (key_is_string(key_type)) {
                 carbon_string_update_wnchar(file, key, length);
                 return true;
         } else {
@@ -131,12 +131,12 @@ bool carbon_key_update_string_wnchar(memfile *file, const char *key, size_t leng
         }
 }
 
-bool carbon_key_write_string(memfile *file, const char *key)
+bool key_write_string(memfile *file, const char *key)
 {
-        DECLARE_AND_INIT(carbon_key_e, key_type)
+        DECLARE_AND_INIT(key_e, key_type)
 
-        carbon_key_read_type(&key_type, file);
-        if (carbon_key_is_string(key_type)) {
+        key_read_type(&key_type, file);
+        if (key_is_string(key_type)) {
                 carbon_string_write(file, key);
                 return true;
         } else {
@@ -144,7 +144,7 @@ bool carbon_key_write_string(memfile *file, const char *key)
         }
 }
 
-bool carbon_key_read_type(carbon_key_e *out, memfile *file)
+bool key_read_type(key_e *out, memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -174,10 +174,10 @@ bool carbon_key_read_type(carbon_key_e *out, memfile *file)
         return true;
 }
 
-const void *carbon_key_read(u64 *len, carbon_key_e *out, memfile *file)
+const void *key_read(u64 *len, key_e *out, memfile *file)
 {
-        carbon_key_e key_type = 0;
-        carbon_key_read_type(&key_type, file);
+        key_e key_type = 0;
+        key_read_type(&key_type, file);
 
         OPTIONAL_SET(out, key_type)
 
@@ -201,7 +201,7 @@ const void *carbon_key_read(u64 *len, carbon_key_e *out, memfile *file)
         }
 }
 
-const char *carbon_key_type_str(carbon_key_e type)
+const char *key_type_str(key_e type)
 {
         switch (type) {
                 case CARBON_KEY_NOKEY:

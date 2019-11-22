@@ -428,7 +428,7 @@ static void _insert_binary(insert *in, const void *value, size_t nbytes,
                 push_media_type_for_array(in, FIELD_BINARY);
 
                 /** write mime type with variable-length integer type */
-                u64 mime_id = carbon_media_mime_by_ext(file_ext);
+                u64 mime_id = mime_by_ext(file_ext);
 
                 /** write mime type id */
                 memfile_write_uintvar_stream(NULL, &in->file, mime_id);
@@ -975,7 +975,7 @@ static bool push_in_column(insert *in, const void *base, field_e type)
 static bool push_media_type_for_array(insert *in, field_e type)
 {
         memfile_ensure_space(&in->file, sizeof(media_type));
-        return carbon_media_write(&in->file, type);
+        return mime_write(&in->file, type);
 }
 
 static void internal_create(insert *in, memfile *src, offset_t pos)

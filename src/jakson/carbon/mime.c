@@ -38,14 +38,14 @@
         result;                                                                         \
 })
 
-bool carbon_media_write(memfile *dst, field_e type)
+bool mime_write(memfile *dst, field_e type)
 {
         media_type t = type;
         memfile_write(dst, &t, sizeof(media_type));
         return true;
 }
 
-u32 carbon_media_mime_by_ext(const char *ext)
+u32 mime_by_ext(const char *ext)
 {
         u32 id;
         if (LIKELY(ext != NULL)) {
@@ -58,7 +58,7 @@ u32 carbon_media_mime_by_ext(const char *ext)
         return id;
 }
 
-const char *carbon_media_mime_by_id(u32 id)
+const char *mime_by_id(u32 id)
 {
         if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
@@ -67,7 +67,7 @@ const char *carbon_media_mime_by_id(u32 id)
         return global_mime_register[id].type;
 }
 
-const char *carbon_media_mime_ext_by_id(u32 id)
+const char *mime_ext_by_id(u32 id)
 {
         if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");

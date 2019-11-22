@@ -371,7 +371,7 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
                         }
                                 break;
                         case FIELD_STRING: {
-                                string_field value = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                string_field value = item_get_string(&(it->prop.value), NULL_STRING);
                                 printer_prop_string(printer, buffer, prop_key.str, prop_key.len, value.str, value.len);
                         }
                                 break;
@@ -523,7 +523,7 @@ bool printer_print_array(arr_it *it, printer *printer, str_buf *buffer,
                         }
                                 break;
                         case FIELD_STRING: {
-                                string_field string = item_get_string(&(it->item), CARBON_NULL_STRING);
+                                string_field string = item_get_string(&(it->item), NULL_STRING);
                                 printer_string(printer, buffer, string.str, string.len);
                         }
                                 break;

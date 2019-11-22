@@ -21,7 +21,7 @@ typedef struct string_field
         u64 len;
 } string_field;
 
-static string_field CARBON_NULL_STRING = {
+static string_field NULL_STRING = {
         .str = NULL,
         .len = 0
 };

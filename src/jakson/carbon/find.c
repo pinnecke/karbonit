@@ -701,7 +701,7 @@ static void result_from_array(find *find, arr_it *it)
                         find->value.object->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
-                        find->value.string = item_get_string(&(it->item), CARBON_NULL_STRING);
+                        find->value.string = item_get_string(&(it->item), NULL_STRING);
                         break;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:
@@ -794,7 +794,7 @@ static void result_from_object(find *find, obj_it *it)
                         find->value.object->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
-                        find->value.string = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                        find->value.string = item_get_string(&(it->prop.value), NULL_STRING);
                         break;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:

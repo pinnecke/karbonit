@@ -152,7 +152,7 @@ bool internal_obj_it_tell(offset_t *key_off, offset_t *value_off, obj_it *it)
 
 string_field internal_obj_it_prop_name(obj_it *it)
 {
-        string_field ret = CARBON_NULL_STRING;
+        string_field ret = NULL_STRING;
         if (LIKELY(it != NULL)) {
                 ret.len = it->field.key.name_len;
                 ret.str = it->field.key.name;

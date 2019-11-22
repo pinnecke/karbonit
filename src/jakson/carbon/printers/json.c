@@ -349,7 +349,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
                         case FIELD_STRING: {
-                                string_field string = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                string_field string = item_get_string(&(it->prop.value), NULL_STRING);
                                 __carbon_print_json_string(str_buf, string.str, string.len);
                         } break;
                         case FIELD_NUMBER_U8:

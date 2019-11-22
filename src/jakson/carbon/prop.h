@@ -24,7 +24,7 @@ typedef struct prop
 } prop;
 
 #define prop_get_name(prop)                                                                                     \
-        (prop ? (prop)->key : CARBON_NULL_STRING)
+        (prop ? (prop)->key : NULL_STRING)
 
 #define prop_get_type(prop)                                                                                     \
         ((prop) ? item_get_type((prop)->value) : ITEM_UNDEF)

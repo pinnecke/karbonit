@@ -604,7 +604,7 @@ static bool print_array_objects(FILE *file, const char *type_name,
                         fprintf(file, "\"Values\": [");
                         for (size_t array_idx = 0; array_idx < columnTable->values.num_elems; array_idx++) {
                                 switch (columnTable->type) {
-                                        case FIELD_NULL: {
+                                        case ARCHIVE_FIELD_NULL: {
                                                 const vec
                                                         *column = VECTOR_GET(&columnTable->values, array_idx,
                                                                           vec);
@@ -616,37 +616,37 @@ static bool print_array_objects(FILE *file, const char *type_name,
                                                 fprintf(file, "%s", column->num_elems > 1 ? "]" : "");
                                         }
                                                 break;
-                                        case FIELD_INT8: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_INT8: PRINT_COLUMN(file, columnTable, array_idx,
                                                                           archive_field_i8_t, "%d")
                                                 break;
-                                        case FIELD_INT16: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_INT16: PRINT_COLUMN(file, columnTable, array_idx,
                                                                            archive_field_i16_t, "%d")
                                                 break;
-                                        case FIELD_INT32: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_INT32: PRINT_COLUMN(file, columnTable, array_idx,
                                                                            archive_field_i32_t, "%d")
                                                 break;
-                                        case FIELD_INT64: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_INT64: PRINT_COLUMN(file, columnTable, array_idx,
                                                                            archive_field_i64_t, "%"
                                                                                    PRIi64)
                                                 break;
-                                        case FIELD_UINT8: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_UINT8: PRINT_COLUMN(file, columnTable, array_idx,
                                                                            archive_field_u8_t, "%d")
                                                 break;
-                                        case FIELD_UINT16: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_UINT16: PRINT_COLUMN(file, columnTable, array_idx,
                                                                             archive_field_u16_t, "%d")
                                                 break;
-                                        case FIELD_UINT32: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_UINT32: PRINT_COLUMN(file, columnTable, array_idx,
                                                                             archive_field_u32_t, "%d")
                                                 break;
-                                        case FIELD_UINT64: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_UINT64: PRINT_COLUMN(file, columnTable, array_idx,
                                                                             archive_field_u64_t, "%"
                                                                                     PRIu64)
                                                 break;
-                                        case FIELD_FLOAT: PRINT_COLUMN(file, columnTable, array_idx,
+                                        case ARCHIVE_FIELD_FLOAT: PRINT_COLUMN(file, columnTable, array_idx,
                                                                            archive_field_number_t,
                                                                            "%f")
                                                 break;
-                                        case FIELD_STRING: {
+                                        case ARCHIVE_FIELD_STRING: {
                                                 const vec
                                                         *column = VECTOR_GET(&columnTable->values, array_idx,
                                                                           vec);
@@ -665,7 +665,7 @@ static bool print_array_objects(FILE *file, const char *type_name,
                                                 fprintf(file, "%s", column->num_elems > 1 ? "]" : "");
                                         }
                                                 break;
-                                        case FIELD_OBJECT: {
+                                        case ARCHIVE_FIELD_OBJECT: {
                                                 // column_doc_obj *doc = VECTOR_GET(&column->values, valueIdx, column_doc_obj);
                                                 //  _column_doc_print_object(file, doc, encode);
                                                 const vec
@@ -905,7 +905,7 @@ static void object_array_key_columns_drop(vec ofType(column_doc_group) *columns)
 
                                 vec ofType(<T>)
                                         *values_for_index = VECTOR_GET(values_for_indicies, k, vec);
-                                if (column->type == FIELD_OBJECT) {
+                                if (column->type == ARCHIVE_FIELD_OBJECT) {
                                         for (size_t l = 0; l < values_for_index->num_elems; l++) {
                                                 column_doc_obj *nested_object =
                                                         VECTOR_GET(values_for_index, l, column_doc_obj);
@@ -926,29 +926,29 @@ static void object_array_key_columns_drop(vec ofType(column_doc_group) *columns)
 static const char *get_type_name(archive_field_e type)
 {
         switch (type) {
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         return "Null";
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         return "Int8";
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         return "Int16";
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         return "Int32";
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         return "Int64";
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         return "UInt8";
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         return "UInt16";
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         return "UInt32";
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         return "UInt64";
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         return "Real";
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         return "String";
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         return "Object";
                 default: {
                         error(ERR_NOTYPE, NULL);
@@ -1014,28 +1014,28 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
         bool is_null_by_def = entry->values.num_elems == 0;
         u32 num_elements = (u32) entry->values.num_elems;
 
-        archive_field_e entryType = is_null_by_def ? FIELD_NULL : entry->type;
+        archive_field_e entryType = is_null_by_def ? ARCHIVE_FIELD_NULL : entry->type;
         num_elements = is_null_by_def ? 1 : num_elements;
 
         switch (entryType) {
-                case FIELD_NULL: {
+                case ARCHIVE_FIELD_NULL: {
                         vector_push(values_for_entry, &num_elements, 1);
                 }
                         break;
-                case FIELD_BOOLEAN:
-                case FIELD_INT8:
-                case FIELD_INT16:
-                case FIELD_INT32:
-                case FIELD_INT64:
-                case FIELD_UINT8:
-                case FIELD_UINT16:
-                case FIELD_UINT32:
-                case FIELD_UINT64:
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_INT8:
+                case ARCHIVE_FIELD_INT16:
+                case ARCHIVE_FIELD_INT32:
+                case ARCHIVE_FIELD_INT64:
+                case ARCHIVE_FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT64:
+                case ARCHIVE_FIELD_FLOAT:
                         JAK_ASSERT(!is_null_by_def);
                         vector_push(values_for_entry, entry->values.base, num_elements);
                         break;
-                case FIELD_STRING: {
+                case ARCHIVE_FIELD_STRING: {
                         JAK_ASSERT(!is_null_by_def);
                         char **strings = VECTOR_ALL(&entry->values, char *);
                         archive_field_sid_t *string_ids;
@@ -1045,7 +1045,7 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
                         //string_dict_free(encode, strings);
                 }
                         break;
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         JAK_ASSERT(!is_null_by_def);
 
                         archive_field_sid_t *array_key;
@@ -1162,50 +1162,50 @@ object_put_primitive(column_doc_obj *columndoc, const doc_entries *entry,
                      string_dict *dic, const archive_field_sid_t *key_id)
 {
         switch (entry->type) {
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         vector_push(&columndoc->null_prop_keys, key_id, 1);
                         break;
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         vector_push(&columndoc->bool_prop_keys, key_id, 1);
                         vector_push(&columndoc->bool_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         vector_push(&columndoc->int8_prop_keys, key_id, 1);
                         vector_push(&columndoc->int8_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         vector_push(&columndoc->int16_prop_keys, key_id, 1);
                         vector_push(&columndoc->int16_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         vector_push(&columndoc->int32_prop_keys, key_id, 1);
                         vector_push(&columndoc->int32_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         vector_push(&columndoc->int64_prop_keys, key_id, 1);
                         vector_push(&columndoc->int64_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         vector_push(&columndoc->uint8_prop_keys, key_id, 1);
                         vector_push(&columndoc->uint8_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         vector_push(&columndoc->uint16_prop_keys, key_id, 1);
                         vector_push(&columndoc->uint16_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         vector_push(&columndoc->uin32_prop_keys, key_id, 1);
                         vector_push(&columndoc->uint32_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         vector_push(&columndoc->uint64_prop_keys, key_id, 1);
                         vector_push(&columndoc->uint64_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         vector_push(&columndoc->float_prop_keys, key_id, 1);
                         vector_push(&columndoc->float_prop_vals, entry->values.base, 1);
                         break;
-                case FIELD_STRING: {
+                case ARCHIVE_FIELD_STRING: {
                         archive_field_sid_t *value;
                         string_dict_locate_fast(&value, dic, (char *const *) entry->values.base, 1);
                         vector_push(&columndoc->string_prop_keys, key_id, 1);
@@ -1213,7 +1213,7 @@ object_put_primitive(column_doc_obj *columndoc, const doc_entries *entry,
                         string_dict_free(dic, value);
                 }
                         break;
-                case FIELD_OBJECT: {
+                case ARCHIVE_FIELD_OBJECT: {
                         column_doc_obj template, *nested_object;
                         size_t position = vector_length(&columndoc->obj_prop_keys);
                         vector_push(&columndoc->obj_prop_keys, key_id, 1);
@@ -1253,12 +1253,12 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
         u32 num_elements = (u32) vector_length(&entry->values);
 
         switch (entry->type) {
-                case FIELD_NULL: {
+                case ARCHIVE_FIELD_NULL: {
                         vector_push(&model->null_array_prop_vals, &num_elements, 1);
                         vector_push(&model->null_array_prop_keys, key_id, 1);
                 }
                         break;
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         object_push_array(&model->bool_array_prop_vals,
                                           sizeof(archive_field_boolean_t),
                                           num_elements,
@@ -1266,7 +1266,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->bool_array_prop_keys);
                         break;
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         object_push_array(&model->int8_array_prop_vals,
                                           sizeof(archive_field_i8_t),
                                           num_elements,
@@ -1274,7 +1274,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->int8_array_prop_keys);
                         break;
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         object_push_array(&model->int16_array_prop_vals,
                                           sizeof(archive_field_i16_t),
                                           num_elements,
@@ -1282,7 +1282,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->int16_array_prop_keys);
                         break;
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         object_push_array(&model->int32_array_prop_vals,
                                           sizeof(archive_field_i32_t),
                                           num_elements,
@@ -1290,7 +1290,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->int32_array_prop_keys);
                         break;
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         object_push_array(&model->int64_array_prop_vals,
                                           sizeof(archive_field_i64_t),
                                           num_elements,
@@ -1298,7 +1298,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->int64_array_prop_keys);
                         break;
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         object_push_array(&model->uint8_array_prop_vals,
                                           sizeof(archive_field_u8_t),
                                           num_elements,
@@ -1306,7 +1306,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->uint8_array_prop_keys);
                         break;
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         object_push_array(&model->uint16_array_prop_vals,
                                           sizeof(archive_field_u16_t),
                                           num_elements,
@@ -1314,7 +1314,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->uint16_array_prop_keys);
                         break;
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         object_push_array(&model->uint32_array_prop_vals,
                                           sizeof(archive_field_u32_t),
                                           num_elements,
@@ -1322,7 +1322,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->uint32_array_prop_keys);
                         break;
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         object_push_array(&model->ui64_array_prop_vals,
                                           sizeof(archive_field_u64_t),
                                           num_elements,
@@ -1330,7 +1330,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->uint64_array_prop_keys);
                         break;
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         object_push_array(&model->float_array_prop_vals,
                                           sizeof(archive_field_number_t),
                                           num_elements,
@@ -1338,7 +1338,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                                           *key_id,
                                           &model->float_array_prop_keys);
                         break;
-                case FIELD_STRING: {
+                case ARCHIVE_FIELD_STRING: {
                         const char **strings = VECTOR_ALL(&entry->values, const char *);
                         archive_field_sid_t *string_ids;
                         string_dict_locate_fast(&string_ids, dic, (char *const *) strings, num_elements);
@@ -1351,7 +1351,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                         string_dict_free(dic, string_ids);
                 }
                         break;
-                case FIELD_OBJECT: {
+                case ARCHIVE_FIELD_OBJECT: {
                         archive_field_sid_t *nested_object_key_name;
                         for (u32 array_idx = 0; array_idx < num_elements; array_idx++) {
                                 const doc_obj *object = VECTOR_GET(&entry->values, array_idx,

@@ -143,49 +143,49 @@ encoded_doc_add_prop_##value_name##_decoded(encoded_doc *doc, const char *key, b
     return true;                                                                                                       \
 }
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i8_t, FIELD_INT8, int8)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i8_t, ARCHIVE_FIELD_INT8, int8)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i16_t, FIELD_INT16, int16)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i16_t, ARCHIVE_FIELD_INT16, int16)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i32_t, FIELD_INT32, int32)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i32_t, ARCHIVE_FIELD_INT32, int32)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i64_t, FIELD_INT64, int64)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_i64_t, ARCHIVE_FIELD_INT64, int64)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u8_t, FIELD_UINT8, uint8)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u8_t, ARCHIVE_FIELD_UINT8, uint8)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u16_t, FIELD_UINT16, uint16)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u16_t, ARCHIVE_FIELD_UINT16, uint16)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u32_t, FIELD_UINT32, uint32)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u32_t, ARCHIVE_FIELD_UINT32, uint32)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u64_t, FIELD_UINT64, uint64)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_u64_t, ARCHIVE_FIELD_UINT64, uint64)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_number_t, FIELD_FLOAT, number)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_number_t, ARCHIVE_FIELD_FLOAT, number)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_boolean_t, FIELD_BOOLEAN, boolean)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_boolean_t, ARCHIVE_FIELD_BOOLEAN, boolean)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_sid_t, FIELD_STRING, string)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC(archive_field_sid_t, ARCHIVE_FIELD_STRING, string)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i8_t, FIELD_INT8, int8)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i8_t, ARCHIVE_FIELD_INT8, int8)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i16_t, FIELD_INT16, int16)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i16_t, ARCHIVE_FIELD_INT16, int16)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i32_t, FIELD_INT32, int32)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i32_t, ARCHIVE_FIELD_INT32, int32)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i64_t, FIELD_INT64, int64)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_i64_t, ARCHIVE_FIELD_INT64, int64)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u8_t, FIELD_UINT8, uint8)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u8_t, ARCHIVE_FIELD_UINT8, uint8)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u16_t, FIELD_UINT16, uint16)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u16_t, ARCHIVE_FIELD_UINT16, uint16)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u32_t, FIELD_UINT32, uint32)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u32_t, ARCHIVE_FIELD_UINT32, uint32)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u64_t, FIELD_UINT64, uint64)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_u64_t, ARCHIVE_FIELD_UINT64, uint64)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_number_t, FIELD_FLOAT, number)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_number_t, ARCHIVE_FIELD_FLOAT, number)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_boolean_t, FIELD_BOOLEAN, boolean)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_boolean_t, ARCHIVE_FIELD_BOOLEAN, boolean)
 
-DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_sid_t, FIELD_STRING, string)
+DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_sid_t, ARCHIVE_FIELD_STRING, string)
 
 bool encoded_doc_add_prop_string_decoded_string_value_decoded(encoded_doc *doc, const char *key,
                                                               const char *value)
@@ -194,7 +194,7 @@ bool encoded_doc_add_prop_string_decoded_string_value_decoded(encoded_doc *doc, 
         prop->header.context = doc;
         prop->header.key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
-        prop->header.type = FIELD_STRING;
+        prop->header.type = ARCHIVE_FIELD_STRING;
         prop->value.string = strdup(value);
         return true;
 }
@@ -205,7 +205,7 @@ bool encoded_doc_add_prop_null(encoded_doc *doc, archive_field_sid_t key)
         prop->header.context = doc;
         prop->header.key_type = STRING_ENCODED;
         prop->header.key.key_id = key;
-        prop->header.type = FIELD_NULL;
+        prop->header.type = ARCHIVE_FIELD_NULL;
         prop->value.builtin.null = 1;
         return true;
 }
@@ -216,7 +216,7 @@ bool encoded_doc_add_prop_null_decoded(encoded_doc *doc, const char *key)
         prop->header.context = doc;
         prop->header.key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
-        prop->header.type = FIELD_NULL;
+        prop->header.type = ARCHIVE_FIELD_NULL;
         prop->value.builtin.null = 1;
         return true;
 }
@@ -228,7 +228,7 @@ encoded_doc_add_prop_object(encoded_doc *doc, archive_field_sid_t key, encoded_d
         prop->header.context = doc;
         prop->header.key_type = STRING_ENCODED;
         prop->header.key.key_id = key;
-        prop->header.type = FIELD_OBJECT;
+        prop->header.type = ARCHIVE_FIELD_OBJECT;
         prop->value.builtin.object = value->object_id;
         return true;
 }
@@ -240,7 +240,7 @@ bool encoded_doc_add_prop_object_decoded(encoded_doc *doc, const char *key,
         prop->header.context = doc;
         prop->header.key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
-        prop->header.type = FIELD_OBJECT;
+        prop->header.type = ARCHIVE_FIELD_OBJECT;
         prop->value.builtin.object = value->object_id;
         return true;
 }
@@ -275,57 +275,57 @@ encoded_doc_add_prop_array_##name##_decoded(encoded_doc *doc,                   
     return true;                                                                                                       \
 }
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int8, FIELD_INT8)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int8, ARCHIVE_FIELD_INT8)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int16, FIELD_INT16)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int16, ARCHIVE_FIELD_INT16)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int32, FIELD_INT32)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int32, ARCHIVE_FIELD_INT32)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int64, FIELD_INT64)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(int64, ARCHIVE_FIELD_INT64)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint8, FIELD_UINT8)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint8, ARCHIVE_FIELD_UINT8)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint16, FIELD_UINT16)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint16, ARCHIVE_FIELD_UINT16)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint32, FIELD_UINT32)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint32, ARCHIVE_FIELD_UINT32)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint64, FIELD_UINT64)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(uint64, ARCHIVE_FIELD_UINT64)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(number, FIELD_FLOAT)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(number, ARCHIVE_FIELD_FLOAT)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(boolean, FIELD_BOOLEAN)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(boolean, ARCHIVE_FIELD_BOOLEAN)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(string, FIELD_STRING)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(string, ARCHIVE_FIELD_STRING)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(null, FIELD_NULL)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(null, ARCHIVE_FIELD_NULL)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(object, FIELD_OBJECT)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE(object, ARCHIVE_FIELD_OBJECT)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int8, FIELD_INT8)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int8, ARCHIVE_FIELD_INT8)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int16, FIELD_INT16)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int16, ARCHIVE_FIELD_INT16)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int32, FIELD_INT32)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int32, ARCHIVE_FIELD_INT32)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int64, FIELD_INT64)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(int64, ARCHIVE_FIELD_INT64)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint8, FIELD_UINT8)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint8, ARCHIVE_FIELD_UINT8)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint16, FIELD_UINT16)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint16, ARCHIVE_FIELD_UINT16)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint32, FIELD_UINT32)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint32, ARCHIVE_FIELD_UINT32)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint64, FIELD_UINT64)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(uint64, ARCHIVE_FIELD_UINT64)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(number, FIELD_FLOAT)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(number, ARCHIVE_FIELD_FLOAT)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(boolean, FIELD_BOOLEAN)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(boolean, ARCHIVE_FIELD_BOOLEAN)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(string, FIELD_STRING)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(string, ARCHIVE_FIELD_STRING)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(null, FIELD_NULL)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(null, ARCHIVE_FIELD_NULL)
 
-DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(object, FIELD_OBJECT)
+DECALRE_ENCODED_DOC_ADD_PROP_ARRAY_TYPE_DECODED(object, ARCHIVE_FIELD_OBJECT)
 
 #define DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(name, built_in_type, basic_type)                                    \
 bool                                                                                                    \
@@ -377,53 +377,53 @@ encoded_doc_array_push_##name##_decoded(encoded_doc *doc, const char *key,      
     return true;                                                                                                       \
 }
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int8, archive_field_i8_t, FIELD_INT8)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int8, archive_field_i8_t, ARCHIVE_FIELD_INT8)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int16, archive_field_i16_t, FIELD_INT16)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int16, archive_field_i16_t, ARCHIVE_FIELD_INT16)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int32, archive_field_i32_t, FIELD_INT32)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int32, archive_field_i32_t, ARCHIVE_FIELD_INT32)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int64, archive_field_i64_t, FIELD_INT64)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(int64, archive_field_i64_t, ARCHIVE_FIELD_INT64)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint8, archive_field_u8_t, FIELD_UINT8)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint8, archive_field_u8_t, ARCHIVE_FIELD_UINT8)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint16, archive_field_u16_t, FIELD_UINT16)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint16, archive_field_u16_t, ARCHIVE_FIELD_UINT16)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint32, archive_field_u32_t, FIELD_UINT32)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint32, archive_field_u32_t, ARCHIVE_FIELD_UINT32)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint64, archive_field_u64_t, FIELD_UINT64)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(uint64, archive_field_u64_t, ARCHIVE_FIELD_UINT64)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(number, archive_field_number_t, FIELD_FLOAT)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(number, archive_field_number_t, ARCHIVE_FIELD_FLOAT)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(boolean, archive_field_boolean_t, FIELD_BOOLEAN)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(boolean, archive_field_boolean_t, ARCHIVE_FIELD_BOOLEAN)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(string, archive_field_sid_t, FIELD_STRING)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(string, archive_field_sid_t, ARCHIVE_FIELD_STRING)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(null, archive_field_u32_t, FIELD_NULL)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE(null, archive_field_u32_t, ARCHIVE_FIELD_NULL)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int8, archive_field_i8_t, FIELD_INT8)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int8, archive_field_i8_t, ARCHIVE_FIELD_INT8)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int16, archive_field_i16_t, FIELD_INT16)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int16, archive_field_i16_t, ARCHIVE_FIELD_INT16)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int32, archive_field_i32_t, FIELD_INT32)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int32, archive_field_i32_t, ARCHIVE_FIELD_INT32)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int64, archive_field_i64_t, FIELD_INT64)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(int64, archive_field_i64_t, ARCHIVE_FIELD_INT64)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint8, archive_field_u8_t, FIELD_UINT8)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint8, archive_field_u8_t, ARCHIVE_FIELD_UINT8)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint16, archive_field_u16_t, FIELD_UINT16)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint16, archive_field_u16_t, ARCHIVE_FIELD_UINT16)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint32, archive_field_u32_t, FIELD_UINT32)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint32, archive_field_u32_t, ARCHIVE_FIELD_UINT32)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint64, archive_field_u64_t, FIELD_UINT64)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(uint64, archive_field_u64_t, ARCHIVE_FIELD_UINT64)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(number, archive_field_number_t, FIELD_FLOAT)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(number, archive_field_number_t, ARCHIVE_FIELD_FLOAT)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(boolean, archive_field_boolean_t, FIELD_BOOLEAN)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(boolean, archive_field_boolean_t, ARCHIVE_FIELD_BOOLEAN)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(string, archive_field_sid_t, FIELD_STRING)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(string, archive_field_sid_t, ARCHIVE_FIELD_STRING)
 
-DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(null, archive_field_u32_t, FIELD_NULL)
+DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(null, archive_field_u32_t, ARCHIVE_FIELD_NULL)
 //
 //bool
 //encoded_doc_array_push_null(encoded_doc *doc, archive_field_sid_t key, u32 how_many)
@@ -434,7 +434,7 @@ DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(null, archive_field_u32_t, FIELD_NUL
 //    encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, *prop_pos,
 //                                                               encoded_doc_prop_array);
 //    error_if_and_return(array == NULL, &doc->err, ERR_INTERNALERR);
-//    error_if_and_return(array->header.type != FIELD_NULL, &doc->err, ERR_TYPEMISMATCH);
+//    error_if_and_return(array->header.type != ARCHIVE_FIELD_NULL, &doc->err, ERR_TYPEMISMATCH);
 //    encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);
 //    value->num_nulls = how_many;
 //    return true;
@@ -454,7 +454,7 @@ bool encoded_doc_array_push_object(encoded_doc *doc, archive_field_sid_t key, un
         encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, *prop_pos,
                                                            encoded_doc_prop_array);
         error_if_and_return(array == NULL, ERR_INTERNALERR, NULL);
-        error_if_and_return(array->header.type != FIELD_OBJECT, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(array->header.type != ARCHIVE_FIELD_OBJECT, ERR_TYPEMISMATCH, NULL);
         encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);
         value->object = id;
         return true;
@@ -481,7 +481,7 @@ bool encoded_doc_array_push_object_decoded(encoded_doc *doc, const char *key, un
         encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, prop_pos,
                                                            encoded_doc_prop_array);
         error_if_and_return(array == NULL, ERR_INTERNALERR, NULL);
-        error_if_and_return(array->header.type != FIELD_OBJECT, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(array->header.type != ARCHIVE_FIELD_OBJECT, ERR_TYPEMISMATCH, NULL);
         encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);
         value->object = id;
         return true;
@@ -509,34 +509,34 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
 
                 fprintf(file, "\"%s\": ", key_str);
                 switch (prop->header.type) {
-                        case FIELD_INT8:
+                        case ARCHIVE_FIELD_INT8:
                                 fprintf(file, "%" PRIi8, prop->value.builtin.int8);
                                 break;
-                        case FIELD_INT16:
+                        case ARCHIVE_FIELD_INT16:
                                 fprintf(file, "%" PRIi16, prop->value.builtin.int16);
                                 break;
-                        case FIELD_INT32:
+                        case ARCHIVE_FIELD_INT32:
                                 fprintf(file, "%" PRIi32, prop->value.builtin.int32);
                                 break;
-                        case FIELD_INT64:
+                        case ARCHIVE_FIELD_INT64:
                                 fprintf(file, "%" PRIi64, prop->value.builtin.int64);
                                 break;
-                        case FIELD_UINT8:
+                        case ARCHIVE_FIELD_UINT8:
                                 fprintf(file, "%" PRIu8, prop->value.builtin.uint8);
                                 break;
-                        case FIELD_UINT16:
+                        case ARCHIVE_FIELD_UINT16:
                                 fprintf(file, "%" PRIu16, prop->value.builtin.uint16);
                                 break;
-                        case FIELD_UINT32:
+                        case ARCHIVE_FIELD_UINT32:
                                 fprintf(file, "%" PRIu32, prop->value.builtin.uint32);
                                 break;
-                        case FIELD_UINT64:
+                        case ARCHIVE_FIELD_UINT64:
                                 fprintf(file, "%" PRIu64, prop->value.builtin.uint64);
                                 break;
-                        case FIELD_FLOAT:
+                        case ARCHIVE_FIELD_FLOAT:
                                 fprintf(file, "%.2f", ceilf(prop->value.builtin.number * 100) / 100);
                                 break;
-                        case FIELD_STRING: {
+                        case ARCHIVE_FIELD_STRING: {
                                 if (prop->header.value_type == VALUE_BUILTIN) {
                                         char *value_str = query_fetch_string_by_id(&query,
                                                                                        prop->value.builtin.string);
@@ -547,13 +547,13 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 }
                         }
                                 break;
-                        case FIELD_BOOLEAN:
+                        case ARCHIVE_FIELD_BOOLEAN:
                                 fprintf(file, "\"%s\"", prop->value.builtin.boolean ? "true" : "false");
                                 break;
-                        case FIELD_NULL:
+                        case ARCHIVE_FIELD_NULL:
                                 fprintf(file, "null");
                                 break;
-                        case FIELD_OBJECT: {
+                        case ARCHIVE_FIELD_OBJECT: {
                                 encoded_doc *nested =
                                         encoded_doc_collection_get_or_append(doc->context, prop->value.builtin.object);
                                 doc_print_pretty(file, nested, level + 1);
@@ -592,7 +592,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                 }
 
                 switch (prop->header.type) {
-                        case FIELD_INT8:
+                        case ARCHIVE_FIELD_INT8:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_i8_t value = (VECTOR_GET(&prop->values, k,
                                                                                 encoded_doc_value_u))->int8;
@@ -606,7 +606,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_INT16:
+                        case ARCHIVE_FIELD_INT16:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_i16_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->int16;
@@ -620,7 +620,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_INT32:
+                        case ARCHIVE_FIELD_INT32:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_i32_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->int32;
@@ -634,7 +634,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_INT64:
+                        case ARCHIVE_FIELD_INT64:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_i64_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->int64;
@@ -648,7 +648,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_UINT8:
+                        case ARCHIVE_FIELD_UINT8:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_u8_t value = (VECTOR_GET(&prop->values, k,
                                                                                 encoded_doc_value_u))->uint8;
@@ -662,7 +662,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_UINT16:
+                        case ARCHIVE_FIELD_UINT16:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_u16_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->uint16;
@@ -676,7 +676,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_UINT32:
+                        case ARCHIVE_FIELD_UINT32:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_u32_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->uint32;
@@ -690,7 +690,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_UINT64:
+                        case ARCHIVE_FIELD_UINT64:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_u64_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->uint64;
@@ -704,7 +704,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_FLOAT:
+                        case ARCHIVE_FIELD_FLOAT:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_number_t value = (VECTOR_GET(&prop->values, k,
                                                                                     encoded_doc_value_u))->number;
@@ -718,7 +718,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_STRING: {
+                        case ARCHIVE_FIELD_STRING: {
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_sid_t value = (VECTOR_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->string;
@@ -735,7 +735,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 }
                         }
                                 break;
-                        case FIELD_BOOLEAN:
+                        case ARCHIVE_FIELD_BOOLEAN:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_boolean_t
                                                 value = (VECTOR_GET(&prop->values, k, encoded_doc_value_u))->boolean;
@@ -749,12 +749,12 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                         }
                                 }
                                 break;
-                        case FIELD_NULL:
+                        case ARCHIVE_FIELD_NULL:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
                                 }
                                 break;
-                        case FIELD_OBJECT: {
+                        case ARCHIVE_FIELD_OBJECT: {
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         unique_id_t nested_oid = (VECTOR_GET(&prop->values, k,
                                                                               encoded_doc_value_u))->object;

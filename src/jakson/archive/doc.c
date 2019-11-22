@@ -212,10 +212,10 @@ bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_f
 bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 {
         switch (entry->type) {
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         vector_push(&entry->values, &VALUE_NULL, 1);
                         break;
-                case FIELD_STRING: {
+                case ARCHIVE_FIELD_STRING: {
                         char *string = value ? strdup((char *) value) : NULL;
                         vector_push(&entry->context->doc->context->values, &string, 1);
                         vector_push(&entry->values, &string, 1);
@@ -230,7 +230,7 @@ bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 
 bool doc_obj_push_object(doc_obj **out, doc_entries *entry)
 {
-        JAK_ASSERT(entry->type == FIELD_OBJECT);
+        JAK_ASSERT(entry->type == ARCHIVE_FIELD_OBJECT);
 
         doc_obj objectModel;
 
@@ -249,34 +249,34 @@ value_type_for_json_number(bool *success, const json_number *number)
         *success = true;
         switch (number->value_type) {
                 case JSON_NUMBER_FLOAT:
-                        return FIELD_FLOAT;
+                        return ARCHIVE_FIELD_FLOAT;
                 case JSON_NUMBER_UNSIGNED: {
                         u64 test = number->value.unsigned_integer;
                         if (test <= LIMITS_UINT8_MAX) {
-                                return FIELD_UINT8;
+                                return ARCHIVE_FIELD_UINT8;
                         } else if (test <= LIMITS_UINT16_MAX) {
-                                return FIELD_UINT16;
+                                return ARCHIVE_FIELD_UINT16;
                         } else if (test <= LIMITS_UINT32_MAX) {
-                                return FIELD_UINT32;
+                                return ARCHIVE_FIELD_UINT32;
                         } else {
-                                return FIELD_UINT64;
+                                return ARCHIVE_FIELD_UINT64;
                         }
                 }
                 case JSON_NUMBER_SIGNED: {
                         i64 test = number->value.signed_integer;
                         if (test >= LIMITS_INT8_MIN && test <= LIMITS_INT8_MAX) {
-                                return FIELD_INT8;
+                                return ARCHIVE_FIELD_INT8;
                         } else if (test >= LIMITS_INT16_MIN && test <= LIMITS_INT16_MAX) {
-                                return FIELD_INT16;
+                                return ARCHIVE_FIELD_INT16;
                         } else if (test >= LIMITS_INT32_MIN && test <= LIMITS_INT32_MAX) {
-                                return FIELD_INT32;
+                                return ARCHIVE_FIELD_INT32;
                         } else {
-                                return FIELD_INT64;
+                                return ARCHIVE_FIELD_INT64;
                         }
                 }
                 default: error(ERR_NOJSONNUMBERT, NULL);
                         *success = false;
-                        return FIELD_INT8;
+                        return ARCHIVE_FIELD_INT8;
         }
 }
 
@@ -284,7 +284,7 @@ static void
 import_json_object_string_prop(doc_obj *target, const char *key, const json_string *string)
 {
         doc_entries *entry;
-        doc_obj_add_key(&entry, target, key, FIELD_STRING);
+        doc_obj_add_key(&entry, target, key, ARCHIVE_FIELD_STRING);
         doc_obj_push_primtive(entry, string->value);
 }
 
@@ -305,14 +305,14 @@ static bool import_json_object_number_prop(doc_obj *target, const char *key,
 static void import_json_object_bool_prop(doc_obj *target, const char *key, archive_field_boolean_t value)
 {
         doc_entries *entry;
-        doc_obj_add_key(&entry, target, key, FIELD_BOOLEAN);
+        doc_obj_add_key(&entry, target, key, ARCHIVE_FIELD_BOOLEAN);
         doc_obj_push_primtive(entry, &value);
 }
 
 static void import_json_object_null_prop(doc_obj *target, const char *key)
 {
         doc_entries *entry;
-        doc_obj_add_key(&entry, target, key, FIELD_NULL);
+        doc_obj_add_key(&entry, target, key, ARCHIVE_FIELD_NULL);
         doc_obj_push_primtive(entry, NULL);
 }
 
@@ -321,7 +321,7 @@ static bool import_json_object_object_prop(doc_obj *target, const char *key,
 {
         doc_entries *entry;
         doc_obj *nested_object = NULL;
-        doc_obj_add_key(&entry, target, key, FIELD_OBJECT);
+        doc_obj_add_key(&entry, target, key, ARCHIVE_FIELD_OBJECT);
         doc_obj_push_object(&nested_object, entry);
         return import_json_object(nested_object, object);
 }
@@ -345,14 +345,14 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
 
                 switch (array_data_type) {
                         case JSON_VALUE_OBJECT:
-                                field_type = FIELD_OBJECT;
+                                field_type = ARCHIVE_FIELD_OBJECT;
                                 break;
                         case JSON_VALUE_STRING:
-                                field_type = FIELD_STRING;
+                                field_type = ARCHIVE_FIELD_STRING;
                                 break;
                         case JSON_VALUE_NUMBER: {
                                 /** find smallest fitting physical number type */
-                                archive_field_e array_number_type = FIELD_NULL;
+                                archive_field_e array_number_type = ARCHIVE_FIELD_NULL;
                                 for (size_t i = 0; i < num_elements; i++) {
                                         const json_element
                                                 *element = VECTOR_GET(&array->elements.elements, i,
@@ -367,68 +367,68 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                 if (!success) {
                                                         return false;
                                                 }
-                                                JAK_ASSERT(element_number_type == FIELD_INT8 ||
-                                                           element_number_type == FIELD_INT16
-                                                           || element_number_type == FIELD_INT32
-                                                           || element_number_type == FIELD_INT64
-                                                           || element_number_type == FIELD_UINT8
-                                                           || element_number_type == FIELD_UINT16
-                                                           || element_number_type == FIELD_UINT32
-                                                           || element_number_type == FIELD_UINT64
-                                                           || element_number_type == FIELD_FLOAT);
-                                                if (UNLIKELY(array_number_type == FIELD_NULL)) {
+                                                JAK_ASSERT(element_number_type == ARCHIVE_FIELD_INT8 ||
+                                                           element_number_type == ARCHIVE_FIELD_INT16
+                                                           || element_number_type == ARCHIVE_FIELD_INT32
+                                                           || element_number_type == ARCHIVE_FIELD_INT64
+                                                           || element_number_type == ARCHIVE_FIELD_UINT8
+                                                           || element_number_type == ARCHIVE_FIELD_UINT16
+                                                           || element_number_type == ARCHIVE_FIELD_UINT32
+                                                           || element_number_type == ARCHIVE_FIELD_UINT64
+                                                           || element_number_type == ARCHIVE_FIELD_FLOAT);
+                                                if (UNLIKELY(array_number_type == ARCHIVE_FIELD_NULL)) {
                                                         array_number_type = element_number_type;
                                                 } else {
-                                                        if (array_number_type == FIELD_INT8) {
+                                                        if (array_number_type == ARCHIVE_FIELD_INT8) {
                                                                 array_number_type = element_number_type;
-                                                        } else if (array_number_type == FIELD_INT16) {
-                                                                if (element_number_type != FIELD_INT8) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_INT16) {
+                                                                if (element_number_type != ARCHIVE_FIELD_INT8) {
                                                                         array_number_type = element_number_type;
                                                                 }
-                                                        } else if (array_number_type == FIELD_INT32) {
-                                                                if (element_number_type != FIELD_INT8
-                                                                    && element_number_type != FIELD_INT16) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_INT32) {
+                                                                if (element_number_type != ARCHIVE_FIELD_INT8
+                                                                    && element_number_type != ARCHIVE_FIELD_INT16) {
                                                                         array_number_type = element_number_type;
                                                                 }
-                                                        } else if (array_number_type == FIELD_INT64) {
-                                                                if (element_number_type != FIELD_INT8
-                                                                    && element_number_type != FIELD_INT16
-                                                                    && element_number_type != FIELD_INT32) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_INT64) {
+                                                                if (element_number_type != ARCHIVE_FIELD_INT8
+                                                                    && element_number_type != ARCHIVE_FIELD_INT16
+                                                                    && element_number_type != ARCHIVE_FIELD_INT32) {
                                                                         array_number_type = element_number_type;
                                                                 }
-                                                        } else if (array_number_type == FIELD_UINT8) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_UINT8) {
                                                                 array_number_type = element_number_type;
-                                                        } else if (array_number_type == FIELD_UINT16) {
-                                                                if (element_number_type != FIELD_UINT16) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_UINT16) {
+                                                                if (element_number_type != ARCHIVE_FIELD_UINT16) {
                                                                         array_number_type = element_number_type;
                                                                 }
-                                                        } else if (array_number_type == FIELD_UINT32) {
-                                                                if (element_number_type != FIELD_UINT8
-                                                                    && element_number_type != FIELD_UINT16) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_UINT32) {
+                                                                if (element_number_type != ARCHIVE_FIELD_UINT8
+                                                                    && element_number_type != ARCHIVE_FIELD_UINT16) {
                                                                         array_number_type = element_number_type;
                                                                 }
-                                                        } else if (array_number_type == FIELD_UINT64) {
-                                                                if (element_number_type != FIELD_UINT8
-                                                                    && element_number_type != FIELD_UINT16
-                                                                    && element_number_type != FIELD_UINT32) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_UINT64) {
+                                                                if (element_number_type != ARCHIVE_FIELD_UINT8
+                                                                    && element_number_type != ARCHIVE_FIELD_UINT16
+                                                                    && element_number_type != ARCHIVE_FIELD_UINT32) {
                                                                         array_number_type = element_number_type;
                                                                 }
-                                                        } else if (array_number_type == FIELD_FLOAT) {
+                                                        } else if (array_number_type == ARCHIVE_FIELD_FLOAT) {
                                                                 break;
                                                         }
                                                 }
                                         }
                                 }
-                                JAK_ASSERT(array_number_type != FIELD_NULL);
+                                JAK_ASSERT(array_number_type != ARCHIVE_FIELD_NULL);
                                 field_type = array_number_type;
                         }
                                 break;
                         case JSON_VALUE_FALSE:
                         case JSON_VALUE_TRUE:
-                                field_type = FIELD_BOOLEAN;
+                                field_type = ARCHIVE_FIELD_BOOLEAN;
                                 break;
                         case JSON_VALUE_NULL:
-                                field_type = FIELD_NULL;
+                                field_type = ARCHIVE_FIELD_NULL;
                                 break;
                         case JSON_VALUE_ARRAY:
                                 return error(ERR_ERRINTERNAL, NULL) /** array type is illegal here */;
@@ -444,7 +444,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                         json_value_type_e ast_node_data_type = element->value.value_type;
 
                         switch (field_type) {
-                                case FIELD_OBJECT: {
+                                case ARCHIVE_FIELD_OBJECT: {
                                         doc_obj *nested_object = NULL;
                                         doc_obj_push_object(&nested_object, entry);
                                         if (ast_node_data_type != JSON_VALUE_NULL) {
@@ -455,7 +455,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                         }
                                 }
                                         break;
-                                case FIELD_STRING: {
+                                case ARCHIVE_FIELD_STRING: {
                                         JAK_ASSERT(ast_node_data_type == array_data_type ||
                                                    ast_node_data_type == JSON_VALUE_NULL);
                                         doc_obj_push_primtive(entry,
@@ -464,19 +464,19 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                                       .value.string->value);
                                 }
                                         break;
-                                case FIELD_INT8:
-                                case FIELD_INT16:
-                                case FIELD_INT32:
-                                case FIELD_INT64:
-                                case FIELD_UINT8:
-                                case FIELD_UINT16:
-                                case FIELD_UINT32:
-                                case FIELD_UINT64:
-                                case FIELD_FLOAT: {
+                                case ARCHIVE_FIELD_INT8:
+                                case ARCHIVE_FIELD_INT16:
+                                case ARCHIVE_FIELD_INT32:
+                                case ARCHIVE_FIELD_INT64:
+                                case ARCHIVE_FIELD_UINT8:
+                                case ARCHIVE_FIELD_UINT16:
+                                case ARCHIVE_FIELD_UINT32:
+                                case ARCHIVE_FIELD_UINT64:
+                                case ARCHIVE_FIELD_FLOAT: {
                                         JAK_ASSERT(ast_node_data_type == array_data_type ||
                                                    ast_node_data_type == JSON_VALUE_NULL);
                                         switch (field_type) {
-                                                case FIELD_INT8: {
+                                                case ARCHIVE_FIELD_INT8: {
                                                         archive_field_i8_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_INT8
                                                                                                       : (archive_field_i8_t) element
@@ -484,7 +484,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_INT16: {
+                                                case ARCHIVE_FIELD_INT16: {
                                                         archive_field_i16_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_INT16
                                                                                                       : (archive_field_i16_t) element
@@ -492,7 +492,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_INT32: {
+                                                case ARCHIVE_FIELD_INT32: {
                                                         archive_field_i32_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_INT32
                                                                                                       : (archive_field_i32_t) element
@@ -500,7 +500,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_INT64: {
+                                                case ARCHIVE_FIELD_INT64: {
                                                         archive_field_i64_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_INT64
                                                                                                       : (archive_field_i64_t) element
@@ -508,7 +508,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_UINT8: {
+                                                case ARCHIVE_FIELD_UINT8: {
                                                         archive_field_u8_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_UINT8
                                                                                                       : (archive_field_u8_t) element
@@ -516,7 +516,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_UINT16: {
+                                                case ARCHIVE_FIELD_UINT16: {
                                                         archive_field_u16_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_UINT16
                                                                                                       : (archive_field_u16_t) element
@@ -524,7 +524,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_UINT32: {
+                                                case ARCHIVE_FIELD_UINT32: {
                                                         archive_field_u32_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_UINT32
                                                                                                       : (archive_field_u32_t) element
@@ -532,7 +532,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_UINT64: {
+                                                case ARCHIVE_FIELD_UINT64: {
                                                         archive_field_u64_t value =
                                                                 ast_node_data_type == JSON_VALUE_NULL ? NULL_UINT64
                                                                                                       : (archive_field_u64_t) element
@@ -540,7 +540,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
-                                                case FIELD_FLOAT: {
+                                                case ARCHIVE_FIELD_FLOAT: {
                                                         archive_field_number_t value = NULL_FLOAT;
                                                         if (ast_node_data_type != JSON_VALUE_NULL) {
                                                                 json_number_type_e
@@ -564,7 +564,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                         }
                                 }
                                         break;
-                                case FIELD_BOOLEAN:
+                                case ARCHIVE_FIELD_BOOLEAN:
                                         if (LIKELY(ast_node_data_type == JSON_VALUE_TRUE
                                                        || ast_node_data_type == JSON_VALUE_FALSE)) {
                                                 archive_field_boolean_t value =
@@ -577,7 +577,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                 doc_obj_push_primtive(entry, &value);
                                         }
                                         break;
-                                case FIELD_NULL:
+                                case ARCHIVE_FIELD_NULL:
                                         JAK_ASSERT(ast_node_data_type == array_data_type);
                                         doc_obj_push_primtive(entry, NULL);
                                         break;
@@ -717,9 +717,9 @@ doc_obj *doc_entries_get_root(const doc_entries *partition)
 doc_entries *doc_bulk_new_entries(doc_bulk *dst)
 {
         doc_entries *partition = NULL;
-        doc *model = doc_bulk_new_doc(dst, FIELD_OBJECT);
+        doc *model = doc_bulk_new_doc(dst, ARCHIVE_FIELD_OBJECT);
         doc_obj *object = doc_bulk_new_obj(model);
-        doc_obj_add_key(&partition, object, "/", FIELD_OBJECT);
+        doc_obj_add_key(&partition, object, "/", ARCHIVE_FIELD_OBJECT);
         return partition;
 }
 
@@ -849,7 +849,7 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
                                 for (size_t k = 0; k < array_indices->num_elems; k++) {
                                         vec ofType(<T>)
                                                 *values_for_index = VECTOR_GET(values_for_indicies, k, vec);
-                                        if (column->type == FIELD_OBJECT) {
+                                        if (column->type == ARCHIVE_FIELD_OBJECT) {
                                                 for (size_t l = 0; l < values_for_index->num_elems; l++) {
                                                         column_doc_obj *nested_object =
                                                                 VECTOR_GET(values_for_index, l, column_doc_obj);
@@ -1054,30 +1054,30 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
         size_t max_num_elem = JAK_MIN(a->num_elems, b->num_elems);
 
         switch (func_arg->value_type) {
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         return (a->num_elems <= b->num_elems);
                         break;
-                case FIELD_BOOLEAN: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_boolean_t, a, b);
+                case ARCHIVE_FIELD_BOOLEAN: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_boolean_t, a, b);
                         break;
-                case FIELD_INT8: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i8_t, a, b);
+                case ARCHIVE_FIELD_INT8: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i8_t, a, b);
                         break;
-                case FIELD_INT16: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i16_t, a, b);
+                case ARCHIVE_FIELD_INT16: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i16_t, a, b);
                         break;
-                case FIELD_INT32: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i32_t, a, b);
+                case ARCHIVE_FIELD_INT32: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i32_t, a, b);
                         break;
-                case FIELD_INT64: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i64_t, a, b);
+                case ARCHIVE_FIELD_INT64: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_i64_t, a, b);
                         break;
-                case FIELD_UINT8: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u8_t, a, b);
+                case ARCHIVE_FIELD_UINT8: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u8_t, a, b);
                         break;
-                case FIELD_UINT16: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u16_t, a, b);
+                case ARCHIVE_FIELD_UINT16: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u16_t, a, b);
                         break;
-                case FIELD_UINT32: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u32_t, a, b);
+                case ARCHIVE_FIELD_UINT32: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u32_t, a, b);
                         break;
-                case FIELD_UINT64: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u64_t, a, b);
+                case ARCHIVE_FIELD_UINT64: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_u64_t, a, b);
                         break;
-                case FIELD_FLOAT: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_number_t, a, b);
+                case ARCHIVE_FIELD_FLOAT: ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, archive_field_number_t, a, b);
                         break;
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         for (size_t i = 0; i < max_num_elem; i++) {
                                 archive_field_sid_t o1 = *VECTOR_GET(a, i, archive_field_sid_t);
                                 archive_field_sid_t o2 = *VECTOR_GET(b, i, archive_field_sid_t);
@@ -1091,7 +1091,7 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
                                 }
                         }
                         return true;
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         return true;
                         break;
                 default:
@@ -1329,43 +1329,43 @@ static void create_typed_vector(doc_entries *entry)
 {
         size_t size;
         switch (entry->type) {
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         size = sizeof(field_null_t);
                         break;
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         size = sizeof(archive_field_boolean_t);
                         break;
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         size = sizeof(archive_field_i8_t);
                         break;
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         size = sizeof(archive_field_i16_t);
                         break;
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         size = sizeof(archive_field_i32_t);
                         break;
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         size = sizeof(archive_field_i64_t);
                         break;
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         size = sizeof(archive_field_u8_t);
                         break;
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         size = sizeof(archive_field_u16_t);
                         break;
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         size = sizeof(archive_field_u32_t);
                         break;
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         size = sizeof(archive_field_u64_t);
                         break;
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         size = sizeof(archive_field_number_t);
                         break;
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         size = sizeof(field_string_t);
                         break;
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         size = sizeof(doc_obj);
                         break;
                 default: error(ERR_INTERNALERR, "unknown type"); /** unknown type */
@@ -1376,7 +1376,7 @@ static void create_typed_vector(doc_entries *entry)
 
 static void entries_drop(doc_entries *entry)
 {
-        if (entry->type == FIELD_OBJECT) {
+        if (entry->type == ARCHIVE_FIELD_OBJECT) {
                 for (size_t i = 0; i < entry->values.num_elems; i++) {
                         doc_obj *model = VECTOR_GET(&entry->values, i, doc_obj);
                         doc_drop(model);
@@ -1396,13 +1396,13 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                 fprintf(file, "[");
         }
         switch (type) {
-                case FIELD_NULL: {
+                case ARCHIVE_FIELD_NULL: {
                         for (size_t i = 0; i < num_values; i++) {
                                 fprintf(file, "null%s", i + 1 < num_values ? ", " : "");
                         }
                 }
                         break;
-                case FIELD_BOOLEAN: {
+                case ARCHIVE_FIELD_BOOLEAN: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_boolean_t value = *(VECTOR_GET(values, i, archive_field_boolean_t));
                                 if (value != NULL_BOOLEAN) {
@@ -1414,7 +1414,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_INT8: {
+                case ARCHIVE_FIELD_INT8: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_i8_t value = *(VECTOR_GET(values, i, archive_field_i8_t));
                                 if (value != NULL_INT8) {
@@ -1425,7 +1425,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_INT16: {
+                case ARCHIVE_FIELD_INT16: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_i16_t value = *(VECTOR_GET(values, i, archive_field_i16_t));
                                 if (value != NULL_INT16) {
@@ -1436,7 +1436,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_INT32: {
+                case ARCHIVE_FIELD_INT32: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_i32_t value = *(VECTOR_GET(values, i, archive_field_i32_t));
                                 if (value != NULL_INT32) {
@@ -1447,7 +1447,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_INT64: {
+                case ARCHIVE_FIELD_INT64: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_i64_t value = *(VECTOR_GET(values, i, archive_field_i64_t));
                                 if (value != NULL_INT64) {
@@ -1458,7 +1458,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_UINT8: {
+                case ARCHIVE_FIELD_UINT8: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_u8_t value = *(VECTOR_GET(values, i, archive_field_u8_t));
                                 if (value != NULL_UINT8) {
@@ -1469,7 +1469,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_UINT16: {
+                case ARCHIVE_FIELD_UINT16: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_u16_t value = *(VECTOR_GET(values, i, archive_field_u16_t));
                                 if (value != NULL_UINT16) {
@@ -1480,7 +1480,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_UINT32: {
+                case ARCHIVE_FIELD_UINT32: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_u32_t value = *(VECTOR_GET(values, i, archive_field_u32_t));
                                 if (value != NULL_UINT32) {
@@ -1491,7 +1491,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_UINT64: {
+                case ARCHIVE_FIELD_UINT64: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_u64_t value = *(VECTOR_GET(values, i, archive_field_u64_t));
                                 if (value != NULL_UINT64) {
@@ -1502,7 +1502,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_FLOAT: {
+                case ARCHIVE_FIELD_FLOAT: {
                         for (size_t i = 0; i < num_values; i++) {
                                 archive_field_number_t value = *(VECTOR_GET(values, i, archive_field_number_t));
                                 if (!isnan(value)) {
@@ -1513,7 +1513,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_STRING: {
+                case ARCHIVE_FIELD_STRING: {
                         for (size_t i = 0; i < num_values; i++) {
                                 field_string_t value = *(VECTOR_GET(values, i, field_string_t));
                                 if (value) {
@@ -1524,7 +1524,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                case FIELD_OBJECT: {
+                case ARCHIVE_FIELD_OBJECT: {
                         for (size_t i = 0; i < num_values; i++) {
                                 doc_obj *obj = VECTOR_GET(values, i, doc_obj);
                                 if (!NULL_OBJECT_MODEL(obj)) {

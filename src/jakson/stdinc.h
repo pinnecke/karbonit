@@ -66,20 +66,20 @@ typedef int64_t signed_offset_t;
 typedef unsigned char u_char;
 
 typedef enum archive_field_type {
-        FIELD_NULL = 0,
-        FIELD_BOOLEAN = 1,
-        FIELD_INT8 = 2,
-        FIELD_INT16 = 3,
-        FIELD_INT32 = 4,
-        FIELD_INT64 = 5,
-        FIELD_UINT8 = 6,
-        FIELD_UINT16 = 7,
-        FIELD_UINT32 = 8,
-        FIELD_UINT64 = 9,
-        FIELD_FLOAT = 10,
-        FIELD_STRING = 11,
-        FIELD_OBJECT = 12,
-        FIELD_ERR    = 13
+        ARCHIVE_FIELD_NULL = 0,
+        ARCHIVE_FIELD_BOOLEAN = 1,
+        ARCHIVE_FIELD_INT8 = 2,
+        ARCHIVE_FIELD_INT16 = 3,
+        ARCHIVE_FIELD_INT32 = 4,
+        ARCHIVE_FIELD_INT64 = 5,
+        ARCHIVE_FIELD_UINT8 = 6,
+        ARCHIVE_FIELD_UINT16 = 7,
+        ARCHIVE_FIELD_UINT32 = 8,
+        ARCHIVE_FIELD_UINT64 = 9,
+        ARCHIVE_FIELD_FLOAT = 10,
+        ARCHIVE_FIELD_STRING = 11,
+        ARCHIVE_FIELD_OBJECT = 12,
+        ARCHIVE_FIELD_ERR    = 13
 } archive_field_e;
 
 typedef enum access_mode_e {
@@ -92,24 +92,24 @@ typedef enum access_mode_e {
 MAYBE_UNUSED static const char *basic_type_to_json_type_str(enum archive_field_type t)
 {
         switch (t) {
-                case FIELD_INT8:
-                case FIELD_INT16:
-                case FIELD_INT32:
-                case FIELD_INT64:
-                case FIELD_UINT8:
-                case FIELD_UINT16:
-                case FIELD_UINT32:
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_INT8:
+                case ARCHIVE_FIELD_INT16:
+                case ARCHIVE_FIELD_INT32:
+                case ARCHIVE_FIELD_INT64:
+                case ARCHIVE_FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT64:
                         return "integer";
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         return "float";
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         return "string_buffer";
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         return "boolean";
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         return "null";
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         return "object";
                 default:
                         return "(unknown)";
@@ -119,31 +119,31 @@ MAYBE_UNUSED static const char *basic_type_to_json_type_str(enum archive_field_t
 MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field_type t)
 {
         switch (t) {
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         return "int8";
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         return "int16";
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         return "int32";
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         return "int64";
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         return "uint8";
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         return "uint16";
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         return "uint32";
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         return "uint64";
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         return "float32";
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         return "string64";
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         return "bool8";
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         return "void";
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         return "variable";
                 default:
                         return "(unknown)";

@@ -151,43 +151,43 @@ typedef const char *field_string_t;
 ({                                                                                                                     \
     size_t value_size;                                                                                                 \
     switch (value_type) {                                                                                              \
-        case FIELD_NULL:                                                                                           \
+        case ARCHIVE_FIELD_NULL:                                                                                           \
             value_size = sizeof(u16);                                                                              \
             break;                                                                                                     \
-        case FIELD_BOOLEAN:                                                                                        \
+        case ARCHIVE_FIELD_BOOLEAN:                                                                                        \
             value_size = sizeof(archive_field_boolean_t);                                                          \
             break;                                                                                                     \
-        case FIELD_INT8:                                                                                           \
+        case ARCHIVE_FIELD_INT8:                                                                                           \
             value_size = sizeof(archive_field_i8_t);                                                               \
             break;                                                                                                     \
-        case FIELD_INT16:                                                                                          \
+        case ARCHIVE_FIELD_INT16:                                                                                          \
             value_size = sizeof(archive_field_i16_t);                                                              \
             break;                                                                                                     \
-        case FIELD_INT32:                                                                                          \
+        case ARCHIVE_FIELD_INT32:                                                                                          \
             value_size = sizeof(archive_field_i32_t);                                                              \
             break;                                                                                                     \
-        case FIELD_INT64:                                                                                          \
+        case ARCHIVE_FIELD_INT64:                                                                                          \
             value_size = sizeof(archive_field_i64_t);                                                              \
             break;                                                                                                     \
-        case FIELD_UINT8:                                                                                          \
+        case ARCHIVE_FIELD_UINT8:                                                                                          \
             value_size = sizeof(archive_field_u8_t);                                                               \
             break;                                                                                                     \
-        case FIELD_UINT16:                                                                                         \
+        case ARCHIVE_FIELD_UINT16:                                                                                         \
             value_size = sizeof(archive_field_u16_t);                                                              \
             break;                                                                                                     \
-        case FIELD_UINT32:                                                                                         \
+        case ARCHIVE_FIELD_UINT32:                                                                                         \
             value_size = sizeof(archive_field_u32_t);                                                              \
             break;                                                                                                     \
-        case FIELD_UINT64:                                                                                         \
+        case ARCHIVE_FIELD_UINT64:                                                                                         \
             value_size = sizeof(archive_field_u64_t);                                                              \
             break;                                                                                                     \
-        case FIELD_FLOAT:                                                                                          \
+        case ARCHIVE_FIELD_FLOAT:                                                                                          \
             value_size = sizeof(archive_field_number_t);                                                           \
             break;                                                                                                     \
-        case FIELD_STRING:                                                                                         \
+        case ARCHIVE_FIELD_STRING:                                                                                         \
             value_size = sizeof(archive_field_sid_t);                                                              \
             break;                                                                                                     \
-        case FIELD_OBJECT:                                                                                         \
+        case ARCHIVE_FIELD_OBJECT:                                                                                         \
             value_size = sizeof(column_doc_obj);                                                                   \
             break;                                                                                                     \
         default:  {                                                                                                     \

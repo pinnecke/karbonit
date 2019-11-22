@@ -155,7 +155,7 @@ archive_field_e int_get_value_type_of_char(char c)
                         return global_value_array_marker_mapping[i].value_type;
                 }
         }
-        return FIELD_NULL;
+        return ARCHIVE_FIELD_NULL;
 }
 
 archive_field_e // TODO: check whether 'archive_field_e' can be replaced by 'enum archive_field_type'
@@ -164,46 +164,46 @@ int_marker_to_field_type(char symbol)
         switch (symbol) {
                 case MARKER_SYMBOL_PROP_NULL:
                 case MARKER_SYMBOL_PROP_NULL_ARRAY:
-                        return FIELD_NULL;
+                        return ARCHIVE_FIELD_NULL;
                 case MARKER_SYMBOL_PROP_BOOLEAN:
                 case MARKER_SYMBOL_PROP_BOOLEAN_ARRAY:
-                        return FIELD_BOOLEAN;
+                        return ARCHIVE_FIELD_BOOLEAN;
                 case MARKER_SYMBOL_PROP_INT8:
                 case MARKER_SYMBOL_PROP_INT8_ARRAY:
-                        return FIELD_INT8;
+                        return ARCHIVE_FIELD_INT8;
                 case MARKER_SYMBOL_PROP_INT16:
                 case MARKER_SYMBOL_PROP_INT16_ARRAY:
-                        return FIELD_INT16;
+                        return ARCHIVE_FIELD_INT16;
                 case MARKER_SYMBOL_PROP_INT32:
                 case MARKER_SYMBOL_PROP_INT32_ARRAY:
-                        return FIELD_INT32;
+                        return ARCHIVE_FIELD_INT32;
                 case MARKER_SYMBOL_PROP_INT64:
                 case MARKER_SYMBOL_PROP_INT64_ARRAY:
-                        return FIELD_INT64;
+                        return ARCHIVE_FIELD_INT64;
                 case MARKER_SYMBOL_PROP_UINT8:
                 case MARKER_SYMBOL_PROP_UINT8_ARRAY:
-                        return FIELD_UINT8;
+                        return ARCHIVE_FIELD_UINT8;
                 case MARKER_SYMBOL_PROP_UINT16:
                 case MARKER_SYMBOL_PROP_UINT16_ARRAY:
-                        return FIELD_UINT16;
+                        return ARCHIVE_FIELD_UINT16;
                 case MARKER_SYMBOL_PROP_UINT32:
                 case MARKER_SYMBOL_PROP_UINT32_ARRAY:
-                        return FIELD_UINT32;
+                        return ARCHIVE_FIELD_UINT32;
                 case MARKER_SYMBOL_PROP_UINT64:
                 case MARKER_SYMBOL_PROP_UINT64_ARRAY:
-                        return FIELD_UINT64;
+                        return ARCHIVE_FIELD_UINT64;
                 case MARKER_SYMBOL_PROP_REAL:
                 case MARKER_SYMBOL_PROP_REAL_ARRAY:
-                        return FIELD_FLOAT;
+                        return ARCHIVE_FIELD_FLOAT;
                 case MARKER_SYMBOL_PROP_TEXT:
                 case MARKER_SYMBOL_PROP_TEXT_ARRAY:
-                        return FIELD_STRING;
+                        return ARCHIVE_FIELD_STRING;
                 case MARKER_SYMBOL_PROP_OBJECT:
                 case MARKER_SYMBOL_PROP_OBJECT_ARRAY:
-                        return FIELD_OBJECT;
+                        return ARCHIVE_FIELD_OBJECT;
                 default: {
                         error(ERR_MARKERMAPPING, NULL);
-                        return FIELD_NULL;
+                        return ARCHIVE_FIELD_NULL;
                 }
         }
 }

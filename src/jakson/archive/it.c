@@ -431,46 +431,46 @@ static enum archive_field_type get_basic_type(prop_iter_state_e state)
         switch (state) {
                 case PROP_ITER_NULLS:
                 case PROP_ITER_NULL_ARRAYS:
-                        return FIELD_NULL;
+                        return ARCHIVE_FIELD_NULL;
                 case PROP_ITER_BOOLS:
                 case PROP_ITER_BOOL_ARRAYS:
-                        return FIELD_BOOLEAN;
+                        return ARCHIVE_FIELD_BOOLEAN;
                 case PROP_ITER_INT8S:
                 case PROP_ITER_INT8_ARRAYS:
-                        return FIELD_INT8;
+                        return ARCHIVE_FIELD_INT8;
                 case PROP_ITER_INT16S:
                 case PROP_ITER_INT16_ARRAYS:
-                        return FIELD_INT16;
+                        return ARCHIVE_FIELD_INT16;
                 case PROP_ITER_INT32S:
                 case PROP_ITER_INT32_ARRAYS:
-                        return FIELD_INT32;
+                        return ARCHIVE_FIELD_INT32;
                 case PROP_ITER_INT64S:
                 case PROP_ITER_INT64_ARRAYS:
-                        return FIELD_INT64;
+                        return ARCHIVE_FIELD_INT64;
                 case PROP_ITER_UINT8S:
                 case PROP_ITER_UINT8_ARRAYS:
-                        return FIELD_UINT8;
+                        return ARCHIVE_FIELD_UINT8;
                 case PROP_ITER_UINT16S:
                 case PROP_ITER_UINT16_ARRAYS:
-                        return FIELD_UINT16;
+                        return ARCHIVE_FIELD_UINT16;
                 case PROP_ITER_UINT32S:
                 case PROP_ITER_UINT32_ARRAYS:
-                        return FIELD_UINT32;
+                        return ARCHIVE_FIELD_UINT32;
                 case PROP_ITER_UINT64S:
                 case PROP_ITER_UINT64_ARRAYS:
-                        return FIELD_UINT64;
+                        return ARCHIVE_FIELD_UINT64;
                 case PROP_ITER_FLOATS:
                 case PROP_ITER_FLOAT_ARRAYS:
-                        return FIELD_FLOAT;
+                        return ARCHIVE_FIELD_FLOAT;
                 case PROP_ITER_STRINGS:
                 case PROP_ITER_STRING_ARRAYS:
-                        return FIELD_STRING;
+                        return ARCHIVE_FIELD_STRING;
                 case PROP_ITER_OBJECTS:
                 case PROP_ITER_OBJECT_ARRAYS:
-                        return FIELD_OBJECT;
+                        return ARCHIVE_FIELD_OBJECT;
                 default: {
                         error(ERR_INTERNALERR, NULL);
-                        return FIELD_ERR;
+                        return ARCHIVE_FIELD_ERR;
                 }
         }
 }
@@ -659,29 +659,29 @@ archive_column_entry_get_##name(u32 *array_length, independent_iter_state *entry
     }                                                                                                                  \
 }
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i8_t, int8s, FIELD_INT8);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i8_t, int8s, ARCHIVE_FIELD_INT8);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i16_t, int16s, FIELD_INT16);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i16_t, int16s, ARCHIVE_FIELD_INT16);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i32_t, int32s, FIELD_INT32);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i32_t, int32s, ARCHIVE_FIELD_INT32);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i64_t, int64s, FIELD_INT64);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_i64_t, int64s, ARCHIVE_FIELD_INT64);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u8_t, uint8s, FIELD_UINT8);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u8_t, uint8s, ARCHIVE_FIELD_UINT8);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u16_t, uint16s, FIELD_UINT16);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u16_t, uint16s, ARCHIVE_FIELD_UINT16);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, uint32s, FIELD_UINT32);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, uint32s, ARCHIVE_FIELD_UINT32);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u64_t, uint64s, FIELD_UINT64);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u64_t, uint64s, ARCHIVE_FIELD_UINT64);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_sid_t, strings, FIELD_STRING);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_sid_t, strings, ARCHIVE_FIELD_STRING);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_number_t, numbers, FIELD_FLOAT);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_number_t, numbers, ARCHIVE_FIELD_FLOAT);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_boolean_t, booleans, FIELD_BOOLEAN);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_boolean_t, booleans, ARCHIVE_FIELD_BOOLEAN);
 
-DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, nulls, FIELD_NULL);
+DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, nulls, ARCHIVE_FIELD_NULL);
 
 bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter_state *entry)
 {
@@ -757,47 +757,47 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
         JAK_ASSERT(!value->is_array);
 
         switch (value->prop_type) {
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         value->data.basic.values.int8s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                           archive_field_i8_t);
                         break;
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         value->data.basic.values.int16s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                            archive_field_i16_t);
                         break;
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         value->data.basic.values.int32s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                            archive_field_i32_t);
                         break;
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         value->data.basic.values.int64s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                            archive_field_i64_t);
                         break;
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         value->data.basic.values.uint8s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                            archive_field_u8_t);
                         break;
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         value->data.basic.values.uint16s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                             archive_field_u16_t);
                         break;
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         value->data.basic.values.uint32s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                             archive_field_u32_t);
                         break;
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         value->data.basic.values.uint64s = MEMFILE_PEEK(&value->record_table_memfile,
                                                                             archive_field_u64_t);
                         break;
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         value->data.basic.values.numbers = MEMFILE_PEEK(&value->record_table_memfile,
                                                                             archive_field_number_t);
                         break;
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         value->data.basic.values.strings = MEMFILE_PEEK(&value->record_table_memfile,
                                                                             archive_field_sid_t);
                         break;
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         value->data.basic.values.booleans = MEMFILE_PEEK(&value->record_table_memfile,
                                                                              archive_field_boolean_t);
                         break;
@@ -812,7 +812,7 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
 static void value_vector_init_fixed_length_types_null_arrays(archive_value_vector *value)
 {
         JAK_ASSERT(value->is_array);
-        JAK_ASSERT(value->prop_type == FIELD_NULL);
+        JAK_ASSERT(value->prop_type == ARCHIVE_FIELD_NULL);
         value->data.arrays.meta.num_nulls_contained =
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 }
@@ -825,47 +825,47 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 
         switch (value->prop_type) {
-                case FIELD_INT8:
+                case ARCHIVE_FIELD_INT8:
                         value->data.arrays.values.int8s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                 archive_field_i8_t);
                         break;
-                case FIELD_INT16:
+                case ARCHIVE_FIELD_INT16:
                         value->data.arrays.values.int16s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                  archive_field_i16_t);
                         break;
-                case FIELD_INT32:
+                case ARCHIVE_FIELD_INT32:
                         value->data.arrays.values.int32s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                  archive_field_i32_t);
                         break;
-                case FIELD_INT64:
+                case ARCHIVE_FIELD_INT64:
                         value->data.arrays.values.int64s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                  archive_field_i64_t);
                         break;
-                case FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT8:
                         value->data.arrays.values.uint8s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                  archive_field_u8_t);
                         break;
-                case FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT16:
                         value->data.arrays.values.uint16s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                   archive_field_u16_t);
                         break;
-                case FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT32:
                         value->data.arrays.values.uint32s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                   archive_field_u32_t);
                         break;
-                case FIELD_UINT64:
+                case ARCHIVE_FIELD_UINT64:
                         value->data.arrays.values.uint64s_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                   archive_field_u64_t);
                         break;
-                case FIELD_FLOAT:
+                case ARCHIVE_FIELD_FLOAT:
                         value->data.arrays.values.numbers_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                   archive_field_number_t);
                         break;
-                case FIELD_STRING:
+                case ARCHIVE_FIELD_STRING:
                         value->data.arrays.values.strings_base = MEMFILE_PEEK(&value->record_table_memfile,
                                                                                   archive_field_sid_t);
                         break;
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_BOOLEAN:
                         value->data.arrays.values.booleans_base =
                                 MEMFILE_PEEK(&value->record_table_memfile, archive_field_boolean_t);
                         break;
@@ -917,25 +917,25 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
         value->value_max_idx = prop_iter->mode_object.prop_group_header.header->num_entries;
 
         switch (value->prop_type) {
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                         value_vector_init_object(value);
                         break;
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                         if (value->is_array) {
                                 value_vector_init_fixed_length_types_null_arrays(value);
                         }
                         break;
-                case FIELD_INT8:
-                case FIELD_INT16:
-                case FIELD_INT32:
-                case FIELD_INT64:
-                case FIELD_UINT8:
-                case FIELD_UINT16:
-                case FIELD_UINT32:
-                case FIELD_UINT64:
-                case FIELD_FLOAT:
-                case FIELD_STRING:
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_INT8:
+                case ARCHIVE_FIELD_INT16:
+                case ARCHIVE_FIELD_INT32:
+                case ARCHIVE_FIELD_INT64:
+                case ARCHIVE_FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT64:
+                case ARCHIVE_FIELD_FLOAT:
+                case ARCHIVE_FIELD_STRING:
+                case ARCHIVE_FIELD_BOOLEAN:
                         value_vector_init_fixed_length_types(value);
                         break;
                 default: {
@@ -968,7 +968,7 @@ bool archive_value_vector_get_length(u32 *length, const archive_value_vector *va
 
 bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *value)
 {
-        *is_object = value->prop_type == FIELD_OBJECT && !value->is_array;
+        *is_object = value->prop_type == ARCHIVE_FIELD_OBJECT && !value->is_array;
         return true;
 }
 
@@ -1001,29 +1001,29 @@ archive_value_vector_is_##name(bool *type_match, archive_value_vector *value)   
     return true;                                                                                                       \
 }
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int8, FIELD_INT8)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int8, ARCHIVE_FIELD_INT8)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int16, FIELD_INT16)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int16, ARCHIVE_FIELD_INT16)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int32, FIELD_INT32)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int32, ARCHIVE_FIELD_INT32)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int64, FIELD_INT64)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int64, ARCHIVE_FIELD_INT64)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint8, FIELD_UINT8)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint8, ARCHIVE_FIELD_UINT8)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint16, FIELD_UINT16)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint16, ARCHIVE_FIELD_UINT16)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint32, FIELD_UINT32)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint32, ARCHIVE_FIELD_UINT32)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint64, FIELD_UINT64)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint64, ARCHIVE_FIELD_UINT64)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(string, FIELD_STRING)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(string, ARCHIVE_FIELD_STRING)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(number, FIELD_FLOAT)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(number, ARCHIVE_FIELD_FLOAT)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(boolean, FIELD_BOOLEAN)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(boolean, ARCHIVE_FIELD_BOOLEAN)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null, FIELD_NULL)
+DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null, ARCHIVE_FIELD_NULL)
 
 #define DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(names, name, built_in_type, err_code)                       \
 const built_in_type *                                                                                   \

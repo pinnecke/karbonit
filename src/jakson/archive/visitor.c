@@ -235,7 +235,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                         }
 
                         switch (type) {
-                                case FIELD_OBJECT:
+                                case ARCHIVE_FIELD_OBJECT:
                                         JAK_ASSERT (!is_array);
                                         iterate_objects(archive,
                                                         keys,
@@ -250,7 +250,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                         //    iterate_objects(archive, &keys[i], 1, &value_iter, path_stack, visitor, mask, capture, is_root_object, keys[i], i);
                                         //}
                                         break;
-                                case FIELD_NULL:
+                                case ARCHIVE_FIELD_NULL:
                                         if (is_array) {
                                                 visit_policy_e visit = VISIT_INCLUDE;
                                                 if (visitor->visit_enter_null_array_pairs) {
@@ -312,27 +312,27 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                 }
                                         }
                                         break;
-                                case FIELD_INT8: SET_TYPE_SWITCH_CASE(int8, archive_field_i8_t)
+                                case ARCHIVE_FIELD_INT8: SET_TYPE_SWITCH_CASE(int8, archive_field_i8_t)
                                         break;
-                                case FIELD_INT16: SET_TYPE_SWITCH_CASE(int16, archive_field_i16_t)
+                                case ARCHIVE_FIELD_INT16: SET_TYPE_SWITCH_CASE(int16, archive_field_i16_t)
                                         break;
-                                case FIELD_INT32: SET_TYPE_SWITCH_CASE(int32, archive_field_i32_t)
+                                case ARCHIVE_FIELD_INT32: SET_TYPE_SWITCH_CASE(int32, archive_field_i32_t)
                                         break;
-                                case FIELD_INT64: SET_TYPE_SWITCH_CASE(int64, archive_field_i64_t)
+                                case ARCHIVE_FIELD_INT64: SET_TYPE_SWITCH_CASE(int64, archive_field_i64_t)
                                         break;
-                                case FIELD_UINT8: SET_TYPE_SWITCH_CASE(uint8, archive_field_u8_t)
+                                case ARCHIVE_FIELD_UINT8: SET_TYPE_SWITCH_CASE(uint8, archive_field_u8_t)
                                         break;
-                                case FIELD_UINT16: SET_TYPE_SWITCH_CASE(uint16, archive_field_u16_t)
+                                case ARCHIVE_FIELD_UINT16: SET_TYPE_SWITCH_CASE(uint16, archive_field_u16_t)
                                         break;
-                                case FIELD_UINT32: SET_TYPE_SWITCH_CASE(uint32, archive_field_u32_t)
+                                case ARCHIVE_FIELD_UINT32: SET_TYPE_SWITCH_CASE(uint32, archive_field_u32_t)
                                         break;
-                                case FIELD_UINT64: SET_TYPE_SWITCH_CASE(uint64, archive_field_u64_t)
+                                case ARCHIVE_FIELD_UINT64: SET_TYPE_SWITCH_CASE(uint64, archive_field_u64_t)
                                         break;
-                                case FIELD_FLOAT: SET_TYPE_SWITCH_CASE(number, archive_field_number_t)
+                                case ARCHIVE_FIELD_FLOAT: SET_TYPE_SWITCH_CASE(number, archive_field_number_t)
                                         break;
-                                case FIELD_STRING: SET_TYPE_SWITCH_CASE(string, archive_field_sid_t)
+                                case ARCHIVE_FIELD_STRING: SET_TYPE_SWITCH_CASE(string, archive_field_sid_t)
                                         break;
-                                case FIELD_BOOLEAN: SET_TYPE_SWITCH_CASE(boolean, archive_field_boolean_t)
+                                case ARCHIVE_FIELD_BOOLEAN: SET_TYPE_SWITCH_CASE(boolean, archive_field_boolean_t)
                                         break;
                                 default:
                                         break;
@@ -479,79 +479,79 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                         DECLARE_AND_INIT(u32, entry_length)
 
                                                                         switch (current_column_entry_type) {
-                                                                                case FIELD_INT8: {
+                                                                                case ARCHIVE_FIELD_INT8: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 int8s,
                                                                                                 archive_field_i8_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_INT16: {
+                                                                                case ARCHIVE_FIELD_INT16: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 int16s,
                                                                                                 archive_field_i16_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_INT32: {
+                                                                                case ARCHIVE_FIELD_INT32: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 int32s,
                                                                                                 archive_field_i32_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_INT64: {
+                                                                                case ARCHIVE_FIELD_INT64: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 int64s,
                                                                                                 archive_field_i64_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_UINT8: {
+                                                                                case ARCHIVE_FIELD_UINT8: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 uint8s,
                                                                                                 archive_field_u8_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_UINT16: {
+                                                                                case ARCHIVE_FIELD_UINT16: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 uint16s,
                                                                                                 archive_field_u16_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_UINT32: {
+                                                                                case ARCHIVE_FIELD_UINT32: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 uint32s,
                                                                                                 archive_field_u32_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_UINT64: {
+                                                                                case ARCHIVE_FIELD_UINT64: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 uint64s,
                                                                                                 archive_field_u64_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_FLOAT: {
+                                                                                case ARCHIVE_FIELD_FLOAT: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 numbers,
                                                                                                 archive_field_number_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_STRING: {
+                                                                                case ARCHIVE_FIELD_STRING: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 strings,
                                                                                                 archive_field_sid_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_BOOLEAN: {
+                                                                                case ARCHIVE_FIELD_BOOLEAN: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 booleans,
                                                                                                 archive_field_boolean_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_NULL: {
+                                                                                case ARCHIVE_FIELD_NULL: {
                                                                                         SET_NESTED_ARRAY_SWITCH_CASE(
                                                                                                 nulls,
                                                                                                 archive_field_u32_t)
                                                                                 }
                                                                                         break;
-                                                                                case FIELD_OBJECT: {
+                                                                                case ARCHIVE_FIELD_OBJECT: {
                                                                                         column_object_iter iter;
                                                                                         const archive_object
                                                                                                 *archive_object;

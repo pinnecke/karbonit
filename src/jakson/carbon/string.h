@@ -30,13 +30,13 @@
 extern "C" {
 #endif
 
-typedef struct carbon_string_field
+typedef struct string_field
 {
         const char *string;
         u64 length;
-} carbon_string_field;
+} string_field;
 
-static carbon_string_field CARBON_NULL_STRING = {
+static string_field CARBON_NULL_STRING = {
         .string = NULL,
         .length = 0
 };

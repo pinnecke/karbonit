@@ -89,7 +89,7 @@ typedef struct field field;
 
 typedef struct arr_it arr_it;
 typedef struct item item;
-typedef struct carbon_string_field carbon_string_field;
+typedef struct string_field string_field;
 struct carbon_traverse_extra;
 
 typedef struct col_it col_it;
@@ -106,7 +106,7 @@ typedef struct pindex pindex;
 typedef struct pindex_it pindex_it;
 typedef struct carbon_printer carbon_printer;
 typedef struct rev rev;
-typedef struct binary binary;
+typedef struct binary_field binary_field;
 typedef struct carbon_update carbon_update;
 typedef struct packer packer;
 

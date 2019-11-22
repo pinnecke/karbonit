@@ -7,14 +7,14 @@
 
 #include <jakson/types.h>
 
-typedef struct binary {
+typedef struct binary_field {
     const char *mime;
     u64 mime_len;
     const void *blob;
     u64 blob_len;
-} binary;
+} binary_field;
 
-static binary NULL_BINARY = {
+static binary_field NULL_BINARY = {
         .mime = NULL,
         .mime_len = 0,
         .blob = 0,

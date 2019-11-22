@@ -53,8 +53,8 @@ typedef struct item
         i64                  number_signed;
         u64                  number_unsigned;
         float                number_float;
-        carbon_string_field  string;
-        binary        binary;
+        string_field  string;
+        binary_field        binary;
         arr_it        *array;
         col_it       *column;
         obj_it       *object;

@@ -216,7 +216,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                 /** empty document */
                 return PATH_EMPTY_DOC;
         } else {
-                carbon_string_field prop_key;
+                string_field prop_key;
                 do {
                         prop_key = internal_carbon_object_prop_name(it);
                         if (prop_key.length == needle_len && strncmp(prop_key.string, needle, needle_len) == 0) {

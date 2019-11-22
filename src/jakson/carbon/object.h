@@ -90,7 +90,7 @@ bool internal_carbon_object_fast_forward(obj_it *it);
 offset_t internal_carbon_object_memfile_pos(obj_it *it);
 bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, obj_it *it);
 
-carbon_string_field internal_carbon_object_prop_name(obj_it *it);
+string_field internal_carbon_object_prop_name(obj_it *it);
 bool internal_carbon_object_remove(obj_it *it);
 bool internal_carbon_object_prop_type(field_e *type, obj_it *it);
 

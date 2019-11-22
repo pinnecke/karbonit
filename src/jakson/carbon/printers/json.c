@@ -333,7 +333,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';
 
-                carbon_string_field prop_key = internal_carbon_object_prop_name(it);
+                string_field prop_key = internal_carbon_object_prop_name(it);
                 __carbon_print_json_string(str_buf, prop_key.string, prop_key.length);
                 string_buffer_add_char(str_buf, ':');
 
@@ -349,7 +349,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
                         case FIELD_STRING: {
-                                carbon_string_field string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                string_field string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                                 __carbon_print_json_string(str_buf, string.string, string.length);
                         } break;
                         case FIELD_NUMBER_U8:
@@ -381,7 +381,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                binary binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
+                                binary_field binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
                         } break;
                         default:

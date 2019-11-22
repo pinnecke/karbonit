@@ -59,7 +59,7 @@ typedef struct carbon_printer
         /** if <code>value</code> is NULL, <code>value</code> is interpreted as null-value'd entry */
         void (*val_float)(carbon_printer *self, string_buffer *builder, const float *value);
         void (*val_string)(carbon_printer *self, string_buffer *builder, const char *value, u64 strlen);
-        void (*val_binary)(carbon_printer *self, string_buffer *builder, const binary *binary);
+        void (*val_binary)(carbon_printer *self, string_buffer *builder, const binary_field *binary);
         void (*comma)(carbon_printer *self, string_buffer *builder);
         void (*obj_begin)(carbon_printer *self, string_buffer *builder);
         void (*obj_end)(carbon_printer *self, string_buffer *builder);
@@ -70,7 +70,7 @@ typedef struct carbon_printer
         void (*prop_unsigned)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const u64 *value);
         void (*prop_float)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const float *value);
         void (*prop_string)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const char *value, u64 strlen);
-        void (*prop_binary)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const binary *binary);
+        void (*prop_binary)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len, const binary_field *binary);
         void (*array_prop_name)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len);
         void (*column_prop_name)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len);
         void (*obj_prop_name)(carbon_printer *self, string_buffer *builder, const char *key_name, u64 key_len);
@@ -111,7 +111,7 @@ bool carbon_printer_i32_or_null(carbon_printer *printer, string_buffer *str, i32
 bool carbon_printer_i64_or_null(carbon_printer *printer, string_buffer *str, i64 value);
 bool carbon_printer_float(carbon_printer *printer, string_buffer *str, const float *value);
 bool carbon_printer_string(carbon_printer *printer, string_buffer *str, const char *value, u64 strlen);
-bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const binary *binary);
+bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const binary_field *binary);
 bool carbon_printer_prop_null(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_prop_true(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_prop_false(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
@@ -119,7 +119,7 @@ bool carbon_printer_prop_signed(carbon_printer *printer, string_buffer *str, con
 bool carbon_printer_prop_unsigned(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const u64 *value);
 bool carbon_printer_prop_float(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const float *value);
 bool carbon_printer_prop_string(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const char *value, u64 strlen);
-bool carbon_printer_prop_binary(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const binary *binary);
+bool carbon_printer_prop_binary(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len, const binary_field *binary);
 bool carbon_printer_array_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_column_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);
 bool carbon_printer_object_prop_name(carbon_printer *printer, string_buffer *str, const char *key_name, u64 key_len);

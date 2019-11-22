@@ -870,7 +870,7 @@ const char *carbon_int_field_string_value(u64 *strlen, field *field)
 }
 
 bool
-carbon_int_field_binary_value(binary *out, field *field)
+carbon_int_field_binary_value(binary_field *out, field *field)
 {
         error_if_and_return(field->type != FIELD_BINARY &&
                  field->type != FIELD_BINARY_CUSTOM,

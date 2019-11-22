@@ -150,9 +150,9 @@ bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, obj_it 
         return true;
 }
 
-carbon_string_field internal_carbon_object_prop_name(obj_it *it)
+string_field internal_carbon_object_prop_name(obj_it *it)
 {
-        carbon_string_field ret = CARBON_NULL_STRING;
+        string_field ret = CARBON_NULL_STRING;
         if (LIKELY(it != NULL)) {
                 ret.length = it->field.key.name_len;
                 ret.string = it->field.key.name;

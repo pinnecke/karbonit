@@ -280,7 +280,7 @@ const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e pri
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                const binary *val = find_result_binary(find);
+                                const binary_field *val = find_result_binary(find);
                                 carbon_printer_binary(&printer, dst_str, val);
                         }
                                 break;
@@ -615,7 +615,7 @@ const char *find_result_string(u64 *str_len, find *find)
         return find->value.string.string;
 }
 
-binary *find_result_binary(find *find)
+binary_field *find_result_binary(find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;

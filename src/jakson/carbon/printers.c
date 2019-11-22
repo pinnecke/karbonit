@@ -229,7 +229,7 @@ bool carbon_printer_string(carbon_printer *printer, string_buffer *str, const ch
         return true;
 }
 
-bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const binary *binary)
+bool carbon_printer_binary(carbon_printer *printer, string_buffer *str, const binary_field *binary)
 {
         printer->val_binary(printer, str, binary);
         return true;
@@ -285,7 +285,7 @@ bool carbon_printer_prop_string(carbon_printer *printer, string_buffer *str,
 }
 
 bool carbon_printer_prop_binary(carbon_printer *printer, string_buffer *str,
-                                const char *key_name, u64 key_len, const binary *binary)
+                                const char *key_name, u64 key_len, const binary_field *binary)
 {
         printer->prop_binary(printer, str, key_name, key_len, binary);
         return true;
@@ -326,7 +326,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         carbon_printer_comma(printer, builder);
                 }
                 DECLARE_AND_INIT(field_e, type)
-                carbon_string_field prop_key = internal_carbon_object_prop_name(it);
+                string_field prop_key = internal_carbon_object_prop_name(it);
 
                 internal_carbon_object_prop_type(&type, it);
                 switch (type) {
@@ -371,13 +371,13 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         }
                                 break;
                         case FIELD_STRING: {
-                                carbon_string_field value = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                string_field value = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                                 carbon_printer_prop_string(printer, builder, prop_key.string, prop_key.length, value.string, value.length);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                binary binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
+                                binary_field binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
                                 carbon_printer_prop_binary(printer, builder, prop_key.string, prop_key.length, &binary);
                         }
                                 break;
@@ -523,13 +523,13 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         }
                                 break;
                         case FIELD_STRING: {
-                                carbon_string_field string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
+                                string_field string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
                                 carbon_printer_string(printer, builder, string.string, string.length);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                binary binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
+                                binary_field binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
                                 carbon_printer_binary(printer, builder, &binary);
                         }
                                 break;

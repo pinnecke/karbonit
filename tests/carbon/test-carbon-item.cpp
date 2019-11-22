@@ -26,7 +26,7 @@ TEST(TestCarbonItem, CreateId) {
                 case 3:
                         EXPECT_TRUE(carbon_item_is_string(item));
                         {
-                                carbon_string_field value = carbon_item_get_string(item, CARBON_NULL_STRING);
+                                string_field value = carbon_item_get_string(item, CARBON_NULL_STRING);
                                 EXPECT_TRUE(value.length = strlen("Hello World"));
                                 EXPECT_TRUE(strncmp(value.string, "Hello World", value.length) == 0);
                         }

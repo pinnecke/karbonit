@@ -37,9 +37,8 @@ typedef struct find {
                 u64 unsigned_number;
                 i64 signed_number;
                 float float_number;
-
-                carbon_string_field string;
-                binary binary;
+                string_field string;
+                binary_field binary;
         } value;
 } find;
 
@@ -79,7 +78,7 @@ bool find_result_unsigned(u64 *out, find *find);
 bool find_result_signed(i64 *out, find *find);
 bool find_result_float(float *out, find *find);
 const char *find_result_string(u64 *str_len, find *find);
-binary *find_result_binary(find *find);
+binary_field *find_result_binary(find *find);
 
 #ifdef __cplusplus
 }

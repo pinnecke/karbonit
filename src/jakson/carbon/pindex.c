@@ -292,7 +292,7 @@ static void object_traverse(struct pindex_node *parent, obj_it *it)
         while (carbon_object_next(it)) {
                 offset_t key_off = 0, value_off = 0;
                 internal_carbon_object_tell(&key_off, &value_off, it);
-                carbon_string_field prop_key = internal_carbon_object_prop_name(it);
+                string_field prop_key = internal_carbon_object_prop_name(it);
                 struct pindex_node *elem_node = pindex_node_add_key_elem(parent, key_off,
                                                                                  prop_key.string, prop_key.length, value_off);
                 object_build_index(elem_node, it);

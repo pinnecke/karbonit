@@ -17,7 +17,7 @@ typedef struct carbon_prop
 {
         obj_it       *parent;
         u64                  idx;
-        carbon_string_field  key;
+        string_field  key;
         item          value;
 } carbon_prop;
 

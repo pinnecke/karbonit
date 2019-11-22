@@ -163,7 +163,7 @@ static void _json_printer_compact_val_string(carbon_printer *self, string_buffer
 #define code_of(x, data_len)      (x + data_len + 2)
 #define data_of(x)      (x)
 
-static bool _json_printer_compact_print_binary(carbon_printer *self, string_buffer *builder, const binary *binary)
+static bool _json_printer_compact_print_binary(carbon_printer *self, string_buffer *builder, const binary_field *binary)
 {
         /** base64 code will be written into the extra's buffer after a null-terminated copy of the binary data */
         struct json_compact_extra *extra = (struct json_compact_extra *) self->extra;
@@ -203,7 +203,7 @@ static bool _json_printer_compact_print_binary(carbon_printer *self, string_buff
         return true;
 }
 
-static void _json_printer_compact_val_binary(carbon_printer *self, string_buffer *builder, const binary *binary)
+static void _json_printer_compact_val_binary(carbon_printer *self, string_buffer *builder, const binary_field *binary)
 {
         _json_printer_compact_print_binary(self, builder, binary);
 }
@@ -280,7 +280,7 @@ static void _json_printer_compact_prop_string(carbon_printer *self, string_buffe
 }
 
 static void _json_printer_compact_prop_binary(carbon_printer *self, string_buffer *builder,
-                        const char *key_name, u64 key_len, const binary *binary)
+                        const char *key_name, u64 key_len, const binary_field *binary)
 {
         print_key(builder, key_name, key_len);
         _json_printer_compact_print_binary(self, builder, binary);

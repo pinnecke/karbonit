@@ -64,10 +64,10 @@ bool dot_eval_end(dot_eval *state)
 {
         switch (state->result.container) {
                 case OBJECT:
-                        obj_it_drop(&state->result.containers.object.it);
+                        obj_it_drop(&state->result.containers.object);
                         break;
                 case ARRAY:
-                        arr_it_drop(&state->result.containers.array.it);
+                        arr_it_drop(&state->result.containers.array);
                         break;
                 case COLUMN:
                         break;
@@ -222,7 +222,7 @@ static inline pstatus_e traverse_object(dot_eval *state,
                         if (prop_key.length == needle_len && strncmp(prop_key.string, needle, needle_len) == 0) {
                                 if (next_path_pos == length) {
                                         state->result.container = OBJECT;
-                                        internal_obj_it_clone(&state->result.containers.object.it, it);
+                                        internal_obj_it_clone(&state->result.containers.object, it);
                                         return PATH_RESOLVED;
                                 } else {
                                         /** path end not reached, traverse further if possible */
@@ -471,7 +471,7 @@ static inline pstatus_e traverse_array(dot_eval *state,
                                                 } else {
                                                         /** path end is reached */
                                                         state->result.container = ARRAY;
-                                                        internal_arr_it_clone(&state->result.containers.array.it, it);
+                                                        internal_arr_it_clone(&state->result.containers.array, it);
                                                         return PATH_RESOLVED;
                                                 }
                                         }

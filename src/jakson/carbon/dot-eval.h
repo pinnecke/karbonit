@@ -22,19 +22,12 @@ typedef struct dot_eval {
         struct {
                 container_e container;
                 union {
-                        struct {
-                                arr_it it;
-                        } array;
-
-                        struct {
-                                obj_it it;
-                        } object;
-
+                        arr_it array;
+                        obj_it object;
                         struct {
                                 col_it it;
                                 u32 elem_pos;
                         } column;
-
                 } containers;
         } result;
 } dot_eval;

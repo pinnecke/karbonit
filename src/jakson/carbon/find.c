@@ -117,14 +117,14 @@ bool find_create(find *find, dot *path, rec *doc)
         if (dot_eval_has_result(&find->eval)) {
                 switch (find->eval.result.container) {
                         case ARRAY:
-                                result_from_array(find, &find->eval.result.containers.array.it);
+                                result_from_array(find, &find->eval.result.containers.array);
                                 break;
                         case COLUMN:
                                 result_from_column(find, find->eval.result.containers.column.elem_pos,
                                                    &find->eval.result.containers.column.it);
                                 break;
                         case OBJECT:
-                                result_from_object(find, &find->eval.result.containers.object.it);
+                                result_from_object(find, &find->eval.result.containers.object);
                                 break;
                         default:
                                 return error(ERR_INTERNALERR, "unknown container type");

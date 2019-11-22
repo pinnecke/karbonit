@@ -198,7 +198,7 @@ bool carbon_revise_remove(const char *path, rev *context)
                 } else {
                         switch (eval.result.container) {
                                 case ARRAY: {
-                                        arr_it *it = &eval.result.containers.array.it;
+                                        arr_it *it = &eval.result.containers.array;
                                         result = internal_arr_it_remove(it);
                                 }
                                         break;

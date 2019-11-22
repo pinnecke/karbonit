@@ -215,7 +215,7 @@ static bool column_update_float(col_it *it, u32 pos, float value)
 
 static inline arr_it *arrayerator(carbon_update *updater)
 {
-        return &updater->path_evaluater.result.containers.array.it;
+        return &updater->path_evaluater.result.containers.array;
 }
 
 static inline col_it *column_iterator(u32 *elem_pos, carbon_update *updater)

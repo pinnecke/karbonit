@@ -32,9 +32,9 @@ void dot_eval_begin(dot_eval *eval, dot *path,
 {
         ZERO_MEMORY(eval, sizeof(dot_eval));
         eval->doc = doc;
-        carbon_read_begin(&eval->root_it, eval->doc);
+        rec_read_begin(&eval->root_it, eval->doc);
         eval->status = _dot_eval_traverse_array(eval, path, 0, &eval->root_it, true);
-        carbon_read_end(&eval->root_it);
+        rec_read_end(&eval->root_it);
 }
 
 bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
@@ -45,7 +45,7 @@ bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
             return error(ERR_OPPFAILED, "revise iterator cannot be opened");
         }
         eval->status = _dot_eval_traverse_array(eval, path, 0, &eval->root_it, true);
-        carbon_read_end(&eval->root_it);
+        rec_read_end(&eval->root_it);
         return true;
 }
 

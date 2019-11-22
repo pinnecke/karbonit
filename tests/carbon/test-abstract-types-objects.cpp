@@ -14,7 +14,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         field_e ft;
         rev rev_context;
 
-        ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
+        ins = rec_create_begin(&context, &doc, KEY_NOKEY, OPTIMIZE);
 
         insert_object_begin(&s1, ins, 100);
         insert_object_end(&s1);
@@ -31,10 +31,10 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         insert_object_map_begin(&s1, ins, MAP_SORTED_MAP, 100);
         insert_object_map_end(&s1);
 
-        carbon_create_end(&context);
+        rec_create_end(&context);
 
         {
-                carbon_read_begin(&it, &doc);
+                rec_read_begin(&it, &doc);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -71,7 +71,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 ASSERT_FALSE(obj_it_is_multimap(obj_it));
                 ASSERT_TRUE(obj_it_is_sorted(obj_it));
 
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
         {
@@ -99,7 +99,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                carbon_read_begin(&it, &doc2);
+                rec_read_begin(&it, &doc2);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -129,11 +129,11 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 ASSERT_TRUE(obj_it_is_multimap(obj_it));
                 ASSERT_FALSE(obj_it_is_sorted(obj_it));
 
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
+        rec_drop(&doc);
+        rec_drop(&doc2);
 }
 
 
@@ -144,7 +144,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
         field_e ft;
         rev revise;
 
-        carbon_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", KEY_NOKEY, NULL);
 
         {
                 revise_begin(&revise, &doc2, &doc);
@@ -214,11 +214,11 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 find_end(&find);
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
-        carbon_drop(&doc3);
-        carbon_drop(&doc4);
-        carbon_drop(&doc5);
+        rec_drop(&doc);
+        rec_drop(&doc2);
+        rec_drop(&doc3);
+        rec_drop(&doc4);
+        rec_drop(&doc5);
 }
 
 int main(int argc, char **argv) {

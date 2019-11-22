@@ -7,8 +7,8 @@ TEST(TestCarbonItem, CreateId) {
         arr_it array;
         item *item;
 
-        carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", KEY_NOKEY, NULL);
-        carbon_read_begin(&array, &doc);
+        rec_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", KEY_NOKEY, NULL);
+        rec_read_begin(&array, &doc);
         while ((item = arr_it_next(&array))) {
                 u64 index = item_get_index(item);
                 switch (index) {
@@ -69,8 +69,8 @@ TEST(TestCarbonItem, CreateId) {
                         FAIL();
                 }
         }
-        carbon_read_end(&array);
-        carbon_drop(&doc);
+        rec_read_end(&array);
+        rec_drop(&doc);
 }
 
 int main(int argc, char **argv) {

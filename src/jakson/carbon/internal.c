@@ -1603,10 +1603,10 @@ void internal_from_json(rec *doc, const json *data,
         UNUSED(primary_key)
 
         rec_new context;
-        insert *ins = carbon_create_begin(&context, doc, key_type, mode);
+        insert *ins = rec_create_begin(&context, doc, key_type, mode);
         int_carbon_from_json_elem(ins, data->element, true);
 
-        carbon_create_end(&context);
+        rec_create_end(&context);
 }
 
 static void marker_insert(memfile *memfile, u8 marker)

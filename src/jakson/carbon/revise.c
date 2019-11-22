@@ -40,7 +40,7 @@ void revise_begin(rev *context, rec *revised, rec *original)
 {
         context->original = original;
         context->revised = revised;
-        carbon_clone(context->revised, context->original);
+        rec_clone(context->revised, context->original);
 }
 
 
@@ -249,7 +249,7 @@ const rec *revise_end(rev *context)
 
 bool revise_abort(rev *context)
 {
-        carbon_drop(context->revised);
+        rec_drop(context->revised);
         return true;
 }
 
@@ -581,7 +581,7 @@ static bool carbon_header_rev_inc(rec *doc)
         key_read(NULL, &key_type, &doc->file);
         if (carbon_has_key(key_type)) {
                 u64 raw_data_len = 0;
-                const void *raw_data = carbon_raw_data(&raw_data_len, doc);
+                const void *raw_data = rec_raw_data(&raw_data_len, doc);
                 commit_update(&doc->file, raw_data, raw_data_len);
         }
         memfile_restore_position(&doc->file);

@@ -49,7 +49,7 @@ static void carbon_header_init(rec *doc, key_e key_type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-insert * carbon_create_begin(rec_new *context, rec *doc,
+insert * rec_create_begin(rec_new *context, rec *doc,
                                            key_e type, int options)
 {
         if (context && doc) {
@@ -70,7 +70,7 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
                         derivation = LIST_UNSORTED_MULTISET;
                 }
 
-                carbon_create_empty(&context->original, derivation, type);
+                rec_create_empty(&context->original, derivation, type);
                 revise_begin(&context->context, doc, &context->original);
                 if (!revise_iterator_open(context->array, &context->context)) {
                     error(ERR_OPPFAILED, "cannot open revision iterator");
@@ -83,28 +83,28 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
         }
 }
 
-void carbon_create_end(rec_new *context)
+void rec_create_end(rec_new *context)
 {
         arr_it_insert_end(context->in);
         revise_iterator_close(context->array);
-        if (context->mode & CARBON_COMPACT) {
+        if (context->mode & COMPACT) {
                 revise_pack(&context->context);
         }
-        if (context->mode & CARBON_SHRINK) {
+        if (context->mode & SHRINK) {
                 revise_shrink(&context->context);
         }
         revise_end(&context->context);
         free(context->array);
         free(context->in);
-        carbon_drop(&context->original);
+        rec_drop(&context->original);
 }
 
-void carbon_create_empty(rec *doc, list_type_e derivation, key_e type)
+void rec_create_empty(rec *doc, list_type_e derivation, key_e type)
 {
-        carbon_create_empty_ex(doc, derivation, type, 1024, 1);
+        rec_create_empty_ex(doc, derivation, type, 1024, 1);
 }
 
-void carbon_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
+void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
                                 u64 doc_cap, u64 array_cap)
 {
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
@@ -117,7 +117,7 @@ void carbon_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
         internal_insert_array(&doc->file, derivation, array_cap);
 }
 
-bool carbon_from_json(rec *doc, const char *json, key_e type,
+bool rec_from_json(rec *doc, const char *json, key_e type,
                       const void *key)
 {
         struct json data;
@@ -128,13 +128,13 @@ bool carbon_from_json(rec *doc, const char *json, key_e type,
                 error(ERR_JSONPARSEERR, "parsing JSON file failed");
                 return false;
         } else {
-                internal_from_json(doc, &data, type, key, CARBON_OPTIMIZE);
+                internal_from_json(doc, &data, type, key, OPTIMIZE);
                 json_drop(&data);
                 return true;
         }
 }
 
-bool carbon_from_raw_data(rec *doc, const void *data, u64 len)
+bool rec_from_raw_data(rec *doc, const void *data, u64 len)
 {
         memblock_from_raw_data(&doc->block, data, len);
         memfile_open(&doc->file, doc->block, READ_WRITE);
@@ -142,12 +142,12 @@ bool carbon_from_raw_data(rec *doc, const void *data, u64 len)
         return true;
 }
 
-bool carbon_drop(rec *doc)
+bool rec_drop(rec *doc)
 {
         return internal_drop(doc);
 }
 
-const void *carbon_raw_data(u64 *len, rec *doc)
+const void *rec_raw_data(u64 *len, rec *doc)
 {
         if (len && doc) {
                 memblock_size(len, doc->file.memblock);
@@ -241,37 +241,37 @@ bool carbon_has_key(key_e type)
         return type != KEY_NOKEY;
 }
 
-void carbon_clone(rec *clone, rec *doc)
+void rec_clone(rec *clone, rec *doc)
 {
         memblock_cpy(&clone->block, doc->block);
         memfile_open(&clone->file, clone->block, READ_WRITE);
 }
 
-bool carbon_commit_hash(u64 *hash, rec *doc)
+bool rec_commit_hash(u64 *hash, rec *doc)
 {
         *hash = internal_header_get_commit_hash(doc);
         return true;
 }
 
-bool carbon_is_multiset(rec *doc)
+bool rec_is_multiset(rec *doc)
 {
         arr_it it;
-        carbon_read_begin(&it, doc);
+        rec_read_begin(&it, doc);
         bool ret = arr_it_is_multiset(&it);
-        carbon_read_end(&it);
+        rec_read_end(&it);
         return ret;
 }
 
-bool carbon_is_sorted(rec *doc)
+bool rec_is_sorted(rec *doc)
 {
         arr_it it;
-        carbon_read_begin(&it, doc);
+        rec_read_begin(&it, doc);
         bool ret = arr_it_is_sorted(&it);
-        carbon_read_end(&it);
+        rec_read_end(&it);
         return ret;
 }
 
-void update_list_type(rec *revised, rec *doc, list_type_e derivation)
+void rec_update_list_type(rec *revised, rec *doc, list_type_e derivation)
 {
         rev context;
         revise_begin(&context, revised, doc);
@@ -279,7 +279,7 @@ void update_list_type(rec *revised, rec *doc, list_type_e derivation)
         revise_end(&context);
 }
 
-bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
+bool rec_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
 {
         struct printer p;
         str_buf b;
@@ -295,7 +295,7 @@ bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
         ZERO_MEMORY(&p, sizeof(printer));
         str_buf_create(&b);
 
-        carbon_commit_hash(&rev, doc);
+        rec_commit_hash(&rev, doc);
 
         printer_by_type(&p, printer);
 
@@ -309,7 +309,7 @@ bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
         printer_payload_begin(&p, &b);
 
         arr_it it;
-        carbon_read_begin(&it, doc);
+        rec_read_begin(&it, doc);
 
         printer_print_array(&it, &p, &b, true);
         arr_it_drop(&it);
@@ -325,59 +325,59 @@ bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
         return true;
 }
 
-const char *carbon_to_json_extended(str_buf *dst, rec *doc)
+const char *rec_to_json_extended(str_buf *dst, rec *doc)
 {
-        carbon_to_str(dst, JSON_EXTENDED, doc);
+        rec_to_str(dst, JSON_EXTENDED, doc);
         return string_cstr(dst);
 }
 
-const char *carbon_to_json_compact(str_buf *dst, rec *doc)
+const char *rec_to_json_compact(str_buf *dst, rec *doc)
 {
-        carbon_to_str(dst, JSON_COMPACT, doc);
+        rec_to_str(dst, JSON_COMPACT, doc);
         return string_cstr(dst);
 }
 
-char *carbon_to_json_extended_dup(rec *doc)
+char *rec_to_json_extended_dup(rec *doc)
 {
         str_buf sb;
         str_buf_create(&sb);
-        char *result = strdup(carbon_to_json_extended(&sb, doc));
+        char *result = strdup(rec_to_json_extended(&sb, doc));
         str_buf_drop(&sb);
         return result;
 }
 
-char *carbon_to_json_compact_dup(rec *doc)
+char *rec_to_json_compact_dup(rec *doc)
 {
         str_buf sb;
         str_buf_create(&sb);
-        char *result = strdup(carbon_to_json_compact(&sb, doc));
+        char *result = strdup(rec_to_json_compact(&sb, doc));
         str_buf_drop(&sb);
         return result;
 }
 
-void carbon_read_begin(arr_it *it, rec *doc)
+void rec_read_begin(arr_it *it, rec *doc)
 {
         patch_begin(it, doc);
         internal_arr_it_set_mode(it, READ_ONLY);
 }
 
-void carbon_read_end(arr_it *it)
+void rec_read_end(arr_it *it)
 {
         patch_end(it);
 }
 
-bool carbon_print(FILE *file, printer_impl_e printer, rec *doc)
+bool rec_print(FILE *file, printer_impl_e printer, rec *doc)
 {
         str_buf buffer;
         str_buf_create(&buffer);
-        carbon_to_str(&buffer, printer, doc);
+        rec_to_str(&buffer, printer, doc);
         fprintf(file, "%s\n", string_cstr(&buffer));
         str_buf_drop(&buffer);
 
         return true;
 }
 
-bool carbon_hexdump_print(FILE *file, rec *doc)
+bool rec_hexdump_print(FILE *file, rec *doc)
 {
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);

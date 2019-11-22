@@ -9,14 +9,14 @@ int main (void)
         arr_it it;
         //str_buf str;
 
-        carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", KEY_NOKEY, NULL);
+        rec_from_json(&record, "[\"Hello\", \"Number\", 23]", KEY_NOKEY, NULL);
 
-        carbon_read_begin(&it, &record);
+        rec_read_begin(&it, &record);
         while (arr_it_next(&it)) {
                 //arr_it_
         }
 
-        carbon_drop(&record);
+        rec_drop(&record);
 
         return 0;
 }

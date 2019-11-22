@@ -214,7 +214,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
         key_e type;
         u64 commit_hash;
         key_type(&type, doc);
-        carbon_commit_hash(&commit_hash, doc);
+        rec_commit_hash(&commit_hash, doc);
 
         /** write record key */
         memfile_seek(memfile, 0);
@@ -1046,7 +1046,7 @@ static void index_build(memfile *file, rec *doc)
 
         arr_it it;
         u64 array_pos = 0;
-        carbon_read_begin(&it, doc);
+        rec_read_begin(&it, doc);
 
         /** build index as tree structure */
         while (arr_it_next(&it)) {
@@ -1055,7 +1055,7 @@ static void index_build(memfile *file, rec *doc)
                 array_build_index(node, &it);
                 array_pos++;
         }
-        carbon_read_end(&it);
+        rec_read_end(&it);
 
         /** for debug */
         pindex_node_print_level(stdout, &root_array, 0); // TODO: Debug remove
@@ -1226,7 +1226,7 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
 {
         u64 index_hash = 0, doc_hash = 0;
         pindex_commit_hash(&index_hash, index);
-        carbon_commit_hash(&doc_hash, doc);
+        rec_commit_hash(&doc_hash, doc);
         if (likely(index_hash == doc_hash)) {
                 key_e index_key_type, doc_key_type;
                 pindex_key_type(&index_key_type, index);
@@ -1300,7 +1300,7 @@ void pindex_to_record(rec *doc, pindex *index)
 
         memfile_seek_to_start(&index->memfile);
 
-        insert *ins = carbon_create_begin(&context, doc, KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = rec_create_begin(&context, doc, KEY_NOKEY, OPTIMIZE);
         insert *oins = insert_object_begin(&object, ins, 1024);
 
         {
@@ -1318,7 +1318,7 @@ void pindex_to_record(rec *doc, pindex *index)
         }
 
         insert_object_end(&object);
-        carbon_create_end(&context);
+        rec_create_end(&context);
 }
 
 const char *pindex_to_str(str_buf *str, pindex *index)

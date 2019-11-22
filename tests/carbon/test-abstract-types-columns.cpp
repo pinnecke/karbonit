@@ -14,7 +14,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         field_e ft;
         rev rev_context;
 
-        ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
+        ins = rec_create_begin(&context, &doc, KEY_NOKEY, OPTIMIZE);
 
         insert_column_begin(&s1, ins, COLUMN_I64, 100);
         insert_column_end(&s1);
@@ -31,10 +31,10 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         insert_column_list_begin(&s1, ins, LIST_SORTED_SET, COLUMN_I64, 100);
         insert_column_list_end(&s1);
 
-        carbon_create_end(&context);
+        rec_create_end(&context);
 
         {
-                carbon_read_begin(&it, &doc);
+                rec_read_begin(&it, &doc);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -71,7 +71,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 ASSERT_FALSE(col_it_is_multiset(col_it));
                 ASSERT_TRUE(col_it_is_sorted(col_it));
 
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
         {
@@ -101,7 +101,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                carbon_read_begin(&it, &doc2);
+                rec_read_begin(&it, &doc2);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -131,11 +131,11 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 ASSERT_TRUE(col_it_is_multiset(col_it));
                 ASSERT_FALSE(col_it_is_sorted(col_it));
 
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
+        rec_drop(&doc);
+        rec_drop(&doc2);
 }
 
 
@@ -146,7 +146,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
         field_e ft;
         rev revise;
 
-        carbon_from_json(&doc, "{ x: [ { y: [1, 2, 3] } ] }", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "{ x: [ { y: [1, 2, 3] } ] }", KEY_NOKEY, NULL);
 
         {
                 revise_begin(&revise, &doc2, &doc);
@@ -216,11 +216,11 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 find_end(&find);
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
-        carbon_drop(&doc3);
-        carbon_drop(&doc4);
-        carbon_drop(&doc5);
+        rec_drop(&doc);
+        rec_drop(&doc2);
+        rec_drop(&doc3);
+        rec_drop(&doc4);
+        rec_drop(&doc5);
 }
 
 int main(int argc, char **argv) {

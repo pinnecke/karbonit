@@ -14,7 +14,7 @@
   case of failure, a (thread-local) global err structure is filled and can be read from the caller.  
 
 ## 0.5.00.02 [2019-08-23]
-- JSON parser for carbon files (see `carbon_from_json` in `carbon.h`)
+- JSON parser for carbon files (see `rec_from_json` in `carbon.h`)
 - Increase building times by sharing common sources in a static library
 - Dot path evaluation for objects (e.g., `0.x.5."my key"`) for carbon files
 - Add shortened path evaluation for record container to make the initial array index `0` optional, i.e., `0.x` is 

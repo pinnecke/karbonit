@@ -8,21 +8,21 @@
 TEST(CarbonTest, InvalidObject) {
         rec carbon;
         const char *json_in = "{\"foo\"}";
-        bool status = carbon_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
         ASSERT_FALSE(status);
 }
 
 TEST(CarbonTest, EmptyInput) {
         rec carbon;
         const char *json_in = "";
-        bool status = carbon_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
         ASSERT_FALSE(status);
 }
 
 TEST(CarbonTest, SingleString) {
         rec carbon;
         const char *json_in = "  foo  ";
-        carbon_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
         UNUSED(carbon);
 }
 

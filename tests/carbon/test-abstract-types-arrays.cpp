@@ -8,13 +8,13 @@ TEST(TestAbstractTypes, CreateRecordDefaultJsonArray) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, KEY_NOKEY, 0);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, 0);
+        rec_create_end(&context);
 
-        ASSERT_TRUE(carbon_is_multiset(&doc));
-        ASSERT_FALSE(carbon_is_sorted(&doc));
+        ASSERT_TRUE(rec_is_multiset(&doc));
+        ASSERT_FALSE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordUnsortedMultiset) {
@@ -22,13 +22,13 @@ TEST(TestAbstractTypes, CreateRecordUnsortedMultiset) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, KEY_NOKEY, UNSORTED_MULTISET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, UNSORTED_MULTISET);
+        rec_create_end(&context);
 
-        ASSERT_TRUE(carbon_is_multiset(&doc));
-        ASSERT_FALSE(carbon_is_sorted(&doc));
+        ASSERT_TRUE(rec_is_multiset(&doc));
+        ASSERT_FALSE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordUnsortedSet) {
@@ -36,13 +36,13 @@ TEST(TestAbstractTypes, CreateRecordUnsortedSet) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, KEY_NOKEY, UNSORTED_SET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, UNSORTED_SET);
+        rec_create_end(&context);
 
-        ASSERT_FALSE(carbon_is_multiset(&doc));
-        ASSERT_FALSE(carbon_is_sorted(&doc));
+        ASSERT_FALSE(rec_is_multiset(&doc));
+        ASSERT_FALSE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordSortedSet) {
@@ -50,13 +50,13 @@ TEST(TestAbstractTypes, CreateRecordSortedSet) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, KEY_NOKEY, SORTED_SET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, SORTED_SET);
+        rec_create_end(&context);
 
-        ASSERT_FALSE(carbon_is_multiset(&doc));
-        ASSERT_TRUE(carbon_is_sorted(&doc));
+        ASSERT_FALSE(rec_is_multiset(&doc));
+        ASSERT_TRUE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordSortedMultiset) {
@@ -64,13 +64,13 @@ TEST(TestAbstractTypes, CreateRecordSortedMultiset) {
         rec_new context;
         rec doc;
 
-        carbon_create_begin(&context, &doc, KEY_NOKEY, SORTED_MULTISET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, SORTED_MULTISET);
+        rec_create_end(&context);
 
-        ASSERT_TRUE(carbon_is_multiset(&doc));
-        ASSERT_TRUE(carbon_is_sorted(&doc));
+        ASSERT_TRUE(rec_is_multiset(&doc));
+        ASSERT_TRUE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
@@ -78,38 +78,38 @@ TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
         rec_new new_context;
         rec doc, doc2, doc3, doc4, doc5;
 
-        carbon_create_begin(&new_context, &doc, KEY_NOKEY, UNSORTED_MULTISET);
-        carbon_create_end(&new_context);
+        rec_create_begin(&new_context, &doc, KEY_NOKEY, UNSORTED_MULTISET);
+        rec_create_end(&new_context);
 
         {
-                update_list_type(&doc2, &doc, LIST_UNSORTED_MULTISET);
-                ASSERT_TRUE(carbon_is_multiset(&doc2));
-                ASSERT_FALSE(carbon_is_sorted(&doc2));
+                rec_update_list_type(&doc2, &doc, LIST_UNSORTED_MULTISET);
+                ASSERT_TRUE(rec_is_multiset(&doc2));
+                ASSERT_FALSE(rec_is_sorted(&doc2));
         }
 
         {
-                update_list_type(&doc3, &doc2, LIST_UNSORTED_SET);
-                ASSERT_FALSE(carbon_is_multiset(&doc3));
-                ASSERT_FALSE(carbon_is_sorted(&doc3));
+                rec_update_list_type(&doc3, &doc2, LIST_UNSORTED_SET);
+                ASSERT_FALSE(rec_is_multiset(&doc3));
+                ASSERT_FALSE(rec_is_sorted(&doc3));
         }
 
         {
-                update_list_type(&doc4, &doc3, LIST_SORTED_MULTISET);
-                ASSERT_TRUE(carbon_is_multiset(&doc4));
-                ASSERT_TRUE(carbon_is_sorted(&doc4));
+                rec_update_list_type(&doc4, &doc3, LIST_SORTED_MULTISET);
+                ASSERT_TRUE(rec_is_multiset(&doc4));
+                ASSERT_TRUE(rec_is_sorted(&doc4));
         }
 
         {
-                update_list_type(&doc5, &doc4, LIST_SORTED_SET);
-                ASSERT_FALSE(carbon_is_multiset(&doc5));
-                ASSERT_TRUE(carbon_is_sorted(&doc5));
+                rec_update_list_type(&doc5, &doc4, LIST_SORTED_SET);
+                ASSERT_FALSE(rec_is_multiset(&doc5));
+                ASSERT_TRUE(rec_is_sorted(&doc5));
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
-        carbon_drop(&doc3);
-        carbon_drop(&doc4);
-        carbon_drop(&doc5);
+        rec_drop(&doc);
+        rec_drop(&doc2);
+        rec_drop(&doc3);
+        rec_drop(&doc4);
+        rec_drop(&doc5);
 }
 
 TEST(TestAbstractTypes, ArraySetAbstractType) {
@@ -122,7 +122,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         field_e ft;
         rev rev_context;
 
-        ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
+        ins = rec_create_begin(&context, &doc, KEY_NOKEY, OPTIMIZE);
 
         insert_array_begin(&s1, ins, 100);
         insert_array_end(&s1);
@@ -139,10 +139,10 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         insert_array_list_begin(&s1, ins, LIST_SORTED_SET, 100);
         insert_array_list_end(&s1);
 
-        carbon_create_end(&context);
+        rec_create_end(&context);
 
         {
-                carbon_read_begin(&it, &doc);
+                rec_read_begin(&it, &doc);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -179,7 +179,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 ASSERT_FALSE(arr_it_is_multiset(sub_it));
                 ASSERT_TRUE(arr_it_is_sorted(sub_it));
 
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
         {
@@ -207,7 +207,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         }
 
         {
-                carbon_read_begin(&it, &doc2);
+                rec_read_begin(&it, &doc2);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -237,11 +237,11 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 ASSERT_TRUE(arr_it_is_multiset(sub_it));
                 ASSERT_FALSE(arr_it_is_sorted(sub_it));
 
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
+        rec_drop(&doc);
+        rec_drop(&doc2);
 }
 
 TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
@@ -251,7 +251,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
         field_e ft;
         rev revise;
 
-        carbon_from_json(&doc, "{ x: [ { y: [1,\"b\",3] } ] }", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "{ x: [ { y: [1,\"b\",3] } ] }", KEY_NOKEY, NULL);
 
         {
                 revise_begin(&revise, &doc2, &doc);
@@ -321,11 +321,11 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 find_end(&find);
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
-        carbon_drop(&doc3);
-        carbon_drop(&doc4);
-        carbon_drop(&doc5);
+        rec_drop(&doc);
+        rec_drop(&doc2);
+        rec_drop(&doc3);
+        rec_drop(&doc4);
+        rec_drop(&doc5);
 }
 
 int main(int argc, char **argv) {

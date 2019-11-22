@@ -133,7 +133,7 @@ void internal_auto_close_nested_column_it(field *field);
 bool internal_field_remove(memfile *memfile, field_e type);
 
 /**
- * For <code>mode</code>, see <code>carbon_create_begin</code>
+ * For <code>mode</code>, see <code>rec_create_begin</code>
  */
 void internal_from_json(rec *doc, const json *data, key_e key_type, const void *primary_key, int mode);
 

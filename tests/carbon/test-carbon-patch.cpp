@@ -10,10 +10,10 @@ TEST(TestCarbonPatch, CreatePatch) {
         obj_it *obj;
         field_e type;
 
-        carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", KEY_AUTOKEY, NULL);
-        carbon_commit_hash(&hash_original, &doc);
+        rec_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", KEY_AUTOKEY, NULL);
+        rec_commit_hash(&hash_original, &doc);
 
-        char *json_original = carbon_to_json_compact_dup(&doc);
+        char *json_original = rec_to_json_compact_dup(&doc);
 
         /* patching via patch iterators */
         {
@@ -40,8 +40,8 @@ TEST(TestCarbonPatch, CreatePatch) {
                 patch_end(&it);
         }
 
-        char *json_patch_1 = carbon_to_json_compact_dup(&doc);
-        carbon_commit_hash(&hash_patch_1, &doc);
+        char *json_patch_1 = rec_to_json_compact_dup(&doc);
+        rec_commit_hash(&hash_patch_1, &doc);
 
         /* patching via patch find */
         {
@@ -53,8 +53,8 @@ TEST(TestCarbonPatch, CreatePatch) {
                 patch_find_end(&find);
         }
 
-        char *json_patch_2 = carbon_to_json_compact_dup(&doc);
-        carbon_commit_hash(&hash_patch_2, &doc);
+        char *json_patch_2 = rec_to_json_compact_dup(&doc);
+        rec_commit_hash(&hash_patch_2, &doc);
 
         EXPECT_TRUE(strcmp(json_original, "{\"x\": [1, \"y\", 3]}") == 0);
         EXPECT_TRUE(strcmp(json_patch_1, "{\"x\": [42, \"y\", 23]}") == 0);
@@ -64,7 +64,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         EXPECT_EQ(hash_patch_1, hash_original);
         EXPECT_EQ(hash_patch_2, hash_original);
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 
         EXPECT_TRUE(true);
 }

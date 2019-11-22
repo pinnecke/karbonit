@@ -100,7 +100,7 @@ typedef enum printer_impl {
 
 #define CARBON_NIL_STR "_nil"
 
-typedef enum key_type {
+typedef enum key {
         /** no key, no revision number */
         KEY_NOKEY = MNOKEY,
         /** auto-generated 64bit unsigned integer key */
@@ -113,15 +113,15 @@ typedef enum key_type {
         KEY_SKEY = MSKEY
 } key_e;
 
-#define CARBON_KEEP              0x00 /** do not shrink, do not compact, use UNSORTED_MULTISET (equiv. JSON array) */
-#define CARBON_SHRINK            0x01 /** perform shrinking, i.e., remove tail-buffer from carbon file */
-#define CARBON_COMPACT           0x02 /** perform compacting, i.e., remove reserved memory from containers */
+#define KEEP              0x00 /** do not shrink, do not compact, use UNSORTED_MULTISET (equiv. JSON array) */
+#define SHRINK            0x01 /** perform shrinking, i.e., remove tail-buffer from carbon file */
+#define COMPACT           0x02 /** perform compacting, i.e., remove reserved memory from containers */
 #define UNSORTED_MULTISET 0x04 /** annotate the record outer-most array as unsorted multi set */
 #define SORTED_MULTISET   0x08 /** annotate the record outer-most array as sorted multi set */
 #define UNSORTED_SET      0x10 /** annotate the record outer-most array as unsorted set */
 #define SORTED_SET        0x20 /** annotate the record outer-most array as sorted set */
 
-#define CARBON_OPTIMIZE          (CARBON_SHRINK | CARBON_COMPACT | UNSORTED_MULTISET)
+#define OPTIMIZE          (SHRINK | COMPACT | UNSORTED_MULTISET)
 
 /**
  * Constructs a new context in which a new document can be created. The parameter <b>options</b> controls
@@ -167,17 +167,55 @@ typedef enum key_type {
  *  deduplication and sorting work. Instead, the annotation stores the semantics of that particular container, which
  *  functionality must be effectively implemented at caller site.
  */
-insert * carbon_create_begin(rec_new *context, rec *doc, key_e type, int options);
-void carbon_create_end(rec_new *context);
-void carbon_create_empty(rec *doc, list_type_e derivation, key_e type);
-void carbon_create_empty_ex(rec *doc, list_type_e derivation, key_e type, u64 doc_cap, u64 array_cap);
+insert *rec_create_begin(rec_new *context, rec *doc, key_e type, int options);
+void rec_create_end(rec_new *context);
+void rec_create_empty(rec *doc, list_type_e derivation, key_e type);
+void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type, u64 doc_cap, u64 array_cap);
 
-bool carbon_from_json(rec *doc, const char *json, key_e type, const void *key);
-bool carbon_from_raw_data(rec *doc, const void *data, u64 len);
+bool rec_from_json(rec *doc, const char *json, key_e type, const void *key);
+bool rec_from_raw_data(rec *doc, const void *data, u64 len);
 
-bool carbon_drop(rec *doc);
+bool rec_drop(rec *doc);
 
-const void *carbon_raw_data(u64 *len, rec *doc);
+const void *rec_raw_data(u64 *len, rec *doc);
+
+void rec_clone(rec *clone, rec *doc);
+bool rec_commit_hash(u64 *hash, rec *doc);
+
+/** Checks if the records most-outer array is annotated as a multi set abstract type. Returns true if the record
+ * is a multi set, and false if the record is a set. In case of any error, a failure is returned. */
+bool rec_is_multiset(rec *doc);
+
+/** Checks if the records most-outer array is annotated as a sorted abstract type. Returns true if this is the case,
+ * otherwise false. In case of any error, a failure is returned. */
+bool rec_is_sorted(rec *doc);
+
+/** Changes the abstract type of the most-outer record array to the given abstract type */
+void rec_update_list_type(rec *revised, rec *doc, list_type_e derivation);
+
+bool rec_to_str(str_buf *dst, printer_impl_e printer, rec *doc);
+const char *rec_to_json_extended(str_buf *dst, rec *doc);
+const char *rec_to_json_compact(str_buf *dst, rec *doc);
+char *rec_to_json_extended_dup(rec *doc);
+char *rec_to_json_compact_dup(rec *doc);
+
+/* Opens a read-only iterator for navigating though the records contents.
+ *
+ * For readers, use 'rec_read_begin', and 'revise_begin()' for writers.
+ *
+ * In case a single record must be updated while the upfront costs for the entire revision process is not sustainable,
+ * a record might be patched using a patch iterator, see
+ *
+ *
+ * An opened iterator must be closed by calling 'rec_read_end'. Not closing an iterator leads to undefined
+ * behavior. */
+void rec_read_begin(arr_it *it, rec *doc);
+
+/* Closes a read-only iterator, which was previously opened via 'rec_read_begin' */
+void rec_read_end(arr_it *it);
+
+bool rec_print(FILE *file, printer_impl_e printer, rec *doc);
+bool rec_hexdump_print(FILE *file, rec *doc);
 
 bool key_type(key_e *out, rec *doc);
 const void *key_raw_value(u64 *len, key_e *type, rec *doc);
@@ -188,43 +226,6 @@ bool carbon_has_key(key_e type);
 bool key_is_unsigned(key_e type);
 bool key_is_signed(key_e type);
 bool key_is_string(key_e type);
-void carbon_clone(rec *clone, rec *doc);
-bool carbon_commit_hash(u64 *hash, rec *doc);
-
-/** Checks if the records most-outer array is annotated as a multi set abstract type. Returns true if the record
- * is a multi set, and false if the record is a set. In case of any error, a failure is returned. */
-bool carbon_is_multiset(rec *doc);
-
-/** Checks if the records most-outer array is annotated as a sorted abstract type. Returns true if this is the case,
- * otherwise false. In case of any error, a failure is returned. */
-bool carbon_is_sorted(rec *doc);
-
-/** Changes the abstract type of the most-outer record array to the given abstract type */
-void update_list_type(rec *revised, rec *doc, list_type_e derivation);
-
-bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc);
-const char *carbon_to_json_extended(str_buf *dst, rec *doc);
-const char *carbon_to_json_compact(str_buf *dst, rec *doc);
-char *carbon_to_json_extended_dup(rec *doc);
-char *carbon_to_json_compact_dup(rec *doc);
-
-/* Opens a read-only iterator for navigating though the records contents.
- *
- * For readers, use 'carbon_read_begin', and 'revise_begin()' for writers.
- *
- * In case a single record must be updated while the upfront costs for the entire revision process is not sustainable,
- * a record might be patched using a patch iterator, see
- *
- *
- * An opened iterator must be closed by calling 'carbon_read_end'. Not closing an iterator leads to undefined
- * behavior. */
-void carbon_read_begin(arr_it *it, rec *doc);
-
-/* Closes a read-only iterator, which was previously opened via 'carbon_read_begin' */
-void carbon_read_end(arr_it *it);
-
-bool carbon_print(FILE *file, printer_impl_e printer, rec *doc);
-bool carbon_hexdump_print(FILE *file, rec *doc);
 
 #ifdef __cplusplus
 }

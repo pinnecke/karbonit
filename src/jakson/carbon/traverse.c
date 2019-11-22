@@ -76,9 +76,9 @@ void traverse_record(rec *rev_out, struct traverse *traverse, rec *record)
                 revise_iterator_close(&it);
                 revise_end(&context);
         } else {
-                carbon_read_begin(&it, record);
+                rec_read_begin(&it, record);
                 traverse_array(traverse, &it);
-                carbon_read_end(&it);
+                rec_read_end(&it);
         }
 
 }

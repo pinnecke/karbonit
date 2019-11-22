@@ -27,7 +27,7 @@
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/abstract.h>
 
-const char *field_type_str(field_type_e type)
+const char *field_str(field_e type)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -161,13 +161,13 @@ const char *field_type_str(field_type_e type)
         }
 }
 
-bool field_type_is_traversable(field_type_e type)
+bool field_is_traversable(field_e type)
 {
-        return field_type_is_object_or_subtype(type) ||
-                field_type_is_list_or_subtype(type);
+        return field_is_object_or_subtype(type) ||
+                field_is_list_or_subtype(type);
 }
 
-bool field_type_is_signed(field_type_e type)
+bool field_is_signed(field_e type)
 {
         return (type == FIELD_NUMBER_I8 || type == FIELD_NUMBER_I16 ||
                 type == FIELD_NUMBER_I32 || type == FIELD_NUMBER_I64 ||
@@ -189,7 +189,7 @@ bool field_type_is_signed(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_I64_SORTED_SET);
 }
 
-bool field_type_is_unsigned(field_type_e type)
+bool field_is_unsigned(field_e type)
 {
         return (type == FIELD_NUMBER_U8 || type == FIELD_NUMBER_U16 ||
                 type == FIELD_NUMBER_U32 || type == FIELD_NUMBER_U64 ||
@@ -211,7 +211,7 @@ bool field_type_is_unsigned(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_U64_SORTED_SET);
 }
 
-bool field_type_is_floating(field_type_e type)
+bool field_is_floating(field_e type)
 {
         return (type == FIELD_NUMBER_FLOAT || type == FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||
@@ -219,22 +219,22 @@ bool field_type_is_floating(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET);
 }
 
-bool field_type_is_number(field_type_e type)
+bool field_is_number(field_e type)
 {
-        return field_type_is_integer(type) || field_type_is_floating(type);
+        return field_is_integer(type) || field_is_floating(type);
 }
 
-bool field_type_is_integer(field_type_e type)
+bool field_is_integer(field_e type)
 {
-        return field_type_is_signed(type) || field_type_is_unsigned(type);
+        return field_is_signed(type) || field_is_unsigned(type);
 }
 
-bool field_type_is_binary(field_type_e type)
+bool field_is_binary(field_e type)
 {
         return (type == FIELD_BINARY || type == FIELD_BINARY_CUSTOM);
 }
 
-bool field_type_is_boolean(field_type_e type)
+bool field_is_boolean(field_e type)
 {
         return (type == FIELD_TRUE || type == FIELD_FALSE ||
                 type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||
@@ -243,14 +243,14 @@ bool field_type_is_boolean(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET);
 }
 
-bool field_type_is_string(field_type_e type)
+bool field_is_string(field_e type)
 {
         return (type == FIELD_STRING);
 }
 
-bool field_type_is_constant(field_type_e type)
+bool field_is_constant(field_e type)
 {
-        return (field_type_is_null(type) || field_type_is_boolean(type));
+        return (field_is_null(type) || field_is_boolean(type));
 }
 
 bool carbon_field_skip(memfile *file)
@@ -385,7 +385,7 @@ bool carbon_field_skip_column(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(!field_type_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
         col_it skip_it;
         col_it_create(&skip_it, file, memfile_tell(file) - sizeof(u8));
@@ -505,7 +505,7 @@ bool carbon_field_skip_64(memfile *file)
         return true;
 }
 
-field_type_e field_type_for_column(list_type_e derivation, col_it_type_e type)
+field_e field_for_column(list_type_e derivation, col_it_type_e type)
 {
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:
@@ -613,8 +613,8 @@ field_type_e field_type_for_column(list_type_e derivation, col_it_type_e type)
         }
 }
 
-field_type_e
-field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is_true)
+field_e
+field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true)
 {
         if (is_null) {
                 return FIELD_NULL;
@@ -676,7 +676,7 @@ field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is
         }
 }
 
-field_class_e field_type_get_class(field_type_e type)
+field_class_e field_get_class(field_e type)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -752,13 +752,13 @@ field_class_e field_type_get_class(field_type_e type)
         }
 }
 
-bool field_type_is_array_or_subtype(field_type_e type)
+bool field_is_array_or_subtype(field_e type)
 {
         return (type == FIELD_ARRAY_UNSORTED_MULTISET || type == FIELD_DERIVED_ARRAY_SORTED_MULTISET ||
                 type == FIELD_DERIVED_ARRAY_UNSORTED_SET || type == FIELD_DERIVED_ARRAY_SORTED_SET);
 }
 
-bool field_type_is_column_u8_or_subtype(field_type_e type)
+bool field_is_column_u8_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET ||
@@ -766,7 +766,7 @@ bool field_type_is_column_u8_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_U8_SORTED_SET);
 }
 
-bool field_type_is_column_u16_or_subtype(field_type_e type)
+bool field_is_column_u16_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_U16_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET ||
@@ -774,7 +774,7 @@ bool field_type_is_column_u16_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_U16_SORTED_SET);
 }
 
-bool field_type_is_column_u32_or_subtype(field_type_e type)
+bool field_is_column_u32_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_U32_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET ||
@@ -782,7 +782,7 @@ bool field_type_is_column_u32_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_U32_SORTED_SET);
 }
 
-bool field_type_is_column_u64_or_subtype(field_type_e type)
+bool field_is_column_u64_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_U64_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET ||
@@ -790,7 +790,7 @@ bool field_type_is_column_u64_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_U64_SORTED_SET);
 }
 
-bool field_type_is_column_i8_or_subtype(field_type_e type)
+bool field_is_column_i8_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_I8_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||
@@ -798,7 +798,7 @@ bool field_type_is_column_i8_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_I8_SORTED_SET);
 }
 
-bool field_type_is_column_i16_or_subtype(field_type_e type)
+bool field_is_column_i16_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_I16_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET ||
@@ -806,7 +806,7 @@ bool field_type_is_column_i16_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_I16_SORTED_SET);
 }
 
-bool field_type_is_column_i32_or_subtype(field_type_e type)
+bool field_is_column_i32_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_I32_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET ||
@@ -814,7 +814,7 @@ bool field_type_is_column_i32_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_I32_SORTED_SET);
 }
 
-bool field_type_is_column_i64_or_subtype(field_type_e type)
+bool field_is_column_i64_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_I64_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET ||
@@ -822,7 +822,7 @@ bool field_type_is_column_i64_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_I64_SORTED_SET);
 }
 
-bool field_type_is_column_float_or_subtype(field_type_e type)
+bool field_is_column_float_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||
@@ -830,7 +830,7 @@ bool field_type_is_column_float_or_subtype(field_type_e type)
                 type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET);
 }
 
-bool field_type_is_column_bool_or_subtype(field_type_e type)
+bool field_is_column_bool_or_subtype(field_e type)
 {
         return (type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||
                 type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET ||
@@ -840,33 +840,33 @@ bool field_type_is_column_bool_or_subtype(field_type_e type)
 
 
 
-bool field_type_is_list_or_subtype(field_type_e type)
+bool field_is_list_or_subtype(field_e type)
 {
-        return field_type_is_array_or_subtype(type) || field_type_is_column_or_subtype(type);
+        return field_is_array_or_subtype(type) || field_is_column_or_subtype(type);
 }
 
-bool field_type_is_column_or_subtype(field_type_e type)
+bool field_is_column_or_subtype(field_e type)
 {
-        return field_type_is_column_u8_or_subtype(type) ||
-                field_type_is_column_u16_or_subtype(type) ||
-                field_type_is_column_u32_or_subtype(type) ||
-                field_type_is_column_u64_or_subtype(type) ||
-                field_type_is_column_i8_or_subtype(type) ||
-                field_type_is_column_i16_or_subtype(type) ||
-                field_type_is_column_i32_or_subtype(type) ||
-                field_type_is_column_i64_or_subtype(type) ||
-                field_type_is_column_float_or_subtype(type) ||
-                field_type_is_column_bool_or_subtype(type);
+        return field_is_column_u8_or_subtype(type) ||
+                field_is_column_u16_or_subtype(type) ||
+                field_is_column_u32_or_subtype(type) ||
+                field_is_column_u64_or_subtype(type) ||
+                field_is_column_i8_or_subtype(type) ||
+                field_is_column_i16_or_subtype(type) ||
+                field_is_column_i32_or_subtype(type) ||
+                field_is_column_i64_or_subtype(type) ||
+                field_is_column_float_or_subtype(type) ||
+                field_is_column_bool_or_subtype(type);
 }
 
-bool field_type_is_object_or_subtype(field_type_e type)
+bool field_is_object_or_subtype(field_e type)
 {
         return (type == FIELD_OBJECT_UNSORTED_MULTIMAP || type == FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
                         type == FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
                         type == FIELD_DERIVED_OBJECT_SORTED_MAP);
 }
 
-bool field_type_is_null(field_type_e type)
+bool field_is_null(field_e type)
 {
         return (type == FIELD_NULL);
 }

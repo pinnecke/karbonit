@@ -33,7 +33,7 @@ typedef struct {
 } nested_it;
 
 typedef struct field {
-        field_type_e type;
+        field_e type;
         const void *data;
         u64 len;
         const char *mime;
@@ -151,7 +151,7 @@ bool internal_arr_it_update_from_object(arr_it *it, const obj_it *src);
 bool internal_arr_it_update_from_column(arr_it *it, const col_it *src);
 
 
-bool arr_it_field_type(field_type_e *type, arr_it *it);
+bool arr_it_field_type(field_e *type, arr_it *it);
 
 offset_t internal_arr_it_memfilepos(arr_it *it);
 offset_t internal_arr_it_tell(arr_it *it);

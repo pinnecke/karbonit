@@ -88,7 +88,7 @@ bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, col_i
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
 
-        field_type_e column_type = field_type_for_column(derivation, type);
+        field_e column_type = field_for_column(derivation, type);
 
         memfile_ensure_space(memfile_in, sizeof(u8));
         marker_insert(memfile_in, column_type);
@@ -112,7 +112,7 @@ bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, col_i
         return true;
 }
 
-size_t carbon_int_get_type_size_encoded(field_type_e type)
+size_t carbon_int_get_type_size_encoded(field_e type)
 {
         size_t type_size = sizeof(media_type); /** at least the media type marker is required */
         switch (type) {
@@ -146,7 +146,7 @@ size_t carbon_int_get_type_size_encoded(field_type_e type)
         return type_size;
 }
 
-size_t carbon_int_get_type_value_size(field_type_e type)
+size_t carbon_int_get_type_value_size(field_e type)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -284,7 +284,7 @@ bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *i
 {
         carbon_int_field_drop(&it->field);
         if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
-                carbon_int_array_field_type_read(it);
+                carbon_int_array_field_read(it);
                 carbon_int_field_data_access(&it->file, &it->field);
                 return true;
         } else {
@@ -292,7 +292,7 @@ bool carbon_int_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *i
         }
 }
 
-bool carbon_int_array_field_type_read(arr_it *it)
+bool carbon_int_array_field_read(arr_it *it)
 {
         error_if_and_return(memfile_remain_size(&it->file) < 1, ERR_ILLEGALOP, NULL);
         memfile_save_position(&it->file);
@@ -622,7 +622,7 @@ bool carbon_int_field_auto_close(field *field)
         return true;
 }
 
-bool carbon_int_field_field_type(field_type_e *type, field *field)
+bool carbon_int_field_field_type(field_e *type, field *field)
 {
         *type = field->type;
         return true;
@@ -885,7 +885,7 @@ carbon_int_field_binary_value(binary *out, field *field)
 arr_it *carbon_int_field_array_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!field_type_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         field->arr_it.accessed = true;
         return field->array;
 }
@@ -893,7 +893,7 @@ arr_it *carbon_int_field_array_value(field *field)
 obj_it *carbon_int_field_object_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!field_type_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         field->obj_it.accessed = true;
         return field->object;
 }
@@ -901,13 +901,13 @@ obj_it *carbon_int_field_object_value(field *field)
 col_it *carbon_int_field_column_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!field_type_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         return field->column;
 }
 
-bool carbon_int_field_remove(memfile *memfile, field_type_e type)
+bool carbon_int_field_remove(memfile *memfile, field_e type)
 {
-        JAK_ASSERT((field_type_e) *memfile_peek(memfile, sizeof(u8)) == type);
+        JAK_ASSERT((field_e) *memfile_peek(memfile, sizeof(u8)) == type);
         offset_t start_off = memfile_tell(memfile);
         memfile_skip(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
@@ -1657,7 +1657,7 @@ static bool object_it_next_no_load(bool *is_empty_slot, bool *is_array_end, obj_
 static bool array_next_no_load(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
         if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
-                carbon_int_array_field_type_read(it);
+                carbon_int_array_field_read(it);
                 carbon_field_skip(&it->file);
                 return true;
         } else {

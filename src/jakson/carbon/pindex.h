@@ -93,7 +93,7 @@ bool pindex_it_obj_enter(pindex_it *it);
 //  field access
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool pindex_type(field_type_e *type, pindex_it *it);
+bool pindex_type(field_e *type, pindex_it *it);
 bool pindex_it_field_u8_value(u8 *value, pindex_it *it);
 bool pindex_it_field_u16_value(u16 *value, pindex_it *it);
 bool pindex_it_field_u32_value(u32 *value, pindex_it *it);

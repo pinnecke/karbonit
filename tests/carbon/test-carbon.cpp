@@ -1644,7 +1644,7 @@ TEST(CarbonTest, CarbonFind) {
         carbon_insert ins;
         carbon_find finder;
         u64 result_unsigned;
-        field_type_e type;
+        field_e type;
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
@@ -1723,7 +1723,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         carbon_insert_array_state array_state, nested_array_state;
         carbon_find finder;
         u64 result_unsigned;
-        field_type_e type;
+        field_e type;
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         carbon_revise_begin(&revise, &rev_doc, &doc);
@@ -2173,7 +2173,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         // -------------------------------------------------------------------------------------------------------------
 
         carbon_find find;
-        field_type_e result_type;
+        field_e result_type;
         u64 result;
         i64 resulti64;
         float resultfloat;
@@ -2291,7 +2291,7 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e next_type;
+        field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_FALSE);
         carbon_revise_iterator_close(&rev_it);
@@ -2399,7 +2399,7 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e type;
+        field_e type;
         arr_it_field_type(&type, &rev_it);
         ASSERT_EQ(type, FIELD_FALSE);
         has_next = arr_it_next(&rev_it);
@@ -2502,7 +2502,7 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e next_type;
+        field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_NUMBER_U32);
         carbon_revise_iterator_close(&rev_it);
@@ -2610,7 +2610,7 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e type;
+        field_e type;
         arr_it_field_type(&type, &rev_it);
         ASSERT_EQ(type, FIELD_NUMBER_U32);
         has_next = arr_it_next(&rev_it);
@@ -2714,7 +2714,7 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e next_type;
+        field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_STRING);
         carbon_revise_iterator_close(&rev_it);
@@ -2822,7 +2822,7 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e type;
+        field_e type;
         arr_it_field_type(&type, &rev_it);
         ASSERT_EQ(type, FIELD_STRING);
         has_next = arr_it_next(&rev_it);
@@ -2933,7 +2933,7 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e next_type;
+        field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_BINARY);
         carbon_revise_iterator_close(&rev_it);
@@ -3049,7 +3049,7 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e type;
+        field_e type;
         arr_it_field_type(&type, &rev_it);
         ASSERT_EQ(type, FIELD_BINARY);
         has_next = arr_it_next(&rev_it);
@@ -3168,7 +3168,7 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e next_type;
+        field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_BINARY_CUSTOM);
         carbon_revise_iterator_close(&rev_it);
@@ -3284,7 +3284,7 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e type;
+        field_e type;
         arr_it_field_type(&type, &rev_it);
         ASSERT_EQ(type, FIELD_BINARY_CUSTOM);
         has_next = arr_it_next(&rev_it);
@@ -3416,7 +3416,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e next_type;
+        field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_ARRAY_UNSORTED_MULTISET);
         carbon_revise_iterator_close(&rev_it);
@@ -3553,7 +3553,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        field_type_e type;
+        field_e type;
         arr_it_field_type(&type, &rev_it);
         ASSERT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
         has_next = arr_it_next(&rev_it);
@@ -3614,7 +3614,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
         col_it *cit = carbon_item_get_column(&(rev_it.item));
-        field_type_e type;
+        field_e type;
         u32 num_elems;
         col_it_values_info(&type, &num_elems, cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
@@ -5620,7 +5620,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
 
@@ -5710,7 +5710,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
 
@@ -5782,7 +5782,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -5860,7 +5860,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -5935,7 +5935,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6010,7 +6010,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6086,7 +6086,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6163,7 +6163,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6240,7 +6240,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6320,7 +6320,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6397,7 +6397,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6479,7 +6479,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6556,7 +6556,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -6632,7 +6632,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it *obj_it = carbon_item_get_object(&(rev_it.item));
@@ -7648,7 +7648,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         arr_it it;
-        field_type_e field_type;
+        field_e field_type;
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
@@ -7656,7 +7656,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         obj_it *oit = carbon_item_get_object(&(it.item));
         ASSERT_TRUE(carbon_object_next(oit));
         internal_carbon_object_prop_type(&field_type, oit);
-        ASSERT_TRUE(field_type_is_column_or_subtype(field_type));
+        ASSERT_TRUE(field_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == FIELD_COLUMN_U8_UNSORTED_MULTISET);
         carbon_object_drop(oit);
         carbon_read_end(&it);
@@ -7688,7 +7688,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         arr_it it;
-        field_type_e field_type;
+        field_e field_type;
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
@@ -7696,7 +7696,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         obj_it *oit = carbon_item_get_object(&(it.item));
         ASSERT_TRUE(carbon_object_next(oit));
         internal_carbon_object_prop_type(&field_type, oit);
-        ASSERT_TRUE(field_type_is_column_or_subtype(field_type));
+        ASSERT_TRUE(field_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == FIELD_COLUMN_U8_UNSORTED_MULTISET);
         carbon_object_drop(oit);
         carbon_read_end(&it);
@@ -7729,11 +7729,11 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
 
         arr_it it;
-        field_type_e field_type;
+        field_e field_type;
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
-        ASSERT_TRUE(field_type_is_number(field_type));
+        ASSERT_TRUE(field_is_number(field_type));
         carbon_read_end(&it);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [1, null, 3, \"a\"]}'
@@ -7900,7 +7900,7 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
 {
         rec doc;
         carbon_find find;
-        field_type_e result_type;
+        field_e result_type;
         u64 number;
 
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}}";
@@ -8188,7 +8188,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 {
         rec doc;
         carbon_find find;
-        field_type_e result_type;
+        field_e result_type;
 
         const char *json_in = "{\"x\": \"y\"}";
         carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
@@ -8603,7 +8603,7 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 TEST(CarbonTest, ParseBooleanArray) {
         rec doc;
         carbon_find find;
-        field_type_e type;
+        field_e type;
         const char *json = "[{\"col\": [true, null, false]}]";
 
         carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);

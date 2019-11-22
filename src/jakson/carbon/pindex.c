@@ -53,7 +53,7 @@ struct pindex_node {
                 } key;
         } entry;
 
-        field_type_e field_type;
+        field_e field_type;
         offset_t field_offset;
 
         vec ofType(struct pindex_node) sub_entries;
@@ -137,7 +137,7 @@ static void pindex_node_new_object_prop(struct pindex_node *node, offset_t key_o
         node->field_offset = value_off;
 }
 
-static void pindex_node_set_field_type(struct pindex_node *node, field_type_e field_type)
+static void pindex_node_set_field_type(struct pindex_node *node, field_e field_type)
 {
         node->field_type = field_type;
 }
@@ -185,7 +185,7 @@ static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsign
                         (unsigned) node->entry.key.offset);
         }
         if (node->type != PINDEX_ROOT) {
-                fprintf(file, "field(type: %s, offset: 0x%x)\n", field_type_str(node->field_type),
+                fprintf(file, "field(type: %s, offset: 0x%x)\n", field_str(node->field_type),
                         (unsigned) node->field_offset);
         } else {
                 fprintf(file, "\n");
@@ -267,8 +267,8 @@ static void array_traverse(struct pindex_node *parent, arr_it *it)
 
 static void column_traverse(struct pindex_node *parent, col_it *it)
 {
-        field_type_e column_type;
-        field_type_e entry_type;
+        field_e column_type;
+        field_e entry_type;
         u32 nvalues = 0;
 
         col_it_values_info(&column_type, &nvalues, it);
@@ -276,10 +276,10 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
         for (u32 i = 0; i < nvalues; i++) {
                 bool is_null = col_it_value_is_null(it, i);
                 bool is_true = false;
-                if (field_type_is_column_bool_or_subtype(column_type)) {
+                if (field_is_column_bool_or_subtype(column_type)) {
                         is_true = col_it_boolean_values(NULL, it)[i];
                 }
-                entry_type = field_type_column_entry_to_regular_type(column_type, is_null, is_true);
+                entry_type = field_column_entry_to_regular_type(column_type, is_null, is_true);
                 offset_t sub_elem_off = col_it_tell(it, i);
 
                 struct pindex_node *node = pindex_node_add_column_elem(parent, i, sub_elem_off);
@@ -301,7 +301,7 @@ static void object_traverse(struct pindex_node *parent, obj_it *it)
 
 static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
 {
-        field_type_e field_type = 0;;
+        field_e field_type = 0;;
         internal_carbon_object_prop_type(&field_type, elem_it);
         pindex_node_set_field_type(parent, field_type);
 
@@ -392,7 +392,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
 
 static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
 {
-        field_type_e field_type;
+        field_e field_type;
         arr_it_field_type(&field_type, elem_it);
         pindex_node_set_field_type(parent, field_type);
 
@@ -655,7 +655,7 @@ static u8 field_ref_into_carbon(carbon_insert *ins, pindex *index, bool is_root)
         if (is_root) {
                 carbon_insert_prop_null(ins, "container");
         } else {
-                carbon_insert_prop_string(ins, "container", field_type_str(field_type));
+                carbon_insert_prop_string(ins, "container", field_str(field_type));
         }
 
 

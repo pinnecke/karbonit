@@ -160,7 +160,7 @@ carbon_string_field internal_carbon_object_prop_name(obj_it *it)
         return ret;
 }
 
-static i64 prop_remove(obj_it *it, field_type_e type)
+static i64 prop_remove(obj_it *it, field_e type)
 {
         i64 prop_size = internal_carbon_prop_size(&it->memfile);
         carbon_string_nomarker_remove(&it->memfile);
@@ -174,7 +174,7 @@ static i64 prop_remove(obj_it *it, field_type_e type)
 
 bool internal_carbon_object_remove(obj_it *it)
 {
-        field_type_e type;
+        field_e type;
         if (internal_carbon_object_prop_type(&type, it)) {
                 offset_t prop_off = carbon_int_history_pop(&it->history);
                 memfile_seek(&it->memfile, prop_off);
@@ -186,7 +186,7 @@ bool internal_carbon_object_remove(obj_it *it)
         }
 }
 
-bool internal_carbon_object_prop_type(field_type_e *type, obj_it *it)
+bool internal_carbon_object_prop_type(field_e *type, obj_it *it)
 {
         return carbon_int_field_field_type(type, &it->field.value.data);
 }

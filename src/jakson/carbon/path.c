@@ -87,12 +87,12 @@ bool carbon_path_exists(rec *doc, const char *path)
 bool carbon_path_is_array(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_array_or_subtype(field_type);
+                result = field_is_array_or_subtype(field_type);
         }
 
         carbon_find_end(&find);
@@ -102,12 +102,12 @@ bool carbon_path_is_array(rec *doc, const char *path)
 bool carbon_path_is_column(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_column_or_subtype(field_type);
+                result = field_is_column_or_subtype(field_type);
         }
 
         carbon_find_end(&find);
@@ -117,12 +117,12 @@ bool carbon_path_is_column(rec *doc, const char *path)
 bool carbon_path_is_object(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_object_or_subtype(field_type);
+                result = field_is_object_or_subtype(field_type);
         }
 
         carbon_find_end(&find);
@@ -138,12 +138,12 @@ bool carbon_path_is_container(rec *doc, const char *path)
 bool carbon_path_is_null(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_null(field_type);
+                result = field_is_null(field_type);
         }
 
         carbon_find_end(&find);
@@ -153,12 +153,12 @@ bool carbon_path_is_null(rec *doc, const char *path)
 bool carbon_path_is_number(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_number(field_type);
+                result = field_is_number(field_type);
         }
 
         carbon_find_end(&find);
@@ -168,12 +168,12 @@ bool carbon_path_is_number(rec *doc, const char *path)
 bool carbon_path_is_boolean(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_boolean(field_type);
+                result = field_is_boolean(field_type);
         }
 
         carbon_find_end(&find);
@@ -183,12 +183,12 @@ bool carbon_path_is_boolean(rec *doc, const char *path)
 bool carbon_path_is_string(rec *doc, const char *path)
 {
         carbon_find find;
-        field_type_e field_type;
+        field_e field_type;
         bool result = false;
 
         if (carbon_find_begin(&find, path, doc)) {
                 carbon_find_result_type(&field_type, &find);
-                result = field_type_is_string(field_type);
+                result = field_is_string(field_type);
         }
 
         carbon_find_end(&find);
@@ -228,10 +228,10 @@ static inline path_status_e traverse_object(carbon_path_evaluator *state,
                                         /** path end not reached, traverse further if possible */
                                         JAK_ASSERT(next_path_pos < length);
 
-                                        field_type_e prop_type;
+                                        field_e prop_type;
                                         internal_carbon_object_prop_type(&prop_type, it);
 
-                                        if (!field_type_is_traversable(prop_type)) {
+                                        if (!field_is_traversable(prop_type)) {
                                                 return PATH_NOTTRAVERSABLE;
                                         } else {
                                                 JAK_ASSERT(prop_type == FIELD_OBJECT_UNSORTED_MULTIMAP ||
@@ -375,7 +375,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
         JAK_ASSERT(it);
         JAK_ASSERT(current_path_pos < path->len);
 
-        DECLARE_AND_INIT(field_type_e, elem_type)
+        DECLARE_AND_INIT(field_e, elem_type)
         DECLARE_AND_INIT(dot_node_type_e, node_type)
         DECLARE_AND_INIT(u32, length)
         DECLARE_AND_INIT(path_status_e, status)
@@ -405,7 +405,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
                                         arr_it_field_type(&elem_type, it);
                                         u32 next_path_pos = current_path_pos + 1;
                                         if (is_unit_array && is_record &&
-                                                field_type_is_column_or_subtype(elem_type)) {
+                                                field_is_column_or_subtype(elem_type)) {
                                                 col_it *sub_it = carbon_item_get_column(&(it->item));
                                                 return traverse_column(state,
                                                                        path,
@@ -417,7 +417,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
                                                          * type (for traversability) */
                                                         dot_node_type_e next_node_type;
                                                         dot_type_at(&next_node_type, next_path_pos, path);
-                                                        if (!field_type_is_traversable(elem_type)) {
+                                                        if (!field_is_traversable(elem_type)) {
                                                                 /** the array element is not a container; path evaluation stops here */
                                                                 return PATH_NOTTRAVERSABLE;
                                                         } else {
@@ -426,10 +426,10 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
                                                                         case DOT_NODE_IDX:
                                                                                 /** next node in path is an array index which requires that
                                                                                  * the current array element is an array or column */
-                                                                                if (!field_type_is_list_or_subtype(elem_type)) {
+                                                                                if (!field_is_list_or_subtype(elem_type)) {
                                                                                         return PATH_NOCONTAINER;
                                                                                 } else {
-                                                                                        if (field_type_is_array_or_subtype(elem_type)) {
+                                                                                        if (field_is_array_or_subtype(elem_type)) {
                                                                                                 arr_it *sub_it = carbon_item_get_array(&(it->item));
                                                                                                 status = traverse_array(
                                                                                                         state,
@@ -440,7 +440,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
                                                                                                         sub_it);
                                                                                                 return status;
                                                                                         } else {
-                                                                                                JAK_ASSERT(field_type_is_column_or_subtype(elem_type));
+                                                                                                JAK_ASSERT(field_is_column_or_subtype(elem_type));
                                                                                                 col_it *sub_it = carbon_item_get_column(&(it->item));
                                                                                                 return traverse_column(
                                                                                                         state,
@@ -452,7 +452,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
                                                                         case DOT_NODE_KEY:
                                                                                 /** next node in path is a key name which requires that
                                                                                  * the current array element is of type object */
-                                                                                if (!field_type_is_object_or_subtype(
+                                                                                if (!field_is_object_or_subtype(
                                                                                         elem_type)) {
                                                                                         return PATH_NOTANOBJECT;
                                                                                 } else {
@@ -479,14 +479,14 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
                         case DOT_NODE_KEY:
                                 /** first array element exists, which must be of type object */
                                 arr_it_field_type(&elem_type, it);
-                                if (!field_type_is_object_or_subtype(elem_type)) {
+                                if (!field_is_object_or_subtype(elem_type)) {
                                         /** first array element is not of type object and a key lookup cannot
                                          * be executed, consequentially */
                                         return PATH_NOTANOBJECT;
                                 } else {
                                         /** next node in path is a key name which requires that
                                                                          * the current array element is of type object */
-                                        if (!field_type_is_object_or_subtype(elem_type)) {
+                                        if (!field_is_object_or_subtype(elem_type)) {
                                                 return PATH_NOTANOBJECT;
                                         } else {
                                                 if (is_unit_array && is_record) {
@@ -517,7 +517,7 @@ static inline path_status_e traverse_column(carbon_path_evaluator *state,
         DECLARE_AND_INIT(u32, requested_idx)
         DECLARE_AND_INIT(u32, nun_values_contained)
         DECLARE_AND_INIT(dot_node_type_e, node_type)
-        DECLARE_AND_INIT(field_type_e, column_type)
+        DECLARE_AND_INIT(field_e, column_type)
         dot_len(&total_len, path);
         if (current_path_pos + 1 != total_len) {
                 /** a column cannot contain further containers; since the current path node is not

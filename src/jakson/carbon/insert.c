@@ -39,11 +39,11 @@ if (UNLIKELY(inserter->context_type == COLUMN && inserter->context.column->type 
 }
 
 static bool
-write_field_data(carbon_insert *inserter, u8 field_type_marker, const void *base, u64 nbytes);
+write_field_data(carbon_insert *inserter, u8 field_marker, const void *base, u64 nbytes);
 
-static bool push_in_column(carbon_insert *inserter, const void *base, field_type_e type);
+static bool push_in_column(carbon_insert *inserter, const void *base, field_e type);
 
-static bool push_media_type_for_array(carbon_insert *inserter, field_type_e type);
+static bool push_media_type_for_array(carbon_insert *inserter, field_e type);
 
 static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos);
 
@@ -92,7 +92,7 @@ bool carbon_int_insert_create_for_object(carbon_insert *inserter, obj_it *contex
 bool carbon_insert_null(carbon_insert *inserter)
 {
         if (UNLIKELY(inserter->context_type == COLUMN &&
-                !field_type_is_column_or_subtype(inserter->context.column->field_type))) {
+                !field_is_column_or_subtype(inserter->context.column->field_type))) {
                 error(ERR_TYPEMISMATCH, "Element type does not match container type");
         }
 
@@ -182,7 +182,7 @@ bool carbon_insert_null(carbon_insert *inserter)
 
 bool carbon_insert_true(carbon_insert *inserter)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_bool_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_bool_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         return push_media_type_for_array(inserter, FIELD_TRUE);
@@ -197,7 +197,7 @@ bool carbon_insert_true(carbon_insert *inserter)
 
 bool carbon_insert_false(carbon_insert *inserter)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_bool_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_bool_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         return push_media_type_for_array(inserter, FIELD_FALSE);
@@ -212,7 +212,7 @@ bool carbon_insert_false(carbon_insert *inserter)
 
 bool carbon_insert_u8(carbon_insert *inserter, u8 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_u8_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_u8_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_U8, &value, sizeof(u8));
@@ -228,7 +228,7 @@ bool carbon_insert_u8(carbon_insert *inserter, u8 value)
 
 bool carbon_insert_u16(carbon_insert *inserter, u16 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_u16_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_u16_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_U16, &value, sizeof(u16));
@@ -244,7 +244,7 @@ bool carbon_insert_u16(carbon_insert *inserter, u16 value)
 
 bool carbon_insert_u32(carbon_insert *inserter, u32 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_u32_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_u32_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_U32, &value, sizeof(u32));
@@ -260,7 +260,7 @@ bool carbon_insert_u32(carbon_insert *inserter, u32 value)
 
 bool carbon_insert_u64(carbon_insert *inserter, u64 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_u64_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_u64_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_U64, &value, sizeof(u64));
@@ -276,7 +276,7 @@ bool carbon_insert_u64(carbon_insert *inserter, u64 value)
 
 bool carbon_insert_i8(carbon_insert *inserter, i8 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_i8_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_i8_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_I8, &value, sizeof(i8));
@@ -292,7 +292,7 @@ bool carbon_insert_i8(carbon_insert *inserter, i8 value)
 
 bool carbon_insert_i16(carbon_insert *inserter, i16 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_i16_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_i16_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_I16, &value, sizeof(i16));
@@ -308,7 +308,7 @@ bool carbon_insert_i16(carbon_insert *inserter, i16 value)
 
 bool carbon_insert_i32(carbon_insert *inserter, i32 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_i32_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_i32_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_I32, &value, sizeof(i32));
@@ -324,7 +324,7 @@ bool carbon_insert_i32(carbon_insert *inserter, i32 value)
 
 bool carbon_insert_i64(carbon_insert *inserter, i64 value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_i64_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_i64_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_I64, &value, sizeof(i64));
@@ -376,7 +376,7 @@ bool carbon_insert_signed(carbon_insert *inserter, i64 value)
 
 bool carbon_insert_float(carbon_insert *inserter, float value)
 {
-        check_type_if_container_is_column(inserter, field_type_is_column_float_or_subtype(inserter->context.column->field_type));
+        check_type_if_container_is_column(inserter, field_is_column_float_or_subtype(inserter->context.column->field_type));
         switch (inserter->context_type) {
                 case ARRAY:
                         write_field_data(inserter, FIELD_NUMBER_FLOAT, &value, sizeof(float));
@@ -587,7 +587,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
         error_if_and_return(inserter_in->context_type != ARRAY && inserter_in->context_type != OBJECT,
                      ERR_UNSUPPCONTAINER, NULL);
 
-        field_type_e field_type = field_type_for_column(derivation, type);
+        field_e field_type = field_for_column(derivation, type);
 
         *state_out = (carbon_insert_column_state) {
                 .parent_inserter = inserter_in,
@@ -922,16 +922,16 @@ u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in)
 }
 
 static bool
-write_field_data(carbon_insert *inserter, u8 field_type_marker, const void *base, u64 nbytes)
+write_field_data(carbon_insert *inserter, u8 field_marker, const void *base, u64 nbytes)
 {
         JAK_ASSERT(inserter->context_type == ARRAY || inserter->context_type == OBJECT);
 
         memfile_ensure_space(&inserter->memfile, sizeof(u8) + nbytes);
-        memfile_write(&inserter->memfile, &field_type_marker, sizeof(u8));
+        memfile_write(&inserter->memfile, &field_marker, sizeof(u8));
         return memfile_write(&inserter->memfile, base, nbytes);
 }
 
-static bool push_in_column(carbon_insert *inserter, const void *base, field_type_e type)
+static bool push_in_column(carbon_insert *inserter, const void *base, field_e type)
 {
         JAK_ASSERT(inserter->context_type == COLUMN);
 
@@ -974,7 +974,7 @@ static bool push_in_column(carbon_insert *inserter, const void *base, field_type
         return true;
 }
 
-static bool push_media_type_for_array(carbon_insert *inserter, field_type_e type)
+static bool push_media_type_for_array(carbon_insert *inserter, field_e type)
 {
         memfile_ensure_space(&inserter->memfile, sizeof(media_type));
         return carbon_media_write(&inserter->memfile, type);

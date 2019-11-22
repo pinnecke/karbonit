@@ -24,7 +24,7 @@ typedef struct col_it {
         memfile file;
         offset_t header_begin;
         offset_t begin;
-        field_type_e field_type;
+        field_e field_type;
         list_type_e list_type;
         i64 mod_size; /* in case of modifications, the number of bytes that are added resp. removed */
         u32 cap;
@@ -37,8 +37,8 @@ bool col_it_insert(carbon_insert *inserter, col_it *it);
 bool col_it_fast_forward(col_it *it);
 offset_t col_it_memfilepos(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
-const void *col_it_values(field_type_e *type, u32 *nvalues, col_it *it);
-bool col_it_values_info(field_type_e *type, u32 *nvalues, col_it *it);
+const void *col_it_values(field_e *type, u32 *nvalues, col_it *it);
+bool col_it_values_info(field_e *type, u32 *nvalues, col_it *it);
 bool col_it_value_is_null(col_it *it, u32 pos);
 const boolean *col_it_boolean_values(u32 *nvalues, col_it *it);
 const u8 *col_it_u8_values(u32 *nvalues, col_it *it);

@@ -325,7 +325,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                 if (LIKELY(!first_entry)) {
                         carbon_printer_comma(printer, builder);
                 }
-                DECLARE_AND_INIT(field_type_e, type)
+                DECLARE_AND_INIT(field_e, type)
                 carbon_string_field prop_key = internal_carbon_object_prop_name(it);
 
                 internal_carbon_object_prop_type(&type, it);
@@ -482,7 +482,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         }
                         has_entries = true;
                 }
-                field_type_e type;
+                field_e type;
                 arr_it_field_type(&type, it);
                 switch (type) {
                         case FIELD_NULL:
@@ -623,7 +623,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
 
 bool carbon_printer_print_column(col_it *it, carbon_printer *printer, string_buffer *builder)
 {
-        field_type_e type;
+        field_e type;
         u32 nvalues;
         const void *values = col_it_values(&type, &nvalues, it);
 

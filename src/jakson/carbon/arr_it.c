@@ -70,7 +70,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
 {
         memfile_save_position(&it->file);
 
-        if (field_type_is_constant(it->field.type)) {
+        if (field_is_constant(it->field.type)) {
                 u8 value;
                 switch (constant) {
                         case CONST_TRUE:
@@ -454,7 +454,7 @@ void arr_it_insert_end(carbon_insert *inserter)
 
 bool internal_arr_it_remove(arr_it *it)
 {
-        field_type_e type;
+        field_e type;
         if (arr_it_field_type(&type, it)) {
                 offset_t prev_off = carbon_int_history_pop(&it->history);
                 memfile_seek(&it->file, prev_off);
@@ -500,7 +500,7 @@ void arr_it_update_type(arr_it *it, list_type_e derivation)
         memfile_restore_position(&it->file);
 }
 
-bool arr_it_field_type(field_type_e *type, arr_it *it)
+bool arr_it_field_type(field_e *type, arr_it *it)
 {
         return carbon_int_field_field_type(type, &it->field);
 }

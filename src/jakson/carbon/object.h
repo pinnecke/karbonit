@@ -92,7 +92,7 @@ bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, obj_it 
 
 carbon_string_field internal_carbon_object_prop_name(obj_it *it);
 bool internal_carbon_object_remove(obj_it *it);
-bool internal_carbon_object_prop_type(field_type_e *type, obj_it *it);
+bool internal_carbon_object_prop_type(field_e *type, obj_it *it);
 
 bool internal_carbon_object_insert_begin(carbon_insert *inserter, obj_it *it);
 void internal_carbon_object_insert_end(carbon_insert *inserter);

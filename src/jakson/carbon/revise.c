@@ -295,7 +295,7 @@ static bool internal_pack_array(arr_it *it)
         /** shrink contained containers */
         {
                 while (arr_it_next(it)) {
-                        field_type_e type;
+                        field_e type;
                         arr_it_field_type(&type, it);
                         switch (type) {
                                 case FIELD_NULL:
@@ -438,7 +438,7 @@ static bool internal_pack_object(obj_it *it)
         /** shrink contained containers */
         {
                 while (carbon_object_next(it)) {
-                        field_type_e type;
+                        field_e type;
                         internal_carbon_object_prop_type(&type, it);
                         switch (type) {
                                 case FIELD_NULL:

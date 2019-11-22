@@ -38,7 +38,7 @@ extern "C" {
 
 typedef struct carbon_find {
         rec *doc;
-        field_type_e type;
+        field_e type;
         carbon_path_evaluator path_evaluater;
 
         bool value_is_nulled;
@@ -67,7 +67,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
 const char *carbon_find_result_to_json_compact(string_buffer *dst_str, carbon_find *find);
 char *carbon_find_result_to_json_compact_dup(carbon_find *find);
 
-bool carbon_find_result_type(field_type_e *type, carbon_find *find);
+bool carbon_find_result_type(field_e *type, carbon_find *find);
 
 bool carbon_find_update_array_type(carbon_find *find, list_type_e derivation);
 bool carbon_find_array_is_multiset(carbon_find *find);

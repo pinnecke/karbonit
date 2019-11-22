@@ -143,7 +143,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                                                         arr_it *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
-        field_type_e type;
+        field_e type;
         //const char *string;
         //binary binary;
         //u64 string_len;
@@ -218,13 +218,13 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 //                                break;
 //                }
 
-                if (field_type_is_object_or_subtype(type)) {
+                if (field_is_object_or_subtype(type)) {
                         obj_it *sub = carbon_item_get_object(&(it->item));
                         carbon_traverse_continue_object(extra, sub);
-                } else if (field_type_is_column_or_subtype(type)) {
+                } else if (field_is_column_or_subtype(type)) {
                         col_it *sub = carbon_item_get_column(&(it->item));
                         carbon_traverse_continue_column(extra, sub);
-                } else if (field_type_is_array_or_subtype(type)) {
+                } else if (field_is_array_or_subtype(type)) {
                         arr_it *sub = carbon_item_get_array(&(it->item));
                         carbon_traverse_continue_array(extra, sub);
                 }
@@ -322,7 +322,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                                          struct obj_it *restrict it)
 {
         struct string_buffer *str_buf = extra->capture.print_json.str;
-        field_type_e type;
+        field_e type;
 
         string_buffer_add(str_buf, "{");
         char sep = '\0';
@@ -388,13 +388,13 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 break;
                 }
 
-                if (field_type_is_object_or_subtype(type)) {
+                if (field_is_object_or_subtype(type)) {
                         obj_it *sub = carbon_item_get_object(&(it->prop.value));
                         carbon_traverse_continue_object(extra, sub);
-                } else if (field_type_is_column_or_subtype(type)) {
+                } else if (field_is_column_or_subtype(type)) {
                         col_it *sub = carbon_item_get_column(&(it->prop.value));
                         carbon_traverse_continue_column(extra, sub);
-                } else if (field_type_is_array_or_subtype(type)) {
+                } else if (field_is_array_or_subtype(type)) {
                         arr_it *sub = carbon_item_get_array(&(it->prop.value));
                         carbon_traverse_continue_array(extra, sub);
                 }

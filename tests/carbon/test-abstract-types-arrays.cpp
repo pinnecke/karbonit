@@ -82,25 +82,25 @@ TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
         carbon_create_end(&new_context);
 
         {
-                carbon_update_list_type(&doc2, &doc, LIST_UNSORTED_MULTISET);
+                update_list_type(&doc2, &doc, LIST_UNSORTED_MULTISET);
                 ASSERT_TRUE(carbon_is_multiset(&doc2));
                 ASSERT_FALSE(carbon_is_sorted(&doc2));
         }
 
         {
-                carbon_update_list_type(&doc3, &doc2, LIST_UNSORTED_SET);
+                update_list_type(&doc3, &doc2, LIST_UNSORTED_SET);
                 ASSERT_FALSE(carbon_is_multiset(&doc3));
                 ASSERT_FALSE(carbon_is_sorted(&doc3));
         }
 
         {
-                carbon_update_list_type(&doc4, &doc3, LIST_SORTED_MULTISET);
+                update_list_type(&doc4, &doc3, LIST_SORTED_MULTISET);
                 ASSERT_TRUE(carbon_is_multiset(&doc4));
                 ASSERT_TRUE(carbon_is_sorted(&doc4));
         }
 
         {
-                carbon_update_list_type(&doc5, &doc4, LIST_SORTED_SET);
+                update_list_type(&doc5, &doc4, LIST_SORTED_SET);
                 ASSERT_FALSE(carbon_is_multiset(&doc5));
                 ASSERT_TRUE(carbon_is_sorted(&doc5));
         }

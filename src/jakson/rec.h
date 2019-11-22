@@ -198,7 +198,7 @@ bool carbon_is_multiset(rec *doc);
 bool carbon_is_sorted(rec *doc);
 
 /** Changes the abstract type of the most-outer record array to the given abstract type */
-void carbon_update_list_type(rec *revised, rec *doc, list_type_e derivation);
+void update_list_type(rec *revised, rec *doc, list_type_e derivation);
 
 bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc);
 const char *carbon_to_json_extended(str_buf *dst, rec *doc);

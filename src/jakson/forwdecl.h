@@ -107,7 +107,7 @@ typedef struct pindex_it pindex_it;
 typedef struct printer printer;
 typedef struct rev rev;
 typedef struct binary_field binary_field;
-typedef struct carbon_update carbon_update;
+typedef struct update update;
 typedef struct packer packer;
 
 typedef struct hashset_bucket hashset_bucket;

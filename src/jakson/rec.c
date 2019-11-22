@@ -272,7 +272,7 @@ bool carbon_is_sorted(rec *doc)
         return ret;
 }
 
-void carbon_update_list_type(rec *revised, rec *doc, list_type_e derivation)
+void update_list_type(rec *revised, rec *doc, list_type_e derivation)
 {
         rev context;
         revise_begin(&context, revised, doc);

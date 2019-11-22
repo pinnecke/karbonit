@@ -2062,7 +2062,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
 
-        carbon_update_set_u8(&revise, "0", 'Y');
+        update_set_u8(&revise, "0", 'Y');
 
         arr_it_insert_end(&in);
         revise_iterator_close(&it);
@@ -2081,7 +2081,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         insert_u8(&in, 'A');
         insert_u8(&in, 'B');
-        carbon_update_set_u8(&revise, "2", 'C');
+        update_set_u8(&revise, "2", 'C');
 
         arr_it_insert_end(&in);
         revise_iterator_close(&it);
@@ -2098,9 +2098,9 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
 
-        carbon_update_set_u8(&revise, "0", 1);
-        carbon_update_set_u8(&revise, "1", 2);
-        carbon_update_set_u8(&revise, "2", 3);
+        update_set_u8(&revise, "0", 1);
+        update_set_u8(&revise, "1", 2);
+        update_set_u8(&revise, "2", 3);
 
         arr_it_insert_end(&in);
         revise_iterator_close(&it);
@@ -2159,7 +2159,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
 
-        carbon_update_set_i64(&revise, "1", 1024);
+        update_set_i64(&revise, "1", 1024);
 
         arr_it_insert_end(&in);
         revise_iterator_close(&it);
@@ -3868,7 +3868,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         // -------------------------------------------------------------------------------------------------------------
 
         revise_begin(&revise, &rev_doc2, &rev_doc);
-        carbon_update_set_u32(&revise, "1", 1024);
+        update_set_u32(&revise, "1", 1024);
         revise_end(&revise);
 
 
@@ -6786,7 +6786,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        // -------------------------------------------------------------------------------------------------------------
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.0", &rev_doc, &doc); // replaces null with null
+//        status = update_one_set_null("0.0", &rev_doc, &doc); // replaces null with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6795,7 +6795,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.1", &rev_doc, &doc); // replaces true with null
+//        status = update_one_set_null("0.1", &rev_doc, &doc); // replaces true with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6804,7 +6804,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.2", &rev_doc, &doc); // replaces false with null
+//        status = update_one_set_null("0.2", &rev_doc, &doc); // replaces false with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6813,7 +6813,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.3", &rev_doc, &doc); // replaces u8 (8) with null
+//        status = update_one_set_null("0.3", &rev_doc, &doc); // replaces u8 (8) with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6822,7 +6822,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.4", &rev_doc, &doc); // replaces i16 (-16) with null
+//        status = update_one_set_null("0.4", &rev_doc, &doc); // replaces i16 (-16) with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6831,7 +6831,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.5", &rev_doc, &doc); // replaces str_buf with null
+//        status = update_one_set_null("0.5", &rev_doc, &doc); // replaces str_buf with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6840,7 +6840,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.6", &rev_doc, &doc); // replaces binary str_buf with null
+//        status = update_one_set_null("0.6", &rev_doc, &doc); // replaces binary str_buf with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6849,7 +6849,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.7", &rev_doc, &doc); // replaces custom binary with null
+//        status = update_one_set_null("0.7", &rev_doc, &doc); // replaces custom binary with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6858,7 +6858,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.8", &rev_doc, &doc); // replaces column ([32, 33, 34, 35]) with null
+//        status = update_one_set_null("0.8", &rev_doc, &doc); // replaces column ([32, 33, 34, 35]) with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6867,7 +6867,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.8.0", &rev_doc, &doc); // replaces element in column with null value (special case) --> [NULL, 33, 34, 35]
+//        status = update_one_set_null("0.8.0", &rev_doc, &doc); // replaces element in column with null value (special case) --> [NULL, 33, 34, 35]
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6876,7 +6876,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.9", &rev_doc, &doc); // replaces empty array with null
+//        status = update_one_set_null("0.9", &rev_doc, &doc); // replaces empty array with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6885,7 +6885,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.10", &rev_doc, &doc); // replaces complex array with null
+//        status = update_one_set_null("0.10", &rev_doc, &doc); // replaces complex array with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6894,7 +6894,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0", &rev_doc, &doc); // replaces 1st outermost array with null
+//        status = update_one_set_null("0", &rev_doc, &doc); // replaces 1st outermost array with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6903,7 +6903,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("1", &rev_doc, &doc); // replaces 2nd outermost array with null
+//        status = update_one_set_null("1", &rev_doc, &doc); // replaces 2nd outermost array with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6916,7 +6916,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        // -------------------------------------------------------------------------------------------------------------
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.0", &rev_doc, &doc); // replaces null with true
+//        status = update_one_set_true("0.0", &rev_doc, &doc); // replaces null with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6925,7 +6925,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.1", &rev_doc, &doc); // replaces true with true
+//        status = update_one_set_true("0.1", &rev_doc, &doc); // replaces true with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6934,7 +6934,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.2", &rev_doc, &doc); // replaces false with true
+//        status = update_one_set_true("0.2", &rev_doc, &doc); // replaces false with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6943,7 +6943,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.3", &rev_doc, &doc); // replaces u8 (8) with true
+//        status = update_one_set_true("0.3", &rev_doc, &doc); // replaces u8 (8) with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6952,7 +6952,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.4", &rev_doc, &doc); // replaces i16 (-16) with true
+//        status = update_one_set_true("0.4", &rev_doc, &doc); // replaces i16 (-16) with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6961,7 +6961,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.5", &rev_doc, &doc); // replaces str_buf with true
+//        status = update_one_set_true("0.5", &rev_doc, &doc); // replaces str_buf with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6970,7 +6970,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.6", &rev_doc, &doc); // replaces binary str_buf with true
+//        status = update_one_set_true("0.6", &rev_doc, &doc); // replaces binary str_buf with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6979,7 +6979,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.7", &rev_doc, &doc); // replaces custom binary with true
+//        status = update_one_set_true("0.7", &rev_doc, &doc); // replaces custom binary with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6988,7 +6988,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.8", &rev_doc, &doc); // replaces column ([32, 33, 34, 35]) with true
+//        status = update_one_set_true("0.8", &rev_doc, &doc); // replaces column ([32, 33, 34, 35]) with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -6998,7 +6998,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 
 //        create_nested_doc(&doc);
 //        // ??????
-//        status = carbon_update_one_set_true("0.8.0", &rev_doc, &doc); // replaces element in column with null value (special case) --> [NULL, 33, 34, 35]
+//        status = update_one_set_true("0.8.0", &rev_doc, &doc); // replaces element in column with null value (special case) --> [NULL, 33, 34, 35]
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -7007,7 +7007,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.9", &rev_doc, &doc); // replaces empty array with true
+//        status = update_one_set_true("0.9", &rev_doc, &doc); // replaces empty array with true
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -7016,7 +7016,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.10", &rev_doc, &doc); // replaces complex array with true
+//        status = update_one_set_true("0.10", &rev_doc, &doc); // replaces complex array with true
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -7025,7 +7025,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0", &rev_doc, &doc); // replaces 1st outermost array with true
+//        status = update_one_set_true("0", &rev_doc, &doc); // replaces 1st outermost array with true
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -7034,7 +7034,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("1", &rev_doc, &doc); // replaces 2nd outermost array with true
+//        status = update_one_set_true("1", &rev_doc, &doc); // replaces 2nd outermost array with true
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
@@ -7044,7 +7044,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 
         /*
         create_nested_doc(&doc);
-        status = carbon_update_one_set_null("0.5", &rev_doc, &doc); // replaces str_buf with null
+        status = update_one_set_null("0.5", &rev_doc, &doc); // replaces str_buf with null
         ASSERT_TRUE(status);
         printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
         printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));

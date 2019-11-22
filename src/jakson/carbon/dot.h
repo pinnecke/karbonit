@@ -64,7 +64,7 @@ bool dot_is_empty(const dot *path);
 bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path);
 bool dot_idx_at(u32 *idx, u32 pos, const dot *path);
 const char *dot_key_at(u32 pos, const dot *path);
-bool dot_to_str(string_buffer *sb, dot *path);
+bool dot_to_str(str_buf *sb, dot *path);
 bool dot_fprint(FILE *file, dot *path);
 bool dot_print(dot *path);
 

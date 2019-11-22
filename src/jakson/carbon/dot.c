@@ -259,7 +259,7 @@ bool dot_drop(dot *path)
         return true;
 }
 
-bool dot_to_str(string_buffer *sb, dot *path)
+bool dot_to_str(str_buf *sb, dot *path)
 {
         for (u32 i = 0; i < path->len; i++) {
                 dot_node *node = path->nodes + i;
@@ -269,22 +269,22 @@ bool dot_to_str(string_buffer *sb, dot *path)
                                 bool quotes_required =
                                         empty_str || strings_contains_blank_char(node->name.string);
                                 if (quotes_required) {
-                                        string_buffer_add_char(sb, '"');
+                                        str_buf_add_char(sb, '"');
                                 }
                                 if (!empty_str) {
-                                        string_buffer_add(sb, node->name.string);
+                                        str_buf_add(sb, node->name.string);
                                 }
                                 if (quotes_required) {
-                                        string_buffer_add_char(sb, '"');
+                                        str_buf_add_char(sb, '"');
                                 }
                         }
                                 break;
                         case DOT_NODE_IDX:
-                                string_buffer_add_u32(sb, node->name.idx);
+                                str_buf_add_u32(sb, node->name.idx);
                                 break;
                 }
                 if (i + 1 < path->len) {
-                        string_buffer_add_char(sb, '.');
+                        str_buf_add_char(sb, '.');
                 }
         }
         return true;
@@ -292,11 +292,11 @@ bool dot_to_str(string_buffer *sb, dot *path)
 
 bool dot_fprint(FILE *file, dot *path)
 {
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         dot_to_str(&sb, path);
         fprintf(file, "%s", string_cstr(&sb));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         return true;
 }
 

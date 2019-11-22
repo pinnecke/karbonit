@@ -115,7 +115,7 @@ print_basic_fixed_types_basic(archive_value_vector *value_iter, u32 idx)
             const archive_field_sid_t *values = archive_value_vector_get_strings(&num_values, value_iter);
             ASSERT_TRUE(values != NULL);
             ASSERT_TRUE(idx < num_values);
-            printf("\t\t{ type: string_buffer, value: %" PRIu64 " }\n", values[idx]);
+            printf("\t\t{ type: str_buf, value: %" PRIu64 " }\n", values[idx]);
         } break;
     case ARCHIVE_FIELD_BOOLEAN: {
         const archive_field_boolean_t *values = archive_value_vector_get_booleans(&num_values, value_iter);

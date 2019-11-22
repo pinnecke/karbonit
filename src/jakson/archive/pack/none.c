@@ -79,7 +79,7 @@ bool pack_none_print_encoded_string(packer *self, FILE *file, memfile *src,
         memcpy(printableString, string, decompressed_strlen);
         printableString[decompressed_strlen] = '\0';
 
-        fprintf(file, "[string_buffer: %s]", printableString);
+        fprintf(file, "[str_buf: %s]", printableString);
 
         free(printableString);
 

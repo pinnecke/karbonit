@@ -72,7 +72,7 @@ struct carbon_traverse_extra {
         struct carbon_traverse *parent;
         union {
             struct {
-                struct string_buffer *str;
+                struct str_buf *str;
                 struct carbon_json_from_opts *config;
                 enum carbon_print_json_collection_convert convert;
             } print_json;

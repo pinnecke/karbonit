@@ -29,42 +29,42 @@
 extern "C" {
 #endif
 
-typedef struct string_buffer {
+typedef struct str_buf {
         char *data;
         size_t cap;
         size_t end;
-} string_buffer;
+} str_buf;
 
-bool string_buffer_create(string_buffer *builder);
-bool string_buffer_create_ex(string_buffer *builder, size_t capacity);
-bool string_buffer_drop(string_buffer *builder);
+bool str_buf_create(str_buf *buffer);
+bool str_buf_create_ex(str_buf *buffer, size_t capacity);
+bool str_buf_drop(str_buf *buffer);
 
-bool string_buffer_add(string_buffer *builder, const char *str);
-bool string_buffer_add_nchar(string_buffer *builder, const char *str, u64 strlen);
-bool string_buffer_add_char(string_buffer *builder, char c);
-bool string_buffer_add_u8(string_buffer *builder, u8 value);
-bool string_buffer_add_u16(string_buffer *builder, u16 value);
-bool string_buffer_add_u32(string_buffer *builder, u32 value);
-bool string_buffer_add_u64(string_buffer *builder, u64 value);
-bool string_buffer_add_i8(string_buffer *builder, i8 value);
-bool string_buffer_add_i16(string_buffer *builder, i16 value);
-bool string_buffer_add_i32(string_buffer *builder, i32 value);
-bool string_buffer_add_i64(string_buffer *builder, i64 value);
-bool string_buffer_add_u64_as_hex(string_buffer *builder, u64 value);
-bool string_buffer_add_u64_as_hex_0x_prefix_compact(string_buffer *builder, u64 value);
-bool string_buffer_add_float(string_buffer *builder, float value);
-bool string_buffer_add_bool(string_buffer *builder, bool value);
-bool string_buffer_add_boolean(string_buffer *builder, boolean value);
-bool string_buffer_clear(string_buffer *builder);
-bool string_buffer_ensure_capacity(string_buffer *builder, u64 cap);
-size_t string_len(string_buffer *builder);
-bool string_buffer_trim(string_buffer *builder);
-bool string_buffer_is_empty(string_buffer *builder);
+bool str_buf_add(str_buf *buffer, const char *str);
+bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen);
+bool str_buf_add_char(str_buf *buffer, char c);
+bool str_buf_add_u8(str_buf *buffer, u8 value);
+bool str_buf_add_u16(str_buf *buffer, u16 value);
+bool str_buf_add_u32(str_buf *buffer, u32 value);
+bool str_buf_add_u64(str_buf *buffer, u64 value);
+bool str_buf_add_i8(str_buf *buffer, i8 value);
+bool str_buf_add_i16(str_buf *buffer, i16 value);
+bool str_buf_add_i32(str_buf *buffer, i32 value);
+bool str_buf_add_i64(str_buf *buffer, i64 value);
+bool str_buf_add_u64_as_hex(str_buf *buffer, u64 value);
+bool str_buf_add_u64_as_hex_0x_prefix_compact(str_buf *buffer, u64 value);
+bool str_buf_add_float(str_buf *buffer, float value);
+bool str_buf_add_bool(str_buf *buffer, bool value);
+bool str_buf_add_boolean(str_buf *buffer, boolean value);
+bool str_buf_clear(str_buf *buffer);
+bool str_buf_ensure_capacity(str_buf *buffer, u64 cap);
+size_t string_len(str_buf *buffer);
+bool str_buf_trim(str_buf *buffer);
+bool str_buf_is_empty(str_buf *buffer);
 
-const char *string_cstr(string_buffer *builder);
+const char *string_cstr(str_buf *buffer);
 
-bool string_buffer_print(string_buffer *builder);
-bool string_buffer_fprint(FILE *file, string_buffer *builder);
+bool str_buf_print(str_buf *buffer);
+bool str_buf_fprint(FILE *file, str_buf *buffer);
 
 #ifdef __cplusplus
 }

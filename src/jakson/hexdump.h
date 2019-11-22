@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-bool hexdump(string_buffer *dst, const void *base, u64 nbytes);
+bool hexdump(str_buf *dst, const void *base, u64 nbytes);
 bool hexdump_print(FILE *file, const void *base, u64 nbytes);
 
 #ifdef __cplusplus

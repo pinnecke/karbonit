@@ -48,8 +48,8 @@ bool find_create(find *find, dot *path, rec *doc);
 bool find_drop(find *find);
 
 bool find_has_result(find *find);
-const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, find *find);
-const char *find_result_to_json_compact(string_buffer *dst_str, find *find);
+const char *find_result_to_str(str_buf *dst_str, printer_impl_e print_type, find *find);
+const char *find_result_to_json_compact(str_buf *dst_str, find *find);
 char *find_result_to_json_compact_dup(find *find);
 
 bool find_result_type(field_e *type, find *find);

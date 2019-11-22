@@ -476,7 +476,7 @@ void *memfile_current_pos(memfile *file, offset_t nbytes)
         }
 }
 
-bool memfile_hexdump(string_buffer *sb, memfile *file)
+bool memfile_hexdump(str_buf *sb, memfile *file)
 {
         DECLARE_AND_INIT(offset_t, block_size)
         memblock_size(&block_size, file->memblock);

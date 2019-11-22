@@ -104,7 +104,7 @@ MAYBE_UNUSED static const char *basic_type_to_json_type_str(enum archive_field_t
                 case ARCHIVE_FIELD_FLOAT:
                         return "float";
                 case ARCHIVE_FIELD_STRING:
-                        return "string_buffer";
+                        return "str_buf";
                 case ARCHIVE_FIELD_BOOLEAN:
                         return "boolean";
                 case ARCHIVE_FIELD_NULL:

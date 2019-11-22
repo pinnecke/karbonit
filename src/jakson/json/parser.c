@@ -257,16 +257,16 @@ static bool json_ast_node_element_print(FILE *file, json_element *element);
 bool
 json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input)
 {
-        string_buffer str;
-        string_buffer_create(&str);
-        string_buffer_add(&str, input);
-        string_buffer_trim(&str);
-        if (string_buffer_is_empty(&str)) {
-                set_error(error_desc, NULL, "input string_buffer is empty");
-                string_buffer_drop(&str);
+        str_buf str;
+        str_buf_create(&str);
+        str_buf_add(&str, input);
+        str_buf_trim(&str);
+        if (str_buf_is_empty(&str)) {
+                set_error(error_desc, NULL, "input str_buf is empty");
+                str_buf_drop(&str);
                 return false;
         }
-        string_buffer_drop(&str);
+        str_buf_drop(&str);
 
 
         vec ofType(json_token_e) brackets;
@@ -796,7 +796,7 @@ static int process_token(json_err *error_desc, const json_token *token,
                                 default:
                                         return set_error(error_desc,
                                                          token,
-                                                         "Expected key name, or value (string_buffer, number, object, enumeration, true, "
+                                                         "Expected key name, or value (str_buf, number, object, enumeration, true, "
                                                          "false, or null).");
                         }
                         break;

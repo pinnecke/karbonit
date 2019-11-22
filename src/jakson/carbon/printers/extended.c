@@ -36,178 +36,178 @@ struct json_extended_extra {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void _json_printer_extended_drop(carbon_printer *self)
+static void _json_printer_extended_drop(printer *self)
 {
         struct json_extended_extra *extra = (struct json_extended_extra *) self->extra;
         free(extra->buffer);
         free(self->extra);
 }
 
-static void _json_printer_extended_obj_begin(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_obj_begin(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "{");
+        str_buf_add(buffer, "{");
 }
 
-static void _json_printer_extended_obj_end(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_obj_end(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "}");
+        str_buf_add(buffer, "}");
 }
 
-static void _json_printer_extended_meta_begin(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_meta_begin(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "\"meta\": {");
+        str_buf_add(buffer, "\"meta\": {");
 }
 
-static bool meta_data(carbon_printer *self, string_buffer *builder,
+static bool meta_data(printer *self, str_buf *buffer,
                       int key_type, const void *key,
                       u64 key_length, u64 commit_hash)
 {
         UNUSED(self)
 
-        string_buffer_add(builder, "\"key\": {");
+        str_buf_add(buffer, "\"key\": {");
 
         switch (key_type) {
                 case CARBON_KEY_NOKEY:
-                        string_buffer_add(builder, "\"type\": \"nokey\", \"value\": null");
+                        str_buf_add(buffer, "\"type\": \"nokey\", \"value\": null");
                         break;
                 case CARBON_KEY_AUTOKEY:
-                        string_buffer_add(builder, "\"type\": \"autokey\", \"value\": ");
-                        string_buffer_add_u64(builder, *(u64 *) key);
+                        str_buf_add(buffer, "\"type\": \"autokey\", \"value\": ");
+                        str_buf_add_u64(buffer, *(u64 *) key);
                         break;
                 case CARBON_KEY_UKEY:
-                        string_buffer_add(builder, "\"type\": \"ukey\", \"value\": ");
-                        string_buffer_add_u64(builder, *(u64 *) key);
+                        str_buf_add(buffer, "\"type\": \"ukey\", \"value\": ");
+                        str_buf_add_u64(buffer, *(u64 *) key);
                         break;
                 case CARBON_KEY_IKEY:
-                        string_buffer_add(builder, "\"type\": \"ikey\", \"value\": ");
-                        string_buffer_add_u64(builder, *(i64 *) key);
+                        str_buf_add(buffer, "\"type\": \"ikey\", \"value\": ");
+                        str_buf_add_u64(buffer, *(i64 *) key);
                         break;
                 case CARBON_KEY_SKEY:
-                        string_buffer_add(builder, "\"type\": \"skey\", \"value\": ");
+                        str_buf_add(buffer, "\"type\": \"skey\", \"value\": ");
                         if (key_length > 0) {
-                                string_buffer_add(builder, "\"");
-                                string_buffer_add_nchar(builder, key, key_length);
-                                string_buffer_add(builder, "\"");
+                                str_buf_add(buffer, "\"");
+                                str_buf_add_nchar(buffer, key, key_length);
+                                str_buf_add(buffer, "\"");
                         } else {
-                                string_buffer_add(builder, "null");
+                                str_buf_add(buffer, "null");
                         }
 
                         break;
                 default: error(ERR_INTERNALERR, NULL);
                         return false;
         }
-        string_buffer_add(builder, "}, \"commit\": ");
+        str_buf_add(buffer, "}, \"commit\": ");
         if (commit_hash) {
-                string_buffer_add(builder, "\"");
-                commit_append_to_str(builder, commit_hash);
-                string_buffer_add(builder, "\"");
+                str_buf_add(buffer, "\"");
+                commit_append_to_str(buffer, commit_hash);
+                str_buf_add(buffer, "\"");
         } else {
-                string_buffer_add(builder, "null");
+                str_buf_add(buffer, "null");
         }
         return true;
 }
 
-static void _json_printer_extended_meta_end(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_meta_end(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "}, ");
+        str_buf_add(buffer, "}, ");
 }
 
-static void _json_printer_extended_doc_begin(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_doc_begin(printer *self, str_buf *buffer)
 {
         UNUSED(self)
 
-        string_buffer_add(builder, "\"doc\": ");
+        str_buf_add(buffer, "\"doc\": ");
 }
 
-static void _json_printer_extended_doc_end(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_doc_end(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        UNUSED(builder);
+        UNUSED(buffer);
 }
 
-static void _json_printer_extended_empty_record(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_empty_record(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "[]");
+        str_buf_add(buffer, "[]");
 }
 
-static void _json_printer_extended_array_begin(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_array_begin(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "[");
+        str_buf_add(buffer, "[");
 }
 
-static void _json_printer_extended_array_end(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_array_end(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "]");
+        str_buf_add(buffer, "]");
 }
 
-static void _json_printer_extended_const_null(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_const_null(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, "null");
+        str_buf_add(buffer, "null");
 }
 
-static void _json_printer_extended_const_true(carbon_printer *self, bool is_null, string_buffer *builder)
+static void _json_printer_extended_const_true(printer *self, bool is_null, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, is_null ? "null" : "true");
+        str_buf_add(buffer, is_null ? "null" : "true");
 }
 
-static void _json_printer_extended_const_false(carbon_printer *self, bool is_null, string_buffer *builder)
+static void _json_printer_extended_const_false(printer *self, bool is_null, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, is_null ? "null" : "false");
+        str_buf_add(buffer, is_null ? "null" : "false");
 }
 
-static void _json_printer_extended_val_signed(carbon_printer *self, string_buffer *builder, const i64 *value)
+static void _json_printer_extended_val_signed(printer *self, str_buf *buffer, const i64 *value)
 {
         UNUSED(self);
         if (LIKELY(value != NULL)) {
-                string_buffer_add_i64(builder, *value);
+                str_buf_add_i64(buffer, *value);
         } else {
-                string_buffer_add(builder, NULL_STR);
+                str_buf_add(buffer, NULL_STR);
         }
 
 }
 
-static void _json_printer_extended_val_unsigned(carbon_printer *self, string_buffer *builder, const u64 *value)
+static void _json_printer_extended_val_unsigned(printer *self, str_buf *buffer, const u64 *value)
 {
         UNUSED(self);
         if (LIKELY(value != NULL)) {
-                string_buffer_add_u64(builder, *value);
+                str_buf_add_u64(buffer, *value);
         } else {
-                string_buffer_add(builder, NULL_STR);
+                str_buf_add(buffer, NULL_STR);
         }
 }
 
-static void _json_printer_extended_val_float(carbon_printer *self, string_buffer *builder, const float *value)
+static void _json_printer_extended_val_float(printer *self, str_buf *buffer, const float *value)
 {
         UNUSED(self);
         if (LIKELY(value != NULL)) {
-                string_buffer_add_float(builder, *value);
+                str_buf_add_float(buffer, *value);
         } else {
-                string_buffer_add(builder, NULL_STR);
+                str_buf_add(buffer, NULL_STR);
         }
 }
 
-static void _json_printer_extended_val_string(carbon_printer *self, string_buffer *builder, const char *value, u64 strlen)
+static void _json_printer_extended_val_string(printer *self, str_buf *buffer, const char *value, u64 strlen)
 {
         UNUSED(self);
-        string_buffer_add_char(builder, '"');
-        string_buffer_add_nchar(builder, value, strlen);
-        string_buffer_add_char(builder, '"');
+        str_buf_add_char(buffer, '"');
+        str_buf_add_nchar(buffer, value, strlen);
+        str_buf_add_char(buffer, '"');
 }
 
 #define code_of(x, data_len)      (x + data_len + 2)
 #define data_of(x)      (x)
 
-static bool _json_printer_extended_print_binary(carbon_printer *self, string_buffer *builder, const binary_field *binary)
+static bool _json_printer_extended_print_binary(printer *self, str_buf *buffer, const binary_field *binary)
 {
         /** base64 code will be written into the extra's buffer after a null-terminated copy of the binary data */
         struct json_extended_extra *extra = (struct json_extended_extra *) self->extra;
@@ -231,10 +231,10 @@ static bool _json_printer_extended_print_binary(carbon_printer *self, string_buf
         /** copy binary data into buffer, and leave one (zero'd) byte free; null-termination is required by libb64 */
         memcpy(data_of(extra->buffer), binary->blob, binary->blob_len);
 
-        string_buffer_add(builder, "{ ");
-        string_buffer_add(builder, "\"type\": \"");
-        string_buffer_add_nchar(builder, binary->mime, binary->mime_len);
-        string_buffer_add(builder, "\", \"encoding\": \"base64\", \"binary-string_buffer\": \"");
+        str_buf_add(buffer, "{ ");
+        str_buf_add(buffer, "\"type\": \"");
+        str_buf_add_nchar(buffer, binary->mime, binary->mime_len);
+        str_buf_add(buffer, "\", \"encoding\": \"base64\", \"binary-str_buf\": \"");
 
         base64_encodestate state;
         base64_init_encodestate(&state);
@@ -242,111 +242,111 @@ static bool _json_printer_extended_print_binary(carbon_printer *self, string_buf
         u64 code_len = base64_encode_block(data_of(extra->buffer), binary->blob_len + 2,
                                                code_of(extra->buffer, binary->blob_len), &state);
         base64_encode_blockend(code_of(extra->buffer, binary->blob_len), &state);
-        string_buffer_add_nchar(builder, code_of(extra->buffer, binary->blob_len), code_len);
-        string_buffer_add(builder, "\" }");
+        str_buf_add_nchar(buffer, code_of(extra->buffer, binary->blob_len), code_len);
+        str_buf_add(buffer, "\" }");
         return true;
 }
 
-static void _json_printer_extended_val_binary(carbon_printer *self, string_buffer *builder, const binary_field *binary)
+static void _json_printer_extended_val_binary(printer *self, str_buf *buffer, const binary_field *binary)
 {
-        _json_printer_extended_print_binary(self, builder, binary);
+        _json_printer_extended_print_binary(self, buffer, binary);
 }
 
-static void _json_printer_extended_comma(carbon_printer *self, string_buffer *builder)
+static void _json_printer_extended_comma(printer *self, str_buf *buffer)
 {
         UNUSED(self);
-        string_buffer_add(builder, ", ");
+        str_buf_add(buffer, ", ");
 }
 
-static void _json_printer_extended_print_key(string_buffer *builder, const char *key_name, u64 key_len)
+static void _json_printer_extended_print_key(str_buf *buffer, const char *key_name, u64 key_len)
 {
-        string_buffer_add_char(builder, '"');
-        string_buffer_add_nchar(builder, key_name, key_len);
-        string_buffer_add(builder, "\": ");
+        str_buf_add_char(buffer, '"');
+        str_buf_add_nchar(buffer, key_name, key_len);
+        str_buf_add(buffer, "\": ");
 }
 
-static void _json_printer_extended_prop_null(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_null(printer *self, str_buf *buffer,
                       const char *key_name, u64 key_len)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add(builder, "null");
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add(buffer, "null");
 }
 
-static void _json_printer_extended_prop_true(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_true(printer *self, str_buf *buffer,
                       const char *key_name, u64 key_len)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add(builder, "true");
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add(buffer, "true");
 }
 
-static void _json_printer_extended_prop_false(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_false(printer *self, str_buf *buffer,
                        const char *key_name, u64 key_len)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add(builder, "false");
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add(buffer, "false");
 }
 
-static void _json_printer_extended_prop_signed(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_signed(printer *self, str_buf *buffer,
                         const char *key_name, u64 key_len, const i64 *value)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add_i64(builder, *value);
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add_i64(buffer, *value);
 }
 
-static void _json_printer_extended_prop_unsigned(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_unsigned(printer *self, str_buf *buffer,
                           const char *key_name, u64 key_len, const u64 *value)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add_u64(builder, *value);
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add_u64(buffer, *value);
 }
 
-static void _json_printer_extended_prop_float(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_float(printer *self, str_buf *buffer,
                        const char *key_name, u64 key_len, const float *value)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add_float(builder, *value);
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add_float(buffer, *value);
 }
 
-static void _json_printer_extended_prop_string(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_string(printer *self, str_buf *buffer,
                         const char *key_name, u64 key_len, const char *value, u64 strlen)
 {
         UNUSED(self);
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        string_buffer_add_char(builder, '"');
-        string_buffer_add_nchar(builder, value, strlen);
-        string_buffer_add_char(builder, '"');
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        str_buf_add_char(buffer, '"');
+        str_buf_add_nchar(buffer, value, strlen);
+        str_buf_add_char(buffer, '"');
 }
 
-static void _json_printer_extended_prop_binary(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_prop_binary(printer *self, str_buf *buffer,
                         const char *key_name, u64 key_len, const binary_field *binary)
 {
-        _json_printer_extended_print_key(builder, key_name, key_len);
-        _json_printer_extended_print_binary(self, builder, binary);
+        _json_printer_extended_print_key(buffer, key_name, key_len);
+        _json_printer_extended_print_binary(self, buffer, binary);
 }
 
-static void _json_printer_extended_array_prop_name(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_array_prop_name(printer *self, str_buf *buffer,
                             const char *key_name, u64 key_len)
 {
         UNUSED(self)
-        _json_printer_extended_print_key(builder, key_name, key_len);
+        _json_printer_extended_print_key(buffer, key_name, key_len);
 }
 
-static void _json_printer_extended_obj_prop_name(carbon_printer *self, string_buffer *builder,
+static void _json_printer_extended_obj_prop_name(printer *self, str_buf *buffer,
                           const char *key_name, u64 key_len)
 {
         UNUSED(self)
-        _json_printer_extended_print_key(builder, key_name, key_len);
+        _json_printer_extended_print_key(buffer, key_name, key_len);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool json_extended_printer_create(carbon_printer *printer)
+bool json_extended_printer_create(printer *printer)
 {
         printer->drop = _json_printer_extended_drop;
 

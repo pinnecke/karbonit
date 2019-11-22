@@ -19,179 +19,179 @@
 #include <jakson/std/string.h>
 #include <ctype.h>
 
-bool string_buffer_create(string_buffer *builder)
+bool str_buf_create(str_buf *buffer)
 {
-        return string_buffer_create_ex(builder, 1024);
+        return str_buf_create_ex(buffer, 1024);
 }
 
-bool string_buffer_create_ex(string_buffer *builder, size_t capacity)
+bool str_buf_create_ex(str_buf *buffer, size_t capacity)
 {
-        builder->cap = capacity;
-        builder->end = 0;
-        builder->data = MALLOC(capacity);
-        error_if_and_return(!builder->data, ERR_MALLOCERR, false);
-        ZERO_MEMORY(builder->data, builder->cap);
+        buffer->cap = capacity;
+        buffer->end = 0;
+        buffer->data = MALLOC(capacity);
+        error_if_and_return(!buffer->data, ERR_MALLOCERR, false);
+        ZERO_MEMORY(buffer->data, buffer->cap);
         return true;
 }
 
-bool string_buffer_add(string_buffer *builder, const char *str)
+bool str_buf_add(str_buf *buffer, const char *str)
 {
         u64 len = strlen(str);
-        return string_buffer_add_nchar(builder, str, len);
+        return str_buf_add_nchar(buffer, str, len);
 }
 
-bool string_buffer_add_nchar(string_buffer *builder, const char *str, u64 strlen)
+bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen)
 {
         /** resize if needed */
-        if (UNLIKELY(builder->end + strlen >= builder->cap)) {
-                size_t new_cap = (builder->end + strlen) * 1.7f;
-                builder->data = realloc(builder->data, new_cap);
-                error_if_and_return(!builder->data, ERR_REALLOCERR, false);
-                ZERO_MEMORY(builder->data + builder->cap, (new_cap - builder->cap));
-                builder->cap = new_cap;
+        if (UNLIKELY(buffer->end + strlen >= buffer->cap)) {
+                size_t new_cap = (buffer->end + strlen) * 1.7f;
+                buffer->data = realloc(buffer->data, new_cap);
+                error_if_and_return(!buffer->data, ERR_REALLOCERR, false);
+                ZERO_MEMORY(buffer->data + buffer->cap, (new_cap - buffer->cap));
+                buffer->cap = new_cap;
         }
 
-        /** append string_buffer */
-        memcpy(builder->data + builder->end, str, strlen);
-        builder->end += strlen;
+        /** append str_buf */
+        memcpy(buffer->data + buffer->end, str, strlen);
+        buffer->end += strlen;
 
         return true;
 }
 
-bool string_buffer_add_char(string_buffer *builder, char c)
+bool str_buf_add_char(str_buf *buffer, char c)
 {
-        char buffer[2];
-        sprintf(buffer, "%c", c);
-        return string_buffer_add(builder, buffer);
+        char buff[2];
+        sprintf(buff, "%c", c);
+        return str_buf_add(buffer, buff);
         return true;
 }
 
-bool string_buffer_add_u8(string_buffer *builder, u8 value)
+bool str_buf_add_u8(str_buf *buffer, u8 value)
 {
-        char buffer[21];
-        ZERO_MEMORY(buffer, ARRAY_LENGTH(buffer));
-        sprintf(buffer, "%u", value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        ZERO_MEMORY(buff, ARRAY_LENGTH(buff));
+        sprintf(buff, "%u", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_u16(string_buffer *builder, u16 value)
+bool str_buf_add_u16(str_buf *buffer, u16 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%u", value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%u", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_u32(string_buffer *builder, u32 value)
+bool str_buf_add_u32(str_buf *buffer, u32 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%u", value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%u", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_u64(string_buffer *builder, u64 value)
+bool str_buf_add_u64(str_buf *buffer, u64 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%" PRIu64, value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%" PRIu64, value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_i8(string_buffer *builder, i8 value)
+bool str_buf_add_i8(str_buf *buffer, i8 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%d", value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%d", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_i16(string_buffer *builder, i16 value)
+bool str_buf_add_i16(str_buf *buffer, i16 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%d", value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%d", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_i32(string_buffer *builder, i32 value)
+bool str_buf_add_i32(str_buf *buffer, i32 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%d", value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%d", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_i64(string_buffer *builder, i64 value)
+bool str_buf_add_i64(str_buf *buffer, i64 value)
 {
-        char buffer[21];
-        sprintf(buffer, "%" PRIi64, value);
-        return string_buffer_add(builder, buffer);
+        char buff[21];
+        sprintf(buff, "%" PRIi64, value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_u64_as_hex(string_buffer *builder, u64 value)
+bool str_buf_add_u64_as_hex(str_buf *buffer, u64 value)
 {
-        char buffer[17];
-        sprintf(buffer, "%016"PRIx64, value);
-        return string_buffer_add(builder, buffer);
+        char buff[17];
+        sprintf(buff, "%016"PRIx64, value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_u64_as_hex_0x_prefix_compact(string_buffer *builder, u64 value)
+bool str_buf_add_u64_as_hex_0x_prefix_compact(str_buf *buffer, u64 value)
 {
-        char buffer[17];
-        sprintf(buffer, "0x%"PRIx64, value);
-        return string_buffer_add(builder, buffer);
+        char buff[17];
+        sprintf(buff, "0x%"PRIx64, value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_float(string_buffer *builder, float value)
+bool str_buf_add_float(str_buf *buffer, float value)
 {
-        char buffer[2046];
-        sprintf(buffer, "%0.2f", value);
-        return string_buffer_add(builder, buffer);
+        char buff[2046];
+        sprintf(buff, "%0.2f", value);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_bool(string_buffer *builder, bool value)
+bool str_buf_add_bool(str_buf *buffer, bool value)
 {
-        char buffer[6];
-        sprintf(buffer, "%s", value ? "true" : "false");
-        return string_buffer_add(builder, buffer);
+        char buff[6];
+        sprintf(buff, "%s", value ? "true" : "false");
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_add_boolean(string_buffer *builder, boolean value)
+bool str_buf_add_boolean(str_buf *buffer, boolean value)
 {
-        char buffer[6];
+        char buff[6];
         if (IS_NULL_BOOLEAN(value)) {
-                sprintf(buffer, "null");
+                sprintf(buff, "null");
         } else {
-                sprintf(buffer, "%s", value ? "true" : "false");
+                sprintf(buff, "%s", value ? "true" : "false");
         }
 
-        return string_buffer_add(builder, buffer);
+        return str_buf_add(buffer, buff);
 }
 
-bool string_buffer_clear(string_buffer *builder)
+bool str_buf_clear(str_buf *buffer)
 {
-        ZERO_MEMORY(builder->data, builder->cap);
-        builder->end = 0;
+        ZERO_MEMORY(buffer->data, buffer->cap);
+        buffer->end = 0;
         return true;
 }
 
-bool string_buffer_ensure_capacity(string_buffer *builder, u64 cap)
+bool str_buf_ensure_capacity(str_buf *buffer, u64 cap)
 {
         /** resize if needed */
-        if (UNLIKELY(cap > builder->cap)) {
+        if (UNLIKELY(cap > buffer->cap)) {
                 size_t new_cap = cap * 1.7f;
-                builder->data = realloc(builder->data, new_cap);
-                error_if_and_return(!builder->data, ERR_REALLOCERR, false);
-                ZERO_MEMORY(builder->data + builder->cap, (new_cap - builder->cap));
-                builder->cap = new_cap;
+                buffer->data = realloc(buffer->data, new_cap);
+                error_if_and_return(!buffer->data, ERR_REALLOCERR, false);
+                ZERO_MEMORY(buffer->data + buffer->cap, (new_cap - buffer->cap));
+                buffer->cap = new_cap;
         }
         return true;
 }
 
-size_t string_len(string_buffer *builder)
+size_t string_len(str_buf *buffer)
 {
-        return builder->end;
+        return buffer->end;
 }
 
-bool string_buffer_trim(string_buffer *builder)
+bool str_buf_trim(str_buf *buffer)
 {
-        if (builder->end > 0) {
-                char *string = builder->data;
+        if (buffer->end > 0) {
+                char *string = buffer->data;
                 int len = strlen(string);
 
                 while (isspace(string[len - 1])) {
@@ -202,35 +202,35 @@ bool string_buffer_trim(string_buffer *builder)
                         --len;
                 }
 
-                builder->end = len + 1;
-                memmove(builder->data, string, builder->end);
+                buffer->end = len + 1;
+                memmove(buffer->data, string, buffer->end);
         }
         return true;
 }
 
-bool string_buffer_is_empty(string_buffer *builder)
+bool str_buf_is_empty(str_buf *buffer)
 {
-        return builder ? (builder->end == 0 || (builder->end == 1 && builder->data[0] == '\0')) : true;
+        return buffer ? (buffer->end == 0 || (buffer->end == 1 && buffer->data[0] == '\0')) : true;
 }
 
-bool string_buffer_drop(string_buffer *builder)
+bool str_buf_drop(str_buf *buffer)
 {
-        free(builder->data);
+        free(buffer->data);
         return true;
 }
 
-bool string_buffer_print(string_buffer *builder)
+bool str_buf_print(str_buf *buffer)
 {
-        return string_buffer_fprint(stdout, builder);
+        return str_buf_fprint(stdout, buffer);
 }
 
-bool string_buffer_fprint(FILE *file, string_buffer *builder)
+bool str_buf_fprint(FILE *file, str_buf *buffer)
 {
-        fprintf(file, "%s\n", string_cstr(builder));
+        fprintf(file, "%s\n", string_cstr(buffer));
         return true;
 }
 
-const char *string_cstr(string_buffer *builder)
+const char *string_cstr(str_buf *buffer)
 {
-        return builder->data;
+        return buffer->data;
 }

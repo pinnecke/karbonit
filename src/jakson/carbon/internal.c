@@ -346,7 +346,7 @@ bool internal_field_data_access(memfile *file, field *field)
                 }
                         break;
                 case FIELD_BINARY_CUSTOM: {
-                        /** read mime type string_buffer */
+                        /** read mime type str_buf */
                         field->mime_len = memfile_read_uintvar_stream(NULL, file);
                         field->mime = memfile_read(file, field->mime_len);
 
@@ -937,8 +937,8 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         rm_nbytes += sizeof(float);
                         break;
                 case FIELD_STRING: {
-                        u8 len_nbytes;  /** number of bytes used to store string_buffer length */
-                        u64 str_len; /** the number of characters of the string_buffer field */
+                        u8 len_nbytes;  /** number of bytes used to store str_buf length */
+                        u64 str_len; /** the number of characters of the str_buf field */
 
                         str_len = memfile_read_uintvar_stream(&len_nbytes, memfile);
 
@@ -960,12 +960,12 @@ bool internal_field_remove(memfile *memfile, field_e type)
                 }
                         break;
                 case FIELD_BINARY_CUSTOM: {
-                        u8 custom_type_strlen_nbytes; /** number of bytes for type name string_buffer length info */
-                        u8 custom_type_strlen; /** number of characters to encode type name string_buffer */
+                        u8 custom_type_strlen_nbytes; /** number of bytes for type name str_buf length info */
+                        u8 custom_type_strlen; /** number of characters to encode type name str_buf */
                         u8 blob_length_nbytes; /** number of bytes to store blob length */
                         u64 blob_nbytes; /** number of bytes to store actual blob data */
 
-                        /** get bytes for custom type string_buffer len, and the actual length */
+                        /** get bytes for custom type str_buf len, and the actual length */
                         custom_type_strlen = memfile_read_uintvar_stream(&custom_type_strlen_nbytes, memfile);
                         memfile_skip(memfile, custom_type_strlen);
 

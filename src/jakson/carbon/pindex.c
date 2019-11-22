@@ -64,15 +64,15 @@ struct pindex_node {
 // ---------------------------------------------------------------------------------------------------------------------
 
 static void
-array_to_str(string_buffer *str, pindex *index, bool is_root, unsigned intent_level);
+array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level);
 
 static void array_into_carbon(insert *ins, pindex *index, bool is_root);
 
-static void prop_to_str(string_buffer *str, pindex *index, unsigned intent_level);
+static void prop_to_str(str_buf *str, pindex *index, unsigned intent_level);
 
 static void prop_into_carbon(insert *ins, pindex *index);
 
-static void column_to_str(string_buffer *str, pindex *index, unsigned intent_level);
+static void column_to_str(str_buf *str, pindex *index, unsigned intent_level);
 
 static void column_into_carbon(insert *ins, pindex *index);
 
@@ -86,11 +86,11 @@ static void node_flat(memfile *file, struct pindex_node *node);
 //  helper
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void intent(string_buffer *str, unsigned intent)
+static void intent(str_buf *str, unsigned intent)
 {
-        string_buffer_add_char(str, '\n');
+        str_buf_add_char(str, '\n');
         for (unsigned i = 0; i < intent; i++) {
-                string_buffer_add(str, "    ");
+                str_buf_add(str, "    ");
         }
 }
 
@@ -629,7 +629,7 @@ static void node_into_carbon(insert *ins, pindex *index)
         }
 }
 
-static void node_to_str(string_buffer *str, pindex *index, unsigned intent_level)
+static void node_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
         u8 next = memfile_peek_byte(&index->memfile);
         intent_level++;
@@ -667,11 +667,11 @@ static u8 field_ref_into_carbon(insert *ins, pindex *index, bool is_root)
                 if (is_root) {
                         insert_prop_null(ins, "offset");
                 } else {
-                        string_buffer str;
-                        string_buffer_create(&str);
-                        string_buffer_add_u64_as_hex_0x_prefix_compact(&str, field_offset);
+                        str_buf str;
+                        str_buf_create(&str);
+                        str_buf_add_u64_as_hex_0x_prefix_compact(&str, field_offset);
                         insert_prop_string(ins, "offset", string_cstr(&str));
-                        string_buffer_drop(&str);
+                        str_buf_drop(&str);
                 }
         } else {
                 insert_prop_null(ins, "offset");
@@ -679,34 +679,34 @@ static u8 field_ref_into_carbon(insert *ins, pindex *index, bool is_root)
         return field_type;
 }
 
-static u8 field_ref_to_str(string_buffer *str, pindex *index)
+static u8 field_ref_to_str(str_buf *str, pindex *index)
 {
         u8 field_type = memfile_read_byte(&index->memfile);
 
-        string_buffer_add_char(str, '[');
-        string_buffer_add_char(str, field_type);
-        string_buffer_add_char(str, ']');
+        str_buf_add_char(str, '[');
+        str_buf_add_char(str, field_type);
+        str_buf_add_char(str, ']');
 
         if (field_type != FIELD_NULL && field_type != FIELD_TRUE &&
             field_type != FIELD_FALSE) {
                 /** only in case of field type that is not null, true, or false, there is more information behind
                  * the field offset */
                 u64 field_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
-                string_buffer_add_char(str, '(');
-                string_buffer_add_u64_as_hex_0x_prefix_compact(str, field_offset);
-                string_buffer_add_char(str, ')');
+                str_buf_add_char(str, '(');
+                str_buf_add_u64_as_hex_0x_prefix_compact(str, field_offset);
+                str_buf_add_char(str, ')');
         }
 
         return field_type;
 }
 
-static void column_to_str(string_buffer *str, pindex *index, unsigned intent_level)
+static void column_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
         intent(str, intent_level);
         u8 marker = memfile_read_byte(&index->memfile);
-        string_buffer_add_char(str, '[');
-        string_buffer_add_char(str, marker);
-        string_buffer_add_char(str, ']');
+        str_buf_add_char(str, '[');
+        str_buf_add_char(str, marker);
+        str_buf_add_char(str, ']');
 
         field_ref_to_str(str, index);
 }
@@ -736,15 +736,15 @@ static void container_contents_into_carbon(insert *ins, pindex *index)
         arr_state array;
         insert *ains = insert_prop_array_begin(&array, ins, "element-offsets", 1024);
 
-        string_buffer str;
-        string_buffer_create(&str);
+        str_buf str;
+        str_buf_create(&str);
         for (u32 i = 0; i < num_elems; i++) {
                 u64 pos_offs = memfile_read_uintvar_stream(NULL, &index->memfile);
-                string_buffer_clear(&str);
-                string_buffer_add_u64_as_hex_0x_prefix_compact(&str, pos_offs);
+                str_buf_clear(&str);
+                str_buf_add_u64_as_hex_0x_prefix_compact(&str, pos_offs);
                 insert_string(ains, string_cstr(&str));
         }
-        string_buffer_drop(&str);
+        str_buf_drop(&str);
 
         insert_prop_array_end(&array);
 
@@ -761,18 +761,18 @@ static void container_contents_into_carbon(insert *ins, pindex *index)
 }
 
 static void
-container_contents_to_str(string_buffer *str, pindex *index, unsigned intent_level)
+container_contents_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
         u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
-        string_buffer_add_char(str, '(');
-        string_buffer_add_u64(str, num_elems);
-        string_buffer_add_char(str, ')');
+        str_buf_add_char(str, '(');
+        str_buf_add_u64(str, num_elems);
+        str_buf_add_char(str, ')');
 
         for (u32 i = 0; i < num_elems; i++) {
                 u64 pos_offs = memfile_read_uintvar_stream(NULL, &index->memfile);
-                string_buffer_add_char(str, '(');
-                string_buffer_add_u64_as_hex_0x_prefix_compact(str, pos_offs);
-                string_buffer_add_char(str, ')');
+                str_buf_add_char(str, '(');
+                str_buf_add_u64_as_hex_0x_prefix_compact(str, pos_offs);
+                str_buf_add_char(str, ')');
         }
 
         for (u32 i = 0; i < num_elems; i++) {
@@ -781,7 +781,7 @@ container_contents_to_str(string_buffer *str, pindex *index, unsigned intent_lev
 }
 
 static void
-container_to_str(string_buffer *str, pindex *index, u8 field_type, unsigned intent_level)
+container_to_str(str_buf *str, pindex *index, u8 field_type, unsigned intent_level)
 {
         switch (field_type) {
                 case FIELD_NULL:
@@ -933,22 +933,22 @@ static void container_into_carbon(insert *ins, pindex *index, u8 field_type)
         }
 }
 
-static void prop_to_str(string_buffer *str, pindex *index, unsigned intent_level)
+static void prop_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
         intent(str, intent_level++);
 
         u8 marker = memfile_read_byte(&index->memfile);
-        string_buffer_add_char(str, '[');
-        string_buffer_add_char(str, marker);
-        string_buffer_add_char(str, ']');
+        str_buf_add_char(str, '[');
+        str_buf_add_char(str, marker);
+        str_buf_add_char(str, ']');
 
         u8 field_type = field_ref_to_str(str, index);
 
         u64 key_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
 
-        string_buffer_add_char(str, '(');
-        string_buffer_add_u64_as_hex_0x_prefix_compact(str, key_offset);
-        string_buffer_add_char(str, ')');
+        str_buf_add_char(str, '(');
+        str_buf_add_u64_as_hex_0x_prefix_compact(str, key_offset);
+        str_buf_add_char(str, ')');
 
         container_to_str(str, index, field_type, intent_level);
 }
@@ -960,13 +960,13 @@ static void prop_into_carbon(insert *ins, pindex *index)
         insert_prop_string(ins, "type", "key");
         u8 field_type = _insert_field_ref(ins, index, false);
 
-        string_buffer str;
-        string_buffer_create(&str);
+        str_buf str;
+        str_buf_create(&str);
 
         u64 key_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
-        string_buffer_add_u64_as_hex_0x_prefix_compact(&str, key_offset);
+        str_buf_add_u64_as_hex_0x_prefix_compact(&str, key_offset);
         insert_prop_string(ins, "key", string_cstr(&str));
-        string_buffer_drop(&str);
+        str_buf_drop(&str);
 
         container_into_carbon(ins, index, field_type);
 }
@@ -990,14 +990,14 @@ static void array_into_carbon(insert *ins, pindex *index, bool is_root)
 }
 
 static void
-array_to_str(string_buffer *str, pindex *index, bool is_root, unsigned intent_level)
+array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level)
 {
         intent(str, intent_level++);
 
         u8 marker = memfile_read_byte(&index->memfile);
-        string_buffer_add_char(str, '[');
-        string_buffer_add_char(str, marker);
-        string_buffer_add_char(str, ']');
+        str_buf_add_char(str, '[');
+        str_buf_add_char(str, marker);
+        str_buf_add_char(str, ']');
 
         u8 field_type = field_ref_to_str(str, index);
 
@@ -1067,12 +1067,12 @@ static void index_build(memfile *file, rec *doc)
         pindex_node_drop(&root_array);
 }
 
-static void record_ref_to_str(string_buffer *str, pindex *index)
+static void record_ref_to_str(str_buf *str, pindex *index)
 {
         u8 key_type = memfile_read_byte(&index->memfile);
-        string_buffer_add_char(str, '[');
-        string_buffer_add_char(str, key_type);
-        string_buffer_add_char(str, ']');
+        str_buf_add_char(str, '[');
+        str_buf_add_char(str, key_type);
+        str_buf_add_char(str, ']');
 
         switch (key_type) {
                 case CARBON_KEY_NOKEY:
@@ -1081,32 +1081,32 @@ static void record_ref_to_str(string_buffer *str, pindex *index)
                 case CARBON_KEY_AUTOKEY:
                 case CARBON_KEY_UKEY: {
                         u64 key = memfile_read_u64(&index->memfile);
-                        string_buffer_add_char(str, '[');
-                        string_buffer_add_u64(str, key);
-                        string_buffer_add_char(str, ']');
+                        str_buf_add_char(str, '[');
+                        str_buf_add_u64(str, key);
+                        str_buf_add_char(str, ']');
                 }
                         break;
                 case CARBON_KEY_IKEY: {
                         i64 key = memfile_read_i64(&index->memfile);
-                        string_buffer_add_char(str, '[');;
-                        string_buffer_add_i64(str, key);
-                        string_buffer_add_char(str, ']');
+                        str_buf_add_char(str, '[');;
+                        str_buf_add_i64(str, key);
+                        str_buf_add_char(str, ']');
                 }
                         break;
                 case CARBON_KEY_SKEY: {
                         u64 key_len;
                         const char *key = carbon_string_read(&key_len, &index->memfile);
-                        string_buffer_add_char(str, '(');
-                        string_buffer_add_nchar(str, key, key_len);
-                        string_buffer_add_char(str, ')');
+                        str_buf_add_char(str, '(');
+                        str_buf_add_nchar(str, key, key_len);
+                        str_buf_add_char(str, ')');
                 }
                         break;
                 default: error(ERR_INTERNALERR, NULL);
         }
         u64 commit_hash = memfile_read_u64(&index->memfile);
-        string_buffer_add_char(str, '[');
-        string_buffer_add_u64(str, commit_hash);
-        string_buffer_add_char(str, ']');
+        str_buf_add_char(str, '[');
+        str_buf_add_u64(str, commit_hash);
+        str_buf_add_char(str, ']');
 }
 
 static void record_ref_to_carbon(insert *roins, pindex *index)
@@ -1138,11 +1138,11 @@ static void record_ref_to_carbon(insert *roins, pindex *index)
                 default: error(ERR_INTERNALERR, NULL);
         }
         u64 commit_hash = memfile_read_u64(&index->memfile);
-        string_buffer str;
-        string_buffer_create(&str);
+        str_buf str;
+        str_buf_create(&str);
         commit_to_str(&str, commit_hash);
         insert_prop_string(roins, "commit-hash", string_cstr(&str));
-        string_buffer_drop(&str);
+        str_buf_drop(&str);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1321,7 +1321,7 @@ void pindex_to_carbon(rec *doc, pindex *index)
         carbon_create_end(&context);
 }
 
-const char *pindex_to_str(string_buffer *str, pindex *index)
+const char *pindex_to_str(str_buf *str, pindex *index)
 {
         memfile_seek_to_start(&index->memfile);
         record_ref_to_str(str, index);
@@ -1331,12 +1331,12 @@ const char *pindex_to_str(string_buffer *str, pindex *index)
 
 bool pindex_print(FILE *file, pindex *index)
 {
-        string_buffer str;
-        string_buffer_create(&str);
+        str_buf str;
+        str_buf_create(&str);
         memfile_save_position(&index->memfile);
         memfile_seek_to_start(&index->memfile);
         fprintf(file, "%s", pindex_to_str(&str, index));
         memfile_restore_position(&index->memfile);
-        string_buffer_drop(&str);
+        str_buf_drop(&str);
         return true;
 }

@@ -280,59 +280,59 @@ void carbon_update_list_type(rec *revised_doc, rec *doc, list_type_e derivation)
         carbon_revise_end(&context);
 }
 
-bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc)
+bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
 {
-        carbon_printer p;
-        string_buffer b;
+        struct printer p;
+        str_buf b;
         key_e key_type;
         u64 key_len;
         u64 rev;
 
-        string_buffer_clear(dst);
-        string_buffer_ensure_capacity(dst, 2 * memfile_size(&doc->file));
+        str_buf_clear(dst);
+        str_buf_ensure_capacity(dst, 2 * memfile_size(&doc->file));
 
         memfile_save_position(&doc->file);
 
-        ZERO_MEMORY(&p, sizeof(carbon_printer));
-        string_buffer_create(&b);
+        ZERO_MEMORY(&p, sizeof(printer));
+        str_buf_create(&b);
 
         carbon_commit_hash(&rev, doc);
 
-        carbon_printer_by_type(&p, printer);
+        printer_by_type(&p, printer);
 
-        carbon_printer_begin(&p, &b);
-        carbon_printer_header_begin(&p, &b);
+        printer_begin(&p, &b);
+        printer_header_begin(&p, &b);
 
         const void *key = key_raw_value(&key_len, &key_type, doc);
-        carbon_printer_header_contents(&p, &b, key_type, key, key_len, rev);
+        printer_header_contents(&p, &b, key_type, key, key_len, rev);
 
-        carbon_printer_header_end(&p, &b);
-        carbon_printer_payload_begin(&p, &b);
+        printer_header_end(&p, &b);
+        printer_payload_begin(&p, &b);
 
         arr_it it;
         carbon_read_begin(&it, doc);
 
-        carbon_printer_print_array(&it, &p, &b, true);
+        printer_print_array(&it, &p, &b, true);
         arr_it_drop(&it);
 
-        carbon_printer_payload_end(&p, &b);
-        carbon_printer_end(&p, &b);
+        printer_payload_end(&p, &b);
+        printer_end(&p, &b);
 
-        carbon_printer_drop(&p);
-        string_buffer_add(dst, string_cstr(&b));
-        string_buffer_drop(&b);
+        printer_drop(&p);
+        str_buf_add(dst, string_cstr(&b));
+        str_buf_drop(&b);
 
         memfile_restore_position(&doc->file);
         return true;
 }
 
-const char *carbon_to_json_extended(string_buffer *dst, rec *doc)
+const char *carbon_to_json_extended(str_buf *dst, rec *doc)
 {
         carbon_to_str(dst, JSON_EXTENDED, doc);
         return string_cstr(dst);
 }
 
-const char *carbon_to_json_compact(string_buffer *dst, rec *doc)
+const char *carbon_to_json_compact(str_buf *dst, rec *doc)
 {
         carbon_to_str(dst, JSON_COMPACT, doc);
         return string_cstr(dst);
@@ -340,19 +340,19 @@ const char *carbon_to_json_compact(string_buffer *dst, rec *doc)
 
 char *carbon_to_json_extended_dup(rec *doc)
 {
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         char *result = strdup(carbon_to_json_extended(&sb, doc));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         return result;
 }
 
 char *carbon_to_json_compact_dup(rec *doc)
 {
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         char *result = strdup(carbon_to_json_compact(&sb, doc));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         return result;
 }
 
@@ -367,13 +367,13 @@ void carbon_read_end(arr_it *it)
         patch_end(it);
 }
 
-bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc)
+bool carbon_print(FILE *file, printer_impl_e printer, rec *doc)
 {
-        string_buffer builder;
-        string_buffer_create(&builder);
-        carbon_to_str(&builder, printer, doc);
-        fprintf(file, "%s\n", string_cstr(&builder));
-        string_buffer_drop(&builder);
+        str_buf buffer;
+        str_buf_create(&buffer);
+        carbon_to_str(&buffer, printer, doc);
+        fprintf(file, "%s\n", string_cstr(&buffer));
+        str_buf_drop(&buffer);
 
         return true;
 }

@@ -95,7 +95,7 @@ typedef enum field_type {
         FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET = SORTED_SET_COL_BOOLEAN,
 
         /** character strings */
-        FIELD_STRING = MSTRING, /** UTF-8 string_buffer */
+        FIELD_STRING = MSTRING, /** UTF-8 str_buf */
 
         /** numbers */
         FIELD_NUMBER_U8 = MU8, /** 8bit unsigned integer */

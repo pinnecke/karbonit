@@ -117,7 +117,7 @@ bool pindex_it_field_column_value(col_it *it_out, pindex_it *it_in);
 
 bool pindex_hexdump(FILE *file, pindex *index);
 void pindex_to_carbon(rec *doc, pindex *index);
-const char *pindex_to_str(string_buffer *str, pindex *index);
+const char *pindex_to_str(str_buf *str, pindex *index);
 bool pindex_print(FILE *file, pindex *index);
 
 #ifdef __cplusplus

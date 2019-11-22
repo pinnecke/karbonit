@@ -11,17 +11,17 @@ A `marker` is an particular 8-bit character determining how the byte-stream `dat
 Using an EBNF notation, the structure of a CARBON file is:
 
 ```
-archive               ::= archive-header string_buffer-table record-header carbon-object baked-indexes
-archive-header        ::= magic-word version-string_buffer record-offset string_buffer-id-offset-index-offset
+archive               ::= archive-header str_buf-table record-header carbon-object baked-indexes
+archive-header        ::= magic-word version-str_buf record-offset str_buf-id-offset-index-offset
 record-header         ::= 'r' record-header-flags record-size
-baked-indexes         ::= string_buffer-id-to-offset?
-string_buffer-id-to-offset   ::= '#' key-data-off value-data-off table-off num-entries key-vec value-vec table-vec 
-string_buffer-table          ::= 'D' num-strings table-flags first-entry-offset extra-field-size ( no-compressor | huffman-compressor )
-string_buffer-entry-header   ::= '-' next-entry-offset string_buffer-id string_buffer-length 
-no-compressor         ::= (string_buffer-entry-header character+)+
-huffman-compressor    ::= huffman-dictionary huffman-string_buffer+
+baked-indexes         ::= str_buf-id-to-offset?
+str_buf-id-to-offset   ::= '#' key-data-off value-data-off table-off num-entries key-vec value-vec table-vec 
+str_buf-table          ::= 'D' num-strings table-flags first-entry-offset extra-field-size ( no-compressor | huffman-compressor )
+str_buf-entry-header   ::= '-' next-entry-offset str_buf-id str_buf-length 
+no-compressor         ::= (str_buf-entry-header character+)+
+huffman-compressor    ::= huffman-dictionary huffman-str_buf+
 huffman-dictionary    ::= 'd' character prefix-length prefix-code+
-huffman-string_buffer        ::= string_buffer-entry-header data-length byte+
+huffman-str_buf        ::= str_buf-entry-header data-length byte+
 carbon-object         ::= '{' object-id object-flags property-offset+ next-object-offset columnified-props+ '}'
 columnified-props     ::= null-prop | nullable-prop | null-array-prop | nullable-array-prop | object-array-prop
 null-prop             ::= 'n' column-length key-column
@@ -40,6 +40,6 @@ column                ::= 'x' column-name ( null-column | nullable-column | obje
 null-column           ::= 'N' column-length offset-column value-column
 nullable-column       ::= ( 'B' | number-array-type | 'T' ) column-length offset-column positioning-column ( column-length value-column )+
 object-column         ::= 'o' column-length offset-column positioning-column ( column-length carbon-object )+
-column-name           ::= string_buffer-id
+column-name           ::= str_buf-id
          
 ```

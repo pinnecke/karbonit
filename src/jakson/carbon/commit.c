@@ -66,20 +66,20 @@ bool commit_compute(u64 *commit_hash, const void *base, u64 len)
         return true;
 }
 
-const char *commit_to_str(string_buffer *dst, u64 commit_hash)
+const char *commit_to_str(str_buf *dst, u64 commit_hash)
 {
         if (dst) {
-                string_buffer_clear(dst);
-                string_buffer_add_u64_as_hex(dst, commit_hash);
+                str_buf_clear(dst);
+                str_buf_add_u64_as_hex(dst, commit_hash);
                 return string_cstr(dst);
         } else {
                 return NULL;
         }
 }
 
-bool commit_append_to_str(string_buffer *dst, u64 commit_hash)
+bool commit_append_to_str(str_buf *dst, u64 commit_hash)
 {
-        string_buffer_add_u64_as_hex(dst, commit_hash);
+        str_buf_add_u64_as_hex(dst, commit_hash);
         return true;
 }
 

@@ -276,7 +276,7 @@ static void appenderNew(slice_list_t *list)
                  "# of slices (incl. appender) in total...............: %zu\n\t"
                  "slice target memory size............................: %zuB (%s)\n\t"
                  "bitmap target memory size......................: %zuB (%s)\n\t"
-                 "Max # of (keys, hash, string_buffer) in appender/slice......: %zu\n\t"
+                 "Max # of (keys, hash, str_buf) in appender/slice......: %zu\n\t"
                  "Bits used in per-slice bitmap..................: %zu\n\t"
                  "Prob. of bitmap to produce false-positives.....: %f\n\t"
                  "Single slice type size..............................: %zuB\n\t"

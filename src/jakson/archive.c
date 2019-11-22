@@ -397,7 +397,7 @@ bool archive_from_model(memblock **stream, column_doc *model, packer_e compresso
         memfile_shrink(&memfile);
 
         if (bake_string_id_index) {
-                /** create string_buffer id to offset index, and append it to the CARBON file */
+                /** create str_buf id to offset index, and append it to the CARBON file */
                 OPTIONAL_CALL(callback, begin_string_id_index_baking);
                 if (!run_string_id_baking(stream)) {
                         return false;
@@ -2199,7 +2199,7 @@ static bool print_header_from_memfile(FILE *file, memfile *memfile)
 
         fprintf(file, "0x%04x ", offset);
         fprintf(file,
-                "[magic: " CARBON_ARCHIVE_MAGIC "] [version: %d] [recordOffset: 0x%04x] [string_buffer-id-offset-index: 0x%04x]\n",
+                "[magic: " CARBON_ARCHIVE_MAGIC "] [version: %d] [recordOffset: 0x%04x] [str_buf-id-offset-index: 0x%04x]\n",
                 header->version,
                 (unsigned) header->root_object_header_offset,
                 (unsigned) header->string_id_to_offset_index_offset);
@@ -2245,7 +2245,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
                 unsigned offset = memfile_tell(memfile);
                 string_entry_header header = *MEMFILE_READ_TYPE(memfile, string_entry_header);
                 fprintf(file,
-                        "0x%04x    [marker: %c] [next-entry-off: 0x%04zx] [string_buffer-id: %"PRIu64"] [string_buffer-length: %"PRIu32"]",
+                        "0x%04x    [marker: %c] [next-entry-off: 0x%04zx] [str_buf-id: %"PRIu64"] [str_buf-length: %"PRIu32"]",
                         offset,
                         header.marker,
                         (size_t) header.next_entry_off,
@@ -2324,17 +2324,17 @@ bool archive_open(archive *out, const char *file_path)
         out->disk_file_path = strdup(file_path);
         disk_file = fopen(out->disk_file_path, "r");
         if (!disk_file) {
-                string_buffer sb;
+                str_buf sb;
                 char cwd[PATH_MAX];
-                string_buffer_create(&sb);
+                str_buf_create(&sb);
 
-                string_buffer_add(&sb, "File '");
-                string_buffer_add(&sb, file_path);
-                string_buffer_add(&sb, "' not found in current working directory ('");
-                string_buffer_add(&sb, getcwd(cwd, sizeof(cwd)));
-                string_buffer_add(&sb, "')");
+                str_buf_add(&sb, "File '");
+                str_buf_add(&sb, file_path);
+                str_buf_add(&sb, "' not found in current working directory ('");
+                str_buf_add(&sb, getcwd(cwd, sizeof(cwd)));
+                str_buf_add(&sb, "')");
                 error(ERR_FOPEN_FAILED, string_cstr(&sb));
-                string_buffer_drop(&sb);
+                str_buf_drop(&sb);
                 return false;
         } else {
                 archive_header header;

@@ -77,38 +77,38 @@ static void __carbon_print_json_exit_object(struct carbon_traverse_extra *extra,
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-static inline void __carbon_print_json_constant(struct string_buffer *restrict buf, const char *restrict literal)
+static inline void __carbon_print_json_constant(struct str_buf *restrict buf, const char *restrict literal)
 {
-        string_buffer_add(buf, literal);
+        str_buf_add(buf, literal);
 }
 
-static inline void __carbon_print_json_string(struct string_buffer *restrict buf, const char *restrict string, u64 len)
+static inline void __carbon_print_json_string(struct str_buf *restrict buf, const char *restrict string, u64 len)
 {
-        string_buffer_add_char(buf, '"');
-        string_buffer_add_nchar(buf, string, len);
-        string_buffer_add_char(buf, '"');
+        str_buf_add_char(buf, '"');
+        str_buf_add_nchar(buf, string, len);
+        str_buf_add_char(buf, '"');
 }
 
-static inline void __carbon_print_json_binary(struct string_buffer *restrict buf, const void *restrict data, u64 nbyte)
+static inline void __carbon_print_json_binary(struct str_buf *restrict buf, const void *restrict data, u64 nbyte)
 {
-        string_buffer_add_char(buf, '[');
+        str_buf_add_char(buf, '[');
         for (register uint_fast64_t i = 0; i < nbyte; i++) {
                 const u8 byte = *(const u8 *)(data + nbyte);
-                string_buffer_add_u8(buf, byte);
+                str_buf_add_u8(buf, byte);
                 if (LIKELY(i + 1 < nbyte)) {
-                        string_buffer_add_char(buf, ',');
+                        str_buf_add_char(buf, ',');
                 }
         }
-        string_buffer_add_char(buf, ']');
+        str_buf_add_char(buf, ']');
 }
 
 //#define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(type)                                                                 \
-//static inline void __carbon_print_json_##type##_from_array(struct string_buffer *restrict buf,                         \
+//static inline void __carbon_print_json_##type##_from_array(struct str_buf *restrict buf,                         \
 //                                                           arr_it *restrict it)                        \
 //{                                                                                                                      \
 //        type val;                                                                                                      \
 //        internal_arr_it_##type##_value(&val, it);                                                                      \
-//        string_buffer_add_##type(buf, val);                                                                            \
+//        str_buf_add_##type(buf, val);                                                                            \
 //}
 //
 //DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(u8)
@@ -122,11 +122,11 @@ static inline void __carbon_print_json_binary(struct string_buffer *restrict buf
 //DEFINE_CARBON_PRINT_JSON_TYPE_FROM_ARRAY(float)
 
 #define DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(type, clazz, default_value)                                                            \
-static inline void __carbon_print_json_##type##_from_prop_value(struct string_buffer *restrict buf,                    \
+static inline void __carbon_print_json_##type##_from_prop_value(struct str_buf *restrict buf,                    \
                                                                 struct obj_it *restrict it)                     \
 {                                                                                                                      \
         type val = (type) item_get_##clazz(&(it->prop.value), default_value);                                                    \
-        string_buffer_add_##type(buf, val);                                                                            \
+        str_buf_add_##type(buf, val);                                                                            \
 }
 
 DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(u8, number_unsigned, CARBON_NULL_UNSIGNED)
@@ -142,7 +142,7 @@ DEFINE_CARBON_PRINT_JSON_TYPE_FROM_PROP_VALUE(float, number_float, CARBON_NULL_F
 static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_extra *restrict extra,
                                                         arr_it *restrict it)
 {
-        struct string_buffer *str_buf = extra->capture.print_json.str;
+        struct str_buf *str_buf = extra->capture.print_json.str;
         field_e type;
         //const char *string;
         //binary binary;
@@ -154,7 +154,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
                 return;
         } else if (LIKELY(!arr_it_is_unit(it))) {
                 extra->capture.print_json.convert = CARBON_PRINT_JSON_CONVERT_REMAIN;
-                string_buffer_add(str_buf, "[");
+                str_buf_add(str_buf, "[");
         } else {
                 extra->capture.print_json.convert = CARBON_PRINT_JSON_CONVERT_TO_ELEMENT;
         }
@@ -163,7 +163,7 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 
         while (arr_it_next(it)) {
 
-                string_buffer_add_char(str_buf, sep);
+                str_buf_add_char(str_buf, sep);
                 sep = ',';
 
                 arr_it_field_type(&type, it);
@@ -235,10 +235,10 @@ static inline void __carbon_print_json_exit_array_fast(struct carbon_traverse_ex
                                                        arr_it *restrict it)
 {
         UNUSED(it)
-        struct string_buffer *str_buf = extra->capture.print_json.str;
+        struct str_buf *str_buf = extra->capture.print_json.str;
 
         if (extra->capture.print_json.convert == CARBON_PRINT_JSON_CONVERT_REMAIN) {
-                string_buffer_add(str_buf, "]");
+                str_buf_add(str_buf, "]");
         }
 }
 
@@ -246,12 +246,12 @@ static inline void __carbon_print_json_exit_array_fast(struct carbon_traverse_ex
 {                                                                                                                      \
         const type *values = (const type *) base;                                                                      \
         for (register uint_fast32_t i = 0; i < num_elems; i++) {                                                       \
-                string_buffer_add_char(str_buf, sep);                                                                  \
+                str_buf_add_char(str_buf, sep);                                                                  \
                 const type elem = values[i];                                                                           \
                 if (UNLIKELY(null_test(elem))) {                                                                       \
-                        string_buffer_add(str_buf, CARBON_PRINT_JSON_NULL);                                            \
+                        str_buf_add(str_buf, CARBON_PRINT_JSON_NULL);                                            \
                 } else {                                                                                               \
-                        string_buffer_add_##type(str_buf, values[i]);                                                  \
+                        str_buf_add_##type(str_buf, values[i]);                                                  \
                 }                                                                                                      \
                 sep = ',';                                                                                             \
         }                                                                                                              \
@@ -260,7 +260,7 @@ static inline void __carbon_print_json_exit_array_fast(struct carbon_traverse_ex
 static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra *restrict extra,
                                                    struct col_it *restrict it)
 {
-        struct string_buffer *str_buf = extra->capture.print_json.str;
+        struct str_buf *str_buf = extra->capture.print_json.str;
 
         uint_fast32_t num_elems;
         enum field_type type;
@@ -274,7 +274,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);
                 return false;
         } else if (LIKELY(num_elems > 1)) {
-                string_buffer_add(str_buf, "[");
+                str_buf_add(str_buf, "[");
         }
 
         switch (container) {
@@ -313,7 +313,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
         }
 
         if (LIKELY(num_elems > 1)) {
-                string_buffer_add(str_buf, "]");
+                str_buf_add(str_buf, "]");
         }
         return true;
 }
@@ -321,21 +321,21 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
 static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_extra *restrict extra,
                                                          struct obj_it *restrict it)
 {
-        struct string_buffer *str_buf = extra->capture.print_json.str;
+        struct str_buf *str_buf = extra->capture.print_json.str;
         field_e type;
 
-        string_buffer_add(str_buf, "{");
+        str_buf_add(str_buf, "{");
         char sep = '\0';
 
         while (obj_it_next(it)) {
                 internal_obj_it_prop_type(&type, it);
 
-                string_buffer_add_char(str_buf, sep);
+                str_buf_add_char(str_buf, sep);
                 sep = ',';
 
                 string_field prop_key = internal_obj_it_prop_name(it);
                 __carbon_print_json_string(str_buf, prop_key.string, prop_key.length);
-                string_buffer_add_char(str_buf, ':');
+                str_buf_add_char(str_buf, ':');
 
                 internal_obj_it_prop_type(&type, it);
                 switch (type) {
@@ -405,8 +405,8 @@ static inline void __carbon_print_json_exit_object_fast(struct carbon_traverse_e
                                                         struct obj_it *it)
 {
         UNUSED(it)
-        struct string_buffer *str_buf = extra->capture.print_json.str;
-        string_buffer_add(str_buf, "}");
+        struct str_buf *str_buf = extra->capture.print_json.str;
+        str_buf_add(str_buf, "}");
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ static inline void __carbon_print_json_exit_object_fast(struct carbon_traverse_e
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse, struct string_buffer *str,
+static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse, struct str_buf *str,
                                                 struct carbon_json_from_opts *config)
 {
         bool use_fast_formatter = !config || config->force_fast_formatter;
@@ -438,7 +438,7 @@ static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse
                                visit_record, enter_array, exit_array, visit_column, enter_object, exit_object,
                                CARBON_TRAVERSE_PRINT_JSON, false);
 
-        string_buffer_clear(str);
+        str_buf_clear(str);
         traverse->extra.parent = traverse;
         traverse->extra.capture.print_json.str = str;
         traverse->extra.capture.print_json.config = config ? config : &CARBON_PRINT_JSON_PRETTY;
@@ -450,7 +450,7 @@ static void __carbon_print_json_traverse_create(struct carbon_traverse *traverse
 //
 // ---------------------------------------------------------------------------------------------------------------------
 
-void carbon_json_from_carbon(struct string_buffer *str, rec *record,
+void carbon_json_from_carbon(struct str_buf *str, rec *record,
                              struct carbon_json_from_opts *config)
 {
         assert(str);
@@ -458,14 +458,14 @@ void carbon_json_from_carbon(struct string_buffer *str, rec *record,
 
         struct carbon_traverse traverse;
 
-        string_buffer_ensure_capacity(str, 2 * memfile_size(&record->file));
+        str_buf_ensure_capacity(str, 2 * memfile_size(&record->file));
         __carbon_print_json_traverse_create(&traverse, str, config);
         carbon_traverse_carbon(NULL, &traverse, record);
         carbon_traverse_drop(&traverse);
 
 }
 
-void carbon_json_from_array(struct string_buffer *str, arr_it *it,
+void carbon_json_from_array(struct str_buf *str, arr_it *it,
                             struct carbon_json_from_opts *config)
 {
         assert(str);
@@ -478,7 +478,7 @@ void carbon_json_from_array(struct string_buffer *str, arr_it *it,
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_json_from_column(struct string_buffer *str, struct col_it *it,
+void carbon_json_from_column(struct str_buf *str, struct col_it *it,
                              struct carbon_json_from_opts *config)
 {
         assert(str);
@@ -491,7 +491,7 @@ void carbon_json_from_column(struct string_buffer *str, struct col_it *it,
         carbon_traverse_drop(&traverse);
 }
 
-void carbon_json_from_object(struct string_buffer *str, struct obj_it *it,
+void carbon_json_from_object(struct str_buf *str, struct obj_it *it,
                              struct carbon_json_from_opts *config)
 {
         assert(str);

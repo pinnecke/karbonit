@@ -138,32 +138,32 @@ bool find_has_result(find *find)
         return dot_eval_has_result(&find->eval);
 }
 
-const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, find *find)
+const char *find_result_to_str(str_buf *dst_str, printer_impl_e print_type, find *find)
 {
-        string_buffer_clear(dst_str);
+        str_buf_clear(dst_str);
 
-        carbon_printer printer;
-        carbon_printer_by_type(&printer, print_type);
+        printer printer;
+        printer_by_type(&printer, print_type);
 
         if (find_has_result(find)) {
                 field_e result_type;
                 find_result_type(&result_type, find);
                 switch (result_type) {
                         case FIELD_NULL:
-                                carbon_printer_null(&printer, dst_str);
+                                printer_null(&printer, dst_str);
                                 break;
                         case FIELD_TRUE:
-                                carbon_printer_true(&printer, false, dst_str);
+                                printer_true(&printer, false, dst_str);
                                 break;
                         case FIELD_FALSE:
-                                carbon_printer_false(&printer, false, dst_str);
+                                printer_false(&printer, false, dst_str);
                                 break;
                         case FIELD_OBJECT_UNSORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 obj_it *sub_it = find_result_object(find);
-                                carbon_printer_print_object(sub_it, &printer, dst_str);
+                                printer_print_object(sub_it, &printer, dst_str);
                         }
                                 break;
                         case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -171,7 +171,7 @@ const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e pri
                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                 arr_it *sub_it = find_result_array(find);
-                                carbon_printer_print_array(sub_it, &printer, dst_str, false);
+                                printer_print_array(sub_it, &printer, dst_str, false);
                         }
                                 break;
                         case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -215,73 +215,73 @@ const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e pri
                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                 col_it *sub_it = find_result_column(find);
-                                carbon_printer_print_column(sub_it, &printer, dst_str);
+                                printer_print_column(sub_it, &printer, dst_str);
                         }
                                 break;
                         case FIELD_STRING: {
                                 u64 str_len = 0;
                                 const char *str = find_result_string(&str_len, find);
-                                carbon_printer_string(&printer, dst_str, str, str_len);
+                                printer_string(&printer, dst_str, str, str_len);
                         }
                                 break;
                         case FIELD_NUMBER_U8: {
                                 u64 val = 0;
                                 find_result_unsigned(&val, find);
-                                carbon_printer_u8_or_null(&printer, dst_str, (u8) val);
+                                printer_u8_or_null(&printer, dst_str, (u8) val);
                         }
                                 break;
                         case FIELD_NUMBER_U16: {
                                 u64 val = 0;
                                 find_result_unsigned(&val, find);
-                                carbon_printer_u16_or_null(&printer, dst_str, (u16) val);
+                                printer_u16_or_null(&printer, dst_str, (u16) val);
                         }
                                 break;
                         case FIELD_NUMBER_U32: {
                                 u64 val = 0;
                                 find_result_unsigned(&val, find);
-                                carbon_printer_u32_or_null(&printer, dst_str, (u32) val);
+                                printer_u32_or_null(&printer, dst_str, (u32) val);
                         }
                                 break;
                         case FIELD_NUMBER_U64: {
                                 u64 val = 0;
                                 find_result_unsigned(&val, find);
-                                carbon_printer_u64_or_null(&printer, dst_str, (u64) val);
+                                printer_u64_or_null(&printer, dst_str, (u64) val);
                         }
                                 break;
                         case FIELD_NUMBER_I8: {
                                 i64 val = 0;
                                 find_result_signed(&val, find);
-                                carbon_printer_i8_or_null(&printer, dst_str, (i8) val);
+                                printer_i8_or_null(&printer, dst_str, (i8) val);
                         }
                                 break;
                         case FIELD_NUMBER_I16: {
                                 i64 val = 0;
                                 find_result_signed(&val, find);
-                                carbon_printer_i16_or_null(&printer, dst_str, (i16) val);
+                                printer_i16_or_null(&printer, dst_str, (i16) val);
                         }
                                 break;
                         case FIELD_NUMBER_I32: {
                                 i64 val = 0;
                                 find_result_signed(&val, find);
-                                carbon_printer_i32_or_null(&printer, dst_str, (i32) val);
+                                printer_i32_or_null(&printer, dst_str, (i32) val);
                         }
                                 break;
                         case FIELD_NUMBER_I64: {
                                 i64 val = 0;
                                 find_result_signed(&val, find);
-                                carbon_printer_i64_or_null(&printer, dst_str, (i64) val);
+                                printer_i64_or_null(&printer, dst_str, (i64) val);
                         }
                                 break;
                         case FIELD_NUMBER_FLOAT: {
                                 float val = 0;
                                 find_result_float(&val, find);
-                                carbon_printer_float(&printer, dst_str, &val);
+                                printer_float(&printer, dst_str, &val);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
                                 const binary_field *val = find_result_binary(find);
-                                carbon_printer_binary(&printer, dst_str, val);
+                                printer_binary(&printer, dst_str, val);
                         }
                                 break;
                         default:
@@ -290,24 +290,24 @@ const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e pri
                 }
 
         } else {
-                string_buffer_add(dst_str, CARBON_NIL_STR);
+                str_buf_add(dst_str, CARBON_NIL_STR);
         }
-        carbon_printer_drop(&printer);
+        printer_drop(&printer);
 
         return string_cstr(dst_str);
 }
 
-const char *find_result_to_json_compact(string_buffer *dst_str, find *find)
+const char *find_result_to_json_compact(str_buf *dst_str, find *find)
 {
         return find_result_to_str(dst_str, JSON_COMPACT, find);
 }
 
 char *find_result_to_json_compact_dup(find *find)
 {
-        string_buffer str;
-        string_buffer_create(&str);
+        str_buf str;
+        str_buf_create(&str);
         char *ret = strdup(find_result_to_json_compact(&str, find));
-        string_buffer_drop(&str);
+        str_buf_drop(&str);
         return ret;
 }
 

@@ -612,7 +612,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
                 JAK_ASSERT (&arg->keys_in.base != NULL);
         }
 
-        TRACE(STRING_DIC_ASYNC_TAG, "computing per-thread string_buffer subset for %zu strings", num_keys)
+        TRACE(STRING_DIC_ASYNC_TAG, "computing per-thread str_buf subset for %zu strings", num_keys)
         /** create per-carrier string subset */
         for (size_t i = 0; i < num_keys; i++) {
                 /** get thread responsible for this particular string */

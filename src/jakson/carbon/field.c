@@ -416,7 +416,7 @@ bool carbon_field_skip_custom_binary(memfile *file)
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
         error_if_and_return(type_marker != FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
-        /** read custom type string_buffer length, and skip the type string_buffer */
+        /** read custom type str_buf length, and skip the type str_buf */
         u64 custom_type_str_len = memfile_read_uintvar_stream(NULL, file);
         memfile_skip(file, custom_type_str_len);
 

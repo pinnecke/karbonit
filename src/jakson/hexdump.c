@@ -18,12 +18,12 @@
 #include <ctype.h>
 #include <jakson/hexdump.h>
 
-bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
+bool hexdump(str_buf *dst, const void *base, u64 nbytes)
 {
         char buffer[11];
 
         sprintf(buffer, "%08x  ", 0);
-        string_buffer_add(dst, buffer);
+        str_buf_add(dst, buffer);
 
         for (u64 hex_block_id = 0; hex_block_id < nbytes;) {
 
@@ -32,24 +32,24 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
                 for (u64 i = 0; i < step; i++) {
                         char c = *((const char *) (base + hex_block_id + i));
                         sprintf(buffer, "%02x ", (unsigned char) c);
-                        string_buffer_add(dst, buffer);
+                        str_buf_add(dst, buffer);
                         if (i == 7) {
-                                string_buffer_add_char(dst, ' ');
+                                str_buf_add_char(dst, ' ');
                         }
                 }
 
                 if (UNLIKELY(step == 7)) {
-                        string_buffer_add_char(dst, ' ');
+                        str_buf_add_char(dst, ' ');
                 }
 
                 if (UNLIKELY(step < 16)) {
                         for (u8 pad = 0; pad < 16 - step; pad++) {
                                 sprintf(buffer, "   ");
-                                string_buffer_add(dst, buffer);
+                                str_buf_add(dst, buffer);
                         }
                 }
 
-                string_buffer_add(dst, " | ");
+                str_buf_add(dst, " | ");
 
                 for (u64 i = 0; i < step; i++) {
                         char c = *((const char *) (base + hex_block_id + i));
@@ -59,30 +59,30 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
                                 sprintf(buffer, ".");
                         }
 
-                        string_buffer_add(dst, buffer);
+                        str_buf_add(dst, buffer);
                 }
 
                 if (UNLIKELY(step < 16)) {
                         for (u8 pad = 0; pad < 16 - step; pad++) {
                                 sprintf(buffer, " ");
-                                string_buffer_add(dst, buffer);
+                                str_buf_add(dst, buffer);
                         }
                 }
 
-                string_buffer_add_char(dst, '|');
+                str_buf_add_char(dst, '|');
 
 
                 if (LIKELY(hex_block_id + step < nbytes)) {
-                        string_buffer_add(dst, "\n");
+                        str_buf_add(dst, "\n");
                         sprintf(buffer, "%08x  ", ((u32) hex_block_id + 16));
-                        string_buffer_add(dst, buffer);
+                        str_buf_add(dst, buffer);
                 }
 
 
                 hex_block_id += step;
         }
 
-        string_buffer_add(dst, "\n");
+        str_buf_add(dst, "\n");
 
         return true;
 }
@@ -90,12 +90,12 @@ bool hexdump(string_buffer *dst, const void *base, u64 nbytes)
 bool hexdump_print(FILE *file, const void *base, u64 nbytes)
 {
         bool status;
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         if ((status = hexdump(&sb, base, nbytes))) {
                 fprintf(file, "%s", string_cstr(&sb));
         }
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         return status;
 
 }

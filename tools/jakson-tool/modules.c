@@ -38,7 +38,7 @@ static int convertJs2Model(struct js_to_context *context, FILE *file, bool optim
     CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
 
 
-    CONSOLE_WRITE(file, "  - Setup string_buffer dictionary%s", "");
+    CONSOLE_WRITE(file, "  - Setup str_buf dictionary%s", "");
 
     encode_async_create(&context->dictionary, 1000, 1000, 1000, 8);
     CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
@@ -223,12 +223,12 @@ static void tracker_end_load_archive()
 
 static void tracker_begin_setup_string_dict_ionary()
 {
-    CONSOLE_WRITELN(stdout, "%s", "  - Setup string_buffer dictionary started");
+    CONSOLE_WRITELN(stdout, "%s", "  - Setup str_buf dictionary started");
 }
 
 static void tracker_end_setup_string_dict_ionary()
 {
-    CONSOLE_WRITELN(stdout, "%s", "  - Setup string_buffer dictionary finished");
+    CONSOLE_WRITELN(stdout, "%s", "  - Setup str_buf dictionary finished");
 }
 
 static void tracker_begin_parse_json()
@@ -273,12 +273,12 @@ static void tracker_end_cleanup()
 
 static void tracker_begin_write_string_table()
 {
-    CONSOLE_WRITELN(stdout, "%s", "  - Writing string_buffer table started");
+    CONSOLE_WRITELN(stdout, "%s", "  - Writing str_buf table started");
 }
 
 static void tracker_end_write_string_table()
 {
-    CONSOLE_WRITELN(stdout, "%s", "  - Writing string_buffer table finished");
+    CONSOLE_WRITELN(stdout, "%s", "  - Writing str_buf table finished");
 }
 
 static void tracker_begin_write_record_table()
@@ -298,12 +298,12 @@ static void tracker_skip_string_id_index_baking()
 
 static void tracker_begin_string_id_index_baking()
 {
-    CONSOLE_WRITELN(stdout, "%s", "  - Backing string_buffer id to offset index started");
+    CONSOLE_WRITELN(stdout, "%s", "  - Backing str_buf id to offset index started");
 }
 
 static void tracker_end_string_id_index_baking()
 {
-    CONSOLE_WRITELN(stdout, "%s", "  - Backing string_buffer id to offset index finished");
+    CONSOLE_WRITELN(stdout, "%s", "  - Backing str_buf id to offset index finished");
 }
 
 
@@ -571,7 +571,7 @@ bool moduleInspectInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
             fclose(f);
             printf("file:\t\t\t'%s'\n", pathCarbonFileIn);
             printf("file-size:\t\t%" PRIu64 " B\n", fileLength);
-            printf("string_buffer-table-size:\t%zu B\n", info.string_table_size);
+            printf("str_buf-table-size:\t%zu B\n", info.string_table_size);
             printf("record-table-size:\t%zu B\n", info.record_table_size);
             printf("index-size:\t\t%zu B\n", info.string_id_index_size);
             printf("#-embedded-strings:\t%" PRIu32 "\n", info.num_embeddded_strings);

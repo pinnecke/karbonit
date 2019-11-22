@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-typedef u8 media_type; /** byte to determine type at hand (e.g., JSON array, string_buffer, null, ...) */
+typedef u8 media_type; /** byte to determine type at hand (e.g., JSON array, str_buf, null, ...) */
 
 static struct mime {
         const char *type;
@@ -414,7 +414,7 @@ static struct mime {
         {"application/pkcs8",                                                         "p8"},
         {"text/plain-bas",                                                            "par"},
         {"application/vnd.pawaafile",                                                 "paw"},
-        {"application/vnd.powerbuilder6",                                             "pbd"},
+        {"application/vnd.powerbuffer6",                                             "pbd"},
         {"image/x-portable-bitmap",                                                   "pbm"},
         {"application/x-font-pcf",                                                    "pcf"},
         {"application/vnd.hp-pcl",                                                    "pcl"},

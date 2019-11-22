@@ -1,9 +1,11 @@
 /*
+ * prop - object container property
+ *
  * Copyright 2019 Marcus Pinnecke
  */
 
-#ifndef HAD_CARBON_PROP_H
-#define HAD_CARBON_PROP_H
+#ifndef HAD_PROP_H
+#define HAD_PROP_H
 
 #include <jakson/stdinc.h>
 #include <jakson/carbon/field.h>

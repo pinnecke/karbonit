@@ -198,7 +198,7 @@ static bool
 _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *strings, size_t num_strings,
             size_t num_threads)
 {
-        TRACE(STRING_DIC_SYNC_TAG, "local string_buffer dictionary insertion invoked for %zu strings", num_strings);
+        TRACE(STRING_DIC_SYNC_TAG, "local str_buf dictionary insertion invoked for %zu strings", num_strings);
         timestamp begin = wallclock();
 
         UNUSED(num_threads);
@@ -215,7 +215,7 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
         /** query index for strings to get a boolean mask which strings are new and which must be added */
         /** This is for the case that the string dictionary is not empty to skip processing of those new elements
          * which are already contained */
-        TRACE(STRING_DIC_SYNC_TAG, "local string_buffer dictionary check for new strings in insertion bulk%s", "...");
+        TRACE(STRING_DIC_SYNC_TAG, "local str_buf dictionary check for new strings in insertion bulk%s", "...");
 
         /** NOTE: palatalization of the call to this function decreases performance */
         str_hash_get_bulk_safe(&values, &found_mask, &num_not_found, &extra->index, strings, num_strings);

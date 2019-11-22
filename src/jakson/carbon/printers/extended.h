@@ -24,6 +24,6 @@
 
 #include <jakson/carbon/printers.h>
 
-bool json_extended_printer_create(carbon_printer *printer);
+bool json_extended_printer_create(printer *printer);
 
 #endif

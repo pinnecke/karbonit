@@ -104,7 +104,7 @@ typedef struct carbon_prop carbon_prop;
 typedef struct dot_eval dot_eval;
 typedef struct pindex pindex;
 typedef struct pindex_it pindex_it;
-typedef struct carbon_printer carbon_printer;
+typedef struct printer printer;
 typedef struct rev rev;
 typedef struct binary_field binary_field;
 typedef struct carbon_update carbon_update;
@@ -158,7 +158,7 @@ typedef struct vec vec;
 typedef struct str_hash str_hash;
 typedef struct str_hash_counters str_hash_counters;
 
-typedef struct string_buffer string_buffer;
+typedef struct str_buf str_buf;
 
 typedef struct string_dict string_dict;
 

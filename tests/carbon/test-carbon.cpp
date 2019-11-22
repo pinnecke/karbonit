@@ -8,10 +8,10 @@ TEST(CarbonTest, CreateCarbon) {
         rec doc;
         unique_id_t oid;
         u64 rev;
-        string_buffer builder;
+        str_buf buffer;
         bool status;
 
-        string_buffer_create(&builder);
+        str_buf_create(&buffer);
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
 
@@ -25,9 +25,9 @@ TEST(CarbonTest, CreateCarbon) {
         EXPECT_TRUE(status);
         EXPECT_NE(rev, 0U);
 
-        carbon_to_str(&builder, JSON_EXTENDED, &doc);
-        // printf("%s\n", string_builder_cstr(&builder));
-        string_buffer_drop(&builder);
+        carbon_to_str(&buffer, JSON_EXTENDED, &doc);
+        // printf("%s\n", string_buffer_cstr(&buffer));
+        str_buf_drop(&buffer);
 
         carbon_drop(&doc);
 }
@@ -83,10 +83,10 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingWithKey) {
 TEST(CarbonTest, CreateCarbonRevisionNumbering) {
         rec doc, rev_doc;
         u64 hash;
-        string_buffer builder;
+        str_buf buffer;
         bool status;
 
-        string_buffer_create(&builder);
+        str_buf_create(&buffer);
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
@@ -106,9 +106,9 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
         EXPECT_TRUE(status);
         EXPECT_EQ(hash, 0U);
 
-        carbon_to_str(&builder, JSON_EXTENDED, &doc);
-        // printf("%s\n", string_builder_cstr(&builder));
-        string_buffer_drop(&builder);
+        carbon_to_str(&buffer, JSON_EXTENDED, &doc);
+        // printf("%s\n", string_buffer_cstr(&buffer));
+        str_buf_drop(&buffer);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -117,10 +117,10 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
 TEST(CarbonTest, CreateCarbonRevisionAbort) {
         rec doc, rev_doc;
         u64 hash;
-        string_buffer builder;
+        str_buf buffer;
         bool status;
 
-        string_buffer_create(&builder);
+        str_buf_create(&buffer);
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
@@ -136,9 +136,9 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
         EXPECT_TRUE(status);
         EXPECT_EQ(hash, 0U);
 
-        carbon_to_str(&builder, JSON_EXTENDED, &doc);
-        // printf("%s\n", string_builder_cstr(&builder));
-        string_buffer_drop(&builder);
+        carbon_to_str(&buffer, JSON_EXTENDED, &doc);
+        // printf("%s\n", string_buffer_cstr(&buffer));
+        str_buf_drop(&buffer);
 
         carbon_drop(&doc);
 }
@@ -146,10 +146,10 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
 TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
         rec doc, rev_doc;
         u64 hash;
-        string_buffer builder;
+        str_buf buffer;
         bool status;
 
-        string_buffer_create(&builder);
+        str_buf_create(&buffer);
 
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
@@ -170,9 +170,9 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
         EXPECT_TRUE(status);
         EXPECT_EQ(hash, 0U);
 
-        carbon_to_str(&builder, JSON_EXTENDED, &doc);
-        // printf("%s\n", string_builder_cstr(&builder));
-        string_buffer_drop(&builder);
+        carbon_to_str(&buffer, JSON_EXTENDED, &doc);
+        // printf("%s\n", string_buffer_cstr(&buffer));
+        str_buf_drop(&buffer);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -730,11 +730,11 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         carbon_revise_end(&revise);
 
         //carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -785,11 +785,11 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         carbon_revise_end(&revise);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -824,11 +824,11 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -861,11 +861,11 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[42, 43, 44]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -898,11 +898,11 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1000,12 +1000,12 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         //carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        //string_builder_print(&sb);
+        //string_buffer_print(&sb);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [-1, -2, -3], [-4, -5, -6], [-7, -8, -9], [-10, -11, -12], [42.00, 21.00, 23.42]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1040,11 +1040,11 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         // printf("Carbon DOC PRINT:");
         // carbon_print(stdout, &rev_doc);
         // fflush(stdout);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1082,11 +1082,11 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         // printf("Carbon DOC PRINT:");
         // carbon_print(stdout, &rev_doc);
         // fflush(stdout);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46, 47, 47, 47, 48, 48, 48, 49, 49, 49, 50, 50, 50, 51, 51, 51, 52, 52, 52, 53, 53, 53, 54, 54, 54, 55, 55, 55, 56, 56, 56, 57, 57, 57, 58, 58, 58, 59, 59, 59, 60, 60, 60, 61, 61, 61, 62, 62, 62, 63, 63, 63, 64, 64, 64, 65, 65, 65, 66, 66, 66, 67, 67, 67, 68, 68, 68, 69, 69, 69, 70, 70, 70, 71, 71, 71, 72, 72, 72, 73, 73, 73, 74, 74, 74, 75, 75, 75, 76, 76, 76, 77, 77, 77, 78, 78, 78, 79, 79, 79, 80, 80, 80, 81, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 84, 85, 85, 85, 86, 86, 86, 87, 87, 87, 88, 88, 88, 89, 89, 89, 90, 90, 90, 91, 91, 91, 92, 92, 92, 93, 93, 93, 94, 94, 94, 95, 95, 95, 96, 96, 96, 97, 97, 97, 98, 98, 98, 99, 99, 99]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1126,11 +1126,11 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         // printf("Carbon DOC PRINT:");
         // carbon_print(stdout, &rev_doc);
         // fflush(stdout);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1228,11 +1228,11 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 3], [4, null, 6], [7, null, 9], [10, null, 12], [-1, null, -3], [-4, null, -6], [-7, null, -9], [-10, null, -12], [42.00, null, 23.42]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1328,11 +1328,11 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 2], [3, null, 4], [5, null, 6], [7, null, 8], [9, null, 10], [11, null, 12], [13, null, 14], [15, null, 16]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1380,11 +1380,11 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 1, 1], [2, 3, 4], [5, 6, 7]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1454,11 +1454,11 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         //carbon_hexdump_print(stdout, &rev_doc);
 
         // carbon_print(stdout, &rev_doc);
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[\"Hello\", \"World\"], 1, 1, 1], [2, [\"Hello\", \"World\"], 3, 4], [5, 6, [\"Hello\", \"World\"], 7], [8, 9, 10, [\"Hello\", \"World\"]]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1516,15 +1516,15 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
 
         // carbon_print(stdout, &rev_doc);
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
         carbon_to_str(&sb, JSON_EXTENDED, &rev_doc);
 
-        // fprintf(stdout, "IST  %s\n", string_builder_cstr(&sb));
+        // fprintf(stdout, "IST  %s\n", string_buffer_cstr(&sb));
         // fprintf(stdout, "SOLL {\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [4223, [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]]}\n");
 
         ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [4223, [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]]}"));
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -1532,109 +1532,109 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
 
 TEST(CarbonTest, CarbonDotNotation) {
         dot path;
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         dot_create(&path);
 
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_add_key(&path, "name");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_add_key(&path, "my name");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\"") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_add_key(&path, "");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\"") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_add_idx(&path, 42);
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_add_idx(&path, 23);
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42.23") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_add_key(&path, "\"already quotes\"");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42.23.\"already quotes\"") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
 
         dot_drop(&path);
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonDotNotationParsing) {
         dot path;
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         dot_from_string(&path, "name");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "   name");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "   name    ");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "\"name\"");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "\"nam e\"");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "\"nam e\"") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "nam e");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "nam.e") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "\"My Doc\" names 5 age");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "\"My Doc\".names.5.age") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "23.authors.3.name");
         dot_to_str(&sb, &path);
         ASSERT_TRUE(strcmp(string_cstr(&sb), "23.authors.3.name") == 0);
-        string_buffer_clear(&sb);
+        str_buf_clear(&sb);
         dot_drop(&path);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonFind) {
@@ -2034,10 +2034,10 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         rev revise;
         arr_it it;
         insert in;
-        string_buffer sb;
+        str_buf sb;
         const char *json;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -2113,7 +2113,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -2128,10 +2128,10 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         rev revise;
         arr_it it;
         insert in;
-        string_buffer sb;
+        str_buf sb;
         const char *json;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -2205,7 +2205,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -2219,9 +2219,9 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2255,7 +2255,7 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2268,9 +2268,9 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2308,7 +2308,7 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, false]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [false]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2321,9 +2321,9 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2360,7 +2360,7 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, false]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2373,9 +2373,9 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2417,7 +2417,7 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, null, false]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, false]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2430,9 +2430,9 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2466,7 +2466,7 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2479,9 +2479,9 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2519,7 +2519,7 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 23]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [23]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2532,9 +2532,9 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2571,7 +2571,7 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 23]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2584,9 +2584,9 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2628,7 +2628,7 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 21, 23]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 23]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2642,9 +2642,9 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2678,7 +2678,7 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\"]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2691,9 +2691,9 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2731,7 +2731,7 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"World\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2744,9 +2744,9 @@ TEST(CarbonTest, CarbonRemoveLastString)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2783,7 +2783,7 @@ TEST(CarbonTest, CarbonRemoveLastString)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2796,9 +2796,9 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2840,7 +2840,7 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Plato\", \"Kant\", \"Nietzsche\"]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Plato\", \"Nietzsche\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2857,9 +2857,9 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2891,10 +2891,10 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
 
         //printf("\nBEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2907,9 +2907,9 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -2947,10 +2947,10 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
 
         //printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -2963,9 +2963,9 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3002,10 +3002,10 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3018,9 +3018,9 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3064,10 +3064,10 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
 
         printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-str_buf\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-str_buf\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3090,9 +3090,9 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3126,10 +3126,10 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"123\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A=JDAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"123\", \"encoding\": \"base64\", \"binary-str_buf\": \"A=JDAA\" }]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3142,9 +3142,9 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3182,10 +3182,10 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3198,9 +3198,9 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3237,10 +3237,10 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3253,9 +3253,9 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3299,10 +3299,10 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-string_buffer\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"base64\", \"binary-string_buffer\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/something-json-like\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"my-fancy-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"my-other-nonstandard-format\", \"encoding\": \"base64\", \"binary-str_buf\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3324,11 +3324,11 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         arr_state state;
         insert *array_ins;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
         insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
@@ -3368,7 +3368,7 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3381,9 +3381,9 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         arr_state state;
         insert *array_ins;
@@ -3433,7 +3433,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [4, 5, 6]]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[4, 5, 6]]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3446,9 +3446,9 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         arr_state state;
         insert *array_ins;
@@ -3497,7 +3497,7 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [4, 5, 6]]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3510,9 +3510,9 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         arr_state state;
         insert *array_ins;
@@ -3571,7 +3571,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [4, 5, 6], [7, 8, 9]]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [7, 8, 9]]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3584,9 +3584,9 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
         bool status;
         const u16 *values;
 
@@ -3665,7 +3665,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         ASSERT_TRUE(strcmp(json_3, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[3]]}") == 0);
         ASSERT_TRUE(strcmp(json_4, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[]]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -3679,8 +3679,8 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
         rec doc, rev_doc, rev_doc2, rev_doc3, rev_doc4, rev_doc5, rev_doc6, rev_doc7, rev_doc8, rev_doc9,
                 rev_doc10, rev_doc11, rev_doc12, rev_doc13, rev_doc14;
         rec_new context;
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         arr_state state, state2, state3;
         col_state cstate;
@@ -3806,7 +3806,7 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
         ASSERT_TRUE(strcmp(json_15, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         carbon_drop(&rev_doc2);
@@ -3841,10 +3841,10 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         rev revise;
         arr_it it;
         insert in;
-        string_buffer sb;
+        str_buf sb;
         const char *json;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
         carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3877,7 +3877,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
@@ -3900,12 +3900,12 @@ TEST(CarbonTest, CarbonShrinkIssueFix)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -3924,13 +3924,13 @@ TEST(CarbonTest, CarbonKeyTypeNoKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -3980,13 +3980,13 @@ TEST(CarbonTest, CarbonKeyTypeAutoKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4057,9 +4057,9 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        string_buffer sb;
+        str_buf sb;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         u64 id_read;
 
@@ -4083,7 +4083,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
@@ -4091,9 +4091,9 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        string_buffer sb;
+        str_buf sb;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         i64 id_read;
 
@@ -4117,7 +4117,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
@@ -4125,9 +4125,9 @@ TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
         rec doc, rev_doc;
         rec_new context;
         rev revise;
-        string_buffer sb;
+        str_buf sb;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         u64 key_len;
 
@@ -4150,7 +4150,7 @@ TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
 
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
@@ -4285,13 +4285,13 @@ TEST(CarbonTest, CarbonKeyTypeStringKey)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4312,13 +4312,13 @@ TEST(CarbonTest, CarbonObjectInsertEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4340,13 +4340,13 @@ TEST(CarbonTest, CarbonObjectInsertNull)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": null}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4370,12 +4370,12 @@ TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": null, \"My Key 2\": null, \"My Key 3\": null}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4397,13 +4397,13 @@ TEST(CarbonTest, CarbonObjectInsertU8)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4427,13 +4427,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4455,13 +4455,13 @@ TEST(CarbonTest, CarbonObjectInsertU16)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4485,13 +4485,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4513,13 +4513,13 @@ TEST(CarbonTest, CarbonObjectInsertU32)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4543,13 +4543,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4571,13 +4571,13 @@ TEST(CarbonTest, CarbonObjectInsertU64)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4601,13 +4601,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         //carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4629,13 +4629,13 @@ TEST(CarbonTest, CarbonObjectInsertI8)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4659,13 +4659,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4687,13 +4687,13 @@ TEST(CarbonTest, CarbonObjectInsertI16)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4717,13 +4717,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4745,13 +4745,13 @@ TEST(CarbonTest, CarbonObjectInsertI32)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4775,13 +4775,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4803,13 +4803,13 @@ TEST(CarbonTest, CarbonObjectInsertI64)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4833,13 +4833,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4861,13 +4861,13 @@ TEST(CarbonTest, CarbonObjectInsertFloat)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123.32}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4891,13 +4891,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1.23, \"My Key 2\": -2.42, \"My Key 3\": 3.21}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4919,13 +4919,13 @@ TEST(CarbonTest, CarbonObjectInsertTrue)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": true}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4947,13 +4947,13 @@ TEST(CarbonTest, CarbonObjectInsertFalse)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": false}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -4977,13 +4977,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": true, \"My Key 2\": false, \"My Key 3\": true}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5017,13 +5017,13 @@ TEST(CarbonTest, CarbonObjectInsertMixed)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": true, \"k2\": false, \"k3\": null, \"k4\": 1, \"k5\": 2, \"k6\": 3, \"k7\": 4, \"k8\": -1, \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5047,13 +5047,13 @@ TEST(CarbonTest, CarbonObjectInsertString)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"hello\": \"world\"}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5079,13 +5079,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleString)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": \"v1\", \"hello\": \"world\", \"k3\": \"there\"}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5124,13 +5124,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23, \"k1\": true}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5154,13 +5154,13 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }}]}") == 0);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5201,13 +5201,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"LAAA\" }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==ybGQAA\" }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5233,13 +5233,13 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"LAAA\" }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==ybGQAA\" }}]}") == 0);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5264,13 +5264,13 @@ TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my nested\": {}}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5318,13 +5318,13 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==sbG8AA\" }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"LAAA\" }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"A==ybGQAA\" }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
+        ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5350,13 +5350,13 @@ TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": []}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5407,13 +5407,13 @@ TEST(CarbonTest, CarbonObjectInsertArrayData)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5442,13 +5442,13 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        string_buffer sb;
-        string_buffer_create(&sb);
+        str_buf sb;
+        str_buf_create(&sb);
 
         // carbon_print(stdout, &doc);
         ASSERT_TRUE(strcmp(carbon_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my column\": [1, 2, 3]}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
 }
 
@@ -5569,9 +5569,9 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
 
@@ -5646,7 +5646,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}, {\"6\": false, \"7\": null, \"8\": 1, \"9\": \"v1\", \"10\": 2}, {\"11\": false, \"12\": null, \"13\": 1, \"14\": \"v1\", \"15\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -5659,9 +5659,9 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
 
@@ -5735,7 +5735,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}, {\"6\": false, \"7\": null, \"8\": 1, \"9\": \"v1\", \"10\": 2}, {\"11\": false, \"12\": null, \"13\": 1, \"14\": \"v1\", \"15\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -5748,9 +5748,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         insert nested_ins;
@@ -5813,7 +5813,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"Hello Long Key\": \"Hello Long Value\", \"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -5826,9 +5826,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         insert nested_ins;
@@ -5888,7 +5888,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"Hello Long Key\": \"Hello Long Value\", \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -5901,9 +5901,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         insert nested_ins;
@@ -5963,7 +5963,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"Hello Long Key\": \"Hello Long Value\", \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -5976,9 +5976,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         insert nested_ins;
@@ -6039,7 +6039,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"Hello Long Key\": \"Hello Long Value\", \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6052,9 +6052,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         insert nested_ins;
@@ -6116,7 +6116,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"Hello Long Key\": \"Hello Long Value\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6129,9 +6129,9 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         insert nested_ins;
@@ -6194,7 +6194,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2, \"Hello Long Key\": \"Hello Long Value\"}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6207,9 +6207,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
 
@@ -6267,7 +6267,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6280,9 +6280,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         obj_state nested_obj;
@@ -6347,7 +6347,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": {\"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}, \"6\": null, \"7\": 1, \"8\": \"v1\", \"9\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"6\": null, \"7\": 1, \"8\": \"v1\", \"9\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6360,9 +6360,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         arr_state nested_arr;
@@ -6426,7 +6426,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": [], \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6439,9 +6439,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         arr_state nested_arr;
@@ -6506,7 +6506,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": [null, 1, \"v1\", 2], \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6519,9 +6519,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         col_state nested_col;
@@ -6583,7 +6583,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": [], \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6596,9 +6596,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         rec_new context;
         rev revise;
         arr_it rev_it;
-        string_buffer sb;
+        str_buf sb;
         bool has_next;
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         obj_state state;
         obj_state nested_obj;
@@ -6659,7 +6659,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": {}, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         free(json_1);
@@ -6668,9 +6668,9 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
 
 TEST(CarbonTest, CarbonUpdateSetToNull)
 {
-        string_buffer sb;
+        str_buf sb;
 
-        string_buffer_create(&sb);
+        str_buf_create(&sb);
 
         /* Each time 'create_nested_doc' is called, the following document will be generated
 
@@ -6685,12 +6685,12 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
                       {
                          "type":"text/plain",
                          "encoding":"base64",
-                         "binary-string_buffer":"TXkgUGxhaW4tVGV4dAAA"
+                         "binary-str_buf":"TXkgUGxhaW4tVGV4dAAA"
                       },
                       {
                          "type":"own",
                          "encoding":"base64",
-                         "binary-string_buffer":"TXkgT3duIEZvcm1hdAAA"
+                         "binary-str_buf":"TXkgT3duIEZvcm1hdAAA"
                       },
                       [
                          32,
@@ -6711,12 +6711,12 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
                          {
                             "type":"text/plain",
                             "encoding":"base64",
-                            "binary-string_buffer":"TXkgUGxhaW4tVGV4dAAA"
+                            "binary-str_buf":"TXkgUGxhaW4tVGV4dAAA"
                          },
                          {
                             "type":"own",
                             "encoding":"base64",
-                            "binary-string_buffer":"TXkgT3duIEZvcm1hdAAA"
+                            "binary-str_buf":"TXkgT3duIEZvcm1hdAAA"
                          },
                          [
                             32,
@@ -6736,12 +6736,12 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
                       {
                          "type":"text/plain",
                          "encoding":"base64",
-                         "binary-string_buffer":"TXkgUGxhaW4tVGV4dAAA"
+                         "binary-str_buf":"TXkgUGxhaW4tVGV4dAAA"
                       },
                       {
                          "type":"own",
                          "encoding":"base64",
-                         "binary-string_buffer":"TXkgT3duIEZvcm1hdAAA"
+                         "binary-str_buf":"TXkgT3duIEZvcm1hdAAA"
                       },
                       [
                          32,
@@ -6762,12 +6762,12 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
                          {
                             "type":"text/plain",
                             "encoding":"base64",
-                            "binary-string_buffer":"TXkgUGxhaW4tVGV4dAAA"
+                            "binary-str_buf":"TXkgUGxhaW4tVGV4dAAA"
                          },
                          {
                             "type":"own",
                             "encoding":"base64",
-                            "binary-string_buffer":"TXkgT3duIEZvcm1hdAAA"
+                            "binary-str_buf":"TXkgT3duIEZvcm1hdAAA"
                          },
                          [
                             32,
@@ -6790,7 +6790,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6799,7 +6799,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, null, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, null, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6808,7 +6808,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, null, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, null, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6817,7 +6817,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, null, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, null, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6826,25 +6826,25 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, null, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, null, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.5", &rev_doc, &doc); // replaces string_buffer with null
+//        status = carbon_update_one_set_null("0.5", &rev_doc, &doc); // replaces str_buf with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, null, { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, null, { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_null("0.6", &rev_doc, &doc); // replaces binary string_buffer with null
+//        status = carbon_update_one_set_null("0.6", &rev_doc, &doc); // replaces binary str_buf with null
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", null, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", null, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6853,7 +6853,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, null, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, null, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6862,7 +6862,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, null, [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, null, [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6871,7 +6871,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [null, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [null, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6880,7 +6880,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], null, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], null, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6889,7 +6889,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], null], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], null], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6898,7 +6898,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6907,7 +6907,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], null]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], null]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6920,7 +6920,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[true, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[true, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6929,7 +6929,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6938,7 +6938,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, true, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, true, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6947,7 +6947,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, true, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, true, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6956,25 +6956,25 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, true, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, true, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.5", &rev_doc, &doc); // replaces string_buffer with true
+//        status = carbon_update_one_set_true("0.5", &rev_doc, &doc); // replaces str_buf with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, true, { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, true, { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
 //        create_nested_doc(&doc);
-//        status = carbon_update_one_set_true("0.6", &rev_doc, &doc); // replaces binary string_buffer with true
+//        status = carbon_update_one_set_true("0.6", &rev_doc, &doc); // replaces binary str_buf with true
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", true, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", true, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6983,7 +6983,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, true, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, true, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -6992,7 +6992,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        // printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        // printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, true, [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, true, [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 
@@ -7002,7 +7002,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [true, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [true, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -7011,7 +7011,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], true, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], true, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -7020,7 +7020,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], true], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], true], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -7029,7 +7029,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 //
@@ -7038,24 +7038,24 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 //        ASSERT_TRUE(status);
 //        printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
 //        printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], true]}") == 0);
+//        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], true]}") == 0);
 //        carbon_drop(&doc);
 //        carbon_drop(&rev_doc);
 
         /*
         create_nested_doc(&doc);
-        status = carbon_update_one_set_null("0.5", &rev_doc, &doc); // replaces string_buffer with null
+        status = carbon_update_one_set_null("0.5", &rev_doc, &doc); // replaces str_buf with null
         ASSERT_TRUE(status);
         printf("built:  \t'%s'\n", carbon_to_json(&sb, &doc));
         printf("altered:\t'%s'\n", carbon_to_json(&sb, &rev_doc));
-        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-string_buffer\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
+        ASSERT_TRUE(strcmp(carbon_to_json(&sb, &rev_doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35], [], [null, true, false, 8, -16, \"Hello, World!\", { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }, { \"type\": \"own\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgT3duIEZvcm1hdAAA\" }, [32, 33, 34, 35]]]]}") == 0);
         carbon_drop(&doc);
         carbon_drop(&rev_doc);
         */
 
 
         // Overwrite constant in-pace w/ fixed-type
-        // Overwrite constant in-pace w/ string_buffer
+        // Overwrite constant in-pace w/ str_buf
         // Overwrite constant in-pace w/ binary
         // Overwrite constant in-pace w/ custom binary
         // Overwrite constant in-pace w/ empty array
@@ -7067,7 +7067,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Overwrite fixed-type in-pace w/ constant
         // Overwrite fixed-type in-pace w/ fixed-type (w/ same width)
         // Overwrite fixed-type in-pace w/ fixed-type (w/ other width)
-        // Overwrite fixed-type in-pace w/ string_buffer
+        // Overwrite fixed-type in-pace w/ str_buf
         // Overwrite fixed-type in-pace w/ binary
         // Overwrite fixed-type in-pace w/ custom binary
         // Overwrite fixed-type in-pace w/ empty array
@@ -7075,21 +7075,21 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Overwrite fixed-type in-pace w/ empty column
         // Overwrite fixed-type in-pace w/ non-empty column
 
-        // Update string_buffer in-place
-        // Overwrite string_buffer in-pace w/ constant
-        // Overwrite string_buffer in-pace w/ fixed-type
-        // Overwrite string_buffer in-pace w/ string_buffer
-        // Overwrite string_buffer in-pace w/ binary
-        // Overwrite string_buffer in-pace w/ custom binary
-        // Overwrite string_buffer in-pace w/ empty array
-        // Overwrite string_buffer in-pace w/ non-empty array
-        // Overwrite string_buffer in-pace w/ empty column
-        // Overwrite string_buffer in-pace w/ non-empty column
+        // Update str_buf in-place
+        // Overwrite str_buf in-pace w/ constant
+        // Overwrite str_buf in-pace w/ fixed-type
+        // Overwrite str_buf in-pace w/ str_buf
+        // Overwrite str_buf in-pace w/ binary
+        // Overwrite str_buf in-pace w/ custom binary
+        // Overwrite str_buf in-pace w/ empty array
+        // Overwrite str_buf in-pace w/ non-empty array
+        // Overwrite str_buf in-pace w/ empty column
+        // Overwrite str_buf in-pace w/ non-empty column
 
         // Update binary in-place
         // Overwrite binary in-pace w/ constant
         // Overwrite binary in-pace w/ fixed-type
-        // Overwrite binary in-pace w/ string_buffer
+        // Overwrite binary in-pace w/ str_buf
         // Overwrite binary in-pace w/ binary
         // Overwrite binary in-pace w/ custom binary
         // Overwrite binary in-pace w/ empty array
@@ -7100,7 +7100,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Update custom binary in-place
         // Overwrite custom binary in-pace w/ constant
         // Overwrite custom binary in-pace w/ fixed-type
-        // Overwrite custom binary in-pace w/ string_buffer
+        // Overwrite custom binary in-pace w/ str_buf
         // Overwrite custom binary in-pace w/ binary
         // Overwrite custom binary in-pace w/ custom binary
         // Overwrite custom binary in-pace w/ empty array
@@ -7111,7 +7111,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Update empty-array binary in-place
         // Overwrite empty-array in-pace w/ constant
         // Overwrite empty-array in-pace w/ fixed-type
-        // Overwrite empty-array in-pace w/ string_buffer
+        // Overwrite empty-array in-pace w/ str_buf
         // Overwrite empty-array in-pace w/ binary
         // Overwrite empty-array in-pace w/ custom binary
         // Overwrite empty-array in-pace w/ non-empty array
@@ -7121,7 +7121,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Update non-empty array binary in-place
         // Overwrite non-empty array in-pace w/ constant
         // Overwrite non-empty array in-pace w/ fixed-type
-        // Overwrite non-empty array in-pace w/ string_buffer
+        // Overwrite non-empty array in-pace w/ str_buf
         // Overwrite non-empty array in-pace w/ binary
         // Overwrite non-empty array in-pace w/ custom binary
         // Overwrite non-empty array in-pace w/ empty array
@@ -7131,7 +7131,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 
         // Overwrite empty column in-pace w/ constant
         // Overwrite empty column in-pace w/ fixed-type
-        // Overwrite empty column in-pace w/ string_buffer
+        // Overwrite empty column in-pace w/ str_buf
         // Overwrite empty column in-pace w/ binary
         // Overwrite empty column in-pace w/ custom binary
         // Overwrite empty column in-pace w/ empty array
@@ -7141,7 +7141,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Update non-empty column in-place
         // Overwrite non-empty column in-pace w/ constant
         // Overwrite non-empty column in-pace w/ fixed-type
-        // Overwrite non-empty column in-pace w/ string_buffer
+        // Overwrite non-empty column in-pace w/ str_buf
         // Overwrite non-empty column in-pace w/ binary
         // Overwrite non-empty column in-pace w/ custom binary
         // Overwrite non-empty column in-pace w/ empty array
@@ -7157,7 +7157,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
 
         // Overwrite entire document content in-pace w/ constant
         // Overwrite entire document content in-pace w/ fixed-type
-        // Overwrite entire document content in-pace w/ string_buffer
+        // Overwrite entire document content in-pace w/ str_buf
         // Overwrite entire document content in-pace w/ binary
         // Overwrite entire document content in-pace w/ custom binary
         // Overwrite entire document content in-pace w/ empty array
@@ -7166,7 +7166,7 @@ TEST(CarbonTest, CarbonUpdateSetToNull)
         // Overwrite entire document content in-pace w/ non-empty column
 
 
-        string_buffer_drop(&sb);
+        str_buf_drop(&sb);
 }
 
 TEST(CarbonTest, CarbonFromEmptyJson)
@@ -8563,12 +8563,12 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 {
         rec doc;
         find find;
-        string_buffer result;
+        str_buf result;
 
         const char *json = "{\"x\": {\"y\": [{\"z\": 23}, {\"z\": null}]} }";
 
         carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
-        string_buffer_create(&result);
+        str_buf_create(&result);
 
         printf("input: '%s'\n", json);
 
@@ -8596,7 +8596,7 @@ TEST(CarbonTest, CarbonFindPrintExamples)
         printf("x.y.0.z\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
         find_end(&find);
 
-        string_buffer_drop(&result);
+        str_buf_drop(&result);
         carbon_drop(&doc);
 }
 
@@ -8676,8 +8676,8 @@ TEST(CarbonTest, PathIndex) {
 }
 
 TEST(CarbonTest, CommitHashStr) {
-        string_buffer s;
-        string_buffer_create(&s);
+        str_buf s;
+        str_buf_create(&s);
 
         ASSERT_TRUE(strcmp(commit_to_str(&s, 1), "0000000000000001") == 0);
         ASSERT_TRUE(strcmp(commit_to_str(&s, 42), "000000000000002a") == 0);
@@ -8692,7 +8692,7 @@ TEST(CarbonTest, CommitHashStr) {
         ASSERT_EQ(0U, commit_from_str("000000000000001Z"));
         ASSERT_EQ(0U, commit_from_str(NULL));
 
-        string_buffer_drop(&s);
+        str_buf_drop(&s);
 }
 
 int main(int argc, char **argv) {

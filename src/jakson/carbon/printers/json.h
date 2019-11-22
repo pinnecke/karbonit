@@ -145,16 +145,16 @@ static struct carbon_json_from_opts
  * for using a built-in fast formatter. Use built-in formatter 'CARBON_PRINT_JSON_PRETTY' for 'config' to format
  * into a nice human readable form. */
 
-void carbon_json_from_carbon(struct string_buffer *str, struct rec *record,
+void carbon_json_from_carbon(struct str_buf *str, struct rec *record,
                              struct carbon_json_from_opts *config);
 
-void carbon_json_from_array(struct string_buffer *str, arr_it *it,
+void carbon_json_from_array(struct str_buf *str, arr_it *it,
                             struct carbon_json_from_opts *config);
 
-void carbon_json_from_column(struct string_buffer *str, struct col_it *it,
+void carbon_json_from_column(struct str_buf *str, struct col_it *it,
                              struct carbon_json_from_opts *config);
 
-void carbon_json_from_object(struct string_buffer *str, struct obj_it *it,
+void carbon_json_from_object(struct str_buf *str, struct obj_it *it,
                              struct carbon_json_from_opts *config);
 
 #ifdef __cplusplus

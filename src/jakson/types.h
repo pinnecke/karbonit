@@ -85,7 +85,7 @@ typedef u8 boolean;
 #define IS_NULL_UNSIGNED(x)     (x == CARBON_NULL_UNSIGNED)
 #define IS_NULL_SIGNED(x)       (x == CARBON_NULL_SIGNED)
 
-typedef u64 archive_field_sid_t;  /** string_buffer identifier, resolvable by a string_buffer dictionary */
+typedef u64 archive_field_sid_t;  /** str_buf identifier, resolvable by a str_buf dictionary */
 typedef char field_null_t;
 typedef i8 archive_field_boolean_t;
 typedef i8 archive_field_i8_t;

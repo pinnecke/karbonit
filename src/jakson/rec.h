@@ -92,9 +92,9 @@ typedef struct rec_new {
         int mode;
 } rec_new;
 
-typedef enum carbon_printer_impl {
+typedef enum printer_impl {
         JSON_EXTENDED, JSON_COMPACT
-} carbon_printer_impl_e;
+} printer_impl_e;
 
 #define CARBON_NIL_STR "_nil"
 
@@ -107,7 +107,7 @@ typedef enum key_type {
         CARBON_KEY_UKEY = MUKEY,
         /** user-defined 64bit signed integer key */
         CARBON_KEY_IKEY = MIKEY,
-        /** user-defined n-char string_buffer key */
+        /** user-defined n-char str_buf key */
         CARBON_KEY_SKEY = MSKEY
 } key_e;
 
@@ -200,9 +200,9 @@ bool carbon_is_sorted(rec *doc);
 /** Changes the abstract type of the most-outer record array to the given abstract type */
 void carbon_update_list_type(rec *revised_doc, rec *doc, list_type_e derivation);
 
-bool carbon_to_str(string_buffer *dst, carbon_printer_impl_e printer, rec *doc);
-const char *carbon_to_json_extended(string_buffer *dst, rec *doc);
-const char *carbon_to_json_compact(string_buffer *dst, rec *doc);
+bool carbon_to_str(str_buf *dst, printer_impl_e printer, rec *doc);
+const char *carbon_to_json_extended(str_buf *dst, rec *doc);
+const char *carbon_to_json_compact(str_buf *dst, rec *doc);
 char *carbon_to_json_extended_dup(rec *doc);
 char *carbon_to_json_compact_dup(rec *doc);
 
@@ -221,7 +221,7 @@ void carbon_read_begin(arr_it *it, rec *doc);
 /* Closes a read-only iterator, which was previously opened via 'carbon_read_begin' */
 void carbon_read_end(arr_it *it);
 
-bool carbon_print(FILE *file, carbon_printer_impl_e printer, rec *doc);
+bool carbon_print(FILE *file, printer_impl_e printer, rec *doc);
 bool carbon_hexdump_print(FILE *file, rec *doc);
 
 #ifdef __cplusplus

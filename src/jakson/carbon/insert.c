@@ -411,12 +411,12 @@ static void _insert_binary(insert *in, const void *value, size_t nbytes,
                 /** write media type 'user binary' */
                 push_media_type_for_array(in, FIELD_BINARY_CUSTOM);
 
-                /** write length of 'user_type' string_buffer with variable-length integer type */
+                /** write length of 'user_type' str_buf with variable-length integer type */
                 u64 user_type_strlen = strlen(user_type);
 
                 memfile_write_uintvar_stream(NULL, &in->file, user_type_strlen);
 
-                /** write 'user_type' string_buffer */
+                /** write 'user_type' str_buf */
                 memfile_ensure_space(&in->file, user_type_strlen);
                 memfile_write(&in->file, user_type, user_type_strlen);
 

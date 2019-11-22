@@ -261,7 +261,7 @@ typedef struct item
                                 internal_arr_it_update_object_end((state)) :                                     \
                                 internal_obj_it_update_object_end((state))
 
-#define item_set_from_carbon(item, const_carbon_ptr_src)                                                        \
+#define item_set_from_record(item, const_carbon_ptr_src)                                                        \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_from_carbon((item)->parent.array, const_carbon_ptr_src) : \
                                 internal_obj_it_update_from_carbon((item)->parent.object, const_carbon_ptr_src))

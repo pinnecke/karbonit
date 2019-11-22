@@ -66,15 +66,15 @@ struct pindex_node {
 static void
 array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level);
 
-static void array_into_carbon(insert *ins, pindex *index, bool is_root);
+static void array_into_record(insert *ins, pindex *index, bool is_root);
 
 static void prop_to_str(str_buf *str, pindex *index, unsigned intent_level);
 
-static void prop_into_carbon(insert *ins, pindex *index);
+static void prop_into_record(insert *ins, pindex *index);
 
 static void column_to_str(str_buf *str, pindex *index, unsigned intent_level);
 
-static void column_into_carbon(insert *ins, pindex *index);
+static void column_into_record(insert *ins, pindex *index);
 
 static void object_build_index(struct pindex_node *parent, obj_it *elem_it);
 
@@ -612,18 +612,18 @@ static void array_flat(memfile *file, struct pindex_node *node)
 }
 
 MAYBE_UNUSED
-static void node_into_carbon(insert *ins, pindex *index)
+static void node_into_record(insert *ins, pindex *index)
 {
         u8 next = memfile_peek_byte(&index->memfile);
         switch (next) {
                 case PATH_MARKER_PROP_NODE:
-                        prop_into_carbon(ins, index);
+                        prop_into_record(ins, index);
                         break;
                 case PATH_MARKER_ARRAY_NODE:
-                        array_into_carbon(ins, index, false);
+                        array_into_record(ins, index, false);
                         break;
                 case PATH_MARKER_COLUMN_NODE:
-                        column_into_carbon(ins, index);
+                        column_into_record(ins, index);
                         break;
                 default: error(ERR_CORRUPTED, NULL);
         }
@@ -648,7 +648,7 @@ static void node_to_str(str_buf *str, pindex *index, unsigned intent_level)
         }
 }
 
-static u8 field_ref_into_carbon(insert *ins, pindex *index, bool is_root)
+static u8 field_ref_into_record(insert *ins, pindex *index, bool is_root)
 {
         u8 field_type = memfile_read_byte(&index->memfile);
 
@@ -715,20 +715,20 @@ static u8 _insert_field_ref(insert *ins, pindex *index, bool is_root)
 {
         obj_state object;
         insert *oins = insert_prop_object_begin(&object, ins, "record-reference", 1024);
-        u8 ret = field_ref_into_carbon(oins, index, is_root);
+        u8 ret = field_ref_into_record(oins, index, is_root);
         insert_prop_object_end(&object);
         return ret;
 }
 
 MAYBE_UNUSED
-static void column_into_carbon(insert *ins, pindex *index)
+static void column_into_record(insert *ins, pindex *index)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
         insert_prop_string(ins, "type", "column");
         _insert_field_ref(ins, index, false);
 }
 
-static void container_contents_into_carbon(insert *ins, pindex *index)
+static void container_contents_into_record(insert *ins, pindex *index)
 {
         u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
         insert_prop_unsigned(ins, "element-count", num_elems);
@@ -753,7 +753,7 @@ static void container_contents_into_carbon(insert *ins, pindex *index)
         for (u32 i = 0; i < num_elems; i++) {
                 obj_state node_obj;
                 insert *node_obj_ins = insert_object_begin(&node_obj, ains, 1024);
-                node_into_carbon(node_obj_ins, index);
+                node_into_record(node_obj_ins, index);
                 insert_object_end(&node_obj);
         }
         insert_prop_array_end(&array);
@@ -857,7 +857,7 @@ container_to_str(str_buf *str, pindex *index, u8 field_type, unsigned intent_lev
         }
 }
 
-static void container_into_carbon(insert *ins, pindex *index, u8 field_type)
+static void container_into_record(insert *ins, pindex *index, u8 field_type)
 {
         switch (field_type) {
                 case FIELD_NULL:
@@ -926,7 +926,7 @@ static void container_into_carbon(insert *ins, pindex *index, u8 field_type)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         /** subsequent path elements to be printed */
-                        container_contents_into_carbon(ins, index);
+                        container_contents_into_record(ins, index);
                 }
                         break;
                 default: error(ERR_INTERNALERR, NULL);
@@ -954,7 +954,7 @@ static void prop_to_str(str_buf *str, pindex *index, unsigned intent_level)
 }
 
 MAYBE_UNUSED
-static void prop_into_carbon(insert *ins, pindex *index)
+static void prop_into_record(insert *ins, pindex *index)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
         insert_prop_string(ins, "type", "key");
@@ -968,10 +968,10 @@ static void prop_into_carbon(insert *ins, pindex *index)
         insert_prop_string(ins, "key", string_cstr(&str));
         str_buf_drop(&str);
 
-        container_into_carbon(ins, index, field_type);
+        container_into_record(ins, index, field_type);
 }
 
-static void array_into_carbon(insert *ins, pindex *index, bool is_root)
+static void array_into_record(insert *ins, pindex *index, bool is_root)
 {
         MEMFILE_SKIP_BYTE(&index->memfile);
         u8 field_type;
@@ -982,9 +982,9 @@ static void array_into_carbon(insert *ins, pindex *index, bool is_root)
         obj_state object;
         insert *oins = insert_prop_object_begin(&object, ins, "nodes", 1024);
         if (UNLIKELY(is_root)) {
-                container_contents_into_carbon(oins, index);
+                container_contents_into_record(oins, index);
         } else {
-                container_into_carbon(oins, index, field_type);
+                container_into_record(oins, index, field_type);
         }
         insert_prop_object_end(&object);
 }
@@ -1109,7 +1109,7 @@ static void record_ref_to_str(str_buf *str, pindex *index)
         str_buf_add_char(str, ']');
 }
 
-static void record_ref_to_carbon(insert *roins, pindex *index)
+static void record_ref_to_record(insert *roins, pindex *index)
 {
         char key_type = memfile_read_byte(&index->memfile);
         insert_prop_string(roins, "key-type", key_type_str(key_type));
@@ -1293,7 +1293,7 @@ bool pindex_hexdump(FILE *file, pindex *index)
         return memfile_hexdump_printf(file, &index->memfile);
 }
 
-void pindex_to_carbon(rec *doc, pindex *index)
+void pindex_to_record(rec *doc, pindex *index)
 {
         rec_new context;
         obj_state object;
@@ -1307,13 +1307,13 @@ void pindex_to_carbon(rec *doc, pindex *index)
                 obj_state ref_object;
                 insert *roins = insert_prop_object_begin(&ref_object, oins,
                                                                                   "record-association", 1024);
-                record_ref_to_carbon(roins, index);
+                record_ref_to_record(roins, index);
                 insert_prop_object_end(&ref_object);
         }
         {
                 obj_state root_object;
                 insert *roins = insert_prop_object_begin(&root_object, oins, "index", 1024);
-                array_into_carbon(roins, index, true);
+                array_into_record(roins, index, true);
                 insert_prop_object_end(&root_object);
         }
 

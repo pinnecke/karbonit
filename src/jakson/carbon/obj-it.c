@@ -74,7 +74,7 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
         dst->field.key.start = src->field.key.start;
         dst->field.value.start = src->field.value.start;
         internal_field_clone(&dst->field.value.data, &src->field.value.data);
-        internal_carbon_prop_create(&dst->prop, dst);
+        internal_prop_create(&dst->prop, dst);
         return true;
 }
 
@@ -94,7 +94,7 @@ bool obj_it_rewind(obj_it *it)
         return memfile_seek(&it->file, it->content_begin);
 }
 
-carbon_prop *obj_it_next(obj_it *it)
+prop *obj_it_next(obj_it *it)
 {
         bool is_empty_slot;
         offset_t last_off = memfile_tell(&it->file);
@@ -102,7 +102,7 @@ carbon_prop *obj_it_next(obj_it *it)
         if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
                 it->pos++;
                 internal_history_push(&it->history, last_off);
-                internal_carbon_prop_create(&it->prop, it);
+                internal_prop_create(&it->prop, it);
                 return &it->prop;
         } else {
                 /** skip remaining zeros until end of array is reached */
@@ -160,9 +160,9 @@ string_field internal_obj_it_prop_name(obj_it *it)
         return ret;
 }
 
-static i64 prop_remove(obj_it *it, field_e type)
+static i64 _prop_remove(obj_it *it, field_e type)
 {
-        i64 prop_size = internal_carbon_prop_size(&it->file);
+        i64 prop_size = internal_prop_size(&it->file);
         carbon_string_nomarker_remove(&it->file);
         if (internal_field_remove(&it->file, type)) {
                 internal_object_it_refresh(NULL, NULL, it);
@@ -178,7 +178,7 @@ bool internal_obj_it_remove(obj_it *it)
         if (internal_obj_it_prop_type(&type, it)) {
                 offset_t prop_off = internal_history_pop(&it->history);
                 memfile_seek(&it->file, prop_off);
-                it->mod_size -= prop_remove(it, type);
+                it->mod_size -= _prop_remove(it, type);
                 return true;
         } else {
                 error(ERR_ILLEGALSTATE, NULL);

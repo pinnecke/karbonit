@@ -20,7 +20,7 @@
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/obj-it.h>
 
-bool internal_carbon_prop_create(carbon_prop *dst, obj_it *parent)
+bool internal_prop_create(prop *dst, obj_it *parent)
 {
         dst->parent = parent;
         dst->idx = parent->pos;
@@ -30,7 +30,7 @@ bool internal_carbon_prop_create(carbon_prop *dst, obj_it *parent)
         return true;
 }
 
-u64 internal_carbon_prop_size(memfile *file)
+u64 internal_prop_size(memfile *file)
 {
         offset_t prop_start = memfile_save_position(file);
         carbon_string_nomarker_skip(file);

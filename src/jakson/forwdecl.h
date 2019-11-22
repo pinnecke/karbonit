@@ -100,7 +100,7 @@ typedef struct arr_state arr_state;
 typedef struct obj_state obj_state;
 typedef struct col_state col_state;
 typedef struct obj_it obj_it;
-typedef struct carbon_prop carbon_prop;
+typedef struct prop prop;
 typedef struct dot_eval dot_eval;
 typedef struct pindex pindex;
 typedef struct pindex_it pindex_it;

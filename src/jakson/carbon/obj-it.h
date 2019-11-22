@@ -36,7 +36,7 @@ typedef struct obj_it {
                 } value;
         } field;
         map_type_e type;
-        carbon_prop prop;
+        prop prop;
         i64 mod_size; /** in case of modifications, the number of bytes that are added resp. removed */
 } obj_it;
 
@@ -47,7 +47,7 @@ typedef struct obj_it {
 bool obj_it_drop(obj_it *it);
 
 bool obj_it_rewind(obj_it *it);
-carbon_prop *obj_it_next(obj_it *it);
+prop *obj_it_next(obj_it *it);
 bool obj_it_has_next(obj_it *it);
 bool obj_it_prev(obj_it *it);
 

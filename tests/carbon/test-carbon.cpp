@@ -8666,10 +8666,10 @@ TEST(CarbonTest, PathIndex) {
         carbon_hexdump_print(stdout, &doc);
         pindex_hexdump(stdout, &index);
 
-        rec path_carbon;
-        pindex_to_carbon(&path_carbon, &index);
-        carbon_print(stdout, JSON_COMPACT, &path_carbon);
-        carbon_drop(&path_carbon);
+        rec doc2;
+        pindex_to_record(&doc2, &index);
+        carbon_print(stdout, JSON_COMPACT, &doc2);
+        carbon_drop(&doc2);
 
         ASSERT_TRUE(pindex_indexes_doc(&index, &doc));
         carbon_drop(&doc);

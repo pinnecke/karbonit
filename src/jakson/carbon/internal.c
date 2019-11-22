@@ -23,11 +23,11 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/col_it.h>
-#include <jakson/carbon/object.h>
+#include <jakson/carbon/obj_it.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
 #include <jakson/json/parser.h>
-#include <jakson/carbon/object.h>
+#include <jakson/carbon/obj_it.h>
 
 static void marker_insert(memfile *memfile, u8 marker);
 

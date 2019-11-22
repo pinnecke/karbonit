@@ -23,7 +23,7 @@
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
-#include <jakson/carbon/object.h>
+#include <jakson/carbon/obj_it.h>
 
 static bool internal_pack_array(arr_it *it);
 

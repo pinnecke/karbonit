@@ -23,7 +23,7 @@
 #include <jakson/carbon/container.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/string.h>
-#include <jakson/carbon/object.h>
+#include <jakson/carbon/obj_it.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/utils/numbers.h>
 

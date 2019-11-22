@@ -24,7 +24,7 @@
 #include <jakson/carbon/col_it.h>
 #include <jakson/carbon/mime.h>
 #include <jakson/carbon/arr_it.h>
-#include <jakson/carbon/object.h>
+#include <jakson/carbon/obj_it.h>
 #include <jakson/carbon/abstract.h>
 
 const char *field_str(field_e type)

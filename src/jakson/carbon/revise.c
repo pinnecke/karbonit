@@ -149,7 +149,7 @@ void carbon_revise_set_list_type(rev *context, list_type_e derivation)
 
 bool carbon_revise_iterator_open(arr_it *it, rev *context)
 {
-        offset_t payload_start = carbon_int_payload_after_header(context->revised_doc);
+        offset_t payload_start = internal_payload_after_header(context->revised_doc);
         if (UNLIKELY(context->revised_doc->file.mode != READ_WRITE)) {
                 return error(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
@@ -269,7 +269,7 @@ static bool internal_pack_array(arr_it *it)
                 bool is_empty_slot, is_array_end;
 
                 internal_arr_it_copy(&this_array, it);
-                carbon_int_array_skip_contents(&is_empty_slot, &is_array_end, &this_array);
+                internal_array_skip_contents(&is_empty_slot, &is_array_end, &this_array);
 
                 if (!is_array_end) {
 
@@ -412,7 +412,7 @@ static bool internal_pack_object(obj_it *it)
                 bool is_empty_slot, is_object_end;
 
                 internal_carbon_object_copy(&this_object_it, it);
-                carbon_int_object_skip_contents(&is_empty_slot, &is_object_end, &this_object_it);
+                internal_object_skip_contents(&is_empty_slot, &is_object_end, &this_object_it);
 
                 if (!is_object_end) {
 
@@ -549,9 +549,9 @@ static bool internal_pack_column(col_it *it)
 {
         JAK_ASSERT(it);
 
-        u32 free_space = (it->cap - it->num) * carbon_int_get_type_value_size(it->field_type);
-        offset_t payload_start = carbon_int_column_get_payload_off(it);
-        u64 payload_size = it->num * carbon_int_get_type_value_size(it->field_type);
+        u32 free_space = (it->cap - it->num) * internal_get_type_value_size(it->field_type);
+        offset_t payload_start = internal_column_get_payload_off(it);
+        u64 payload_size = it->num * internal_get_type_value_size(it->field_type);
         memfile_seek(&it->file, payload_start);
         memfile_skip(&it->file, payload_size);
 

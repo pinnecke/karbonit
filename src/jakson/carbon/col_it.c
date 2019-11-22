@@ -81,7 +81,7 @@ bool col_it_clone(col_it *dst, col_it *src)
 
 bool col_it_insert(carbon_insert *inserter, col_it *it)
 {
-        return carbon_int_insert_create_for_column(inserter, it);
+        return internal_insert_create_for_column(inserter, it);
 }
 
 bool col_it_fast_forward(col_it *it)
@@ -109,7 +109,7 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
                 memfile_read_uintvar_stream(NULL, &it->file);
                 offset_t payload_start = memfile_tell(&it->file);
                 error_if_and_return(elem_idx >= num_elements, ERR_OUTOFBOUNDS, NULL);
-                offset_t ret = payload_start + elem_idx * carbon_int_get_type_value_size(it->field_type);
+                offset_t ret = payload_start + elem_idx * internal_get_type_value_size(it->field_type);
                 memfile_restore_position(&it->file);
                 return ret;
         } else {
@@ -205,7 +205,7 @@ const void *col_it_values(field_e *type, u32 *nvalues, col_it *it)
         OPTIONAL_SET(type, it->field_type);
         OPTIONAL_SET(nvalues, num_elements);
 
-        u32 skip = cap_elements * carbon_int_get_type_value_size(it->field_type);
+        u32 skip = cap_elements * internal_get_type_value_size(it->field_type);
         memfile_seek(&it->file, payload_start + skip);
 
         return result;
@@ -266,10 +266,10 @@ bool col_it_remove(col_it *it, u32 pos)
         error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL);
         memfile_save_position(&it->file);
 
-        offset_t payload_start = carbon_int_column_get_payload_off(it);
+        offset_t payload_start = internal_column_get_payload_off(it);
 
         /** remove element */
-        size_t elem_size = carbon_int_get_type_value_size(it->field_type);
+        size_t elem_size = internal_get_type_value_size(it->field_type);
         memfile_seek(&it->file, payload_start + pos * elem_size);
         memfile_inplace_remove(&it->file, elem_size);
 
@@ -331,8 +331,8 @@ bool col_it_update_set_null(col_it *it, u32 pos)
 
         memfile_save_position(&it->file);
 
-        offset_t payload_start = carbon_int_column_get_payload_off(it);
-        memfile_seek(&it->file, payload_start + pos * carbon_int_get_type_value_size(it->field_type));
+        offset_t payload_start = internal_column_get_payload_off(it);
+        memfile_seek(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
 
         switch (it->field_type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
@@ -488,8 +488,8 @@ static bool rewrite_column_to_array(col_it *it)
         memfile_seek_to_end(&it->file);
         offset_t array_marker_begin = memfile_tell(&it->file);
 
-        size_t capacity = it->num * carbon_int_get_type_value_size(it->field_type);
-        carbon_int_insert_array(&it->file, list_type, capacity);
+        size_t capacity = it->num * internal_get_type_value_size(it->field_type);
+        internal_insert_array(&it->file, list_type, capacity);
         internal_arr_it_create(&array, &it->file, array_marker_begin);
         arr_it_insert_begin(&array_ins, &array);
 
@@ -553,8 +553,8 @@ bool col_it_update_set_true(col_it *it, u32 pos)
 
         memfile_save_position(&it->file);
 
-        offset_t payload_start = carbon_int_column_get_payload_off(it);
-        memfile_seek(&it->file, payload_start + pos * carbon_int_get_type_value_size(it->field_type));
+        offset_t payload_start = internal_column_get_payload_off(it);
+        memfile_seek(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
 
         switch (it->field_type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
@@ -767,7 +767,7 @@ bool col_it_update_set_float(col_it *it, u32 pos, float value)
 
 bool col_it_rewind(col_it *it)
 {
-        offset_t playload_start = carbon_int_column_get_payload_off(it);
+        offset_t playload_start = internal_column_get_payload_off(it);
         error_if_and_return(playload_start >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
         return memfile_seek(&it->file, playload_start);
 }

@@ -49,7 +49,7 @@ static void internal_create(carbon_insert *inserter, memfile *src, offset_t pos)
 
 static void write_binary_blob(carbon_insert *inserter, const void *value, size_t nbytes);
 
-void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context)
+void internal_insert_create_for_array(carbon_insert *inserter, arr_it *context)
 {
         inserter->context_type = ARRAY;
         inserter->context.array = context;
@@ -59,13 +59,13 @@ void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context
         if (context->eof) {
                 pos = memfile_tell(&context->file);
         } else {
-                pos = carbon_int_history_has(&context->history) ? carbon_int_history_peek(&context->history) : 0;
+                pos = internal_history_has(&context->history) ? internal_history_peek(&context->history) : 0;
         }
 
         internal_create(inserter, &context->file, pos);
 }
 
-bool carbon_int_insert_create_for_column(carbon_insert *inserter, col_it *context)
+bool internal_insert_create_for_column(carbon_insert *inserter, col_it *context)
 {
         inserter->context_type = COLUMN;
         inserter->context.column = context;
@@ -73,7 +73,7 @@ bool carbon_int_insert_create_for_column(carbon_insert *inserter, col_it *contex
         return true;
 }
 
-bool carbon_int_insert_create_for_object(carbon_insert *inserter, obj_it *context)
+bool internal_insert_create_for_object(carbon_insert *inserter, obj_it *context)
 {
         inserter->context_type = OBJECT;
         inserter->context.object = context;
@@ -82,7 +82,7 @@ bool carbon_int_insert_create_for_object(carbon_insert *inserter, obj_it *contex
         if (context->object_end_reached) {
                 pos = memfile_tell(&context->memfile);
         } else {
-                pos = carbon_int_history_has(&context->history) ? carbon_int_history_peek(&context->history) : 0;
+                pos = internal_history_has(&context->history) ? internal_history_peek(&context->history) : 0;
         }
 
         internal_create(inserter, &context->memfile, pos);
@@ -466,7 +466,7 @@ carbon_insert *__carbon_insert_map_begin(carbon_insert_object_state *out,
         };
 
 
-        carbon_int_insert_object(&inserter->memfile, derivation, object_capacity);
+        internal_insert_object(&inserter->memfile, derivation, object_capacity);
         u64 payload_start = memfile_tell(&inserter->memfile) - 1;
 
         internal_carbon_object_create(out->it, &inserter->memfile, payload_start);
@@ -532,7 +532,7 @@ carbon_insert *__carbon_insert_array_list_begin(carbon_insert_array_state *state
                 .array_end = 0
         };
 
-        carbon_int_insert_array(&inserter_in->memfile, derivation, array_capacity);
+        internal_insert_array(&inserter_in->memfile, derivation, array_capacity);
         u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
 
         internal_arr_it_create(state_out->array, &inserter_in->memfile, payload_start);
@@ -598,7 +598,7 @@ carbon_insert *__carbon_insert_column_list_begin(carbon_insert_column_state *sta
         };
 
         u64 container_start_off = memfile_tell(&inserter_in->memfile);
-        carbon_int_insert_column(&inserter_in->memfile, derivation, type, cap);
+        internal_insert_column(&inserter_in->memfile, derivation, type, cap);
 
         col_it_create(state_out->nested_column, &inserter_in->memfile,
                                     container_start_off);
@@ -935,7 +935,7 @@ static bool push_in_column(carbon_insert *inserter, const void *base, field_e ty
 {
         JAK_ASSERT(inserter->context_type == COLUMN);
 
-        size_t type_size = carbon_int_get_type_value_size(type);
+        size_t type_size = internal_get_type_value_size(type);
 
         memfile_save_position(&inserter->memfile);
 
@@ -959,14 +959,14 @@ static bool push_in_column(carbon_insert *inserter, const void *base, field_e ty
                 memfile_update_uintvar_stream(&inserter->memfile, new_capacity);
                 inserter->context.column->cap = new_capacity;
 
-                size_t payload_start = carbon_int_column_get_payload_off(inserter->context.column);
+                size_t payload_start = internal_column_get_payload_off(inserter->context.column);
                 memfile_seek(&inserter->memfile, payload_start + (num_elems - 1) * type_size);
                 memfile_ensure_space(&inserter->memfile, (new_capacity - capacity) * type_size);
 
                 memfile_restore_position(&inserter->memfile);
         }
 
-        size_t payload_start = carbon_int_column_get_payload_off(inserter->context.column);
+        size_t payload_start = internal_column_get_payload_off(inserter->context.column);
         memfile_seek(&inserter->memfile, payload_start + (num_elems - 1) * type_size);
         memfile_write(&inserter->memfile, base, type_size);
 

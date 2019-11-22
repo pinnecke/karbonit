@@ -1,23 +1,11 @@
-/**
- * Columnar Binary JSON -- Copyright 2019 Marcus Pinnecke
- * This file implements the document format itself
+/*
+ * insert - container insert operations
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright 2019 Marcus Pinnecke
  */
 
-#ifndef CARBON_INSERT_H
-#define CARBON_INSERT_H
+#ifndef HAD_INSERT_H
+#define HAD_INSERT_H
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  includes
@@ -35,9 +23,9 @@
 extern "C" {
 #endif
 
-void carbon_int_insert_create_for_array(carbon_insert *inserter, arr_it *context);
-bool carbon_int_insert_create_for_column(carbon_insert *inserter, col_it *context);
-bool carbon_int_insert_create_for_object(carbon_insert *inserter, obj_it *context);
+// ---------------------------------------------------------------------------------------------------------------------
+//  public interface
+// ---------------------------------------------------------------------------------------------------------------------
 
 bool carbon_insert_null(carbon_insert *inserter);
 bool carbon_insert_true(carbon_insert *inserter);
@@ -123,6 +111,15 @@ u64 carbon_insert_prop_array_end(carbon_insert_array_state *state);
 
 carbon_insert *carbon_insert_prop_column_begin(carbon_insert_column_state *state_out, carbon_insert *inserter_in, const char *key, col_it_type_e type, u64 cap);
 u64 carbon_insert_prop_column_end(carbon_insert_column_state *state_in);
+
+// ---------------------------------------------------------------------------------------------------------------------
+//  for internal usage only
+// ---------------------------------------------------------------------------------------------------------------------
+
+void internal_insert_create_for_array(carbon_insert *inserter, arr_it *context);
+bool internal_insert_create_for_column(carbon_insert *inserter, col_it *context);
+bool internal_insert_create_for_object(carbon_insert *inserter, obj_it *context);
+
 
 #ifdef __cplusplus
 }

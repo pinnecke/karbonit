@@ -114,7 +114,7 @@ void carbon_create_empty_ex(rec *doc, list_type_e derivation, carbon_key_e type,
         memfile_open(&doc->file, doc->area, READ_WRITE);
 
         carbon_header_init(doc, type);
-        carbon_int_insert_array(&doc->file, derivation, array_cap);
+        internal_insert_array(&doc->file, derivation, array_cap);
 }
 
 bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
@@ -128,7 +128,7 @@ bool carbon_from_json(rec *doc, const char *json, carbon_key_e type,
                 error(ERR_JSONPARSEERR, "parsing JSON file failed");
                 return false;
         } else {
-                carbon_int_from_json(doc, &data, type, key, CARBON_OPTIMIZE);
+                internal_from_json(doc, &data, type, key, CARBON_OPTIMIZE);
                 json_drop(&data);
                 return true;
         }
@@ -250,7 +250,7 @@ bool carbon_clone(rec *clone, rec *doc)
 
 bool carbon_commit_hash(u64 *hash, rec *doc)
 {
-        *hash = carbon_int_header_get_commit_hash(doc);
+        *hash = internal_header_get_commit_hash(doc);
         return true;
 }
 

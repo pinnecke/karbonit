@@ -416,14 +416,14 @@ bool find_update_object_type(find *find, map_type_e derivation)
         find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
                 obj_it *it = find_result_object(find);
-                memfile_save_position(&it->memfile);
-                memfile_seek(&it->memfile, it->object_start_off);
+                memfile_save_position(&it->file);
+                memfile_seek(&it->file, it->begin);
 
                 derived_e derive_marker;
                 abstract_derive_map_to(&derive_marker, derivation);
-                abstract_write_derived_type(&it->memfile, derive_marker);
+                abstract_write_derived_type(&it->file, derive_marker);
 
-                memfile_restore_position(&it->memfile);
+                memfile_restore_position(&it->file);
                 return true;
 
         } else {
@@ -698,7 +698,7 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
                         find->value.object = item_get_object(&(it->item));
-                        find->value.object->memfile.mode = find->doc->file.mode;
+                        find->value.object->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
                         find->value.string = item_get_string(&(it->item), CARBON_NULL_STRING);
@@ -791,7 +791,7 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
                         find->value.object = item_get_object(&(it->prop.value));
-                        find->value.object->memfile.mode = find->doc->file.mode;
+                        find->value.object->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
                         find->value.string = item_get_string(&(it->prop.value), CARBON_NULL_STRING);

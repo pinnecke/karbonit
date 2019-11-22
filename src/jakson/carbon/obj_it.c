@@ -24,27 +24,27 @@
 
 bool internal_carbon_object_create(obj_it *it, memfile *memfile, offset_t payload_start)
 {
-        it->object_contents_off = payload_start;
-        it->object_start_off = payload_start;
+        it->content_begin = payload_start;
+        it->begin = payload_start;
         it->mod_size = 0;
         it->pos = 0;
-        it->object_end_reached = false;
+        it->eof = false;
 
         vector_create(&it->history, sizeof(offset_t), 40);
 
-        memfile_open(&it->memfile, memfile->memblock, memfile->mode);
-        memfile_seek(&it->memfile, payload_start);
+        memfile_open(&it->file, memfile->memblock, memfile->mode);
+        memfile_seek(&it->file, payload_start);
 
-        error_if_and_return(memfile_remain_size(&it->memfile) < sizeof(u8), ERR_CORRUPTED, NULL);
+        error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
 
         sub_type_e sub_type;
-        abstract_get_container_subtype(&sub_type, &it->memfile);
+        abstract_get_container_subtype(&sub_type, &it->file);
         error_if_and_return(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
-        char marker = memfile_read_byte(&it->memfile);
-        it->abstract_type = (map_type_e) marker;
+        char marker = memfile_read_byte(&it->file);
+        it->type = (map_type_e) marker;
 
-        it->object_contents_off += sizeof(u8);
+        it->content_begin += sizeof(u8);
 
         internal_field_create(&it->field.value.data);
 
@@ -55,24 +55,24 @@ bool internal_carbon_object_create(obj_it *it, memfile *memfile, offset_t payloa
 
 bool internal_carbon_object_copy(obj_it *dst, obj_it *src)
 {
-        internal_carbon_object_create(dst, &src->memfile, src->object_start_off);
+        internal_carbon_object_create(dst, &src->file, src->begin);
         return true;
 }
 
 bool internal_carbon_object_clone(obj_it *dst, obj_it *src)
 {
-        memfile_clone(&dst->memfile, &src->memfile);
-        dst->object_contents_off = src->object_contents_off;
-        dst->object_start_off = src->object_start_off;
+        memfile_clone(&dst->file, &src->file);
+        dst->content_begin = src->content_begin;
+        dst->begin = src->begin;
         dst->mod_size = src->mod_size;
         dst->pos = src->pos;
-        dst->object_end_reached = src->object_end_reached;
-        dst->abstract_type = src->abstract_type;
+        dst->eof = src->eof;
+        dst->type = src->type;
         vector_cpy(&dst->history, &src->history);
         dst->field.key.name_len = src->field.key.name_len;
         dst->field.key.name = src->field.key.name;
-        dst->field.key.offset = src->field.key.offset;
-        dst->field.value.offset = src->field.value.offset;
+        dst->field.key.start = src->field.key.start;
+        dst->field.value.start = src->field.value.start;
         internal_field_clone(&dst->field.value.data, &src->field.value.data);
         internal_carbon_prop_create(&dst->prop, dst);
         return true;
@@ -88,33 +88,33 @@ bool carbon_object_drop(obj_it *it)
 
 bool carbon_object_rewind(obj_it *it)
 {
-        error_if_and_return(it->object_contents_off >= memfile_size(&it->memfile), ERR_OUTOFBOUNDS, NULL);
+        error_if_and_return(it->content_begin >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
         internal_history_clear(&it->history);
         it->pos = 0;
-        return memfile_seek(&it->memfile, it->object_contents_off);
+        return memfile_seek(&it->file, it->content_begin);
 }
 
 carbon_prop *carbon_object_next(obj_it *it)
 {
         bool is_empty_slot;
-        offset_t last_off = memfile_tell(&it->memfile);
+        offset_t last_off = memfile_tell(&it->file);
         internal_field_drop(&it->field.value.data);
-        if (internal_object_it_next(&is_empty_slot, &it->object_end_reached, it)) {
+        if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
                 it->pos++;
                 internal_history_push(&it->history, last_off);
                 internal_carbon_prop_create(&it->prop, it);
                 return &it->prop;
         } else {
                 /** skip remaining zeros until end of array is reached */
-                if (!it->object_end_reached) {
+                if (!it->eof) {
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
-                        while (*memfile_peek(&it->memfile, 1) == 0) {
-                                memfile_skip(&it->memfile, 1);
+                        while (*memfile_peek(&it->file, 1) == 0) {
+                                memfile_skip(&it->file, 1);
                         }
                 }
 
-                JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == MOBJECT_END);
+                JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
                 return NULL;
         }
 }
@@ -131,7 +131,7 @@ bool carbon_object_prev(obj_it *it)
         if (internal_history_has(&it->history)) {
                 offset_t prev_off = internal_history_pop(&it->history);
                 it->pos--;
-                memfile_seek(&it->memfile, prev_off);
+                memfile_seek(&it->file, prev_off);
                 return internal_object_it_refresh(NULL, NULL, it);
         } else {
                 return false;
@@ -140,13 +140,13 @@ bool carbon_object_prev(obj_it *it)
 
 offset_t internal_carbon_object_memfile_pos(obj_it *it)
 {
-        return memfile_tell(&it->memfile);
+        return memfile_tell(&it->file);
 }
 
 bool internal_carbon_object_tell(offset_t *key_off, offset_t *value_off, obj_it *it)
 {
-        OPTIONAL_SET(key_off, it->field.key.offset);
-        OPTIONAL_SET(value_off, it->field.value.offset);
+        OPTIONAL_SET(key_off, it->field.key.start);
+        OPTIONAL_SET(value_off, it->field.value.start);
         return true;
 }
 
@@ -162,9 +162,9 @@ string_field internal_carbon_object_prop_name(obj_it *it)
 
 static i64 prop_remove(obj_it *it, field_e type)
 {
-        i64 prop_size = internal_carbon_prop_size(&it->memfile);
-        carbon_string_nomarker_remove(&it->memfile);
-        if (internal_field_remove(&it->memfile, type)) {
+        i64 prop_size = internal_carbon_prop_size(&it->file);
+        carbon_string_nomarker_remove(&it->file);
+        if (internal_field_remove(&it->file, type)) {
                 internal_object_it_refresh(NULL, NULL, it);
                 return prop_size;
         } else {
@@ -177,7 +177,7 @@ bool internal_carbon_object_remove(obj_it *it)
         field_e type;
         if (internal_carbon_object_prop_type(&type, it)) {
                 offset_t prop_off = internal_history_pop(&it->history);
-                memfile_seek(&it->memfile, prop_off);
+                memfile_seek(&it->file, prop_off);
                 it->mod_size -= prop_remove(it, type);
                 return true;
         } else {
@@ -194,27 +194,27 @@ bool internal_carbon_object_prop_type(field_e *type, obj_it *it)
 bool carbon_object_is_multimap(obj_it *it)
 {
         abstract_type_class_e type_class;
-        abstract_map_derivable_to_class(&type_class, it->abstract_type);
+        abstract_map_derivable_to_class(&type_class, it->type);
         return abstract_is_multimap(type_class);
 }
 
 bool carbon_object_is_sorted(obj_it *it)
 {
         abstract_type_class_e type_class;
-        abstract_map_derivable_to_class(&type_class, it->abstract_type);
+        abstract_map_derivable_to_class(&type_class, it->type);
         return abstract_is_sorted(type_class);
 }
 
 void carbon_object_update_type(obj_it *it, map_type_e derivation)
 {
-        memfile_save_position(&it->memfile);
-        memfile_seek(&it->memfile, it->object_start_off);
+        memfile_save_position(&it->file);
+        memfile_seek(&it->file, it->begin);
 
         derived_e derive_marker;
         abstract_derive_map_to(&derive_marker, derivation);
-        abstract_write_derived_type(&it->memfile, derive_marker);
+        abstract_write_derived_type(&it->file, derive_marker);
 
-        memfile_restore_position(&it->memfile);
+        memfile_restore_position(&it->file);
 }
 
 bool internal_carbon_object_insert_begin(insert *in, obj_it *it)
@@ -232,8 +232,8 @@ bool internal_carbon_object_fast_forward(obj_it *it)
 {
         while (carbon_object_next(it)) {}
 
-        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(u8)) == MOBJECT_END);
-        memfile_skip(&it->memfile, sizeof(u8));
+        JAK_ASSERT(*memfile_peek(&it->file, sizeof(u8)) == MOBJECT_END);
+        memfile_skip(&it->file, sizeof(u8));
         return true;
 }
 

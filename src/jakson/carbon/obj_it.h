@@ -1,22 +1,11 @@
-/**
- * Columnar Binary JSON -- Copyright 2019 Marcus Pinnecke
+/*
+ * obj_it - object container iterator
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright 2019 Marcus Pinnecke
  */
 
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef HAD_OBJ_IT_H
+#define HAD_OBJ_IT_H
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
@@ -29,37 +18,26 @@
 extern "C" {
 #endif
 
-// ---------------------------------------------------------------------------------------------------------------------
-//  public structures
-// ---------------------------------------------------------------------------------------------------------------------
-
 typedef struct obj_it {
-        memfile memfile;
-
-        offset_t object_contents_off, object_start_off;
-        bool object_end_reached;
-
+        memfile file;
+        offset_t content_begin, begin;
+        bool eof;
         u64 pos;
-
         vec ofType(offset_t) history;
-
         struct {
                 struct {
-                        offset_t offset;
+                        offset_t start;
                         const char *name;
                         u64 name_len;
                 } key;
                 struct {
-                        offset_t offset;
+                        offset_t start;
                         field data;
                 } value;
         } field;
-
-        map_type_e abstract_type;
+        map_type_e type;
         carbon_prop prop;
-
-        /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
-        i64 mod_size;
+        i64 mod_size; /** in case of modifications, the number of bytes that are added resp. removed */
 } obj_it;
 
 // ---------------------------------------------------------------------------------------------------------------------

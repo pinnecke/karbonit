@@ -359,7 +359,7 @@ bool carbon_field_skip_object(memfile *file)
                 obj_it skip_it;
                 internal_carbon_object_create(&skip_it, file, memfile_tell(file));
                 internal_carbon_object_fast_forward(&skip_it);
-                memfile_seek(file, memfile_tell(&skip_it.memfile));
+                memfile_seek(file, memfile_tell(&skip_it.file));
                 carbon_object_drop(&skip_it);
                 return true;
         } else {

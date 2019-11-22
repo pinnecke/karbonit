@@ -381,13 +381,13 @@ static bool internal_pack_array(arr_it *it)
                                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         obj_it object;
                                         internal_carbon_object_create(&object, &it->file,
-                                                                      it->field.object->object_contents_off -
+                                                                      it->field.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
-                                        JAK_ASSERT(*memfile_peek(&object.memfile, sizeof(char)) ==
+                                        JAK_ASSERT(*memfile_peek(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
-                                        memfile_skip(&object.memfile, sizeof(char));
-                                        memfile_seek(&it->file, memfile_tell(&object.memfile));
+                                        memfile_skip(&object.file, sizeof(char));
+                                        memfile_seek(&it->file, memfile_tell(&object.file));
                                         carbon_object_drop(&object);
                                 }
                                         break;
@@ -417,18 +417,18 @@ static bool internal_pack_object(obj_it *it)
                 if (!is_object_end) {
 
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
-                        offset_t first_empty_slot_offset = memfile_tell(&this_object_it.memfile);
+                        offset_t first_empty_slot_offset = memfile_tell(&this_object_it.file);
                         char final;
-                        while ((final = *memfile_read(&this_object_it.memfile, sizeof(char))) == 0) {}
+                        while ((final = *memfile_read(&this_object_it.file, sizeof(char))) == 0) {}
                         JAK_ASSERT(final == MOBJECT_END);
-                        offset_t last_empty_slot_offset = memfile_tell(&this_object_it.memfile) - sizeof(char);
-                        memfile_seek(&this_object_it.memfile, first_empty_slot_offset);
+                        offset_t last_empty_slot_offset = memfile_tell(&this_object_it.file) - sizeof(char);
+                        memfile_seek(&this_object_it.file, first_empty_slot_offset);
                         JAK_ASSERT(last_empty_slot_offset > first_empty_slot_offset);
 
-                        memfile_inplace_remove(&this_object_it.memfile,
+                        memfile_inplace_remove(&this_object_it.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
-                        final = *memfile_read(&this_object_it.memfile, sizeof(char));
+                        final = *memfile_read(&this_object_it.file, sizeof(char));
                         JAK_ASSERT(final == MOBJECT_END);
                 }
 
@@ -463,13 +463,13 @@ static bool internal_pack_object(obj_it *it)
                                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                         arr_it array;
-                                        internal_arr_it_create(&array, &it->memfile,
+                                        internal_arr_it_create(&array, &it->file,
                                                                it->field.value.data.array->begin);
                                         internal_pack_array(&array);
                                         JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
-                                        memfile_seek(&it->memfile, memfile_tell(&array.file));
+                                        memfile_seek(&it->file, memfile_tell(&array.file));
                                         arr_it_drop(&array);
                                 }
                                         break;
@@ -515,7 +515,7 @@ static bool internal_pack_object(obj_it *it)
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                         col_it_rewind(it->field.value.data.column);
                                         internal_pack_column(it->field.value.data.column);
-                                        memfile_seek(&it->memfile,
+                                        memfile_seek(&it->file,
                                                      memfile_tell(&it->field.value.data.column->file));
                                         break;
                                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -523,14 +523,14 @@ static bool internal_pack_object(obj_it *it)
                                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         obj_it object;
-                                        internal_carbon_object_create(&object, &it->memfile,
-                                                                      it->field.value.data.object->object_contents_off -
+                                        internal_carbon_object_create(&object, &it->file,
+                                                                      it->field.value.data.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
-                                        JAK_ASSERT(*memfile_peek(&object.memfile, sizeof(char)) ==
+                                        JAK_ASSERT(*memfile_peek(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
-                                        memfile_skip(&object.memfile, sizeof(char));
-                                        memfile_seek(&it->memfile, memfile_tell(&object.memfile));
+                                        memfile_skip(&object.file, sizeof(char));
+                                        memfile_seek(&it->file, memfile_tell(&object.file));
                                         carbon_object_drop(&object);
                                 }
                                         break;
@@ -540,7 +540,7 @@ static bool internal_pack_object(obj_it *it)
                 }
         }
 
-        JAK_ASSERT(*memfile_peek(&it->memfile, sizeof(char)) == MOBJECT_END);
+        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
 
         return true;
 }

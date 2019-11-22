@@ -79,13 +79,13 @@ bool internal_insert_create_for_object(insert *in, obj_it *context)
         in->context.object = context;
 
         offset_t pos;
-        if (context->object_end_reached) {
-                pos = memfile_tell(&context->memfile);
+        if (context->eof) {
+                pos = memfile_tell(&context->file);
         } else {
                 pos = internal_history_has(&context->history) ? internal_history_peek(&context->history) : 0;
         }
 
-        internal_create(in, &context->memfile, pos);
+        internal_create(in, &context->file, pos);
         return true;
 }
 
@@ -486,14 +486,14 @@ bool insert_object_end(obj_state *state)
         internal_carbon_object_create(&scan, &state->parent->file, memfile_tell(&state->parent->file) - 1);
         while (carbon_object_next(&scan)) {}
 
-        JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == MOBJECT_END);
-        memfile_read(&scan.memfile, sizeof(char));
+        JAK_ASSERT(*memfile_peek(&scan.file, sizeof(char)) == MOBJECT_END);
+        memfile_read(&scan.file, sizeof(char));
 
-        state->end = memfile_tell(&scan.memfile);
+        state->end = memfile_tell(&scan.file);
 
-        memfile_skip(&scan.memfile, 1);
+        memfile_skip(&scan.file, 1);
 
-        memfile_seek(&state->parent->file, memfile_tell(&scan.memfile) - 1);
+        memfile_seek(&state->parent->file, memfile_tell(&scan.file) - 1);
         carbon_object_drop(&scan);
         carbon_object_drop(state->it);
         free(state->it);

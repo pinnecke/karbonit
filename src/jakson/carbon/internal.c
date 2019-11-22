@@ -236,7 +236,7 @@ bool internal_object_it_refresh(bool *is_empty_slot, bool *is_object_end, obj_it
 {
         if (object_it_is_slot_occupied(is_empty_slot, is_object_end, it)) {
                 internal_object_it_prop_key_access(it);
-                internal_field_data_access(&it->memfile, &it->field.value.data);
+                internal_field_data_access(&it->file, &it->field.value.data);
                 return true;
         } else {
                 return false;
@@ -245,27 +245,27 @@ bool internal_object_it_refresh(bool *is_empty_slot, bool *is_object_end, obj_it
 
 bool internal_object_it_prop_key_access(obj_it *it)
 {
-        it->field.key.offset = memfile_tell(&it->memfile);
-        it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->memfile);
-        it->field.key.name = memfile_peek(&it->memfile, it->field.key.name_len);
-        memfile_skip(&it->memfile, it->field.key.name_len);
-        it->field.value.offset = memfile_tell(&it->memfile);
-        it->field.value.data.type = *MEMFILE_PEEK(&it->memfile, u8);
+        it->field.key.start = memfile_tell(&it->file);
+        it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->file);
+        it->field.key.name = memfile_peek(&it->file, it->field.key.name_len);
+        memfile_skip(&it->file, it->field.key.name_len);
+        it->field.value.start = memfile_tell(&it->file);
+        it->field.value.data.type = *MEMFILE_PEEK(&it->file, u8);
 
         return true;
 }
 
 bool internal_object_it_prop_value_skip(obj_it *it)
 {
-        memfile_seek(&it->memfile, it->field.value.offset);
-        return carbon_field_skip(&it->memfile);
+        memfile_seek(&it->file, it->field.value.start);
+        return carbon_field_skip(&it->file);
 }
 
 bool internal_object_it_prop_skip(obj_it *it)
 {
-        it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->memfile);
-        memfile_skip(&it->memfile, it->field.key.name_len);
-        return carbon_field_skip(&it->memfile);
+        it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->file);
+        memfile_skip(&it->file, it->field.key.name_len);
+        return carbon_field_skip(&it->file);
 }
 
 bool internal_object_skip_contents(bool *is_empty_slot, bool *is_array_end, obj_it *it)
@@ -1628,7 +1628,7 @@ static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, arr_
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, obj_it *it)
 {
         internal_field_auto_close(&it->field.value.data);
-        return is_slot_occupied(is_empty_slot, is_object_end, &it->memfile, MOBJECT_END);
+        return is_slot_occupied(is_empty_slot, is_object_end, &it->file, MOBJECT_END);
 }
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)

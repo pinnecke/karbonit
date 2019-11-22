@@ -457,7 +457,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
         if (LIKELY(null_check(datum) == false)) {                                                                      \
                 insert_func(&array_ins);                                                                               \
         } else {                                                                                                       \
-                carbon_insert_null(&array_ins);                                                                         \
+                insert_null(&array_ins);                                                                         \
         }                                                                                                              \
 }
 
@@ -467,7 +467,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
         if (LIKELY(null_check(datum) == false)) {                                                                      \
                 insert_func(&array_ins, datum);                                                                        \
         } else {                                                                                                       \
-                carbon_insert_null(&array_ins);                                                                         \
+                insert_null(&array_ins);                                                                         \
         }                                                                                                              \
 }
 
@@ -499,41 +499,41 @@ static bool rewrite_column_to_array(col_it *it)
         switch (type) {
                 case FIELD_NULL:
                         while (num_values--) {
-                                carbon_insert_null(&array_ins);
+                                insert_null(&array_ins);
                         }
                         break;
                 case FIELD_TRUE:
-                        push_array_element(num_values, data, u8, IS_NULL_BOOLEAN, carbon_insert_true);
+                        push_array_element(num_values, data, u8, IS_NULL_BOOLEAN, insert_true);
                         break;
                 case FIELD_FALSE:
-                        push_array_element(num_values, data, u8, IS_NULL_BOOLEAN, carbon_insert_false);
+                        push_array_element(num_values, data, u8, IS_NULL_BOOLEAN, insert_false);
                         break;
                 case FIELD_NUMBER_U8:
-                        push_array_element_wvalue(num_values, data, u8, IS_NULL_U8, carbon_insert_u8);
+                        push_array_element_wvalue(num_values, data, u8, IS_NULL_U8, insert_u8);
                         break;
                 case FIELD_NUMBER_U16:
-                        push_array_element_wvalue(num_values, data, u16, IS_NULL_U16, carbon_insert_u16);
+                        push_array_element_wvalue(num_values, data, u16, IS_NULL_U16, insert_u16);
                         break;
                 case FIELD_NUMBER_U32:
-                        push_array_element_wvalue(num_values, data, u32, IS_NULL_U32, carbon_insert_u32);
+                        push_array_element_wvalue(num_values, data, u32, IS_NULL_U32, insert_u32);
                         break;
                 case FIELD_NUMBER_U64:
-                        push_array_element_wvalue(num_values, data, u64, IS_NULL_U64, carbon_insert_u64);
+                        push_array_element_wvalue(num_values, data, u64, IS_NULL_U64, insert_u64);
                         break;
                 case FIELD_NUMBER_I8:
-                        push_array_element_wvalue(num_values, data, i8, IS_NULL_I8, carbon_insert_i8);
+                        push_array_element_wvalue(num_values, data, i8, IS_NULL_I8, insert_i8);
                         break;
                 case FIELD_NUMBER_I16:
-                        push_array_element_wvalue(num_values, data, i16, IS_NULL_I16, carbon_insert_i16);
+                        push_array_element_wvalue(num_values, data, i16, IS_NULL_I16, insert_i16);
                         break;
                 case FIELD_NUMBER_I32:
-                        push_array_element_wvalue(num_values, data, i32, IS_NULL_I32, carbon_insert_i32);
+                        push_array_element_wvalue(num_values, data, i32, IS_NULL_I32, insert_i32);
                         break;
                 case FIELD_NUMBER_I64:
-                        push_array_element_wvalue(num_values, data, i64, IS_NULL_I64, carbon_insert_i64);
+                        push_array_element_wvalue(num_values, data, i64, IS_NULL_I64, insert_i64);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        push_array_element_wvalue(num_values, data, float, IS_NULL_FLOAT, carbon_insert_float);
+                        push_array_element_wvalue(num_values, data, float, IS_NULL_FLOAT, insert_float);
                         break;
                 default: error(ERR_UNSUPPORTEDTYPE, NULL);
                         return false;

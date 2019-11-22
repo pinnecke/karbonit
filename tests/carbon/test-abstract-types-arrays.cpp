@@ -117,27 +117,27 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         rec_new context;
         carbon_insert *ins;
         rec doc, doc2;
-        carbon_insert_array_state s1;
+        insert_array_state s1;
         arr_it it, *sub_it;
         field_e ft;
         rev rev_context;
 
         ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
 
-        carbon_insert_array_begin(&s1, ins, 100);
-        carbon_insert_array_end(&s1);
+        insert_array_begin(&s1, ins, 100);
+        insert_array_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, LIST_UNSORTED_MULTISET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_UNSORTED_MULTISET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, LIST_SORTED_MULTISET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_SORTED_MULTISET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, LIST_UNSORTED_SET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_UNSORTED_SET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, LIST_SORTED_SET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_SORTED_SET, 100);
+        insert_array_list_end(&s1);
 
         carbon_create_end(&context);
 

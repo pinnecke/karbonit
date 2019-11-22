@@ -8,7 +8,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec_new context;
         carbon_insert *ins;
         rec doc, doc2;
-        carbon_insert_object_state s1;
+        insert_object_state s1;
         arr_it it;
         obj_it *obj_it;
         field_e ft;
@@ -16,20 +16,20 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
         ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
 
-        carbon_insert_object_begin(&s1, ins, 100);
-        carbon_insert_object_end(&s1);
+        insert_object_begin(&s1, ins, 100);
+        insert_object_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, MAP_UNSORTED_MULTIMAP, 100);
-        carbon_insert_object_map_end(&s1);
+        insert_object_map_begin(&s1, ins, MAP_UNSORTED_MULTIMAP, 100);
+        insert_object_map_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, MAP_SORTED_MULTIMAP, 100);
-        carbon_insert_object_map_end(&s1);
+        insert_object_map_begin(&s1, ins, MAP_SORTED_MULTIMAP, 100);
+        insert_object_map_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, MAP_UNSORTED_MAP, 100);
-        carbon_insert_object_map_end(&s1);
+        insert_object_map_begin(&s1, ins, MAP_UNSORTED_MAP, 100);
+        insert_object_map_end(&s1);
 
-        carbon_insert_object_map_begin(&s1, ins, MAP_SORTED_MAP, 100);
-        carbon_insert_object_map_end(&s1);
+        insert_object_map_begin(&s1, ins, MAP_SORTED_MAP, 100);
+        insert_object_map_end(&s1);
 
         carbon_create_end(&context);
 

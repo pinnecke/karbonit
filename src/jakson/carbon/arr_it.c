@@ -96,13 +96,13 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
 
                 switch (constant) {
                         case CONST_TRUE:
-                                carbon_insert_true(&ins);
+                                insert_true(&ins);
                                 break;
                         case CONST_FALSE:
-                                carbon_insert_false(&ins);
+                                insert_false(&ins);
                                 break;
                         case CONST_NULL:
-                                carbon_insert_null(&ins);
+                                insert_null(&ins);
                                 break;
                         default: error(ERR_INTERNALERR, NULL);
                                 break;
@@ -149,7 +149,7 @@ bool internal_arr_it_update_binary(arr_it *it, const void *base, size_t nbytes, 
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_arr_it_update_array_begin(carbon_insert_array_state *state, arr_it *it)
+carbon_insert *internal_arr_it_update_array_begin(insert_array_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -158,14 +158,14 @@ carbon_insert *internal_arr_it_update_array_begin(carbon_insert_array_state *sta
         return NULL;
 }
 
-bool internal_arr_it_update_array_end(carbon_insert_array_state *state)
+bool internal_arr_it_update_array_end(insert_array_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_arr_it_update_column_begin(carbon_insert_column_state *state, arr_it *it)
+carbon_insert *internal_arr_it_update_column_begin(insert_column_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -174,14 +174,14 @@ carbon_insert *internal_arr_it_update_column_begin(carbon_insert_column_state *s
         return NULL;
 }
 
-bool internal_arr_it_update_column_end(carbon_insert_column_state *state)
+bool internal_arr_it_update_column_end(insert_column_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
         return error(ERR_NOTIMPLEMENTED, NULL);
 }
 
-carbon_insert *internal_arr_it_update_object_begin(carbon_insert_object_state *state, arr_it *it)
+carbon_insert *internal_arr_it_update_object_begin(insert_object_state *state, arr_it *it)
 {
         // TODO: Implement P1
         UNUSED(state)
@@ -190,7 +190,7 @@ carbon_insert *internal_arr_it_update_object_begin(carbon_insert_object_state *s
         return NULL;
 }
 
-bool internal_arr_it_update_object_end(carbon_insert_object_state *state)
+bool internal_arr_it_update_object_end(insert_object_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)

@@ -50,30 +50,30 @@ static bool array_update_##type_name(arr_it *it, type_name value)               
         return try_array_update(type_match, in_place_update_fn, insert_fn);                                            \
 }
 
-DEFINE_ARRAY_UPDATE_FUNCTION(u8, FIELD_NUMBER_U8, internal_arr_it_update_u8, carbon_insert_u8)
+DEFINE_ARRAY_UPDATE_FUNCTION(u8, FIELD_NUMBER_U8, internal_arr_it_update_u8, insert_u8)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(u16, FIELD_NUMBER_U16, internal_arr_it_update_u16,
-                             carbon_insert_u16)
+                             insert_u16)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(u32, FIELD_NUMBER_U32, internal_arr_it_update_u32,
-                             carbon_insert_u32)
+                             insert_u32)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(u64, FIELD_NUMBER_U64, internal_arr_it_update_u64,
-                             carbon_insert_u64)
+                             insert_u64)
 
-DEFINE_ARRAY_UPDATE_FUNCTION(i8, FIELD_NUMBER_I8, internal_arr_it_update_i8, carbon_insert_i8)
+DEFINE_ARRAY_UPDATE_FUNCTION(i8, FIELD_NUMBER_I8, internal_arr_it_update_i8, insert_i8)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(i16, FIELD_NUMBER_I16, internal_arr_it_update_i16,
-                             carbon_insert_i16)
+                             insert_i16)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(i32, FIELD_NUMBER_I32, internal_arr_it_update_i32,
-                             carbon_insert_i32)
+                             insert_i32)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(i64, FIELD_NUMBER_I64, internal_arr_it_update_i64,
-                             carbon_insert_i64)
+                             insert_i64)
 
 DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_float,
-                             carbon_insert_float)
+                             insert_float)
 
 #define try_update_generic(context, path, array_exec, column_exec)                                                     \
 ({                                                                                                                     \
@@ -367,7 +367,7 @@ bool carbon_update_set_binary(rev *context, const char *path, const void *value,
 }
 
 carbon_insert *carbon_update_set_array_begin(rev *context, const char *path,
-                                                        carbon_insert_array_state *state_out,
+                                                        insert_array_state *state_out,
                                                         u64 array_capacity)
 {
         // TODO: Implement
@@ -379,7 +379,7 @@ carbon_insert *carbon_update_set_array_begin(rev *context, const char *path,
         return NULL;
 }
 
-bool carbon_update_set_array_end(carbon_insert_array_state *state_in)
+bool carbon_update_set_array_end(insert_array_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -387,7 +387,7 @@ bool carbon_update_set_array_end(carbon_insert_array_state *state_in)
 }
 
 carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
-                                                         carbon_insert_column_state *state_out,
+                                                         insert_column_state *state_out,
                                                          field_e type, u64 cap)
 {
         // TODO: Implement
@@ -400,7 +400,7 @@ carbon_insert *carbon_update_set_column_begin(rev *context, const char *path,
         return NULL;
 }
 
-bool carbon_update_set_column_end(carbon_insert_column_state *state_in)
+bool carbon_update_set_column_end(insert_column_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -539,7 +539,7 @@ bool carbon_update_set_binary_compiled(rev *context, const dot *path,
 
 carbon_insert *carbon_update_set_array_begin_compiled(rev *context,
                                                                  const dot *path,
-                                                                 carbon_insert_array_state *state_out,
+                                                                 insert_array_state *state_out,
                                                                  u64 array_capacity)
 {
         // TODO: Implement
@@ -551,7 +551,7 @@ carbon_insert *carbon_update_set_array_begin_compiled(rev *context,
         return NULL;
 }
 
-bool carbon_update_set_array_end_compiled(carbon_insert_array_state *state_in)
+bool carbon_update_set_array_end_compiled(insert_array_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -560,7 +560,7 @@ bool carbon_update_set_array_end_compiled(carbon_insert_array_state *state_in)
 
 carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
                                                                   const dot *path,
-                                                                  carbon_insert_column_state *state_out,
+                                                                  insert_column_state *state_out,
                                                                   field_e type,
                                                                   u64 cap)
 {
@@ -574,7 +574,7 @@ carbon_insert *carbon_update_set_column_begin_compiled(rev *context,
         return NULL;
 }
 
-bool carbon_update_set_column_end_compiled(carbon_insert_column_state *state_in)
+bool carbon_update_set_column_end_compiled(insert_column_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
@@ -677,7 +677,7 @@ bool carbon_update_one_set_binary(const char *dot, rec *rev_doc, rec *doc,
                                               file_ext, user_type);
 }
 
-carbon_insert *carbon_update_one_set_array_begin(carbon_insert_array_state *state_out,
+carbon_insert *carbon_update_one_set_array_begin(insert_array_state *state_out,
                                                             const char *dot, rec *rev_doc,
                                                             rec *doc, u64 array_capacity)
 {
@@ -688,14 +688,14 @@ carbon_insert *carbon_update_one_set_array_begin(carbon_insert_array_state *stat
         return result;
 }
 
-bool carbon_update_one_set_array_end(carbon_insert_array_state *state_in)
+bool carbon_update_one_set_array_end(insert_array_state *state_in)
 {
         bool status = carbon_update_set_array_end(state_in);
         // ... TODO: drop revision from context
         return status;
 }
 
-carbon_insert *carbon_update_one_set_column_begin(carbon_insert_column_state *state_out,
+carbon_insert *carbon_update_one_set_column_begin(insert_column_state *state_out,
                                                              const char *dot, rec *rev_doc,
                                                              rec *doc, field_e type,
                                                              u64 cap)
@@ -708,7 +708,7 @@ carbon_insert *carbon_update_one_set_column_begin(carbon_insert_column_state *st
         return result;
 }
 
-bool carbon_update_one_set_column_end(carbon_insert_column_state *state_in)
+bool carbon_update_one_set_column_end(insert_column_state *state_in)
 {
         bool status = carbon_update_set_column_end(state_in);
         // ... TODO: drop revision from context
@@ -816,7 +816,7 @@ bool carbon_update_one_set_binary_compiled(const dot *path, rec *rev_doc,
                                               file_ext, user_type);
 }
 
-carbon_insert *carbon_update_one_set_array_begin_compiled(carbon_insert_array_state *state_out,
+carbon_insert *carbon_update_one_set_array_begin_compiled(insert_array_state *state_out,
                                                                      const dot *path,
                                                                      rec *rev_doc, rec *doc,
                                                                      u64 array_capacity)
@@ -829,7 +829,7 @@ carbon_insert *carbon_update_one_set_array_begin_compiled(carbon_insert_array_st
         return result;
 }
 
-bool carbon_update_one_set_array_end_compiled(carbon_insert_array_state *state_in)
+bool carbon_update_one_set_array_end_compiled(insert_array_state *state_in)
 {
         bool status = carbon_update_set_array_end_compiled(state_in);
         // ... TODO: drop revision from context
@@ -837,7 +837,7 @@ bool carbon_update_one_set_array_end_compiled(carbon_insert_array_state *state_i
 }
 
 carbon_insert *carbon_update_one_set_column_begin_compiled(
-        carbon_insert_column_state *state_out, const dot *path,
+        insert_column_state *state_out, const dot *path,
         rec *rev_doc,
         rec *doc, field_e type, u64 cap)
 {
@@ -849,7 +849,7 @@ carbon_insert *carbon_update_one_set_column_begin_compiled(
         return result;
 }
 
-bool carbon_update_one_set_column_end_compiled(carbon_insert_column_state *state_in)
+bool carbon_update_one_set_column_end_compiled(insert_column_state *state_in)
 {
         bool status = carbon_update_set_column_end_compiled(state_in);
         // ... TODO: drop revision from context

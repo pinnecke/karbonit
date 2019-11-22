@@ -8,16 +8,16 @@ int main (void)
     rec_new context;
     rec record;
     carbon_insert *ins, *nested_ins;
-    carbon_insert_column_state state;
+    insert_column_state state;
     char *as_json;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
 
-    nested_ins = carbon_insert_column_begin(&state, ins, COLUMN_U32, 1024);
-        carbon_insert_u32(nested_ins, 23);
-        carbon_insert_null(nested_ins);
-        carbon_insert_u32(nested_ins, 42);
-    carbon_insert_column_end(&state);
+    nested_ins = insert_column_begin(&state, ins, COLUMN_U32, 1024);
+        insert_u32(nested_ins, 23);
+        insert_null(nested_ins);
+        insert_u32(nested_ins, 42);
+    insert_column_end(&state);
 
     carbon_create_end(&context);
 

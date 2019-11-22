@@ -8,7 +8,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec_new context;
         carbon_insert *ins;
         rec doc, doc2;
-        carbon_insert_column_state s1;
+        insert_column_state s1;
         arr_it it;
         col_it *col_it;
         field_e ft;
@@ -16,20 +16,20 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
         ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
 
-        carbon_insert_column_begin(&s1, ins, COLUMN_I64, 100);
-        carbon_insert_column_end(&s1);
+        insert_column_begin(&s1, ins, COLUMN_I64, 100);
+        insert_column_end(&s1);
 
-        carbon_insert_column_list_begin(&s1, ins, LIST_UNSORTED_MULTISET, COLUMN_I64, 100);
-        carbon_insert_column_list_end(&s1);
+        insert_column_list_begin(&s1, ins, LIST_UNSORTED_MULTISET, COLUMN_I64, 100);
+        insert_column_list_end(&s1);
 
-        carbon_insert_column_list_begin(&s1, ins, LIST_SORTED_MULTISET, COLUMN_I64, 100);
-        carbon_insert_column_list_end(&s1);
+        insert_column_list_begin(&s1, ins, LIST_SORTED_MULTISET, COLUMN_I64, 100);
+        insert_column_list_end(&s1);
 
-        carbon_insert_column_list_begin(&s1, ins, LIST_UNSORTED_SET, COLUMN_I64, 100);
-        carbon_insert_column_list_end(&s1);
+        insert_column_list_begin(&s1, ins, LIST_UNSORTED_SET, COLUMN_I64, 100);
+        insert_column_list_end(&s1);
 
-        carbon_insert_column_list_begin(&s1, ins, LIST_SORTED_SET, COLUMN_I64, 100);
-        carbon_insert_column_list_end(&s1);
+        insert_column_list_begin(&s1, ins, LIST_SORTED_SET, COLUMN_I64, 100);
+        insert_column_list_end(&s1);
 
         carbon_create_end(&context);
 

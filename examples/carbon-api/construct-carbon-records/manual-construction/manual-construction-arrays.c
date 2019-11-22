@@ -8,17 +8,17 @@ int main (void)
     rec_new context;
     rec record;
     carbon_insert *ins, *nested_ins;
-    carbon_insert_array_state state;
+    insert_array_state state;
     char *as_json;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
 
-    carbon_insert_string(ins, "Hello");
-    nested_ins = carbon_insert_array_begin(&state, ins, 1024);
-        carbon_insert_string(nested_ins, "you");
-        carbon_insert_string(nested_ins, "nested") ;
-    carbon_insert_array_end(&state);
-    carbon_insert_string(ins, "array!");
+    insert_string(ins, "Hello");
+    nested_ins = insert_array_begin(&state, ins, 1024);
+        insert_string(nested_ins, "you");
+        insert_string(nested_ins, "nested") ;
+    insert_array_end(&state);
+    insert_string(ins, "array!");
 
     carbon_create_end(&context);
 

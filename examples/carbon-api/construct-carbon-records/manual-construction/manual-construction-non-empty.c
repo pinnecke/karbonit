@@ -12,9 +12,9 @@ int main (void)
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
 
-    carbon_insert_string(ins, "Hello, Carbon!");
-    carbon_insert_unsigned(ins, 42);
-    carbon_insert_null(ins);
+    insert_string(ins, "Hello, Carbon!");
+    insert_unsigned(ins, 42);
+    insert_null(ins);
 
     carbon_create_end(&context);
 

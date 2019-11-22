@@ -11,8 +11,8 @@ int main (void)
     char *as_json;
 
     ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
-    carbon_insert_string(ins, "Hello");
-    carbon_insert_string(ins, "Carbon!");
+    insert_string(ins, "Hello");
+    insert_string(ins, "Carbon!");
     carbon_create_end(&context);
 
     as_json = carbon_to_json_compact_dup(&record);

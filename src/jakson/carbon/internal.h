@@ -49,27 +49,27 @@ typedef struct carbon_insert {
         offset_t position;
 } carbon_insert;
 
-typedef struct carbon_insert_array_state {
+typedef struct insert_array_state {
         carbon_insert *parent_inserter;
         arr_it *array;
         carbon_insert nested_inserter;
         offset_t array_begin, array_end;
-} carbon_insert_array_state;
+} insert_array_state;
 
-typedef struct carbon_insert_object_state {
+typedef struct insert_object_state {
         carbon_insert *parent_inserter;
         obj_it *it;
         carbon_insert inserter;
         offset_t object_begin, object_end;
-} carbon_insert_object_state;
+} insert_object_state;
 
-typedef struct carbon_insert_column_state {
+typedef struct insert_column_state {
         carbon_insert *parent_inserter;
         field_e type;
         col_it *nested_column;
         carbon_insert nested_inserter;
         offset_t column_begin, column_end;
-} carbon_insert_column_state;
+} insert_column_state;
 
 bool internal_insert_object(memfile *memfile, map_type_e derivation, size_t nbytes);
 bool internal_insert_array(memfile *memfile, list_type_e derivation, size_t nbytes);

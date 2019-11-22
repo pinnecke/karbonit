@@ -647,7 +647,7 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = carbon_item_get_array(&(it->item));
+                        find->value.array = item_get_array(&(it->item));
                         find->value.array->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -690,37 +690,37 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column = carbon_item_get_column(&(it->item));
+                        find->value.column = item_get_column(&(it->item));
                         find->value.column->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        find->value.object = carbon_item_get_object(&(it->item));
+                        find->value.object = item_get_object(&(it->item));
                         find->value.object->memfile.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
-                        find->value.string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
+                        find->value.string = item_get_string(&(it->item), CARBON_NULL_STRING);
                         break;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_U64:
-                        find->value.unsigned_number = carbon_item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
+                        find->value.unsigned_number = item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
                         break;
                 case FIELD_NUMBER_I8:
                 case FIELD_NUMBER_I16:
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
-                        find->value.signed_number = carbon_item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
+                        find->value.signed_number = item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        find->value.float_number = carbon_item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
+                        find->value.float_number = item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
                         break;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        find->value.binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
+                        find->value.binary = item_get_binary(&(it->item), NULL_BINARY);
                         break;
                 default: error(ERR_INTERNALERR, NULL);
                         break;
@@ -740,7 +740,7 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = carbon_item_get_array(&(it->prop.value));
+                        find->value.array = item_get_array(&(it->prop.value));
                         find->value.array->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -783,37 +783,37 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column = carbon_item_get_column(&(it->prop.value));
+                        find->value.column = item_get_column(&(it->prop.value));
                         find->value.column->file.mode = find->doc->file.mode;
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        find->value.object = carbon_item_get_object(&(it->prop.value));
+                        find->value.object = item_get_object(&(it->prop.value));
                         find->value.object->memfile.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
-                        find->value.string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                        find->value.string = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                         break;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_U64:
-                        find->value.unsigned_number = carbon_item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
+                        find->value.unsigned_number = item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
                         break;
                 case FIELD_NUMBER_I8:
                 case FIELD_NUMBER_I16:
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
-                        find->value.signed_number = carbon_item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
+                        find->value.signed_number = item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        find->value.float_number = carbon_item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
+                        find->value.float_number = item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
                         break;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        find->value.binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
+                        find->value.binary = item_get_binary(&(it->prop.value), NULL_BINARY);
                         break;
                 default: error(ERR_INTERNALERR, NULL);
                         break;

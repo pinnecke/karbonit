@@ -363,7 +363,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        col_it *it = carbon_item_get_column(&(elem_it->prop.value));
+                        col_it *it = item_get_column(&(elem_it->prop.value));
                         column_traverse(parent, it);
 
                 }
@@ -372,7 +372,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        arr_it *it = carbon_item_get_array(&(elem_it->prop.value));
+                        arr_it *it = item_get_array(&(elem_it->prop.value));
                         array_traverse(parent, it);
                         arr_it_drop(it);
                 }
@@ -381,7 +381,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                        obj_it *it = carbon_item_get_object(&(elem_it->prop.value));
+                        obj_it *it = item_get_object(&(elem_it->prop.value));
                         object_traverse(parent, it);
                         carbon_object_drop(it);
                 }
@@ -454,7 +454,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        col_it *it = carbon_item_get_column(&elem_it->item);
+                        col_it *it = item_get_column(&elem_it->item);
                         column_traverse(parent, it);
 
                 }
@@ -463,7 +463,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        arr_it *it = carbon_item_get_array(&elem_it->item);
+                        arr_it *it = item_get_array(&elem_it->item);
                         array_traverse(parent, it);
                         arr_it_drop(it);
                 }
@@ -472,7 +472,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                        obj_it *it = carbon_item_get_object(&elem_it->item);
+                        obj_it *it = item_get_object(&elem_it->item);
                         object_traverse(parent, it);
                         carbon_object_drop(it);
                 }

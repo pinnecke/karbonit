@@ -26,7 +26,7 @@ bool internal_carbon_prop_create(carbon_prop *dst, obj_it *parent)
         dst->idx = parent->pos;
         dst->key.string = parent->field.key.name;
         dst->key.length = parent->field.key.name_len;
-        internal_carbon_item_create_from_object(&dst->value, parent);
+        internal_item_create_from_object(&dst->value, parent);
         return true;
 }
 

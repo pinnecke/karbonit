@@ -287,7 +287,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                                                obj_it *sub_it = carbon_item_get_object(&(it->prop.value));
+                                                                obj_it *sub_it = item_get_object(&(it->prop.value));
                                                                 path_status_e ret = traverse_object(state,
                                                                                                               path,
                                                                                                               next_path_pos,
@@ -299,7 +299,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                                                arr_it *sub_it = carbon_item_get_array(&(it->prop.value));
+                                                                arr_it *sub_it = item_get_array(&(it->prop.value));
                                                                 path_status_e ret = traverse_array(state,
                                                                                                              path,
                                                                                                              next_path_pos,
@@ -348,7 +348,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                                                col_it *sub_it = carbon_item_get_column(&(it->prop.value));
+                                                                col_it *sub_it = item_get_column(&(it->prop.value));
                                                                 return traverse_column(state,
                                                                                        path,
                                                                                        next_path_pos,
@@ -406,7 +406,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                         u32 next_path_pos = current_path_pos + 1;
                                         if (is_unit_array && is_record &&
                                                 field_is_column_or_subtype(elem_type)) {
-                                                col_it *sub_it = carbon_item_get_column(&(it->item));
+                                                col_it *sub_it = item_get_column(&(it->item));
                                                 return traverse_column(state,
                                                                        path,
                                                                        next_path_pos,
@@ -430,7 +430,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                                                                         return PATH_NOCONTAINER;
                                                                                 } else {
                                                                                         if (field_is_array_or_subtype(elem_type)) {
-                                                                                                arr_it *sub_it = carbon_item_get_array(&(it->item));
+                                                                                                arr_it *sub_it = item_get_array(&(it->item));
                                                                                                 status = traverse_array(
                                                                                                         state,
                                                                                                         path,
@@ -441,7 +441,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                                                                                 return status;
                                                                                         } else {
                                                                                                 JAK_ASSERT(field_is_column_or_subtype(elem_type));
-                                                                                                col_it *sub_it = carbon_item_get_column(&(it->item));
+                                                                                                col_it *sub_it = item_get_column(&(it->item));
                                                                                                 return traverse_column(
                                                                                                         state,
                                                                                                         path,
@@ -456,7 +456,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                                                                         elem_type)) {
                                                                                         return PATH_NOTANOBJECT;
                                                                                 } else {
-                                                                                        obj_it *sub_it = carbon_item_get_object(&(it->item));
+                                                                                        obj_it *sub_it = item_get_object(&(it->item));
                                                                                         status = traverse_object(state,
                                                                                                                  path,
                                                                                                                  next_path_pos,
@@ -490,7 +490,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                                 return PATH_NOTANOBJECT;
                                         } else {
                                                 if (is_unit_array && is_record) {
-                                                        obj_it *sub_it = carbon_item_get_object(&(it->item));
+                                                        obj_it *sub_it = item_get_object(&(it->item));
                                                         status = traverse_object(state,
                                                                                  path,
                                                                                  current_path_pos,

@@ -39,35 +39,35 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_TRUE(carbon_object_is_multimap(obj_it));
                 ASSERT_FALSE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_TRUE(carbon_object_is_multimap(obj_it));
                 ASSERT_FALSE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_TRUE(carbon_object_is_multimap(obj_it));
                 ASSERT_TRUE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_FALSE(carbon_object_is_multimap(obj_it));
                 ASSERT_FALSE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_FALSE(carbon_object_is_multimap(obj_it));
                 ASSERT_TRUE(carbon_object_is_sorted(obj_it));
 
@@ -79,19 +79,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 carbon_revise_iterator_open(&it, &rev_context);
 
                 arr_it_next(&it);
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 carbon_object_update_type(obj_it, MAP_SORTED_MULTIMAP);
 
                 arr_it_next(&it);
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 carbon_object_update_type(obj_it, MAP_UNSORTED_MAP);
 
                 arr_it_next(&it);
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 carbon_object_update_type(obj_it, MAP_SORTED_MAP);
 
                 arr_it_next(&it);
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 carbon_object_update_type(obj_it, MAP_UNSORTED_MULTIMAP);
 
                 carbon_revise_iterator_close(&it);
@@ -104,28 +104,28 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_TRUE(carbon_object_is_multimap(obj_it));
                 ASSERT_TRUE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_FALSE(carbon_object_is_multimap(obj_it));
                 ASSERT_FALSE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_FALSE(carbon_object_is_multimap(obj_it));
                 ASSERT_TRUE(carbon_object_is_sorted(obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_object_or_subtype(ft));
-                obj_it = carbon_item_get_object(&(it.item));
+                obj_it = item_get_object(&(it.item));
                 ASSERT_TRUE(carbon_object_is_multimap(obj_it));
                 ASSERT_FALSE(carbon_object_is_sorted(obj_it));
 

@@ -125,7 +125,7 @@ static inline void __carbon_print_json_binary(struct string_buffer *restrict buf
 static inline void __carbon_print_json_##type##_from_prop_value(struct string_buffer *restrict buf,                    \
                                                                 struct obj_it *restrict it)                     \
 {                                                                                                                      \
-        type val = (type) carbon_item_get_##clazz(&(it->prop.value), default_value);                                                    \
+        type val = (type) item_get_##clazz(&(it->prop.value), default_value);                                                    \
         string_buffer_add_##type(buf, val);                                                                            \
 }
 
@@ -219,13 +219,13 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 //                }
 
                 if (field_is_object_or_subtype(type)) {
-                        obj_it *sub = carbon_item_get_object(&(it->item));
+                        obj_it *sub = item_get_object(&(it->item));
                         carbon_traverse_continue_object(extra, sub);
                 } else if (field_is_column_or_subtype(type)) {
-                        col_it *sub = carbon_item_get_column(&(it->item));
+                        col_it *sub = item_get_column(&(it->item));
                         carbon_traverse_continue_column(extra, sub);
                 } else if (field_is_array_or_subtype(type)) {
-                        arr_it *sub = carbon_item_get_array(&(it->item));
+                        arr_it *sub = item_get_array(&(it->item));
                         carbon_traverse_continue_array(extra, sub);
                 }
         }
@@ -349,7 +349,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_FALSE);
                                 break;
                         case FIELD_STRING: {
-                                string_field string = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                string_field string = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                                 __carbon_print_json_string(str_buf, string.string, string.length);
                         } break;
                         case FIELD_NUMBER_U8:
@@ -381,7 +381,7 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                binary_field binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
+                                binary_field binary = item_get_binary(&(it->prop.value), NULL_BINARY);
                                 __carbon_print_json_binary(str_buf, binary.blob, binary.blob_len);
                         } break;
                         default:
@@ -389,13 +389,13 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                 }
 
                 if (field_is_object_or_subtype(type)) {
-                        obj_it *sub = carbon_item_get_object(&(it->prop.value));
+                        obj_it *sub = item_get_object(&(it->prop.value));
                         carbon_traverse_continue_object(extra, sub);
                 } else if (field_is_column_or_subtype(type)) {
-                        col_it *sub = carbon_item_get_column(&(it->prop.value));
+                        col_it *sub = item_get_column(&(it->prop.value));
                         carbon_traverse_continue_column(extra, sub);
                 } else if (field_is_array_or_subtype(type)) {
-                        arr_it *sub = carbon_item_get_array(&(it->prop.value));
+                        arr_it *sub = item_get_array(&(it->prop.value));
                         carbon_traverse_continue_array(extra, sub);
                 }
         }

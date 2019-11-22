@@ -287,7 +287,7 @@ bool internal_arr_it_clone(arr_it *dst, arr_it *src)
         internal_field_clone(&dst->field, &src->field);
         dst->field_offset = src->field_offset;
         dst->pos = src->pos;
-        internal_carbon_item_create_from_array(&dst->item, dst);
+        internal_item_create_from_array(&dst->item, dst);
         return true;
 }
 
@@ -389,7 +389,7 @@ static bool _internal_array_next(arr_it *it)
 item *arr_it_next(arr_it *it)
 {
         if (_internal_array_next(it)) {
-                internal_carbon_item_create_from_array(&(it->item), it);
+                internal_item_create_from_array(&(it->item), it);
                 return &(it->item);
         } else {
                 return NULL;

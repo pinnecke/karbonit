@@ -347,7 +347,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         case FIELD_NUMBER_U16:
                         case FIELD_NUMBER_U32:
                         case FIELD_NUMBER_U64: {
-                                u64 value = carbon_item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
+                                u64 value = item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
                                 is_null_value = IS_NULL_UNSIGNED(value);
                                 carbon_printer_prop_unsigned(printer, builder, prop_key.string, prop_key.length,
                                                              is_null_value ? NULL : &value);
@@ -357,27 +357,27 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         case FIELD_NUMBER_I16:
                         case FIELD_NUMBER_I32:
                         case FIELD_NUMBER_I64: {
-                                i64 value = carbon_item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
+                                i64 value = item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
                                 is_null_value = IS_NULL_SIGNED(value);
                                 carbon_printer_prop_signed(printer, builder, prop_key.string, prop_key.length,
                                                            is_null_value ? NULL : &value);
                         }
                                 break;
                         case FIELD_NUMBER_FLOAT: {
-                                float value = carbon_item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
+                                float value = item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
                                 is_null_value = IS_NULL_FLOAT(value);
                                 carbon_printer_prop_float(printer, builder, prop_key.string, prop_key.length,
                                                           is_null_value ? NULL : &value);
                         }
                                 break;
                         case FIELD_STRING: {
-                                string_field value = carbon_item_get_string(&(it->prop.value), CARBON_NULL_STRING);
+                                string_field value = item_get_string(&(it->prop.value), CARBON_NULL_STRING);
                                 carbon_printer_prop_string(printer, builder, prop_key.string, prop_key.length, value.string, value.length);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                binary_field binary = carbon_item_get_binary(&(it->prop.value), NULL_BINARY);
+                                binary_field binary = item_get_binary(&(it->prop.value), NULL_BINARY);
                                 carbon_printer_prop_binary(printer, builder, prop_key.string, prop_key.length, &binary);
                         }
                                 break;
@@ -385,7 +385,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                arr_it *array = carbon_item_get_array(&(it->prop.value));
+                                arr_it *array = item_get_array(&(it->prop.value));
                                 carbon_printer_array_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_array(array, printer, builder, false);
                                 arr_it_drop(array);
@@ -431,7 +431,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                col_it *column = carbon_item_get_column(&(it->prop.value));
+                                col_it *column = item_get_column(&(it->prop.value));
                                 carbon_printer_column_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_column(column, printer, builder);
                         }
@@ -440,7 +440,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                obj_it *object = carbon_item_get_object(&(it->prop.value));
+                                obj_it *object = item_get_object(&(it->prop.value));
                                 carbon_printer_object_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_object(object, printer, builder);
                                 carbon_object_drop(object);
@@ -502,7 +502,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case FIELD_NUMBER_U16:
                         case FIELD_NUMBER_U32:
                         case FIELD_NUMBER_U64: {
-                                u64 value = carbon_item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
+                                u64 value = item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
                                 is_null_value = false;
                                 carbon_printer_unsigned_nonull(printer, builder, is_null_value ? NULL : &value);
                         }
@@ -511,25 +511,25 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case FIELD_NUMBER_I16:
                         case FIELD_NUMBER_I32:
                         case FIELD_NUMBER_I64: {
-                                i64 value = carbon_item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
+                                i64 value = item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
                                 is_null_value = false;
                                 carbon_printer_signed_nonull(printer, builder, is_null_value ? NULL : &value);
                         }
                                 break;
                         case FIELD_NUMBER_FLOAT: {
-                                float value = carbon_item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
+                                float value = item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
                                 is_null_value = false;
                                 carbon_printer_float(printer, builder, is_null_value ? NULL : &value);
                         }
                                 break;
                         case FIELD_STRING: {
-                                string_field string = carbon_item_get_string(&(it->item), CARBON_NULL_STRING);
+                                string_field string = item_get_string(&(it->item), CARBON_NULL_STRING);
                                 carbon_printer_string(printer, builder, string.string, string.length);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                binary_field binary = carbon_item_get_binary(&(it->item), NULL_BINARY);
+                                binary_field binary = item_get_binary(&(it->item), NULL_BINARY);
                                 carbon_printer_binary(printer, builder, &binary);
                         }
                                 break;
@@ -537,7 +537,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                arr_it *array = carbon_item_get_array(&(it->item));
+                                arr_it *array = item_get_array(&(it->item));
                                 carbon_printer_print_array(array, printer, builder, false);
                                 arr_it_drop(array);
                         }
@@ -582,7 +582,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                col_it *column = carbon_item_get_column(&(it->item));
+                                col_it *column = item_get_column(&(it->item));
                                 carbon_printer_print_column(column, printer, builder);
                         }
                                 break;
@@ -590,7 +590,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                obj_it *object = carbon_item_get_object(&(it->item));
+                                obj_it *object = item_get_object(&(it->item));
                                 carbon_printer_print_object(object, printer, builder);
                                 carbon_object_drop(object);
                         }

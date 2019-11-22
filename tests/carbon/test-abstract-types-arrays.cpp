@@ -147,35 +147,35 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_TRUE(arr_it_is_multiset(sub_it));
                 ASSERT_FALSE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_TRUE(arr_it_is_multiset(sub_it));
                 ASSERT_FALSE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_TRUE(arr_it_is_multiset(sub_it));
                 ASSERT_TRUE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_FALSE(arr_it_is_multiset(sub_it));
                 ASSERT_FALSE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_FALSE(arr_it_is_multiset(sub_it));
                 ASSERT_TRUE(arr_it_is_sorted(sub_it));
 
@@ -187,19 +187,19 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 carbon_revise_iterator_open(&it, &rev_context);
 
                 arr_it_next(&it);
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 arr_it_update_type(sub_it, LIST_SORTED_MULTISET);
 
                 arr_it_next(&it);
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 arr_it_update_type(sub_it, LIST_UNSORTED_SET);
 
                 arr_it_next(&it);
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 arr_it_update_type(sub_it, LIST_SORTED_SET);
 
                 arr_it_next(&it);
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 arr_it_update_type(sub_it, LIST_UNSORTED_MULTISET);
 
                 carbon_revise_iterator_close(&it);
@@ -212,28 +212,28 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_TRUE(arr_it_is_multiset(sub_it));
                 ASSERT_TRUE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_FALSE(arr_it_is_multiset(sub_it));
                 ASSERT_FALSE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_FALSE(arr_it_is_multiset(sub_it));
                 ASSERT_TRUE(arr_it_is_sorted(sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = carbon_item_get_array(&(it.item));
+                sub_it = item_get_array(&(it.item));
                 ASSERT_TRUE(arr_it_is_multiset(sub_it));
                 ASSERT_FALSE(arr_it_is_sorted(sub_it));
 

@@ -29,7 +29,7 @@
 #include <jakson/std/hash/table.h>
 #include <jakson/std/hash.h>
 #include <jakson/archive/huffman.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 #include <jakson/mem/block.h>
 #include <jakson/mem/file.h>
 #include <jakson/stdx/unique_id.h>

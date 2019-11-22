@@ -81,7 +81,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_f
         if (create(&updater, context, path)) {                                                                         \
                 if (resolve_path(&updater) && path_resolved(&updater)) {                                               \
                                                                                                                        \
-                        switch (updater.path_evaluater.result.container) {                                        \
+                        switch (updater.eval.result.container) {                                        \
                         case ARRAY:                                                                              \
                                 array_exec;                                                                            \
                                 break;                                                                                 \
@@ -94,7 +94,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_f
                                 return error(ERR_INTERNALERR, "unknown container type for update operation");                                            \
                         }                                                                                              \
                 }                                                                                                      \
-                dot_eval_end(&updater.path_evaluater);                                                    \
+                dot_eval_end(&updater.eval);                                                    \
                 }                                                                                                              \
         true;                                                                                                        \
 })
@@ -123,12 +123,12 @@ static bool compile_path(dot *out, const char *in)
 
 static bool resolve_path(update *updater)
 {
-        return dot_eval_begin_mutable(&updater->path_evaluater, updater->path, updater->context);
+        return dot_eval_begin_mutable(&updater->eval, updater->path, updater->context);
 }
 
 static bool path_resolved(update *updater)
 {
-        return dot_eval_has_result(&updater->path_evaluater);
+        return dot_eval_has_result(&updater->eval);
 }
 
 static bool column_update_u8(col_it *it, u32 pos, u8 value)
@@ -215,13 +215,13 @@ static bool column_update_float(col_it *it, u32 pos, float value)
 
 static inline arr_it *arrayerator(update *updater)
 {
-        return &updater->path_evaluater.result.containers.array;
+        return &updater->eval.result.containers.array;
 }
 
 static inline col_it *column_iterator(u32 *elem_pos, update *updater)
 {
-        *elem_pos = updater->path_evaluater.result.containers.column.elem_pos;
-        return &updater->path_evaluater.result.containers.column.it;
+        *elem_pos = updater->eval.result.containers.column.elem_pos;
+        return &updater->eval.result.containers.column.it;
 }
 
 #define compile_path_and_delegate(context, path, func)                                                                 \

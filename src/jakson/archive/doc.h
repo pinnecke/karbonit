@@ -25,7 +25,7 @@
 #include <jakson/stdinc.h>
 #include <jakson/std/vec.h>
 #include <jakson/std/string_dict.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -17,10 +17,10 @@
 
 #include <math.h>
 #include <inttypes.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 #include <jakson/archive/doc.h>
 #include <jakson/archive/column_doc.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 #include <jakson/utils/sort.h>
 
 char VALUE_NULL = '\0';

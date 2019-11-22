@@ -27,9 +27,8 @@ extern "C" {
 
 typedef struct update {
         rev *context;
-        dot_eval path_evaluater;
+        dot_eval eval;
         const dot *path;
-        bool is_found;
 } update;
 
 bool update_set_null(rev *context, const char *path);

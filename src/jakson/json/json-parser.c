@@ -18,11 +18,11 @@
 #include <inttypes.h>
 #include <ctype.h>
 #include <locale.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 #include <jakson/archive/doc.h>
 #include <jakson/utils/convert.h>
 #include <jakson/utils/numbers.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 
 static struct {
         json_token_e token;

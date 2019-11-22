@@ -26,7 +26,7 @@
 #include <jakson/carbon/obj-it.h>
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
-#include <jakson/json/parser.h>
+#include <jakson/json/json-parser.h>
 #include <jakson/carbon/obj-it.h>
 
 static void marker_insert(memfile *memfile, u8 marker);

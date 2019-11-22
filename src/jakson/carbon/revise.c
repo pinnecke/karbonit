@@ -81,7 +81,7 @@ bool revise_key_generate(unique_id_t *out, rev *context)
 {
         key_e type;
         key_type(&type, context->revised);
-        if (type == CARBON_KEY_AUTOKEY) {
+        if (type == KEY_AUTOKEY) {
                 unique_id_t oid;
                 unique_id_create(&oid);
                 key_unsigned_set(context->revised, oid);
@@ -96,7 +96,7 @@ bool revise_key_set_unsigned(rev *context, u64 key_value)
 {
         key_e type;
         key_type(&type, context->revised);
-        if (type == CARBON_KEY_UKEY) {
+        if (type == KEY_UKEY) {
                 key_unsigned_set(context->revised, key_value);
                 return true;
         } else {
@@ -108,7 +108,7 @@ bool revise_key_set_signed(rev *context, i64 key_value)
 {
         key_e type;
         key_type(&type, context->revised);
-        if (type == CARBON_KEY_IKEY) {
+        if (type == KEY_IKEY) {
                 key_signed_set(context->revised, key_value);
                 return true;
         } else {
@@ -120,7 +120,7 @@ bool revise_key_set_string(rev *context, const char *key_value)
 {
         key_e type;
         key_type(&type, context->revised);
-        if (type == CARBON_KEY_SKEY) {
+        if (type == KEY_SKEY) {
                 key_string_set(context->revised, key_value);
                 return true;
         } else {

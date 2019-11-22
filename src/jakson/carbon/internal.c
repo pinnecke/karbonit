@@ -449,7 +449,7 @@ offset_t internal_payload_after_header(rec *doc)
         memfile_seek(&doc->file, 0);
 
         if (likely(key_skip(&key_type, &doc->file))) {
-                if (key_type != CARBON_KEY_NOKEY) {
+                if (key_type != KEY_NOKEY) {
                         commit_skip(&doc->file);
                 }
                 result = memfile_tell(&doc->file);
@@ -470,7 +470,7 @@ u64 internal_header_get_commit_hash(rec *doc)
         memfile_seek(&doc->file, 0);
 
         key_skip(&key_type, &doc->file);
-        if (key_type != CARBON_KEY_NOKEY) {
+        if (key_type != KEY_NOKEY) {
                 commit_read(&rev, &doc->file);
         }
 

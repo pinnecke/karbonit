@@ -10,7 +10,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         obj_it *obj;
         field_e type;
 
-        carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", CARBON_KEY_AUTOKEY, NULL);
+        carbon_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", KEY_AUTOKEY, NULL);
         carbon_commit_hash(&hash_original, &doc);
 
         char *json_original = carbon_to_json_compact_dup(&doc);

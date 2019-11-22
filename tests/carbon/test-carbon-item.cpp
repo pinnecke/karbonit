@@ -7,7 +7,7 @@ TEST(TestCarbonItem, CreateId) {
         arr_it array;
         item *item;
 
-        carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", KEY_NOKEY, NULL);
         carbon_read_begin(&array, &doc);
         while ((item = arr_it_next(&array))) {
                 u64 index = item_get_index(item);

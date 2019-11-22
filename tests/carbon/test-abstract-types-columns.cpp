@@ -14,7 +14,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         field_e ft;
         rev rev_context;
 
-        ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_column_begin(&s1, ins, COLUMN_I64, 100);
         insert_column_end(&s1);
@@ -146,7 +146,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
         field_e ft;
         rev revise;
 
-        carbon_from_json(&doc, "{ x: [ { y: [1, 2, 3] } ] }", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "{ x: [ { y: [1, 2, 3] } ] }", KEY_NOKEY, NULL);
 
         {
                 revise_begin(&revise, &doc2, &doc);

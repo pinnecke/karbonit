@@ -220,26 +220,26 @@ static void record_ref_create(memfile *memfile, rec *doc)
         memfile_seek(memfile, 0);
         key_create(memfile, type);
         switch (type) {
-                case CARBON_KEY_NOKEY: {
+                case KEY_NOKEY: {
                         /** nothing to do */
                 }
                         break;
-                case CARBON_KEY_AUTOKEY:
-                case CARBON_KEY_UKEY: {
+                case KEY_AUTOKEY:
+                case KEY_UKEY: {
                         u64 key;
                         key_unsigned_value(&key, doc);
                         memfile_seek(memfile, 0);
                         key_write_unsigned(memfile, key);
                 }
                         break;
-                case CARBON_KEY_IKEY: {
+                case KEY_IKEY: {
                         DECLARE_AND_INIT(i64, key)
                         key_signed_value(&key, doc);
                         memfile_seek(memfile, 0);
                         key_write_signed(memfile, key);
                 }
                         break;
-                case CARBON_KEY_SKEY: {
+                case KEY_SKEY: {
                         u64 len;
                         const char *key = key_string_value(&len, doc);
                         memfile_seek(memfile, 0);
@@ -1075,25 +1075,25 @@ static void record_ref_to_str(str_buf *str, pindex *index)
         str_buf_add_char(str, ']');
 
         switch (key_type) {
-                case CARBON_KEY_NOKEY:
+                case KEY_NOKEY:
                         /** nothing to do */
                         break;
-                case CARBON_KEY_AUTOKEY:
-                case CARBON_KEY_UKEY: {
+                case KEY_AUTOKEY:
+                case KEY_UKEY: {
                         u64 key = memfile_read_u64(&index->memfile);
                         str_buf_add_char(str, '[');
                         str_buf_add_u64(str, key);
                         str_buf_add_char(str, ']');
                 }
                         break;
-                case CARBON_KEY_IKEY: {
+                case KEY_IKEY: {
                         i64 key = memfile_read_i64(&index->memfile);
                         str_buf_add_char(str, '[');;
                         str_buf_add_i64(str, key);
                         str_buf_add_char(str, ']');
                 }
                         break;
-                case CARBON_KEY_SKEY: {
+                case KEY_SKEY: {
                         u64 key_len;
                         const char *key = string_field_read(&key_len, &index->memfile);
                         str_buf_add_char(str, '(');
@@ -1115,21 +1115,21 @@ static void record_ref_to_record(insert *roins, pindex *index)
         insert_prop_string(roins, "key-type", key_type_str(key_type));
 
         switch (key_type) {
-                case CARBON_KEY_NOKEY:
+                case KEY_NOKEY:
                         /** nothing to do */
                         break;
-                case CARBON_KEY_AUTOKEY:
-                case CARBON_KEY_UKEY: {
+                case KEY_AUTOKEY:
+                case KEY_UKEY: {
                         u64 key = memfile_read_u64(&index->memfile);
                         insert_prop_unsigned(roins, "key-value", key);
                 }
                         break;
-                case CARBON_KEY_IKEY: {
+                case KEY_IKEY: {
                         i64 key = memfile_read_i64(&index->memfile);
                         insert_prop_signed(roins, "key-value", key);
                 }
                         break;
-                case CARBON_KEY_SKEY: {
+                case KEY_SKEY: {
                         u64 key_len;
                         const char *key = string_field_read(&key_len, &index->memfile);
                         insert_prop_nchar(roins, "key-value", key, key_len);
@@ -1195,7 +1195,7 @@ bool pindex_key_unsigned_value(u64 *key, pindex *index)
 {
         key_e key_type;
         u64 ret = *(u64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
-        error_if_and_return(key_type != CARBON_KEY_AUTOKEY && key_type != CARBON_KEY_UKEY, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(key_type != KEY_AUTOKEY && key_type != KEY_UKEY, ERR_TYPEMISMATCH, NULL);
         *key = ret;
         return true;
 }
@@ -1204,7 +1204,7 @@ bool pindex_key_signed_value(i64 *key, pindex *index)
 {
         key_e key_type;
         i64 ret = *(i64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
-        error_if_and_return(key_type != CARBON_KEY_IKEY, ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(key_type != KEY_IKEY, ERR_TYPEMISMATCH, NULL);
         *key = ret;
         return true;
 }
@@ -1214,7 +1214,7 @@ const char *pindex_key_string_value(u64 *str_len, pindex *index)
         if (str_len && index) {
                 key_e key_type;
                 const char *ret = (const char *) record_ref_read(&key_type, str_len, NULL, &index->memfile);
-                error_if_and_return(key_type != CARBON_KEY_SKEY, ERR_TYPEMISMATCH, NULL);
+                error_if_and_return(key_type != KEY_SKEY, ERR_TYPEMISMATCH, NULL);
                 return ret;
         } else {
                 error(ERR_NULLPTR, NULL);
@@ -1233,22 +1233,22 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
                 key_type(&doc_key_type, doc);
                 if (likely(index_key_type == doc_key_type)) {
                         switch (index_key_type) {
-                                case CARBON_KEY_NOKEY:
+                                case KEY_NOKEY:
                                         return true;
-                                case CARBON_KEY_AUTOKEY:
-                                case CARBON_KEY_UKEY: {
+                                case KEY_AUTOKEY:
+                                case KEY_UKEY: {
                                         u64 index_key, doc_key;
                                         pindex_key_unsigned_value(&index_key, index);
                                         key_unsigned_value(&doc_key, doc);
                                         return index_key == doc_key;
                                 }
-                                case CARBON_KEY_IKEY: {
+                                case KEY_IKEY: {
                                         i64 index_key, doc_key;
                                         pindex_key_signed_value(&index_key, index);
                                         key_signed_value(&doc_key, doc);
                                         return index_key == doc_key;
                                 }
-                                case CARBON_KEY_SKEY: {
+                                case KEY_SKEY: {
                                         u64 index_key_len, doc_key_len;
                                         const char *index_key = pindex_key_string_value(&index_key_len,
                                                                                                    index);
@@ -1300,7 +1300,7 @@ void pindex_to_record(rec *doc, pindex *index)
 
         memfile_seek_to_start(&index->memfile);
 
-        insert *ins = carbon_create_begin(&context, doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, doc, KEY_NOKEY, CARBON_OPTIMIZE);
         insert *oins = insert_object_begin(&object, ins, 1024);
 
         {

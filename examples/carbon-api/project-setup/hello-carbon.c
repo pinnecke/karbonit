@@ -10,7 +10,7 @@ int main (void)
     insert *ins;
     char *as_json;
 
-    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    ins = carbon_create_begin(&context, &record, KEY_NOKEY, CARBON_KEEP);
     insert_string(ins, "Hello");
     insert_string(ins, "Carbon!");
     carbon_create_end(&context);

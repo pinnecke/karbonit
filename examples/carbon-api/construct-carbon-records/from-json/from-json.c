@@ -8,7 +8,7 @@ int main (void)
     rec record;
     char *as_json;
 
-    carbon_from_json(&record, "{\"msg\": \"Hello from JSON\"}", CARBON_KEY_NOKEY, NULL);
+    carbon_from_json(&record, "{\"msg\": \"Hello from JSON\"}", KEY_NOKEY, NULL);
 
     as_json = carbon_to_json_compact_dup(&record);
 

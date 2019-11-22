@@ -53,7 +53,7 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
                                            key_e type, int options)
 {
         if (context && doc) {
-                context->content_it = MALLOC(sizeof(arr_it));
+                context->array = MALLOC(sizeof(arr_it));
                 context->in = MALLOC(sizeof(insert));
                 context->mode = options;
 
@@ -71,12 +71,12 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
                 }
 
                 carbon_create_empty(&context->original, derivation, type);
-                revise_begin(&context->revision_context, doc, &context->original);
-                if (!revise_iterator_open(context->content_it, &context->revision_context)) {
+                revise_begin(&context->context, doc, &context->original);
+                if (!revise_iterator_open(context->array, &context->context)) {
                     error(ERR_OPPFAILED, "cannot open revision iterator");
                     return NULL;
                 }
-                arr_it_insert_begin(context->in, context->content_it);
+                arr_it_insert_begin(context->in, context->array);
                 return context->in;
         } else {
                 return NULL;
@@ -86,15 +86,15 @@ insert * carbon_create_begin(rec_new *context, rec *doc,
 void carbon_create_end(rec_new *context)
 {
         arr_it_insert_end(context->in);
-        revise_iterator_close(context->content_it);
+        revise_iterator_close(context->array);
         if (context->mode & CARBON_COMPACT) {
-                revise_pack(&context->revision_context);
+                revise_pack(&context->context);
         }
         if (context->mode & CARBON_SHRINK) {
-                revise_shrink(&context->revision_context);
+                revise_shrink(&context->context);
         }
-        revise_end(&context->revision_context);
-        free(context->content_it);
+        revise_end(&context->context);
+        free(context->array);
         free(context->in);
         carbon_drop(&context->original);
 }
@@ -109,9 +109,9 @@ void carbon_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
 {
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
 
-        memblock_create(&doc->area, doc_cap);
-        memblock_zero_out(doc->area);
-        memfile_open(&doc->file, doc->area, READ_WRITE);
+        memblock_create(&doc->block, doc_cap);
+        memblock_zero_out(doc->block);
+        memfile_open(&doc->file, doc->block, READ_WRITE);
 
         carbon_header_init(doc, type);
         internal_insert_array(&doc->file, derivation, array_cap);
@@ -136,8 +136,8 @@ bool carbon_from_json(rec *doc, const char *json, key_e type,
 
 bool carbon_from_raw_data(rec *doc, const void *data, u64 len)
 {
-        memblock_from_raw_data(&doc->area, data, len);
-        memfile_open(&doc->file, doc->area, READ_WRITE);
+        memblock_from_raw_data(&doc->block, data, len);
+        memfile_open(&doc->file, doc->block, READ_WRITE);
 
         return true;
 }
@@ -223,28 +223,28 @@ const char *key_string_value(u64 *len, rec *doc)
 
 bool key_is_unsigned(key_e type)
 {
-        return type == CARBON_KEY_UKEY || type == CARBON_KEY_AUTOKEY;
+        return type == KEY_UKEY || type == KEY_AUTOKEY;
 }
 
 bool key_is_signed(key_e type)
 {
-        return type == CARBON_KEY_IKEY;
+        return type == KEY_IKEY;
 }
 
 bool key_is_string(key_e type)
 {
-        return type == CARBON_KEY_SKEY;
+        return type == KEY_SKEY;
 }
 
 bool carbon_has_key(key_e type)
 {
-        return type != CARBON_KEY_NOKEY;
+        return type != KEY_NOKEY;
 }
 
 void carbon_clone(rec *clone, rec *doc)
 {
-        memblock_cpy(&clone->area, doc->area);
-        memfile_open(&clone->file, clone->area, READ_WRITE);
+        memblock_cpy(&clone->block, doc->block);
+        memfile_open(&clone->file, clone->block, READ_WRITE);
 }
 
 bool carbon_commit_hash(u64 *hash, rec *doc)
@@ -391,7 +391,7 @@ bool carbon_hexdump_print(FILE *file, rec *doc)
 static bool internal_drop(rec *doc)
 {
         assert(doc);
-        memblock_drop(doc->area);
+        memblock_drop(doc->block);
         return true;
 }
 
@@ -402,7 +402,7 @@ static void carbon_header_init(rec *doc, key_e key_type)
         memfile_seek(&doc->file, 0);
         key_create(&doc->file, key_type);
 
-        if (key_type != CARBON_KEY_NOKEY) {
+        if (key_type != KEY_NOKEY) {
                 commit_create(&doc->file);
         }
 }

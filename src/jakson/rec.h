@@ -1,4 +1,6 @@
 /*
+ * rec - Carbon file record implementation
+ *
  * Copyright 2019 Marcus Pinnecke
  */
 
@@ -72,7 +74,7 @@ extern "C" {
  * creating a new revision but by altered the current revision (i.e., the commit hash remains the same). See patch.h
  * for more. */
 typedef struct rec {
-        memblock *area;
+        memblock *block;
         memfile file;
 } rec;
 
@@ -84,8 +86,8 @@ typedef struct rev {
 
 typedef struct rec_new {
         rec original;
-        rev revision_context;
-        arr_it *content_it;
+        rev context;
+        arr_it *array;
         insert *in;
         /** options shrink or compact (or both) documents, see
          * CARBON_KEEP, CARBON_SHRINK, CARBON_COMPACT, and CARBON_OPTIMIZE  */
@@ -100,15 +102,15 @@ typedef enum printer_impl {
 
 typedef enum key_type {
         /** no key, no revision number */
-        CARBON_KEY_NOKEY = MNOKEY,
+        KEY_NOKEY = MNOKEY,
         /** auto-generated 64bit unsigned integer key */
-        CARBON_KEY_AUTOKEY = MAUTOKEY,
+        KEY_AUTOKEY = MAUTOKEY,
         /** user-defined 64bit unsigned integer key */
-        CARBON_KEY_UKEY = MUKEY,
+        KEY_UKEY = MUKEY,
         /** user-defined 64bit signed integer key */
-        CARBON_KEY_IKEY = MIKEY,
+        KEY_IKEY = MIKEY,
         /** user-defined n-char str_buf key */
-        CARBON_KEY_SKEY = MSKEY
+        KEY_SKEY = MSKEY
 } key_e;
 
 #define CARBON_KEEP              0x00 /** do not shrink, do not compact, use UNSORTED_MULTISET (equiv. JSON array) */

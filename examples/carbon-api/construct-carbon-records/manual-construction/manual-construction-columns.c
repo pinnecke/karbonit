@@ -11,7 +11,7 @@ int main (void)
     col_state state;
     char *as_json;
 
-    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    ins = carbon_create_begin(&context, &record, KEY_NOKEY, CARBON_KEEP);
 
     nested_ins = insert_column_begin(&state, ins, COLUMN_U32, 1024);
         insert_u32(nested_ins, 23);

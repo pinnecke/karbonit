@@ -61,19 +61,19 @@ static void write_skey(memfile *file)
 bool key_create(memfile *file, key_e type)
 {
         switch (type) {
-                case CARBON_KEY_NOKEY:
+                case KEY_NOKEY:
                         write_nokey(file);
                         break;
-                case CARBON_KEY_AUTOKEY:
+                case KEY_AUTOKEY:
                         write_autokey(file);
                         break;
-                case CARBON_KEY_UKEY:
+                case KEY_UKEY:
                         write_ukey(file);
                         break;
-                case CARBON_KEY_IKEY:
+                case KEY_IKEY:
                         write_ikey(file);
                         break;
-                case CARBON_KEY_SKEY:
+                case KEY_SKEY:
                         write_skey(file);
                         break;
                 default:
@@ -154,19 +154,19 @@ bool key_read_type(key_e *out, memfile *file)
 
         switch (marker) {
                 case MNOKEY:
-                        OPTIONAL_SET(out, CARBON_KEY_NOKEY)
+                        OPTIONAL_SET(out, KEY_NOKEY)
                         break;
                 case MAUTOKEY:
-                        OPTIONAL_SET(out, CARBON_KEY_AUTOKEY)
+                        OPTIONAL_SET(out, KEY_AUTOKEY)
                         break;
                 case MUKEY:
-                        OPTIONAL_SET(out, CARBON_KEY_UKEY)
+                        OPTIONAL_SET(out, KEY_UKEY)
                         break;
                 case MIKEY:
-                        OPTIONAL_SET(out, CARBON_KEY_IKEY)
+                        OPTIONAL_SET(out, KEY_IKEY)
                         break;
                 case MSKEY:
-                        OPTIONAL_SET(out, CARBON_KEY_SKEY)
+                        OPTIONAL_SET(out, KEY_SKEY)
                         break;
                 default:
                         return error(ERR_INTERNALERR, NULL);
@@ -182,19 +182,19 @@ const void *key_read(u64 *len, key_e *out, memfile *file)
         OPTIONAL_SET(out, key_type)
 
         switch (key_type) {
-                case CARBON_KEY_NOKEY:
+                case KEY_NOKEY:
                         OPTIONAL_SET(len, 0)
                         return NULL;
-                case CARBON_KEY_AUTOKEY:
+                case KEY_AUTOKEY:
                         OPTIONAL_SET(len, sizeof(unique_id_t))
                         return memfile_read_type(file, unique_id_t);
-                case CARBON_KEY_UKEY:
+                case KEY_UKEY:
                         OPTIONAL_SET(len, sizeof(u64))
                         return memfile_read_type(file, u64);
-                case CARBON_KEY_IKEY:
+                case KEY_IKEY:
                         OPTIONAL_SET(len, sizeof(i64))
                         return memfile_read_type(file, i64);
-                case CARBON_KEY_SKEY:
+                case KEY_SKEY:
                         return string_field_read(len, file);
                 default: error(ERR_INTERNALERR, NULL);
                         return NULL;
@@ -204,15 +204,15 @@ const void *key_read(u64 *len, key_e *out, memfile *file)
 const char *key_type_str(key_e type)
 {
         switch (type) {
-                case CARBON_KEY_NOKEY:
+                case KEY_NOKEY:
                         return "nokey";
-                case CARBON_KEY_AUTOKEY:
+                case KEY_AUTOKEY:
                         return "autokey";
-                case CARBON_KEY_UKEY:
+                case KEY_UKEY:
                         return "ukey";
-                case CARBON_KEY_IKEY:
+                case KEY_IKEY:
                         return "ikey";
-                case CARBON_KEY_SKEY:
+                case KEY_SKEY:
                         return "skey";
                 default: error(ERR_INTERNALERR, NULL);
                         return NULL;

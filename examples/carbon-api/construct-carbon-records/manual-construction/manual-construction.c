@@ -9,7 +9,7 @@ int main (void)
     rec record;
     char *as_json;
 
-    carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    carbon_create_begin(&context, &record, KEY_NOKEY, CARBON_KEEP);
     carbon_create_end(&context);
 
     as_json = carbon_to_json_compact_dup(&record);

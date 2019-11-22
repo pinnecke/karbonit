@@ -11,7 +11,7 @@ int main (void)
     obj_state state, as_prop_state;
     char *as_json;
 
-    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    ins = carbon_create_begin(&context, &record, KEY_NOKEY, CARBON_KEEP);
 
     nested_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_string(nested_ins, "key", "value");

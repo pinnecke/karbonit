@@ -70,22 +70,22 @@ static bool meta_data(printer *self, str_buf *buffer,
         str_buf_add(buffer, "\"key\": {");
 
         switch (key_type) {
-                case CARBON_KEY_NOKEY:
+                case KEY_NOKEY:
                         str_buf_add(buffer, "\"type\": \"nokey\", \"value\": null");
                         break;
-                case CARBON_KEY_AUTOKEY:
+                case KEY_AUTOKEY:
                         str_buf_add(buffer, "\"type\": \"autokey\", \"value\": ");
                         str_buf_add_u64(buffer, *(u64 *) key);
                         break;
-                case CARBON_KEY_UKEY:
+                case KEY_UKEY:
                         str_buf_add(buffer, "\"type\": \"ukey\", \"value\": ");
                         str_buf_add_u64(buffer, *(u64 *) key);
                         break;
-                case CARBON_KEY_IKEY:
+                case KEY_IKEY:
                         str_buf_add(buffer, "\"type\": \"ikey\", \"value\": ");
                         str_buf_add_u64(buffer, *(i64 *) key);
                         break;
-                case CARBON_KEY_SKEY:
+                case KEY_SKEY:
                         str_buf_add(buffer, "\"type\": \"skey\", \"value\": ");
                         if (key_length > 0) {
                                 str_buf_add(buffer, "\"");

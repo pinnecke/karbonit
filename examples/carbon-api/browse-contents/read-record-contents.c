@@ -9,7 +9,7 @@ int main (void)
         arr_it it;
         //str_buf str;
 
-        carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", KEY_NOKEY, NULL);
 
         carbon_read_begin(&it, &record);
         while (arr_it_next(&it)) {

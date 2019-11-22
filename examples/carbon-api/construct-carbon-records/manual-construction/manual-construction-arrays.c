@@ -11,7 +11,7 @@ int main (void)
     arr_state state;
     char *as_json;
 
-    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    ins = carbon_create_begin(&context, &record, KEY_NOKEY, CARBON_KEEP);
 
     insert_string(ins, "Hello");
     nested_ins = insert_array_begin(&state, ins, 1024);

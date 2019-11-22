@@ -13,7 +13,7 @@ TEST(CarbonTest, CreateCarbon) {
 
         str_buf_create(&buffer);
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
 
         //carbon_hexdump_print(stderr, &doc);
 
@@ -38,7 +38,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingNoKey) {
         rev revise;
         u64 commit_new, commit_mod;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
         carbon_create_end(&context);
 
         revise_begin(&revise, &rev_doc, &doc);
@@ -60,7 +60,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingWithKey) {
         rev revise;
         u64 commit_new, commit_mod, commit_mod_cmpr;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_AUTOKEY, CARBON_OPTIMIZE);
+        carbon_create_begin(&context, &doc, KEY_AUTOKEY, CARBON_OPTIMIZE);
         carbon_create_end(&context);
 
         revise_begin(&revise, &rev_doc, &doc);
@@ -88,7 +88,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
 
         str_buf_create(&buffer);
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -122,7 +122,7 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
 
         str_buf_create(&buffer);
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -151,7 +151,7 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
 
         str_buf_create(&buffer);
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         status = carbon_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -185,7 +185,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
         rev revise;
         u64 commit_hash_old, commit_hash_new;
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
 
         key_unsigned_value(&oid, &doc);
         EXPECT_NE(oid, 0U);
@@ -214,7 +214,7 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
         rev revise;
         arr_it it;
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_key_generate(NULL, &revise);
@@ -237,7 +237,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
         arr_it it;
         insert in;
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_AUTOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -260,7 +260,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
         arr_it it;
         insert in;
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -297,7 +297,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
         arr_it it;
         insert in;
 
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -336,7 +336,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY, 20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -379,7 +379,7 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -419,7 +419,7 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -452,7 +452,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -476,7 +476,7 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -501,7 +501,7 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -529,7 +529,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -558,7 +558,7 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
         arr_it it;
         insert in;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -587,7 +587,7 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
         insert in;
         arr_state array_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -616,7 +616,7 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
         insert in;
         arr_state array_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -655,7 +655,7 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
         insert in;
         arr_state array_state_l1, array_state_l2;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -702,7 +702,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         insert in;
         arr_state array_state_l1;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -747,7 +747,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         insert in;
         arr_state array_state_l1;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -802,7 +802,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         insert in;
         col_state column_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -841,7 +841,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         insert in;
         col_state column_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -878,7 +878,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         insert in;
         col_state column_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -916,7 +916,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         col_state column_state;
         insert *ins;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1018,7 +1018,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         insert in;
         col_state column_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,16, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1057,7 +1057,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         insert in;
         col_state column_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,16, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1099,7 +1099,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         insert in;
         col_state column_state;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,16, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,16, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1144,7 +1144,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         col_state column_state;
         insert *ins;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1246,7 +1246,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         col_state column_state;
         insert *ins;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1346,7 +1346,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         arr_state array_state;
         insert *ins;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1398,7 +1398,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         arr_state array_state, nested_array_state;
         insert *ins, *nested_ins;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1473,7 +1473,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         arr_state array_state, nested_array_state;
         insert *ins, *nested_ins, *column_ins;
 
-        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY,20, 1);
+        carbon_create_empty_ex(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY,20, 1);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -1645,7 +1645,7 @@ TEST(CarbonTest, CarbonFind) {
         find finder;
         u64 result_unsigned;
         field_e type;
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         revise_begin(&revise, &rev_doc, &doc);
 
@@ -1724,7 +1724,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         find finder;
         u64 result_unsigned;
         field_e type;
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -2038,7 +2038,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         const char *json;
 
         str_buf_create(&sb);
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2132,7 +2132,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         const char *json;
 
         str_buf_create(&sb);
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2224,7 +2224,7 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_null(ins);
 
@@ -2273,7 +2273,7 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_true(ins);
         insert_false(ins);
@@ -2326,7 +2326,7 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_true(ins);
         insert_false(ins);
@@ -2378,7 +2378,7 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_true(ins);
         insert_null(ins);
@@ -2435,7 +2435,7 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_u8(ins, 42);
 
@@ -2484,7 +2484,7 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_u8(ins, 42);
         insert_u32(ins, 23);
@@ -2537,7 +2537,7 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_u8(ins, 42);
         insert_u32(ins, 23);
@@ -2589,7 +2589,7 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_u8(ins, 42);
         insert_u16(ins, 21);
@@ -2647,7 +2647,7 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_string(ins, "Hello");
 
@@ -2696,7 +2696,7 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -2749,7 +2749,7 @@ TEST(CarbonTest, CarbonRemoveLastString)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -2801,7 +2801,7 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         insert_string(ins, "Plato");
         insert_string(ins, "Kant");
@@ -2862,7 +2862,7 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data, strlen(data), "txt", NULL);
@@ -2912,7 +2912,7 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), "txt", NULL);
@@ -2968,7 +2968,7 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), "txt", NULL);
@@ -3023,7 +3023,7 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), "txt", NULL);
@@ -3095,7 +3095,7 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data = "ABC";
         insert_binary(ins, data, strlen(data), NULL, "123");
@@ -3147,7 +3147,7 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), NULL, "my-fancy-format");
@@ -3203,7 +3203,7 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), NULL, "my-fancy-format");
@@ -3258,7 +3258,7 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), NULL, "my-fancy-format");
@@ -3331,7 +3331,7 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         str_buf_create(&sb);
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         array_ins = insert_array_begin(&state, ins, 10);
         insert_u8(array_ins, 1);
@@ -3389,7 +3389,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         array_ins = insert_array_begin(&state, ins, 10);
         insert_u8(array_ins, 1);
@@ -3454,7 +3454,7 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         array_ins = insert_array_begin(&state, ins, 10);
         insert_u8(array_ins, 1);
@@ -3518,7 +3518,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         array_ins = insert_array_begin(&state, ins, 10);
         insert_u8(array_ins, 1);
@@ -3594,7 +3594,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         insert *array_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_KEEP);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_KEEP);
 
         array_ins = insert_column_begin(&state, ins, COLUMN_U16, 10);
         insert_u16(array_ins, 1);
@@ -3687,7 +3687,7 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
         insert *array_ins, *array_ins2, *array_ins3, *column_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_u8(ins, 1);
         insert_string(ins, "Hello");
@@ -3845,7 +3845,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         const char *json;
 
         str_buf_create(&sb);
-        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3891,7 +3891,7 @@ TEST(CarbonTest, CarbonShrinkIssueFix)
         rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -3915,7 +3915,7 @@ TEST(CarbonTest, CarbonKeyTypeNoKey)
         rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -3942,7 +3942,7 @@ TEST(CarbonTest, CarbonKeyTypeNoKeyNoRevInc)
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -3971,7 +3971,7 @@ TEST(CarbonTest, CarbonKeyTypeAutoKey)
         rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -3998,7 +3998,7 @@ TEST(CarbonTest, CarbonKeyTypeAutoKeyRevInc)
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4028,7 +4028,7 @@ TEST(CarbonTest, CarbonKeyTypeAutoKeyUpdate)
         unique_id_t id, id_read;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_AUTOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_AUTOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4064,7 +4064,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
         u64 id_read;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_UKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_UKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4098,7 +4098,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
         i64 id_read;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_IKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_IKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4132,7 +4132,7 @@ TEST(CarbonTest, CarbonKeyTypeStringKeyUpdate)
         u64 key_len;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_SKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_SKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4159,7 +4159,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
         rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_UKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_UKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4170,7 +4170,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
 
         key_e type;
         key_type(&type, &doc);
-        ASSERT_EQ(type, CARBON_KEY_UKEY);
+        ASSERT_EQ(type, KEY_UKEY);
 
         carbon_drop(&doc);
 }
@@ -4183,7 +4183,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_IKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_IKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4226,7 +4226,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyRevInc)
         u64 rev_old, rev_new;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_UKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_UKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4254,7 +4254,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKey)
         rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_IKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_IKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4265,7 +4265,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKey)
 
         key_e type;
         key_type(&type, &doc);
-        ASSERT_EQ(type, CARBON_KEY_IKEY);
+        ASSERT_EQ(type, KEY_IKEY);
 
         carbon_drop(&doc);
 }
@@ -4276,7 +4276,7 @@ TEST(CarbonTest, CarbonKeyTypeStringKey)
         rec_new context;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_string(ins, "Hello");
         insert_string(ins, "World");
@@ -4303,7 +4303,7 @@ TEST(CarbonTest, CarbonObjectInsertEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert_object_begin(&state, ins, 1024);
         insert_object_end(&state);
@@ -4330,7 +4330,7 @@ TEST(CarbonTest, CarbonObjectInsertNull)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_null(obj_ins, "My Key");
@@ -4358,7 +4358,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_null(obj_ins, "My Key 1");
@@ -4387,7 +4387,7 @@ TEST(CarbonTest, CarbonObjectInsertU8)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_u8(obj_ins, "My Key", 123);
@@ -4415,7 +4415,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_u8(obj_ins, "My Key 1", 1);
@@ -4445,7 +4445,7 @@ TEST(CarbonTest, CarbonObjectInsertU16)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_u16(obj_ins, "My Key", 123);
@@ -4473,7 +4473,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_u16(obj_ins, "My Key 1", 1);
@@ -4503,7 +4503,7 @@ TEST(CarbonTest, CarbonObjectInsertU32)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_u32(obj_ins, "My Key", 123);
@@ -4531,7 +4531,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_u32(obj_ins, "My Key 1", 1);
@@ -4561,7 +4561,7 @@ TEST(CarbonTest, CarbonObjectInsertU64)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_u64(obj_ins, "My Key", 123);
@@ -4589,7 +4589,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_u64(obj_ins, "My Key 1", 1);
@@ -4619,7 +4619,7 @@ TEST(CarbonTest, CarbonObjectInsertI8)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_i8(obj_ins, "My Key", -123);
@@ -4647,7 +4647,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_i8(obj_ins, "My Key 1", -1);
@@ -4677,7 +4677,7 @@ TEST(CarbonTest, CarbonObjectInsertI16)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_i16(obj_ins, "My Key", -123);
@@ -4705,7 +4705,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_i16(obj_ins, "My Key 1", -1);
@@ -4735,7 +4735,7 @@ TEST(CarbonTest, CarbonObjectInsertI32)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_i32(obj_ins, "My Key", -123);
@@ -4763,7 +4763,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_i32(obj_ins, "My Key 1", -1);
@@ -4793,7 +4793,7 @@ TEST(CarbonTest, CarbonObjectInsertI64)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_i64(obj_ins, "My Key", -123);
@@ -4821,7 +4821,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_i64(obj_ins, "My Key 1", -1);
@@ -4851,7 +4851,7 @@ TEST(CarbonTest, CarbonObjectInsertFloat)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_float(obj_ins, "My Key", -123.32);
@@ -4879,7 +4879,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_float(obj_ins, "My Key 1", -1.23);
@@ -4909,7 +4909,7 @@ TEST(CarbonTest, CarbonObjectInsertTrue)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_true(obj_ins, "My Key");
@@ -4937,7 +4937,7 @@ TEST(CarbonTest, CarbonObjectInsertFalse)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1024);
         insert_prop_false(obj_ins, "My Key");
@@ -4965,7 +4965,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_true(obj_ins, "My Key 1");
@@ -4995,7 +4995,7 @@ TEST(CarbonTest, CarbonObjectInsertMixed)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
         insert_prop_true(obj_ins, "k1");
@@ -5035,7 +5035,7 @@ TEST(CarbonTest, CarbonObjectInsertString)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5065,7 +5065,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleString)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5097,7 +5097,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5142,7 +5142,7 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5172,7 +5172,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5219,7 +5219,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5251,7 +5251,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5283,7 +5283,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
         // -------------------------------------------------------------------------------------------------------------
 
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5337,7 +5337,7 @@ TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5370,7 +5370,7 @@ TEST(CarbonTest, CarbonObjectInsertArrayData)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5426,7 +5426,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
@@ -5461,7 +5461,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
 //        arr_state array_state, nested_array_state;
 //        col_state column_state;
 //
-//        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY);
+//        carbon_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
 //        revise_begin(&revise, rev_doc, &doc);
 //        revise_iterator_open(&it, &revise);
 //
@@ -5576,7 +5576,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -5666,7 +5666,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -5756,7 +5756,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -5834,7 +5834,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -5909,7 +5909,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -5984,7 +5984,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6060,7 +6060,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6137,7 +6137,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         insert nested_ins;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6214,7 +6214,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         obj_state state;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6288,7 +6288,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         obj_state nested_obj;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6368,7 +6368,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         arr_state nested_arr;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6447,7 +6447,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         arr_state nested_arr;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6527,7 +6527,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         col_state nested_col;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -6604,7 +6604,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         obj_state nested_obj;
 
         // -------------------------------------------------------------------------------------------------------------
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
 
         insert *nested_obj_ins = insert_object_begin(&state, ins, 200);
 
@@ -7177,7 +7177,7 @@ TEST(CarbonTest, CarbonFromEmptyJson)
         char *json_out_compact, *json_out_extended;
 
         json_in = "{}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
         json_out_extended = carbon_to_json_extended_dup(&doc);
         json_out_compact = carbon_to_json_compact_dup(&doc);
 
@@ -7202,7 +7202,7 @@ TEST(CarbonTest, CarbonFromEmptyArray)
         char *json_out_compact, *json_out_extended;
 
         json_in = "[]";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
         json_out_extended = carbon_to_json_extended_dup(&doc);
         json_out_compact = carbon_to_json_compact_dup(&doc);
 
@@ -7228,7 +7228,7 @@ TEST(CarbonTest, CarbonFromJsonNull)
 
         json_in = "null";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [null]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be 'null'
@@ -7254,7 +7254,7 @@ TEST(CarbonTest, CarbonFromJsonTrue)
 
         json_in = "true";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [true]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be 'true'
@@ -7280,7 +7280,7 @@ TEST(CarbonTest, CarbonFromJsonFalse)
 
         json_in = "false";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [false]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be 'false'
@@ -7306,7 +7306,7 @@ TEST(CarbonTest, CarbonFromJsonNumberSigned)
 
         json_in = "42";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [42]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '42'
@@ -7332,7 +7332,7 @@ TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
 
         json_in = "-42";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '-42'
@@ -7358,7 +7358,7 @@ TEST(CarbonTest, CarbonFromJsonNumberFloat)
 
         json_in = "-42.23";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42.23]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '-42.23'
@@ -7384,7 +7384,7 @@ TEST(CarbonTest, CarbonFromJsonString)
 
         json_in = "\"Hello, World!\"";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": ["Hello, World!"]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '"Hello, World!"'
@@ -7410,7 +7410,7 @@ TEST(CarbonTest, CarbonFromJsonObjectSingle)
 
         json_in = "{\"k\": \"v\"}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":"v"}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":"v"}'
@@ -7437,7 +7437,7 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
 
         json_in = "{\"k\": []}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":[]}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":[]}'
@@ -7463,7 +7463,7 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
 
         json_in = "{\"k\": {}}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":{}}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":{}}'
@@ -7489,7 +7489,7 @@ TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
 
         json_in = "{\"k\": true}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":true}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":true}'
@@ -7515,7 +7515,7 @@ TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
 
         json_in = "{\"k\": false}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":false}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":false}'
@@ -7541,7 +7541,7 @@ TEST(CarbonTest, CarbonFromJsonObjectNullProp)
 
         json_in = "{\"k\": null}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":null}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":null}'
@@ -7567,7 +7567,7 @@ TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
 
         json_in = "{\"k\": 42}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":42}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":42}'
@@ -7593,7 +7593,7 @@ TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
 
         json_in = "{\"k\": -42}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":-42}'
@@ -7619,7 +7619,7 @@ TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
 
         json_in = "{\"k\": -42.23}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42.23}]}'
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"k":-42.23}'
@@ -7645,7 +7645,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
 
         json_in = "{\"x\": [1, 2, 3]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         arr_it it;
         field_e field_type;
@@ -7685,7 +7685,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 
         json_in = "{\"x\": [1, null, 3]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         arr_it it;
         field_e field_type;
@@ -7726,7 +7726,7 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
 
         json_in = "[1, null, 3, \"a\"]";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         arr_it it;
         field_e field_type;
@@ -7758,7 +7758,7 @@ TEST(CarbonTest, CarbonColumnOptimizeFix)
         rec doc;
         col_state state_out;
 
-        insert *ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        insert *ins = carbon_create_begin(&context, &doc, KEY_NOKEY, CARBON_OPTIMIZE);
         insert *cins = insert_column_begin(&state_out, ins, COLUMN_U8, 4);
         insert_u8(cins, 3);
         insert_u8(cins, 4);
@@ -7782,13 +7782,13 @@ TEST(CarbonTest, CarbonFromJsonExample)
         /* example json taken from 'https://json.org/example.html' */
         json_in = "{\"web-app\": {\"servlet\": [{\"servlet-name\": \"cofaxCDS\", \"servlet-class\": \"org.cofax.cds.CDSServlet\", \"init-param\": {\"configGlossary: installationAt\": \"Philadelphia, PA\", \"configGlossary: adminEmail\": \"ksm@pobox.com\", \"configGlossary: poweredBy\": \"Cofax\", \"configGlossary: poweredByIcon\": \"/images/cofax.gif\", \"configGlossary: staticPath\": \"/content/static\", \"templateProcessorClass\": \"org.cofax.WysiwygTemplate\", \"templateLoaderClass\": \"org.cofax.FilesTemplateLoader\", \"templatePath\": \"templates\", \"templateOverridePath\": \"\", \"defaultListTemplate\": \"listTemplate.htm\", \"defaultFileTemplate\": \"articleTemplate.htm\", \"useJSP\": false, \"jspListTemplate\": \"listTemplate.jsp\", \"jspFileTemplate\": \"articleTemplate.jsp\", \"cachePackageTagsTrack\": 200, \"cachePackageTagsStore\": 200, \"cachePackageTagsRefresh\": 60, \"cacheTemplatesTrack\": 100, \"cacheTemplatesStore\": 50, \"cacheTemplatesRefresh\": 15, \"cachePagesTrack\": 200, \"cachePagesStore\": 100, \"cachePagesRefresh\": 10, \"cachePagesDirtyRead\": 10, \"searchEngineListTemplate\": \"forSearchEnginesList.htm\", \"searchEngineFileTemplate\": \"forSearchEngines.htm\", \"searchEngineRobotsDb\": \"WEB-INF/robots.db\", \"useDataStore\": true, \"dataStoreClass\": \"org.cofax.SqlDataStore\", \"redirectionClass\": \"org.cofax.SqlRedirection\", \"dataStoreName\": \"cofax\", \"dataStoreDriver\": \"com.microsoft.jdbc.sqlserver.SQLServerDriver\", \"dataStoreUrl\": \"jdbc: microsoft: sqlserver: //LOCALHOST: 1433;DatabaseName=goon\", \"dataStoreUser\": \"sa\", \"dataStorePassword\": \"dataStoreTestQuery\", \"dataStoreTestQuery\": \"SET NOCOUNT ON;select test='test';\", \"dataStoreLogFile\": \"/usr/local/tomcat/logs/datastore.log\", \"dataStoreInitConns\": 10, \"dataStoreMaxConns\": 100, \"dataStoreConnUsageLimit\": 100, \"dataStoreLogLevel\": \"debug\", \"maxUrlLength\": 500}}, {\"servlet-name\": \"cofaxEmail\", \"servlet-class\": \"org.cofax.cds.EmailServlet\", \"init-param\": {\"mailHost\": \"mail1\", \"mailHostOverride\": \"mail2\"}}, {\"servlet-name\": \"cofaxAdmin\", \"servlet-class\": \"org.cofax.cds.AdminServlet\"}, {\"servlet-name\": \"fileServlet\", \"servlet-class\": \"org.cofax.cds.FileServlet\"}, {\"servlet-name\": \"cofaxTools\", \"servlet-class\": \"org.cofax.cms.CofaxToolsServlet\", \"init-param\": {\"templatePath\": \"toolstemplates/\", \"log\": 1, \"logLocation\": \"/usr/local/tomcat/logs/CofaxTools.log\", \"logMaxSize\": \"\", \"dataLog\": 1, \"dataLogLocation\": \"/usr/local/tomcat/logs/dataLog.log\", \"dataLogMaxSize\": \"\", \"removePageCache\": \"/content/admin/remove?cache=pages&id=\", \"removeTemplateCache\": \"/content/admin/remove?cache=templates&id=\", \"fileTransferFolder\": \"/usr/local/tomcat/webapps/content/fileTransferFolder\", \"lookInContext\": 1, \"adminGroupID\": 4, \"betaServer\": true}}], \"servlet-mapping\": {\"cofaxCDS\": \"/\", \"cofaxEmail\": \"/cofaxutil/aemail/*\", \"cofaxAdmin\": \"/admin/*\", \"fileServlet\": \"/static/*\", \"cofaxTools\": \"/tools/*\"}, \"taglib\": {\"taglib-uri\": \"cofax.tld\", \"taglib-location\": \"/WEB-INF/tlds/cofax.tld\"}}}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         u32 max = 10000;
         timestamp t1 = wallclock();
         for (u32 i = 0; i < max; i++) {
                 rec d;
-                carbon_from_json(&d, json_in, CARBON_KEY_NOKEY, NULL);
+                carbon_from_json(&d, json_in, KEY_NOKEY, NULL);
                 carbon_drop(&d);
         }
         timestamp t2 = wallclock();
@@ -7823,7 +7823,7 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
 
         json_in = "{\"x\": [1]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"x":[1]}'
 
@@ -7846,7 +7846,7 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
 
         json_in = "{\"x\": [{\"y\": 1}]}";
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         json_out_compact = carbon_to_json_compact_dup(&doc);    // shall be '{"x":[{"y":1}]}'
 
@@ -7865,7 +7865,7 @@ TEST(CarbonTest, CarbonFromJsonSimpleExample)
         rec doc;
 
         const char *json_in = "{\"k\": {\"x\": [1,2,3], \"y\": \"z\"}}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
         //carbon_hexdump_print(stdout, &doc);
         //carbon_print(stdout, &doc);
         carbon_drop(&doc);
@@ -7881,7 +7881,7 @@ TEST(CarbonTest, CarbonFromJsonFromExcerpt)
         u64 json_in_len = lseek(fd, 0, SEEK_END);
         const char *json_in = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
 
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         u64 carbon_out_len = 0;
         carbon_raw_data(&carbon_out_len, &doc);
@@ -7904,7 +7904,7 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         u64 number;
 
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -8042,7 +8042,7 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
         find find;
 
         const char *json_in = "{\"a\": 1, \"b\": {\"c\": [1,2,3], \"d\": [\"Hello\", \"World\"], \"e\": [4], \"f\": [\"!\"], \"the key\": \"x\"}, \"array\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825, 826, 827, 828, 829, 830, 831, 832, 833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, 991, 992, 993, 994, 995, 996, 997, 998, 999]}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         dot path1, path2, path3, path4, path5, path6, path7, path8, path9, path10, path11, path12,
                 path13, path14, path15, path16, path17, path18, path19, path20, path21, path22,
@@ -8223,7 +8223,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         field_e result_type;
 
         const char *json_in = "{\"x\": \"y\"}";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         /* without shortened dot path rule, the json object as given is embedded in an record container (aka array)
          * such that the object must be referenced by its index in the record container (i.e., 0) */
@@ -8243,7 +8243,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         carbon_drop(&doc);
 
         json_in = "[{\"x\": \"y\"},{\"x\": [{\"z\": 42}]}]";
-        carbon_from_json(&doc, json_in, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         /* The shortened dot path rule does not apply here since the user input is an array  */
         find_begin(&find, "0.x", &doc);
@@ -8280,7 +8280,7 @@ TEST(CarbonTest, CarbonFindPrint)
         find find;
         char *result;
 
-        carbon_from_json(&doc, "8", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "8", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "8") == 0);
@@ -8288,7 +8288,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "-8", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "-8", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "-8") == 0);
@@ -8296,7 +8296,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "\"A\"", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "\"A\"", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
@@ -8304,7 +8304,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "32.4", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "32.4", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
@@ -8312,7 +8312,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "null", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "null", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
@@ -8320,7 +8320,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "true", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "true", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
@@ -8328,7 +8328,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "false", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "false", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "false") == 0);
@@ -8336,7 +8336,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "1") == 0);
@@ -8344,7 +8344,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "1", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "2") == 0);
@@ -8352,7 +8352,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "2", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "3") == 0);
@@ -8360,7 +8360,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "3", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
@@ -8368,7 +8368,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[1, 2, 3, null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "4", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
@@ -8376,7 +8376,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
@@ -8384,7 +8384,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "1", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "\"B\"") == 0);
@@ -8392,7 +8392,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "2", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "\"C\"") == 0);
@@ -8400,7 +8400,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "3", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
@@ -8408,7 +8408,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "\"Hello, World!\"", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "\"Hello, World!\"", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
@@ -8416,7 +8416,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "{}", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "{}", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "{}") == 0);
@@ -8424,7 +8424,7 @@ TEST(CarbonTest, CarbonFindPrint)
         free(result);
         carbon_drop(&doc);
 
-        carbon_from_json(&doc, "[]", CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, "[]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_json_compact_dup(&find);
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
@@ -8465,7 +8465,7 @@ TEST(CarbonTest, CarbonFindPrint)
                               "      }\n"
                               "}";
 
-        carbon_from_json(&doc, complex, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, complex, KEY_NOKEY, NULL);
 
         ASSERT_TRUE(find_begin(&find, "m", &doc));
         result = find_result_to_json_compact_dup(&find);
@@ -8599,7 +8599,7 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 
         const char *json = "{\"x\": {\"y\": [{\"z\": 23}, {\"z\": null}]} }";
 
-        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json, KEY_NOKEY, NULL);
         str_buf_create(&result);
 
         printf("input: '%s'\n", json);
@@ -8638,7 +8638,7 @@ TEST(CarbonTest, ParseBooleanArray) {
         field_e type;
         const char *json = "[{\"col\": [true, null, false]}]";
 
-        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json, KEY_NOKEY, NULL);
 
         ASSERT_TRUE(find_begin(&find, "0.col", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -8692,7 +8692,7 @@ TEST(CarbonTest, PathIndex) {
 //        int json_in_len = lseek(fd, 0, SEEK_END);
 //        const char *json = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
 
-        carbon_from_json(&doc, json, CARBON_KEY_NOKEY, NULL);
+        carbon_from_json(&doc, json, KEY_NOKEY, NULL);
         pindex_create(&index, &doc);
         pindex_print(stdout, &index);
         carbon_hexdump_print(stdout, &doc);

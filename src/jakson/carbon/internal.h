@@ -16,7 +16,7 @@
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/json/parser.h>
 #include <jakson/carbon/internal.h>
-#include <jakson/carbon/containers.h>
+#include <jakson/carbon/container.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/arr_it.h>
 #include <jakson/carbon/abstract.h>
@@ -32,8 +32,7 @@ typedef struct insert {
                 col_it *column;
                 obj_it *object;
         } context;
-
-        memfile memfile;
+        memfile file;
         offset_t position;
 } insert;
 

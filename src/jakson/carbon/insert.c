@@ -20,7 +20,7 @@
 #include <jakson/carbon/col_it.h>
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/mime.h>
-#include <jakson/carbon/containers.h>
+#include <jakson/carbon/container.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/object.h>
@@ -401,7 +401,7 @@ bool insert_nchar(insert *in, const char *value, u64 value_len)
         UNUSED(value);
         error_if_and_return(in->context_type != ARRAY, ERR_UNSUPPCONTAINER, NULL);
 
-        return carbon_string_nchar_write(&in->memfile, value, value_len);
+        return carbon_string_nchar_write(&in->file, value, value_len);
 }
 
 static void _insert_binary(insert *in, const void *value, size_t nbytes,
@@ -414,11 +414,11 @@ static void _insert_binary(insert *in, const void *value, size_t nbytes,
                 /** write length of 'user_type' string_buffer with variable-length integer type */
                 u64 user_type_strlen = strlen(user_type);
 
-                memfile_write_uintvar_stream(NULL, &in->memfile, user_type_strlen);
+                memfile_write_uintvar_stream(NULL, &in->file, user_type_strlen);
 
                 /** write 'user_type' string_buffer */
-                memfile_ensure_space(&in->memfile, user_type_strlen);
-                memfile_write(&in->memfile, user_type, user_type_strlen);
+                memfile_ensure_space(&in->file, user_type_strlen);
+                memfile_write(&in->file, user_type, user_type_strlen);
 
                 /** write binary blob */
                 write_binary_blob(in, value, nbytes);
@@ -431,7 +431,7 @@ static void _insert_binary(insert *in, const void *value, size_t nbytes,
                 u64 mime_id = carbon_media_mime_by_ext(file_ext);
 
                 /** write mime type id */
-                memfile_write_uintvar_stream(NULL, &in->memfile, mime_id);
+                memfile_write_uintvar_stream(NULL, &in->file, mime_id);
 
                 /** write binary blob */
                 write_binary_blob(in, value, nbytes);
@@ -459,15 +459,15 @@ insert *__insert_map_begin(obj_state *out,
         *out = (obj_state) {
                 .parent = in,
                 .it = MALLOC(sizeof(obj_it)),
-                .begin = memfile_tell(&in->memfile),
+                .begin = memfile_tell(&in->file),
                 .end = 0
         };
 
 
-        internal_insert_object(&in->memfile, derivation, object_capacity);
-        u64 payload_start = memfile_tell(&in->memfile) - 1;
+        internal_insert_object(&in->file, derivation, object_capacity);
+        u64 payload_start = memfile_tell(&in->file) - 1;
 
-        internal_carbon_object_create(out->it, &in->memfile, payload_start);
+        internal_carbon_object_create(out->it, &in->file, payload_start);
         internal_carbon_object_insert_begin(&out->in, out->it);
 
         return &out->in;
@@ -483,7 +483,7 @@ insert *insert_object_begin(obj_state *out,
 bool insert_object_end(obj_state *state)
 {
         obj_it scan;
-        internal_carbon_object_create(&scan, &state->parent->memfile, memfile_tell(&state->parent->memfile) - 1);
+        internal_carbon_object_create(&scan, &state->parent->file, memfile_tell(&state->parent->file) - 1);
         while (carbon_object_next(&scan)) {}
 
         JAK_ASSERT(*memfile_peek(&scan.memfile, sizeof(char)) == MOBJECT_END);
@@ -493,7 +493,7 @@ bool insert_object_end(obj_state *state)
 
         memfile_skip(&scan.memfile, 1);
 
-        memfile_seek(&state->parent->memfile, memfile_tell(&scan.memfile) - 1);
+        memfile_seek(&state->parent->file, memfile_tell(&scan.memfile) - 1);
         carbon_object_drop(&scan);
         carbon_object_drop(state->it);
         free(state->it);
@@ -526,14 +526,14 @@ insert *__insert_array_list_begin(arr_state *state_out,
         *state_out = (arr_state) {
                 .parent = inserter_in,
                 .array = MALLOC(sizeof(arr_it)),
-                .begin = memfile_tell(&inserter_in->memfile),
+                .begin = memfile_tell(&inserter_in->file),
                 .end = 0
         };
 
-        internal_insert_array(&inserter_in->memfile, derivation, array_capacity);
-        u64 payload_start = memfile_tell(&inserter_in->memfile) - 1;
+        internal_insert_array(&inserter_in->file, derivation, array_capacity);
+        u64 payload_start = memfile_tell(&inserter_in->file) - 1;
 
-        internal_arr_it_create(state_out->array, &inserter_in->memfile, payload_start);
+        internal_arr_it_create(state_out->array, &inserter_in->file, payload_start);
         arr_it_insert_begin(&state_out->nested, state_out->array);
 
         return &state_out->nested;
@@ -548,15 +548,15 @@ insert *insert_array_begin(arr_state *state_out,
 bool insert_array_end(arr_state *state_in)
 {
         arr_it scan;
-        internal_arr_it_create(&scan, &state_in->parent->memfile,
-                               memfile_tell(&state_in->parent->memfile) - 1);
+        internal_arr_it_create(&scan, &state_in->parent->file,
+                               memfile_tell(&state_in->parent->file) - 1);
 
         internal_arr_it_fast_forward(&scan);
 
         state_in->end = memfile_tell(&scan.file);
         memfile_skip(&scan.file, 1);
 
-        memfile_seek(&state_in->parent->memfile, memfile_tell(&scan.file) - 1);
+        memfile_seek(&state_in->parent->file, memfile_tell(&scan.file) - 1);
         arr_it_drop(&scan);
         arr_it_drop(state_in->array);
         free(state_in->array);
@@ -591,14 +591,14 @@ insert *__insert_column_list_begin(col_state *state_out,
                 .parent = inserter_in,
                 .nested_column = MALLOC(sizeof(col_it)),
                 .type = field_type,
-                .begin = memfile_tell(&inserter_in->memfile),
+                .begin = memfile_tell(&inserter_in->file),
                 .end = 0
         };
 
-        u64 container_start_off = memfile_tell(&inserter_in->memfile);
-        internal_insert_column(&inserter_in->memfile, derivation, type, cap);
+        u64 container_start_off = memfile_tell(&inserter_in->file);
+        internal_insert_column(&inserter_in->file, derivation, type, cap);
 
-        col_it_create(state_out->nested_column, &inserter_in->memfile,
+        col_it_create(state_out->nested_column, &inserter_in->file,
                                     container_start_off);
         col_it_insert(&state_out->nested, state_out->nested_column);
 
@@ -616,12 +616,12 @@ insert *insert_column_begin(col_state *state_out,
 bool insert_column_end(col_state *state_in)
 {
         col_it scan;
-        col_it_create(&scan, &state_in->parent->memfile,
+        col_it_create(&scan, &state_in->parent->file,
                                 state_in->nested_column->begin);
         col_it_fast_forward(&scan);
 
         state_in->end = memfile_tell(&scan.file);
-        memfile_seek(&state_in->parent->memfile, memfile_tell(&scan.file));
+        memfile_seek(&state_in->parent->file, memfile_tell(&scan.file));
 
         free(state_in->nested_column);
         return true;
@@ -662,10 +662,10 @@ static bool inserter_refresh_mod_size(insert *in, i64 mod_size)
 bool insert_prop_null(insert *in, const char *key)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         push_media_type_for_array(in, FIELD_NULL);
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -673,10 +673,10 @@ bool insert_prop_null(insert *in, const char *key)
 bool insert_prop_true(insert *in, const char *key)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         push_media_type_for_array(in, FIELD_TRUE);
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -684,10 +684,10 @@ bool insert_prop_true(insert *in, const char *key)
 bool insert_prop_false(insert *in, const char *key)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         push_media_type_for_array(in, FIELD_FALSE);
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -695,10 +695,10 @@ bool insert_prop_false(insert *in, const char *key)
 bool insert_prop_u8(insert *in, const char *key, u8 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U8, &value, sizeof(u8));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -706,10 +706,10 @@ bool insert_prop_u8(insert *in, const char *key, u8 value)
 bool insert_prop_u16(insert *in, const char *key, u16 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U16, &value, sizeof(u16));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -717,10 +717,10 @@ bool insert_prop_u16(insert *in, const char *key, u16 value)
 bool insert_prop_u32(insert *in, const char *key, u32 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U32, &value, sizeof(u32));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -728,10 +728,10 @@ bool insert_prop_u32(insert *in, const char *key, u32 value)
 bool insert_prop_u64(insert *in, const char *key, u64 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U64, &value, sizeof(u64));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -739,10 +739,10 @@ bool insert_prop_u64(insert *in, const char *key, u64 value)
 bool insert_prop_i8(insert *in, const char *key, i8 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I8, &value, sizeof(i8));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -750,10 +750,10 @@ bool insert_prop_i8(insert *in, const char *key, i8 value)
 bool insert_prop_i16(insert *in, const char *key, i16 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I16, &value, sizeof(i16));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -761,10 +761,10 @@ bool insert_prop_i16(insert *in, const char *key, i16 value)
 bool insert_prop_i32(insert *in, const char *key, i32 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I32, &value, sizeof(i32));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -772,10 +772,10 @@ bool insert_prop_i32(insert *in, const char *key, i32 value)
 bool insert_prop_i64(insert *in, const char *key, i64 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I64, &value, sizeof(i64));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -819,10 +819,10 @@ bool insert_prop_signed(insert *in, const char *key, i64 value)
 bool insert_prop_float(insert *in, const char *key, float value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_FLOAT, &value, sizeof(float));
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -835,10 +835,10 @@ bool insert_prop_string(insert *in, const char *key, const char *value)
 bool insert_prop_nchar(insert *in, const char *key, const char *value, u64 value_len)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
-        carbon_string_nchar_write(&in->memfile, value, value_len);
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
+        carbon_string_nchar_write(&in->file, value, value_len);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -847,10 +847,10 @@ bool insert_prop_binary(insert *in, const char *key, const void *value,
                                size_t nbytes, const char *file_ext, const char *user_type)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        offset_t prop_start = memfile_tell(&in->memfile);
-        carbon_string_nomarker_write(&in->memfile, key);
+        offset_t prop_start = memfile_tell(&in->file);
+        carbon_string_nomarker_write(&in->file, key);
         _insert_binary(in, value, nbytes, file_ext, user_type);
-        offset_t prop_end = memfile_tell(&in->memfile);
+        offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
 }
@@ -860,7 +860,7 @@ static insert *__insert_prop_object_container_begin(obj_state *out,
                                                        u64 object_capacity)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        carbon_string_nomarker_write(&in->memfile, key);
+        carbon_string_nomarker_write(&in->file, key);
         return insert_object_map_begin(out, in, derivation, object_capacity);
 }
 
@@ -894,7 +894,7 @@ insert *insert_prop_array_begin(arr_state *state,
                                                          u64 array_capacity)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        carbon_string_nomarker_write(&in->memfile, key);
+        carbon_string_nomarker_write(&in->file, key);
         return insert_array_begin(state, in, array_capacity);
 }
 
@@ -909,7 +909,7 @@ insert *insert_prop_column_begin(col_state *state_out,
                                                           col_it_type_e type, u64 cap)
 {
         error_if_and_return(inserter_in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        carbon_string_nomarker_write(&inserter_in->memfile, key);
+        carbon_string_nomarker_write(&inserter_in->file, key);
         return insert_column_begin(state_out, inserter_in, type, cap);
 }
 
@@ -924,9 +924,9 @@ write_field_data(insert *in, u8 field_marker, const void *base, u64 nbytes)
 {
         JAK_ASSERT(in->context_type == ARRAY || in->context_type == OBJECT);
 
-        memfile_ensure_space(&in->memfile, sizeof(u8) + nbytes);
-        memfile_write(&in->memfile, &field_marker, sizeof(u8));
-        return memfile_write(&in->memfile, base, nbytes);
+        memfile_ensure_space(&in->file, sizeof(u8) + nbytes);
+        memfile_write(&in->file, &field_marker, sizeof(u8));
+        return memfile_write(&in->file, base, nbytes);
 }
 
 static bool push_in_column(insert *in, const void *base, field_e type)
@@ -935,62 +935,62 @@ static bool push_in_column(insert *in, const void *base, field_e type)
 
         size_t type_size = internal_get_type_value_size(type);
 
-        memfile_save_position(&in->memfile);
+        memfile_save_position(&in->file);
 
         // Increase element counter
-        memfile_seek(&in->memfile, in->context.column->header_begin);
-        u32 num_elems = memfile_peek_uintvar_stream(NULL, &in->memfile);
+        memfile_seek(&in->file, in->context.column->header_begin);
+        u32 num_elems = memfile_peek_uintvar_stream(NULL, &in->file);
         num_elems++;
-        memfile_update_uintvar_stream(&in->memfile, num_elems);
+        memfile_update_uintvar_stream(&in->file, num_elems);
         in->context.column->num = num_elems;
 
-        u32 capacity = memfile_read_uintvar_stream(NULL, &in->memfile);
+        u32 capacity = memfile_read_uintvar_stream(NULL, &in->file);
 
         if (UNLIKELY(num_elems > capacity)) {
-                memfile_save_position(&in->memfile);
+                memfile_save_position(&in->file);
 
                 u32 new_capacity = (capacity + 1) * 1.7f;
 
                 // Update capacity counter
-                memfile_seek(&in->memfile, in->context.column->header_begin);
-                memfile_skip_uintvar_stream(&in->memfile); // skip num element counter
-                memfile_update_uintvar_stream(&in->memfile, new_capacity);
+                memfile_seek(&in->file, in->context.column->header_begin);
+                memfile_skip_uintvar_stream(&in->file); // skip num element counter
+                memfile_update_uintvar_stream(&in->file, new_capacity);
                 in->context.column->cap = new_capacity;
 
                 size_t payload_start = internal_column_get_payload_off(in->context.column);
-                memfile_seek(&in->memfile, payload_start + (num_elems - 1) * type_size);
-                memfile_ensure_space(&in->memfile, (new_capacity - capacity) * type_size);
+                memfile_seek(&in->file, payload_start + (num_elems - 1) * type_size);
+                memfile_ensure_space(&in->file, (new_capacity - capacity) * type_size);
 
-                memfile_restore_position(&in->memfile);
+                memfile_restore_position(&in->file);
         }
 
         size_t payload_start = internal_column_get_payload_off(in->context.column);
-        memfile_seek(&in->memfile, payload_start + (num_elems - 1) * type_size);
-        memfile_write(&in->memfile, base, type_size);
+        memfile_seek(&in->file, payload_start + (num_elems - 1) * type_size);
+        memfile_write(&in->file, base, type_size);
 
-        memfile_restore_position(&in->memfile);
+        memfile_restore_position(&in->file);
         return true;
 }
 
 static bool push_media_type_for_array(insert *in, field_e type)
 {
-        memfile_ensure_space(&in->memfile, sizeof(media_type));
-        return carbon_media_write(&in->memfile, type);
+        memfile_ensure_space(&in->file, sizeof(media_type));
+        return carbon_media_write(&in->file, type);
 }
 
 static void internal_create(insert *in, memfile *src, offset_t pos)
 {
-        memfile_clone(&in->memfile, src);
+        memfile_clone(&in->file, src);
         in->position = pos ? pos : memfile_tell(src);
-        memfile_seek(&in->memfile, in->position);
+        memfile_seek(&in->file, in->position);
 }
 
 static void write_binary_blob(insert *in, const void *value, size_t nbytes)
 {
         /** write blob length */
-        memfile_write_uintvar_stream(NULL, &in->memfile, nbytes);
+        memfile_write_uintvar_stream(NULL, &in->file, nbytes);
 
         /** write blob */
-        memfile_ensure_space(&in->memfile, nbytes);
-        memfile_write(&in->memfile, value, nbytes);
+        memfile_ensure_space(&in->file, nbytes);
+        memfile_write(&in->file, value, nbytes);
 }

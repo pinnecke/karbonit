@@ -15,7 +15,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <jakson/carbon/containers.h>
+#include <jakson/carbon/container.h>
 #include <jakson/carbon/field.h>
 
 bool list_by_column_type(list_container_e *out, int field_type)

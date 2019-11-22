@@ -60,7 +60,7 @@ static bool carbon_item_setup_value(item *item, field_e field_type, field *field
 
 bool internal_carbon_item_create_from_array(item *item, arr_it *parent)
 {
-        item->parent_type = CARBON_PARENT_ARRAY;
+        item->parent_type = UNTYPED_ARRAY;
         item->parent.array = parent;
         item->idx = parent->pos;
         field_e field_type = parent->field.type;
@@ -70,7 +70,7 @@ bool internal_carbon_item_create_from_array(item *item, arr_it *parent)
 
 bool internal_carbon_item_create_from_object(item *item, obj_it *parent)
 {
-        item->parent_type = CARBON_PARENT_OBJECT;
+        item->parent_type = UNTYPED_OBJECT;
         item->parent.object = parent;
         item->idx = parent->pos;
         field_e field_type = parent->field.value.data.type;

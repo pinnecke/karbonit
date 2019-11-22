@@ -24,6 +24,12 @@ typedef enum container {
     OBJECT, ARRAY, COLUMN
 } container_e;
 
+typedef enum untyped_e
+{
+    UNTYPED_ARRAY,
+    UNTYPED_OBJECT
+} untyped_e;
+
 // ---------------------------------------------------------------------------------------------------------------------
 //  implementation types (and marker) for list/map container types
 // ---------------------------------------------------------------------------------------------------------------------

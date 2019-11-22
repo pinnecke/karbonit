@@ -13,7 +13,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/carbon/markers.h>
-#include <jakson/carbon/containers.h>
+#include <jakson/carbon/container.h>
 
 #ifdef __cplusplus
 extern "C" {

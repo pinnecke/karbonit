@@ -24,9 +24,8 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include "jakson/stdinc.h"
-#include "stdbool.h"
-#include "jakson/types.h"
+#include <jakson/types.h>
+#include <stdbool.h>
 
 /**
  * This type is for variable-length unsigned integer types.

@@ -36,7 +36,7 @@
 #include <limits.h>
 #include <math.h>
 
-#include "forwdecl.h"
+#include <jakson/forwdecl.h>
 
 #ifndef __cplusplus
 

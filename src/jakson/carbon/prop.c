@@ -18,7 +18,7 @@
 #include <jakson/carbon/prop.h>
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/field.h>
-#include "object.h"
+#include <jakson/carbon/object.h>
 
 bool internal_carbon_prop_create(carbon_prop *dst, obj_it *parent)
 {

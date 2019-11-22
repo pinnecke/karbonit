@@ -24,7 +24,6 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 #include <stdint.h>
-#include "find.h"
 
 static void result_from_array(carbon_find *find, arr_it *it);
 

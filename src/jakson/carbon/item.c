@@ -20,8 +20,6 @@
 #include <jakson/carbon/object.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/utils/numbers.h>
-#include "item.h"
-#include "object.h"
 
 static bool carbon_item_setup_value(item *item, field_type_e field_type, field *field)
 {

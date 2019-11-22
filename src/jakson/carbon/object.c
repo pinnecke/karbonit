@@ -21,8 +21,6 @@
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/string.h>
 #include <jakson/carbon/prop.h>
-#include <jakson/carbon/object.h>
-#include "object.h"
 
 bool internal_carbon_object_create(obj_it *it, memfile *memfile, offset_t payload_start)
 {

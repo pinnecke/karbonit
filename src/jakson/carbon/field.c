@@ -31,130 +31,130 @@ const char *field_type_str(field_type_e type)
 {
         switch (type) {
                 case FIELD_NULL:
-                        return FIELD_TYPE_NULL_STR;
+                        return NULL_STR;
                 case FIELD_TRUE:
-                        return FIELD_TYPE_TRUE_STR;
+                        return TRUE_STR;
                 case FIELD_FALSE:
-                        return FIELD_TYPE_FALSE_STR;
+                        return FALSE_STR;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                        return FIELD_TYPE_OBJECT_UNSORTED_MULTIMAP_STR;
+                        return OBJECT_UNSORTED_MULTIMAP_STR;
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        return FIELD_TYPE_OBJECT_SORTED_MULTIMAP_STR;
+                        return OBJECT_SORTED_MULTIMAP_STR;
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                        return FIELD_TYPE_OBJECT_UNSORTED_MAP_STR;
+                        return OBJECT_UNSORTED_MAP_STR;
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        return FIELD_TYPE_OBJECT_SORTED_MAP_STR;
+                        return OBJECT_SORTED_MAP_STR;
                 case FIELD_ARRAY_UNSORTED_MULTISET:
-                        return FIELD_TYPE_ARRAY_UNSORTED_MULTISET_STR;
+                        return ARRAY_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                        return FIELD_TYPE_ARRAY_SORTED_MULTISET_STR;
+                        return ARRAY_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                        return FIELD_TYPE_ARRAY_UNSORTED_SET_STR;
+                        return ARRAY_UNSORTED_SET_STR;
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        return FIELD_TYPE_ARRAY_SORTED_SET_STR;
+                        return ARRAY_SORTED_SET_STR;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U8_UNSORTED_MULTISET_STR;
+                        return COLUMN_U8_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U8_SORTED_MULTISET_STR;
+                        return COLUMN_U8_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_U8_UNSORTED_SET_STR;
+                        return COLUMN_U8_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_U8_SORTED_SET_STR;
+                        return COLUMN_U8_SORTED_SET_STR;
                 case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U16_UNSORTED_MULTISET_STR;
+                        return COLUMN_U16_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U16_SORTED_MULTISET_STR;
+                        return COLUMN_U16_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_U16_UNSORTED_SET_STR;
+                        return COLUMN_U16_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_U16_SORTED_SET_STR;
+                        return COLUMN_U16_SORTED_SET_STR;
                 case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U32_UNSORTED_MULTISET_STR;
+                        return COLUMN_U32_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U32_SORTED_MULTISET_STR;
+                        return COLUMN_U32_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_U32_UNSORTED_SET_STR;
+                        return COLUMN_U32_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_U32_SORTED_SET_STR;
+                        return COLUMN_U32_SORTED_SET_STR;
                 case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U64_UNSORTED_MULTISET_STR;
+                        return COLUMN_U64_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_U64_SORTED_MULTISET_STR;
+                        return COLUMN_U64_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_U64_UNSORTED_SET_STR;
+                        return COLUMN_U64_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_U64_SORTED_SET_STR;
+                        return COLUMN_U64_SORTED_SET_STR;
                 case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I8_UNSORTED_MULTISET_STR;
+                        return COLUMN_I8_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I8_SORTED_MULTISET_STR;
+                        return COLUMN_I8_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_I8_UNSORTED_SET_STR;
+                        return COLUMN_I8_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_I8_SORTED_SET_STR;
+                        return COLUMN_I8_SORTED_SET_STR;
                 case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I16_UNSORTED_MULTISET_STR;
+                        return COLUMN_I16_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I16_SORTED_MULTISET_STR;
+                        return COLUMN_I16_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_I16_UNSORTED_SET_STR;
+                        return COLUMN_I16_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_I16_SORTED_SET_STR;
+                        return COLUMN_I16_SORTED_SET_STR;
                 case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I32_UNSORTED_MULTISET_STR;
+                        return COLUMN_I32_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I32_SORTED_MULTISET_STR;
+                        return COLUMN_I32_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_I32_UNSORTED_SET_STR;
+                        return COLUMN_I32_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_I32_SORTED_SET_STR;
+                        return COLUMN_I32_SORTED_SET_STR;
                 case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I64_UNSORTED_MULTISET_STR;
+                        return COLUMN_I64_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_I64_SORTED_MULTISET_STR;
+                        return COLUMN_I64_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_I64_UNSORTED_SET_STR;
+                        return COLUMN_I64_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_I64_SORTED_SET_STR;
+                        return COLUMN_I64_SORTED_SET_STR;
                 case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_FLOAT_UNSORTED_MULTISET_STR;
+                        return COLUMN_FLOAT_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_FLOAT_SORTED_MULTISET_STR;
+                        return COLUMN_FLOAT_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_FLOAT_UNSORTED_SET_STR;
+                        return COLUMN_FLOAT_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_FLOAT_SORTED_SET_STR;
+                        return COLUMN_FLOAT_SORTED_SET_STR;
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_BOOLEAN_UNSORTED_MULTISET_STR;
+                        return COLUMN_BOOLEAN_UNSORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                        return FIELD_TYPE_COLUMN_BOOLEAN_SORTED_MULTISET_STR;
+                        return COLUMN_BOOLEAN_SORTED_MULTISET_STR;
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                        return FIELD_TYPE_COLUMN_BOOLEAN_UNSORTED_SET_STR;
+                        return COLUMN_BOOLEAN_UNSORTED_SET_STR;
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        return FIELD_TYPE_COLUMN_BOOLEAN_SORTED_SET_STR;
+                        return COLUMN_BOOLEAN_SORTED_SET_STR;
                 case FIELD_STRING:
-                        return FIELD_TYPE_STRING_STR;
+                        return STRING_STR;
                 case FIELD_NUMBER_U8:
-                        return FIELD_TYPE_NUMBER_U8_STR;
+                        return NUMBER_U8_STR;
                 case FIELD_NUMBER_U16:
-                        return FIELD_TYPE_NUMBER_U16_STR;
+                        return NUMBER_U16_STR;
                 case FIELD_NUMBER_U32:
-                        return FIELD_TYPE_NUMBER_U32_STR;
+                        return NUMBER_U32_STR;
                 case FIELD_NUMBER_U64:
-                        return FIELD_TYPE_NUMBER_U64_STR;
+                        return NUMBER_U64_STR;
                 case FIELD_NUMBER_I8:
-                        return FIELD_TYPE_NUMBER_I8_STR;
+                        return NUMBER_I8_STR;
                 case FIELD_NUMBER_I16:
-                        return FIELD_TYPE_NUMBER_I16_STR;
+                        return NUMBER_I16_STR;
                 case FIELD_NUMBER_I32:
-                        return FIELD_TYPE_NUMBER_I32_STR;
+                        return NUMBER_I32_STR;
                 case FIELD_NUMBER_I64:
-                        return FIELD_TYPE_NUMBER_I64_STR;
+                        return NUMBER_I64_STR;
                 case FIELD_NUMBER_FLOAT:
-                        return FIELD_TYPE_NUMBER_FLOAT_STR;
+                        return NUMBER_FLOAT_STR;
                 case FIELD_BINARY_CUSTOM:
                 case FIELD_BINARY:
-                        return FIELD_TYPE_BINARY_STR;
+                        return BINARY_STR;
                 default:
                         error(ERR_NOTFOUND, NULL);
                         return NULL;

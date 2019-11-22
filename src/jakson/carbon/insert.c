@@ -401,7 +401,7 @@ bool insert_nchar(insert *in, const char *value, u64 value_len)
         UNUSED(value);
         error_if_and_return(in->context_type != ARRAY, ERR_UNSUPPCONTAINER, NULL);
 
-        return carbon_string_nchar_write(&in->file, value, value_len);
+        return string_field_nchar_write(&in->file, value, value_len);
 }
 
 static void _insert_binary(insert *in, const void *value, size_t nbytes,
@@ -663,7 +663,7 @@ bool insert_prop_null(insert *in, const char *key)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         push_media_type_for_array(in, FIELD_NULL);
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -674,7 +674,7 @@ bool insert_prop_true(insert *in, const char *key)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         push_media_type_for_array(in, FIELD_TRUE);
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -685,7 +685,7 @@ bool insert_prop_false(insert *in, const char *key)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         push_media_type_for_array(in, FIELD_FALSE);
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -696,7 +696,7 @@ bool insert_prop_u8(insert *in, const char *key, u8 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U8, &value, sizeof(u8));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -707,7 +707,7 @@ bool insert_prop_u16(insert *in, const char *key, u16 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U16, &value, sizeof(u16));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -718,7 +718,7 @@ bool insert_prop_u32(insert *in, const char *key, u32 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U32, &value, sizeof(u32));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -729,7 +729,7 @@ bool insert_prop_u64(insert *in, const char *key, u64 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_U64, &value, sizeof(u64));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -740,7 +740,7 @@ bool insert_prop_i8(insert *in, const char *key, i8 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I8, &value, sizeof(i8));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -751,7 +751,7 @@ bool insert_prop_i16(insert *in, const char *key, i16 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I16, &value, sizeof(i16));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -762,7 +762,7 @@ bool insert_prop_i32(insert *in, const char *key, i32 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I32, &value, sizeof(i32));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -773,7 +773,7 @@ bool insert_prop_i64(insert *in, const char *key, i64 value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_I64, &value, sizeof(i64));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -820,7 +820,7 @@ bool insert_prop_float(insert *in, const char *key, float value)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         write_field_data(in, FIELD_NUMBER_FLOAT, &value, sizeof(float));
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -836,8 +836,8 @@ bool insert_prop_nchar(insert *in, const char *key, const char *value, u64 value
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
-        carbon_string_nchar_write(&in->file, value, value_len);
+        string_field_nomarker_write(&in->file, key);
+        string_field_nchar_write(&in->file, value, value_len);
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
         return true;
@@ -848,7 +848,7 @@ bool insert_prop_binary(insert *in, const char *key, const void *value,
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
         offset_t prop_start = memfile_tell(&in->file);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         _insert_binary(in, value, nbytes, file_ext, user_type);
         offset_t prop_end = memfile_tell(&in->file);
         inserter_refresh_mod_size(in, prop_end - prop_start);
@@ -860,7 +860,7 @@ static insert *__insert_prop_object_container_begin(obj_state *out,
                                                        u64 object_capacity)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         return insert_object_map_begin(out, in, derivation, object_capacity);
 }
 
@@ -894,7 +894,7 @@ insert *insert_prop_array_begin(arr_state *state,
                                                          u64 array_capacity)
 {
         error_if_and_return(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        carbon_string_nomarker_write(&in->file, key);
+        string_field_nomarker_write(&in->file, key);
         return insert_array_begin(state, in, array_capacity);
 }
 
@@ -909,7 +909,7 @@ insert *insert_prop_column_begin(col_state *state_out,
                                                           col_it_type_e type, u64 cap)
 {
         error_if_and_return(inserter_in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL);
-        carbon_string_nomarker_write(&inserter_in->file, key);
+        string_field_nomarker_write(&inserter_in->file, key);
         return insert_column_begin(state_out, inserter_in, type, cap);
 }
 

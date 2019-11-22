@@ -163,7 +163,7 @@ string_field internal_obj_it_prop_name(obj_it *it)
 static i64 _prop_remove(obj_it *it, field_e type)
 {
         i64 prop_size = internal_prop_size(&it->file);
-        carbon_string_nomarker_remove(&it->file);
+        string_field_nomarker_remove(&it->file);
         if (internal_field_remove(&it->file, type)) {
                 internal_object_it_refresh(NULL, NULL, it);
                 return prop_size;

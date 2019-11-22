@@ -26,18 +26,18 @@ static string_field NULL_STRING = {
         .len = 0
 };
 
-bool carbon_string_write(memfile *file, const char *string);
-bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len);
-bool carbon_string_nomarker_write(memfile *file, const char *string);
-bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len);
-bool carbon_string_nomarker_remove(memfile *file);
-bool carbon_string_remove(memfile *file);
-bool carbon_string_update(memfile *file, const char *string);
-bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_len);
-bool carbon_string_skip(memfile *file);
-bool carbon_string_nomarker_skip(memfile *file);
-const char *carbon_string_read(u64 *len, memfile *file);
-const char *carbon_string_nomarker_read(u64 *len, memfile *file);
+bool string_field_write(memfile *file, const char *string);
+bool string_field_nchar_write(memfile *file, const char *string, u64 str_len);
+bool string_field_nomarker_write(memfile *file, const char *string);
+bool string_field_nomarker_nchar_write(memfile *file, const char *string, u64 str_len);
+bool string_field_nomarker_remove(memfile *file);
+bool string_field_remove(memfile *file);
+bool string_field_update(memfile *file, const char *string);
+bool string_field_update_wnchar(memfile *file, const char *string, size_t str_len);
+bool string_field_skip(memfile *file);
+bool string_field_nomarker_skip(memfile *file);
+const char *string_field_read(u64 *len, memfile *file);
+const char *string_field_nomarker_read(u64 *len, memfile *file);
 
 #ifdef __cplusplus
 }

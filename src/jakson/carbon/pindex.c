@@ -1095,7 +1095,7 @@ static void record_ref_to_str(str_buf *str, pindex *index)
                         break;
                 case CARBON_KEY_SKEY: {
                         u64 key_len;
-                        const char *key = carbon_string_read(&key_len, &index->memfile);
+                        const char *key = string_field_read(&key_len, &index->memfile);
                         str_buf_add_char(str, '(');
                         str_buf_add_nchar(str, key, key_len);
                         str_buf_add_char(str, ')');
@@ -1131,7 +1131,7 @@ static void record_ref_to_record(insert *roins, pindex *index)
                         break;
                 case CARBON_KEY_SKEY: {
                         u64 key_len;
-                        const char *key = carbon_string_read(&key_len, &index->memfile);
+                        const char *key = string_field_read(&key_len, &index->memfile);
                         insert_prop_nchar(roins, "key-value", key, key_len);
                 }
                         break;

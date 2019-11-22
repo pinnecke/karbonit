@@ -27,18 +27,18 @@ static void write_payload(memfile *file, const char *string, size_t str_len)
         memfile_write(file, string, str_len);
 }
 
-bool carbon_string_nomarker_write(memfile *file, const char *string)
+bool string_field_nomarker_write(memfile *file, const char *string)
 {
-        return carbon_string_nomarker_nchar_write(file, string, strlen(string));
+        return string_field_nomarker_nchar_write(file, string, strlen(string));
 }
 
-bool carbon_string_nomarker_nchar_write(memfile *file, const char *string, u64 str_len)
+bool string_field_nomarker_nchar_write(memfile *file, const char *string, u64 str_len)
 {
         write_payload(file, string, str_len);
         return true;
 }
 
-bool carbon_string_nomarker_remove(memfile *file)
+bool string_field_nomarker_remove(memfile *file)
 {
         u8 len_nbytes;
         u64 str_len = memfile_read_uintvar_stream(&len_nbytes, file);
@@ -47,36 +47,36 @@ bool carbon_string_nomarker_remove(memfile *file)
         return true;
 }
 
-bool carbon_string_remove(memfile *file)
+bool string_field_remove(memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == FIELD_STRING)) {
                 memfile_inplace_remove(file, sizeof(u8));
-                return carbon_string_nomarker_remove(file);
+                return string_field_nomarker_remove(file);
         } else {
                 return error(ERR_MARKERMAPPING, NULL);
         }
 }
 
-bool carbon_string_write(memfile *file, const char *string)
+bool string_field_write(memfile *file, const char *string)
 {
-        return carbon_string_nchar_write(file, string, strlen(string));
+        return string_field_nchar_write(file, string, strlen(string));
 }
 
-bool carbon_string_nchar_write(memfile *file, const char *string, u64 str_len)
+bool string_field_nchar_write(memfile *file, const char *string, u64 str_len)
 {
         memfile_ensure_space(file, sizeof(media_type));
         mime_write(file, FIELD_STRING);
-        carbon_string_nomarker_nchar_write(file, string, str_len);
+        string_field_nomarker_nchar_write(file, string, str_len);
         return true;
 }
 
-bool carbon_string_update(memfile *file, const char *string)
+bool string_field_update(memfile *file, const char *string)
 {
-        return carbon_string_update_wnchar(file, string, strlen(string));
+        return string_field_update_wnchar(file, string, strlen(string));
 }
 
-bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_len)
+bool string_field_update_wnchar(memfile *file, const char *string, size_t str_len)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == FIELD_STRING)) {
@@ -94,28 +94,28 @@ bool carbon_string_update_wnchar(memfile *file, const char *string, size_t str_l
         }
 }
 
-bool carbon_string_skip(memfile *file)
+bool string_field_skip(memfile *file)
 {
-        return carbon_string_read(NULL, file);
+        return string_field_read(NULL, file);
 }
 
-bool carbon_string_nomarker_skip(memfile *file)
+bool string_field_nomarker_skip(memfile *file)
 {
-        return carbon_string_nomarker_read(NULL, file);
+        return string_field_nomarker_read(NULL, file);
 }
 
-const char *carbon_string_read(u64 *len, memfile *file)
+const char *string_field_read(u64 *len, memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (LIKELY(marker == FIELD_STRING)) {
-                return carbon_string_nomarker_read(len, file);
+                return string_field_nomarker_read(len, file);
         } else {
                 error(ERR_MARKERMAPPING, NULL);
                 return NULL;
         }
 }
 
-const char *carbon_string_nomarker_read(u64 *len, memfile *file)
+const char *string_field_nomarker_read(u64 *len, memfile *file)
 {
         u64 str_len = memfile_read_uintvar_stream(NULL, file);
         const char *result = memfile_read(file, str_len);

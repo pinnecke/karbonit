@@ -55,7 +55,7 @@ static void write_skey(memfile *file)
         u8 marker = MSKEY;
         const char *key = "";
         memfile_write(file, &marker, sizeof(u8));
-        carbon_string_write(file, key);
+        string_field_write(file, key);
 }
 
 bool key_create(memfile *file, key_e type)
@@ -124,7 +124,7 @@ bool key_update_string_wnchar(memfile *file, const char *key, size_t length)
         DECLARE_AND_INIT(key_e, key_type)
         key_read_type(&key_type, file);
         if (key_is_string(key_type)) {
-                carbon_string_update_wnchar(file, key, length);
+                string_field_update_wnchar(file, key, length);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
@@ -137,7 +137,7 @@ bool key_write_string(memfile *file, const char *key)
 
         key_read_type(&key_type, file);
         if (key_is_string(key_type)) {
-                carbon_string_write(file, key);
+                string_field_write(file, key);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
@@ -195,7 +195,7 @@ const void *key_read(u64 *len, key_e *out, memfile *file)
                         OPTIONAL_SET(len, sizeof(i64))
                         return MEMFILE_READ_TYPE(file, i64);
                 case CARBON_KEY_SKEY:
-                        return carbon_string_read(len, file);
+                        return string_field_read(len, file);
                 default: error(ERR_INTERNALERR, NULL);
                         return NULL;
         }

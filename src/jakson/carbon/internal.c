@@ -88,7 +88,7 @@ bool carbon_int_insert_column(memfile *memfile_in, list_type_e derivation, col_i
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
 
-        field_type_e column_type = carbon_field_type_for_column(derivation, type);
+        field_type_e column_type = field_type_for_column(derivation, type);
 
         memfile_ensure_space(memfile_in, sizeof(u8));
         marker_insert(memfile_in, column_type);
@@ -885,7 +885,7 @@ carbon_int_field_binary_value(binary *out, field *field)
 arr_it *carbon_int_field_array_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!carbon_field_type_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_type_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         field->arr_it.accessed = true;
         return field->array;
 }
@@ -893,7 +893,7 @@ arr_it *carbon_int_field_array_value(field *field)
 obj_it *carbon_int_field_object_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!carbon_field_type_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_type_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         field->obj_it.accessed = true;
         return field->object;
 }
@@ -901,7 +901,7 @@ obj_it *carbon_int_field_object_value(field *field)
 col_it *carbon_int_field_column_value(field *field)
 {
         error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!carbon_field_type_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
+        error_if_and_return(!field_type_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
         return field->column;
 }
 

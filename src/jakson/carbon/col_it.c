@@ -213,52 +213,52 @@ const void *col_it_values(field_type_e *type, u32 *nvalues, col_it *it)
 
 const boolean *col_it_boolean_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(boolean, nvalues, it, carbon_field_type_is_column_bool_or_subtype(type));
+        return safe_cast(boolean, nvalues, it, field_type_is_column_bool_or_subtype(type));
 }
 
 const u8 *col_it_u8_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(u8, nvalues, it, carbon_field_type_is_column_u8_or_subtype(type));
+        return safe_cast(u8, nvalues, it, field_type_is_column_u8_or_subtype(type));
 }
 
 const u16 *col_it_u16_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(u16, nvalues, it, carbon_field_type_is_column_u16_or_subtype(type));
+        return safe_cast(u16, nvalues, it, field_type_is_column_u16_or_subtype(type));
 }
 
 const u32 *col_it_u32_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(u32, nvalues, it, carbon_field_type_is_column_u32_or_subtype(type));
+        return safe_cast(u32, nvalues, it, field_type_is_column_u32_or_subtype(type));
 }
 
 const u64 *col_it_u64_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(u64, nvalues, it, carbon_field_type_is_column_u64_or_subtype(type));
+        return safe_cast(u64, nvalues, it, field_type_is_column_u64_or_subtype(type));
 }
 
 const i8 *col_it_i8_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(i8, nvalues, it, carbon_field_type_is_column_i8_or_subtype(type));
+        return safe_cast(i8, nvalues, it, field_type_is_column_i8_or_subtype(type));
 }
 
 const i16 *col_it_i16_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(i16, nvalues, it, carbon_field_type_is_column_i16_or_subtype(type));
+        return safe_cast(i16, nvalues, it, field_type_is_column_i16_or_subtype(type));
 }
 
 const i32 *col_it_i32_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(i32, nvalues, it, carbon_field_type_is_column_i32_or_subtype(type));
+        return safe_cast(i32, nvalues, it, field_type_is_column_i32_or_subtype(type));
 }
 
 const i64 *col_it_i64_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(i64, nvalues, it, carbon_field_type_is_column_i64_or_subtype(type));
+        return safe_cast(i64, nvalues, it, field_type_is_column_i64_or_subtype(type));
 }
 
 const float *col_it_float_values(u32 *nvalues, col_it *it)
 {
-        return safe_cast(float, nvalues, it, carbon_field_type_is_column_float_or_subtype(type));
+        return safe_cast(float, nvalues, it, field_type_is_column_float_or_subtype(type));
 }
 
 bool col_it_remove(col_it *it, u32 pos)
@@ -307,7 +307,7 @@ bool col_it_is_sorted(col_it *it)
 
 bool col_it_update_type(col_it *it, list_type_e derivation)
 {
-        if (!carbon_field_type_is_column_or_subtype(it->field_type)) {
+        if (!field_type_is_column_or_subtype(it->field_type)) {
                 return false;
         }
 
@@ -479,7 +479,7 @@ static bool rewrite_column_to_array(col_it *it)
         carbon_insert array_ins;
 
         memfile_save_position(&it->file);
-        assert(carbon_field_type_is_column_or_subtype(memfile_peek_byte(&it->file)));
+        assert(field_type_is_column_or_subtype(memfile_peek_byte(&it->file)));
 
         abstract_get_class(&type_class, &it->file);
         abstract_class_to_list_derivable(&list_type, type_class);

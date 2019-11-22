@@ -70,7 +70,7 @@ static bool update_in_place_constant(arr_it *it, carbon_constant_e constant)
 {
         memfile_save_position(&it->file);
 
-        if (carbon_field_type_is_constant(it->field.type)) {
+        if (field_type_is_constant(it->field.type)) {
                 u8 value;
                 switch (constant) {
                         case CARBON_CONSTANT_TRUE:

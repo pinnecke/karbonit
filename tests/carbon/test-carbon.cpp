@@ -7656,7 +7656,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         obj_it *oit = carbon_item_get_object(&(it.item));
         ASSERT_TRUE(carbon_object_next(oit));
         internal_carbon_object_prop_type(&field_type, oit);
-        ASSERT_TRUE(carbon_field_type_is_column_or_subtype(field_type));
+        ASSERT_TRUE(field_type_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET);
         carbon_object_drop(oit);
         carbon_read_end(&it);
@@ -7696,7 +7696,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         obj_it *oit = carbon_item_get_object(&(it.item));
         ASSERT_TRUE(carbon_object_next(oit));
         internal_carbon_object_prop_type(&field_type, oit);
-        ASSERT_TRUE(carbon_field_type_is_column_or_subtype(field_type));
+        ASSERT_TRUE(field_type_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == CARBON_FIELD_COLUMN_U8_UNSORTED_MULTISET);
         carbon_object_drop(oit);
         carbon_read_end(&it);
@@ -7733,7 +7733,7 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         carbon_read_begin(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
-        ASSERT_TRUE(carbon_field_type_is_number(field_type));
+        ASSERT_TRUE(field_type_is_number(field_type));
         carbon_read_end(&it);
 
         json_out_extended = carbon_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [1, null, 3, \"a\"]}'

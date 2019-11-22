@@ -25,32 +25,32 @@
 
 static bool carbon_item_setup_value(item *item, field_type_e field_type, field *field)
 {
-        if (carbon_field_type_is_signed(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
+        if (field_type_is_signed(field_type) && !field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_signed_value(&item->value.number_signed, field);
                 item->value_type = CARBON_ITEM_NUMBER_SIGNED;
-        } else if (carbon_field_type_is_unsigned(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
+        } else if (field_type_is_unsigned(field_type) && !field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_unsigned_value(&item->value.number_unsigned, field);
                 item->value_type = CARBON_ITEM_NUMBER_UNSIGNED;
-        } else if (carbon_field_type_is_floating(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
+        } else if (field_type_is_floating(field_type) && !field_type_is_list_or_subtype(field_type)) {
                 carbon_int_field_float_value(&item->value.number_float, field);
                 item->value_type = CARBON_ITEM_NUMBER_FLOAT;
-        } else if (carbon_field_type_is_binary(field_type)) {
+        } else if (field_type_is_binary(field_type)) {
                 carbon_int_field_binary_value(&item->value.binary, field);
                 item->value_type = CARBON_ITEM_BINARY;
-        } else if (carbon_field_type_is_boolean(field_type) && !carbon_field_type_is_list_or_subtype(field_type)) {
+        } else if (field_type_is_boolean(field_type) && !field_type_is_list_or_subtype(field_type)) {
                 item->value_type = field_type == CARBON_FIELD_TRUE ? CARBON_ITEM_TRUE : CARBON_ITEM_FALSE;
-        } else if (carbon_field_type_is_array_or_subtype(field_type)) {
+        } else if (field_type_is_array_or_subtype(field_type)) {
                 item->value.array = carbon_int_field_array_value(field);
                 item->value_type = CARBON_ITEM_ARRAY;
-        } else if (carbon_field_type_is_column_or_subtype(field_type)) {
+        } else if (field_type_is_column_or_subtype(field_type)) {
                 item->value.column = carbon_int_field_column_value(field);
                 item->value_type = CARBON_ITEM_COLUMN;
-        } else if (carbon_field_type_is_object_or_subtype(field_type)) {
+        } else if (field_type_is_object_or_subtype(field_type)) {
                 item->value.object = carbon_int_field_object_value(field);
                 item->value_type = CARBON_ITEM_OBJECT;
-        } else if (carbon_field_type_is_null(field_type)) {
+        } else if (field_type_is_null(field_type)) {
                 item->value_type = CARBON_ITEM_NULL;
-        } else if (carbon_field_type_is_string(field_type)) {
+        } else if (field_type_is_string(field_type)) {
                 item->value.string.string = carbon_int_field_string_value(&item->value.string.length, field);
                 item->value_type = CARBON_ITEM_STRING;
         } else {

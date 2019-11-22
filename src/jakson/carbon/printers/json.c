@@ -218,13 +218,13 @@ static inline void __carbon_print_json_enter_array_fast(struct carbon_traverse_e
 //                                break;
 //                }
 
-                if (carbon_field_type_is_object_or_subtype(type)) {
+                if (field_type_is_object_or_subtype(type)) {
                         obj_it *sub = carbon_item_get_object(&(it->item));
                         carbon_traverse_continue_object(extra, sub);
-                } else if (carbon_field_type_is_column_or_subtype(type)) {
+                } else if (field_type_is_column_or_subtype(type)) {
                         col_it *sub = carbon_item_get_column(&(it->item));
                         carbon_traverse_continue_column(extra, sub);
-                } else if (carbon_field_type_is_array_or_subtype(type)) {
+                } else if (field_type_is_array_or_subtype(type)) {
                         arr_it *sub = carbon_item_get_array(&(it->item));
                         carbon_traverse_continue_array(extra, sub);
                 }
@@ -263,7 +263,7 @@ static inline bool __carbon_print_json_column_fast(struct carbon_traverse_extra 
         struct string_buffer *str_buf = extra->capture.print_json.str;
 
         uint_fast32_t num_elems;
-        enum carbon_field_type type;
+        enum field_type type;
         list_container_e container;
 
         char sep = '\0';
@@ -388,13 +388,13 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
                                 break;
                 }
 
-                if (carbon_field_type_is_object_or_subtype(type)) {
+                if (field_type_is_object_or_subtype(type)) {
                         obj_it *sub = carbon_item_get_object(&(it->prop.value));
                         carbon_traverse_continue_object(extra, sub);
-                } else if (carbon_field_type_is_column_or_subtype(type)) {
+                } else if (field_type_is_column_or_subtype(type)) {
                         col_it *sub = carbon_item_get_column(&(it->prop.value));
                         carbon_traverse_continue_column(extra, sub);
-                } else if (carbon_field_type_is_array_or_subtype(type)) {
+                } else if (field_type_is_array_or_subtype(type)) {
                         arr_it *sub = carbon_item_get_array(&(it->prop.value));
                         carbon_traverse_continue_array(extra, sub);
                 }

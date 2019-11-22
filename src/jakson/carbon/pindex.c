@@ -185,7 +185,7 @@ static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsign
                         (unsigned) node->entry.key.offset);
         }
         if (node->type != PINDEX_ROOT) {
-                fprintf(file, "field(type: %s, offset: 0x%x)\n", carbon_field_type_str(node->field_type),
+                fprintf(file, "field(type: %s, offset: 0x%x)\n", field_type_str(node->field_type),
                         (unsigned) node->field_offset);
         } else {
                 fprintf(file, "\n");
@@ -276,10 +276,10 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
         for (u32 i = 0; i < nvalues; i++) {
                 bool is_null = col_it_value_is_null(it, i);
                 bool is_true = false;
-                if (carbon_field_type_is_column_bool_or_subtype(column_type)) {
+                if (field_type_is_column_bool_or_subtype(column_type)) {
                         is_true = col_it_boolean_values(NULL, it)[i];
                 }
-                entry_type = carbon_field_type_column_entry_to_regular_type(column_type, is_null, is_true);
+                entry_type = field_type_column_entry_to_regular_type(column_type, is_null, is_true);
                 offset_t sub_elem_off = col_it_tell(it, i);
 
                 struct pindex_node *node = pindex_node_add_column_elem(parent, i, sub_elem_off);
@@ -655,7 +655,7 @@ static u8 field_ref_into_carbon(carbon_insert *ins, pindex *index, bool is_root)
         if (is_root) {
                 carbon_insert_prop_null(ins, "container");
         } else {
-                carbon_insert_prop_string(ins, "container", carbon_field_type_str(field_type));
+                carbon_insert_prop_string(ins, "container", field_type_str(field_type));
         }
 
 

@@ -184,13 +184,13 @@ bool carbon_revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
         return status;
 }
 
-bool carbon_revise_remove(const char *dot, rev *context)
+bool carbon_revise_remove(const char *path, rev *context)
 {
         struct dot dot;
         carbon_path_evaluator eval;
         bool result;
 
-        if (dot_from_string(&dot, dot)) {
+        if (dot_from_string(&dot, path)) {
                 carbon_path_evaluator_begin_mutable(&eval, &dot, context);
 
                 if (eval.status != PATH_RESOLVED) {

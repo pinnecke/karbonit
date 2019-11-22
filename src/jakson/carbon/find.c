@@ -326,7 +326,7 @@ bool carbon_find_update_array_type(carbon_find *find, list_type_e derivation)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
+        if (field_type_is_array_or_subtype(type)) {
                 memfile mod;
                 arr_it *it = carbon_find_result_array(find);
                 memfile_clone(&mod, &it->file);
@@ -345,7 +345,7 @@ bool carbon_find_array_is_multiset(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
+        if (field_type_is_array_or_subtype(type)) {
                 arr_it *it = carbon_find_result_array(find);
                 return arr_it_is_multiset(it);
         } else {
@@ -357,7 +357,7 @@ bool carbon_find_array_is_sorted(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
+        if (field_type_is_array_or_subtype(type)) {
                 arr_it *it = carbon_find_result_array(find);
                 return arr_it_is_sorted(it);
         } else {
@@ -369,7 +369,7 @@ bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_column_or_subtype(type)) {
+        if (field_type_is_column_or_subtype(type)) {
                 col_it *it = carbon_find_result_column(find);
                 memfile_save_position(&it->file);
                 memfile_seek(&it->file, it->begin);
@@ -391,7 +391,7 @@ bool carbon_find_column_is_multiset(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_column_or_subtype(type)) {
+        if (field_type_is_column_or_subtype(type)) {
                 col_it *it = carbon_find_result_column(find);
                 return col_it_is_multiset(it);
         } else {
@@ -403,7 +403,7 @@ bool carbon_find_column_is_sorted(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_column_or_subtype(type)) {
+        if (field_type_is_column_or_subtype(type)) {
                 col_it *it = carbon_find_result_column(find);
                 return col_it_is_sorted(it);
         } else {
@@ -415,7 +415,7 @@ bool carbon_find_update_object_type(carbon_find *find, map_type_e derivation)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
+        if (field_type_is_object_or_subtype(type)) {
                 obj_it *it = carbon_find_result_object(find);
                 memfile_save_position(&it->memfile);
                 memfile_seek(&it->memfile, it->object_start_off);
@@ -436,7 +436,7 @@ bool carbon_find_object_is_multimap(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
+        if (field_type_is_object_or_subtype(type)) {
                 obj_it *it = carbon_find_result_object(find);
                 return carbon_object_is_multimap(it);
         } else {
@@ -448,7 +448,7 @@ bool carbon_find_object_is_sorted(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
+        if (field_type_is_object_or_subtype(type)) {
                 obj_it *it = carbon_find_result_object(find);
                 return carbon_object_is_sorted(it);
         } else {
@@ -460,7 +460,7 @@ bool carbon_find_multimap(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_object_or_subtype(type)) {
+        if (field_type_is_object_or_subtype(type)) {
                 return carbon_find_object_is_multimap(find);
         } else {
                 return false;
@@ -471,9 +471,9 @@ bool carbon_find_multiset(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
+        if (field_type_is_array_or_subtype(type)) {
                 return carbon_find_array_is_multiset(find);
-        } else if (carbon_field_type_is_column_or_subtype(type)) {
+        } else if (field_type_is_column_or_subtype(type)) {
                 return carbon_find_column_is_multiset(find);
         } else {
                 return false;
@@ -484,9 +484,9 @@ bool carbon_find_sorted(carbon_find *find)
 {
         field_type_e type;
         carbon_find_result_type(&type, find);
-        if (carbon_field_type_is_array_or_subtype(type)) {
+        if (field_type_is_array_or_subtype(type)) {
                 return carbon_find_array_is_sorted(find);
-        } else if (carbon_field_type_is_column_or_subtype(type)) {
+        } else if (field_type_is_column_or_subtype(type)) {
                 return carbon_find_column_is_sorted(find);
         } else {
                 return carbon_find_object_is_sorted(find);
@@ -510,7 +510,7 @@ arr_it *carbon_find_result_array(carbon_find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_array_or_subtype(find->type))) {
+        if (UNLIKELY(!field_type_is_array_or_subtype(find->type))) {
                 error(ERR_TYPEMISMATCH, "container must be array or sub type");
                 return NULL;
         }
@@ -524,7 +524,7 @@ obj_it *carbon_find_result_object(carbon_find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_object_or_subtype(find->type))) {
+        if (UNLIKELY(!field_type_is_object_or_subtype(find->type))) {
                 error(ERR_TYPEMISMATCH, "container must be object or sub type");
                 return NULL;
         }
@@ -538,7 +538,7 @@ col_it *carbon_find_result_column(carbon_find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_column_or_subtype(find->type))) {
+        if (UNLIKELY(!field_type_is_column_or_subtype(find->type))) {
                 error(ERR_TYPEMISMATCH, "container must be column or sub type");
                 return NULL;
         }
@@ -552,7 +552,7 @@ bool carbon_find_result_boolean(bool *result, carbon_find *find)
             return false;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_boolean(find->type))) {
+        if (UNLIKELY(!field_type_is_boolean(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of boolean type");
         }
 
@@ -566,7 +566,7 @@ bool carbon_find_result_unsigned(u64 *out, carbon_find *find)
             return false;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_unsigned(find->type))) {
+        if (UNLIKELY(!field_type_is_unsigned(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of unsigned type");
         }
 
@@ -580,7 +580,7 @@ bool carbon_find_result_signed(i64 *out, carbon_find *find)
             return false;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_signed(find->type))) {
+        if (UNLIKELY(!field_type_is_signed(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of signed type");
         }
 
@@ -594,7 +594,7 @@ bool carbon_find_result_float(float *out, carbon_find *find)
             return false;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_floating(find->type))) {
+        if (UNLIKELY(!field_type_is_floating(find->type))) {
                 return error(ERR_TYPEMISMATCH, "result value must be of float type");
         }
 
@@ -608,7 +608,7 @@ const char *carbon_find_result_string(u64 *str_len, carbon_find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_string(find->type))) {
+        if (UNLIKELY(!field_type_is_string(find->type))) {
                 error(ERR_TYPEMISMATCH, "result value must be of string type");
                 return NULL;
         }
@@ -622,7 +622,7 @@ binary *carbon_find_result_binary(carbon_find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!carbon_field_type_is_binary(find->type))) {
+        if (UNLIKELY(!field_type_is_binary(find->type))) {
                 error(ERR_TYPEMISMATCH, "result value must be of binary type");
                 return NULL;
         }

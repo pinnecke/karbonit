@@ -14,7 +14,7 @@
 #ifndef HAD_FIELD_H
 #define HAD_FIELD_H
 
-typedef enum carbon_field_type {
+typedef enum field_type {
         /** constants */
         CARBON_FIELD_NULL = MNULL, /** null */
         CARBON_FIELD_TRUE = MTRUE, /** true */
@@ -207,35 +207,35 @@ typedef enum carbon_constant {
 extern "C" {
 #endif
 
-const char *carbon_field_type_str(field_type_e type);
+const char *field_type_str(field_type_e type);
 
-bool carbon_field_type_is_traversable(field_type_e type);
-bool carbon_field_type_is_signed(field_type_e type);
-bool carbon_field_type_is_unsigned(field_type_e type);
-bool carbon_field_type_is_floating(field_type_e type);
-bool carbon_field_type_is_number(field_type_e type);
-bool carbon_field_type_is_integer(field_type_e type);
-bool carbon_field_type_is_binary(field_type_e type);
-bool carbon_field_type_is_boolean(field_type_e type);
-bool carbon_field_type_is_list_or_subtype(field_type_e type);
-bool carbon_field_type_is_array_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_u8_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_u16_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_u32_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_u64_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_i8_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_i16_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_i32_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_i64_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_float_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_bool_or_subtype(field_type_e type);
-bool carbon_field_type_is_column_or_subtype(field_type_e type);
-bool carbon_field_type_is_object_or_subtype(field_type_e type);
-bool carbon_field_type_is_null(field_type_e type);
-bool carbon_field_type_is_string(field_type_e type);
-bool carbon_field_type_is_constant(field_type_e type);
+bool field_type_is_traversable(field_type_e type);
+bool field_type_is_signed(field_type_e type);
+bool field_type_is_unsigned(field_type_e type);
+bool field_type_is_floating(field_type_e type);
+bool field_type_is_number(field_type_e type);
+bool field_type_is_integer(field_type_e type);
+bool field_type_is_binary(field_type_e type);
+bool field_type_is_boolean(field_type_e type);
+bool field_type_is_list_or_subtype(field_type_e type);
+bool field_type_is_array_or_subtype(field_type_e type);
+bool field_type_is_column_u8_or_subtype(field_type_e type);
+bool field_type_is_column_u16_or_subtype(field_type_e type);
+bool field_type_is_column_u32_or_subtype(field_type_e type);
+bool field_type_is_column_u64_or_subtype(field_type_e type);
+bool field_type_is_column_i8_or_subtype(field_type_e type);
+bool field_type_is_column_i16_or_subtype(field_type_e type);
+bool field_type_is_column_i32_or_subtype(field_type_e type);
+bool field_type_is_column_i64_or_subtype(field_type_e type);
+bool field_type_is_column_float_or_subtype(field_type_e type);
+bool field_type_is_column_bool_or_subtype(field_type_e type);
+bool field_type_is_column_or_subtype(field_type_e type);
+bool field_type_is_object_or_subtype(field_type_e type);
+bool field_type_is_null(field_type_e type);
+bool field_type_is_string(field_type_e type);
+bool field_type_is_constant(field_type_e type);
 
-carbon_field_class_e carbon_field_type_get_class(field_type_e type);
+carbon_field_class_e field_type_get_class(field_type_e type);
 
 bool carbon_field_skip(memfile *file);
 
@@ -254,8 +254,8 @@ bool carbon_field_skip_16(memfile *file);
 bool carbon_field_skip_32(memfile *file);
 bool carbon_field_skip_64(memfile *file);
 
-field_type_e carbon_field_type_for_column(list_type_e derivation, col_it_type_e type);
-field_type_e carbon_field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is_true);
+field_type_e field_type_for_column(list_type_e derivation, col_it_type_e type);
+field_type_e field_type_column_entry_to_regular_type(field_type_e type, bool is_null, bool is_true);
 
 #ifdef __cplusplus
 }

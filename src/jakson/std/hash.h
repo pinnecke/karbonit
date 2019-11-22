@@ -50,7 +50,7 @@ typedef u64 hash64_t;
 
 #define HASH_BERNSTEIN_WTYPE(key_size, key, hash_type)                                                             \
 ({                                                                                                                     \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     hash_type hash = 0;                                                                                                \
     for (size_t i = 0; i < key_size; i++) {                                                                            \
@@ -61,7 +61,7 @@ typedef u64 hash64_t;
 
 #define HASH64_BERNSTEIN_WSEED(key_size, key, seed)                                                                \
 ({                                                                                                                     \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     hash64_t hash = seed;                                                                                              \
     for (size_t i = 0; i < key_size; i++) {                                                                            \
@@ -72,7 +72,7 @@ typedef u64 hash64_t;
 
 #define HASH_BERNSTEIN2(key_size, key)                                                                             \
 ({                                                                                                                     \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     hash32_t hash = 0;                                                                                                 \
     for (size_t i = 0; i < key_size; i++) {                                                                            \
@@ -83,7 +83,7 @@ typedef u64 hash64_t;
 
 #define HASH_ELF(key_size, key)                                                                                    \
 ({                                                                                                                     \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     hash32_t hash = 0, g;                                                                                              \
     for (size_t i = 0; i < key_size; i++) {                                                                            \
@@ -103,7 +103,7 @@ typedef u64 hash64_t;
 
 #define HASH_FNV_WTYPE(key_size, key, hash_type)                                                                   \
 ({                                                                                                                     \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     hash_type hash = (hash_type) 2166136261;                                                                           \
     for (size_t i = 0; i < key_size; i++) {                                                                            \
@@ -129,7 +129,7 @@ typedef u64 hash64_t;
 #define HASH_JENKINS(keySizeIn, key)                                                                               \
 ({                                                                                                                     \
     size_t key_size = keySizeIn;                                                                                       \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     unsigned a, b;                                                                                                     \
     unsigned c = 0;                                                                                                    \
@@ -167,7 +167,7 @@ typedef u64 hash64_t;
 
 #define HASH_OAT(key_size, key)                                                                                    \
 ({                                                                                                                     \
-    JAK_ASSERT ((key != NULL) && (key_size > 0));                                                                          \
+    assert ((key != NULL) && (key_size > 0));                                                                          \
                                                                                                                        \
     hash32_t hash = 0;                                                                                                 \
     for (size_t i = 0; i < key_size; i++) {                                                                            \

@@ -31,7 +31,7 @@ struct converter_capture {
 {                                                                                                                      \
     UNUSED(archive);                                                                                            \
     UNUSED(path_stack);                                                                                         \
-    JAK_ASSERT(capture);                                                                                                   \
+    assert(capture);                                                                                                   \
                                                                                                                        \
     struct converter_capture *extra = (struct converter_capture *) capture;                                                                          \
     encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, oid);                          \
@@ -60,7 +60,7 @@ visit_enter_##name##_array_pairs(archive *archive, path_stack_t path, unique_id_
     UNUSED(num_pairs);                                                                                          \
     UNUSED(capture);                                                                                            \
                                                                                                                        \
-    JAK_ASSERT(capture);                                                                                                   \
+    assert(capture);                                                                                                   \
                                                                                                                        \
     struct converter_capture *extra = (struct converter_capture *) capture;                                                                          \
     encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, id);                           \
@@ -85,7 +85,7 @@ visit_##name##_array_pair(archive *archive, path_stack_t path, unique_id_t id,  
     UNUSED(max_entries);                                                                                        \
     UNUSED(capture);                                                                                            \
                                                                                                                        \
-    JAK_ASSERT(capture);                                                                                                   \
+    assert(capture);                                                                                                   \
                                                                                                                        \
     struct converter_capture *extra = (struct converter_capture *) capture;                                                                          \
     encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, id);                           \
@@ -96,7 +96,7 @@ visit_##name##_array_pair(archive *archive, path_stack_t path, unique_id_t id,  
 static void visit_root_object(archive *archive, unique_id_t id, void *capture)
 {
         UNUSED(archive);
-        JAK_ASSERT(capture);
+        assert(capture);
 
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc_collection_get_or_append(extra->collection, id);
@@ -130,7 +130,7 @@ static void visit_null_pairs(archive *archive, path_stack_t path, unique_id_t oi
 {
         UNUSED(archive);
         UNUSED(path);
-        JAK_ASSERT(capture);
+        assert(capture);
 
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, oid);
@@ -192,7 +192,7 @@ visit_enter_null_array_pairs(archive *archive, path_stack_t path, unique_id_t id
         UNUSED(num_pairs);
         UNUSED(capture);
 
-        JAK_ASSERT(capture);
+        assert(capture);
 
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, id);
@@ -216,7 +216,7 @@ static void visit_null_array_pair(archive *archive, path_stack_t path, unique_id
         UNUSED(num_nulls);
         UNUSED(capture);
 
-        JAK_ASSERT(capture);
+        assert(capture);
 
         struct converter_capture *extra = (struct converter_capture *) capture;
         encoded_doc *doc = encoded_doc_collection_get_or_append(extra->collection, id);

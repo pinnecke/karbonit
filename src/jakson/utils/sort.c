@@ -63,7 +63,7 @@ int sort_qsort_indicies_wargs(size_t *indices, const void *base, size_t width, l
 
         i64 h = nelemens - 1;
         i64 *stack = MALLOC((h + 1) * sizeof(i64));
-        JAK_ASSERT (stack);
+        assert (stack);
 
         i64 top = -1;
         i64 l = 0;

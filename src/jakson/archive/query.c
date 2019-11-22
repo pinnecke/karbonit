@@ -43,7 +43,7 @@ struct sid_to_offset {
     }                                                                                                                  \
                                                                                                                        \
     if (obj->flags.bits.bit_flag_name) {                                                                               \
-        JAK_ASSERT(obj->props.offset_name != 0);                                                                           \
+        assert(obj->props.offset_name != 0);                                                                           \
         memfile_seek(&obj->file, obj->props.offset_name);                                                       \
         fixed_prop prop;                                                                                      \
         int_embedded_fixed_props_read(&prop, &obj->file);                                                       \
@@ -198,7 +198,7 @@ static char *fetch_string_from_file(bool *decode_success, FILE *disk_file, size_
 
 static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
 {
-        JAK_ASSERT(query);
+        assert(query);
 
         strid_iter strid_iter;
         strid_info *info;
@@ -274,7 +274,7 @@ static char *fetch_string_by_id_via_index(query *query, struct sid_to_offset *in
 
 char *query_fetch_string_by_id(query *query, archive_field_sid_t id)
 {
-        JAK_ASSERT(query);
+        assert(query);
 
         bool has_cache = false;
         archive_hash_query_string_id_cache(&has_cache, query->archive);
@@ -299,9 +299,9 @@ char *query_fetch_string_by_id_nocache(query *query, archive_field_sid_t id)
 char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
                                          size_t num_offs)
 {
-        JAK_ASSERT(query);
-        JAK_ASSERT(offs);
-        JAK_ASSERT(strlens);
+        assert(query);
+        assert(offs);
+        assert(strlens);
 
         FILE *file;
 
@@ -453,9 +453,9 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                                 idxs_matching = tmp;
                         }
                 }
-                JAK_ASSERT(info_len <= str_cap);
+                assert(info_len <= str_cap);
                 for (step_len = 0; step_len < info_len; step_len++) {
-                        JAK_ASSERT(step_len < str_cap);
+                        assert(step_len < str_cap);
                         str_offs[step_len] = info[step_len].offset;
                         str_lens[step_len] = info[step_len].strlen;
                 }
@@ -479,7 +479,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                 free(strings);
 
                 for (size_t i = 0; i < num_matching; i++) {
-                        JAK_ASSERT (idxs_matching[i] < info_len);
+                        assert (idxs_matching[i] < info_len);
                         result_ids[result_len++] = info[idxs_matching[i]].id;
                         if (pred_limit > 0 && result_len == (size_t) pred_limit) {
                                 goto stop_search_and_return;

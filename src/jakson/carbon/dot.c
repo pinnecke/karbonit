@@ -41,8 +41,8 @@ struct dot_token {
 
 static const char *next_token(struct dot_token *token, const char *str)
 {
-        JAK_ASSERT(token);
-        JAK_ASSERT(str);
+        assert(token);
+        assert(str);
 
         str = strings_skip_blanks(str);
         char c = *str;
@@ -190,7 +190,7 @@ bool dot_add_nkey(dot *dst, const char *key, size_t len)
                         size_t l = strlen(str_wo_rightspaces);
                         node->name.string[l - 1] = '\0';
                 }
-                JAK_ASSERT(!strings_is_enquoted(node->name.string));
+                assert(!strings_is_enquoted(node->name.string));
                 return true;
         } else {
                 return error(ERR_OUTOFBOUNDS, NULL);

@@ -314,9 +314,9 @@ bool printer_object_prop_name(printer *printer, str_buf *str,
 
 bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
 {
-        JAK_ASSERT(it);
-        JAK_ASSERT(printer);
-        JAK_ASSERT(buffer);
+        assert(it);
+        assert(printer);
+        assert(buffer);
         bool is_null_value = false;
         bool first_entry = true;
         printer_object_begin(printer, buffer);
@@ -461,9 +461,9 @@ bool printer_print_object(obj_it *it, printer *printer, str_buf *buffer)
 bool printer_print_array(arr_it *it, printer *printer, str_buf *buffer,
                                 bool is_record_container)
 {
-        JAK_ASSERT(it);
-        JAK_ASSERT(printer);
-        JAK_ASSERT(buffer);
+        assert(it);
+        assert(printer);
+        assert(buffer);
 
         bool first_entry = true;
         bool has_entries = false;

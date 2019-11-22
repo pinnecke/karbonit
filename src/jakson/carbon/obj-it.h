@@ -9,7 +9,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/arr-it.h>
 #include <jakson/carbon/prop.h>

@@ -16,7 +16,7 @@
  */
 
 #include <jakson/carbon/abstract.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 
 bool abstract_type(abstract_e *type, memfile *memfile)
 {

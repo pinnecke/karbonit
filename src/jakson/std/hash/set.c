@@ -90,15 +90,15 @@ hashset *hashset_cpy(hashset *src)
 
                 hashset_create(cpy, src->key_data.elem_size, src->table.cap_elems);
 
-                JAK_ASSERT(src->key_data.cap_elems == src->table.cap_elems);
-                JAK_ASSERT(src->key_data.num_elems <= src->table.num_elems);
+                assert(src->key_data.cap_elems == src->table.cap_elems);
+                assert(src->key_data.num_elems <= src->table.num_elems);
 
                 vector_cpy_to(&cpy->key_data, &src->key_data);
                 vector_cpy_to(&cpy->table, &src->table);
                 cpy->size = src->size;
 
-                JAK_ASSERT(cpy->key_data.cap_elems == cpy->table.cap_elems);
-                JAK_ASSERT(cpy->key_data.num_elems <= cpy->table.num_elems);
+                assert(cpy->key_data.cap_elems == cpy->table.cap_elems);
+                assert(cpy->key_data.num_elems <= cpy->table.num_elems);
 
                 hashset_unlock(src);
                 return cpy;
@@ -110,8 +110,8 @@ hashset *hashset_cpy(hashset *src)
 
 bool hashset_clear(hashset *map)
 {
-        JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
+        assert(map->key_data.cap_elems == map->table.cap_elems);
+        assert(map->key_data.num_elems <= map->table.num_elems);
 
         hashset_lock(map);
 
@@ -119,8 +119,8 @@ bool hashset_clear(hashset *map)
 
         map->size = 0;
 
-        JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
+        assert(map->key_data.cap_elems == map->table.cap_elems);
+        assert(map->key_data.num_elems <= map->table.num_elems);
 
         if (!status) {
                 error(ERR_OPPFAILED, NULL);
@@ -220,7 +220,7 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
                                 }
                         }
 
-                        JAK_ASSERT(fitting_bucket_found == true);
+                        assert(fitting_bucket_found == true);
                         bucket_idx = displace_idx;
                         bucket = VECTOR_GET(&map->table, bucket_idx, hashset_bucket);
                 }
@@ -243,8 +243,8 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
 
 bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_pairs)
 {
-        JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
+        assert(map->key_data.cap_elems == map->table.cap_elems);
+        assert(map->key_data.num_elems <= map->table.num_elems);
 
         hashset_lock(map);
 
@@ -381,8 +381,8 @@ bool hashset_rehash(hashset *map)
         vector_enlarge_size_to_capacity(&map->table);
         vector_zero_memory(&map->table);
 
-        JAK_ASSERT(map->key_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT(map->key_data.num_elems <= map->table.num_elems);
+        assert(map->key_data.cap_elems == map->table.cap_elems);
+        assert(map->key_data.num_elems <= map->table.num_elems);
 
         for (size_t i = 0; i < cpy->table.num_elems; i++) {
                 hashset_bucket *bucket = VECTOR_GET(&cpy->table, i, hashset_bucket);

@@ -7,7 +7,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/field.h>
 

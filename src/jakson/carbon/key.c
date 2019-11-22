@@ -148,7 +148,7 @@ bool key_read_type(key_e *out, memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
 
-        JAK_ASSERT(marker == MNOKEY || marker == MAUTOKEY || marker ==
+        assert(marker == MNOKEY || marker == MAUTOKEY || marker ==
                                                                                                        MUKEY ||
                    marker == MIKEY || marker == MSKEY);
 

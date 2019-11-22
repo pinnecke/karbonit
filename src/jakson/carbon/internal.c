@@ -462,7 +462,7 @@ offset_t internal_payload_after_header(rec *doc)
 
 u64 internal_header_get_commit_hash(rec *doc)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
         u64 rev = 0;
         key_e key_type;
 
@@ -480,33 +480,33 @@ u64 internal_header_get_commit_hash(rec *doc)
 
 void internal_history_push(vec ofType(offset_t) *vec, offset_t off)
 {
-        JAK_ASSERT(vec);
+        assert(vec);
         vector_push(vec, &off, 1);
 }
 
 void internal_history_clear(vec ofType(offset_t) *vec)
 {
-        JAK_ASSERT(vec);
+        assert(vec);
         vector_clear(vec);
 }
 
 offset_t internal_history_pop(vec ofType(offset_t) *vec)
 {
-        JAK_ASSERT(vec);
-        JAK_ASSERT(internal_history_has(vec));
+        assert(vec);
+        assert(internal_history_has(vec));
         return *(offset_t *) vector_pop(vec);
 }
 
 offset_t internal_history_peek(vec ofType(offset_t) *vec)
 {
-        JAK_ASSERT(vec);
-        JAK_ASSERT(internal_history_has(vec));
+        assert(vec);
+        assert(internal_history_has(vec));
         return *(offset_t *) vector_peek(vec);
 }
 
 bool internal_history_has(vec ofType(offset_t) *vec)
 {
-        JAK_ASSERT(vec);
+        assert(vec);
         return !vector_is_empty(vec);
 }
 
@@ -563,19 +563,19 @@ bool internal_field_drop(field *field)
 
 bool internal_field_object_it_opened(field *field)
 {
-        JAK_ASSERT(field);
+        assert(field);
         return field->obj_it.created && field->object != NULL;
 }
 
 bool internal_field_array_opened(field *field)
 {
-        JAK_ASSERT(field);
+        assert(field);
         return field->arr_it.created && field->array != NULL;
 }
 
 bool internal_field_column_it_opened(field *field)
 {
-        JAK_ASSERT(field);
+        assert(field);
         return field->col_it_created && field->column != NULL;
 }
 
@@ -907,7 +907,7 @@ col_it *internal_field_column_value(field *field)
 
 bool internal_field_remove(memfile *memfile, field_e type)
 {
-        JAK_ASSERT((field_e) *memfile_peek(memfile, sizeof(u8)) == type);
+        assert((field_e) *memfile_peek(memfile, sizeof(u8)) == type);
         offset_t start_off = memfile_tell(memfile);
         memfile_skip(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
@@ -987,7 +987,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         offset_t end_off = internal_arr_it_memfilepos(&it);
                         arr_it_drop(&it);
 
-                        JAK_ASSERT(begin_off < end_off);
+                        assert(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;
@@ -1038,7 +1038,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         col_it_fast_forward(&it);
                         offset_t end_off = col_it_memfilepos(&it);
 
-                        JAK_ASSERT(begin_off < end_off);
+                        assert(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;
@@ -1054,7 +1054,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         offset_t end_off = internal_obj_it_memfile_pos(&it);
                         obj_it_drop(&it);
 
-                        JAK_ASSERT(begin_off < end_off);
+                        assert(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);
                 }
                         break;

@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/json/json-parser.h>
 #include <jakson/carbon/internal.h>

@@ -7,8 +7,8 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
-#include <jakson/mem/block.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memblock.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/stdx/unique_id.h>
 #include <jakson/std/string.h>
 #include <jakson/std/spinlock.h>
@@ -30,8 +30,8 @@
 #include <jakson/std/hash.h>
 #include <jakson/archive/huffman.h>
 #include <jakson/json/json-parser.h>
-#include <jakson/mem/block.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memblock.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/stdx/unique_id.h>
 #include <jakson/utils/sort.h>
 #include <jakson/std/async.h>
@@ -186,7 +186,7 @@ bool carbon_has_key(key_e type);
 bool key_is_unsigned(key_e type);
 bool key_is_signed(key_e type);
 bool key_is_string(key_e type);
-bool carbon_clone(rec *clone, rec *doc);
+void carbon_clone(rec *clone, rec *doc);
 bool carbon_commit_hash(u64 *hash, rec *doc);
 
 /** Checks if the records most-outer array is annotated as a multi set abstract type. Returns true if the record

@@ -187,8 +187,8 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
 
 void json_token_dup(json_token *dst, const json_token *src)
 {
-        JAK_ASSERT(dst);
-        JAK_ASSERT(src);
+        assert(dst);
+        assert(src);
         memcpy(dst, src, sizeof(json_token));
 }
 
@@ -493,7 +493,7 @@ bool parse_members(json_members *members,
 
 static bool parse_object(json_object *object, vec ofType(json_token) *token_stream, size_t *token_idx)
 {
-        JAK_ASSERT(get_token(token_stream, *token_idx).type == OBJECT_OPEN);
+        assert(get_token(token_stream, *token_idx).type == OBJECT_OPEN);
         NEXT_TOKEN(token_idx);  /** Skip '{' */
         object->value = MALLOC(sizeof(json_members));
 
@@ -516,7 +516,7 @@ static bool parse_array(json_array *array, vec ofType(json_token) *token_stream,
 {
         json_token token = get_token(token_stream, *token_idx);
         UNUSED(token);
-        JAK_ASSERT(token.type == ARRAY_OPEN);
+        assert(token.type == ARRAY_OPEN);
         NEXT_TOKEN(token_idx); /** Skip '[' */
 
         vector_create(&array->elements.elements, sizeof(json_element), 250);
@@ -532,7 +532,7 @@ static void parse_string(json_string *string, vec ofType(json_token) *token_stre
                          size_t *token_idx)
 {
         json_token token = get_token(token_stream, *token_idx);
-        JAK_ASSERT(token.type == LITERAL_STRING);
+        assert(token.type == LITERAL_STRING);
 
         string->value = MALLOC(token.length + 1);
         if (LIKELY(token.length > 0)) {
@@ -546,7 +546,7 @@ static void parse_number(json_number *number, vec ofType(json_token) *token_stre
                          size_t *token_idx)
 {
         json_token token = get_token(token_stream, *token_idx);
-        JAK_ASSERT(token.type == LITERAL_FLOAT || token.type == LITERAL_INT);
+        assert(token.type == LITERAL_FLOAT || token.type == LITERAL_INT);
 
         char *value = MALLOC(token.length + 1);
         strncpy(value, token.string, token.length);

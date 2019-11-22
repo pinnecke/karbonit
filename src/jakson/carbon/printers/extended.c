@@ -226,7 +226,7 @@ static bool _json_printer_extended_print_binary(printer *self, str_buf *buffer, 
                 error_if_and_return(!extra->buffer, ERR_REALLOCERR, NULL);
         }
 
-        JAK_ASSERT(extra->buffer_size >= required_buff_size);
+        assert(extra->buffer_size >= required_buff_size);
         ZERO_MEMORY(extra->buffer, extra->buffer_size);
         /** copy binary data into buffer, and leave one (zero'd) byte free; null-termination is required by libb64 */
         memcpy(data_of(extra->buffer), binary->blob, binary->blob_len);

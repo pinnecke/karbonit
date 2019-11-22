@@ -486,7 +486,7 @@ bool insert_object_end(obj_state *state)
         internal_obj_it_create(&scan, &state->parent->file, memfile_tell(&state->parent->file) - 1);
         while (obj_it_next(&scan)) {}
 
-        JAK_ASSERT(*memfile_peek(&scan.file, sizeof(char)) == MOBJECT_END);
+        assert(*memfile_peek(&scan.file, sizeof(char)) == MOBJECT_END);
         memfile_read(&scan.file, sizeof(char));
 
         state->end = memfile_tell(&scan.file);
@@ -639,7 +639,7 @@ bool insert_column_list_end(col_state *state_in)
 
 static bool inserter_refresh_mod_size(insert *in, i64 mod_size)
 {
-        JAK_ASSERT(mod_size > 0);
+        assert(mod_size > 0);
 
         i64 *target = NULL;
         switch (in->context_type) {
@@ -922,7 +922,7 @@ u64 insert_prop_column_end(col_state *state_in)
 static bool
 write_field_data(insert *in, u8 field_marker, const void *base, u64 nbytes)
 {
-        JAK_ASSERT(in->context_type == ARRAY || in->context_type == OBJECT);
+        assert(in->context_type == ARRAY || in->context_type == OBJECT);
 
         memfile_ensure_space(&in->file, sizeof(u8) + nbytes);
         memfile_write(&in->file, &field_marker, sizeof(u8));
@@ -931,7 +931,7 @@ write_field_data(insert *in, u8 field_marker, const void *base, u64 nbytes)
 
 static bool push_in_column(insert *in, const void *base, field_e type)
 {
-        JAK_ASSERT(in->context_type == COLUMN);
+        assert(in->context_type == COLUMN);
 
         size_t type_size = internal_get_type_value_size(type);
 

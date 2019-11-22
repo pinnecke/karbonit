@@ -25,7 +25,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,24 +86,25 @@ u8 uintvar_stream_write(uintvar_stream_t dst, u64 value);
 
 #define UINTVAR_STREAM_REQUIRED_BLOCKS(value)                                                                      \
 ({                                                                                                                     \
+        u64 cmp_value = value;                                                                  \
         u8 num_blocks_required;                                                                                    \
-        if (value < 128u) {                                                                                            \
+        if (cmp_value < 128u) {                                                                                            \
                 num_blocks_required = 1;                                                                               \
-        } else if (value < 16384u) {                                                                                   \
+        } else if (cmp_value < 16384u) {                                                                                   \
                 num_blocks_required = 2;                                                                               \
-        } else if (value < 2097152u) {                                                                                 \
+        } else if (cmp_value < 2097152u) {                                                                                 \
                 num_blocks_required = 3;                                                                               \
-        } else if (value < 268435456u) {                                                                               \
+        } else if (cmp_value < 268435456u) {                                                                               \
                 num_blocks_required = 4;                                                                               \
-        } else if (value < 34359738368u) {                                                                             \
+        } else if (cmp_value < 34359738368u) {                                                                             \
                 num_blocks_required = 5;                                                                               \
-        } else if (value < 4398046511104u) {                                                                           \
+        } else if (cmp_value < 4398046511104u) {                                                                           \
                 num_blocks_required = 6;                                                                               \
-        } else if (value < 562949953421312u) {                                                                         \
+        } else if (cmp_value < 562949953421312u) {                                                                         \
                 num_blocks_required = 7;                                                                               \
-        } else if (value < 72057594037927936u) {                                                                       \
+        } else if (cmp_value < 72057594037927936u) {                                                                       \
                 num_blocks_required = 8;                                                                               \
-        } else if (value < 9223372036854775808u) {                                                                     \
+        } else if (cmp_value < 9223372036854775808u) {                                                                     \
                 num_blocks_required = 9;                                                                               \
         } else {                                                                                                       \
                 num_blocks_required = 10;                                                                              \

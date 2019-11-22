@@ -24,8 +24,8 @@
 
 #include <jakson/forwdecl.h>
 #include <jakson/stdinc.h>
-#include <jakson/mem/block.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memblock.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/archive/pack.h>
 #include <jakson/archive/column_doc.h>
 #include <jakson/archive/io.h>

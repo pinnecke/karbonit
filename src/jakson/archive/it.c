@@ -24,7 +24,7 @@
 
 static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
 {
-        JAK_ASSERT(obj);
+        assert(obj);
         offset_t object_off;
         object_header *header;
         object_flags_u flags;
@@ -113,7 +113,7 @@ inline static offset_t offset_by_state(prop_iter *iter)
 
 static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *memfile)
 {
-        JAK_ASSERT(state->current_column_group.current_column.current_entry.idx
+        assert(state->current_column_group.current_column.current_entry.idx
                    < state->current_column_group.current_column.num_elem);
 
         u32 current_idx = state->current_column_group.current_column.current_entry.idx;
@@ -130,14 +130,14 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *me
 
 static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile)
 {
-        JAK_ASSERT(state->current_column_group.current_column.idx < state->current_column_group.num_columns);
+        assert(state->current_column_group.current_column.idx < state->current_column_group.num_columns);
 
         u32 current_idx = state->current_column_group.current_column.idx;
         offset_t column_off = state->current_column_group.column_offs[current_idx];
         memfile_seek(memfile, column_off);
         const column_header *header = MEMFILE_READ_TYPE(memfile, column_header);
 
-        JAK_ASSERT(header->marker == MARKER_SYMBOL_COLUMN);
+        assert(header->marker == MARKER_SYMBOL_COLUMN);
         state->current_column_group.current_column.name = header->column_name;
         state->current_column_group.current_column.type = int_marker_to_field_type(header->value_type);
 
@@ -153,10 +153,10 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
 
 static bool collection_iter_read_next_column_group(collection_iter_state *state, memfile *memfile)
 {
-        JAK_ASSERT(state->current_column_group_idx < state->num_column_groups);
+        assert(state->current_column_group_idx < state->num_column_groups);
         memfile_seek(memfile, state->column_group_offsets[state->current_column_group_idx]);
         const column_group_header *header = MEMFILE_READ_TYPE(memfile, column_group_header);
-        JAK_ASSERT(header->marker == MARKER_SYMBOL_COLUMN_GROUP);
+        assert(header->marker == MARKER_SYMBOL_COLUMN_GROUP);
         state->current_column_group.num_columns = header->num_columns;
         state->current_column_group.num_objects = header->num_objects;
         state->current_column_group.object_ids = MEMFILE_READ_TYPE_LIST(memfile, unique_id_t,
@@ -170,32 +170,32 @@ static bool collection_iter_read_next_column_group(collection_iter_state *state,
 
 static void prop_iter_cursor_init(prop_iter *iter)
 {
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_NULLS, prop_offsets.nulls));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_BOOLS, prop_offsets.bools));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT8S, prop_offsets.int8s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT16S, prop_offsets.int16s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT32S, prop_offsets.int32s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT64S, prop_offsets.int64s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT8S, prop_offsets.uint8s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT16S, prop_offsets.uint16s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT32S, prop_offsets.uint32s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT64S, prop_offsets.uint64s));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_FLOATS, prop_offsets.floats));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_STRINGS, prop_offsets.strings));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_OBJECTS, prop_offsets.objects));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_NULL_ARRAYS, prop_offsets.null_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_BOOL_ARRAYS, prop_offsets.bool_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT8_ARRAYS, prop_offsets.int8_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT16_ARRAYS, prop_offsets.int16_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT32_ARRAYS, prop_offsets.int32_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT64_ARRAYS, prop_offsets.int64_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT8_ARRAYS, prop_offsets.uint8_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT16_ARRAYS, prop_offsets.uint16_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT32_ARRAYS, prop_offsets.uint32_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT64_ARRAYS, prop_offsets.uint64_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_FLOAT_ARRAYS, prop_offsets.float_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_STRING_ARRAYS, prop_offsets.string_arrays));
-        JAK_ASSERT(STATE_AND_PROPERTY_EXISTS(PROP_ITER_OBJECT_ARRAYS, prop_offsets.object_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_NULLS, prop_offsets.nulls));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_BOOLS, prop_offsets.bools));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT8S, prop_offsets.int8s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT16S, prop_offsets.int16s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT32S, prop_offsets.int32s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT64S, prop_offsets.int64s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT8S, prop_offsets.uint8s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT16S, prop_offsets.uint16s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT32S, prop_offsets.uint32s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT64S, prop_offsets.uint64s));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_FLOATS, prop_offsets.floats));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_STRINGS, prop_offsets.strings));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_OBJECTS, prop_offsets.objects));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_NULL_ARRAYS, prop_offsets.null_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_BOOL_ARRAYS, prop_offsets.bool_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT8_ARRAYS, prop_offsets.int8_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT16_ARRAYS, prop_offsets.int16_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT32_ARRAYS, prop_offsets.int32_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_INT64_ARRAYS, prop_offsets.int64_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT8_ARRAYS, prop_offsets.uint8_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT16_ARRAYS, prop_offsets.uint16_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT32_ARRAYS, prop_offsets.uint32_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_UINT64_ARRAYS, prop_offsets.uint64_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_FLOAT_ARRAYS, prop_offsets.float_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_STRING_ARRAYS, prop_offsets.string_arrays));
+        assert(STATE_AND_PROPERTY_EXISTS(PROP_ITER_OBJECT_ARRAYS, prop_offsets.object_arrays));
 
         if (iter->mode == PROP_ITER_MODE_COLLECTION) {
                 iter->mode_collection.collection_start_off = offset_by_state(iter);
@@ -399,9 +399,7 @@ static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
                                             memblock *memblock, offset_t object_offset)
 {
         iter->mask = mask;
-        if (!memfile_open(&iter->record_table_memfile, memblock, READ_ONLY)) {
-                return error(ERR_MEMFILEOPEN_FAILED, NULL);
-        }
+        memfile_open(&iter->record_table_memfile, memblock, READ_ONLY);
         if (!memfile_seek(&iter->record_table_memfile, object_offset)) {
                 return error(ERR_MEMFILESEEK_FAILED, NULL);
         }
@@ -754,7 +752,7 @@ static void value_vector_init_object_basic(archive_value_vector *value)
 
 static bool value_vector_init_fixed_length_types_basic(archive_value_vector *value)
 {
-        JAK_ASSERT(!value->is_array);
+        assert(!value->is_array);
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_INT8:
@@ -811,15 +809,15 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
 
 static void value_vector_init_fixed_length_types_null_arrays(archive_value_vector *value)
 {
-        JAK_ASSERT(value->is_array);
-        JAK_ASSERT(value->prop_type == ARCHIVE_FIELD_NULL);
+        assert(value->is_array);
+        assert(value->prop_type == ARCHIVE_FIELD_NULL);
         value->data.arrays.meta.num_nulls_contained =
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 }
 
 static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
 {
-        JAK_ASSERT (value->is_array);
+        assert (value->is_array);
 
         value->data.arrays.meta.array_lengths =
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
@@ -904,10 +902,7 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
         value->data_off = prop_iter->mode_object.prop_data_off;
         value->object_id = prop_iter->object.object_id;
 
-        if (!memfile_open(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY)) {
-                error(ERR_MEMFILEOPEN_FAILED, NULL);
-                return false;
-        }
+        memfile_open(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY);
         if (!memfile_skip(&value->record_table_memfile, value->data_off)) {
                 return error(ERR_MEMFILESKIP_FAILED, NULL);
         }

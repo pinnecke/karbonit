@@ -130,44 +130,44 @@ typedef struct string_dict {
  */
 static BUILT_IN(bool) string_dict_drop(string_dict *dic)
 {
-        JAK_ASSERT(dic->drop);
+        assert(dic->drop);
         return dic->drop(dic);
 }
 
 static BUILT_IN(bool)
 string_dict_insert(string_dict *dic, archive_field_sid_t **out, char *const *strings, size_t nstrings, size_t nthreads)
 {
-        JAK_ASSERT(dic->insert);
+        assert(dic->insert);
         return dic->insert(dic, out, strings, nstrings, nthreads);
 }
 
 static BUILT_IN(bool)  string_dict_reset_counters(string_dict *dic)
 {
-        JAK_ASSERT(dic->resetCounters);
+        assert(dic->resetCounters);
         return dic->resetCounters(dic);
 }
 
 static BUILT_IN(bool)  string_dict_get_counters(str_hash_counters *counters, string_dict *dic)
 {
-        JAK_ASSERT(dic->counters);
+        assert(dic->counters);
         return dic->counters(dic, counters);
 }
 
 static BUILT_IN(bool)  string_dict_remove(string_dict *dic, archive_field_sid_t *strings, size_t num_strings)
 {
-        JAK_ASSERT(dic->remove);
+        assert(dic->remove);
         return dic->remove(dic, strings, num_strings);
 }
 
 static BUILT_IN(bool) string_dict_locate_safe(archive_field_sid_t **out, bool **found_mask, size_t *num_not_found, string_dict *dic, char *const *keys, size_t num_keys)
 {
-        JAK_ASSERT(dic->locate_safe);
+        assert(dic->locate_safe);
         return dic->locate_safe(dic, out, found_mask, num_not_found, keys, num_keys);
 }
 
 static BUILT_IN(bool) string_dict_locate_fast(archive_field_sid_t **out, string_dict *dic, char *const *keys, size_t nkeys)
 {
-        JAK_ASSERT(dic->locate_fast);
+        assert(dic->locate_fast);
         return dic->locate_fast(dic, out, keys, nkeys);
 }
 
@@ -179,7 +179,7 @@ static BUILT_IN(char **)string_dict_extract(string_dict *dic, const archive_fiel
 static BUILT_IN(bool) string_dict_free(string_dict *dic, void *ptr)
 {
         if (ptr) {
-                JAK_ASSERT(dic->free);
+                assert(dic->free);
                 return dic->free(dic, ptr);
         } else {
                 return true;
@@ -188,13 +188,13 @@ static BUILT_IN(bool) string_dict_free(string_dict *dic, void *ptr)
 
 static BUILT_IN(bool) string_dict_num_distinct(size_t *num, string_dict *dic)
 {
-        JAK_ASSERT(dic->num_distinct);
+        assert(dic->num_distinct);
         return dic->num_distinct(dic, num);
 }
 
 static BUILT_IN(bool) string_dict_get_contents(vec ofType (char *) *strings, vec ofType(archive_field_sid_t) *string_ids, string_dict *dic)
 {
-        JAK_ASSERT(dic->get_contents);
+        assert(dic->get_contents);
         return dic->get_contents(dic, strings, string_ids);
 }
 

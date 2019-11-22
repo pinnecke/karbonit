@@ -12,8 +12,8 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/mem/file.h>
-#include <jakson/mem/block.h>
+#include <jakson/mem/memfile.h>
+#include <jakson/mem/memblock.h>
 #include <jakson/error.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/find.h>

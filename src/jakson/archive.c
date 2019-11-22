@@ -32,8 +32,8 @@
 #include <jakson/archive.h>
 #include <jakson/archive/encode_sync.h>
 #include <jakson/stdinc.h>
-#include <jakson/mem/block.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memblock.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/archive/huffman.h>
 #include <jakson/archive.h>
 
@@ -523,7 +523,7 @@ static bool
 write_primitive_fixed_value_column(memfile *memfile, archive_field_e type,
                                    vec ofType(T) *values_vec)
 {
-        JAK_ASSERT (type != ARCHIVE_FIELD_OBJECT); /** use 'write_primitive_var_value_column' instead */
+        assert (type != ARCHIVE_FIELD_OBJECT); /** use 'write_primitive_var_value_column' instead */
 
         switch (type) {
                 case ARCHIVE_FIELD_NULL:
@@ -644,7 +644,7 @@ static bool write_array_prop(offset_t *offset, memfile *memfile,
                              vec ofType(...) *values,
                              offset_t root_object_header_offset)
 {
-        JAK_ASSERT(keys->num_elems == values->num_elems);
+        assert(keys->num_elems == values->num_elems);
 
         if (keys->num_elems > 0) {
                 prop_header header =
@@ -775,8 +775,8 @@ static bool write_fixed_props(offset_t *offset, memfile *memfile,
                               vec ofType(archive_field_sid_t) *keys, archive_field_e type,
                               vec ofType(T) *values)
 {
-        JAK_ASSERT(!values || keys->num_elems == values->num_elems);
-        JAK_ASSERT(type != ARCHIVE_FIELD_OBJECT); /** use 'write_var_props' instead */
+        assert(!values || keys->num_elems == values->num_elems);
+        assert(type != ARCHIVE_FIELD_OBJECT); /** use 'write_var_props' instead */
 
         if (keys->num_elems > 0) {
                 prop_header header =
@@ -807,7 +807,7 @@ static bool write_var_props(offset_t *offset, memfile *memfile,
                             vec ofType(column_doc_obj) *objects,
                             offset_t root_object_header_offset)
 {
-        JAK_ASSERT(!objects || keys->num_elems == objects->num_elems);
+        assert(!objects || keys->num_elems == objects->num_elems);
 
         if (keys->num_elems > 0) {
                 prop_header header = {.marker = MARKER_SYMBOL_PROP_OBJECT, .num_entries = keys->num_elems};
@@ -988,7 +988,7 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
 static bool write_column(memfile *memfile, column_doc_column *column,
                          offset_t root_object_header_offset)
 {
-        JAK_ASSERT(column->array_positions.num_elems == column->values.num_elems);
+        assert(column->array_positions.num_elems == column->values.num_elems);
 
         column_header header = {.marker = global_marker_symbols[MARKER_TYPE_COLUMN].symbol, .column_name = column
                 ->key_name, .value_type = global_marker_symbols[global_value_array_marker_mapping[column->type].marker]
@@ -1349,7 +1349,7 @@ static char *embedded_dic_flags_to_string(const string_tab_flags_u *flags)
         if (flags->value == 0) {
                 strcpy(string, " uncompressed");
                 length = strlen(string);
-                JAK_ASSERT(length <= max);
+                assert(length <= max);
         } else {
 
                 for (size_t i = 0; i < ARRAY_LENGTH(global_pack_strategy_register); i++) {
@@ -1374,12 +1374,12 @@ static char *record_header_flags_to_string(const record_flags *flags)
         if (flags->value == 0) {
                 strcpy(string, " none");
                 length = strlen(string);
-                JAK_ASSERT(length <= max);
+                assert(length <= max);
         } else {
                 if (flags->bits.is_sorted) {
                         strcpy(string + length, " sorted");
                         length = strlen(string);
-                        JAK_ASSERT(length <= max);
+                        assert(length <= max);
                 }
         }
         string[length] = '\0';
@@ -1397,7 +1397,7 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
 
         doc_bulk_get_dic_contents(&strings, &string_ids, context);
 
-        JAK_ASSERT(strings->num_elems == string_ids->num_elems);
+        assert(strings->num_elems == string_ids->num_elems);
 
         flags.value = 0;
         if (!pack_by_type(&strategy, compressor)) {
@@ -2143,7 +2143,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
 
         offset = memfile_tell(memfile);
         char end_marker = *MEMFILE_READ_TYPE(memfile, char);
-        JAK_ASSERT (end_marker == MARKER_SYMBOL_OBJECT_END);
+        assert (end_marker == MARKER_SYMBOL_OBJECT_END);
         nesting_level--;
         fprintf(file, "0x%04x ", offset);
         INTENT_LINE(nesting_level);
@@ -2191,7 +2191,7 @@ static void print_record_header_from_memfile(FILE *file, memfile *memfile)
 static bool print_header_from_memfile(FILE *file, memfile *memfile)
 {
         unsigned offset = memfile_tell(memfile);
-        JAK_ASSERT(memfile_size(memfile) > sizeof(archive_header));
+        assert(memfile_size(memfile) > sizeof(archive_header));
         archive_header *header = MEMFILE_READ_TYPE(memfile, archive_header);
         if (!is_valid_file(header)) {
                 return error(ERR_NOARCHIVEFILE, NULL);
@@ -2302,7 +2302,7 @@ static object_flags_u *get_flags(object_flags_u *flags, column_doc_obj *columndo
         flags->bits.has_float_array_props = (columndoc->float_array_prop_keys.num_elems > 0);
         flags->bits.has_string_array_props = (columndoc->string_array_prop_keys.num_elems > 0);
         flags->bits.has_object_array_props = (columndoc->obj_array_props.num_elems > 0);
-        //JAK_ASSERT(flags->value != 0);
+        //assert(flags->value != 0);
         return flags;
 }
 
@@ -2485,7 +2485,7 @@ static bool init_decompressor(packer *strategy, u8 flags)
 
 static bool read_stringtable(string_table *table, FILE *disk_file)
 {
-        JAK_ASSERT(disk_file);
+        assert(disk_file);
 
         string_table_header header;
         string_tab_flags_u flags;
@@ -2527,10 +2527,7 @@ static bool read_record(record_header *header_read, archive *archive, FILE *disk
                 }
 
                 memfile memfile;
-                if (memfile_open(&memfile, archive->record_table.record_db, READ_ONLY) != true) {
-                        error(ERR_CORRUPTED, NULL);
-                        status = false;
-                }
+                memfile_open(&memfile, archive->record_table.record_db, READ_ONLY);
                 if (*MEMFILE_PEEK(&memfile, char) != MARKER_SYMBOL_OBJECT_BEGIN) {
                         error(ERR_CORRUPTED, NULL);
                         status = false;

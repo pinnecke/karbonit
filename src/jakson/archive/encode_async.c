@@ -152,7 +152,7 @@ int encode_async_create(string_dict *dic, size_t capacity, size_t num_index_buck
 static bool _encode_async_create_extra(string_dict *self, size_t capacity, size_t num_index_buckets,
                               size_t approx_num_unique_str, size_t num_threads)
 {
-        JAK_ASSERT(self);
+        assert(self);
 
         self->extra = MALLOC(sizeof(struct async_extra));
         struct async_extra *extra = THIS_EXTRAS(self);
@@ -415,7 +415,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
 
                 vector_create(&entry->strings, sizeof(char *), JAK_MAX(1, carrier_num_strings[i]));
                 vector_push(&carrier_args, &entry, 1);
-                JAK_ASSERT (entry->strings.base != NULL);
+                assert (entry->strings.base != NULL);
 
                 struct parallel_insert_arg *carrier_arg = *VECTOR_GET(&carrier_args, i, struct parallel_insert_arg *);
                 carrier_arg->out = NULL;
@@ -536,7 +536,7 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
                 archive_field_sid_t global_string_id = strings[i];
                 uint_fast16_t owning_thread_id = GET_OWNER(global_string_id);
                 archive_field_sid_t localstring_id_t = GET_string_id_t(global_string_id);
-                JAK_ASSERT(owning_thread_id < num_threads);
+                assert(owning_thread_id < num_threads);
 
                 vector_push(string_map + owning_thread_id, &localstring_id_t, 1);
         }
@@ -609,7 +609,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
                 vector_create(&arg->keys_in, sizeof(char *), carrier_num_strings[thread_id]);
-                JAK_ASSERT (&arg->keys_in.base != NULL);
+                assert (&arg->keys_in.base != NULL);
         }
 
         TRACE(STRING_DIC_ASYNC_TAG, "computing per-thread str_buf subset for %zu strings", num_keys)
@@ -748,7 +748,7 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
                 archive_field_sid_t global_string_id = ids[i];
                 owning_thread_ids[i] = GET_OWNER(global_string_id);
                 archive_field_sid_t localstring_id_t = GET_string_id_t(global_string_id);
-                JAK_ASSERT(owning_thread_ids[i] < num_threads);
+                assert(owning_thread_ids[i] < num_threads);
 
                 struct parallel_extract_arg *arg = thread_args + owning_thread_ids[i];
                 local_thread_idx[i] = vector_length(&arg->local_ids_in);
@@ -847,7 +847,7 @@ static bool _encode_async_get_contents(string_dict *self, vec ofType (char *) *s
 
                 string_dict_get_contents(&local_string_results, &local_string_id_results, &carrier->local_dictionary);
 
-                JAK_ASSERT(local_string_id_results.num_elems == local_string_results.num_elems);
+                assert(local_string_id_results.num_elems == local_string_results.num_elems);
                 for (size_t k = 0; k < local_string_results.num_elems; k++) {
                         char *string = *VECTOR_GET(&local_string_results, k, char *);
                         archive_field_sid_t localstring_id_t = *VECTOR_GET(&local_string_id_results, k,

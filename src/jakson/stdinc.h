@@ -202,8 +202,6 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
     }
 #endif
 
-#define JAK_ASSERT(x) assert(x);
-
 #define CARBON_ARCHIVE_MAGIC                "MP/CARBON"
 #define CARBON_ARCHIVE_VERSION               1
 
@@ -249,7 +247,7 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
         ZERO_MEMORY(&name, sizeof(type));
 
 #define ZERO_MEMORY(dst, len)                                                                                      \
-    memset((void *) dst, 0, len);
+    memset((char *) (dst), 0, (len));
 
 #define cast(type, name, src)                                                                                      \
       type name = (type) src

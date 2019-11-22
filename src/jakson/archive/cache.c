@@ -124,7 +124,7 @@ char *string_id_cache_get(struct string_cache *cache, archive_field_sid_t id)
                 cursor = cursor->next;
         }
         char *result = query_fetch_string_by_id_nocache(&cache->query, id);
-        JAK_ASSERT(result);
+        assert(result);
         if (list->lest_recent->string != NULL) {
                 cache->statistics.num_evicted++;
         }

@@ -103,14 +103,14 @@ encode_sync_create(string_dict *dic, size_t capacity, size_t num_indx_buckets, s
 
 static void _encode_sync_lock(string_dict *self)
 {
-        JAK_ASSERT(self->tag == SYNC);
+        assert(self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
         spinlock_acquire(&extra->_encode_sync_lock);
 }
 
 static void _encode_sync_unlock(string_dict *self)
 {
-        JAK_ASSERT(self->tag == SYNC);
+        assert(self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
         spinlock_release(&extra->_encode_sync_lock);
 }
@@ -139,19 +139,19 @@ create_extra(string_dict *self, size_t capacity, size_t num_index_buckets, size_
 
 static struct sync_extra *this_extra(string_dict *self)
 {
-        JAK_ASSERT (self->tag == SYNC);
+        assert (self->tag == SYNC);
         return (struct sync_extra *) self->extra;
 }
 
 static int freelist_pop(archive_field_sid_t *out, string_dict *self)
 {
-        JAK_ASSERT (self->tag == SYNC);
+        assert (self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
         if (UNLIKELY(vector_is_empty(&extra->freelist))) {
                 size_t num_new_pos;
                 CHECK_SUCCESS(vector_grow(&num_new_pos, &extra->freelist));
                 CHECK_SUCCESS(vector_grow(NULL, &extra->contents));
-                JAK_ASSERT (extra->freelist.cap_elems == extra->contents.cap_elems);
+                assert (extra->freelist.cap_elems == extra->contents.cap_elems);
                 struct entry empty = {.in_use = false, .str    = NULL};
                 while (num_new_pos--) {
                         size_t new_pos = vector_length(&extra->contents);
@@ -165,10 +165,10 @@ static int freelist_pop(archive_field_sid_t *out, string_dict *self)
 
 static int freelist_push(string_dict *self, archive_field_sid_t idx)
 {
-        JAK_ASSERT (self->tag == SYNC);
+        assert (self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
         CHECK_SUCCESS(vector_push(&extra->freelist, &idx, 1));
-        JAK_ASSERT (extra->freelist.cap_elems == extra->contents.cap_elems);
+        assert (extra->freelist.cap_elems == extra->contents.cap_elems);
         return true;
 }
 
@@ -180,7 +180,7 @@ static bool _encode_sync_drop(string_dict *self)
         for (size_t i = 0; i < extra->contents.num_elems; i++) {
                 struct entry *entry = entries + i;
                 if (entry->in_use) {
-                        JAK_ASSERT (entry->str);
+                        assert (entry->str);
                         free(entry->str);
                         entry->str = NULL;
                 }
@@ -270,7 +270,7 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
                                 error_if_and_return(!pop_result, ERR_SLOTBROKEN, NULL)
                                 struct entry *entries = (struct entry *) vector_data(&extra->contents);
                                 struct entry *entry = entries + string_id;
-                                JAK_ASSERT (!entry->in_use);
+                                assert (!entry->in_use);
                                 entry->in_use = true;
                                 entry->str = strdup(strings[i]);
                                 ids_out[i] = string_id;
@@ -392,8 +392,8 @@ static char **_encode_sync_extract(string_dict *self, const archive_field_sid_t 
 
         for (size_t i = 0; i < num_ids; i++) {
                 archive_field_sid_t archive_field_sid_t = ids[i];
-                JAK_ASSERT(archive_field_sid_t < vector_length(&extra->contents));
-                JAK_ASSERT(
+                assert(archive_field_sid_t < vector_length(&extra->contents));
+                assert(
                         archive_field_sid_t == NULL_ENCODED_STRING || entries[archive_field_sid_t].in_use);
                 result[i] = archive_field_sid_t != NULL_ENCODED_STRING ? entries[archive_field_sid_t].str
                                                                                : NULL_TEXT;

@@ -23,7 +23,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 #include <jakson/stdinc.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/types.h>
 #include <jakson/stdx/unique_id.h>
 #include <jakson/archive/pack.h>

@@ -54,7 +54,7 @@ u32 mime_by_ext(const char *ext)
                 }
         }
         id = find_mime_by_ext("bin");
-        JAK_ASSERT(id < _global_mime_register);
+        assert(id < _global_mime_register);
         return id;
 }
 
@@ -62,7 +62,7 @@ const char *mime_by_id(u32 id)
 {
         if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
-                JAK_ASSERT(id < _global_mime_register);
+                assert(id < _global_mime_register);
         }
         return global_mime_register[id].type;
 }
@@ -71,7 +71,7 @@ const char *mime_ext_by_id(u32 id)
 {
         if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
-                JAK_ASSERT(id < _global_mime_register);
+                assert(id < _global_mime_register);
         }
         return global_mime_register[id].ext;
 }

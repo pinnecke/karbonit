@@ -241,11 +241,10 @@ bool carbon_has_key(key_e type)
         return type != CARBON_KEY_NOKEY;
 }
 
-bool carbon_clone(rec *clone, rec *doc)
+void carbon_clone(rec *clone, rec *doc)
 {
-        CHECK_SUCCESS(memblock_cpy(&clone->area, doc->area));
-        CHECK_SUCCESS(memfile_open(&clone->file, clone->area, READ_WRITE));
-        return true;
+        memblock_cpy(&clone->area, doc->area);
+        memfile_open(&clone->file, clone->area, READ_WRITE);
 }
 
 bool carbon_commit_hash(u64 *hash, rec *doc)
@@ -391,14 +390,14 @@ bool carbon_hexdump_print(FILE *file, rec *doc)
 
 static bool internal_drop(rec *doc)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
         memblock_drop(doc->area);
         return true;
 }
 
 static void carbon_header_init(rec *doc, key_e key_type)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
 
         memfile_seek(&doc->file, 0);
         key_create(&doc->file, key_type);

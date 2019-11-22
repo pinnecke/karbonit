@@ -350,7 +350,7 @@ static struct huff_node *trim_and_begin(vec ofType(HuffNode) *candidates)
 static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
                              const vec ofType(u32) *frequencies)
 {
-        JAK_ASSERT(UCHAR_MAX == frequencies->num_elems);
+        assert(UCHAR_MAX == frequencies->num_elems);
 
         vec ofType(HuffNode) candidates;
         vector_create(&candidates, sizeof(struct huff_node), UCHAR_MAX * UCHAR_MAX);
@@ -418,9 +418,9 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
                         panic(ERR_INTERNALERR);
                 }
 
-                JAK_ASSERT (!handle->prev);
+                assert (!handle->prev);
                 struct huff_node *end = seek_to_end(handle);
-                JAK_ASSERT(!end->next);
+                assert(!end->next);
                 end->next = new_node;
                 new_node->prev = end;
                 new_node->next = NULL;

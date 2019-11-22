@@ -118,7 +118,7 @@ str_hash_create_inmemory(str_hash *str_hash, size_t num_buckets, size_t cap_buck
 
 static int _str_hash_mem_drop(str_hash *self)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
         struct mem_extra *extra = this_get_exta(self);
         struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
         CHECK_SUCCESS(bucket_drop(data, extra->buckets.cap_elems));
@@ -130,7 +130,7 @@ static int _str_hash_mem_drop(str_hash *self)
 static int this_put_safe_bulk(str_hash *self, char *const *keys, const archive_field_sid_t *values,
                               size_t num_pairs)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
         struct mem_extra *extra = this_get_exta(self);
         size_t *bucket_idxs = MALLOC(num_pairs * sizeof(size_t));
 
@@ -158,7 +158,7 @@ static int this_put_safe_bulk(str_hash *self, char *const *keys, const archive_f
 
 static int this_put_safe_exact(str_hash *self, const char *key, archive_field_sid_t value)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
         struct mem_extra *extra = this_get_exta(self);
 
         hash32_t hash = strcmp("", key) != 0 ? STR_HASH_MEM_HASHCODE_OF(key) : 0;
@@ -244,7 +244,7 @@ static int
 this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size_t *num_not_found,
               char *const *keys, size_t num_keys)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
 
         timestamp begin = wallclock();
         TRACE(SMART_MAP_TAG, "'get_safe' function invoked for %zu strings", num_keys)
@@ -254,9 +254,9 @@ this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size
         archive_field_sid_t *values_out = MALLOC(num_keys * sizeof(archive_field_sid_t));
         bool *found_mask_out = MALLOC(num_keys * sizeof(bool));
 
-        JAK_ASSERT(bucket_idxs != NULL);
-        JAK_ASSERT(values_out != NULL);
-        JAK_ASSERT(found_mask_out != NULL);
+        assert(bucket_idxs != NULL);
+        assert(values_out != NULL);
+        assert(found_mask_out != NULL);
 
         for (register size_t i = 0; i < num_keys; i++) {
                 const char *key = keys[i];
@@ -277,8 +277,8 @@ this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size
         free(bucket_idxs);
         TRACE(SMART_MAP_TAG, "'get_safe' function invok fetch: done for %zu strings", num_keys)
 
-        JAK_ASSERT(values_out != NULL);
-        JAK_ASSERT(found_mask_out != NULL);
+        assert(values_out != NULL);
+        assert(found_mask_out != NULL);
 
         *out = values_out;
         *found_mask = found_mask_out;
@@ -294,7 +294,7 @@ this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size
 static int
 this_get_safe_exact(str_hash *self, archive_field_sid_t *out, bool *found_mask, const char *key)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
 
         struct mem_extra *extra = this_get_exta(self);
 
@@ -350,7 +350,7 @@ static int simple_map_remove(struct mem_extra *extra, size_t *bucket_idxs, char 
 
 static int _str_hash_mem_remove(str_hash *self, char *const *keys, size_t num_keys)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
 
         struct mem_extra *extra = this_get_exta(self);
         size_t *bucket_idxs = MALLOC(num_keys * sizeof(size_t));
@@ -367,7 +367,7 @@ static int _str_hash_mem_remove(str_hash *self, char *const *keys, size_t num_ke
 
 static int _str_hash_mem_free(str_hash *self, void *ptr)
 {
-        JAK_ASSERT(self->tag == MEMORY_RESIDENT);
+        assert(self->tag == MEMORY_RESIDENT);
         free(ptr);
         return true;
 }
@@ -394,7 +394,7 @@ static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t
 MAYBE_UNUSED
 static struct mem_extra *this_get_exta(str_hash *self)
 {
-        JAK_ASSERT (self->tag == MEMORY_RESIDENT);
+        assert (self->tag == MEMORY_RESIDENT);
         return (struct mem_extra *) (self->extra);
 }
 
@@ -432,7 +432,7 @@ static int bucket_insert(struct bucket *bucket, const char *restrict key, archiv
 
         if (handle.is_contained) {
                 /** entry found by keys */
-                JAK_ASSERT(value == handle.value);
+                assert(value == handle.value);
                 //debug(SMART_MAP_TAG, "debug(SMART_MAP_TAG, \"*** put *** '%s' into bucket [new]\", keys);*** put *** '%s' into bucket [already contained]", keys);
         } else {
                 /** no entry found */

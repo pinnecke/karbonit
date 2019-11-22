@@ -18,7 +18,7 @@
 #include <inttypes.h>
 #include <sys/mman.h>
 
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/std/vec.h>
 
 #define DEFINE_PRINTER_FUNCTION_WCAST(type, castType, format_string)                                                   \
@@ -273,15 +273,15 @@ bool vector_zero_memory(vec *vec)
 
 bool vector_zero_memory_in_range(vec *vec, size_t from, size_t to)
 {
-        JAK_ASSERT(from < to);
-        JAK_ASSERT(to <= vec->cap_elems);
+        assert(from < to);
+        assert(to <= vec->cap_elems);
         ZERO_MEMORY(vec->base + from * vec->elem_size, vec->elem_size * (to - from));
         return true;
 }
 
 bool vector_set(vec *vec, size_t pos, const void *data)
 {
-        JAK_ASSERT(pos < vec->num_elems);
+        assert(pos < vec->num_elems);
         memcpy(vec->base + pos * vec->elem_size, data, vec->elem_size);
         return true;
 }

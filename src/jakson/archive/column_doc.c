@@ -899,7 +899,7 @@ static void object_array_key_columns_drop(vec ofType(column_doc_group) *columns)
                         vec ofType(u32) *array_indices = &column->array_positions;
                         vec ofType(vec ofType(<T>)) *values_for_indicies = &column->values;
 
-                        JAK_ASSERT (array_indices->num_elems == values_for_indicies->num_elems);
+                        assert (array_indices->num_elems == values_for_indicies->num_elems);
 
                         for (size_t k = 0; k < array_indices->num_elems; k++) {
 
@@ -1003,7 +1003,7 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
                                          u32 array_idx, string_dict *dic,
                                          column_doc_obj *model)
 {
-        JAK_ASSERT(col->type == entry->type);
+        assert(col->type == entry->type);
 
         u32 *entry_array_idx = VECTOR_NEW_AND_GET(&col->array_positions, u32);
         *entry_array_idx = array_idx;
@@ -1032,11 +1032,11 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
                 case ARCHIVE_FIELD_UINT32:
                 case ARCHIVE_FIELD_UINT64:
                 case ARCHIVE_FIELD_FLOAT:
-                        JAK_ASSERT(!is_null_by_def);
+                        assert(!is_null_by_def);
                         vector_push(values_for_entry, entry->values.base, num_elements);
                         break;
                 case ARCHIVE_FIELD_STRING: {
-                        JAK_ASSERT(!is_null_by_def);
+                        assert(!is_null_by_def);
                         char **strings = VECTOR_ALL(&entry->values, char *);
                         archive_field_sid_t *string_ids;
                         string_dict_locate_fast(&string_ids, dic, (char *const *) strings, num_elements);
@@ -1046,7 +1046,7 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
                 }
                         break;
                 case ARCHIVE_FIELD_OBJECT:
-                        JAK_ASSERT(!is_null_by_def);
+                        assert(!is_null_by_def);
 
                         archive_field_sid_t *array_key;
                         string_dict_locate_fast(&array_key, dic, (char *const *) &entry->key, 1);

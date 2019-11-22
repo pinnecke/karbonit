@@ -46,7 +46,7 @@ void revise_begin(rev *context, rec *revised, rec *original)
 
 static void key_unsigned_set(rec *doc, u64 key)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
@@ -57,7 +57,7 @@ static void key_unsigned_set(rec *doc, u64 key)
 
 static void key_signed_set(rec *doc, i64 key)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
@@ -68,7 +68,7 @@ static void key_signed_set(rec *doc, i64 key)
 
 static void key_string_set(rec *doc, const char *key)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
@@ -230,7 +230,7 @@ bool revise_shrink(rev *context)
         internal_arr_it_fast_forward(&it);
         if (memfile_remain_size(&it.file) > 0) {
                 offset_t first_empty_slot = memfile_tell(&it.file);
-                JAK_ASSERT(memfile_size(&it.file) > first_empty_slot);
+                assert(memfile_size(&it.file) > first_empty_slot);
                 offset_t shrink_size = memfile_size(&it.file) - first_empty_slot;
                 memfile_cut(&it.file, shrink_size);
         }
@@ -255,7 +255,7 @@ bool revise_abort(rev *context)
 
 static bool internal_pack_array(arr_it *it)
 {
-        JAK_ASSERT(it);
+        assert(it);
 
         /** shrink this array */
         {
@@ -271,16 +271,16 @@ static bool internal_pack_array(arr_it *it)
                         offset_t first_empty_slot_offset = memfile_tell(&this_array.file);
                         char final;
                         while ((final = *memfile_read(&this_array.file, sizeof(char))) == 0) {}
-                        JAK_ASSERT(final == MARRAY_END);
+                        assert(final == MARRAY_END);
                         offset_t last_empty_slot_offset = memfile_tell(&this_array.file) - sizeof(char);
                         memfile_seek(&this_array.file, first_empty_slot_offset);
-                        JAK_ASSERT(last_empty_slot_offset > first_empty_slot_offset);
+                        assert(last_empty_slot_offset > first_empty_slot_offset);
 
                         memfile_inplace_remove(&this_array.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
                         final = *memfile_read(&this_array.file, sizeof(char));
-                        JAK_ASSERT(final == MARRAY_END);
+                        assert(final == MARRAY_END);
                 }
 
                 arr_it_drop(&this_array);
@@ -317,7 +317,7 @@ static bool internal_pack_array(arr_it *it)
                                         internal_arr_it_create(&array, &it->file,
                                                                      it->field.array->begin);
                                         internal_pack_array(&array);
-                                        JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
+                                        assert(*memfile_peek(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&array.file));
@@ -378,7 +378,7 @@ static bool internal_pack_array(arr_it *it)
                                                                       it->field.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
-                                        JAK_ASSERT(*memfile_peek(&object.file, sizeof(char)) ==
+                                        assert(*memfile_peek(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
                                         memfile_skip(&object.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&object.file));
@@ -391,14 +391,14 @@ static bool internal_pack_array(arr_it *it)
                 }
         }
 
-        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
+        assert(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
 
         return true;
 }
 
 static bool internal_pack_object(obj_it *it)
 {
-        JAK_ASSERT(it);
+        assert(it);
 
         /** shrink this object */
         {
@@ -414,16 +414,16 @@ static bool internal_pack_object(obj_it *it)
                         offset_t first_empty_slot_offset = memfile_tell(&this_object_it.file);
                         char final;
                         while ((final = *memfile_read(&this_object_it.file, sizeof(char))) == 0) {}
-                        JAK_ASSERT(final == MOBJECT_END);
+                        assert(final == MOBJECT_END);
                         offset_t last_empty_slot_offset = memfile_tell(&this_object_it.file) - sizeof(char);
                         memfile_seek(&this_object_it.file, first_empty_slot_offset);
-                        JAK_ASSERT(last_empty_slot_offset > first_empty_slot_offset);
+                        assert(last_empty_slot_offset > first_empty_slot_offset);
 
                         memfile_inplace_remove(&this_object_it.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
                         final = *memfile_read(&this_object_it.file, sizeof(char));
-                        JAK_ASSERT(final == MOBJECT_END);
+                        assert(final == MOBJECT_END);
                 }
 
                 obj_it_drop(&this_object_it);
@@ -460,7 +460,7 @@ static bool internal_pack_object(obj_it *it)
                                         internal_arr_it_create(&array, &it->file,
                                                                it->field.value.data.array->begin);
                                         internal_pack_array(&array);
-                                        JAK_ASSERT(*memfile_peek(&array.file, sizeof(char)) ==
+                                        assert(*memfile_peek(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&array.file));
@@ -521,7 +521,7 @@ static bool internal_pack_object(obj_it *it)
                                                                       it->field.value.data.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
-                                        JAK_ASSERT(*memfile_peek(&object.file, sizeof(char)) ==
+                                        assert(*memfile_peek(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
                                         memfile_skip(&object.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&object.file));
@@ -534,14 +534,14 @@ static bool internal_pack_object(obj_it *it)
                 }
         }
 
-        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
+        assert(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
 
         return true;
 }
 
 static bool internal_pack_column(col_it *it)
 {
-        JAK_ASSERT(it);
+        assert(it);
 
         u32 free_space = (it->cap - it->num) * internal_get_type_value_size(it->field_type);
         offset_t payload_start = internal_column_get_payload_off(it);
@@ -567,13 +567,13 @@ static bool internal_pack_column(col_it *it)
 
 static bool internal_commit_update(rec *doc)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
         return carbon_header_rev_inc(doc);
 }
 
 static bool carbon_header_rev_inc(rec *doc)
 {
-        JAK_ASSERT(doc);
+        assert(doc);
 
         key_e key_type;
         memfile_save_position(&doc->file);

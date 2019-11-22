@@ -230,7 +230,7 @@ bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 
 bool doc_obj_push_object(doc_obj **out, doc_entries *entry)
 {
-        JAK_ASSERT(entry->type == ARCHIVE_FIELD_OBJECT);
+        assert(entry->type == ARCHIVE_FIELD_OBJECT);
 
         doc_obj objectModel;
 
@@ -367,7 +367,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                 if (!success) {
                                                         return false;
                                                 }
-                                                JAK_ASSERT(element_number_type == ARCHIVE_FIELD_INT8 ||
+                                                assert(element_number_type == ARCHIVE_FIELD_INT8 ||
                                                            element_number_type == ARCHIVE_FIELD_INT16
                                                            || element_number_type == ARCHIVE_FIELD_INT32
                                                            || element_number_type == ARCHIVE_FIELD_INT64
@@ -419,7 +419,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                 }
                                         }
                                 }
-                                JAK_ASSERT(array_number_type != ARCHIVE_FIELD_NULL);
+                                assert(array_number_type != ARCHIVE_FIELD_NULL);
                                 field_type = array_number_type;
                         }
                                 break;
@@ -456,7 +456,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                 }
                                         break;
                                 case ARCHIVE_FIELD_STRING: {
-                                        JAK_ASSERT(ast_node_data_type == array_data_type ||
+                                        assert(ast_node_data_type == array_data_type ||
                                                    ast_node_data_type == JSON_VALUE_NULL);
                                         doc_obj_push_primtive(entry,
                                                               ast_node_data_type == JSON_VALUE_NULL
@@ -473,7 +473,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                 case ARCHIVE_FIELD_UINT32:
                                 case ARCHIVE_FIELD_UINT64:
                                 case ARCHIVE_FIELD_FLOAT: {
-                                        JAK_ASSERT(ast_node_data_type == array_data_type ||
+                                        assert(ast_node_data_type == array_data_type ||
                                                    ast_node_data_type == JSON_VALUE_NULL);
                                         switch (field_type) {
                                                 case ARCHIVE_FIELD_INT8: {
@@ -572,13 +572,13 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                                                               : BOOLEAN_FALSE;
                                                 doc_obj_push_primtive(entry, &value);
                                         } else {
-                                                JAK_ASSERT(ast_node_data_type == JSON_VALUE_NULL);
+                                                assert(ast_node_data_type == JSON_VALUE_NULL);
                                                 archive_field_boolean_t value = NULL_BOOLEAN;
                                                 doc_obj_push_primtive(entry, &value);
                                         }
                                         break;
                                 case ARCHIVE_FIELD_NULL:
-                                        JAK_ASSERT(ast_node_data_type == array_data_type);
+                                        assert(ast_node_data_type == array_data_type);
                                         doc_obj_push_primtive(entry, NULL);
                                         break;
                                 default:
@@ -844,7 +844,7 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
                                 vec ofType(u32) *array_indices = &column->array_positions;
                                 vec ofType(
                                         vec ofType(<T>)) *values_for_indicies = &column->values;
-                                JAK_ASSERT (array_indices->num_elems == values_for_indicies->num_elems);
+                                assert (array_indices->num_elems == values_for_indicies->num_elems);
 
                                 for (size_t k = 0; k < array_indices->num_elems; k++) {
                                         vec ofType(<T>)
@@ -1108,9 +1108,9 @@ static void sort_columndoc_column(column_doc_column *column, string_dict *dic)
         vector_cpy(&array_position_cpy, &column->array_positions);
         vector_cpy(&values_cpy, &column->values);
 
-        JAK_ASSERT(column->array_positions.num_elems == column->values.num_elems);
-        JAK_ASSERT(array_position_cpy.num_elems == values_cpy.num_elems);
-        JAK_ASSERT(values_cpy.num_elems == column->array_positions.num_elems);
+        assert(column->array_positions.num_elems == column->values.num_elems);
+        assert(array_position_cpy.num_elems == values_cpy.num_elems);
+        assert(values_cpy.num_elems == column->array_positions.num_elems);
 
         size_t *indices = MALLOC(values_cpy.num_elems * sizeof(size_t));
         for (size_t i = 0; i < values_cpy.num_elems; i++) {
@@ -1296,7 +1296,7 @@ column_doc *doc_entries_columndoc(const doc_bulk *bulk, const doc_entries *parti
 
         // Step 2: for each document doc, create a meta doc, and construct a binary compressed document
         const doc *models = VECTOR_ALL(&bulk->models, doc);
-        JAK_ASSERT (bulk->models.num_elems == 1);
+        assert (bulk->models.num_elems == 1);
 
         const doc *model = models;
 

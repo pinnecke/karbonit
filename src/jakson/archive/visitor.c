@@ -47,7 +47,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
 
         archive_value_vector_get_object_id(&parent_object_id, value_iter);
         archive_value_vector_get_length(&vector_length, value_iter);
-        JAK_ASSERT(num_pairs == vector_length);
+        assert(num_pairs == vector_length);
 
         for (u32 i = 0; i < vector_length; i++) {
                 archive_field_sid_t parent_key = keys[i];
@@ -236,7 +236,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
 
                         switch (type) {
                                 case ARCHIVE_FIELD_OBJECT:
-                                        JAK_ASSERT (!is_array);
+                                        assert (!is_array);
                                         iterate_objects(archive,
                                                         keys,
                                                         num_pairs,

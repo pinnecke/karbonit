@@ -29,8 +29,8 @@
 #define SLICE_SCAN(slice, needle_hash, needle_str)                                                                     \
 ({                                                                                                                     \
     TRACE(SLICE_LIST_TAG, "SLICE_SCAN for '%s' started", needle_str);                                    \
-    JAK_ASSERT(slice);                                                                                                     \
-    JAK_ASSERT(needle_str);                                                                                                \
+    assert(slice);                                                                                                     \
+    assert(needle_str);                                                                                                \
                                                                                                                        \
     register bool continueScan, keysMatch, keyHashsNoMatch, endReached;                                                \
     register bool cacheAvailable = (slice->cache_idx != (u32) -1);                                                 \
@@ -114,14 +114,14 @@ bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *
                 slice_handle handle;
                 int status;
 
-                JAK_ASSERT (key);
+                assert (key);
 
                 /** check whether the keys-values pair is already contained in one slice */
                 status = slice_list_lookup(&handle, list, key);
 
                 if (status == true) {
                         /** pair was found, do not insert it twice */
-                        JAK_ASSERT (value == handle.value);
+                        assert (value == handle.value);
                         continue;
                 } else {
                         /** pair is not found; append it */
@@ -137,7 +137,7 @@ bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *
                                   "appender # of elems: %zu, limit: %zu",
                                   appender->num_elems,
                                   SLICE_KEY_COLUMN_MAX_ELEMS);
-                        JAK_ASSERT(appender->num_elems < SLICE_KEY_COLUMN_MAX_ELEMS);
+                        assert(appender->num_elems < SLICE_KEY_COLUMN_MAX_ELEMS);
                         appender->key_column[appender->num_elems] = key;
                         appender->key_hash_column[appender->num_elems] = keyHash;
                         appender->string_id_column[appender->num_elems] = value;
@@ -249,7 +249,7 @@ static void appenderNew(slice_list_t *list)
         u32 numSlices = vector_length(&list->slices);
         vector_push(&list->slices, &slice, 1);
 
-        JAK_ASSERT(SLICE_KEY_COLUMN_MAX_ELEMS > 0);
+        assert(SLICE_KEY_COLUMN_MAX_ELEMS > 0);
 
         /** the descriptor */
         slice_descriptor desc = {.num_reads_hit  = 0, .num_reads_all  = 0,};
@@ -257,7 +257,7 @@ static void appenderNew(slice_list_t *list)
         vector_push(&list->descriptors, &desc, 1);
 
         /** the lookup guards */
-        JAK_ASSERT(sizeof(bitmap) <= SLICE_LIST_BLOOMFILTER_TARGET_MEMORY_SIZE_IN_BYTE);
+        assert(sizeof(bitmap) <= SLICE_LIST_BLOOMFILTER_TARGET_MEMORY_SIZE_IN_BYTE);
         bitmap filter;
 
         /** NOTE: the size of each bitmap lead to a false positive probability of 100%, i.e., number of items in the

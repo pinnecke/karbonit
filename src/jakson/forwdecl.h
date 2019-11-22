@@ -136,7 +136,7 @@ typedef struct json_array json_array;
 typedef struct json_number json_number;
 
 typedef struct memblock memblock;
-typedef struct mfile memfile;
+typedef struct memfile memfile;
 
 typedef struct command_opt command_opt;
 typedef struct command_opt_group command_opt_group;

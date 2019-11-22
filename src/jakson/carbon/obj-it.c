@@ -114,7 +114,7 @@ prop *obj_it_next(obj_it *it)
                         }
                 }
 
-                JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
+                assert(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
                 return NULL;
         }
 }
@@ -232,7 +232,7 @@ bool internal_obj_it_fast_forward(obj_it *it)
 {
         while (obj_it_next(it)) {}
 
-        JAK_ASSERT(*memfile_peek(&it->file, sizeof(u8)) == MOBJECT_END);
+        assert(*memfile_peek(&it->file, sizeof(u8)) == MOBJECT_END);
         memfile_skip(&it->file, sizeof(u8));
         return true;
 }

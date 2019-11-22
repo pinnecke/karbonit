@@ -825,7 +825,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
 {
         u32 num_contained_values;
         col_it_values_info(&find->type, &num_contained_values, it);
-        JAK_ASSERT(requested_idx < num_contained_values);
+        assert(requested_idx < num_contained_values);
 
         switch (find->type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:

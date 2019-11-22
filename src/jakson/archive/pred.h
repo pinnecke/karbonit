@@ -44,11 +44,11 @@ BUILT_IN(static bool) string_pred_validate(const string_pred *pred)
 BUILT_IN(static bool) string_pred_eval(const string_pred *pred, size_t *idxs_matching,
                                                size_t *num_matching, char **strings, size_t num_strings, void *capture)
 {
-        JAK_ASSERT(pred);
-        JAK_ASSERT(idxs_matching);
-        JAK_ASSERT(num_matching);
-        JAK_ASSERT(strings);
-        JAK_ASSERT(pred->func);
+        assert(pred);
+        assert(idxs_matching);
+        assert(num_matching);
+        assert(strings);
+        assert(pred->func);
         return pred->func(idxs_matching, num_matching, strings, num_strings, capture);
 }
 

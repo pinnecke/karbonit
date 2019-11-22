@@ -534,7 +534,7 @@ static void container_field_flat(memfile *file, struct pindex_node *node)
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
                         /** any path will end with this kind of field, and therefore no subsequent elements exists */
-                        JAK_ASSERT(node->sub_entries.num_elems == 0);
+                        assert(node->sub_entries.num_elems == 0);
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -1012,7 +1012,7 @@ static void column_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_COLUMN_NODE);
         field_ref_write(file, node);
-        JAK_ASSERT(node->sub_entries.num_elems == 0);
+        assert(node->sub_entries.num_elems == 0);
 }
 
 static void node_flat(memfile *file, struct pindex_node *node)

@@ -19,7 +19,7 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/carbon/field.h>
 #include <jakson/carbon/col-it.h>
 #include <jakson/carbon/mime.h>
@@ -467,7 +467,7 @@ bool carbon_field_skip_8(memfile *file)
 
         error_if_and_return(type_marker != FIELD_NUMBER_I8 && type_marker != FIELD_NUMBER_U8,
                  ERR_TYPEMISMATCH, NULL);
-        JAK_ASSERT(sizeof(u8) == sizeof(i8));
+        assert(sizeof(u8) == sizeof(i8));
         memfile_skip(file, sizeof(u8));
         return true;
 }
@@ -478,7 +478,7 @@ bool carbon_field_skip_16(memfile *file)
 
         error_if_and_return(type_marker != FIELD_NUMBER_I16 && type_marker != FIELD_NUMBER_U16,
                  ERR_TYPEMISMATCH, NULL);
-        JAK_ASSERT(sizeof(u16) == sizeof(i16));
+        assert(sizeof(u16) == sizeof(i16));
         memfile_skip(file, sizeof(u16));
         return true;
 }
@@ -489,7 +489,7 @@ bool carbon_field_skip_32(memfile *file)
 
         error_if_and_return(type_marker != FIELD_NUMBER_I32 && type_marker != FIELD_NUMBER_U32,
                  ERR_TYPEMISMATCH, NULL);
-        JAK_ASSERT(sizeof(u32) == sizeof(i32));
+        assert(sizeof(u32) == sizeof(i32));
         memfile_skip(file, sizeof(u32));
         return true;
 }
@@ -500,7 +500,7 @@ bool carbon_field_skip_64(memfile *file)
 
         error_if_and_return(type_marker != FIELD_NUMBER_I64 && type_marker != FIELD_NUMBER_U64,
                  ERR_TYPEMISMATCH, NULL);
-        JAK_ASSERT(sizeof(u64) == sizeof(i64));
+        assert(sizeof(u64) == sizeof(i64));
         memfile_skip(file, sizeof(u64));
         return true;
 }

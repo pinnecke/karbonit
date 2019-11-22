@@ -81,9 +81,9 @@ hashtable *hashtable_cpy(hashtable *src)
                                  src->value_data.elem_size,
                                  src->table.cap_elems);
 
-                JAK_ASSERT(src->key_data.cap_elems == src->value_data.cap_elems
+                assert(src->key_data.cap_elems == src->value_data.cap_elems
                            && src->value_data.cap_elems == src->table.cap_elems);
-                JAK_ASSERT((src->key_data.num_elems == src->value_data.num_elems)
+                assert((src->key_data.num_elems == src->value_data.num_elems)
                            && src->value_data.num_elems <= src->table.num_elems);
 
                 vector_cpy_to(&cpy->key_data, &src->key_data);
@@ -91,9 +91,9 @@ hashtable *hashtable_cpy(hashtable *src)
                 vector_cpy_to(&cpy->table, &src->table);
                 cpy->size = src->size;
 
-                JAK_ASSERT(cpy->key_data.cap_elems == src->value_data.cap_elems
+                assert(cpy->key_data.cap_elems == src->value_data.cap_elems
                            && src->value_data.cap_elems == cpy->table.cap_elems);
-                JAK_ASSERT((cpy->key_data.num_elems == src->value_data.num_elems)
+                assert((cpy->key_data.num_elems == src->value_data.num_elems)
                            && src->value_data.num_elems <= cpy->table.num_elems);
 
                 return cpy;
@@ -105,18 +105,18 @@ hashtable *hashtable_cpy(hashtable *src)
 
 bool hashtable_clear(hashtable *map)
 {
-        JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
+        assert(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
+        assert((map->key_data.num_elems == map->value_data.num_elems)
                    && map->value_data.num_elems <= map->table.num_elems);
 
         bool status = vector_clear(&map->key_data) && vector_clear(&map->value_data) && vector_zero_memory(&map->table);
 
         map->size = 0;
 
-        JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
+        assert(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
+        assert((map->key_data.num_elems == map->value_data.num_elems)
                    && map->value_data.num_elems <= map->table.num_elems);
 
         if (!status) {
@@ -151,7 +151,7 @@ static inline const void *get_bucket_value(const hashtable_bucket *bucket, const
 static void _hash_table_insert(hashtable_bucket *bucket, hashtable *map, const void *key, const void *value,
                    i32 displacement)
 {
-        JAK_ASSERT(map->key_data.num_elems == map->value_data.num_elems);
+        assert(map->key_data.num_elems == map->value_data.num_elems);
         u64 idx = map->key_data.num_elems;
         void *key_datum = VECTOR_NEW_AND_GET(&map->key_data, void *);
         void *value_datum = VECTOR_NEW_AND_GET(&map->value_data, void *);
@@ -214,7 +214,7 @@ static inline uint_fast32_t _hash_table_insert_or_update(hashtable *map, const u
                                 }
                         }
 
-                        JAK_ASSERT(fitting_bucket_found == true);
+                        assert(fitting_bucket_found == true);
                         bucket_idx = displace_idx;
                         bucket = VECTOR_GET(&map->table, bucket_idx, hashtable_bucket);
                 }
@@ -241,9 +241,9 @@ static inline uint_fast32_t _hash_table_insert_or_update(hashtable *map, const u
 bool hashtable_insert_or_update(hashtable *map, const void *keys, const void *values,
                                 uint_fast32_t num_pairs)
 {
-        JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
+        assert(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
+        assert((map->key_data.num_elems == map->value_data.num_elems)
                    && map->value_data.num_elems <= map->table.num_elems);
 
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
@@ -457,9 +457,9 @@ bool hashtable_rehash(hashtable *map)
         vector_enlarge_size_to_capacity(&map->table);
         vector_zero_memory(&map->table);
 
-        JAK_ASSERT(map->key_data.cap_elems == map->value_data.cap_elems
+        assert(map->key_data.cap_elems == map->value_data.cap_elems
                    && map->value_data.cap_elems == map->table.cap_elems);
-        JAK_ASSERT((map->key_data.num_elems == map->value_data.num_elems)
+        assert((map->key_data.num_elems == map->value_data.num_elems)
                    && map->value_data.num_elems <= map->table.num_elems);
 
         for (size_t i = 0; i < cpy->table.num_elems; i++) {

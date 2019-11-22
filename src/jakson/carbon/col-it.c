@@ -280,7 +280,7 @@ bool col_it_remove(col_it *it, u32 pos)
         /** update element counter */
         memfile_seek(&it->file, it->header_begin);
         u32 num_elems = memfile_peek_uintvar_stream(NULL, &it->file);
-        JAK_ASSERT(num_elems > 0);
+        assert(num_elems > 0);
         num_elems--;
         signed_offset_t shift = memfile_update_uintvar_stream(&it->file, num_elems);
         it->num = num_elems;
@@ -540,7 +540,7 @@ static bool rewrite_column_to_array(col_it *it)
         }
 
         arr_it_insert_end(&array_ins);
-        JAK_ASSERT(array_marker_begin < internal_arr_it_memfilepos(&array));
+        assert(array_marker_begin < internal_arr_it_memfilepos(&array));
         arr_it_drop(&array);
 
         memfile_restore_position(&it->file);

@@ -24,7 +24,7 @@
 
 #include <jakson/stdinc.h>
 #include <jakson/std/vec.h>
-#include <jakson/mem/file.h>
+#include <jakson/mem/memfile.h>
 #include <jakson/types.h>
 
 #ifdef __cplusplus

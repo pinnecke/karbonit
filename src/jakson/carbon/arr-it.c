@@ -380,7 +380,7 @@ static bool _internal_array_next(arr_it *it)
                                 memfile_skip(&it->file, 1);
                         }
                 }
-                JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
+                assert(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
                 internal_field_auto_close(&it->field);
                 return false;
         }
@@ -436,7 +436,7 @@ bool internal_arr_it_fast_forward(arr_it *it)
 {
         while (arr_it_next(it)) {}
 
-        JAK_ASSERT(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
+        assert(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
         memfile_skip(&it->file, sizeof(char));
         return true;
 }

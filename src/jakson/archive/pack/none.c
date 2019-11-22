@@ -92,12 +92,9 @@ bool pack_none_encode_string(packer *self, memfile *dst, const char *string)
 
         u32 string_length = strlen(string);
 
-        SUCCESS_OR_JUMP(memfile_write(dst, string, string_length), error_handling)
+        memfile_write(dst, string, string_length);
 
         return true;
-
-        error_handling:
-        return error(ERR_IO, NULL);
 }
 
 bool pack_none_decode_string(packer *self, char *dst, size_t strlen, FILE *src)

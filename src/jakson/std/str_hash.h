@@ -177,7 +177,7 @@ typedef struct str_hash {
  */
 inline static int str_hash_drop(str_hash *str_hash)
 {
-        JAK_ASSERT(str_hash->drop);
+        assert(str_hash->drop);
         return str_hash->drop(str_hash);
 }
 
@@ -218,7 +218,7 @@ inline static int str_hash_get_counters(str_hash_counters *out, const str_hash *
  */
 inline static int str_hash_put_safe(str_hash *str_hash, char *const *keys, const archive_field_sid_t *values, size_t npairs)
 {
-        JAK_ASSERT(str_hash->put_bulk_safe);
+        assert(str_hash->put_bulk_safe);
         return str_hash->put_bulk_safe(str_hash, keys, values, npairs);
 }
 
@@ -239,7 +239,7 @@ inline static int str_hash_put_safe(str_hash *str_hash, char *const *keys, const
  */
 inline static int str_hash_put_bulk_fast(str_hash *str_hash, char *const *keys, const archive_field_sid_t *values, size_t npairs)
 {
-        JAK_ASSERT(str_hash->put_bulk_fast);
+        assert(str_hash->put_bulk_fast);
         return str_hash->put_bulk_fast(str_hash, keys, values, npairs);
 }
 
@@ -248,7 +248,7 @@ inline static int str_hash_put_bulk_fast(str_hash *str_hash, char *const *keys, 
  */
 inline static int str_hash_put_exact(str_hash *str_hash, const char *key, archive_field_sid_t value)
 {
-        JAK_ASSERT(str_hash->put_exact_safe);
+        assert(str_hash->put_exact_safe);
         return str_hash->put_exact_safe(str_hash, key, value);
 }
 
@@ -257,7 +257,7 @@ inline static int str_hash_put_exact(str_hash *str_hash, const char *key, archiv
  */
 inline static int str_hash_put_exact_fast(str_hash *str_hash, const char *key, archive_field_sid_t value)
 {
-        JAK_ASSERT(str_hash->put_exact_fast);
+        assert(str_hash->put_exact_fast);
         return str_hash->put_exact_fast(str_hash, key, value);
 }
 
@@ -290,19 +290,19 @@ inline static int str_hash_put_exact_fast(str_hash *str_hash, const char *key, a
  */
 inline static int str_hash_get_bulk_safe(archive_field_sid_t **out, bool **found_mask, size_t *num_not_found, str_hash *str_hash, char *const *keys, size_t nkeys)
 {
-        JAK_ASSERT(str_hash->get_bulk_safe);
+        assert(str_hash->get_bulk_safe);
         int result = str_hash->get_bulk_safe(str_hash, out, found_mask, num_not_found, keys, nkeys);
-        JAK_ASSERT (out != NULL);
-        JAK_ASSERT (found_mask != NULL);
+        assert (out != NULL);
+        assert (found_mask != NULL);
         return result;
 }
 
 inline static int str_hash_get_bulk_safe_exact(archive_field_sid_t *out, bool *found, str_hash *str_hash, const char *key)
 {
-        JAK_ASSERT(str_hash->get_exact_safe);
+        assert(str_hash->get_exact_safe);
         int result = str_hash->get_exact_safe(str_hash, out, found, key);
-        JAK_ASSERT (out != NULL);
-        JAK_ASSERT (found != NULL);
+        assert (out != NULL);
+        assert (found != NULL);
         return result;
 }
 
@@ -323,7 +323,7 @@ inline static int str_hash_get_bulk_safe_exact(archive_field_sid_t *out, bool *f
  */
 inline static int str_hash_get_bulk_fast(archive_field_sid_t **out, str_hash *str_hash, char *const *keys, size_t nkeys)
 {
-        JAK_ASSERT(str_hash->get_fast);
+        assert(str_hash->get_fast);
         return str_hash->get_fast(str_hash, out, keys, nkeys);
 }
 
@@ -344,7 +344,7 @@ inline static int str_hash_get_bulk_fast(archive_field_sid_t **out, str_hash *st
  */
 inline static int str_hash_update_fast(str_hash *str_hash, const archive_field_sid_t *values, char *const *keys, size_t nkeys)
 {
-        JAK_ASSERT(str_hash->update_key_fast);
+        assert(str_hash->update_key_fast);
         return str_hash->update_key_fast(str_hash, values, keys, nkeys);
 }
 
@@ -358,7 +358,7 @@ inline static int str_hash_update_fast(str_hash *str_hash, const archive_field_s
  */
 inline static int str_hash_remove(str_hash *str_hash, char *const *keys, size_t nkeys)
 {
-        JAK_ASSERT(str_hash->remove);
+        assert(str_hash->remove);
         return str_hash->remove(str_hash, keys, nkeys);
 }
 
@@ -371,7 +371,7 @@ inline static int str_hash_remove(str_hash *str_hash, char *const *keys, size_t 
  */
 inline static int str_hash_free(void *ptr, str_hash *str_hash)
 {
-        JAK_ASSERT(str_hash->free);
+        assert(str_hash->free);
         return str_hash->free(str_hash, ptr);
 }
 

@@ -74,7 +74,7 @@ union global_id {
 
 bool unique_id_create(unique_id_t *out)
 {
-        JAK_ASSERT(out);
+        assert(out);
 
         static bool process_init;
         static u64 process_local_id;

@@ -19,15 +19,15 @@
 
 static bool create_strategy(size_t i, packer *strategy)
 {
-        JAK_ASSERT(strategy);
+        assert(strategy);
         global_pack_strategy_register[i].create(strategy);
-        JAK_ASSERT (strategy->create);
-        JAK_ASSERT (strategy->cpy);
-        JAK_ASSERT (strategy->drop);
-        JAK_ASSERT (strategy->write_extra);
-        JAK_ASSERT (strategy->encode_string);
-        JAK_ASSERT (strategy->decode_string);
-        JAK_ASSERT (strategy->print_extra);
+        assert (strategy->create);
+        assert (strategy->cpy);
+        assert (strategy->drop);
+        assert (strategy->write_extra);
+        assert (strategy->encode_string);
+        assert (strategy->decode_string);
+        assert (strategy->print_extra);
         return strategy->create(strategy);
 }
 

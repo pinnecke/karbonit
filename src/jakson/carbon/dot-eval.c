@@ -204,7 +204,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
         DECLARE_AND_INIT(bool, status)
 
         dot_type_at(&node_type, current_path_pos, path);
-        JAK_ASSERT(node_type == DOT_NODE_KEY);
+        assert(node_type == DOT_NODE_KEY);
 
         status = obj_it_next(it);
         dot_len(&length, path);
@@ -226,7 +226,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                         return PATH_RESOLVED;
                                 } else {
                                         /** path end not reached, traverse further if possible */
-                                        JAK_ASSERT(next_path_pos < length);
+                                        assert(next_path_pos < length);
 
                                         field_e prop_type;
                                         internal_obj_it_prop_type(&prop_type, it);
@@ -234,7 +234,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                         if (!field_is_traversable(prop_type)) {
                                                 return PATH_NOTTRAVERSABLE;
                                         } else {
-                                                JAK_ASSERT(prop_type == FIELD_OBJECT_UNSORTED_MULTIMAP ||
+                                                assert(prop_type == FIELD_OBJECT_UNSORTED_MULTIMAP ||
                                                            prop_type == FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||
                                                            prop_type == FIELD_DERIVED_OBJECT_UNSORTED_MAP ||
                                                            prop_type == FIELD_DERIVED_OBJECT_SORTED_MAP ||
@@ -370,10 +370,10 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                      const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record)
 {
-        JAK_ASSERT(state);
-        JAK_ASSERT(path);
-        JAK_ASSERT(it);
-        JAK_ASSERT(current_path_pos < path->len);
+        assert(state);
+        assert(path);
+        assert(it);
+        assert(current_path_pos < path->len);
 
         DECLARE_AND_INIT(field_e, elem_type)
         DECLARE_AND_INIT(dot_node_type_e, node_type)
@@ -396,7 +396,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                 dot_idx_at(&requested_array_idx, current_path_pos, path);
                                 while (current_array_idx < requested_array_idx &&
                                         arr_it_next(it)) { current_array_idx++; }
-                                JAK_ASSERT(current_array_idx <= requested_array_idx);
+                                assert(current_array_idx <= requested_array_idx);
                                 if (current_array_idx != requested_array_idx) {
                                         /** root array has too less elements to reach the requested index */
                                         return PATH_NOSUCHINDEX;
@@ -440,7 +440,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                                                         sub_it);
                                                                                                 return status;
                                                                                         } else {
-                                                                                                JAK_ASSERT(field_is_column_or_subtype(elem_type));
+                                                                                                assert(field_is_column_or_subtype(elem_type));
                                                                                                 col_it *sub_it = item_get_column(&(it->item));
                                                                                                 return _dot_eval_traverse_column(
                                                                                                         state,
@@ -526,7 +526,7 @@ static inline pstatus_e _dot_eval_traverse_column(dot_eval *state,
                 return PATH_NONESTING;
         } else {
                 dot_type_at(&node_type, current_path_pos, path);
-                JAK_ASSERT(node_type == DOT_NODE_IDX);
+                assert(node_type == DOT_NODE_IDX);
                 dot_idx_at(&requested_idx, current_path_pos, path);
                 col_it_values_info(&column_type, &nun_values_contained, it);
                 if (requested_idx >= nun_values_contained) {

@@ -66,20 +66,20 @@ DEFINE_IN_PLACE_UPDATE_FUNCTION(i64, FIELD_NUMBER_I64)
 
 DEFINE_IN_PLACE_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT)
 
-static bool update_in_place_constant(arr_it *it, carbon_constant_e constant)
+static bool update_in_place_constant(arr_it *it, constant_e constant)
 {
         memfile_save_position(&it->file);
 
         if (field_type_is_constant(it->field.type)) {
                 u8 value;
                 switch (constant) {
-                        case CARBON_CONSTANT_TRUE:
+                        case CONST_TRUE:
                                 value = FIELD_TRUE;
                                 break;
-                        case CARBON_CONSTANT_FALSE:
+                        case CONST_FALSE:
                                 value = FIELD_FALSE;
                                 break;
-                        case CARBON_CONSTANT_NULL:
+                        case CONST_NULL:
                                 value = FIELD_NULL;
                                 break;
                         default: error(ERR_INTERNALERR, NULL);
@@ -95,13 +95,13 @@ static bool update_in_place_constant(arr_it *it, carbon_constant_e constant)
                 arr_it_insert_begin(&ins, it);
 
                 switch (constant) {
-                        case CARBON_CONSTANT_TRUE:
+                        case CONST_TRUE:
                                 carbon_insert_true(&ins);
                                 break;
-                        case CARBON_CONSTANT_FALSE:
+                        case CONST_FALSE:
                                 carbon_insert_false(&ins);
                                 break;
-                        case CARBON_CONSTANT_NULL:
+                        case CONST_NULL:
                                 carbon_insert_null(&ins);
                                 break;
                         default: error(ERR_INTERNALERR, NULL);
@@ -117,17 +117,17 @@ static bool update_in_place_constant(arr_it *it, carbon_constant_e constant)
 
 bool internal_arr_it_update_true(arr_it *it)
 {
-        return update_in_place_constant(it, CARBON_CONSTANT_TRUE);
+        return update_in_place_constant(it, CONST_TRUE);
 }
 
 bool internal_arr_it_update_false(arr_it *it)
 {
-        return update_in_place_constant(it, CARBON_CONSTANT_FALSE);
+        return update_in_place_constant(it, CONST_FALSE);
 }
 
 bool internal_arr_it_update_null(arr_it *it)
 {
-        return update_in_place_constant(it, CARBON_CONSTANT_NULL);
+        return update_in_place_constant(it, CONST_NULL);
 }
 
 bool internal_arr_it_update_string(arr_it *it, const char *str)

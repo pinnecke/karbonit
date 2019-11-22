@@ -134,11 +134,11 @@ typedef enum field_class {
         CLASS_CONTAINER
 } field_class_e;
 
-typedef enum carbon_constant {
-        CARBON_CONSTANT_TRUE,
-        CARBON_CONSTANT_FALSE,
-        CARBON_CONSTANT_NULL
-} carbon_constant_e;
+typedef enum constant {
+        CONST_TRUE,
+        CONST_FALSE,
+        CONST_NULL
+} constant_e;
 
 #define FIELD_TYPE_NULL_STR "null"
 #define FIELD_TYPE_TRUE_STR "boolean-true"

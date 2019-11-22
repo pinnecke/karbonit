@@ -25,27 +25,27 @@
 #include <jakson/types.h>
 #include <stdint.h>
 
-static void result_from_array(carbon_find *find, arr_it *it);
+static void result_from_array(find *find, arr_it *it);
 
-static void result_from_object(carbon_find *find, obj_it *it);
+static void result_from_object(find *find, obj_it *it);
 
 static inline bool
-result_from_column(carbon_find *find, u32 requested_idx, col_it *it);
+result_from_column(find *find, u32 requested_idx, col_it *it);
 
-bool carbon_find_begin(carbon_find *out, const char *dot, rec *doc)
+bool find_begin(find *out, const char *dot, rec *doc)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        carbon_find_create(out, &path, doc);
+        find_create(out, &path, doc);
         dot_drop(&path);
         return true;
 }
 
-bool carbon_find_end(carbon_find *find)
+bool find_end(find *find)
 {
-        if (carbon_find_has_result(find)) {
+        if (find_has_result(find)) {
                 field_e type;
-                carbon_find_result_type(&type, find);
+                find_result_type(&type, find);
                 switch (type) {
                         case FIELD_OBJECT_UNSORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -103,28 +103,28 @@ bool carbon_find_end(carbon_find *find)
                         default:
                                 break;
                 }
-                return carbon_find_drop(find);
+                return find_drop(find);
         }
         return true;
 }
 
-bool carbon_find_create(carbon_find *find, dot *path, rec *doc)
+bool find_create(find *find, dot *path, rec *doc)
 {
-        ZERO_MEMORY(find, sizeof(carbon_find));
+        ZERO_MEMORY(find, sizeof(find));
         find->doc = doc;
 
-        carbon_path_evaluator_begin(&find->path_evaluater, path, doc);
-        if (carbon_path_evaluator_has_result(&find->path_evaluater)) {
-                switch (find->path_evaluater.result.container) {
+        dot_eval_begin(&find->eval, path, doc);
+        if (dot_eval_has_result(&find->eval)) {
+                switch (find->eval.result.container) {
                         case ARRAY:
-                                result_from_array(find, &find->path_evaluater.result.containers.array.it);
+                                result_from_array(find, &find->eval.result.containers.array.it);
                                 break;
                         case COLUMN:
-                                result_from_column(find, find->path_evaluater.result.containers.column.elem_pos,
-                                                   &find->path_evaluater.result.containers.column.it);
+                                result_from_column(find, find->eval.result.containers.column.elem_pos,
+                                                   &find->eval.result.containers.column.it);
                                 break;
                         case OBJECT:
-                                result_from_object(find, &find->path_evaluater.result.containers.object.it);
+                                result_from_object(find, &find->eval.result.containers.object.it);
                                 break;
                         default:
                                 return error(ERR_INTERNALERR, "unknown container type");
@@ -133,21 +133,21 @@ bool carbon_find_create(carbon_find *find, dot *path, rec *doc)
         return true;
 }
 
-bool carbon_find_has_result(carbon_find *find)
+bool find_has_result(find *find)
 {
-        return carbon_path_evaluator_has_result(&find->path_evaluater);
+        return dot_eval_has_result(&find->eval);
 }
 
-const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, carbon_find *find)
+const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, find *find)
 {
         string_buffer_clear(dst_str);
 
         carbon_printer printer;
         carbon_printer_by_type(&printer, print_type);
 
-        if (carbon_find_has_result(find)) {
+        if (find_has_result(find)) {
                 field_e result_type;
-                carbon_find_result_type(&result_type, find);
+                find_result_type(&result_type, find);
                 switch (result_type) {
                         case FIELD_NULL:
                                 carbon_printer_null(&printer, dst_str);
@@ -162,7 +162,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                obj_it *sub_it = carbon_find_result_object(find);
+                                obj_it *sub_it = find_result_object(find);
                                 carbon_printer_print_object(sub_it, &printer, dst_str);
                         }
                                 break;
@@ -170,7 +170,7 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                         case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                arr_it *sub_it = carbon_find_result_array(find);
+                                arr_it *sub_it = find_result_array(find);
                                 carbon_printer_print_array(sub_it, &printer, dst_str, false);
                         }
                                 break;
@@ -214,73 +214,73 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                col_it *sub_it = carbon_find_result_column(find);
+                                col_it *sub_it = find_result_column(find);
                                 carbon_printer_print_column(sub_it, &printer, dst_str);
                         }
                                 break;
                         case FIELD_STRING: {
                                 u64 str_len = 0;
-                                const char *str = carbon_find_result_string(&str_len, find);
+                                const char *str = find_result_string(&str_len, find);
                                 carbon_printer_string(&printer, dst_str, str, str_len);
                         }
                                 break;
                         case FIELD_NUMBER_U8: {
                                 u64 val = 0;
-                                carbon_find_result_unsigned(&val, find);
+                                find_result_unsigned(&val, find);
                                 carbon_printer_u8_or_null(&printer, dst_str, (u8) val);
                         }
                                 break;
                         case FIELD_NUMBER_U16: {
                                 u64 val = 0;
-                                carbon_find_result_unsigned(&val, find);
+                                find_result_unsigned(&val, find);
                                 carbon_printer_u16_or_null(&printer, dst_str, (u16) val);
                         }
                                 break;
                         case FIELD_NUMBER_U32: {
                                 u64 val = 0;
-                                carbon_find_result_unsigned(&val, find);
+                                find_result_unsigned(&val, find);
                                 carbon_printer_u32_or_null(&printer, dst_str, (u32) val);
                         }
                                 break;
                         case FIELD_NUMBER_U64: {
                                 u64 val = 0;
-                                carbon_find_result_unsigned(&val, find);
+                                find_result_unsigned(&val, find);
                                 carbon_printer_u64_or_null(&printer, dst_str, (u64) val);
                         }
                                 break;
                         case FIELD_NUMBER_I8: {
                                 i64 val = 0;
-                                carbon_find_result_signed(&val, find);
+                                find_result_signed(&val, find);
                                 carbon_printer_i8_or_null(&printer, dst_str, (i8) val);
                         }
                                 break;
                         case FIELD_NUMBER_I16: {
                                 i64 val = 0;
-                                carbon_find_result_signed(&val, find);
+                                find_result_signed(&val, find);
                                 carbon_printer_i16_or_null(&printer, dst_str, (i16) val);
                         }
                                 break;
                         case FIELD_NUMBER_I32: {
                                 i64 val = 0;
-                                carbon_find_result_signed(&val, find);
+                                find_result_signed(&val, find);
                                 carbon_printer_i32_or_null(&printer, dst_str, (i32) val);
                         }
                                 break;
                         case FIELD_NUMBER_I64: {
                                 i64 val = 0;
-                                carbon_find_result_signed(&val, find);
+                                find_result_signed(&val, find);
                                 carbon_printer_i64_or_null(&printer, dst_str, (i64) val);
                         }
                                 break;
                         case FIELD_NUMBER_FLOAT: {
                                 float val = 0;
-                                carbon_find_result_float(&val, find);
+                                find_result_float(&val, find);
                                 carbon_printer_float(&printer, dst_str, &val);
                         }
                                 break;
                         case FIELD_BINARY:
                         case FIELD_BINARY_CUSTOM: {
-                                const binary *val = carbon_find_result_binary(find);
+                                const binary *val = find_result_binary(find);
                                 carbon_printer_binary(&printer, dst_str, val);
                         }
                                 break;
@@ -297,23 +297,23 @@ const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_imp
         return string_cstr(dst_str);
 }
 
-const char *carbon_find_result_to_json_compact(string_buffer *dst_str, carbon_find *find)
+const char *find_result_to_json_compact(string_buffer *dst_str, find *find)
 {
-        return carbon_find_result_to_str(dst_str, JSON_COMPACT, find);
+        return find_result_to_str(dst_str, JSON_COMPACT, find);
 }
 
-char *carbon_find_result_to_json_compact_dup(carbon_find *find)
+char *find_result_to_json_compact_dup(find *find)
 {
         string_buffer str;
         string_buffer_create(&str);
-        char *ret = strdup(carbon_find_result_to_json_compact(&str, find));
+        char *ret = strdup(find_result_to_json_compact(&str, find));
         string_buffer_drop(&str);
         return ret;
 }
 
-bool carbon_find_result_type(field_e *type, carbon_find *find)
+bool find_result_type(field_e *type, find *find)
 {
-        if(!carbon_path_evaluator_has_result(&find->path_evaluater)) {
+        if(!dot_eval_has_result(&find->eval)) {
             return false;
         } else {
             *type = find->type;
@@ -321,13 +321,13 @@ bool carbon_find_result_type(field_e *type, carbon_find *find)
         }
 }
 
-bool carbon_find_update_array_type(carbon_find *find, list_type_e derivation)
+bool find_update_array_type(find *find, list_type_e derivation)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_array_or_subtype(type)) {
                 memfile mod;
-                arr_it *it = carbon_find_result_array(find);
+                arr_it *it = find_result_array(find);
                 memfile_clone(&mod, &it->file);
                 memfile_seek_from_here(&mod, -sizeof(u8));
                 derived_e derive_marker;
@@ -340,36 +340,36 @@ bool carbon_find_update_array_type(carbon_find *find, list_type_e derivation)
         }
 }
 
-bool carbon_find_array_is_multiset(carbon_find *find)
+bool find_array_is_multiset(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_array_or_subtype(type)) {
-                arr_it *it = carbon_find_result_array(find);
+                arr_it *it = find_result_array(find);
                 return arr_it_is_multiset(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
 }
 
-bool carbon_find_array_is_sorted(carbon_find *find)
+bool find_array_is_sorted(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_array_or_subtype(type)) {
-                arr_it *it = carbon_find_result_array(find);
+                arr_it *it = find_result_array(find);
                 return arr_it_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
 }
 
-bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation)
+bool find_update_column_type(find *find, list_type_e derivation)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_column_or_subtype(type)) {
-                col_it *it = carbon_find_result_column(find);
+                col_it *it = find_result_column(find);
                 memfile_save_position(&it->file);
                 memfile_seek(&it->file, it->begin);
 
@@ -386,36 +386,36 @@ bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation)
         }
 }
 
-bool carbon_find_column_is_multiset(carbon_find *find)
+bool find_column_is_multiset(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_column_or_subtype(type)) {
-                col_it *it = carbon_find_result_column(find);
+                col_it *it = find_result_column(find);
                 return col_it_is_multiset(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
         }
 }
 
-bool carbon_find_column_is_sorted(carbon_find *find)
+bool find_column_is_sorted(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_column_or_subtype(type)) {
-                col_it *it = carbon_find_result_column(find);
+                col_it *it = find_result_column(find);
                 return col_it_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
         }
 }
 
-bool carbon_find_update_object_type(carbon_find *find, map_type_e derivation)
+bool find_update_object_type(find *find, map_type_e derivation)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
-                obj_it *it = carbon_find_result_object(find);
+                obj_it *it = find_result_object(find);
                 memfile_save_position(&it->memfile);
                 memfile_seek(&it->memfile, it->object_start_off);
 
@@ -431,79 +431,79 @@ bool carbon_find_update_object_type(carbon_find *find, map_type_e derivation)
         }
 }
 
-bool carbon_find_object_is_multimap(carbon_find *find)
+bool find_object_is_multimap(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
-                obj_it *it = carbon_find_result_object(find);
+                obj_it *it = find_result_object(find);
                 return carbon_object_is_multimap(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
         }
 }
 
-bool carbon_find_object_is_sorted(carbon_find *find)
+bool find_object_is_sorted(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
-                obj_it *it = carbon_find_result_object(find);
+                obj_it *it = find_result_object(find);
                 return carbon_object_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
         }
 }
 
-bool carbon_find_multimap(carbon_find *find)
+bool find_multimap(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
-                return carbon_find_object_is_multimap(find);
+                return find_object_is_multimap(find);
         } else {
                 return false;
         }
 }
 
-bool carbon_find_multiset(carbon_find *find)
+bool find_multiset(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_array_or_subtype(type)) {
-                return carbon_find_array_is_multiset(find);
+                return find_array_is_multiset(find);
         } else if (field_is_column_or_subtype(type)) {
-                return carbon_find_column_is_multiset(find);
+                return find_column_is_multiset(find);
         } else {
                 return false;
         }
 }
 
-bool carbon_find_sorted(carbon_find *find)
+bool find_sorted(find *find)
 {
         field_e type;
-        carbon_find_result_type(&type, find);
+        find_result_type(&type, find);
         if (field_is_array_or_subtype(type)) {
-                return carbon_find_array_is_sorted(find);
+                return find_array_is_sorted(find);
         } else if (field_is_column_or_subtype(type)) {
-                return carbon_find_column_is_sorted(find);
+                return find_column_is_sorted(find);
         } else {
-                return carbon_find_object_is_sorted(find);
+                return find_object_is_sorted(find);
         }
 }
 
 
-bool __check_path_evaluator_has_result(carbon_find *find)
+bool __check_path_evaluator_has_result(find *find)
 {
         assert(find);
-        if (UNLIKELY(!(carbon_path_evaluator_has_result(&find->path_evaluater)))) {
+        if (UNLIKELY(!(dot_eval_has_result(&find->eval)))) {
                 return error(ERR_ILLEGALSTATE, "no path evaluation result available");
         } else {
                 return true;
         }
 }
 
-arr_it *carbon_find_result_array(carbon_find *find)
+arr_it *find_result_array(find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -517,7 +517,7 @@ arr_it *carbon_find_result_array(carbon_find *find)
         return find->value.array;
 }
 
-obj_it *carbon_find_result_object(carbon_find *find)
+obj_it *find_result_object(find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -531,7 +531,7 @@ obj_it *carbon_find_result_object(carbon_find *find)
         return find->value.object_it;
 }
 
-col_it *carbon_find_result_column(carbon_find *find)
+col_it *find_result_column(find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -545,7 +545,7 @@ col_it *carbon_find_result_column(carbon_find *find)
         return find->value.column_it;
 }
 
-bool carbon_find_result_boolean(bool *result, carbon_find *find)
+bool find_result_boolean(bool *result, find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return false;
@@ -559,7 +559,7 @@ bool carbon_find_result_boolean(bool *result, carbon_find *find)
         return true;
 }
 
-bool carbon_find_result_unsigned(u64 *out, carbon_find *find)
+bool find_result_unsigned(u64 *out, find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return false;
@@ -573,7 +573,7 @@ bool carbon_find_result_unsigned(u64 *out, carbon_find *find)
         return true;
 }
 
-bool carbon_find_result_signed(i64 *out, carbon_find *find)
+bool find_result_signed(i64 *out, find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return false;
@@ -587,7 +587,7 @@ bool carbon_find_result_signed(i64 *out, carbon_find *find)
         return true;
 }
 
-bool carbon_find_result_float(float *out, carbon_find *find)
+bool find_result_float(float *out, find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return false;
@@ -601,7 +601,7 @@ bool carbon_find_result_float(float *out, carbon_find *find)
         return true;
 }
 
-const char *carbon_find_result_string(u64 *str_len, carbon_find *find)
+const char *find_result_string(u64 *str_len, find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -615,7 +615,7 @@ const char *carbon_find_result_string(u64 *str_len, carbon_find *find)
         return find->value.string.string;
 }
 
-binary *carbon_find_result_binary(carbon_find *find)
+binary *find_result_binary(find *find)
 {
         if (!__check_path_evaluator_has_result(find)) {
             return NULL;
@@ -629,12 +629,12 @@ binary *carbon_find_result_binary(carbon_find *find)
         return &find->value.binary;
 }
 
-bool carbon_find_drop(carbon_find *find)
+bool find_drop(find *find)
 {
-        return carbon_path_evaluator_end(&find->path_evaluater);
+        return dot_eval_end(&find->eval);
 }
 
-static void result_from_array(carbon_find *find, arr_it *it)
+static void result_from_array(find *find, arr_it *it)
 {
         find->type = it->field.type;
         switch (find->type) {
@@ -730,7 +730,7 @@ static void result_from_array(carbon_find *find, arr_it *it)
         }
 }
 
-static void result_from_object(carbon_find *find, obj_it *it)
+static void result_from_object(find *find, obj_it *it)
 {
         internal_carbon_object_prop_type(&find->type, it);
         switch (find->type) {
@@ -827,7 +827,7 @@ static void result_from_object(carbon_find *find, obj_it *it)
 }
 
 static inline bool
-result_from_column(carbon_find *find, u32 requested_idx, col_it *it)
+result_from_column(find *find, u32 requested_idx, col_it *it)
 {
         u32 num_contained_values;
         col_it_values_info(&find->type, &num_contained_values, it);

@@ -247,7 +247,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
 TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
 
         rec doc, doc2, doc3, doc4, doc5;
-        carbon_find find;
+        find find;
         field_e ft;
         rev revise;
 
@@ -256,69 +256,69 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
         {
                 carbon_revise_begin(&revise, &doc2, &doc);
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
+                find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                arr_it * find_result = carbon_find_result_array(&find);
+                arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_array_type(&find, LIST_SORTED_SET);
+                find_update_array_type(&find, LIST_SORTED_SET);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc2);
-                ASSERT_FALSE(carbon_find_array_is_multiset(&find));
-                ASSERT_TRUE(carbon_find_array_is_sorted(&find));
-                carbon_find_end(&find);
+                find_begin(&find, "x.0.y", &doc2);
+                ASSERT_FALSE(find_array_is_multiset(&find));
+                ASSERT_TRUE(find_array_is_sorted(&find));
+                find_end(&find);
         }
 
         {
                 carbon_revise_begin(&revise, &doc3, &doc2);
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
+                find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                arr_it * find_result = carbon_find_result_array(&find);
+                arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_array_type(&find, LIST_SORTED_MULTISET);
+                find_update_array_type(&find, LIST_SORTED_MULTISET);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc3);
-                ASSERT_TRUE(carbon_find_array_is_multiset(&find));
-                ASSERT_TRUE(carbon_find_array_is_sorted(&find));
-                carbon_find_end(&find);
+                find_begin(&find, "x.0.y", &doc3);
+                ASSERT_TRUE(find_array_is_multiset(&find));
+                ASSERT_TRUE(find_array_is_sorted(&find));
+                find_end(&find);
         }
 
         {
                 carbon_revise_begin(&revise, &doc4, &doc3);
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
+                find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                arr_it * find_result = carbon_find_result_array(&find);
+                arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_array_type(&find, LIST_UNSORTED_MULTISET);
+                find_update_array_type(&find, LIST_UNSORTED_MULTISET);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc4);
-                ASSERT_TRUE(carbon_find_array_is_multiset(&find));
-                ASSERT_FALSE(carbon_find_array_is_sorted(&find));
-                carbon_find_end(&find);
+                find_begin(&find, "x.0.y", &doc4);
+                ASSERT_TRUE(find_array_is_multiset(&find));
+                ASSERT_FALSE(find_array_is_sorted(&find));
+                find_end(&find);
         }
 
         {
                 carbon_revise_begin(&revise, &doc5, &doc4);
                 carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
+                find_result_type(&ft, &find);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                arr_it * find_result = carbon_find_result_array(&find);
+                arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
-                carbon_find_update_array_type(&find, LIST_UNSORTED_SET);
+                find_update_array_type(&find, LIST_UNSORTED_SET);
                 carbon_revise_find_end(&find);
                 carbon_revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc5);
-                ASSERT_FALSE(carbon_find_array_is_multiset(&find));
-                ASSERT_FALSE(carbon_find_array_is_sorted(&find));
-                carbon_find_end(&find);
+                find_begin(&find, "x.0.y", &doc5);
+                ASSERT_FALSE(find_array_is_multiset(&find));
+                ASSERT_FALSE(find_array_is_sorted(&find));
+                find_end(&find);
         }
 
         carbon_drop(&doc);

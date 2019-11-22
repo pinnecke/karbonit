@@ -19,25 +19,25 @@
 #include <jakson/carbon/find.h>
 #include <jakson/carbon/revise.h>
 
-static inline path_status_e traverse_column(carbon_path_evaluator *state,
+static inline path_status_e traverse_column(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       col_it *it);
 
-static inline path_status_e traverse_array(carbon_path_evaluator *state,
+static inline path_status_e traverse_array(dot_eval *state,
                                                      const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record);
 
-void carbon_path_evaluator_begin(carbon_path_evaluator *eval, dot *path,
+void dot_eval_begin(dot_eval *eval, dot *path,
                                  rec *doc)
 {
-        ZERO_MEMORY(eval, sizeof(carbon_path_evaluator));
+        ZERO_MEMORY(eval, sizeof(dot_eval));
         eval->doc = doc;
         carbon_read_begin(&eval->root_it, eval->doc);
         eval->status = traverse_array(eval, path, 0, &eval->root_it, true);
         carbon_read_end(&eval->root_it);
 }
 
-bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const dot *path,
+bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
                                          rev *context)
 {
         eval->doc = context->revised_doc;
@@ -49,18 +49,18 @@ bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const dot 
         return true;
 }
 
-bool carbon_path_evaluator_status(path_status_e *status, carbon_path_evaluator *state)
+bool dot_eval_status(path_status_e *status, dot_eval *state)
 {
         *status = state->status;
         return true;
 }
 
-bool carbon_path_evaluator_has_result(carbon_path_evaluator *state)
+bool dot_eval_has_result(dot_eval *state)
 {
         return (state->status == PATH_RESOLVED);
 }
 
-bool carbon_path_evaluator_end(carbon_path_evaluator *state)
+bool dot_eval_end(dot_eval *state)
 {
         switch (state->result.container) {
                 case OBJECT:
@@ -78,54 +78,54 @@ bool carbon_path_evaluator_end(carbon_path_evaluator *state)
 
 bool carbon_path_exists(rec *doc, const char *path)
 {
-        carbon_find find;
-        bool result = carbon_find_begin(&find, path, doc);
-        carbon_find_end(&find);
+        find find;
+        bool result = find_begin(&find, path, doc);
+        find_end(&find);
         return result;
 }
 
 bool carbon_path_is_array(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_array_or_subtype(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
 bool carbon_path_is_column(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_column_or_subtype(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
 bool carbon_path_is_object(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_object_or_subtype(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
@@ -137,65 +137,65 @@ bool carbon_path_is_container(rec *doc, const char *path)
 
 bool carbon_path_is_null(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_null(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
 bool carbon_path_is_number(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_number(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
 bool carbon_path_is_boolean(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_boolean(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
 bool carbon_path_is_string(rec *doc, const char *path)
 {
-        carbon_find find;
+        find find;
         field_e field_type;
         bool result = false;
 
-        if (carbon_find_begin(&find, path, doc)) {
-                carbon_find_result_type(&field_type, &find);
+        if (find_begin(&find, path, doc)) {
+                find_result_type(&field_type, &find);
                 result = field_is_string(field_type);
         }
 
-        carbon_find_end(&find);
+        find_end(&find);
         return result;
 }
 
-static inline path_status_e traverse_object(carbon_path_evaluator *state,
+static inline path_status_e traverse_object(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       obj_it *it)
 {
@@ -366,7 +366,7 @@ static inline path_status_e traverse_object(carbon_path_evaluator *state,
         return PATH_NOSUCHKEY;
 }
 
-static inline path_status_e traverse_array(carbon_path_evaluator *state,
+static inline path_status_e traverse_array(dot_eval *state,
                                                      const dot *path, u32 current_path_pos,
                                                      arr_it *it, bool is_record)
 {
@@ -509,7 +509,7 @@ static inline path_status_e traverse_array(carbon_path_evaluator *state,
         }
 }
 
-static inline path_status_e traverse_column(carbon_path_evaluator *state,
+static inline path_status_e traverse_column(dot_eval *state,
                                                       const dot *path, u32 current_path_pos,
                                                       col_it *it)
 {

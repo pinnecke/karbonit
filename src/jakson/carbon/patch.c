@@ -31,14 +31,14 @@ void carbon_patch_end(arr_it *it)
         arr_it_drop(it);
 }
 
-bool carbon_patch_find_begin(carbon_find *out, const char *dot, rec *doc)
+bool carbon_patch_find_begin(find *out, const char *dot, rec *doc)
 {
         doc->file.mode = READ_WRITE;
-        return carbon_find_begin(out, dot, doc);
+        return find_begin(out, dot, doc);
 }
 
-bool carbon_patch_find_end(carbon_find *find)
+bool carbon_patch_find_end(find *find)
 {
         find->doc->file.mode = READ_ONLY;
-        return carbon_find_end(find);
+        return find_end(find);
 }

@@ -94,7 +94,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_f
                                 return error(ERR_INTERNALERR, "unknown container type for update operation");                                            \
                         }                                                                                              \
                 }                                                                                                      \
-                carbon_path_evaluator_end(&updater.path_evaluater);                                                    \
+                dot_eval_end(&updater.path_evaluater);                                                    \
                 }                                                                                                              \
         true;                                                                                                        \
 })
@@ -123,12 +123,12 @@ static bool compile_path(dot *out, const char *in)
 
 static bool resolve_path(carbon_update *updater)
 {
-        return carbon_path_evaluator_begin_mutable(&updater->path_evaluater, updater->path, updater->context);
+        return dot_eval_begin_mutable(&updater->path_evaluater, updater->path, updater->context);
 }
 
 static bool path_resolved(carbon_update *updater)
 {
-        return carbon_path_evaluator_has_result(&updater->path_evaluater);
+        return dot_eval_has_result(&updater->path_evaluater);
 }
 
 static bool column_update_u8(col_it *it, u32 pos, u8 value)

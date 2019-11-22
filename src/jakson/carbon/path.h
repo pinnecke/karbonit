@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-typedef struct carbon_path_evaluator {
+typedef struct dot_eval {
         rec *doc;
         arr_it root_it;
         path_status_e status;
@@ -52,14 +52,14 @@ typedef struct carbon_path_evaluator {
 
                 } containers;
         } result;
-} carbon_path_evaluator;
+} dot_eval;
 
-void carbon_path_evaluator_begin(carbon_path_evaluator *eval, dot *path, rec *doc);
-bool carbon_path_evaluator_begin_mutable(carbon_path_evaluator *eval, const dot *path, rev *context);
-bool carbon_path_evaluator_end(carbon_path_evaluator *state);
+void dot_eval_begin(dot_eval *eval, dot *path, rec *doc);
+bool dot_eval_begin_mutable(dot_eval *eval, const dot *path, rev *context);
+bool dot_eval_end(dot_eval *state);
 
-bool carbon_path_evaluator_status(path_status_e *status, carbon_path_evaluator *state);
-bool carbon_path_evaluator_has_result(carbon_path_evaluator *state);
+bool dot_eval_status(path_status_e *status, dot_eval *state);
+bool dot_eval_has_result(dot_eval *state);
 bool carbon_path_exists(rec *doc, const char *path);
 
 bool carbon_path_is_array(rec *doc, const char *path);

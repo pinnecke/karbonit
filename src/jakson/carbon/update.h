@@ -38,7 +38,7 @@ extern "C" {
 
 typedef struct carbon_update {
         rev *context;
-        carbon_path_evaluator path_evaluater;
+        dot_eval path_evaluater;
         const dot *path;
         bool is_found;
 } carbon_update;

@@ -161,18 +161,18 @@ void carbon_revise_iterator_close(arr_it *it)
         arr_it_drop(it);
 }
 
-bool carbon_revise_find_begin(carbon_find *out, const char *dot, rev *context)
+bool carbon_revise_find_begin(find *out, const char *dot, rev *context)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        bool status = carbon_find_create(out, &path, context->revised_doc);
+        bool status = find_create(out, &path, context->revised_doc);
         dot_drop(&path);
         return status;
 }
 
-bool carbon_revise_find_end(carbon_find *find)
+bool carbon_revise_find_end(find *find)
 {
-        return carbon_find_drop(find);
+        return find_drop(find);
 }
 
 bool carbon_revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
@@ -187,11 +187,11 @@ bool carbon_revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
 bool carbon_revise_remove(const char *path, rev *context)
 {
         struct dot dot;
-        carbon_path_evaluator eval;
+        dot_eval eval;
         bool result;
 
         if (dot_from_string(&dot, path)) {
-                carbon_path_evaluator_begin_mutable(&eval, &dot, context);
+                dot_eval_begin_mutable(&eval, &dot, context);
 
                 if (eval.status != PATH_RESOLVED) {
                         result = false;
@@ -212,7 +212,7 @@ bool carbon_revise_remove(const char *path, rev *context)
                                         result = false;
                         }
                 }
-                carbon_path_evaluator_end(&eval);
+                dot_eval_end(&eval);
                 return result;
         } else {
                 error(ERR_DOT_PATH_PARSERR, NULL);

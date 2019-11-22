@@ -25,10 +25,10 @@
 extern "C" {
 #endif
 
-typedef struct carbon_find {
+typedef struct find {
         rec *doc;
         field_e type;
-        carbon_path_evaluator path_evaluater;
+        dot_eval eval;
 
         bool value_is_nulled;
 
@@ -44,45 +44,45 @@ typedef struct carbon_find {
                 carbon_string_field string;
                 binary binary;
         } value;
-} carbon_find;
+} find;
 
-bool carbon_find_begin(carbon_find *out, const char *dot, rec *doc);
-bool carbon_find_end(carbon_find *find);
-bool carbon_find_create(carbon_find *find, dot *path, rec *doc);
-bool carbon_find_drop(carbon_find *find);
+bool find_begin(find *out, const char *dot, rec *doc);
+bool find_end(find *find);
+bool find_create(find *find, dot *path, rec *doc);
+bool find_drop(find *find);
 
-bool carbon_find_has_result(carbon_find *find);
-const char *carbon_find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, carbon_find *find);
-const char *carbon_find_result_to_json_compact(string_buffer *dst_str, carbon_find *find);
-char *carbon_find_result_to_json_compact_dup(carbon_find *find);
+bool find_has_result(find *find);
+const char *find_result_to_str(string_buffer *dst_str, carbon_printer_impl_e print_type, find *find);
+const char *find_result_to_json_compact(string_buffer *dst_str, find *find);
+char *find_result_to_json_compact_dup(find *find);
 
-bool carbon_find_result_type(field_e *type, carbon_find *find);
+bool find_result_type(field_e *type, find *find);
 
-bool carbon_find_update_array_type(carbon_find *find, list_type_e derivation);
-bool carbon_find_array_is_multiset(carbon_find *find);
-bool carbon_find_array_is_sorted(carbon_find *find);
+bool find_update_array_type(find *find, list_type_e derivation);
+bool find_array_is_multiset(find *find);
+bool find_array_is_sorted(find *find);
 
-bool carbon_find_update_column_type(carbon_find *find, list_type_e derivation);
-bool carbon_find_column_is_multiset(carbon_find *find);
-bool carbon_find_column_is_sorted(carbon_find *find);
+bool find_update_column_type(find *find, list_type_e derivation);
+bool find_column_is_multiset(find *find);
+bool find_column_is_sorted(find *find);
 
-bool carbon_find_update_object_type(carbon_find *find, map_type_e derivation);
-bool carbon_find_object_is_multimap(carbon_find *find);
-bool carbon_find_object_is_sorted(carbon_find *find);
+bool find_update_object_type(find *find, map_type_e derivation);
+bool find_object_is_multimap(find *find);
+bool find_object_is_sorted(find *find);
 
-bool carbon_find_multimap(carbon_find *find);
-bool carbon_find_multiset(carbon_find *find);
-bool carbon_find_sorted(carbon_find *find);
+bool find_multimap(find *find);
+bool find_multiset(find *find);
+bool find_sorted(find *find);
 
-arr_it *carbon_find_result_array(carbon_find *find);
-obj_it *carbon_find_result_object(carbon_find *find);
-col_it *carbon_find_result_column(carbon_find *find);
-bool carbon_find_result_boolean(bool *result, carbon_find *find);
-bool carbon_find_result_unsigned(u64 *out, carbon_find *find);
-bool carbon_find_result_signed(i64 *out, carbon_find *find);
-bool carbon_find_result_float(float *out, carbon_find *find);
-const char *carbon_find_result_string(u64 *str_len, carbon_find *find);
-binary *carbon_find_result_binary(carbon_find *find);
+arr_it *find_result_array(find *find);
+obj_it *find_result_object(find *find);
+col_it *find_result_column(find *find);
+bool find_result_boolean(bool *result, find *find);
+bool find_result_unsigned(u64 *out, find *find);
+bool find_result_signed(i64 *out, find *find);
+bool find_result_float(float *out, find *find);
+const char *find_result_string(u64 *str_len, find *find);
+binary *find_result_binary(find *find);
 
 #ifdef __cplusplus
 }

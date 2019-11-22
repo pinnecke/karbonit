@@ -64,7 +64,7 @@ bool dot_eval_end(dot_eval *state)
 {
         switch (state->result.container) {
                 case OBJECT:
-                        carbon_object_drop(&state->result.containers.object.it);
+                        obj_it_drop(&state->result.containers.object.it);
                         break;
                 case ARRAY:
                         arr_it_drop(&state->result.containers.array.it);
@@ -206,7 +206,7 @@ static inline path_status_e traverse_object(dot_eval *state,
         dot_type_at(&node_type, current_path_pos, path);
         JAK_ASSERT(node_type == DOT_NODE_KEY);
 
-        status = carbon_object_next(it);
+        status = obj_it_next(it);
         dot_len(&length, path);
         const char *needle = dot_key_at(current_path_pos, path);
         u64 needle_len = strlen(needle);
@@ -218,18 +218,18 @@ static inline path_status_e traverse_object(dot_eval *state,
         } else {
                 string_field prop_key;
                 do {
-                        prop_key = internal_carbon_object_prop_name(it);
+                        prop_key = internal_obj_it_prop_name(it);
                         if (prop_key.length == needle_len && strncmp(prop_key.string, needle, needle_len) == 0) {
                                 if (next_path_pos == length) {
                                         state->result.container = OBJECT;
-                                        internal_carbon_object_clone(&state->result.containers.object.it, it);
+                                        internal_obj_it_clone(&state->result.containers.object.it, it);
                                         return PATH_RESOLVED;
                                 } else {
                                         /** path end not reached, traverse further if possible */
                                         JAK_ASSERT(next_path_pos < length);
 
                                         field_e prop_type;
-                                        internal_carbon_object_prop_type(&prop_type, it);
+                                        internal_obj_it_prop_type(&prop_type, it);
 
                                         if (!field_is_traversable(prop_type)) {
                                                 return PATH_NOTTRAVERSABLE;
@@ -292,7 +292,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                                                                                               path,
                                                                                                               next_path_pos,
                                                                                                               sub_it);
-                                                                carbon_object_drop(sub_it);
+                                                                obj_it_drop(sub_it);
                                                                 return ret;
                                                         }
                                                         case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -360,7 +360,7 @@ static inline path_status_e traverse_object(dot_eval *state,
                                         }
                                 }
                         }
-                } while (carbon_object_next(it));
+                } while (obj_it_next(it));
         }
 
         return PATH_NOSUCHKEY;
@@ -461,7 +461,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                                                                                                  path,
                                                                                                                  next_path_pos,
                                                                                                                  sub_it);
-                                                                                        carbon_object_drop(sub_it);
+                                                                                        obj_it_drop(sub_it);
                                                                                         return status;
                                                                                 }
                                                                         default: error(ERR_INTERNALERR, NULL);
@@ -495,7 +495,7 @@ static inline path_status_e traverse_array(dot_eval *state,
                                                                                  path,
                                                                                  current_path_pos,
                                                                                  sub_it);
-                                                        carbon_object_drop(sub_it);
+                                                        obj_it_drop(sub_it);
                                                         return status;
                                                 } else {
                                                         return PATH_NOSUCHKEY;

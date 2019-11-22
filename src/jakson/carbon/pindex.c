@@ -289,10 +289,10 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
 
 static void object_traverse(struct pindex_node *parent, obj_it *it)
 {
-        while (carbon_object_next(it)) {
+        while (obj_it_next(it)) {
                 offset_t key_off = 0, value_off = 0;
-                internal_carbon_object_tell(&key_off, &value_off, it);
-                string_field prop_key = internal_carbon_object_prop_name(it);
+                internal_obj_it_tell(&key_off, &value_off, it);
+                string_field prop_key = internal_obj_it_prop_name(it);
                 struct pindex_node *elem_node = pindex_node_add_key_elem(parent, key_off,
                                                                                  prop_key.string, prop_key.length, value_off);
                 object_build_index(elem_node, it);
@@ -302,7 +302,7 @@ static void object_traverse(struct pindex_node *parent, obj_it *it)
 static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
 {
         field_e field_type = 0;;
-        internal_carbon_object_prop_type(&field_type, elem_it);
+        internal_obj_it_prop_type(&field_type, elem_it);
         pindex_node_set_field_type(parent, field_type);
 
         switch (field_type) {
@@ -383,7 +383,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         obj_it *it = item_get_object(&(elem_it->prop.value));
                         object_traverse(parent, it);
-                        carbon_object_drop(it);
+                        obj_it_drop(it);
                 }
                         break;
                 default: error(ERR_INTERNALERR, NULL);
@@ -474,7 +474,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         obj_it *it = item_get_object(&elem_it->item);
                         object_traverse(parent, it);
-                        carbon_object_drop(it);
+                        obj_it_drop(it);
                 }
                         break;
                 default: error(ERR_INTERNALERR, NULL);

@@ -321,14 +321,14 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
         bool first_entry = true;
         carbon_printer_object_begin(printer, builder);
 
-        while (carbon_object_next(it)) {
+        while (obj_it_next(it)) {
                 if (LIKELY(!first_entry)) {
                         carbon_printer_comma(printer, builder);
                 }
                 DECLARE_AND_INIT(field_e, type)
-                string_field prop_key = internal_carbon_object_prop_name(it);
+                string_field prop_key = internal_obj_it_prop_name(it);
 
-                internal_carbon_object_prop_type(&type, it);
+                internal_obj_it_prop_type(&type, it);
                 switch (type) {
                         case FIELD_NULL:
                                 carbon_printer_prop_null(printer, builder, prop_key.string, prop_key.length);
@@ -443,7 +443,7 @@ bool carbon_printer_print_object(obj_it *it, carbon_printer *printer, string_buf
                                 obj_it *object = item_get_object(&(it->prop.value));
                                 carbon_printer_object_prop_name(printer, builder, prop_key.string, prop_key.length);
                                 carbon_printer_print_object(object, printer, builder);
-                                carbon_object_drop(object);
+                                obj_it_drop(object);
                         }
                                 break;
                         default:
@@ -592,7 +592,7 @@ bool carbon_printer_print_array(arr_it *it, carbon_printer *printer, string_buff
                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                 obj_it *object = item_get_object(&(it->item));
                                 carbon_printer_print_object(object, printer, builder);
-                                carbon_object_drop(object);
+                                obj_it_drop(object);
                         }
                                 break;
                         default:

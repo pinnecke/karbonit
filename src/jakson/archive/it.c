@@ -1127,7 +1127,7 @@ DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(number, archive_field_number_t, n
 
 DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t, booleans_base)
 
-void archive_int_reset_carbon_object_mem_file(archive_object *object)
+void archive_int_reset_obj_it_mem_file(archive_object *object)
 {
         UNUSED(object);
         //  memfile_seek(&object->file, object->self);

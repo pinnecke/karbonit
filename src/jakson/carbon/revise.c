@@ -380,7 +380,7 @@ static bool internal_pack_array(arr_it *it)
                                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         obj_it object;
-                                        internal_carbon_object_create(&object, &it->file,
+                                        internal_obj_it_create(&object, &it->file,
                                                                       it->field.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
@@ -388,7 +388,7 @@ static bool internal_pack_array(arr_it *it)
                                                    MOBJECT_END);
                                         memfile_skip(&object.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&object.file));
-                                        carbon_object_drop(&object);
+                                        obj_it_drop(&object);
                                 }
                                         break;
                                 default: error(ERR_INTERNALERR, NULL);
@@ -411,7 +411,7 @@ static bool internal_pack_object(obj_it *it)
                 obj_it this_object_it;
                 bool is_empty_slot, is_object_end;
 
-                internal_carbon_object_copy(&this_object_it, it);
+                internal_obj_it_copy(&this_object_it, it);
                 internal_object_skip_contents(&is_empty_slot, &is_object_end, &this_object_it);
 
                 if (!is_object_end) {
@@ -432,14 +432,14 @@ static bool internal_pack_object(obj_it *it)
                         JAK_ASSERT(final == MOBJECT_END);
                 }
 
-                carbon_object_drop(&this_object_it);
+                obj_it_drop(&this_object_it);
         }
 
         /** shrink contained containers */
         {
-                while (carbon_object_next(it)) {
+                while (obj_it_next(it)) {
                         field_e type;
-                        internal_carbon_object_prop_type(&type, it);
+                        internal_obj_it_prop_type(&type, it);
                         switch (type) {
                                 case FIELD_NULL:
                                 case FIELD_TRUE:
@@ -523,7 +523,7 @@ static bool internal_pack_object(obj_it *it)
                                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                         obj_it object;
-                                        internal_carbon_object_create(&object, &it->file,
+                                        internal_obj_it_create(&object, &it->file,
                                                                       it->field.value.data.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
@@ -531,7 +531,7 @@ static bool internal_pack_object(obj_it *it)
                                                    MOBJECT_END);
                                         memfile_skip(&object.file, sizeof(char));
                                         memfile_seek(&it->file, memfile_tell(&object.file));
-                                        carbon_object_drop(&object);
+                                        obj_it_drop(&object);
                                 }
                                         break;
                                 default: error(ERR_INTERNALERR, NULL);

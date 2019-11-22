@@ -417,7 +417,7 @@ bool internal_field_data_access(memfile *file, field *field)
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
                         internal_field_create(field);
                         field->obj_it.created = true;
-                        internal_carbon_object_create(field->object, file,
+                        internal_obj_it_create(field->object, file,
                                                       memfile_tell(file) - sizeof(u8));
                         break;
                 default:
@@ -540,7 +540,7 @@ bool internal_field_clone(field *dst, field *src)
         dst->column = MALLOC(sizeof(col_it));
 
         if (internal_field_object_it_opened(src)) {
-                internal_carbon_object_clone(dst->object, src->object);
+                internal_obj_it_clone(dst->object, src->object);
         } else if (internal_field_column_it_opened(src)) {
                 col_it_clone(dst->column, src->column);
         } else if (internal_field_array_opened(src)) {
@@ -590,7 +590,7 @@ void internal_auto_close_nested_array(field *field)
 void internal_auto_close_nested_object_it(field *field)
 {
         if (internal_field_object_it_opened(field)) {
-                carbon_object_drop(field->object);
+                obj_it_drop(field->object);
                 ZERO_MEMORY(field->object, sizeof(obj_it));
         }
 }
@@ -1049,10 +1049,10 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         obj_it it;
 
                         offset_t begin_off = memfile_tell(memfile);
-                        internal_carbon_object_create(&it, memfile, begin_off - sizeof(u8));
-                        internal_carbon_object_fast_forward(&it);
-                        offset_t end_off = internal_carbon_object_memfile_pos(&it);
-                        carbon_object_drop(&it);
+                        internal_obj_it_create(&it, memfile, begin_off - sizeof(u8));
+                        internal_obj_it_fast_forward(&it);
+                        offset_t end_off = internal_obj_it_memfile_pos(&it);
+                        obj_it_drop(&it);
 
                         JAK_ASSERT(begin_off < end_off);
                         rm_nbytes += (end_off - begin_off);

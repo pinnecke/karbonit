@@ -316,7 +316,7 @@ DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(string, archive_field_sid_t);
 DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(number, archive_field_number_t);
 DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t);
 
-void archive_int_reset_carbon_object_mem_file(archive_object *object);
+void archive_int_reset_obj_it_mem_file(archive_object *object);
 
 #ifdef __cplusplus
 }

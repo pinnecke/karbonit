@@ -47,7 +47,7 @@ struct sid_to_offset {
         memfile_seek(&obj->file, obj->props.offset_name);                                                       \
         fixed_prop prop;                                                                                      \
         int_embedded_fixed_props_read(&prop, &obj->file);                                                       \
-        archive_int_reset_carbon_object_mem_file(obj);                                                                   \
+        archive_int_reset_obj_it_mem_file(obj);                                                                   \
         OPTIONAL_SET(num_pairs, prop.header->num_entries);                                                      \
         return prop.keys;                                                                                              \
     } else {                                                                                                           \

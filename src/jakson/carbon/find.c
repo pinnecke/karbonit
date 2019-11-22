@@ -51,7 +51,7 @@ bool find_end(find *find)
                         case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                         case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                                carbon_object_drop(find->value.object);
+                                obj_it_drop(find->value.object);
                                 break;
                         case FIELD_ARRAY_UNSORTED_MULTISET:
                         case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
@@ -437,7 +437,7 @@ bool find_object_is_multimap(find *find)
         find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
                 obj_it *it = find_result_object(find);
-                return carbon_object_is_multimap(it);
+                return obj_it_is_multimap(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
         }
@@ -449,7 +449,7 @@ bool find_object_is_sorted(find *find)
         find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
                 obj_it *it = find_result_object(find);
-                return carbon_object_is_sorted(it);
+                return obj_it_is_sorted(it);
         } else {
                 return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
         }
@@ -729,7 +729,7 @@ static void result_from_array(find *find, arr_it *it)
 
 static void result_from_object(find *find, obj_it *it)
 {
-        internal_carbon_object_prop_type(&find->type, it);
+        internal_obj_it_prop_type(&find->type, it);
         switch (find->type) {
                 case FIELD_NULL:
                 case FIELD_TRUE:

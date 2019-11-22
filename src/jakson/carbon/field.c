@@ -357,10 +357,10 @@ bool carbon_field_skip_object(memfile *file)
 {
         if (abstract_is_instanceof_object(file)) {
                 obj_it skip_it;
-                internal_carbon_object_create(&skip_it, file, memfile_tell(file));
-                internal_carbon_object_fast_forward(&skip_it);
+                internal_obj_it_create(&skip_it, file, memfile_tell(file));
+                internal_obj_it_fast_forward(&skip_it);
                 memfile_seek(file, memfile_tell(&skip_it.file));
-                carbon_object_drop(&skip_it);
+                obj_it_drop(&skip_it);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, "marker does not encode an object container or sub type");

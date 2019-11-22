@@ -467,8 +467,8 @@ insert *__insert_map_begin(obj_state *out,
         internal_insert_object(&in->file, derivation, object_capacity);
         u64 payload_start = memfile_tell(&in->file) - 1;
 
-        internal_carbon_object_create(out->it, &in->file, payload_start);
-        internal_carbon_object_insert_begin(&out->in, out->it);
+        internal_obj_it_create(out->it, &in->file, payload_start);
+        internal_obj_it_insert_begin(&out->in, out->it);
 
         return &out->in;
 }
@@ -483,8 +483,8 @@ insert *insert_object_begin(obj_state *out,
 bool insert_object_end(obj_state *state)
 {
         obj_it scan;
-        internal_carbon_object_create(&scan, &state->parent->file, memfile_tell(&state->parent->file) - 1);
-        while (carbon_object_next(&scan)) {}
+        internal_obj_it_create(&scan, &state->parent->file, memfile_tell(&state->parent->file) - 1);
+        while (obj_it_next(&scan)) {}
 
         JAK_ASSERT(*memfile_peek(&scan.file, sizeof(char)) == MOBJECT_END);
         memfile_read(&scan.file, sizeof(char));
@@ -494,8 +494,8 @@ bool insert_object_end(obj_state *state)
         memfile_skip(&scan.file, 1);
 
         memfile_seek(&state->parent->file, memfile_tell(&scan.file) - 1);
-        carbon_object_drop(&scan);
-        carbon_object_drop(state->it);
+        obj_it_drop(&scan);
+        obj_it_drop(state->it);
         free(state->it);
         return true;
 }

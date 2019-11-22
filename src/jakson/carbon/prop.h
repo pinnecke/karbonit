@@ -97,10 +97,10 @@ typedef struct carbon_prop
         ((prop) ? item_get_object((prop)->value) : default_value)
 
 #define carbon_prop_remove(prop)                                                                                       \
-        ((prop) ? internal_carbon_object_remove((prop)->value) : default_value)
+        ((prop) ? internal_obj_it_remove((prop)->value) : default_value)
 
 #define carbon_prop_set_name(prop, key_name)                                                                           \
-        (internal_carbon_object_update_name((prop)->parent, key_name))
+        (internal_obj_it_update_name((prop)->parent, key_name))
 
 #define carbon_prop_set_null(prop)                                                                                     \
         item_set_null((prop)->value)
@@ -150,8 +150,8 @@ typedef struct carbon_prop
 #define carbon_prop_set_from_array(prop, const_arr_it_ptr_src)                                                   \
         item_set_from_array((prop)->value, const_arr_it_ptr_src)
 
-#define carbon_prop_set_from_object(prop, const_carbon_object_ptr_src)                                                 \
-        item_set_from_object((prop)->value, const_carbon_object_ptr_src)
+#define carbon_prop_set_from_object(prop, const_obj_it_ptr_src)                                                 \
+        item_set_from_object((prop)->value, const_obj_it_ptr_src)
 
 #define carbon_prop_set_from_column(prop, const_col_it_ptr_src)                                                 \
         item_set_from_column((prop)->value, const_col_it_ptr_src)

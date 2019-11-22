@@ -327,17 +327,17 @@ static inline void __carbon_print_json_enter_object_fast(struct carbon_traverse_
         string_buffer_add(str_buf, "{");
         char sep = '\0';
 
-        while (carbon_object_next(it)) {
-                internal_carbon_object_prop_type(&type, it);
+        while (obj_it_next(it)) {
+                internal_obj_it_prop_type(&type, it);
 
                 string_buffer_add_char(str_buf, sep);
                 sep = ',';
 
-                string_field prop_key = internal_carbon_object_prop_name(it);
+                string_field prop_key = internal_obj_it_prop_name(it);
                 __carbon_print_json_string(str_buf, prop_key.string, prop_key.length);
                 string_buffer_add_char(str_buf, ':');
 
-                internal_carbon_object_prop_type(&type, it);
+                internal_obj_it_prop_type(&type, it);
                 switch (type) {
                         case FIELD_NULL:
                                 __carbon_print_json_constant(str_buf, CARBON_PRINT_JSON_NULL);

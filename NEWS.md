@@ -1,5 +1,8 @@
-## 0.5.00.4 [2019-XX-XX]
-- Add carbon revision patching as alternatve to carbon revisions
+## 0.7.00.0 [2020-XX-XX]
+- TODO
+
+## 0.6.00.0 [2019-11-25]
+- Add carbon revision patching as alternative to carbon revisions
 
 ## 0.5.00.03 [2019-09-27]
 - Add source amalgamation as optional build option to increase runtime performance by generating a single translation 

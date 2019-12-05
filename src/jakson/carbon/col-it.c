@@ -131,7 +131,7 @@ bool col_it_values_info(field_e *type, u32 *nvalues, col_it *it)
         return true;
 }
 
-bool col_it_value_is_null(col_it *it, u32 pos)
+bool col_it_is_null(col_it *it, u32 pos)
 {
         field_e type;
         u32 nvalues = 0;
@@ -190,6 +190,138 @@ bool col_it_value_is_null(col_it *it, u32 pos)
                         return IS_NULL_BOOLEAN(col_it_boolean_values(NULL, it)[pos]);
                 default:
                         return error(ERR_UNSUPPCONTAINER, NULL);
+        }
+}
+
+bool col_it_is_boolean(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_u8(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_u16(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_u32(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_u64(col_it *it)
+{
+        {
+                switch (it->field_type) {
+                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                                return true;
+                        default:
+                                return false;
+                }
+        }
+}
+
+bool col_it_is_i8(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_i16(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_i32(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_i64(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                        return true;
+                default:
+                        return false;
+        }
+}
+
+bool col_it_is_float(col_it *it)
+{
+        switch (it->field_type) {
+                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                        return true;
+                default:
+                        return false;
         }
 }
 
@@ -770,4 +902,55 @@ bool col_it_rewind(col_it *it)
         offset_t playload_start = internal_column_get_payload_off(it);
         error_if_and_return(playload_start >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
         return memfile_seek(&it->file, playload_start);
+}
+
+#define COL_IT_PRINT(it, nvalues, type, null_check)                                             \
+{                                                                                               \
+        const type *value = col_it_##type##_values(&nvalues, it);                               \
+        for (u32 i = 0; i < nvalues; i++) {                                                     \
+                type x = value[i];                                                              \
+                if (null_check(x)) {                                                            \
+                        str_buf_add(dst, "null");                                               \
+                } else {                                                                        \
+                        str_buf_add_##type(dst, value[i]);                                      \
+                }                                                                               \
+                if (i + 1 < nvalues) {                                                          \
+                        str_buf_add(dst, ", ");                                                 \
+                }                                                                               \
+        }                                                                                       \
+}
+
+bool col_it_print(str_buf *dst, col_it *it)
+{
+        u32 nvalues;
+
+        str_buf_add_char(dst, '[');
+
+        if (col_it_is_boolean(it)) {
+                COL_IT_PRINT(it, nvalues, boolean, IS_NULL_BOOLEAN)
+        } else if (col_it_is_i8(it)) {
+                COL_IT_PRINT(it, nvalues, i8, IS_NULL_I8)
+        } else if (col_it_is_i16(it)) {
+                COL_IT_PRINT(it, nvalues, i16, IS_NULL_I16)
+        } else if (col_it_is_i32(it)) {
+                COL_IT_PRINT(it, nvalues, i32, IS_NULL_I32)
+        } else if (col_it_is_i64(it)) {
+                COL_IT_PRINT(it, nvalues, i64, IS_NULL_I64)
+        } else if (col_it_is_u8(it)) {
+                COL_IT_PRINT(it, nvalues, u8, IS_NULL_U8)
+        } else if (col_it_is_u16(it)) {
+                COL_IT_PRINT(it, nvalues, u16, IS_NULL_U16)
+        } else if (col_it_is_u32(it)) {
+                COL_IT_PRINT(it, nvalues, u32, IS_NULL_U32)
+        } else if (col_it_is_u64(it)) {
+                COL_IT_PRINT(it, nvalues, u64, IS_NULL_U64)
+        } else if (col_it_is_float(it)) {
+                COL_IT_PRINT(it, nvalues, float, IS_NULL_FLOAT)
+        } else {
+                str_buf_add_char(dst, ']');
+                return error(ERR_UNSUPPORTEDTYPE, "column has unsupported type");
+        }
+
+        str_buf_add_char(dst, ']');
+        return true;
 }

@@ -93,7 +93,7 @@ bool hexdump_print(FILE *file, const void *base, u64 nbytes)
         str_buf sb;
         str_buf_create(&sb);
         if ((status = hexdump(&sb, base, nbytes))) {
-                fprintf(file, "%s", string_cstr(&sb));
+                fprintf(file, "%s", str_buf_cstr(&sb));
         }
         str_buf_drop(&sb);
         return status;

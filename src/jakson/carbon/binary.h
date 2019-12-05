@@ -6,6 +6,7 @@
 #define HAD_BINARY_H
 
 #include <jakson/types.h>
+#include <jakson/std/string.h>
 
 typedef struct binary_field {
     const char *mime;
@@ -20,6 +21,8 @@ static binary_field NULL_BINARY = {
         .blob = 0,
         .blob_len = 0
 };
+
+void binary_field_print(str_buf *dst, const binary_field *field);
 
 #endif
 

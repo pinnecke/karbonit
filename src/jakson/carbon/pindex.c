@@ -274,7 +274,7 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
         col_it_values_info(&column_type, &nvalues, it);
 
         for (u32 i = 0; i < nvalues; i++) {
-                bool is_null = col_it_value_is_null(it, i);
+                bool is_null = col_it_is_null(it, i);
                 bool is_true = false;
                 if (field_is_column_bool_or_subtype(column_type)) {
                         is_true = col_it_boolean_values(NULL, it)[i];
@@ -670,7 +670,7 @@ static u8 field_ref_into_record(insert *ins, pindex *index, bool is_root)
                         str_buf str;
                         str_buf_create(&str);
                         str_buf_add_u64_as_hex_0x_prefix_compact(&str, field_offset);
-                        insert_prop_string(ins, "offset", string_cstr(&str));
+                        insert_prop_string(ins, "offset", str_buf_cstr(&str));
                         str_buf_drop(&str);
                 }
         } else {
@@ -742,7 +742,7 @@ static void container_contents_into_record(insert *ins, pindex *index)
                 u64 pos_offs = memfile_read_uintvar_stream(NULL, &index->memfile);
                 str_buf_clear(&str);
                 str_buf_add_u64_as_hex_0x_prefix_compact(&str, pos_offs);
-                insert_string(ains, string_cstr(&str));
+                insert_string(ains, str_buf_cstr(&str));
         }
         str_buf_drop(&str);
 
@@ -965,7 +965,7 @@ static void prop_into_record(insert *ins, pindex *index)
 
         u64 key_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
         str_buf_add_u64_as_hex_0x_prefix_compact(&str, key_offset);
-        insert_prop_string(ins, "key", string_cstr(&str));
+        insert_prop_string(ins, "key", str_buf_cstr(&str));
         str_buf_drop(&str);
 
         container_into_record(ins, index, field_type);
@@ -1141,7 +1141,7 @@ static void record_ref_to_record(insert *roins, pindex *index)
         str_buf str;
         str_buf_create(&str);
         commit_to_str(&str, commit_hash);
-        insert_prop_string(roins, "commit-hash", string_cstr(&str));
+        insert_prop_string(roins, "commit-hash", str_buf_cstr(&str));
         str_buf_drop(&str);
 }
 
@@ -1326,7 +1326,7 @@ const char *pindex_to_str(str_buf *str, pindex *index)
         memfile_seek_to_start(&index->memfile);
         record_ref_to_str(str, index);
         array_to_str(str, index, true, 0);
-        return string_cstr(str);
+        return str_buf_cstr(str);
 }
 
 bool pindex_print(FILE *file, pindex *index)

@@ -318,7 +318,7 @@ bool rec_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
         printer_end(&p, &b);
 
         printer_drop(&p);
-        str_buf_add(dst, string_cstr(&b));
+        str_buf_add(dst, str_buf_cstr(&b));
         str_buf_drop(&b);
 
         memfile_restore_position(&doc->file);
@@ -328,13 +328,13 @@ bool rec_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
 const char *rec_to_json_extended(str_buf *dst, rec *doc)
 {
         rec_to_str(dst, JSON_EXTENDED, doc);
-        return string_cstr(dst);
+        return str_buf_cstr(dst);
 }
 
 const char *rec_to_json_compact(str_buf *dst, rec *doc)
 {
         rec_to_str(dst, JSON_COMPACT, doc);
-        return string_cstr(dst);
+        return str_buf_cstr(dst);
 }
 
 char *rec_to_json_extended_dup(rec *doc)
@@ -371,7 +371,7 @@ bool rec_print(FILE *file, printer_impl_e printer, rec *doc)
         str_buf buffer;
         str_buf_create(&buffer);
         rec_to_str(&buffer, printer, doc);
-        fprintf(file, "%s\n", string_cstr(&buffer));
+        fprintf(file, "%s\n", str_buf_cstr(&buffer));
         str_buf_drop(&buffer);
 
         return true;

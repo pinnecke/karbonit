@@ -1,5 +1,5 @@
 ## 0.7.00.0 [2020-XX-XX]
-- TODO
+- Traverse framework
 
 ## 0.6.00.0 [2019-11-25]
 - Add carbon revision patching as alternative to carbon revisions

@@ -71,7 +71,7 @@ const char *commit_to_str(str_buf *dst, u64 commit_hash)
         if (dst) {
                 str_buf_clear(dst);
                 str_buf_add_u64_as_hex(dst, commit_hash);
-                return string_cstr(dst);
+                return str_buf_cstr(dst);
         } else {
                 return NULL;
         }

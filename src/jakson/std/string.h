@@ -41,6 +41,7 @@ bool str_buf_drop(str_buf *buffer);
 
 bool str_buf_add(str_buf *buffer, const char *str);
 bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen);
+void str_buf_add_nquote(str_buf *buffer, const char *str, u64 strlen);
 bool str_buf_add_char(str_buf *buffer, char c);
 bool str_buf_add_u8(str_buf *buffer, u8 value);
 bool str_buf_add_u16(str_buf *buffer, u16 value);
@@ -61,7 +62,7 @@ size_t string_len(str_buf *buffer);
 bool str_buf_trim(str_buf *buffer);
 bool str_buf_is_empty(str_buf *buffer);
 
-const char *string_cstr(str_buf *buffer);
+const char *str_buf_cstr(str_buf *buffer);
 
 bool str_buf_print(str_buf *buffer);
 bool str_buf_fprint(FILE *file, str_buf *buffer);

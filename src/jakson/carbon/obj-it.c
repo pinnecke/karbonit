@@ -100,9 +100,9 @@ prop *obj_it_next(obj_it *it)
         offset_t last_off = memfile_tell(&it->file);
         internal_field_drop(&it->field.value.data);
         if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
-                it->pos++;
                 internal_history_push(&it->history, last_off);
                 internal_prop_create(&it->prop, it);
+                it->pos++;
                 return &it->prop;
         } else {
                 /** skip remaining zeros until end of array is reached */

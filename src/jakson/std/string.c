@@ -58,6 +58,13 @@ bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen)
         return true;
 }
 
+void str_buf_add_nquote(str_buf *buffer, const char *str, u64 strlen)
+{
+        str_buf_add_char(buffer, '"');
+        str_buf_add_nchar(buffer, str, strlen);
+        str_buf_add_char(buffer, '"');
+}
+
 bool str_buf_add_char(str_buf *buffer, char c)
 {
         char buff[2];
@@ -226,11 +233,11 @@ bool str_buf_print(str_buf *buffer)
 
 bool str_buf_fprint(FILE *file, str_buf *buffer)
 {
-        fprintf(file, "%s\n", string_cstr(buffer));
+        fprintf(file, "%s\n", str_buf_cstr(buffer));
         return true;
 }
 
-const char *string_cstr(str_buf *buffer)
+const char *str_buf_cstr(str_buf *buffer)
 {
         return buffer->data;
 }

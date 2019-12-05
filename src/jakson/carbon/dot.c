@@ -295,7 +295,7 @@ bool dot_fprint(FILE *file, dot *path)
         str_buf sb;
         str_buf_create(&sb);
         dot_to_str(&sb, path);
-        fprintf(file, "%s", string_cstr(&sb));
+        fprintf(file, "%s", str_buf_cstr(&sb));
         str_buf_drop(&sb);
         return true;
 }

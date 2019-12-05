@@ -294,7 +294,7 @@ const char *find_result_to_str(str_buf *dst_str, printer_impl_e print_type, find
         }
         printer_drop(&printer);
 
-        return string_cstr(dst_str);
+        return str_buf_cstr(dst_str);
 }
 
 const char *find_result_to_json_compact(str_buf *dst_str, find *find)

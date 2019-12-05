@@ -2333,7 +2333,7 @@ bool archive_open(archive *out, const char *file_path)
                 str_buf_add(&sb, "' not found in current working directory ('");
                 str_buf_add(&sb, getcwd(cwd, sizeof(cwd)));
                 str_buf_add(&sb, "')");
-                error(ERR_FOPEN_FAILED, string_cstr(&sb));
+                error(ERR_FOPEN_FAILED, str_buf_cstr(&sb));
                 str_buf_drop(&sb);
                 return false;
         } else {

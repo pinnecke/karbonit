@@ -62,6 +62,12 @@ typedef struct item
 #define INTERNAL_ITEM_GET_VALUE(item, member, default_value)                                                    \
         ((item) ? (item)->value.member : default_value)
 
+#define item_is_field(item)                                                                                     \
+        ((item) ? (item)->parent_type == UNTYPED_ARRAY : false)
+
+#define item_is_prop(item)                                                                                      \
+        ((item) ? (item)->parent_type == UNTYPED_OBJECT : false)
+
 #define item_get_type(item)                                                                                     \
         ((item) ? (item)->value_type : ITEM_UNDEF)
 

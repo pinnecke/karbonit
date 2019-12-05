@@ -39,7 +39,20 @@ offset_t col_it_memfilepos(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
 const void *col_it_values(field_e *type, u32 *nvalues, col_it *it);
 bool col_it_values_info(field_e *type, u32 *nvalues, col_it *it);
-bool col_it_value_is_null(col_it *it, u32 pos);
+
+bool col_it_is_null(col_it *it, u32 pos);
+
+bool col_it_is_boolean(col_it *it);
+bool col_it_is_u8(col_it *it);
+bool col_it_is_u16(col_it *it);
+bool col_it_is_u32(col_it *it);
+bool col_it_is_u64(col_it *it);
+bool col_it_is_i8(col_it *it);
+bool col_it_is_i16(col_it *it);
+bool col_it_is_i32(col_it *it);
+bool col_it_is_i64(col_it *it);
+bool col_it_is_float(col_it *it);
+
 const boolean *col_it_boolean_values(u32 *nvalues, col_it *it);
 const u8 *col_it_u8_values(u32 *nvalues, col_it *it);
 const u16 *col_it_u16_values(u32 *nvalues, col_it *it);
@@ -67,6 +80,7 @@ bool col_it_update_set_i32(col_it *it, u32 pos, i32 value);
 bool col_it_update_set_i64(col_it *it, u32 pos, i64 value);
 bool col_it_update_set_float(col_it *it, u32 pos, float value);
 bool col_it_rewind(col_it *it);
+bool col_it_print(str_buf *dst, col_it *it);
 
 #ifdef __cplusplus
 }

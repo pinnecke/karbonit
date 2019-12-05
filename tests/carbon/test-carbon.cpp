@@ -733,7 +733,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -788,7 +788,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -827,7 +827,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -864,7 +864,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[42, 43, 44]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[42, 43, 44]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -901,7 +901,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1004,7 +1004,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
         //string_buffer_print(&sb);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [-1, -2, -3], [-4, -5, -6], [-7, -8, -9], [-10, -11, -12], [42.00, 21.00, 23.42]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [-1, -2, -3], [-4, -5, -6], [-7, -8, -9], [-10, -11, -12], [42.00, 21.00, 23.42]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1043,7 +1043,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1085,7 +1085,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46, 47, 47, 47, 48, 48, 48, 49, 49, 49, 50, 50, 50, 51, 51, 51, 52, 52, 52, 53, 53, 53, 54, 54, 54, 55, 55, 55, 56, 56, 56, 57, 57, 57, 58, 58, 58, 59, 59, 59, 60, 60, 60, 61, 61, 61, 62, 62, 62, 63, 63, 63, 64, 64, 64, 65, 65, 65, 66, 66, 66, 67, 67, 67, 68, 68, 68, 69, 69, 69, 70, 70, 70, 71, 71, 71, 72, 72, 72, 73, 73, 73, 74, 74, 74, 75, 75, 75, 76, 76, 76, 77, 77, 77, 78, 78, 78, 79, 79, 79, 80, 80, 80, 81, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 84, 85, 85, 85, 86, 86, 86, 87, 87, 87, 88, 88, 88, 89, 89, 89, 90, 90, 90, 91, 91, 91, 92, 92, 92, 93, 93, 93, 94, 94, 94, 95, 95, 95, 96, 96, 96, 97, 97, 97, 98, 98, 98, 99, 99, 99]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46, 47, 47, 47, 48, 48, 48, 49, 49, 49, 50, 50, 50, 51, 51, 51, 52, 52, 52, 53, 53, 53, 54, 54, 54, 55, 55, 55, 56, 56, 56, 57, 57, 57, 58, 58, 58, 59, 59, 59, 60, 60, 60, 61, 61, 61, 62, 62, 62, 63, 63, 63, 64, 64, 64, 65, 65, 65, 66, 66, 66, 67, 67, 67, 68, 68, 68, 69, 69, 69, 70, 70, 70, 71, 71, 71, 72, 72, 72, 73, 73, 73, 74, 74, 74, 75, 75, 75, 76, 76, 76, 77, 77, 77, 78, 78, 78, 79, 79, 79, 80, 80, 80, 81, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 84, 85, 85, 85, 86, 86, 86, 87, 87, 87, 88, 88, 88, 89, 89, 89, 90, 90, 90, 91, 91, 91, 92, 92, 92, 93, 93, 93, 94, 94, 94, 95, 95, 95, 96, 96, 96, 97, 97, 97, 98, 98, 98, 99, 99, 99]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1129,7 +1129,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1231,7 +1231,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 3], [4, null, 6], [7, null, 9], [10, null, 12], [-1, null, -3], [-4, null, -6], [-7, null, -9], [-10, null, -12], [42.00, null, 23.42]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 3], [4, null, 6], [7, null, 9], [10, null, 12], [-1, null, -3], [-4, null, -6], [-7, null, -9], [-10, null, -12], [42.00, null, 23.42]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1331,7 +1331,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 2], [3, null, 4], [5, null, 6], [7, null, 8], [9, null, 10], [11, null, 12], [13, null, 14], [15, null, 16]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 2], [3, null, 4], [5, null, 6], [7, null, 8], [9, null, 10], [11, null, 12], [13, null, 14], [15, null, 16]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1383,7 +1383,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 1, 1], [2, 3, 4], [5, 6, 7]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 1, 1], [2, 3, 4], [5, 6, 7]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1457,7 +1457,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[\"Hello\", \"World\"], 1, 1, 1], [2, [\"Hello\", \"World\"], 3, 4], [5, 6, [\"Hello\", \"World\"], 7], [8, 9, 10, [\"Hello\", \"World\"]]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[\"Hello\", \"World\"], 1, 1, 1], [2, [\"Hello\", \"World\"], 3, 4], [5, 6, [\"Hello\", \"World\"], 7], [8, 9, 10, [\"Hello\", \"World\"]]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1523,7 +1523,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         // fprintf(stdout, "IST  %s\n", string_buffer_cstr(&sb));
         // fprintf(stdout, "SOLL {\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [4223, [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]]}\n");
 
-        ASSERT_TRUE(0 == strcmp(string_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [4223, [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [4223, [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]]}"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1538,37 +1538,37 @@ TEST(CarbonTest, CarbonDotNotation) {
         dot_create(&path);
 
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "") == 0);
         str_buf_clear(&sb);
 
         dot_add_key(&path, "name");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name") == 0);
         str_buf_clear(&sb);
 
         dot_add_key(&path, "my name");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\"") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name.\"my name\"") == 0);
         str_buf_clear(&sb);
 
         dot_add_key(&path, "");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\"") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name.\"my name\".\"\"") == 0);
         str_buf_clear(&sb);
 
         dot_add_idx(&path, 42);
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name.\"my name\".\"\".42") == 0);
         str_buf_clear(&sb);
 
         dot_add_idx(&path, 23);
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42.23") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name.\"my name\".\"\".42.23") == 0);
         str_buf_clear(&sb);
 
         dot_add_key(&path, "\"already quotes\"");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name.\"my name\".\"\".42.23.\"already quotes\"") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name.\"my name\".\"\".42.23.\"already quotes\"") == 0);
         str_buf_clear(&sb);
 
         dot_drop(&path);
@@ -1582,55 +1582,55 @@ TEST(CarbonTest, CarbonDotNotationParsing) {
 
         dot_from_string(&path, "name");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "   name");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "   name    ");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "\"name\"");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "name") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "name") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "\"nam e\"");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "\"nam e\"") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "\"nam e\"") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "nam e");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "nam.e") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "nam.e") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "\"My Doc\" names 5 age");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "\"My Doc\".names.5.age") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "\"My Doc\".names.5.age") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 
         dot_from_string(&path, "23.authors.3.name");
         dot_to_str(&sb, &path);
-        ASSERT_TRUE(strcmp(string_cstr(&sb), "23.authors.3.name") == 0);
+        ASSERT_TRUE(strcmp(str_buf_cstr(&sb), "23.authors.3.name") == 0);
         str_buf_clear(&sb);
         dot_drop(&path);
 

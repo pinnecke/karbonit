@@ -4,7 +4,7 @@
 
 #include <jakson/carbon/markers.h>
 #include <jakson/carbon/traverse2.h>
-#include "commit.h"
+#include <jakson/carbon/commit.h>
 
 static path_policy_e markers_print_fn_record(const rec *record, const traverse_info *context, traverse_hidden *extra)
 {

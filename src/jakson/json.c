@@ -9,10 +9,6 @@
 
 static path_policy_e json_from_fn_record(const rec *record, const traverse_info *context, traverse_hidden *extra)
 {
-        UNUSED(record)
-        UNUSED(context)
-        UNUSED(extra)
-
         str_buf *str = (str_buf *) extra->arg;
         if (context->type == ON_ENTER) {
                 extra->json_printer.record_is_array = rec_is_array(record);
@@ -103,29 +99,28 @@ traverser_fn json_from_fn = {
 
 void json_from_record(str_buf *dst, rec *src)
 {
-        traverser traverser;
-        str_buf_clear(dst);
-        traverser_create(&traverser, &json_from_fn, VISIT_ALL);
-        traverser_run_from_record(&traverser, src, dst);
-        traverser_drop(&traverser);
+        TRAVERSE(dst, &json_from_fn, VISIT_ALL, traverser_run_from_record, src);
 }
-//
-//void json_from_array(str_buf *dst, const arr_it *src)
-//{
-//
-//}
-//
-//void json_from_column(str_buf *dst, const col_it *src)
-//{
-//
-//}
-//
-//void json_from_object(str_buf *dst, const obj_it *src)
-//{
-//
-//}
-//
-//void json_from_item(str_buf *dst, const item *src)
-//{
-//
-//}
+
+void json_from_array(str_buf *dst, arr_it *src)
+{
+        TRAVERSE(dst, &json_from_fn, VISIT_ALL, traverser_run_from_array, src);
+}
+
+void json_from_column(str_buf *dst, col_it *src)
+{
+       col_it_print(dst, src);
+}
+
+void json_from_object(str_buf *dst, obj_it *src)
+{
+        TRAVERSE(dst, &json_from_fn, VISIT_ALL, traverser_run_from_object, src);
+}
+
+void json_from_item(str_buf *dst, item *src)
+{
+        traverse_info info = { .type = ON_ENTER };
+        json_print_field(dst, src, &info);
+        info.type = ON_EXIT;
+        json_print_field(dst, src, &info);
+}

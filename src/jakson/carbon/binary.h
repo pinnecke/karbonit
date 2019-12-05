@@ -23,6 +23,7 @@ static binary_field NULL_BINARY = {
 };
 
 void binary_field_print(str_buf *dst, const binary_field *field);
+void binary_field_value_print(str_buf *dst, const binary_field *field);
 
 #endif
 

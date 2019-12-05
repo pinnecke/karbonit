@@ -59,7 +59,6 @@ typedef struct traverse_context
 {
         dot path;
         visit_type_e type;
-        rec *record;
 } traverse_info;
 
 typedef struct traverse_hidden
@@ -136,6 +135,15 @@ typedef struct
         traverse_impl impl;
         traverse_info info;
 } traverser;
+
+#define TRAVERSE(str_buf_dst, fn, visit_ops, traverse_func, src)                                                       \
+{                                                                                                                      \
+        traverser traverser;                                                                                           \
+        str_buf_clear(str_buf_dst);                                                                                    \
+        traverser_create(&traverser, (fn), (visit_ops));                                                               \
+        traverse_func(&traverser, src, str_buf_dst);                                                                   \
+        traverser_drop(&traverser);                                                                                    \
+}
 
 void traverser_create(traverser *traverse, const traverser_fn *fns, unsigned visit_ops); /* xor visit_ops_e */
 void traverser_drop(traverser *traverse);

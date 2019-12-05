@@ -19,10 +19,10 @@ extern "C" {
 #endif
 
 void json_from_record(str_buf *dst, rec *src);
-void json_from_array(str_buf *dst, const arr_it *src);
-void json_from_column(str_buf *dst, const col_it *src);
-void json_from_object(str_buf *dst, const obj_it *src);
-void json_from_item(str_buf *dst, const item *src);
+void json_from_array(str_buf *dst, arr_it *src);
+void json_from_column(str_buf *dst, col_it *src);
+void json_from_object(str_buf *dst, obj_it *src);
+void json_from_item(str_buf *dst, item *src);
 
 #ifdef __cplusplus
 }

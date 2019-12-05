@@ -80,7 +80,7 @@ static void key_string_set(rec *doc, const char *key)
 bool revise_key_generate(unique_id_t *out, rev *context)
 {
         key_e type;
-        key_type(&type, context->revised);
+        rec_key_type(&type, context->revised);
         if (type == KEY_AUTOKEY) {
                 unique_id_t oid;
                 unique_id_create(&oid);
@@ -95,7 +95,7 @@ bool revise_key_generate(unique_id_t *out, rev *context)
 bool revise_key_set_unsigned(rev *context, u64 key_value)
 {
         key_e type;
-        key_type(&type, context->revised);
+        rec_key_type(&type, context->revised);
         if (type == KEY_UKEY) {
                 key_unsigned_set(context->revised, key_value);
                 return true;
@@ -107,7 +107,7 @@ bool revise_key_set_unsigned(rev *context, u64 key_value)
 bool revise_key_set_signed(rev *context, i64 key_value)
 {
         key_e type;
-        key_type(&type, context->revised);
+        rec_key_type(&type, context->revised);
         if (type == KEY_IKEY) {
                 key_signed_set(context->revised, key_value);
                 return true;
@@ -119,7 +119,7 @@ bool revise_key_set_signed(rev *context, i64 key_value)
 bool revise_key_set_string(rev *context, const char *key_value)
 {
         key_e type;
-        key_type(&type, context->revised);
+        rec_key_type(&type, context->revised);
         if (type == KEY_SKEY) {
                 key_string_set(context->revised, key_value);
                 return true;
@@ -575,11 +575,11 @@ static bool carbon_header_rev_inc(rec *doc)
 {
         assert(doc);
 
-        key_e key_type;
+        key_e rec_key_type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
-        key_read(NULL, &key_type, &doc->file);
-        if (carbon_has_key(key_type)) {
+        key_read(NULL, &rec_key_type, &doc->file);
+        if (rec_has_key(rec_key_type)) {
                 u64 raw_data_len = 0;
                 const void *raw_data = rec_raw_data(&raw_data_len, doc);
                 commit_update(&doc->file, raw_data, raw_data_len);

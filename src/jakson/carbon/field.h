@@ -10,6 +10,8 @@
 #include <jakson/error.h>
 #include <jakson/rec.h>
 #include <jakson/carbon/abstract.h>
+#include <jakson/mem/memblock.h>
+#include <jakson/std/uintvar/stream.h>
 
 #ifndef HAD_FIELD_H
 #define HAD_FIELD_H

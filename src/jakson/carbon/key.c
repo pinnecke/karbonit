@@ -90,10 +90,10 @@ bool key_skip(key_e *out, memfile *file)
 
 bool key_write_unsigned(memfile *file, u64 key)
 {
-        DECLARE_AND_INIT(key_e, key_type)
+        DECLARE_AND_INIT(key_e, rec_key_type)
 
-        key_read_type(&key_type, file);
-        if (key_is_unsigned(key_type)) {
+        key_read_type(&rec_key_type, file);
+        if (rec_key_is_unsigned(rec_key_type)) {
                 memfile_write(file, &key, sizeof(u64));
                 return true;
         } else {
@@ -103,10 +103,10 @@ bool key_write_unsigned(memfile *file, u64 key)
 
 bool key_write_signed(memfile *file, i64 key)
 {
-        DECLARE_AND_INIT(key_e, key_type)
+        DECLARE_AND_INIT(key_e, rec_key_type)
 
-        key_read_type(&key_type, file);
-        if (key_is_signed(key_type)) {
+        key_read_type(&rec_key_type, file);
+        if (rec_key_is_signed(rec_key_type)) {
                 memfile_write(file, &key, sizeof(i64));
                 return true;
         } else {
@@ -121,9 +121,9 @@ bool key_update_string(memfile *file, const char *key)
 
 bool key_update_string_wnchar(memfile *file, const char *key, size_t length)
 {
-        DECLARE_AND_INIT(key_e, key_type)
-        key_read_type(&key_type, file);
-        if (key_is_string(key_type)) {
+        DECLARE_AND_INIT(key_e, rec_key_type)
+        key_read_type(&rec_key_type, file);
+        if (rec_key_is_string(rec_key_type)) {
                 string_field_update_wnchar(file, key, length);
                 return true;
         } else {
@@ -133,10 +133,10 @@ bool key_update_string_wnchar(memfile *file, const char *key, size_t length)
 
 bool key_write_string(memfile *file, const char *key)
 {
-        DECLARE_AND_INIT(key_e, key_type)
+        DECLARE_AND_INIT(key_e, rec_key_type)
 
-        key_read_type(&key_type, file);
-        if (key_is_string(key_type)) {
+        key_read_type(&rec_key_type, file);
+        if (rec_key_is_string(rec_key_type)) {
                 string_field_write(file, key);
                 return true;
         } else {
@@ -176,12 +176,12 @@ bool key_read_type(key_e *out, memfile *file)
 
 const void *key_read(u64 *len, key_e *out, memfile *file)
 {
-        key_e key_type = 0;
-        key_read_type(&key_type, file);
+        key_e rec_key_type = 0;
+        key_read_type(&rec_key_type, file);
 
-        OPTIONAL_SET(out, key_type)
+        OPTIONAL_SET(out, rec_key_type)
 
-        switch (key_type) {
+        switch (rec_key_type) {
                 case KEY_NOKEY:
                         OPTIONAL_SET(len, 0)
                         return NULL;

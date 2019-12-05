@@ -20,6 +20,7 @@
 #include <jakson/carbon/container.h>
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/dot-eval.h>
+#include <jakson/std/uintvar/stream.h>
 
 #ifdef __cplusplus
 extern "C" {

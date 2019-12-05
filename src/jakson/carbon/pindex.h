@@ -56,7 +56,7 @@ bool pindex_drop(pindex *index);
 
 const void *pindex_raw_data(u64 *size, pindex *index);
 bool pindex_commit_hash(u64 *commit_hash, pindex *index);
-bool pindex_key_type(key_e *key_type, pindex *index);
+bool pindex_key_type(key_e *rec_key_type, pindex *index);
 bool pindex_key_unsigned_value(u64 *key, pindex *index);
 bool pindex_key_signed_value(i64 *key, pindex *index);
 const char *pindex_key_string_value(u64 *str_len, pindex *index);

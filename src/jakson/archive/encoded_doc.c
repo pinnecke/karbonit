@@ -121,7 +121,7 @@ encoded_doc_add_prop_##value_name(encoded_doc *doc, archive_field_sid_t key, bui
 {                                                                                                                      \
     encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);                      \
     prop->header.context = doc;                                                                                        \
-    prop->header.key_type = STRING_ENCODED;                                        \
+    prop->header.rec_key_type = STRING_ENCODED;                                        \
     prop->header.key.key_id = key;                                                                                     \
     prop->header.value_type = VALUE_BUILTIN;                                              \
     prop->header.type = basic_type;                                                                                    \
@@ -135,7 +135,7 @@ encoded_doc_add_prop_##value_name##_decoded(encoded_doc *doc, const char *key, b
 {                                                                                                                      \
     encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);                      \
     prop->header.context = doc;                                                                                        \
-    prop->header.key_type = STRING_DECODED;                                        \
+    prop->header.rec_key_type = STRING_DECODED;                                        \
     prop->header.key.key_str = strdup(key);                                                                            \
     prop->header.value_type = VALUE_BUILTIN;                                              \
     prop->header.type = basic_type;                                                                                    \
@@ -192,7 +192,7 @@ bool encoded_doc_add_prop_string_decoded_string_value_decoded(encoded_doc *doc, 
 {
         encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
-        prop->header.key_type = STRING_DECODED;
+        prop->header.rec_key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
         prop->header.type = ARCHIVE_FIELD_STRING;
         prop->value.string = strdup(value);
@@ -203,7 +203,7 @@ bool encoded_doc_add_prop_null(encoded_doc *doc, archive_field_sid_t key)
 {
         encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
-        prop->header.key_type = STRING_ENCODED;
+        prop->header.rec_key_type = STRING_ENCODED;
         prop->header.key.key_id = key;
         prop->header.type = ARCHIVE_FIELD_NULL;
         prop->value.builtin.null = 1;
@@ -214,7 +214,7 @@ bool encoded_doc_add_prop_null_decoded(encoded_doc *doc, const char *key)
 {
         encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
-        prop->header.key_type = STRING_DECODED;
+        prop->header.rec_key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
         prop->header.type = ARCHIVE_FIELD_NULL;
         prop->value.builtin.null = 1;
@@ -226,7 +226,7 @@ encoded_doc_add_prop_object(encoded_doc *doc, archive_field_sid_t key, encoded_d
 {
         encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
-        prop->header.key_type = STRING_ENCODED;
+        prop->header.rec_key_type = STRING_ENCODED;
         prop->header.key.key_id = key;
         prop->header.type = ARCHIVE_FIELD_OBJECT;
         prop->value.builtin.object = value->object_id;
@@ -238,7 +238,7 @@ bool encoded_doc_add_prop_object_decoded(encoded_doc *doc, const char *key,
 {
         encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
-        prop->header.key_type = STRING_DECODED;
+        prop->header.rec_key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
         prop->header.type = ARCHIVE_FIELD_OBJECT;
         prop->value.builtin.object = value->object_id;
@@ -252,7 +252,7 @@ encoded_doc_add_prop_array_##name(encoded_doc *doc,                             
 {                                                                                                                      \
     u32 new_array_pos = doc->props_arrays.num_elems;                                                              \
     encoded_doc_prop_array *array = VECTOR_NEW_AND_GET(&doc->props_arrays, encoded_doc_prop_array);  \
-    array->header.key_type = STRING_ENCODED;                                          \
+    array->header.rec_key_type = STRING_ENCODED;                                          \
     array->header.key.key_id = key;                                                                                    \
     array->header.type = basic_type;                                                                                   \
     array->header.context = doc;                                                                                       \
@@ -267,7 +267,7 @@ encoded_doc_add_prop_array_##name##_decoded(encoded_doc *doc,                   
                                        const char *key)                                                                \
 {                                                                                                                      \
     encoded_doc_prop_array *array = VECTOR_NEW_AND_GET(&doc->props_arrays, encoded_doc_prop_array);  \
-    array->header.key_type = STRING_DECODED;                                          \
+    array->header.rec_key_type = STRING_DECODED;                                          \
     array->header.key.key_str = strdup(key);                                                                           \
     array->header.type = basic_type;                                                                                   \
     array->header.context = doc;                                                                                       \
@@ -357,7 +357,7 @@ encoded_doc_array_push_##name##_decoded(encoded_doc *doc, const char *key,      
     for (u32 i = 0; i < doc->props_arrays.num_elems; i++)                                                         \
     {                                                                                                                  \
         encoded_doc_prop_array *prop = VECTOR_GET(&doc->props_arrays, i, encoded_doc_prop_array); \
-        if (prop->header.key_type == STRING_DECODED) {                                \
+        if (prop->header.rec_key_type == STRING_DECODED) {                                \
             if (strcmp(prop->header.key.key_str, key) == 0) {                                                          \
                 prop_pos = i;                                                                                          \
                 break;                                                                                                 \
@@ -470,7 +470,7 @@ bool encoded_doc_array_push_object_decoded(encoded_doc *doc, const char *key, un
         for (u32 i = 0; i < doc->props_arrays.num_elems; i++) {
                 encoded_doc_prop_array *prop = VECTOR_GET(&doc->props_arrays, i,
                                                                   encoded_doc_prop_array);
-                if (prop->header.key_type == STRING_DECODED) {
+                if (prop->header.rec_key_type == STRING_DECODED) {
                         if (strcmp(prop->header.key.key_str, key) == 0) {
                                 prop_pos = i;
                                 break;
@@ -497,7 +497,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
         for (u32 i = 0; i < doc->props.num_elems; i++) {
                 encoded_doc_prop *prop = VECTOR_GET(&doc->props, i, encoded_doc_prop);
                 char *key_str = NULL;
-                if (prop->header.key_type == STRING_ENCODED) {
+                if (prop->header.rec_key_type == STRING_ENCODED) {
                         key_str = query_fetch_string_by_id(&query, prop->header.key.key_id);
                 } else {
                         key_str = strdup(prop->header.key.key_str);
@@ -570,7 +570,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                 encoded_doc_prop_array *prop = VECTOR_GET(&doc->props_arrays, i,
                                                                   encoded_doc_prop_array);
                 char *key_str = NULL;
-                if (prop->header.key_type == STRING_ENCODED) {
+                if (prop->header.rec_key_type == STRING_ENCODED) {
                         key_str = query_fetch_string_by_id(&query, prop->header.key.key_id);
                 } else {
                         key_str = strdup(prop->header.key.key_str);

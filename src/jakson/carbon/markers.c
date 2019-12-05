@@ -13,7 +13,7 @@ static path_policy_e markers_print_fn_record(const rec *record, const traverse_i
                 extra->json_printer.record_is_array = rec_is_array(record);
 
                 key_e tk;
-                key_type(&tk, (rec *) record);
+                rec_key_type(&tk, (rec *) record);
                 str_buf_add(str, "[");
                 switch (tk) {
                         case KEY_AUTOKEY:
@@ -42,7 +42,7 @@ static path_policy_e markers_print_fn_record(const rec *record, const traverse_i
                         case KEY_AUTOKEY:
                         case KEY_UKEY: {
                                 u64 key;
-                                key_unsigned_value(&key, (rec *) record);
+                                rec_key_unsigned_value(&key, (rec *) record);
                                 str_buf_add(str, "[key:");
                                 str_buf_add_u64(str, key);
                                 str_buf_add(str, "]");
@@ -50,7 +50,7 @@ static path_policy_e markers_print_fn_record(const rec *record, const traverse_i
                                 break;
                         case KEY_IKEY: {
                                 i64 key;
-                                key_signed_value(&key, (rec *) record);
+                                rec_key_signed_value(&key, (rec *) record);
                                 str_buf_add(str, "[key:");
                                 str_buf_add_i64(str, key);
                                 str_buf_add(str, "]");

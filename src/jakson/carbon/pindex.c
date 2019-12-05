@@ -198,11 +198,11 @@ static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsign
 }
 
 static const void *
-record_ref_read(key_e *key_type, u64 *key_length, u64 *commit_hash, memfile *memfile)
+record_ref_read(key_e *rec_key_type, u64 *key_length, u64 *commit_hash, memfile *memfile)
 {
         memfile_save_position(memfile);
         memfile_seek(memfile, 0);
-        const void *ret = key_read(key_length, key_type, memfile);
+        const void *ret = key_read(key_length, rec_key_type, memfile);
         u64 *hash = memfile_read_type(memfile, u64);
         OPTIONAL_SET(commit_hash, *hash);
         memfile_restore_position(memfile);
@@ -213,7 +213,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
 {
         key_e type;
         u64 commit_hash;
-        key_type(&type, doc);
+        rec_key_type(&type, doc);
         rec_commit_hash(&commit_hash, doc);
 
         /** write record key */
@@ -227,14 +227,14 @@ static void record_ref_create(memfile *memfile, rec *doc)
                 case KEY_AUTOKEY:
                 case KEY_UKEY: {
                         u64 key;
-                        key_unsigned_value(&key, doc);
+                        rec_key_unsigned_value(&key, doc);
                         memfile_seek(memfile, 0);
                         key_write_unsigned(memfile, key);
                 }
                         break;
                 case KEY_IKEY: {
                         DECLARE_AND_INIT(i64, key)
-                        key_signed_value(&key, doc);
+                        rec_key_signed_value(&key, doc);
                         memfile_seek(memfile, 0);
                         key_write_signed(memfile, key);
                 }
@@ -1069,12 +1069,12 @@ static void index_build(memfile *file, rec *doc)
 
 static void record_ref_to_str(str_buf *str, pindex *index)
 {
-        u8 key_type = memfile_read_byte(&index->memfile);
+        u8 rec_key_type = memfile_read_byte(&index->memfile);
         str_buf_add_char(str, '[');
-        str_buf_add_char(str, key_type);
+        str_buf_add_char(str, rec_key_type);
         str_buf_add_char(str, ']');
 
-        switch (key_type) {
+        switch (rec_key_type) {
                 case KEY_NOKEY:
                         /** nothing to do */
                         break;
@@ -1111,10 +1111,10 @@ static void record_ref_to_str(str_buf *str, pindex *index)
 
 static void record_ref_to_record(insert *roins, pindex *index)
 {
-        char key_type = memfile_read_byte(&index->memfile);
-        insert_prop_string(roins, "key-type", key_type_str(key_type));
+        char rec_key_type = memfile_read_byte(&index->memfile);
+        insert_prop_string(roins, "key-type", key_type_str(rec_key_type));
 
-        switch (key_type) {
+        switch (rec_key_type) {
                 case KEY_NOKEY:
                         /** nothing to do */
                         break;
@@ -1185,26 +1185,26 @@ bool pindex_commit_hash(u64 *commit_hash, pindex *index)
         return true;
 }
 
-bool pindex_key_type(key_e *key_type, pindex *index)
+bool pindex_key_type(key_e *rec_key_type, pindex *index)
 {
-        record_ref_read(key_type, NULL, NULL, &index->memfile);
+        record_ref_read(rec_key_type, NULL, NULL, &index->memfile);
         return true;
 }
 
 bool pindex_key_unsigned_value(u64 *key, pindex *index)
 {
-        key_e key_type;
-        u64 ret = *(u64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
-        error_if_and_return(key_type != KEY_AUTOKEY && key_type != KEY_UKEY, ERR_TYPEMISMATCH, NULL);
+        key_e rec_key_type;
+        u64 ret = *(u64 *) record_ref_read(&rec_key_type, NULL, NULL, &index->memfile);
+        error_if_and_return(rec_key_type != KEY_AUTOKEY && rec_key_type != KEY_UKEY, ERR_TYPEMISMATCH, NULL);
         *key = ret;
         return true;
 }
 
 bool pindex_key_signed_value(i64 *key, pindex *index)
 {
-        key_e key_type;
-        i64 ret = *(i64 *) record_ref_read(&key_type, NULL, NULL, &index->memfile);
-        error_if_and_return(key_type != KEY_IKEY, ERR_TYPEMISMATCH, NULL);
+        key_e rec_key_type;
+        i64 ret = *(i64 *) record_ref_read(&rec_key_type, NULL, NULL, &index->memfile);
+        error_if_and_return(rec_key_type != KEY_IKEY, ERR_TYPEMISMATCH, NULL);
         *key = ret;
         return true;
 }
@@ -1212,9 +1212,9 @@ bool pindex_key_signed_value(i64 *key, pindex *index)
 const char *pindex_key_string_value(u64 *str_len, pindex *index)
 {
         if (str_len && index) {
-                key_e key_type;
-                const char *ret = (const char *) record_ref_read(&key_type, str_len, NULL, &index->memfile);
-                error_if_and_return(key_type != KEY_SKEY, ERR_TYPEMISMATCH, NULL);
+                key_e rec_key_type;
+                const char *ret = (const char *) record_ref_read(&rec_key_type, str_len, NULL, &index->memfile);
+                error_if_and_return(rec_key_type != KEY_SKEY, ERR_TYPEMISMATCH, NULL);
                 return ret;
         } else {
                 error(ERR_NULLPTR, NULL);
@@ -1230,7 +1230,7 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
         if (likely(index_hash == doc_hash)) {
                 key_e index_key_type, doc_key_type;
                 pindex_key_type(&index_key_type, index);
-                key_type(&doc_key_type, doc);
+                rec_key_type(&doc_key_type, doc);
                 if (likely(index_key_type == doc_key_type)) {
                         switch (index_key_type) {
                                 case KEY_NOKEY:
@@ -1239,13 +1239,13 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
                                 case KEY_UKEY: {
                                         u64 index_key, doc_key;
                                         pindex_key_unsigned_value(&index_key, index);
-                                        key_unsigned_value(&doc_key, doc);
+                                        rec_key_unsigned_value(&doc_key, doc);
                                         return index_key == doc_key;
                                 }
                                 case KEY_IKEY: {
                                         i64 index_key, doc_key;
                                         pindex_key_signed_value(&index_key, index);
-                                        key_signed_value(&doc_key, doc);
+                                        rec_key_signed_value(&doc_key, doc);
                                         return index_key == doc_key;
                                 }
                                 case KEY_SKEY: {

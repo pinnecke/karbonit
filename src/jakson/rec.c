@@ -43,7 +43,7 @@
 
 static bool internal_drop(rec *doc);
 
-static void carbon_header_init(rec *doc, key_e key_type);
+static void carbon_header_init(rec *doc, key_e rec_key_type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ const void *rec_raw_data(u64 *len, rec *doc)
         }
 }
 
-bool key_type(key_e *out, rec *doc)
+bool rec_key_type(key_e *out, rec *doc)
 {
         memfile_save_position(&doc->file);
         key_skip(out, &doc->file);
@@ -163,7 +163,7 @@ bool key_type(key_e *out, rec *doc)
         return true;
 }
 
-const void *key_raw_value(u64 *len, key_e *type, rec *doc)
+const void *rec_key_raw_value(u64 *len, key_e *type, rec *doc)
 {
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
@@ -172,14 +172,14 @@ const void *key_raw_value(u64 *len, key_e *type, rec *doc)
         return result;
 }
 
-bool key_signed_value(i64 *key, rec *doc)
+bool rec_key_signed_value(i64 *key, rec *doc)
 {
         key_e type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (likely(key_is_signed(type))) {
+        if (likely(rec_key_is_signed(type))) {
                 *key = *((const i64 *) result);
                 return true;
         } else {
@@ -188,14 +188,14 @@ bool key_signed_value(i64 *key, rec *doc)
         }
 }
 
-bool key_unsigned_value(u64 *key, rec *doc)
+bool rec_key_unsigned_value(u64 *key, rec *doc)
 {
         key_e type;
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (likely(key_is_unsigned(type))) {
+        if (likely(rec_key_is_unsigned(type))) {
                 *key = *((const u64 *) result);
                 return true;
         } else {
@@ -211,7 +211,7 @@ const char *key_string_value(u64 *len, rec *doc)
         memfile_seek(&doc->file, 0);
         const void *result = key_read(len, &type, &doc->file);
         memfile_restore_position(&doc->file);
-        if (likely(key_is_string(type))) {
+        if (likely(rec_key_is_string(type))) {
                 return result;
         } else {
                 error(ERR_TYPEMISMATCH, NULL);
@@ -219,22 +219,22 @@ const char *key_string_value(u64 *len, rec *doc)
         }
 }
 
-bool key_is_unsigned(key_e type)
+bool rec_key_is_unsigned(key_e type)
 {
         return type == KEY_UKEY || type == KEY_AUTOKEY;
 }
 
-bool key_is_signed(key_e type)
+bool rec_key_is_signed(key_e type)
 {
         return type == KEY_IKEY;
 }
 
-bool key_is_string(key_e type)
+bool rec_key_is_string(key_e type)
 {
         return type == KEY_SKEY;
 }
 
-bool carbon_has_key(key_e type)
+bool rec_has_key(key_e type)
 {
         return type != KEY_NOKEY;
 }
@@ -320,14 +320,14 @@ static bool internal_drop(rec *doc)
         return true;
 }
 
-static void carbon_header_init(rec *doc, key_e key_type)
+static void carbon_header_init(rec *doc, key_e rec_key_type)
 {
         assert(doc);
 
         memfile_seek(&doc->file, 0);
-        key_create(&doc->file, key_type);
+        key_create(&doc->file, rec_key_type);
 
-        if (key_type != KEY_NOKEY) {
+        if (rec_key_type != KEY_NOKEY) {
                 commit_create(&doc->file);
         }
 }

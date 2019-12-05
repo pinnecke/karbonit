@@ -21,6 +21,9 @@
 #define TOOLS_MODULES
 
 #include <jakson/std/opt.h>
+#include <jakson/archive/encode_async.h>
+#include <jakson/archive/encoded_doc.h>
+#include <jakson/archive/converter.h>
 
 bool moduleCheckJsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);
 bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manager);

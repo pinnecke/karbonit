@@ -17,7 +17,7 @@ TEST(CarbonTest, CreateCarbon) {
 
         //rec_hexdump_print(stderr, &doc);
 
-        status = key_unsigned_value(&oid, &doc);
+        status = rec_key_unsigned_value(&oid, &doc);
         EXPECT_TRUE(status);
         EXPECT_NE(oid, 0U);
 
@@ -187,7 +187,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
 
         rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
 
-        key_unsigned_value(&oid, &doc);
+        rec_key_unsigned_value(&oid, &doc);
         EXPECT_NE(oid, 0U);
 
         rec_commit_hash(&commit_hash_old, &doc);
@@ -200,7 +200,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
         rec_commit_hash(&commit_hash_new, &rev_doc);
         EXPECT_NE(commit_hash_old, commit_hash_new);
 
-        key_unsigned_value(&oid, &rev_doc);
+        rec_key_unsigned_value(&oid, &rev_doc);
         EXPECT_EQ(oid, new_oid);
 
         // rec_print(stdout, &rev_doc);
@@ -4042,7 +4042,7 @@ TEST(CarbonTest, CarbonKeyTypeAutoKeyUpdate)
         revise_key_generate(&id, &revise);
         revise_end(&revise);
 
-        key_unsigned_value(&id_read, &rev_doc);
+        rec_key_unsigned_value(&id_read, &rev_doc);
         ASSERT_NE(id, 0U);
         ASSERT_EQ(id, id_read);
 
@@ -4078,7 +4078,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKeyUpdate)
         revise_key_set_unsigned(&revise, 42);
         revise_end(&revise);
 
-        key_unsigned_value(&id_read, &rev_doc);
+        rec_key_unsigned_value(&id_read, &rev_doc);
         ASSERT_EQ(id_read, 42U);
 
         rec_drop(&doc);
@@ -4112,7 +4112,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyUpdate)
         revise_key_set_signed(&revise, 42);
         revise_end(&revise);
 
-        key_signed_value(&id_read, &rev_doc);
+        rec_key_signed_value(&id_read, &rev_doc);
         ASSERT_EQ(id_read, 42U);
 
         rec_drop(&doc);
@@ -4169,7 +4169,7 @@ TEST(CarbonTest, CarbonKeyTypeUnsignedKey)
         // -------------------------------------------------------------------------------------------------------------
 
         key_e type;
-        key_type(&type, &doc);
+        rec_key_type(&type, &doc);
         ASSERT_EQ(type, KEY_UKEY);
 
         rec_drop(&doc);
@@ -4264,7 +4264,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKey)
         // -------------------------------------------------------------------------------------------------------------
 
         key_e type;
-        key_type(&type, &doc);
+        rec_key_type(&type, &doc);
         ASSERT_EQ(type, KEY_IKEY);
 
         rec_drop(&doc);

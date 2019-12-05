@@ -59,7 +59,7 @@ typedef enum encoded_doc_value_e {
 typedef struct encoded_doc_prop_header {
         encoded_doc *context;
 
-        encoded_doc_string_e key_type;
+        encoded_doc_string_e rec_key_type;
         union {
                 archive_field_sid_t key_id;
                 char *key_str;

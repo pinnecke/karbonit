@@ -443,13 +443,13 @@ offset_t internal_column_get_payload_off(col_it *it)
 offset_t internal_payload_after_header(rec *doc)
 {
         offset_t result = 0;
-        key_e key_type;
+        key_e rec_key_type;
 
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        if (likely(key_skip(&key_type, &doc->file))) {
-                if (key_type != KEY_NOKEY) {
+        if (likely(key_skip(&rec_key_type, &doc->file))) {
+                if (rec_key_type != KEY_NOKEY) {
                         commit_skip(&doc->file);
                 }
                 result = memfile_tell(&doc->file);
@@ -464,13 +464,13 @@ u64 internal_header_get_commit_hash(rec *doc)
 {
         assert(doc);
         u64 rev = 0;
-        key_e key_type;
+        key_e rec_key_type;
 
         memfile_save_position(&doc->file);
         memfile_seek(&doc->file, 0);
 
-        key_skip(&key_type, &doc->file);
-        if (key_type != KEY_NOKEY) {
+        key_skip(&rec_key_type, &doc->file);
+        if (rec_key_type != KEY_NOKEY) {
                 commit_read(&rev, &doc->file);
         }
 
@@ -1597,13 +1597,13 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
 }
 
 void internal_from_json(rec *doc, const json *data,
-                          key_e key_type, const void *primary_key, int mode)
+                          key_e rec_key_type, const void *primary_key, int mode)
 {
         UNUSED(data)
         UNUSED(primary_key)
 
         rec_new context;
-        insert *ins = rec_create_begin(&context, doc, key_type, mode);
+        insert *ins = rec_create_begin(&context, doc, rec_key_type, mode);
         int_carbon_from_json_elem(ins, data->element, true);
 
         rec_create_end(&context);

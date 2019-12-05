@@ -8,54 +8,10 @@
 #define HAD_REC_H
 
 #include <jakson/stdinc.h>
-#include <jakson/error.h>
-#include <jakson/mem/memblock.h>
+#include <jakson/forwdecl.h>
 #include <jakson/mem/memfile.h>
-#include <jakson/stdx/unique_id.h>
-#include <jakson/std/string.h>
-#include <jakson/std/spinlock.h>
-#include <jakson/std/vec.h>
-#include <jakson/stdinc.h>
-#include <jakson/std/bitmap.h>
-#include <jakson/std/bloom.h>
-#include <jakson/archive.h>
-#include <jakson/archive/it.h>
-#include <jakson/archive/visitor.h>
-#include <jakson/archive/converter.h>
-#include <jakson/archive/encoded_doc.h>
-#include <jakson/stdinc.h>
-#include <jakson/utils/convert.h>
-#include <jakson/archive/column_doc.h>
-#include <jakson/archive/doc.h>
-#include <jakson/error.h>
-#include <jakson/std/hash/table.h>
-#include <jakson/std/hash.h>
-#include <jakson/archive/huffman.h>
-#include <jakson/json/json-parser.h>
-#include <jakson/mem/memblock.h>
-#include <jakson/mem/memfile.h>
-#include <jakson/stdx/unique_id.h>
-#include <jakson/utils/sort.h>
-#include <jakson/std/async.h>
-#include <jakson/stdx/slicelist.h>
-#include <jakson/std/spinlock.h>
-#include <jakson/std/string_dict.h>
-#include <jakson/std/str_hash.h>
-#include <jakson/archive/strid_it.h>
-#include <jakson/archive/cache.h>
-#include <jakson/utils/time.h>
-#include <jakson/types.h>
-#include <jakson/archive/query.h>
-#include <jakson/std/vec.h>
-#include <jakson/archive/encode_async.h>
-#include <jakson/archive/encode_sync.h>
-#include <jakson/std/str_hash/mem.h>
-#include <jakson/archive/pred/contains.h>
-#include <jakson/archive/pred/equals.h>
-#include <jakson/std/uintvar/stream.h>
 #include <jakson/carbon/markers.h>
 #include <jakson/carbon/abstract.h>
-#include <jakson/carbon/binary.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -209,15 +165,15 @@ bool rec_is_array(const rec *doc);
 
 bool rec_hexdump_print(FILE *file, rec *doc);
 
-bool key_type(key_e *out, rec *doc);
-const void *key_raw_value(u64 *len, key_e *type, rec *doc);
-bool key_signed_value(i64 *key, rec *doc);
-bool key_unsigned_value(u64 *key, rec *doc);
+bool rec_key_type(key_e *out, rec *doc);
+const void *rec_key_raw_value(u64 *len, key_e *type, rec *doc);
+bool rec_key_signed_value(i64 *key, rec *doc);
+bool rec_key_unsigned_value(u64 *key, rec *doc);
 const char *key_string_value(u64 *len, rec *doc);
-bool carbon_has_key(key_e type);
-bool key_is_unsigned(key_e type);
-bool key_is_signed(key_e type);
-bool key_is_string(key_e type);
+bool rec_has_key(key_e type);
+bool rec_key_is_unsigned(key_e type);
+bool rec_key_is_signed(key_e type);
+bool rec_key_is_string(key_e type);
 
 #ifdef __cplusplus
 }

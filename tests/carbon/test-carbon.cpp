@@ -25,7 +25,7 @@ TEST(CarbonTest, CreateCarbon) {
         EXPECT_TRUE(status);
         EXPECT_NE(rev, 0U);
 
-        rec_to_str(&buffer, JSON_EXTENDED, &doc);
+        rec_to_json(&buffer, &doc);
         // printf("%s\n", string_buffer_cstr(&buffer));
         str_buf_drop(&buffer);
 
@@ -106,7 +106,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
         EXPECT_TRUE(status);
         EXPECT_EQ(hash, 0U);
 
-        rec_to_str(&buffer, JSON_EXTENDED, &doc);
+        rec_to_json(&buffer, &doc);
         // printf("%s\n", string_buffer_cstr(&buffer));
         str_buf_drop(&buffer);
 
@@ -136,7 +136,7 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
         EXPECT_TRUE(status);
         EXPECT_EQ(hash, 0U);
 
-        rec_to_str(&buffer, JSON_EXTENDED, &doc);
+        rec_to_json(&buffer, &doc);
         // printf("%s\n", string_buffer_cstr(&buffer));
         str_buf_drop(&buffer);
 
@@ -170,7 +170,7 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
         EXPECT_TRUE(status);
         EXPECT_EQ(hash, 0U);
 
-        rec_to_str(&buffer, JSON_EXTENDED, &doc);
+        rec_to_json(&buffer, &doc);
         // printf("%s\n", string_buffer_cstr(&buffer));
         str_buf_drop(&buffer);
 
@@ -732,7 +732,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         //rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
         str_buf_drop(&sb);
 
@@ -787,7 +787,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
         str_buf_drop(&sb);
 
@@ -826,7 +826,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
         str_buf_drop(&sb);
 
@@ -863,7 +863,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[42, 43, 44]]}"));
         str_buf_drop(&sb);
 
@@ -900,7 +900,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0]]}"));
         str_buf_drop(&sb);
 
@@ -1002,7 +1002,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         //rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         //string_buffer_print(&sb);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [-1, -2, -3], [-4, -5, -6], [-7, -8, -9], [-10, -11, -12], [42.00, 21.00, 23.42]]}"));
         str_buf_drop(&sb);
@@ -1042,7 +1042,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         // fflush(stdout);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
         str_buf_drop(&sb);
 
@@ -1084,7 +1084,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
         // fflush(stdout);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46, 47, 47, 47, 48, 48, 48, 49, 49, 49, 50, 50, 50, 51, 51, 51, 52, 52, 52, 53, 53, 53, 54, 54, 54, 55, 55, 55, 56, 56, 56, 57, 57, 57, 58, 58, 58, 59, 59, 59, 60, 60, 60, 61, 61, 61, 62, 62, 62, 63, 63, 63, 64, 64, 64, 65, 65, 65, 66, 66, 66, 67, 67, 67, 68, 68, 68, 69, 69, 69, 70, 70, 70, 71, 71, 71, 72, 72, 72, 73, 73, 73, 74, 74, 74, 75, 75, 75, 76, 76, 76, 77, 77, 77, 78, 78, 78, 79, 79, 79, 80, 80, 80, 81, 81, 81, 82, 82, 82, 83, 83, 83, 84, 84, 84, 85, 85, 85, 86, 86, 86, 87, 87, 87, 88, 88, 88, 89, 89, 89, 90, 90, 90, 91, 91, 91, 92, 92, 92, 93, 93, 93, 94, 94, 94, 95, 95, 95, 96, 96, 96, 97, 97, 97, 98, 98, 98, 99, 99, 99]]}"));
         str_buf_drop(&sb);
 
@@ -1128,7 +1128,7 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
         // fflush(stdout);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100], [97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100]]}"));
         str_buf_drop(&sb);
 
@@ -1230,7 +1230,7 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 3], [4, null, 6], [7, null, 9], [10, null, 12], [-1, null, -3], [-4, null, -6], [-7, null, -9], [-10, null, -12], [42.00, null, 23.42]]}"));
         str_buf_drop(&sb);
 
@@ -1330,7 +1330,7 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, null, 2], [3, null, 4], [5, null, 6], [7, null, 8], [9, null, 10], [11, null, 12], [13, null, 14], [15, null, 16]]}"));
         str_buf_drop(&sb);
 
@@ -1382,7 +1382,7 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 1, 1], [2, 3, 4], [5, 6, 7]]}"));
         str_buf_drop(&sb);
 
@@ -1456,7 +1456,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         // rec_print(stdout, &rev_doc);
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[\"Hello\", \"World\"], 1, 1, 1], [2, [\"Hello\", \"World\"], 3, 4], [5, 6, [\"Hello\", \"World\"], 7], [8, 9, 10, [\"Hello\", \"World\"]]]}"));
         str_buf_drop(&sb);
 
@@ -1518,7 +1518,7 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
 
         str_buf sb;
         str_buf_create(&sb);
-        rec_to_str(&sb, JSON_EXTENDED, &rev_doc);
+        rec_to_json(&sb, &rev_doc);
 
         // fprintf(stdout, "IST  %s\n", string_buffer_cstr(&sb));
         // fprintf(stdout, "SOLL {\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [4223, [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]]}\n");
@@ -2053,7 +2053,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc);
+        json = rec_to_json(&sb, &rev_doc);
         // printf("JSON (rev1): %s\n", json);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -2069,7 +2069,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc2);
+        json = rec_to_json(&sb, &rev_doc2);
         // printf("JSON (rev2): %s\n", json);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [89]}") == 0);
 
@@ -2088,7 +2088,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc3);
+        json = rec_to_json(&sb, &rev_doc3);
         // printf("JSON (rev3): %s\n", json);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [65, 66, 67]}") == 0);
 
@@ -2107,7 +2107,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc4);
+        json = rec_to_json(&sb, &rev_doc4);
         // printf("JSON (rev4): %s\n", json);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, 2, 3]}") == 0);
 
@@ -2149,7 +2149,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc);
+        json = rec_to_json(&sb, &rev_doc);
         // printf("JSON (rev1): %s\n", json);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, -42, 23.00]}") == 0);
 
@@ -2166,7 +2166,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc2);
+        json = rec_to_json(&sb, &rev_doc2);
         // printf("JSON (rev2): %s\n", json);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, 1024, 23.00]}") == 0);
 
@@ -2231,7 +2231,7 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2245,7 +2245,7 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2281,7 +2281,7 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2298,7 +2298,7 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2334,7 +2334,7 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2350,7 +2350,7 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2387,7 +2387,7 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2408,7 +2408,7 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2442,7 +2442,7 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2456,7 +2456,7 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2492,7 +2492,7 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2509,7 +2509,7 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2545,7 +2545,7 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2561,7 +2561,7 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2598,7 +2598,7 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2619,7 +2619,7 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2654,7 +2654,7 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2668,7 +2668,7 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2704,7 +2704,7 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2721,7 +2721,7 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2757,7 +2757,7 @@ TEST(CarbonTest, CarbonRemoveLastString)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2773,7 +2773,7 @@ TEST(CarbonTest, CarbonRemoveLastString)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2810,7 +2810,7 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2831,7 +2831,7 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2870,7 +2870,7 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2884,7 +2884,7 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2923,7 +2923,7 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2940,7 +2940,7 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -2979,7 +2979,7 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -2995,7 +2995,7 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3037,7 +3037,7 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3058,7 +3058,7 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3103,7 +3103,7 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         //rec_hexdump_print(stdout, &doc);
 
@@ -3119,7 +3119,7 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3158,7 +3158,7 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3175,7 +3175,7 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3214,7 +3214,7 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3230,7 +3230,7 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3272,7 +3272,7 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3293,7 +3293,7 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3342,7 +3342,7 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         //rec_hexdump_print(stdout, &doc);
 
@@ -3358,7 +3358,7 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3406,7 +3406,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3423,7 +3423,7 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3471,7 +3471,7 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3487,7 +3487,7 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3541,7 +3541,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
         revise_begin(&revise, &rev_doc, &doc);
@@ -3562,7 +3562,7 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3605,7 +3605,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -3629,7 +3629,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         ASSERT_EQ(values[0], 1);
         ASSERT_EQ(values[1], 3);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         status = col_it_remove(cit, 0);
         ASSERT_TRUE(status);
@@ -3639,7 +3639,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         values = col_it_u16_values(&num_elems, cit);
         ASSERT_EQ(values[0], 3);
 
-        char *json_3 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_3 = strdup(rec_to_json(&sb, &rev_doc));
 
         status = col_it_remove(cit, 0);
         ASSERT_TRUE(status);
@@ -3647,7 +3647,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 0u);
 
-        char *json_4 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_4 = strdup(rec_to_json(&sb, &rev_doc));
 
         revise_iterator_close(&rev_it);
         revise_end(&revise);
@@ -3734,37 +3734,37 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
         ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, \"Hello\", 2, 3, 3, \"World\", [], [4, \"Fox!\", 6], [[], [4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("3", &rev_doc, &doc);
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
         ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, \"Hello\", 2, 3, \"World\", [], [4, \"Fox!\", 6], [[], [4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("5", &rev_doc2, &rev_doc);
-        char *json_3 = strdup(rec_to_json_extended(&sb, &rev_doc2));
+        char *json_3 = strdup(rec_to_json(&sb, &rev_doc2));
         ASSERT_TRUE(strcmp(json_3, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, \"Hello\", 2, 3, \"World\", [4, \"Fox!\", 6], [[], [4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("5.1", &rev_doc3, &rev_doc2);
-        char *json_4 = strdup(rec_to_json_extended(&sb, &rev_doc3));
+        char *json_4 = strdup(rec_to_json(&sb, &rev_doc3));
         ASSERT_TRUE(strcmp(json_4, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, \"Hello\", 2, 3, \"World\", [4, 6], [[], [4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("6.0", &rev_doc4, &rev_doc3);
-        char *json_5 = strdup(rec_to_json_extended(&sb, &rev_doc4));
+        char *json_5 = strdup(rec_to_json(&sb, &rev_doc4));
         ASSERT_TRUE(strcmp(json_5, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, \"Hello\", 2, 3, \"World\", [4, 6], [[4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("5", &rev_doc5, &rev_doc4);
-        char *json_6 = strdup(rec_to_json_extended(&sb, &rev_doc5));
+        char *json_6 = strdup(rec_to_json(&sb, &rev_doc5));
         ASSERT_TRUE(strcmp(json_6, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, \"Hello\", 2, 3, \"World\", [[4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3774,35 +3774,35 @@ TEST(CarbonTest, CarbonRemoveComplexTest)
         revise_remove_one("0", &rev_doc8, &rev_doc7);
         revise_remove_one("1", &rev_doc9, &rev_doc8);
         revise_remove_one("0", &rev_doc10, &rev_doc9);
-        char *json_11 = strdup(rec_to_json_extended(&sb, &rev_doc10));
+        char *json_11 = strdup(rec_to_json(&sb, &rev_doc10));
         ASSERT_TRUE(strcmp(json_11, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[4], null, [\"Dog!\", [], [[41, 42, 43]], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("0.2.2.0", &rev_doc11, &rev_doc10);
 
-        char *json_12 = strdup(rec_to_json_extended(&sb, &rev_doc11));
+        char *json_12 = strdup(rec_to_json(&sb, &rev_doc11));
         ASSERT_TRUE(strcmp(json_12, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[4], null, [\"Dog!\", [], [], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("0.2.2", &rev_doc12, &rev_doc11);
 
-        char *json_13 = strdup(rec_to_json_extended(&sb, &rev_doc12));
+        char *json_13 = strdup(rec_to_json(&sb, &rev_doc12));
         ASSERT_TRUE(strcmp(json_13, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[4], null, [\"Dog!\", [], []]]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("0.2", &rev_doc13, &rev_doc12);
 
-        char *json_14 = strdup(rec_to_json_extended(&sb, &rev_doc13));
+        char *json_14 = strdup(rec_to_json(&sb, &rev_doc13));
         ASSERT_TRUE(strcmp(json_14, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[[4], null]]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
         revise_remove_one("0", &rev_doc14, &rev_doc13);
 
-        char *json_15 = strdup(rec_to_json_extended(&sb, &rev_doc14));
+        char *json_15 = strdup(rec_to_json(&sb, &rev_doc14));
         ASSERT_TRUE(strcmp(json_15, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
 
@@ -3862,7 +3862,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc);
+        json = rec_to_json(&sb, &rev_doc);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, -42, 23.00]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3872,7 +3872,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         revise_end(&revise);
 
 
-        json = rec_to_json_extended(&sb, &rev_doc2);
+        json = rec_to_json(&sb, &rev_doc2);
         ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, 1024, 23.00]}") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -3903,7 +3903,7 @@ TEST(CarbonTest, CarbonShrinkIssueFix)
         str_buf sb;
         str_buf_create(&sb);
 
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -3928,7 +3928,7 @@ TEST(CarbonTest, CarbonKeyTypeNoKey)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -3984,7 +3984,7 @@ TEST(CarbonTest, CarbonKeyTypeAutoKey)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4289,7 +4289,7 @@ TEST(CarbonTest, CarbonKeyTypeStringKey)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4316,7 +4316,7 @@ TEST(CarbonTest, CarbonObjectInsertEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4344,7 +4344,7 @@ TEST(CarbonTest, CarbonObjectInsertNull)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": null}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": null}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4373,7 +4373,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
         str_buf sb;
         str_buf_create(&sb);
 
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": null, \"My Key 2\": null, \"My Key 3\": null}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": null, \"My Key 2\": null, \"My Key 3\": null}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4401,7 +4401,7 @@ TEST(CarbonTest, CarbonObjectInsertU8)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4431,7 +4431,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4459,7 +4459,7 @@ TEST(CarbonTest, CarbonObjectInsertU16)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4489,7 +4489,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4517,7 +4517,7 @@ TEST(CarbonTest, CarbonObjectInsertU32)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4547,7 +4547,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4575,7 +4575,7 @@ TEST(CarbonTest, CarbonObjectInsertU64)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4605,7 +4605,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
         str_buf_create(&sb);
 
         //rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4633,7 +4633,7 @@ TEST(CarbonTest, CarbonObjectInsertI8)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4663,7 +4663,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4691,7 +4691,7 @@ TEST(CarbonTest, CarbonObjectInsertI16)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4721,7 +4721,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4749,7 +4749,7 @@ TEST(CarbonTest, CarbonObjectInsertI32)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4779,7 +4779,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4807,7 +4807,7 @@ TEST(CarbonTest, CarbonObjectInsertI64)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4837,7 +4837,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4865,7 +4865,7 @@ TEST(CarbonTest, CarbonObjectInsertFloat)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123.32}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123.32}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4895,7 +4895,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1.23, \"My Key 2\": -2.42, \"My Key 3\": 3.21}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1.23, \"My Key 2\": -2.42, \"My Key 3\": 3.21}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4923,7 +4923,7 @@ TEST(CarbonTest, CarbonObjectInsertTrue)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": true}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": true}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4951,7 +4951,7 @@ TEST(CarbonTest, CarbonObjectInsertFalse)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": false}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": false}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -4981,7 +4981,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": true, \"My Key 2\": false, \"My Key 3\": true}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": true, \"My Key 2\": false, \"My Key 3\": true}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5021,7 +5021,7 @@ TEST(CarbonTest, CarbonObjectInsertMixed)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": true, \"k2\": false, \"k3\": null, \"k4\": 1, \"k5\": 2, \"k6\": 3, \"k7\": 4, \"k8\": -1, \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": true, \"k2\": false, \"k3\": null, \"k4\": 1, \"k5\": 2, \"k6\": 3, \"k7\": 4, \"k8\": -1, \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5051,7 +5051,7 @@ TEST(CarbonTest, CarbonObjectInsertString)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"hello\": \"world\"}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"hello\": \"world\"}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5083,7 +5083,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleString)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": \"v1\", \"hello\": \"world\", \"k3\": \"there\"}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": \"v1\", \"hello\": \"world\", \"k3\": \"there\"}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5128,7 +5128,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23, \"k1\": true}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23, \"k1\": true}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5158,7 +5158,7 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5205,7 +5205,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5237,7 +5237,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5268,7 +5268,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my nested\": {}}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my nested\": {}}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5322,7 +5322,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5354,7 +5354,7 @@ TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": []}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": []}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5411,7 +5411,7 @@ TEST(CarbonTest, CarbonObjectInsertArrayData)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5446,7 +5446,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json_extended(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my column\": [1, 2, 3]}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my column\": [1, 2, 3]}]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -5611,7 +5611,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5639,7 +5639,7 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5701,7 +5701,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5728,7 +5728,7 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5771,7 +5771,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5805,7 +5805,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
         //printf("\n%s\n", json_2);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -5849,7 +5849,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5881,7 +5881,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5924,7 +5924,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5956,7 +5956,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -5999,7 +5999,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6032,7 +6032,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6075,7 +6075,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6109,7 +6109,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6152,7 +6152,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6187,7 +6187,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6229,7 +6229,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6260,7 +6260,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6309,7 +6309,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6340,7 +6340,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6386,7 +6386,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6417,7 +6417,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6468,7 +6468,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6499,7 +6499,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6545,7 +6545,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6576,7 +6576,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6621,7 +6621,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         rec_create_end(&context);
         // -------------------------------------------------------------------------------------------------------------
 
-        char *json_1 = strdup(rec_to_json_extended(&sb, &doc));
+        char *json_1 = strdup(rec_to_json(&sb, &doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -6652,7 +6652,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         revise_iterator_close(&rev_it);
         revise_end(&revise);
 
-        char *json_2 = strdup(rec_to_json_extended(&sb, &rev_doc));
+        char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -7174,12 +7174,15 @@ TEST(CarbonTest, CarbonFromEmptyJson)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{}";
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
-        json_out_extended = rec_to_json_extended_dup(&doc);
-        json_out_compact = rec_to_json_compact_dup(&doc);
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);
+        json_out_compact = rec_to_json(&sb2, &doc);
 
         //printf("INS:\t%s\n", json_in);
         //printf("EXT:\t%s\n", json_out_extended);
@@ -7190,8 +7193,8 @@ TEST(CarbonTest, CarbonFromEmptyJson)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromEmptyArray)
@@ -7199,12 +7202,15 @@ TEST(CarbonTest, CarbonFromEmptyArray)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "[]";
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
-        json_out_extended = rec_to_json_extended_dup(&doc);
-        json_out_compact = rec_to_json_compact_dup(&doc);
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);
+        json_out_compact = rec_to_json(&sb2, &doc);
 
 //        printf("INS:\t%s\n", json_in);
 //        printf("EXT:\t%s\n", json_out_extended);
@@ -7215,8 +7221,8 @@ TEST(CarbonTest, CarbonFromEmptyArray)
         ASSERT_TRUE(strcmp(json_out_compact, "{}") == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonNull)
@@ -7224,14 +7230,16 @@ TEST(CarbonTest, CarbonFromJsonNull)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "null";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
-
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [null]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be 'null'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [null]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be 'null'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7241,8 +7249,8 @@ TEST(CarbonTest, CarbonFromJsonNull)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonTrue)
@@ -7250,14 +7258,17 @@ TEST(CarbonTest, CarbonFromJsonTrue)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "true";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [true]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be 'true'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [true]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be 'true'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7267,8 +7278,8 @@ TEST(CarbonTest, CarbonFromJsonTrue)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonFalse)
@@ -7276,14 +7287,17 @@ TEST(CarbonTest, CarbonFromJsonFalse)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "false";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [false]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be 'false'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [false]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be 'false'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7293,8 +7307,8 @@ TEST(CarbonTest, CarbonFromJsonFalse)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [false]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonNumberSigned)
@@ -7302,14 +7316,16 @@ TEST(CarbonTest, CarbonFromJsonNumberSigned)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "42";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
-
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [42]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '42'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [42]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '42'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7319,8 +7335,8 @@ TEST(CarbonTest, CarbonFromJsonNumberSigned)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
@@ -7328,14 +7344,17 @@ TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "-42";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '-42'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '-42'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7345,8 +7364,8 @@ TEST(CarbonTest, CarbonFromJsonNumberUnsigned)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [-42]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonNumberFloat)
@@ -7354,14 +7373,17 @@ TEST(CarbonTest, CarbonFromJsonNumberFloat)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "-42.23";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42.23]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '-42.23'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [-42.23]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '-42.23'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7371,8 +7393,8 @@ TEST(CarbonTest, CarbonFromJsonNumberFloat)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [-42.23]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonString)
@@ -7380,14 +7402,17 @@ TEST(CarbonTest, CarbonFromJsonString)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "\"Hello, World!\"";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": ["Hello, World!"]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '"Hello, World!"'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": ["Hello, World!"]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '"Hello, World!"'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7397,8 +7422,8 @@ TEST(CarbonTest, CarbonFromJsonString)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello, World!\"]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectSingle)
@@ -7406,14 +7431,17 @@ TEST(CarbonTest, CarbonFromJsonObjectSingle)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": \"v\"}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":"v"}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":"v"}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":"v"}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":"v"}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7423,8 +7451,8 @@ TEST(CarbonTest, CarbonFromJsonObjectSingle)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": \"v\"}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 
@@ -7433,14 +7461,17 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": []}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":[]}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":[]}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":[]}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":[]}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7450,8 +7481,8 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyArrayProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": []}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
@@ -7459,14 +7490,17 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": {}}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":{}}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":{}}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":{}}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":{}}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7476,8 +7510,8 @@ TEST(CarbonTest, CarbonFromJsonObjectEmptyObjectProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": {}}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
@@ -7485,14 +7519,17 @@ TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": true}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":true}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":true}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":true}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":true}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7502,8 +7539,8 @@ TEST(CarbonTest, CarbonFromJsonObjectTrueProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": true}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
@@ -7511,14 +7548,17 @@ TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": false}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":false}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":false}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":false}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":false}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7528,8 +7568,8 @@ TEST(CarbonTest, CarbonFromJsonObjectFalseProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": false}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectNullProp)
@@ -7537,14 +7577,17 @@ TEST(CarbonTest, CarbonFromJsonObjectNullProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": null}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":null}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":null}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":null}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":null}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7554,8 +7597,8 @@ TEST(CarbonTest, CarbonFromJsonObjectNullProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": null}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
@@ -7563,14 +7606,17 @@ TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": 42}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":42}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":42}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":42}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":42}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7580,8 +7626,8 @@ TEST(CarbonTest, CarbonFromJsonObjectUnsignedProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": 42}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
@@ -7589,14 +7635,17 @@ TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": -42}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":-42}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":-42}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7606,8 +7655,8 @@ TEST(CarbonTest, CarbonFromJsonObjectSignedProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": -42}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
@@ -7615,14 +7664,17 @@ TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"k\": -42.23}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42.23}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"k":-42.23}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"k":-42.23}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"k":-42.23}'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7632,8 +7684,8 @@ TEST(CarbonTest, CarbonFromJsonObjectFloatProp)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k\": -42.23}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonColumnNumber)
@@ -7641,7 +7693,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"x\": [1, 2, 3]}";
 
@@ -7661,8 +7713,11 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         obj_it_drop(oit);
         rec_read_end(&it);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{\"x\": [1, 2, 3]}}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '[1, 2, 3]'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{\"x\": [1, 2, 3]}}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '[1, 2, 3]'
 
         //printf("EXT:\t%s\n", json_out_extended);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7672,8 +7727,8 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"x\": [1, 2, 3]}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
@@ -7681,7 +7736,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "{\"x\": [1, null, 3]}";
 
@@ -7701,8 +7756,11 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         obj_it_drop(oit);
         rec_read_end(&it);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"x": [1, null, 3]}]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"x": [1, null, 3]}'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [{"x": [1, null, 3]}]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '{"x": [1, null, 3]}'
 
         //printf("INS:\t%s\n", json_in);
         //printf("EXT:\t%s\n", json_out_extended);
@@ -7713,8 +7771,8 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"x\": [1, null, 3]}]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonFromJsonNonColumn)
@@ -7722,7 +7780,7 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact, *json_out_extended;
+        const char *json_out_compact, *json_out_extended;
 
         json_in = "[1, null, 3, \"a\"]";
 
@@ -7736,8 +7794,11 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         ASSERT_TRUE(field_is_number(field_type));
         rec_read_end(&it);
 
-        json_out_extended = rec_to_json_extended_dup(&doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [1, null, 3, \"a\"]}'
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '[1, null, 3, \"a\"]'
+        str_buf sb1, sb2;
+        str_buf_create(&sb1);
+        str_buf_create(&sb2);
+        json_out_extended = rec_to_json(&sb1, &doc);  // shall be '{"meta": {"key": {"type": "nokey", "value": null}, "rev": 0}, "doc": [1, null, 3, \"a\"]}'
+        json_out_compact = rec_to_json(&sb2, &doc);    // shall be '[1, null, 3, \"a\"]'
 
         //printf("INS:\t%s\n", json_in);
         //printf("EXT:\t%s\n", json_out_extended);
@@ -7748,8 +7809,8 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
         ASSERT_TRUE(strcmp(json_out_extended, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, null, 3, \"a\"]}") == 0);
 
-        free(json_out_compact);
-        free(json_out_extended);
+        str_buf_drop(&sb1);
+        str_buf_drop(&sb2);
 }
 
 TEST(CarbonTest, CarbonColumnOptimizeFix)
@@ -7766,10 +7827,12 @@ TEST(CarbonTest, CarbonColumnOptimizeFix)
         insert_column_end(&state_out);
         rec_create_end(&context);
 
-        char *json = rec_to_json_compact_dup(&doc);
+        str_buf sb1;
+        str_buf_create(&sb1);
+        const char *json = rec_to_json(&sb1, &doc);
         ASSERT_TRUE(strcmp(json, "[3, 4, 5]") == 0);
         rec_drop(&doc);
-        free(json);
+        str_buf_drop(&sb1);
 }
 
 TEST(CarbonTest, CarbonFromJsonExample)
@@ -7777,7 +7840,7 @@ TEST(CarbonTest, CarbonFromJsonExample)
         rec doc;
         
         const char *json_in;
-        char *json_out_compact;
+        const char *json_out_compact;
 
         /* example json taken from 'https://json.org/example.html' */
         json_in = "{\"web-app\": {\"servlet\": [{\"servlet-name\": \"cofaxCDS\", \"servlet-class\": \"org.cofax.cds.CDSServlet\", \"init-param\": {\"configGlossary: installationAt\": \"Philadelphia, PA\", \"configGlossary: adminEmail\": \"ksm@pobox.com\", \"configGlossary: poweredBy\": \"Cofax\", \"configGlossary: poweredByIcon\": \"/images/cofax.gif\", \"configGlossary: staticPath\": \"/content/static\", \"templateProcessorClass\": \"org.cofax.WysiwygTemplate\", \"templateLoaderClass\": \"org.cofax.FilesTemplateLoader\", \"templatePath\": \"templates\", \"templateOverridePath\": \"\", \"defaultListTemplate\": \"listTemplate.htm\", \"defaultFileTemplate\": \"articleTemplate.htm\", \"useJSP\": false, \"jspListTemplate\": \"listTemplate.jsp\", \"jspFileTemplate\": \"articleTemplate.jsp\", \"cachePackageTagsTrack\": 200, \"cachePackageTagsStore\": 200, \"cachePackageTagsRefresh\": 60, \"cacheTemplatesTrack\": 100, \"cacheTemplatesStore\": 50, \"cacheTemplatesRefresh\": 15, \"cachePagesTrack\": 200, \"cachePagesStore\": 100, \"cachePagesRefresh\": 10, \"cachePagesDirtyRead\": 10, \"searchEngineListTemplate\": \"forSearchEnginesList.htm\", \"searchEngineFileTemplate\": \"forSearchEngines.htm\", \"searchEngineRobotsDb\": \"WEB-INF/robots.db\", \"useDataStore\": true, \"dataStoreClass\": \"org.cofax.SqlDataStore\", \"redirectionClass\": \"org.cofax.SqlRedirection\", \"dataStoreName\": \"cofax\", \"dataStoreDriver\": \"com.microsoft.jdbc.sqlserver.SQLServerDriver\", \"dataStoreUrl\": \"jdbc: microsoft: sqlserver: //LOCALHOST: 1433;DatabaseName=goon\", \"dataStoreUser\": \"sa\", \"dataStorePassword\": \"dataStoreTestQuery\", \"dataStoreTestQuery\": \"SET NOCOUNT ON;select test='test';\", \"dataStoreLogFile\": \"/usr/local/tomcat/logs/datastore.log\", \"dataStoreInitConns\": 10, \"dataStoreMaxConns\": 100, \"dataStoreConnUsageLimit\": 100, \"dataStoreLogLevel\": \"debug\", \"maxUrlLength\": 500}}, {\"servlet-name\": \"cofaxEmail\", \"servlet-class\": \"org.cofax.cds.EmailServlet\", \"init-param\": {\"mailHost\": \"mail1\", \"mailHostOverride\": \"mail2\"}}, {\"servlet-name\": \"cofaxAdmin\", \"servlet-class\": \"org.cofax.cds.AdminServlet\"}, {\"servlet-name\": \"fileServlet\", \"servlet-class\": \"org.cofax.cds.FileServlet\"}, {\"servlet-name\": \"cofaxTools\", \"servlet-class\": \"org.cofax.cms.CofaxToolsServlet\", \"init-param\": {\"templatePath\": \"toolstemplates/\", \"log\": 1, \"logLocation\": \"/usr/local/tomcat/logs/CofaxTools.log\", \"logMaxSize\": \"\", \"dataLog\": 1, \"dataLogLocation\": \"/usr/local/tomcat/logs/dataLog.log\", \"dataLogMaxSize\": \"\", \"removePageCache\": \"/content/admin/remove?cache=pages&id=\", \"removeTemplateCache\": \"/content/admin/remove?cache=templates&id=\", \"fileTransferFolder\": \"/usr/local/tomcat/webapps/content/fileTransferFolder\", \"lookInContext\": 1, \"adminGroupID\": 4, \"betaServer\": true}}], \"servlet-mapping\": {\"cofaxCDS\": \"/\", \"cofaxEmail\": \"/cofaxutil/aemail/*\", \"cofaxAdmin\": \"/admin/*\", \"fileServlet\": \"/static/*\", \"cofaxTools\": \"/tools/*\"}, \"taglib\": {\"taglib-uri\": \"cofax.tld\", \"taglib-location\": \"/WEB-INF/tlds/cofax.tld\"}}}";
@@ -7795,7 +7858,9 @@ TEST(CarbonTest, CarbonFromJsonExample)
         printf("%.2fmsec/opp, %.4f ops/sec\n", (t2-t1)/(float)max, 1.0f/((t2-t1)/(float)max/1000.0f));
 
 
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '[1, null, 3, \"a\"]'
+        str_buf sb1;
+        str_buf_create(&sb1);
+        json_out_compact = rec_to_json(&sb1, &doc);    // shall be '[1, null, 3, \"a\"]'
 
         //printf("INS:\t%s\n", json_in);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7811,7 +7876,7 @@ TEST(CarbonTest, CarbonFromJsonExample)
 
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
 
-        free(json_out_compact);
+        str_buf_drop(&sb1);
 }
 
 TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
@@ -7819,13 +7884,15 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact;
+        const char *json_out_compact;
 
         json_in = "{\"x\": [1]}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"x":[1]}'
+        str_buf sb1;
+        str_buf_create(&sb1);
+        json_out_compact = rec_to_json(&sb1, &doc);    // shall be '{"x":[1]}'
 
         //printf("INS:\t%s\n", json_in);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7834,7 +7901,7 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayPrimitive)
 
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
 
-        free(json_out_compact);
+        str_buf_drop(&sb1);
 }
 
 TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
@@ -7842,13 +7909,15 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
         rec doc;
 
         const char *json_in;
-        char *json_out_compact;
+        const char *json_out_compact;
 
         json_in = "{\"x\": [{\"y\": 1}]}";
 
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        json_out_compact = rec_to_json_compact_dup(&doc);    // shall be '{"x":[{"y":1}]}'
+        str_buf sb1;
+        str_buf_create(&sb1);
+        json_out_compact = rec_to_json(&sb1, &doc);    // shall be '{"x":[{"y":1}]}'
 
         //printf("INS:\t%s\n", json_in);
         //printf("SRT:\t%s\n", json_out_compact);
@@ -7857,7 +7926,7 @@ TEST(CarbonTest, CarbonFromJsonUnitArrayObject)
 
         ASSERT_TRUE(strcmp(json_out_compact, json_in) == 0);
 
-        free(json_out_compact);
+        str_buf_drop(&sb1);
 }
 
 TEST(CarbonTest, CarbonFromJsonSimpleExample)
@@ -7889,11 +7958,13 @@ TEST(CarbonTest, CarbonFromJsonFromExcerpt)
         ASSERT_LT(carbon_out_len, json_in_len);
         //printf("%0.2f%% space saving\n", 100 * (1 - (carbon_out_len / (float) json_in_len)));
 
-        char *json_out = rec_to_json_compact_dup(&doc);
+        str_buf sb1;
+        str_buf_create(&sb1);
+        const char *json_out = rec_to_json(&sb1, &doc);
         ASSERT_TRUE(strcmp(json_in, json_out) == 0);
 
         rec_drop(&doc);
-        free(json_out);
+        str_buf_drop(&sb1);
 }
 
 TEST(CarbonTest, CarbonResolveDotPathForObjects)
@@ -8278,158 +8349,142 @@ TEST(CarbonTest, CarbonFindPrint)
 {
         rec doc;
         find find;
-        char *result;
+        const char *result;
+
+        str_buf sb1;
+        str_buf_create(&sb1);
 
         rec_from_json(&doc, "8", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "8") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "-8", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "-8") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "\"A\"", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "32.4", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "null", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "true", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "false", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "false") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "1") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "1", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "2") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "2", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "3") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "3", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "4", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "1", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"B\"") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "2", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"C\"") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "3", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "\"Hello, World!\"", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "{}", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{}") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
         find_end(&find);
-        free(result);
         rec_drop(&doc);
 
         const char *complex = "{\n"
@@ -8468,126 +8523,107 @@ TEST(CarbonTest, CarbonFindPrint)
         rec_from_json(&doc, complex, KEY_NOKEY, NULL);
 
         ASSERT_TRUE(find_begin(&find, "m", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
 
         ASSERT_TRUE(strcmp(result, "{\"n\": 8, \"o\": -8, \"p\": \"A\", \"q\": 32.40, \"r\": null, \"s\": true, \"t\": false, \"u\": [1, 2, 3, null], \"v\": [\"A\", \"B\", null], \"w\": \"Hello, World!\", \"x\": {\"a\": null}, \"y\": [], \"z\": {}}") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.n", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "8") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.o", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "-8") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.p", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.q", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.r", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.s", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.t", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "false") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.u", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "[1, 2, 3, null]") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.u.0", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "1") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.u.1", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "2") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.u.2", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "3") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.u.3", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.u.4", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "_nil") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.v", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "[\"A\", \"B\", null]") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.w", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.x", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{\"a\": null}") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.x.a", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.y", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "[]") == 0);
         find_end(&find);
-        free(result);
 
         ASSERT_TRUE(find_begin(&find, "m.z", &doc));
-        result = find_result_to_json_compact_dup(&find);
+        result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{}") == 0);
         find_end(&find);
-        free(result);
-        
+
+        str_buf_drop(&sb1);
         rec_drop(&doc);
 }
 
@@ -8605,27 +8641,27 @@ TEST(CarbonTest, CarbonFindPrintExamples)
         printf("input: '%s'\n", json);
 
         find_begin(&find, "x", &doc);
-        printf("x\t\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
+        printf("x\t\t\t->\t%s\n", find_result_to_str(&result, &find));
         find_end(&find);
 
         find_begin(&find, "x.y", &doc);
-        printf("x.y\t\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
+        printf("x.y\t\t\t->\t%s\n", find_result_to_str(&result, &find));
         find_end(&find);
 
         find_begin(&find, "x.z", &doc);
-        printf("x.z\t\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
+        printf("x.z\t\t\t->\t%s\n", find_result_to_str(&result, &find));
         find_end(&find);
 
         find_begin(&find, "x.y.z", &doc);
-        printf("x.y.z\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
+        printf("x.y.z\t\t->\t%s\n", find_result_to_str(&result, &find));
         find_end(&find);
 
         find_begin(&find, "x.y.0.z", &doc);
-        printf("x.y.0.z\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
+        printf("x.y.0.z\t\t->\t%s\n", find_result_to_str(&result, &find));
         find_end(&find);
 
         find_begin(&find, "x.y.1.z", &doc);
-        printf("x.y.0.z\t\t->\t%s\n", find_result_to_json_compact(&result, &find));
+        printf("x.y.0.z\t\t->\t%s\n", find_result_to_str(&result, &find));
         find_end(&find);
 
         str_buf_drop(&result);
@@ -8700,7 +8736,6 @@ TEST(CarbonTest, PathIndex) {
 
         rec doc2;
         pindex_to_record(&doc2, &index);
-        rec_print(stdout, JSON_COMPACT, &doc2);
         rec_drop(&doc2);
 
         ASSERT_TRUE(pindex_indexes_doc(&index, &doc));

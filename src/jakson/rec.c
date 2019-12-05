@@ -28,7 +28,6 @@
 #include <jakson/carbon/arr-it.h>
 #include <jakson/carbon/col-it.h>
 #include <jakson/carbon/obj-it.h>
-#include <jakson/carbon/printers.h>
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/dot.h>
 #include <jakson/carbon/find.h>
@@ -38,8 +37,7 @@
 #include <jakson/carbon/key.h>
 #include <jakson/carbon/commit.h>
 #include <jakson/carbon/patch.h>
-#include <jakson/carbon/printers/compact.h>
-#include <jakson/carbon/printers/extended.h>
+#include <jakson/json.h>
 
 #define MIN_DOC_CAPACITY 17 /** minimum number of bytes required to store header and empty document array */
 
@@ -279,80 +277,9 @@ void rec_update_list_type(rec *revised, rec *doc, list_type_e derivation)
         revise_end(&context);
 }
 
-bool rec_to_str(str_buf *dst, printer_impl_e printer, rec *doc)
+const char *rec_to_json(str_buf *dst, rec *doc)
 {
-        struct printer p;
-        str_buf b;
-        key_e key_type;
-        u64 key_len;
-        u64 rev;
-
-        str_buf_clear(dst);
-        str_buf_ensure_capacity(dst, 2 * memfile_size(&doc->file));
-
-        memfile_save_position(&doc->file);
-
-        ZERO_MEMORY(&p, sizeof(printer));
-        str_buf_create(&b);
-
-        rec_commit_hash(&rev, doc);
-
-        printer_by_type(&p, printer);
-
-        printer_begin(&p, &b);
-        printer_header_begin(&p, &b);
-
-        const void *key = key_raw_value(&key_len, &key_type, doc);
-        printer_header_contents(&p, &b, key_type, key, key_len, rev);
-
-        printer_header_end(&p, &b);
-        printer_payload_begin(&p, &b);
-
-        arr_it it;
-        rec_read_begin(&it, doc);
-
-        printer_print_array(&it, &p, &b, true);
-        arr_it_drop(&it);
-
-        printer_payload_end(&p, &b);
-        printer_end(&p, &b);
-
-        printer_drop(&p);
-        str_buf_add(dst, str_buf_cstr(&b));
-        str_buf_drop(&b);
-
-        memfile_restore_position(&doc->file);
-        return true;
-}
-
-const char *rec_to_json_extended(str_buf *dst, rec *doc)
-{
-        rec_to_str(dst, JSON_EXTENDED, doc);
-        return str_buf_cstr(dst);
-}
-
-const char *rec_to_json_compact(str_buf *dst, rec *doc)
-{
-        rec_to_str(dst, JSON_COMPACT, doc);
-        return str_buf_cstr(dst);
-}
-
-char *rec_to_json_extended_dup(rec *doc)
-{
-        str_buf sb;
-        str_buf_create(&sb);
-        char *result = strdup(rec_to_json_extended(&sb, doc));
-        str_buf_drop(&sb);
-        return result;
-}
-
-char *rec_to_json_compact_dup(rec *doc)
-{
-        str_buf sb;
-        str_buf_create(&sb);
-        char *result = strdup(rec_to_json_compact(&sb, doc));
-        str_buf_drop(&sb);
-        return result;
+        return json_from_record(dst, doc);
 }
 
 void rec_read_begin(arr_it *it, rec *doc)
@@ -373,17 +300,6 @@ bool rec_is_array(const rec *doc)
         bool ret = !arr_it_is_unit(&it);
         rec_read_end(&it);
         return ret;
-}
-
-bool rec_print(FILE *file, printer_impl_e printer, rec *doc)
-{
-        str_buf buffer;
-        str_buf_create(&buffer);
-        rec_to_str(&buffer, printer, doc);
-        fprintf(file, "%s\n", str_buf_cstr(&buffer));
-        str_buf_drop(&buffer);
-
-        return true;
 }
 
 bool rec_hexdump_print(FILE *file, rec *doc)

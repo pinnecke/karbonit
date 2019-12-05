@@ -24,6 +24,7 @@
 #include <jakson/stdinc.h>
 #include <jakson/types.h>
 #include <stdint.h>
+#include <jakson/json.h>
 
 static void result_from_array(find *find, arr_it *it);
 
@@ -138,177 +139,48 @@ bool find_has_result(find *find)
         return dot_eval_has_result(&find->eval);
 }
 
-const char *find_result_to_str(str_buf *dst_str, printer_impl_e print_type, find *find)
+const char *find_result_to_str(str_buf *dst_str, find *find)
 {
-        str_buf_clear(dst_str);
-
-        printer printer;
-        printer_by_type(&printer, print_type);
-
-        if (find_has_result(find)) {
-                field_e result_type;
-                find_result_type(&result_type, find);
-                switch (result_type) {
-                        case FIELD_NULL:
-                                printer_null(&printer, dst_str);
-                                break;
-                        case FIELD_TRUE:
-                                printer_true(&printer, false, dst_str);
-                                break;
-                        case FIELD_FALSE:
-                                printer_false(&printer, false, dst_str);
-                                break;
-                        case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                        case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                        case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                obj_it *sub_it = find_result_object(find);
-                                printer_print_object(sub_it, &printer, dst_str);
-                        }
-                                break;
-                        case FIELD_ARRAY_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                        case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                        case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                arr_it *sub_it = find_result_array(find);
-                                printer_print_array(sub_it, &printer, dst_str, false);
-                        }
-                                break;
-                        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                col_it *sub_it = find_result_column(find);
-                                printer_print_column(sub_it, &printer, dst_str);
-                        }
-                                break;
-                        case FIELD_STRING: {
-                                u64 str_len = 0;
-                                const char *str = find_result_string(&str_len, find);
-                                printer_string(&printer, dst_str, str, str_len);
-                        }
-                                break;
-                        case FIELD_NUMBER_U8: {
-                                u64 val = 0;
-                                find_result_unsigned(&val, find);
-                                printer_u8_or_null(&printer, dst_str, (u8) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_U16: {
-                                u64 val = 0;
-                                find_result_unsigned(&val, find);
-                                printer_u16_or_null(&printer, dst_str, (u16) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_U32: {
-                                u64 val = 0;
-                                find_result_unsigned(&val, find);
-                                printer_u32_or_null(&printer, dst_str, (u32) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_U64: {
-                                u64 val = 0;
-                                find_result_unsigned(&val, find);
-                                printer_u64_or_null(&printer, dst_str, (u64) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_I8: {
-                                i64 val = 0;
-                                find_result_signed(&val, find);
-                                printer_i8_or_null(&printer, dst_str, (i8) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_I16: {
-                                i64 val = 0;
-                                find_result_signed(&val, find);
-                                printer_i16_or_null(&printer, dst_str, (i16) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_I32: {
-                                i64 val = 0;
-                                find_result_signed(&val, find);
-                                printer_i32_or_null(&printer, dst_str, (i32) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_I64: {
-                                i64 val = 0;
-                                find_result_signed(&val, find);
-                                printer_i64_or_null(&printer, dst_str, (i64) val);
-                        }
-                                break;
-                        case FIELD_NUMBER_FLOAT: {
-                                float val = 0;
-                                find_result_float(&val, find);
-                                printer_float(&printer, dst_str, &val);
-                        }
-                                break;
-                        case FIELD_BINARY:
-                        case FIELD_BINARY_CUSTOM: {
-                                const binary_field *val = find_result_binary(find);
-                                printer_binary(&printer, dst_str, val);
-                        }
-                                break;
-                        default:
-                                error(ERR_INTERNALERR, "unknown field type");
-                                return NULL;
-                }
-
+        if (!find_has_result(find)) {
+                /* undefined */
+                json_from_undef(dst_str);
         } else {
-                str_buf_add(dst_str, CARBON_NIL_STR);
+                if (find_result_is_array(find)) {
+                        json_from_array(dst_str, find_result_array(find));
+                } else if (find_result_is_object(find)) {
+                        json_from_object(dst_str, find_result_object(find));
+                } else if (find_result_is_column(find)) {
+                        json_from_column(dst_str, find_result_column(find));
+                } else if (find_result_is_binary(find)) {
+                        json_from_binary(dst_str, find_result_binary(find));
+                } else if (find_result_is_boolean(find)) {
+                        bool val;
+                        find_result_boolean(&val, find);
+                        json_from_boolean(dst_str, val);
+                } else if (find_result_is_unsigned(find)) {
+                        u64 val;
+                        find_result_unsigned(&val, find);
+                        json_from_unsigned(dst_str, val);
+                } else if (find_result_is_signed(find)) {
+                        i64 val;
+                        find_result_signed(&val, find);
+                        json_from_signed(dst_str, val);
+                } else if (find_result_is_float(find)) {
+                        float val;
+                        find_result_float(&val, find);
+                        json_from_float(dst_str, val);
+                } else if (find_result_is_string(find)) {
+                        string_field sf;
+                        sf.str = find_result_string(&sf.len, find);
+                        json_from_string(dst_str, &sf);
+                } else if (find_result_is_null(find)) {
+                        json_from_null(dst_str);
+                } else {
+                        /* undefined */
+                        json_from_undef(dst_str);
+                }
         }
-        printer_drop(&printer);
-
         return str_buf_cstr(dst_str);
-}
-
-const char *find_result_to_json_compact(str_buf *dst_str, find *find)
-{
-        return find_result_to_str(dst_str, JSON_COMPACT, find);
-}
-
-char *find_result_to_json_compact_dup(find *find)
-{
-        str_buf str;
-        str_buf_create(&str);
-        char *ret = strdup(find_result_to_json_compact(&str, find));
-        str_buf_drop(&str);
-        return ret;
 }
 
 bool find_result_type(field_e *type, find *find)
@@ -492,6 +364,60 @@ bool find_sorted(find *find)
         }
 }
 
+bool find_result_is_array(find *find)
+{
+        return field_is_array_or_subtype(find->type);
+}
+
+bool find_result_is_object(find *find)
+{
+        return field_is_object_or_subtype(find->type);
+}
+
+bool find_result_is_column(find *find)
+{
+        return field_is_column_or_subtype(find->type);
+}
+
+bool find_result_is_boolean(find *find)
+{
+        return field_is_boolean(find->type);
+}
+
+bool find_result_is_undefined(find *find)
+{
+        return !find_has_result(find);
+}
+
+bool find_result_is_unsigned(find *find)
+{
+        return field_is_unsigned(find->type);
+}
+
+bool find_result_is_signed(find *find)
+{
+        return field_is_signed(find->type);
+}
+
+bool find_result_is_float(find *find)
+{
+        return field_is_floating(find->type);
+}
+
+bool find_result_is_null(find *find)
+{
+        return field_is_null(find->type);
+}
+
+bool find_result_is_string(find *find)
+{
+        return field_is_string(find->type);
+}
+
+bool find_result_is_binary(find *find)
+{
+        return field_is_binary(find->type);
+}
 
 bool __check_path_evaluator_has_result(find *find)
 {

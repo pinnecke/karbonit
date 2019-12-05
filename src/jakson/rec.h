@@ -52,7 +52,6 @@
 #include <jakson/std/str_hash/mem.h>
 #include <jakson/archive/pred/contains.h>
 #include <jakson/archive/pred/equals.h>
-#include <jakson/carbon/printers.h>
 #include <jakson/std/uintvar/stream.h>
 #include <jakson/carbon/markers.h>
 #include <jakson/carbon/abstract.h>
@@ -94,11 +93,7 @@ typedef struct rec_new {
         int mode;
 } rec_new;
 
-typedef enum printer_impl {
-        JSON_EXTENDED, JSON_COMPACT
-} printer_impl_e;
-
-#define CARBON_NIL_STR "_nil"
+#define CARBON_NIL_STR "undef"
 
 typedef enum key {
         /** no key, no revision number */
@@ -193,11 +188,7 @@ bool rec_is_sorted(rec *doc);
 /** Changes the abstract type of the most-outer record array to the given abstract type */
 void rec_update_list_type(rec *revised, rec *doc, list_type_e derivation);
 
-bool rec_to_str(str_buf *dst, printer_impl_e printer, rec *doc);
-const char *rec_to_json_extended(str_buf *dst, rec *doc);
-const char *rec_to_json_compact(str_buf *dst, rec *doc);
-char *rec_to_json_extended_dup(rec *doc);
-char *rec_to_json_compact_dup(rec *doc);
+const char *rec_to_json(str_buf *dst, rec *doc);
 
 /* Opens a read-only iterator for navigating though the records contents.
  *
@@ -216,7 +207,6 @@ void rec_read_end(arr_it *it);
 
 bool rec_is_array(const rec *doc);
 
-bool rec_print(FILE *file, printer_impl_e printer, rec *doc);
 bool rec_hexdump_print(FILE *file, rec *doc);
 
 bool key_type(key_e *out, rec *doc);

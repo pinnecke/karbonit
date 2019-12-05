@@ -9,7 +9,7 @@ int main (void)
     rec record;
     insert *ins, *nested_ins;
     arr_state state;
-    char *as_json;
+    const char *as_json;
 
     ins = rec_create_begin(&context, &record, KEY_NOKEY, KEEP);
 
@@ -22,12 +22,14 @@ int main (void)
 
     rec_create_end(&context);
 
-    as_json = rec_to_json_compact_dup(&record);
+    str_buf buffer;
+    str_buf_create(&buffer);
+    as_json = rec_to_json(&buffer, &record);
 
     printf ("%s\n", as_json);
 
     rec_drop(&record);
-    free(as_json);
+    str_buf_drop(&buffer);
 
     return 0;
 }

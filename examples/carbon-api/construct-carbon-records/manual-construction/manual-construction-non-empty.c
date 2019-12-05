@@ -8,7 +8,8 @@ int main (void)
     rec_new context;
     rec record;
     insert *ins;
-    char *as_json;
+    const char *as_json;
+    str_buf buffer;
 
     ins = rec_create_begin(&context, &record, KEY_NOKEY, KEEP);
 
@@ -18,12 +19,13 @@ int main (void)
 
     rec_create_end(&context);
 
-    as_json = rec_to_json_compact_dup(&record);
+    str_buf_create(&buffer);
+    as_json = rec_to_json(&buffer, &record);
 
     printf ("%s\n", as_json);
 
     rec_drop(&record);
-    free(as_json);
+    str_buf_drop(&buffer);
 
     return 0;
 }

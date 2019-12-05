@@ -48,9 +48,7 @@ bool find_create(find *find, dot *path, rec *doc);
 bool find_drop(find *find);
 
 bool find_has_result(find *find);
-const char *find_result_to_str(str_buf *dst_str, printer_impl_e print_type, find *find);
-const char *find_result_to_json_compact(str_buf *dst_str, find *find);
-char *find_result_to_json_compact_dup(find *find);
+const char *find_result_to_str(str_buf *dst_str, find *find);
 
 bool find_result_type(field_e *type, find *find);
 
@@ -69,6 +67,18 @@ bool find_object_is_sorted(find *find);
 bool find_multimap(find *find);
 bool find_multiset(find *find);
 bool find_sorted(find *find);
+
+bool find_result_is_array(find *find);
+bool find_result_is_object(find *find);
+bool find_result_is_column(find *find);
+bool find_result_is_boolean(find *find);
+bool find_result_is_undefined(find *find);
+bool find_result_is_unsigned(find *find);
+bool find_result_is_signed(find *find);
+bool find_result_is_float(find *find);
+bool find_result_is_null(find *find);
+bool find_result_is_string(find *find);
+bool find_result_is_binary(find *find);
 
 arr_it *find_result_array(find *find);
 obj_it *find_result_object(find *find);

@@ -13,8 +13,13 @@ static path_policy_e json_from_fn_record(const rec *record, const traverse_info 
         UNUSED(context)
         UNUSED(extra)
 
-        //str_buf *str = (str_buf *) extra->arg;
-        //str_buf_add_char(str, context->type == ON_ENTER ? '[' : ']');
+        str_buf *str = (str_buf *) extra->arg;
+        if (context->type == ON_ENTER) {
+                extra->json_printer.record_is_array = rec_is_array(record);
+        }
+        str_buf_add(str, extra->json_printer.record_is_array ?
+                              (context->type == ON_ENTER ? "[" : "]") :
+                              "");
 
         return PATH_EXPAND;
 }

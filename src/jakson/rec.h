@@ -214,6 +214,8 @@ void rec_read_begin(arr_it *it, rec *doc);
 /* Closes a read-only iterator, which was previously opened via 'rec_read_begin' */
 void rec_read_end(arr_it *it);
 
+bool rec_is_array(const rec *doc);
+
 bool rec_print(FILE *file, printer_impl_e printer, rec *doc);
 bool rec_hexdump_print(FILE *file, rec *doc);
 

@@ -366,6 +366,15 @@ void rec_read_end(arr_it *it)
         patch_end(it);
 }
 
+bool rec_is_array(const rec *doc)
+{
+        arr_it it;
+        rec_read_begin(&it, (rec *) doc);
+        bool ret = !arr_it_is_unit(&it);
+        rec_read_end(&it);
+        return ret;
+}
+
 bool rec_print(FILE *file, printer_impl_e printer, rec *doc)
 {
         str_buf buffer;

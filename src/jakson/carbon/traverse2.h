@@ -66,6 +66,9 @@ typedef struct traverse_hidden
 {
         void *arg;
         union {
+            struct {
+                bool record_is_array;
+            } json_printer;
             void *extra;
         };
 } traverse_hidden;

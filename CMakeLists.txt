@@ -9,6 +9,8 @@ set(MAKE_DIRECTORY "${CMAKE_HOME_DIRECTORY}/bin")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MAKE_DIRECTORY})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MAKE_DIRECTORY})
 
+include(FetchContent)
+
 include_directories("${CMAKE_SOURCE_DIR}/src")
 include_directories("${CMAKE_SOURCE_DIR}/include")
 include_directories("${CMAKE_SOURCE_DIR}")
@@ -20,6 +22,45 @@ set(LIBS ${LIBS} pthread m)
 
 file(GLOB_RECURSE LIB_LIBS_HEADER_FILES libs/*.h )
 file(GLOB_RECURSE LIB_LIBS_SOURCE_FILES libs/*.c )
+
+function(clone id src dst tag)
+    IF(NOT EXISTS "${dst}")
+        FetchContent_Populate(${id}
+            GIT_REPOSITORY  ${src}
+            GIT_TAG         ${tag}
+            SOURCE_DIR      ${dst}
+        )
+    ELSE()
+        IF(COMPONENTS_FORCE_PULL)
+            IF(NOT GIT_FOUND)
+                find_package(Git QUIET)
+            ENDIF()
+            execute_process(COMMAND "${GIT_EXECUTABLE}" fetch origin
+                            WORKING_DIRECTORY "${dst}")
+            execute_process(COMMAND "${GIT_EXECUTABLE}" checkout ${tag}
+                            WORKING_DIRECTORY "${dst}")
+            execute_process(COMMAND "${GIT_EXECUTABLE}" pull
+                            WORKING_DIRECTORY "${dst}")
+            ENDIF()
+        ENDIF()
+        IF(EXISTS "${dst}/CMakeList.txt")
+            add_subdirectory("${dst}")
+        ENDIF()
+endfunction()
+
+clone(
+    JSON_for_modern_cpp
+    https://github.com/nlohmann/json.git
+    libs/json_cpp
+    master
+)
+
+clone(
+    JSON_schema_for_modern_cpp
+    https://github.com/pboettch/json-schema-validator.git
+    libs/json_schema_cpp
+    master
+)
 
 #
 # Source Amalgamation

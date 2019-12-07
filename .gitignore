@@ -20,3 +20,8 @@ CMakeCache.txt
 libark-sources\.a
 include/
 libjakson-sources\.a
+json_for_modern_cpp-subbuild/
+json_schema_for_modern_cpp-subbuild/
+libs/json_cpp/
+libs/json_schema_cpp/
+

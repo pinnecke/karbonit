@@ -45,7 +45,7 @@ typedef struct find {
 
 bool find_begin(find *out, const char *dot, rec *doc);
 bool find_end(find *find);
-bool find_create(find *find, dot *path, rec *doc);
+bool find_exec(find *find, dot *path, rec *doc);
 bool find_drop(find *find);
 
 bool find_has_result(find *find);

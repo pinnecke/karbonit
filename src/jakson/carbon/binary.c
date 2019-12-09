@@ -10,12 +10,12 @@
 
 void binary_field_print(str_buf *dst, const binary_field *field)
 {
-        str_buf_add(dst, "{ ");
-        str_buf_add(dst, "\"type\": \"");
+        str_buf_add(dst, "{");
+        str_buf_add(dst, "\"type\":\"");
         str_buf_add_nchar(dst, field->mime, field->mime_len);
-        str_buf_add(dst, "\", \"encoding\": \"base64\", \"value\": \"");
+        str_buf_add(dst, "\", \"encoding\":\"base64\", \"value\":\"");
         binary_field_value_print(dst, field);
-        str_buf_add(dst, "\" }");
+        str_buf_add(dst, "\"}");
 }
 
 void binary_field_value_print(str_buf *dst, const binary_field *field)

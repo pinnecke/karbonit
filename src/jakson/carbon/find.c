@@ -37,7 +37,7 @@ bool find_begin(find *out, const char *dot, rec *doc)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        find_create(out, &path, doc);
+        find_exec(out, &path, doc);
         dot_drop(&path);
         return true;
 }
@@ -109,7 +109,7 @@ bool find_end(find *find)
         return true;
 }
 
-bool find_create(find *find, dot *path, rec *doc)
+bool find_exec(find *find, dot *path, rec *doc)
 {
         ZERO_MEMORY(find, sizeof(find));
         find->doc = doc;
@@ -565,9 +565,11 @@ static void result_from_array(find *find, arr_it *it)
         find->type = it->field.type;
         switch (find->type) {
                 case FIELD_NULL:
+                        /** no value to be stored */
+                        break;
                 case FIELD_TRUE:
                 case FIELD_FALSE:
-                        /** no value to be stored */
+                        find->value.boolean = find->type == FIELD_TRUE ? true : false;
                         break;
                 case FIELD_ARRAY_UNSORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
@@ -658,9 +660,11 @@ static void result_from_object(find *find, obj_it *it)
         internal_obj_it_prop_type(&find->type, it);
         switch (find->type) {
                 case FIELD_NULL:
+                        /** no value to be stored */
+                        break;
                 case FIELD_TRUE:
                 case FIELD_FALSE:
-                        /** no value to be stored */
+                        find->value.boolean = find->type == FIELD_TRUE ? true : false;
                         break;
                 case FIELD_ARRAY_UNSORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:

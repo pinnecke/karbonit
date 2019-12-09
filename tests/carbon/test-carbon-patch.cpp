@@ -11,7 +11,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         field_e type;
         str_buf buffer1, buffer2, buffer3;
 
-        rec_from_json(&doc, "{ \"x\": [1, \"y\", 3] }", KEY_AUTOKEY, NULL);
+        rec_from_json(&doc, "{ \"x\":[1, \"y\", 3] }", KEY_AUTOKEY, NULL);
         rec_commit_hash(&hash_original, &doc);
 
         str_buf_create(&buffer1);
@@ -61,9 +61,9 @@ TEST(TestCarbonPatch, CreatePatch) {
         const char *json_patch_2 = rec_to_json(&buffer3, &doc);
         rec_commit_hash(&hash_patch_2, &doc);
 
-        EXPECT_TRUE(strcmp(json_original, "{\"x\": [1, \"y\", 3]}") == 0);
-        EXPECT_TRUE(strcmp(json_patch_1, "{\"x\": [42, \"y\", 23]}") == 0);
-        EXPECT_TRUE(strcmp(json_patch_2, "{\"x\": [102, \"y\", 23]}") == 0);
+        EXPECT_TRUE(strcmp(json_original, "{\"x\":[1, \"y\", 3]}") == 0);
+        EXPECT_TRUE(strcmp(json_patch_1, "{\"x\":[42, \"y\", 23]}") == 0);
+        EXPECT_TRUE(strcmp(json_patch_2, "{\"x\":[102, \"y\", 23]}") == 0);
 
         /* note especially that the commit hash has not changed; so a patch is not a new revision */
         EXPECT_EQ(hash_patch_1, hash_original);

@@ -43,7 +43,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleStringMixedTypes)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23, \"k1\": true}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"k2\":false, \"k3\":null, \"k4\":1, \"s1\":\"v1\", \"k5\":2, \"s2-longer\":\"world\", \"k6\":3, \"k7\":4, \"k8\":-1, \"s3\":\"there\", \"k9\":-2, \"k10\":-3, \"k11\":-4, \"k12\":42.23, \"k1\":true}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -73,7 +73,7 @@ TEST(CarbonTest, CarbonObjectInsertBinary)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"TXkgUGxhaW4tVGV4dAAA\" }}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"my binary\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"TXkgUGxhaW4tVGV4dAAA\"}}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -120,7 +120,8 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k12\": 42.23, \"k1\": true, \"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"k2\": false, \"k3\": null, \"k4\": 1, \"s1\": \"v1\", \"k5\": 2, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"s2-longer\": \"world\", \"k6\": 3, \"k7\": 4, \"k8\": -1, \"s3\": \"there\", \"k9\": -2, \"k10\": -3, \"k11\": -4}]}") == 0);
+        const char *out = rec_to_json(&sb, &doc);
+        ASSERT_TRUE(strcmp(out, "{\"k12\":42.23, \"k1\":true, \"b1\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"A==sbG8AA\"}, \"my binary\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"LAAA\"}, \"k2\":false, \"k3\":null, \"k4\":1, \"s1\":\"v1\", \"k5\":2, \"b2\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"A==ybGQAA\"}, \"s2-longer\":\"world\", \"k6\":3, \"k7\":4, \"k8\":-1, \"s3\":\"there\", \"k9\":-2, \"k10\":-3, \"k11\":-4}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -152,7 +153,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinaries)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"b1\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"my binary\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"b2\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"b1\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"A==sbG8AA\"}, \"my binary\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"LAAA\"}, \"b2\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"A==ybGQAA\"}}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -183,7 +184,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my nested\": {}}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"my nested\":{}}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -237,7 +238,7 @@ TEST(CarbonTest, CarbonObjectInsertObjectMixedMxed)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": 42.23, \"2\": true, \"3\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==sbG8AA\" }, \"4\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"LAAA\" }, \"5\": { \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"A==ybGQAA\" }, \"6\": \"world\", \"my nested\": {\"7\": false, \"8\": null, \"9\": 1, \"10\": \"v1\", \"11\": 2}, \"12\": 3, \"13\": 4, \"14\": -1, \"15\": \"there\", \"16\": -2, \"17\": -3, \"18\": -4}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"1\":42.23, \"2\":true, \"3\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"A==sbG8AA\"}, \"4\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"LAAA\"}, \"5\":{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"A==ybGQAA\"}, \"6\":\"world\", \"my nested\":{\"7\":false, \"8\":null, \"9\":1, \"10\":\"v1\", \"11\":2}, \"12\":3, \"13\":4, \"14\":-1, \"15\":\"there\", \"16\":-2, \"17\":-3, \"18\":-4}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -269,7 +270,7 @@ TEST(CarbonTest, CarbonObjectInsertArrayEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": []}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"my array\":[]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -326,7 +327,7 @@ TEST(CarbonTest, CarbonObjectInsertArrayData)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my array\": [[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"my array\":[[88, 89, 90], [\"Hello\", [65, 66, 67], \"World\"], 1, 1, [23, 24, 25], 1]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -361,7 +362,7 @@ TEST(CarbonTest, CarbonObjectInsertColumnNonEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"my column\": [1, 2, 3]}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"my column\":[1, 2, 3]}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -558,8 +559,8 @@ TEST(CarbonTest, CarbonObjectRemoveTest)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}, {\"6\": false, \"7\": null, \"8\": 1, \"9\": \"v1\", \"10\": 2}, {\"11\": false, \"12\": null, \"13\": 1, \"14\": \"v1\", \"15\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}, {\"6\":false, \"7\":null, \"8\":1, \"9\":\"v1\", \"10\":2}, {\"11\":false, \"12\":null, \"13\":1, \"14\":\"v1\", \"15\":2}]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -647,8 +648,8 @@ TEST(CarbonTest, CarbonObjectRemoveSkipOneTest)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}, {\"6\": false, \"7\": null, \"8\": 1, \"9\": \"v1\", \"10\": 2}, {\"11\": false, \"12\": null, \"13\": 1, \"14\": \"v1\", \"15\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}, {\"6\":false, \"7\":null, \"8\":1, \"9\":\"v1\", \"10\":2}, {\"11\":false, \"12\":null, \"13\":1, \"14\":\"v1\", \"15\":2}]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -725,8 +726,8 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"Hello Long Key\": \"Hello Long Value\", \"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"Hello Long Key\":\"Hello Long Value\", \"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -800,8 +801,8 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"Hello Long Key\": \"Hello Long Value\", \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"1\":false, \"Hello Long Key\":\"Hello Long Value\", \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -875,8 +876,8 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"Hello Long Key\": \"Hello Long Value\", \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"1\":false, \"2\":null, \"Hello Long Key\":\"Hello Long Value\", \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -951,8 +952,8 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"Hello Long Key\": \"Hello Long Value\", \"4\": \"v1\", \"5\": 2}]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"1\":false, \"2\":null, \"3\":1, \"Hello Long Key\":\"Hello Long Value\", \"4\":\"v1\", \"5\":2}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -1028,8 +1029,8 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
 
         // -------------------------------------------------------------------------------------------------------------
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"5\": 2}]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"1\": false, \"2\": null, \"3\": 1, \"4\": \"v1\", \"Hello Long Key\": \"Hello Long Value\", \"5\": 2}]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"5\":2}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"1\":false, \"2\":null, \"3\":1, \"4\":\"v1\", \"Hello Long Key\":\"Hello Long Value\", \"5\":2}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);

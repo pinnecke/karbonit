@@ -11,7 +11,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         find find;
         field_e result_type;
 
-        const char *json_in = "{\"x\": \"y\"}";
+        const char *json_in = "{\"x\":\"y\"}";
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         /* without shortened dot path rule, the json object as given is embedded in an record container (aka array)
@@ -31,7 +31,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 
         rec_drop(&doc);
 
-        json_in = "[{\"x\": \"y\"},{\"x\": [{\"z\": 42}]}]";
+        json_in = "[{\"x\":\"y\"},{\"x\":[{\"z\":42}]}]";
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         /* The shortened dot path rule does not apply here since the user input is an array  */
@@ -108,6 +108,7 @@ TEST(CarbonTest, CarbonFindPrint)
         rec_drop(&doc);
 
         rec_from_json(&doc, "true", KEY_NOKEY, NULL);
+        rec_hexdump_print(stderr, &doc);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
@@ -152,7 +153,7 @@ TEST(CarbonTest, CarbonFindPrint)
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "4", &doc));
         result = find_result_to_str(&sb1, &find);
-        ASSERT_TRUE(strcmp(result, "_nil") == 0);
+        ASSERT_TRUE(strcmp(result, "undef") == 0);
         find_end(&find);
         rec_drop(&doc);
 
@@ -201,12 +202,12 @@ TEST(CarbonTest, CarbonFindPrint)
         rec_from_json(&doc, "[]", KEY_NOKEY, NULL);
         ASSERT_TRUE(find_begin(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
-        ASSERT_TRUE(strcmp(result, "_nil") == 0);
+        ASSERT_TRUE(strcmp(result, "undef") == 0);
         find_end(&find);
         rec_drop(&doc);
 
         const char *complex = "{\n"
-                              "   \"m\": {\n"
+                              "   \"m\":{\n"
                               "         \"n\":8,\n"
                               "         \"o\":-8,\n"
                               "         \"p\":\"A\",\n"
@@ -227,7 +228,7 @@ TEST(CarbonTest, CarbonFindPrint)
                               "         ],\n"
                               "         \"w\":\"Hello, World!\",\n"
                               "         \"x\":{\n"
-                              "            \"a\": null\n"
+                              "            \"a\":null\n"
                               "         },\n"
                               "         \"y\":[\n"
                               "\n"
@@ -243,7 +244,7 @@ TEST(CarbonTest, CarbonFindPrint)
         ASSERT_TRUE(find_begin(&find, "m", &doc));
         result = find_result_to_str(&sb1, &find);
 
-        ASSERT_TRUE(strcmp(result, "{\"n\": 8, \"o\": -8, \"p\": \"A\", \"q\": 32.40, \"r\": null, \"s\": true, \"t\": false, \"u\": [1, 2, 3, null], \"v\": [\"A\", \"B\", null], \"w\": \"Hello, World!\", \"x\": {\"a\": null}, \"y\": [], \"z\": {}}") == 0);
+        ASSERT_TRUE(strcmp(result, "{\"n\":8, \"o\":-8, \"p\":\"A\", \"q\":32.40, \"r\":null, \"s\":true, \"t\":false, \"u\":[1, 2, 3, null], \"v\":[\"A\", \"B\", null], \"w\":\"Hello, World!\", \"x\":{\"a\":null}, \"y\":[], \"z\":{}}") == 0);
         find_end(&find);
 
         ASSERT_TRUE(find_begin(&find, "m.n", &doc));
@@ -308,7 +309,7 @@ TEST(CarbonTest, CarbonFindPrint)
 
         ASSERT_TRUE(find_begin(&find, "m.u.4", &doc));
         result = find_result_to_str(&sb1, &find);
-        ASSERT_TRUE(strcmp(result, "_nil") == 0);
+        ASSERT_TRUE(strcmp(result, "undef") == 0);
         find_end(&find);
 
         ASSERT_TRUE(find_begin(&find, "m.v", &doc));
@@ -323,7 +324,7 @@ TEST(CarbonTest, CarbonFindPrint)
 
         ASSERT_TRUE(find_begin(&find, "m.x", &doc));
         result = find_result_to_str(&sb1, &find);
-        ASSERT_TRUE(strcmp(result, "{\"a\": null}") == 0);
+        ASSERT_TRUE(strcmp(result, "{\"a\":null}") == 0);
         find_end(&find);
 
         ASSERT_TRUE(find_begin(&find, "m.x.a", &doc));
@@ -351,7 +352,7 @@ TEST(CarbonTest, CarbonFindPrintExamples)
         find find;
         str_buf result;
 
-        const char *json = "{\"x\": {\"y\": [{\"z\": 23}, {\"z\": null}]} }";
+        const char *json = "{\"x\":{\"y\":[{\"z\":23}, {\"z\":null}]} }";
 
         rec_from_json(&doc, json, KEY_NOKEY, NULL);
         str_buf_create(&result);
@@ -390,7 +391,7 @@ TEST(CarbonTest, ParseBooleanArray) {
         rec doc;
         find find;
         field_e type;
-        const char *json = "[{\"col\": [true, null, false]}]";
+        const char *json = "[{\"col\":[true, null, false]}]";
 
         rec_from_json(&doc, json, KEY_NOKEY, NULL);
 

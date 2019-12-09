@@ -901,103 +901,103 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
                 u32 max = 1000;
                 timestamp t1 = wallclock();
                 for (u32 i = 0; i < max; i++) {
-                        ASSERT_TRUE(find_create(&find, &path1, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path1, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path2, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path2, &doc));
                         ASSERT_FALSE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path3, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path3, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path4, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path4, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path5, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path5, &doc));
                         ASSERT_FALSE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path6, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path6, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path7, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path7, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path8, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path8, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path9, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path9, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path10, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path10, &doc));
                         ASSERT_FALSE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path11, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path11, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path12, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path12, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path13, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path13, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path14, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path14, &doc));
                         ASSERT_FALSE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path15, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path15, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path16, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path16, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path17, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path17, &doc));
                         ASSERT_FALSE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path18, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path18, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path19, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path19, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path20, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path20, &doc));
                         ASSERT_FALSE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path21, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path21, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path22, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path22, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path23, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path23, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path24, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path24, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
 
-                        ASSERT_TRUE(find_create(&find, &path25, &doc));
+                        ASSERT_TRUE(find_exec(&find, &path25, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                         ASSERT_TRUE(find_end(&find));
                 }

@@ -827,7 +827,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[1, 2, 3]]"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[1, 2, 3]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -864,7 +864,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[42, 43, 44]]"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[42, 43, 44]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -901,7 +901,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[0, 0, 0]]"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[0, 0, 0]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);

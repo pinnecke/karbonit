@@ -48,7 +48,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         json = rec_to_json(&sb, &rev_doc2);
         // printf("JSON (rev2): %s\n", json);
-        ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [89]}") == 0);
+        ASSERT_TRUE(strcmp(json, "89") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         json = rec_to_json(&sb, &rev_doc3);
         // printf("JSON (rev3): %s\n", json);
-        ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [65, 66, 67]}") == 0);
+        ASSERT_TRUE(strcmp(json, "[65, 66, 67]") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
 
         json = rec_to_json(&sb, &rev_doc4);
         // printf("JSON (rev4): %s\n", json);
-        ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, 2, 3]}") == 0);
+        ASSERT_TRUE(strcmp(json, "[1, 2, 3]") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -128,7 +128,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 
         json = rec_to_json(&sb, &rev_doc);
         // printf("JSON (rev1): %s\n", json);
-        ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, -42, 23.00]}") == 0);
+        ASSERT_TRUE(strcmp(json, "[1, -42, 23.00]") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -145,7 +145,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
 
         json = rec_to_json(&sb, &rev_doc2);
         // printf("JSON (rev2): %s\n", json);
-        ASSERT_TRUE(strcmp(json, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [1, 1024, 23.00]}") == 0);
+        ASSERT_TRUE(strcmp(json, "[1, 1024, 23.00]") == 0);
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -229,8 +229,8 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "null") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -282,8 +282,8 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, false]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [false]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[true, false]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "false") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -334,8 +334,8 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, false]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[true, false]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "true") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -391,8 +391,8 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, null, false]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [true, false]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[true, null, false]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[true, false]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -440,8 +440,8 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "42") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -493,8 +493,8 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 23]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [23]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[42, 23]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "23") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -545,8 +545,8 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 23]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[42, 23]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "42") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -602,8 +602,8 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 21, 23]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [42, 23]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[42, 21, 23]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[42, 23]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -652,8 +652,8 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\"]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "\"Hello\"") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -705,8 +705,8 @@ TEST(CarbonTest, CarbonRemoveFirstString)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"World\"]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[\"Hello\", \"World\"]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "\"World\"") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -757,8 +757,8 @@ TEST(CarbonTest, CarbonRemoveLastString)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\"]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[\"Hello\", \"World\"]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "\"Hello\"") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -814,8 +814,8 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Plato\", \"Kant\", \"Nietzsche\"]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Plato\", \"Nietzsche\"]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[\"Plato\", \"Kant\", \"Nietzsche\"]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[\"Plato\", \"Nietzsche\"]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -868,8 +868,8 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
 
         //printf("\nBEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": []}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\"}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -894,7 +894,7 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         const char *data1 = "This report, by its very length, defends itself against the risk of being read.";
         insert_binary(ins, data1, strlen(data1), "txt", NULL);
 
-        const char *data2 = "{\"key\": \"value\"}";
+        const char *data2 = "{\"key\":\"value\"}";
         insert_binary(ins, data2, strlen(data2), "json", NULL);
 
         rec_create_end(&context);
@@ -924,8 +924,8 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
 
         //printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"type\":\"application/json\", \"encoding\":\"base64\", \"value\":\"A=JrZXkiOiJ2YWx1ZSJ9AA\"}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\"}, {\"type\":\"application/json\", \"encoding\":\"base64\", \"value\":\"A=JrZXkiOiJ2YWx1ZSJ9AA\"}]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -979,8 +979,8 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
 
         // printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\"}, {\"type\":\"application/json\", \"encoding\":\"base64\", \"value\":\"eyJrZXkiOiAidmFsdWUifQAA\"}]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\"}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -1041,8 +1041,8 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
 
         printf("BEFORE\t'%s'\nAFTER\t'%s'\n", json_1, json_2);
 
-        ASSERT_TRUE(strcmp(json_1, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"application/json\", \"encoding\": \"base64\", \"binary-str_buf\": \"eyJrZXkiOiAidmFsdWUifQAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-str_buf\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
-        ASSERT_TRUE(strcmp(json_2, "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{ \"type\": \"text/plain\", \"encoding\": \"base64\", \"binary-str_buf\": \"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\" }, { \"type\": \"text/html\", \"encoding\": \"base64\", \"binary-str_buf\": \"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\" }]}") == 0);
+        ASSERT_TRUE(strcmp(json_1, "[{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\"}, {\"type\":\"application/json\", \"encoding\":\"base64\", \"value\":\"eyJrZXkiOiAidmFsdWUifQAA\"}, {\"type\":\"text/html\", \"encoding\":\"base64\", \"value\":\"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\"}]") == 0);
+        ASSERT_TRUE(strcmp(json_2, "[{\"type\":\"text/plain\", \"encoding\":\"base64\", \"value\":\"VGhpcyByZXBvcnQsIGJ5IGl0cyB2ZXJ5IGxlbmd0aCwgZGVmZW5kcyBpdHNlbGYgYWdhaW5zdCB0aGUgcmlzayBvZiBiZWluZyByZWFkLgAA\"}, {\"type\":\"text/html\", \"encoding\":\"base64\", \"value\":\"PGh0bWw+PGJvZHk+PHA+VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZzwvcD48L2JvZHk+PC9odG1sPgAA\"}]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);

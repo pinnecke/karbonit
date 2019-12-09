@@ -1,108 +1,159 @@
 /**
  * traverse - traversal framework for Carbon records and containers
  *
- * Copyright 2019 Marcus Pinnecke
+ * Copyright 2020 Marcus Pinnecke
  */
 
-#ifndef HAD_TRAVERSE_H
-#define HAD_TRAVERSE_H
+#ifndef HAD_TRAVERSE_FRAMEWORK_H
+#define HAD_TRAVERSE_FRAMEWORK_H
 
 #include <jakson/stdinc.h>
 #include <jakson/forwdecl.h>
+#include <jakson/rec.h>
+#include <jakson/carbon/arr-it.h>
+#include <jakson/carbon/col-it.h>
+#include <jakson/carbon/obj-it.h>
+#include <jakson/carbon/dot.h>
+#include <jakson/carbon/item.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* called before traversing is started; used to allocate 'extra' allocated memory */
-typedef void (*traverse_setup_t)(struct traverse_extra *extra);
+typedef struct traverser_fn traverser_fn;
 
-/* called when traversing has ended; used to free 'extra' allocated memory */
-typedef void (*traverse_clean_t)(struct traverse_extra *extra);
+typedef enum path_policy
+{
+        PATH_PRUNE, /* stop traversal in this branch */
+        PATH_EXPAND /* continue traversal if possible */
+} path_policy_e;
 
-/* called when traversing just had started; accesses the record itself */
-typedef void (*visit_record_t)(struct traverse_extra *extra, struct rec *record);
+typedef enum visit_ops
+{
+        VISIT_CALL_RECORD_ENTER = 0x1 << 0, /* call 'visit_record' when a record was found */
+        VISIT_CALL_RECORD_EXIT = 0x1 << 1, /* call 'visit_record' when a record traversal ended */
+        VISIT_CALL_ARRAY_ENTER = 0x1 << 2, /* call 'visit_array' when an array was found */
+        VISIT_CALL_ARRAY_EXIT = 0x1 << 3, /* call 'visit_array' when an array traversal ended */
+        VISIT_CALL_OBJECT_ENTER = 0x1 << 4, /* call 'visit_object' when an object was found */
+        VISIT_CALL_OBJECT_EXIT = 0x1 << 5, /* call 'visit_object' when an object traversal ended */
+        VISIT_CALL_FIELD_ENTER = 0x1 << 6, /* call 'visit_field' when a field was found */
+        VISIT_CALL_FIELD_EXIT = 0x1 << 7, /* call 'visit_field' when a field traversal ended */
+        VISIT_CALL_PROP_ENTER = 0x1 << 8, /* call 'visit_prop' when a property was found */
+        VISIT_CALL_PROP_EXIT = 0x1 << 9, /* call 'visit_prop' when a property traversal ended */
+        VISIT_NO_PATH = 0x1 << 10 /* do not create dot-path information during traversal */
+} visit_ops_e;
 
-/* called when an array was found */
-typedef void (*visit_array_enter_t)(struct traverse_extra *extra, arr_it *it);
+#define VISIT_ALL   (VISIT_CALL_RECORD_ENTER | VISIT_CALL_RECORD_EXIT |                                                \
+                     VISIT_CALL_ARRAY_ENTER | VISIT_CALL_ARRAY_EXIT |                                                  \
+                     VISIT_CALL_OBJECT_ENTER | VISIT_CALL_OBJECT_EXIT |                                                \
+                     VISIT_CALL_FIELD_ENTER | VISIT_CALL_FIELD_EXIT |                                                  \
+                     VISIT_CALL_PROP_ENTER | VISIT_CALL_PROP_EXIT)
 
-/* called when an array item was found */
-typedef void (*visit_item_t)(struct traverse_extra *extra, item *it);
+typedef enum visit_type
+{
+        ON_ENTER, /* 'visit_*' function was called because element was found */
+        ON_EXIT /* 'visit_*' function was called because element traversal has ended */
+} visit_type_e;
 
-/* called when an array was was passed */
-typedef void (*visit_array_exit_t)(struct traverse_extra *extra, arr_it *it);
+typedef struct traverse_context
+{
+        dot path;
+        visit_type_e type;
+} traverse_info;
 
-/* called when an column was found */
-typedef bool (*visit_column_t)(struct traverse_extra *extra, struct col_it *it);
-
-/* called when an object was found */
-typedef void (*visit_object_enter_t)(struct traverse_extra *extra, struct obj_it *it);
-
-/* called when an object property item was found */
-typedef void (*visit_prop_t)(struct traverse_extra *extra, item *it);
-
-/* called when an object was passed */
-typedef void (*visit_object_exit_t)(struct traverse_extra *extra, struct obj_it *it);
-
-
-/* built-in or user-defined extra data for operation */
-enum  traverse_tag {
-        TRAVERSE_UNKNOWN,
-        TRAVERSE_PRINT_JSON
-};
-
-enum json_convert {
-        JSON_TO_NULL,
-        JSON_REMAIN,
-        JSON_ELEMENT
-};
-
-struct traverse_extra {
-        struct traverse *parent;
+typedef struct traverse_hidden
+{
+        void *arg;
         union {
             struct {
-                struct str_buf *str;
-                struct to_json_opts *config;
-                enum json_convert convert;
-            } print_json;
-            struct {
-                void *data;
-            } unknown;
-        } capture;
-};
+                bool record_is_array;
+            } json_printer;
+            void *extra;
+        };
+} traverse_hidden;
 
-struct traverse
+typedef void (*traverse_fn_create)(traverse_hidden *extra); /* called when traverser is created to setup implementation */
+
+typedef void (*traverse_fn_drop)(traverse_hidden *extra); /* call with live-time end, used for resource releasing */
+
+typedef path_policy_e (*traverse_fn_record)(const rec *record, const traverse_info *context, traverse_hidden *extra);
+
+typedef path_policy_e (*traverse_fn_array)(const arr_it *array, const traverse_info *context, traverse_hidden *extra);
+
+typedef path_policy_e (*traverse_fn_object)(const obj_it *object, const traverse_info *context, traverse_hidden *extra);
+
+typedef path_policy_e (*traverse_fn_field)(const item *field, const traverse_info *context, traverse_hidden *extra);
+
+typedef path_policy_e (*traverse_fn_prop)(const prop *prop, const traverse_info *context, traverse_hidden *extra);
+
+typedef struct traverser_fn
 {
-        enum traverse_tag tag;
-        bool read_write;
-        traverse_setup_t setup;
-        traverse_clean_t cleanup;
-        visit_record_t visit_record;
-        visit_array_enter_t visit_array_begin;
-        visit_item_t visit_item;
-        visit_array_exit_t visit_array_end;
-        visit_column_t visit_column;
-        visit_object_enter_t visit_object_begin;
-        visit_object_exit_t visit_object_end;
-        struct traverse_extra extra;
-};
+        traverse_fn_create create;
+        traverse_fn_drop drop;
 
-void traverse_create(struct traverse *traverse, traverse_setup_t begin, traverse_clean_t end,
-                            visit_record_t visit_record, visit_array_enter_t visit_array_begin,
-                            visit_array_exit_t visit_array_end, visit_column_t visit_column,
-                            visit_object_enter_t visit_object_begin, visit_object_exit_t visit_object_end,
-                            enum traverse_tag tag, bool read_write);
+        traverse_fn_record visit_record;
+        traverse_fn_array visit_array;
+        traverse_fn_object visit_object;
+        traverse_fn_field visit_field;
+        traverse_fn_prop visit_prop;
 
-void traverse_drop(struct traverse *traverse);
+} traverser_fn;
 
-void traverse_record(struct rec *rev_out, struct traverse *traverse, struct rec *record);
-void traverse_array(struct traverse *traverse, arr_it *it);
-void traverse_column(struct traverse *traverse, struct col_it *it);
-void traverse_object(struct traverse *traverse, struct obj_it *it);
+typedef struct traverse_impl
+{
+        traverser_fn fn;
+        traverse_hidden extra;
+} traverse_impl;
 
-void traverse_continue_array(struct traverse_extra *context, arr_it *it);
-void traverse_continue_column(struct traverse_extra *context, struct col_it *it);
-void traverse_continue_object(struct traverse_extra *context, struct obj_it *it);
+typedef enum
+{
+        CNTX_RECORD,
+        CNTX_ARRAY,
+        CNTX_OBJECT,
+        CNTX_COLUMN,
+        CNTX_ITEM,
+        CNTX_PROP,
+} cntx_type_e;
+
+typedef struct {
+        cntx_type_e type;
+        union {
+                rec *record;
+                arr_it *array;
+                col_it *column;
+                obj_it *object;
+                item *item;
+                prop *prop;
+                const void *any;
+        } container;
+} container_cntx;
+
+typedef struct
+{
+        vec ofType(container_cntx) context;
+        unsigned visit_ops;
+        traverse_impl impl;
+        traverse_info info;
+} traverser;
+
+#define TRAVERSE(str_buf_dst, fn, visit_ops, traverse_func, src)                                                       \
+{                                                                                                                      \
+        traverser traverser;                                                                                           \
+        str_buf_clear(str_buf_dst);                                                                                    \
+        traverser_create(&traverser, (fn), (visit_ops));                                                               \
+        traverse_func(&traverser, src, str_buf_dst);                                                                   \
+        traverser_drop(&traverser);                                                                                    \
+}
+
+void traverser_create(traverser *traverse, const traverser_fn *fns, unsigned visit_ops); /* xor visit_ops_e */
+void traverser_drop(traverser *traverse);
+
+void traverser_run_from_record(traverser *traverse, rec *record, void *arg);
+void traverser_run_from_array(traverser *traverse, arr_it *it, void *arg);
+void traverser_run_from_object(traverser *traverse, obj_it *it, void *arg);
+void traverser_run_from_item(traverser *traverse, item *i, void *arg);
+void traverser_run_from_prop(traverser *traverse, prop *p, void *arg);
+
 
 #ifdef __cplusplus
 }

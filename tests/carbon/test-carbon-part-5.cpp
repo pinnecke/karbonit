@@ -209,7 +209,7 @@ TEST(CarbonTest, CarbonKeyTypeStringKey)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [\"Hello\", \"World\"]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "[\"Hello\", \"World\"]") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -236,7 +236,7 @@ TEST(CarbonTest, CarbonObjectInsertEmpty)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -264,7 +264,7 @@ TEST(CarbonTest, CarbonObjectInsertNull)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": null}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":null}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -293,7 +293,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleNulls)
         str_buf sb;
         str_buf_create(&sb);
 
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": null, \"My Key 2\": null, \"My Key 3\": null}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":null, \"My Key 2\":null, \"My Key 3\":null}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -321,7 +321,7 @@ TEST(CarbonTest, CarbonObjectInsertU8)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -351,7 +351,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU8s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":1, \"My Key 2\":2, \"My Key 3\":3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -379,7 +379,7 @@ TEST(CarbonTest, CarbonObjectInsertU16)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -409,7 +409,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU16s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":1, \"My Key 2\":2, \"My Key 3\":3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -437,7 +437,7 @@ TEST(CarbonTest, CarbonObjectInsertU32)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -467,7 +467,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU32s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":1, \"My Key 2\":2, \"My Key 3\":3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -495,7 +495,7 @@ TEST(CarbonTest, CarbonObjectInsertU64)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": 123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -525,7 +525,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleU64s)
         str_buf_create(&sb);
 
         //rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": 1, \"My Key 2\": 2, \"My Key 3\": 3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":1, \"My Key 2\":2, \"My Key 3\":3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -553,7 +553,7 @@ TEST(CarbonTest, CarbonObjectInsertI8)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":-123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -583,7 +583,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI8s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":-1, \"My Key 2\":-2, \"My Key 3\":-3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -611,7 +611,7 @@ TEST(CarbonTest, CarbonObjectInsertI16)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":-123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -641,7 +641,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI16s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":-1, \"My Key 2\":-2, \"My Key 3\":-3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -669,7 +669,7 @@ TEST(CarbonTest, CarbonObjectInsertI32)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":-123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -699,7 +699,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI32s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":-1, \"My Key 2\":-2, \"My Key 3\":-3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -727,7 +727,7 @@ TEST(CarbonTest, CarbonObjectInsertI64)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":-123}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -757,7 +757,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleI64s)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1, \"My Key 2\": -2, \"My Key 3\": -3}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":-1, \"My Key 2\":-2, \"My Key 3\":-3}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -785,7 +785,7 @@ TEST(CarbonTest, CarbonObjectInsertFloat)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": -123.32}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":-123.32}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -815,7 +815,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleFloats)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": -1.23, \"My Key 2\": -2.42, \"My Key 3\": 3.21}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":-1.23, \"My Key 2\":-2.42, \"My Key 3\":3.21}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -843,7 +843,7 @@ TEST(CarbonTest, CarbonObjectInsertTrue)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": true}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":true}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -871,7 +871,7 @@ TEST(CarbonTest, CarbonObjectInsertFalse)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key\": false}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key\":false}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -901,7 +901,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBooleans)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"My Key 1\": true, \"My Key 2\": false, \"My Key 3\": true}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"My Key 1\":true, \"My Key 2\":false, \"My Key 3\":true}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -941,7 +941,7 @@ TEST(CarbonTest, CarbonObjectInsertMixed)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": true, \"k2\": false, \"k3\": null, \"k4\": 1, \"k5\": 2, \"k6\": 3, \"k7\": 4, \"k8\": -1, \"k9\": -2, \"k10\": -3, \"k11\": -4, \"k12\": 42.23}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"k1\":true, \"k2\":false, \"k3\":null, \"k4\":1, \"k5\":2, \"k6\":3, \"k7\":4, \"k8\":-1, \"k9\":-2, \"k10\":-3, \"k11\":-4, \"k12\":42.23}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -971,7 +971,7 @@ TEST(CarbonTest, CarbonObjectInsertString)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"hello\": \"world\"}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"hello\":\"world\"}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);
@@ -1003,7 +1003,7 @@ TEST(CarbonTest, CarbonObjectInsertMultipleString)
         str_buf_create(&sb);
 
         // rec_print(stdout, &doc);
-        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [{\"k1\": \"v1\", \"hello\": \"world\", \"k3\": \"there\"}]}") == 0);
+        ASSERT_TRUE(strcmp(rec_to_json(&sb, &doc), "{\"k1\":\"v1\", \"hello\":\"world\", \"k3\":\"there\"}") == 0);
 
         str_buf_drop(&sb);
         rec_drop(&doc);

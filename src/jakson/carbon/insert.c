@@ -59,7 +59,7 @@ void internal_insert_create_for_array(insert *in, arr_it *context)
         if (context->eof) {
                 pos = memfile_tell(&context->file);
         } else {
-                pos = internal_history_has(&context->history) ? internal_history_peek(&context->history) : 0;
+                pos = context->last_off ? context->last_off : 0;
         }
 
         internal_create(in, &context->file, pos);

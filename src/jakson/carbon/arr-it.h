@@ -55,7 +55,7 @@ typedef struct arr_it {
         /** in case of modifications (updates, inserts, deletes), the number of bytes that are added resp. removed */
         i64 mod_size;
         bool eof;
-        vec ofType(offset_t) history;
+        offset_t last_off;
         field field;
         offset_t field_offset;
 } arr_it;
@@ -83,7 +83,6 @@ bool arr_it_is_empty(arr_it *it);
 item *arr_it_next(arr_it *it);
 bool arr_it_has_next(arr_it *it);
 bool arr_it_is_unit(arr_it *it);
-bool arr_it_prev(arr_it *it);
 
 /**
  * Inserts a new element at the current position of the iterator.

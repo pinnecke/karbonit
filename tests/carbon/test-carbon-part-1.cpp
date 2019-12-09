@@ -457,7 +457,7 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
-        const char *data = "{ \"Message\": \"Hello World\" }";
+        const char *data = "{ \"Message\":\"Hello World\" }";
         bool status = insert_binary(&in, data, strlen(data), "json", NULL);
         ASSERT_TRUE(status);
 
@@ -481,7 +481,7 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
-        const char *data = "{ \"Message\": \"Hello World\" }";
+        const char *data = "{ \"Message\":\"Hello World\" }";
         bool status = insert_binary(&in, data, strlen(data), NULL, "my data");
         ASSERT_TRUE(status);
         ////rec_hexdump_print(stdout, &rev_doc);
@@ -506,8 +506,8 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
-        const char *data1 = "{ \"Message\": \"Hello World\" }";
-        const char *data2 = "{ \"Blog-Header\": \"My Fancy Blog\" }";
+        const char *data1 = "{ \"Message\":\"Hello World\" }";
+        const char *data2 = "{ \"Blog-Header\":\"My Fancy Blog\" }";
         bool status = insert_binary(&in, data1, strlen(data1), "json", NULL);
         ASSERT_TRUE(status);
         status = insert_binary(&in, data2, strlen(data2), "txt", NULL);
@@ -534,8 +534,8 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
-        const char *data1 = "{ \"Message\": \"Hello World\" }";
-        const char *data2 = "{ \"Blog-Header\": \"My Fancy Blog\" }";
+        const char *data1 = "{ \"Message\":\"Hello World\" }";
+        const char *data2 = "{ \"Blog-Header\":\"My Fancy Blog\" }";
         for (u32 i = 0; i < 100; i++) {
                 bool status = insert_binary(&in, i % 2 == 0 ? data1 : data2,
                                             strlen(i % 2 == 0 ? data1 : data2), "json", NULL);
@@ -563,8 +563,8 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
         arr_it_insert_begin(&in, &it);
-        const char *data1 = "{ \"Message\": \"Hello World\" }";
-        const char *data2 = "{ \"Blog-Header\": \"My Fancy Blog\" }";
+        const char *data1 = "{ \"Message\":\"Hello World\" }";
+        const char *data2 = "{ \"Blog-Header\":\"My Fancy Blog\" }";
         for (u32 i = 0; i < 100; i++) {
                 bool status = insert_binary(&in, i % 2 == 0 ? data1 : data2,
                                             strlen(i % 2 == 0 ? data1 : data2), i % 3 == 0 ? "json" : NULL, i % 5 == 0 ? "user/app" : NULL);
@@ -733,7 +733,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -788,7 +788,7 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[null, null, null, [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], [true, true, true], false, false, false]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -827,7 +827,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[1, 2, 3]]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -864,7 +864,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[42, 43, 44]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[42, 43, 44]]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -901,7 +901,7 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         str_buf sb;
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[0, 0, 0]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[0, 0, 0]]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);
@@ -1004,7 +1004,7 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         str_buf_create(&sb);
         rec_to_json(&sb, &rev_doc);
         //string_buffer_print(&sb);
-        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "{\"meta\": {\"key\": {\"type\": \"nokey\", \"value\": null}, \"commit\": null}, \"doc\": [[1, 2, 3], [true, true, true], [false, false, false], [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [-1, -2, -3], [-4, -5, -6], [-7, -8, -9], [-10, -11, -12], [42.00, 21.00, 23.42]]}"));
+        ASSERT_TRUE(0 == strcmp(str_buf_cstr(&sb), "[[1, 2, 3], [true, true, true], [false, false, false], [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [-1, -2, -3], [-4, -5, -6], [-7, -8, -9], [-10, -11, -12], [42.00, 21.00, 23.42]]"));
         str_buf_drop(&sb);
 
         rec_drop(&doc);

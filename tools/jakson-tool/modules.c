@@ -676,28 +676,30 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
         CONSOLE_WRITELN(file, "Starting universal benchmark for %s...", format);
         // TODO : Implement
     } else {
-        char *opt = argv[1];
+        char *opt = argv[2];
         bool flagSelectType = false;
         bench_type selectType;
         bench_format_handler handler;
         bench_error err;
-        uint32_t numOperationsInsert = 100000;
+        uint32_t numOperationsInsert = atoi(argv[1]);
         uint32_t numOperationsRead = 1000;
         uint32_t numOperationsUpdate = 1000;
-        uint32_t numOperationsDelete = 1000;
+        uint32_t numOperationsDelete = ceil((double)numOperationsInsert / 4);
         container_type contType = BENCH_CONTAINER_TYPE_ARRAY;
 
         if (strncmp(opt, "--", 2) == 0) {
             if (strcmp(opt, BENCH_OPTION_SELECT_TYPE) == 0) {
                 flagSelectType = true;
-                if (!strcmp(argv[2], "int8")) {
+                if (!strcmp(argv[3], "int8")) {
                     selectType = BENCH_TYPE_INT8;
-                } else if (!strcmp(argv[2], "int16")) {
+                } else if (!strcmp(argv[3], "int16")) {
                     selectType = BENCH_TYPE_INT16;
-                } else if (!strcmp(argv[2], "int32")) {
+                } else if (!strcmp(argv[3], "int32")) {
                     selectType = BENCH_TYPE_INT32;
-                } else if (!strcmp(argv[2], "int64")) {
+                } else if (!strcmp(argv[3], "int64")) {
                     selectType = BENCH_TYPE_INT64;
+                } else if (!strcmp(argv[3], "string")) {
+                    selectType = BENCH_TYPE_STRING;
                 } else {
                     CONSOLE_WRITELN(file, "Selected type '%s' not found. STOP", argv[2]);
                     return false;
@@ -721,7 +723,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                 CONSOLE_WRITELN(file, "Deleting of %d %s values took: %ldms with %f Ops/s", numOperationsDelete, argv[2], handler.benchTimes[3], ((double)numOperationsDelete / handler.benchTimes[3]));
                 CONSOLE_WRITELN(file, "Total time passed: %ldms", handler.benchTimes[4]);
             }
-        } else if (argc != 2) {
+        } else if (argc > 3) {
             goto wrong_input;
         } else {
             const char *format = argv[0];
@@ -762,7 +764,7 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                         char dir_filePath[512];
 
                         snprintf(dir_filePath, sizeof(dir_filePath), "%s%s", filePath, dir->d_name);
-                        bench_format_handler_append_doc(&handler, dir_filePath);
+                        bench_format_handler_append_doc(&handler, dir_filePath); /* Temporary removed */
                         //bench_format_handler_convert_doc(&conv_size, &handler, filePath);
                         //CONSOLE_WRITELN(file, "File size for %s : %ld", dir->d_name, conv_size);
                         //pthread_exit(NULL);
@@ -788,6 +790,10 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
             CONSOLE_WRITELN(file, "Process size: %ld\n", bench_format_handler_get_process_size());
             //VmSize is the most important bit!
             //CONSOLE_WRITELN(file, "Process information: %s", buffer_status);
+            if(argc == 3) {
+                CONSOLE_WRITELN(file, "Writing converted file to: %s ", argv[2]);
+                bench_format_handler_doc_to_file(&handler, argv[2]);
+            }
         }
         bench_format_handler_destroy(&handler);
     }

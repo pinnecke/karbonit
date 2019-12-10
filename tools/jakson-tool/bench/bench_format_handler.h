@@ -77,10 +77,11 @@ typedef struct bench_format_handler {
 //bool bench_format_handler_create_ubjson_handler(bench_format_handler *handler, bench_error *error, const char* filePath);
 bool bench_format_handler_create_handler(bench_format_handler *handler, bench_error *error, const char *filePath, const char *benchType);
 bool bench_format_handler_append_doc(bench_format_handler *handler, const char *filePath);
-bool bench_format_handler_convert_doc(size_t *conv_size, bench_format_handler *handler, const char *filePath);
+//bool bench_format_handler_convert_doc(size_t *conv_size, bench_format_handler *handler, const char *filePath);
 bool bench_format_handler_destroy(bench_format_handler *handler);
 bool bench_format_handler_get_doc(char *str, bench_format_handler *handler);
 size_t bench_format_handler_get_doc_size(bench_format_handler *handler);
+bool bench_format_handler_doc_to_file(bench_format_handler *handler, const char *filePath);
 bool bench_format_handler_get_process_status(char *buffer);
 size_t bench_format_handler_get_process_size();
 bool bench_format_handler_get_file_content(unsigned char *json_content, FILE *file, long file_size);

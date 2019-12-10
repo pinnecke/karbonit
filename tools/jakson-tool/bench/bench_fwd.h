@@ -30,6 +30,7 @@ typedef enum bench_type {
     BENCH_TYPE_INT16 = 0x03,
     BENCH_TYPE_INT32 = 0x04,
     BENCH_TYPE_INT64 = 0x05,
+    BENCH_TYPE_STRING = 0x06,
 } bench_type;
 
 typedef enum container_type {

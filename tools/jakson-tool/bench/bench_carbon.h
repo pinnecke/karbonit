@@ -48,10 +48,9 @@ bool bench_carbon_error_write(bench_carbon_error *error, const char *msg, const 
 bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError, const char *filePath);
 bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error *carbonError, bench_error *benchError);
 bool bench_carbon_append_doc(bench_carbon_mgr *manager, const char *filePath);
-bool bench_carbon_convert_doc(size_t *conv_size, bench_carbon_mgr *manager, const char *filePath);
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager);
 size_t bench_carbon_get_doc_size(bench_carbon_mgr *manager);
-bool bench_carbon_to_file(bench_carbon_mgr *manager, const char *filePath);
+bool bench_carbon_doc_to_file(bench_carbon_mgr *manager, const char *filePath);
 uint32_t bench_carbon_get_reads(bench_carbon_mgr *manager);
 uint32_t bench_carbon_get_updates(bench_carbon_mgr *manager);
 /*

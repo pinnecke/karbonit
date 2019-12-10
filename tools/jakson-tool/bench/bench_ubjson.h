@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include <libs/ubjsc/ubjs.h>
+#include <libs/ubjsc/ubjs_primitive_str_prv.h>
 
 #include "bench_fwd.h"
 

@@ -62,9 +62,7 @@ bool bench_carbon_mgr_create_from_file(bench_carbon_mgr *manager, bench_carbon_e
     UNUSED(nread)
     fclose(f);
     jsonContent[fsize] = 0;
-
     CHECK_SUCCESS(carbon_from_json(doc, jsonContent, CARBON_KEY_NOKEY, NULL, carbonError->err));
-
     manager->error = carbonError;
     manager->doc = doc;
 
@@ -79,7 +77,6 @@ bool bench_carbon_mgr_create_empty(bench_carbon_mgr *manager, bench_carbon_error
 
     carbon *doc = malloc(sizeof(*doc));
     bench_carbon_error_create(carbonError, benchError);
-
     if(!carbon_create_empty(doc, CARBON_LIST_UNSORTED_MULTISET, CARBON_KEY_NOKEY))
         BENCH_CARBON_ERROR_WRITE(carbonError, "Failed to create CARBON doc", 0);
 
@@ -135,16 +132,6 @@ bool bench_carbon_append_doc(bench_carbon_mgr *manager, const char *filePath)
     return true;
 }
 
-// TODO : Implement
-bool bench_carbon_convert_doc(size_t *conv_size, bench_carbon_mgr *manager, const char *filePath)
-{
-    ERROR_IF_NULL(conv_size);
-    ERROR_IF_NULL(manager);
-    ERROR_IF_NULL(filePath);
-
-    return false;
-}
-
 bool bench_carbon_mgr_destroy(bench_carbon_mgr *manager)
 {
     ERROR_IF_NULL(manager)
@@ -161,15 +148,16 @@ size_t bench_carbon_get_doc_size(bench_carbon_mgr *manager)
     return strlen(carbon_to_json_compact_dup(manager->doc));
 }
 
-bool bench_carbon_to_file(bench_carbon_mgr *manager, const char *filePath)
+bool bench_carbon_doc_to_file(bench_carbon_mgr *manager, const char *filePath)
 {
     ERROR_IF_NULL(manager);
     ERROR_IF_NULL(filePath);
 
+    uint64_t len;
+    const char *data = carbon_raw_data(&len, manager->doc);
+
     FILE *file = fopen(filePath, "w");
-
-    fprintf(file, "%s", carbon_to_json_compact_dup(manager->doc));
-
+    fwrite(data, sizeof(char), len, file);
     fclose(file);
 
     return true;

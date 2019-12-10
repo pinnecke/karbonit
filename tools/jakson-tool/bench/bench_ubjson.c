@@ -659,12 +659,14 @@ bool bench_ubjson_read(bench_ubjson_mgr *manager, uint32_t numOperations, contai
         for (uint32_t i = 0; i < numOperations || timePassed - startPoint < BENCH_OPERATION_MIN_TIME; i++) {
             ubjs_prmtv *arrayObj;
             ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
+            int32_t val;
 
             if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, random() % manager->numEntries, &item)) {
                 sprintf(msg, "Failed to read value in array at position: %d", i);
                 BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
                 return false;
             }
+            ubjs_prmtv_int32_get(item, &val);
             manager->reads++;
             timePassed = clock();
         }
@@ -979,6 +981,46 @@ bool bench_ubjson_delete(bench_ubjson_mgr *manager, uint32_t numOperations, cont
     return true;
 }
 
+bool bench_ubjson_test(bench_ubjson_mgr *manager) {
+    ERROR_IF_NULL(manager)
+
+    char msg[ERROR_MSG_SIZE];
+    int32_t testData[] = {1, 2, 3, 4, 5, 6, 7, 8, 9 , 10};
+    uint8_t testLen = 10;
+    {
+        ubjs_prmtv *arrayObj;
+        ubjs_prmtv_array(manager->lib, &arrayObj);
+        ubjs_prmtv_object_set(manager->obj, 1, "0", arrayObj);
+        ubjs_prmtv *item;
+        for (uint8_t i = 0; i < testLen; i++) {
+            int32_t val = testData[i];
+
+            ubjs_prmtv_int32(manager->lib, val, &item);
+            if (UR_OK != ubjs_prmtv_array_add_last(arrayObj, item)) {
+                sprintf(msg, "Failed to insert int32 value '%d' into array at position: %d", val, i);
+                BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+        }
+    }
+    {
+        for (uint8_t i = 0; i < testLen; i++) {
+            ubjs_prmtv *arrayObj;
+            ubjs_prmtv_object_get(manager->obj, 1, "0", &arrayObj);
+            ubjs_prmtv *item;
+            int32_t val;
+            if (UR_OK != ubjs_prmtv_array_get_at(arrayObj, i, &item)) {
+                sprintf(msg, "Failed to read value in array at position: %d", i);
+                BENCH_UBJSON_ERROR_WRITE(manager->error, msg, i);
+                return false;
+            }
+            ubjs_prmtv_int32_get(item, &val);
+            assert(val == testData[i]);
+        }
+    }
+    return true;
+}
+
 bool bench_ubjson_execute_benchmark_operation_int8(bench_ubjson_mgr *manager, bench_operation_type opType,
         uint32_t numOperations, container_type contType)
 {
@@ -1085,6 +1127,8 @@ bool bench_ubjson_execute_benchmark_operation(bench_ubjson_mgr *manager, bench_t
         return bench_ubjson_execute_benchmark_operation_int64(manager, opType, numOperations, contType);
     } else if(type == BENCH_TYPE_STRING) {
         return bench_ubjson_execute_benchmark_operation_string(manager, opType, numOperations, contType);
+    } else if(type == BENCH_TYPE_TEST) {
+        return bench_ubjson_test(manager);
     } else {
         return false;
     }

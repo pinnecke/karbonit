@@ -700,6 +700,8 @@ bool moduleBenchInvoke(int argc, char **argv, FILE *file, command_opt_mgr *manag
                     selectType = BENCH_TYPE_INT64;
                 } else if (!strcmp(argv[3], "string")) {
                     selectType = BENCH_TYPE_STRING;
+                } else if (!strcmp(argv[3], "test")) {
+                    selectType = BENCH_TYPE_TEST;
                 } else {
                     CONSOLE_WRITELN(file, "Selected type '%s' not found. STOP", argv[2]);
                     return false;

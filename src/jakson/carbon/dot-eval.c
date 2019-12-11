@@ -394,115 +394,121 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                 switch (node_type) {
                         case DOT_NODE_IDX:
                                 dot_idx_at(&requested_array_idx, current_path_pos, path);
-                                while (current_array_idx < requested_array_idx &&
-                                        arr_it_next(it)) { current_array_idx++; }
+                                if (is_unit_array) {
+
+                                }
+
+                                while (current_array_idx < requested_array_idx && arr_it_next(it)) {
+                                        current_array_idx++;
+                                }
                                 assert(current_array_idx <= requested_array_idx);
                                 if (current_array_idx != requested_array_idx) {
                                         /** root array has too less elements to reach the requested index */
                                         return PATH_NOSUCHINDEX;
+                                }
+
+                                /** requested index is reached; depending on the subsequent path, lookup may stops */
+                                arr_it_field_type(&elem_type, it);
+                                u32 next_path_pos = current_path_pos + 1;
+                                if (is_unit_array && is_record &&
+                                        field_is_column_or_subtype(elem_type)) {
+                                        col_it *sub_it = item_get_column(&(it->item));
+                                        return _dot_eval_traverse_column(state,
+                                                                         path,
+                                                                         next_path_pos,
+                                                                         sub_it);
                                 } else {
-                                        /** requested index is reached; depending on the subsequent path, lookup may stops */
-                                        arr_it_field_type(&elem_type, it);
-                                        u32 next_path_pos = current_path_pos + 1;
-                                        if (is_unit_array && is_record &&
-                                                field_is_column_or_subtype(elem_type)) {
-                                                col_it *sub_it = item_get_column(&(it->item));
-                                                return _dot_eval_traverse_column(state,
-                                                                                 path,
-                                                                                 next_path_pos,
-                                                                                 sub_it);
-                                        } else {
-                                                if (next_path_pos < length) {
-                                                        /** path must be further evaluated in the next step, which requires a container
-                                                         * type (for traversability) */
-                                                        dot_node_type_e next_node_type;
-                                                        dot_type_at(&next_node_type, next_path_pos, path);
-                                                        if (!field_is_traversable(elem_type)) {
-                                                                /** the array element is not a container; path evaluation stops here */
-                                                                return PATH_NOTTRAVERSABLE;
-                                                        } else {
-                                                                /** array element is traversable */
-                                                                switch (next_node_type) {
-                                                                        case DOT_NODE_IDX:
-                                                                                /** next node in path is an array index which requires that
-                                                                                 * the current array element is an array or column */
-                                                                                if (!field_is_list_or_subtype(elem_type)) {
-                                                                                        return PATH_NOCONTAINER;
+                                        if (next_path_pos < length) {
+                                                /** path must be further evaluated in the next step, which requires a container
+                                                 * type (for traversability) */
+                                                dot_node_type_e next_node_type;
+                                                dot_type_at(&next_node_type, next_path_pos, path);
+                                                if (!field_is_traversable(elem_type)) {
+                                                        /** the array element is not a container; path evaluation stops here */
+                                                        return PATH_NOTTRAVERSABLE;
+                                                } else {
+                                                        /** array element is traversable */
+                                                        switch (next_node_type) {
+                                                                case DOT_NODE_IDX:
+                                                                        /** next node in path is an array index which requires that
+                                                                         * the current array element is an array or column */
+                                                                        if (!field_is_list_or_subtype(elem_type)) {
+                                                                                return PATH_NOCONTAINER;
+                                                                        } else {
+                                                                                if (field_is_array_or_subtype(elem_type)) {
+                                                                                        arr_it *sub_it = item_get_array(&(it->item));
+                                                                                        status = _dot_eval_traverse_array(
+                                                                                                state,
+                                                                                                path,
+                                                                                                next_path_pos,
+                                                                                                sub_it, false);
+                                                                                        arr_it_drop(
+                                                                                                sub_it);
+                                                                                        return status;
                                                                                 } else {
-                                                                                        if (field_is_array_or_subtype(elem_type)) {
-                                                                                                arr_it *sub_it = item_get_array(&(it->item));
-                                                                                                status = _dot_eval_traverse_array(
-                                                                                                        state,
-                                                                                                        path,
-                                                                                                        next_path_pos,
-                                                                                                        sub_it, false);
-                                                                                                arr_it_drop(
-                                                                                                        sub_it);
-                                                                                                return status;
-                                                                                        } else {
-                                                                                                assert(field_is_column_or_subtype(elem_type));
-                                                                                                col_it *sub_it = item_get_column(&(it->item));
-                                                                                                return _dot_eval_traverse_column(
-                                                                                                        state,
-                                                                                                        path,
-                                                                                                        next_path_pos,
-                                                                                                        sub_it);
-                                                                                        }
-                                                                                }
-                                                                        case DOT_NODE_KEY:
-                                                                                /** next node in path is a key name which requires that
-                                                                                 * the current array element is of type object */
-                                                                                if (!field_is_object_or_subtype(
-                                                                                        elem_type)) {
-                                                                                        return PATH_NOTANOBJECT;
-                                                                                } else {
-                                                                                        obj_it *sub_it = item_get_object(&(it->item));
-                                                                                        status = _dot_eval_traverse_object(
+                                                                                        assert(field_is_column_or_subtype(elem_type));
+                                                                                        col_it *sub_it = item_get_column(&(it->item));
+                                                                                        return _dot_eval_traverse_column(
                                                                                                 state,
                                                                                                 path,
                                                                                                 next_path_pos,
                                                                                                 sub_it);
-                                                                                        obj_it_drop(sub_it);
-                                                                                        return status;
                                                                                 }
-                                                                        default: error(ERR_INTERNALERR, NULL);
-                                                                                return PATH_INTERNAL;
-                                                                }
+                                                                        }
+                                                                case DOT_NODE_KEY:
+                                                                        /** next node in path is a key name which requires that
+                                                                         * the current array element is of type object */
+                                                                        if (!field_is_object_or_subtype(
+                                                                                elem_type)) {
+                                                                                return PATH_NOTANOBJECT;
+                                                                        } else {
+                                                                                obj_it *sub_it = item_get_object(&(it->item));
+                                                                                status = _dot_eval_traverse_object(
+                                                                                        state,
+                                                                                        path,
+                                                                                        next_path_pos,
+                                                                                        sub_it);
+                                                                                obj_it_drop(sub_it);
+                                                                                return status;
+                                                                        }
+                                                                default: error(ERR_INTERNALERR, NULL);
+                                                                        return PATH_INTERNAL;
                                                         }
-                                                } else {
-                                                        /** path end is reached */
-                                                        state->result.container = ARRAY;
-                                                        internal_arr_it_clone(&state->result.containers.array, it);
-                                                        return PATH_RESOLVED;
                                                 }
+                                        } else {
+                                                /** path end is reached */
+                                                state->result.container = ARRAY;
+                                                internal_arr_it_clone(&state->result.containers.array, it);
+                                                return PATH_RESOLVED;
                                         }
                                 }
-                        case DOT_NODE_KEY:
-                                /** first array element exists, which must be of type object */
-                                arr_it_field_type(&elem_type, it);
+
+                case DOT_NODE_KEY:
+                        /** first array element exists, which must be of type object */
+                        arr_it_field_type(&elem_type, it);
+                        if (!field_is_object_or_subtype(elem_type)) {
+                                /** first array element is not of type object and a key lookup cannot
+                                 * be executed, consequentially */
+                                return PATH_NOTANOBJECT;
+                        } else {
+                                /** next node in path is a key name which requires that
+                                                                 * the current array element is of type object */
                                 if (!field_is_object_or_subtype(elem_type)) {
-                                        /** first array element is not of type object and a key lookup cannot
-                                         * be executed, consequentially */
                                         return PATH_NOTANOBJECT;
                                 } else {
-                                        /** next node in path is a key name which requires that
-                                                                         * the current array element is of type object */
-                                        if (!field_is_object_or_subtype(elem_type)) {
-                                                return PATH_NOTANOBJECT;
+                                        if (is_unit_array && is_record) {
+                                                obj_it *sub_it = item_get_object(&(it->item));
+                                                status = _dot_eval_traverse_object(state,
+                                                                                   path,
+                                                                                   current_path_pos,
+                                                                                   sub_it);
+                                                obj_it_drop(sub_it);
+                                                return status;
                                         } else {
-                                                if (is_unit_array && is_record) {
-                                                        obj_it *sub_it = item_get_object(&(it->item));
-                                                        status = _dot_eval_traverse_object(state,
-                                                                                           path,
-                                                                                           current_path_pos,
-                                                                                           sub_it);
-                                                        obj_it_drop(sub_it);
-                                                        return status;
-                                                } else {
-                                                        return PATH_NOSUCHKEY;
-                                                }
+                                                return PATH_NOSUCHKEY;
                                         }
                                 }
+                        }
                                 break;
                         default: error(ERR_INTERNALERR, NULL);
                                 return PATH_INTERNAL;

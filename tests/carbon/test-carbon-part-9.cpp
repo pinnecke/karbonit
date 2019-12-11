@@ -3,7 +3,119 @@
 
 #include <jakson/jakson.h>
 
+// use
+// $ cmake -DBUILD_TYPE=Release -DUSE_AMALGAMATION=ON . && make
 
+#ifdef SAMPLE_SMALL_LIST
+#define MIN_LIST_SIZE 1
+#define MAX_LIST_SIZE 200
+#define N_STEP_SIZE 1
+#else
+#define MIN_LIST_SIZE 2500
+#define MAX_LIST_SIZE 210000
+#define N_STEP_SIZE 2500
+#endif
+
+TEST(CarbonTest, BENCH_COLUMN)
+{
+        printf("num_entries,oppspsec\n");
+
+        for (u64 n = MIN_LIST_SIZE; n <= MAX_LIST_SIZE; n += N_STEP_SIZE) {
+                rec record;
+                rec_new record_new;
+                col_state state;
+                str_buf path;
+                find find;
+
+                u64 ops = 0;
+                u64 max_values = n;
+
+                insert *ins = rec_create_begin(&record_new, &record, KEY_NOKEY, OPTIMIZE);
+                insert *col_ins = insert_column_begin(&state, ins, COLUMN_U64, max_values);
+
+                for (u64 i = 0; i < max_values; i++) {
+                        insert_u64(col_ins, i);
+                }
+                insert_column_end(&state);
+                rec_create_end(&record_new);
+
+                str_buf_create(&path);
+                u64 start = wallclock();
+
+                const u64 measureTime = 2000; /* sample 2 sec */
+                while (wallclock() - start < measureTime) {
+                        i64 rand_val = (rand() % max_values) - 1;
+                        i64 needle_idx = JAK_MAX(0, JAK_MIN((i64) max_values - 1, rand_val));
+
+                        str_buf_clear(&path);
+                        str_buf_add(&path, "0.");
+                        str_buf_add_i64(&path, needle_idx);
+
+                        find_begin(&find, str_buf_cstr(&path), &record);
+                        assert(find_has_result(&find));
+                        find_end(&find);
+
+                        ops++;
+                }
+                str_buf_drop(&path);
+
+                printf("%" PRIu64 ",%f\n", n, (float) ops / (float) (measureTime / 1000));
+                fflush(stdout);
+
+                rec_drop(&record);
+        }
+}
+
+TEST(CarbonTest, BENCH_ARRAY)
+{
+        printf("num_entries,oppspsec\n");
+
+        for (u64 n = MIN_LIST_SIZE; n <= MAX_LIST_SIZE; n += N_STEP_SIZE) {
+                rec record;
+                rec_new record_new;
+                arr_state state;
+                str_buf path;
+                find find;
+
+                u64 ops = 0;
+                u64 max_values = n;
+
+                insert *ins = rec_create_begin(&record_new, &record, KEY_NOKEY, OPTIMIZE);
+                insert *arrins = insert_array_begin(&state, ins, max_values);
+
+                for (u64 i = 0; i < max_values; i++) {
+                        insert_u64(arrins, i);
+                }
+
+                insert_array_end(&state);
+                rec_create_end(&record_new);
+
+                str_buf_create(&path);
+                u64 start = wallclock();
+
+                const u64 measureTime = 2000; /* sample 2 sec */
+                while (wallclock() - start < measureTime) {
+                        i64 rand_val = (rand() % max_values) - 1;
+                        i64 needle_idx = JAK_MAX(0, JAK_MIN((i64) max_values - 1, rand_val));
+
+                        str_buf_clear(&path);
+                        str_buf_add(&path, "0.");
+                        str_buf_add_i64(&path, needle_idx);
+
+                        find_begin(&find, str_buf_cstr(&path), &record);
+                        assert(find_has_result(&find));
+                        find_end(&find);
+
+                        ops++;
+                }
+                str_buf_drop(&path);
+
+                printf("%" PRIu64 ",%f\n", n, (float) ops / (float) (measureTime / 1000));
+                fflush(stdout);
+
+                rec_drop(&record);
+        }
+}
 
 TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 {

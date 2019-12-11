@@ -92,7 +92,7 @@ typedef struct memfile {
 
 #define memfile_restore_position(file)												                                   \
 ({												                                                                       \
-		bool status;												                                                   \
+	bool status;												                                                   \
         if (likely((file)->saved_pos_ptr >= 0)) {												                       \
                 offset_t pos = (file)->saved_pos[--(file)->saved_pos_ptr];											   \
                 memfile_seek((file), pos);												                               \

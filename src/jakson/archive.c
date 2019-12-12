@@ -1783,7 +1783,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
         bool continue_read = true;
         while (continue_read) {
                 offset = MEMFILE_TELL(memfile);
-                char entryMarker = *memfile_peek_type(memfile, char);
+                char entryMarker = *MEMFILE_PEEK_TYPE(memfile, char);
 
                 switch (entryMarker) {
                         case MARKER_SYMBOL_PROP_NULL: {
@@ -1942,7 +1942,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                         if (!_archive_print_object(file, memfile, nesting_level + 1)) {
                                                 return false;
                                         }
-                                        nextEntryMarker = *memfile_peek_type(memfile, char);
+                                        nextEntryMarker = *MEMFILE_PEEK_TYPE(memfile, char);
                                 } while (nextEntryMarker == MARKER_SYMBOL_OBJECT_BEGIN);
 
                         }
@@ -2241,7 +2241,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
 
         pack_print_extra(&strategy, file, memfile);
 
-        while ((*memfile_peek_type(memfile, char)) == global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR].symbol) {
+        while ((*MEMFILE_PEEK_TYPE(memfile, char)) == global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR].symbol) {
                 unsigned offset = MEMFILE_TELL(memfile);
                 string_entry_header header = *memfile_read_type(memfile, string_entry_header);
                 fprintf(file,
@@ -2528,7 +2528,7 @@ static bool read_record(record_header *header_read, archive *archive, FILE *disk
 
                 memfile memfile;
                 memfile_open(&memfile, archive->record_table.record_db, READ_ONLY);
-                if (*memfile_peek_type(&memfile, char) != MARKER_SYMBOL_OBJECT_BEGIN) {
+                if (*MEMFILE_PEEK_TYPE(&memfile, char) != MARKER_SYMBOL_OBJECT_BEGIN) {
                         error(ERR_CORRUPTED, NULL);
                         status = false;
                 }

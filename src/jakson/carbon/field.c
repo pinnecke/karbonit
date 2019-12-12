@@ -163,7 +163,7 @@ const char *field_str(field_e type)
 
 bool carbon_field_skip(memfile *file)
 {
-        u8 type_marker = *memfile_peek_type(file, u8);
+        u8 type_marker = *MEMFILE_PEEK_TYPE(file, u8);
 
         switch (type_marker) {
                 case FIELD_NULL:

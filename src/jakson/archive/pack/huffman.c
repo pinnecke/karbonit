@@ -198,12 +198,12 @@ bool coding_huffman_read_string(pack_huffman_str_info *info, memfile *src)
 
 bool coding_huffman_read_entry(pack_huffman_info *info, memfile *file, char marker_symbol)
 {
-        char marker = *memfile_peek_type(file, char);
+        char marker = *MEMFILE_PEEK_TYPE(file, char);
         if (marker == marker_symbol) {
                 memfile_skip(file, sizeof(char));
                 info->letter = *memfile_read_type(file, unsigned char);
                 info->nbytes_prefix = *memfile_read_type(file, u8);
-                info->prefix_code = memfile_peek_type(file, char);
+                info->prefix_code = MEMFILE_PEEK_TYPE(file, char);
 
                 memfile_skip(file, info->nbytes_prefix);
 

@@ -119,53 +119,73 @@ bool col_it_is_null(col_it *it, u32 pos)
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        return IS_NULL_U8(col_it_u8_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
+                        const u8 *values = col_it_u8_values(NULL, it);
+                        return IS_NULL_U8(values[pos]);
+                }
                 case FIELD_COLUMN_U16_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        return IS_NULL_U16(col_it_u16_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
+                        const u16 *values = col_it_u16_values(NULL, it);
+                        return IS_NULL_U16(values[pos]);
+                }
                 case FIELD_COLUMN_U32_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        return IS_NULL_U32(col_it_u32_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
+                        const u32 *values = col_it_u32_values(NULL, it);
+                        return IS_NULL_U32(values[pos]);
+                }
                 case FIELD_COLUMN_U64_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        return IS_NULL_U64(col_it_u64_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
+                        const u64 *values = col_it_u64_values(NULL, it);
+                        return IS_NULL_U64(values[pos]);
+                }
                 case FIELD_COLUMN_I8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        return IS_NULL_I8(col_it_i8_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
+                        const i8 *values = col_it_i8_values(NULL, it);
+                        return IS_NULL_I8(values[pos]);
+                }
                 case FIELD_COLUMN_I16_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        return IS_NULL_I16(col_it_i16_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
+                        const i16 *values = col_it_i16_values(NULL, it);
+                        return IS_NULL_I16(values[pos]);
+                }
                 case FIELD_COLUMN_I32_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        return IS_NULL_I32(col_it_i32_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
+                        const i32 *values = col_it_i32_values(NULL, it);
+                        return IS_NULL_I32(values[pos]);
+                }
                 case FIELD_COLUMN_I64_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        return IS_NULL_I64(col_it_i64_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
+                        const i64 *values = col_it_i64_values(NULL, it);
+                        return IS_NULL_I64(values[pos]);
+                }
                 case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        return IS_NULL_FLOAT(col_it_float_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
+                        const float *values = col_it_float_values(NULL, it);
+                        return IS_NULL_FLOAT(values[pos]);
+                }
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        return IS_NULL_BOOLEAN(col_it_boolean_values(NULL, it)[pos]);
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                        const boolean *values = col_it_boolean_values(NULL, it);
+                        return IS_NULL_BOOLEAN(values[pos]);
+                }
                 default:
                         return error(ERR_UNSUPPCONTAINER, NULL);
         }

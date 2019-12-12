@@ -48,7 +48,7 @@ bool commit_read(u64 *commit_hash, memfile *file)
 
 bool commit_peek(u64 *commit_hash, memfile *file)
 {
-        *commit_hash = *memfile_peek_type(file, u64);
+        *commit_hash = *MEMFILE_PEEK_TYPE(file, u64);
         return true;
 }
 

@@ -72,18 +72,18 @@ typedef u8 boolean;
 #define CARBON_BOOLEAN_COLUMN_TRUE      1
 #define CARBON_BOOLEAN_COLUMN_NULL      2
 
-#define IS_NULL_BOOLEAN(x)      (x == CARBON_BOOLEAN_COLUMN_NULL)
-#define IS_NULL_U8(x)           (x == U8_NULL)
-#define IS_NULL_U16(x)          (x == U16_NULL)
-#define IS_NULL_U32(x)          (x == U32_NULL)
-#define IS_NULL_U64(x)          (x == U64_NULL)
-#define IS_NULL_I8(x)           (x == I8_NULL)
-#define IS_NULL_I16(x)          (x == I16_NULL)
-#define IS_NULL_I32(x)          (x == I32_NULL)
-#define IS_NULL_I64(x)          (x == I64_NULL)
-#define IS_NULL_FLOAT(x)        (isnan(x))
-#define IS_NULL_UNSIGNED(x)     (x == CARBON_NULL_UNSIGNED)
-#define IS_NULL_SIGNED(x)       (x == CARBON_NULL_SIGNED)
+#define IS_NULL_BOOLEAN(x)      ((x) == CARBON_BOOLEAN_COLUMN_NULL)
+#define IS_NULL_U8(x)           ((x) == U8_NULL)
+#define IS_NULL_U16(x)          ((x) == U16_NULL)
+#define IS_NULL_U32(x)          ((x) == U32_NULL)
+#define IS_NULL_U64(x)          ((x) == U64_NULL)
+#define IS_NULL_I8(x)           ((x) == I8_NULL)
+#define IS_NULL_I16(x)          ((x) == I16_NULL)
+#define IS_NULL_I32(x)          ((x) == I32_NULL)
+#define IS_NULL_I64(x)          ((x) == I64_NULL)
+#define IS_NULL_FLOAT(x)        (isnan((x)))
+#define IS_NULL_UNSIGNED(x)     ((x) == CARBON_NULL_UNSIGNED)
+#define IS_NULL_SIGNED(x)       ((x) == CARBON_NULL_SIGNED)
 
 typedef u64 archive_field_sid_t;  /** str_buf identifier, resolvable by a str_buf dictionary */
 typedef char field_null_t;

@@ -21,12 +21,8 @@
 extern "C" {
 #endif
 
-#define CAST_COL_VALUES(builtin_type, nvalues, iterator, field_expr)                                                   \
-({                                                                                                                     \
-        field_e type;                                                                                                  \
-        const void *raw = COL_IT_VALUES(&type, nvalues, iterator);                                                     \
-        (const builtin_type *) raw;                                                                                    \
-})
+#define CAST_COL_VALUES(builtin_type, __nvalues__, iterator, field_expr)                                                   \
+        ((const builtin_type *) (COL_IT_VALUES(NULL, __nvalues__, iterator)))
 
 typedef struct col_it {
         memfile file;
@@ -47,30 +43,35 @@ offset_t col_it_memfilepos(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
 
 
-#define COL_IT_VALUES(field_e_ptr, u32_ptr_nvalues, col_it_ptr)                                                        \
+#define COL_IT_VALUES(field_e_ptr, _nvalues_u32_ptr_, _col_it_ptr_it_)                                                        \
 ({                                                                                                                     \
-        const char *result = NULL;                                                                                     \
-        col_it *it_ptr = (col_it_ptr);                                                                                 \
-        MEMFILE_SEEK(&it->file, it->header_begin);                                                                     \
-        u32 num_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it_ptr->file);                                     \
-        u32 cap_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it_ptr->file);                                     \
-        offset_t payload_start = MEMFILE_TELL(&it_ptr->file);                                                          \
-        result = MEMFILE_PEEK(&it_ptr->file, sizeof(char));                                                            \
-        field_e *ptr_type = (field_e_ptr);                                                                             \
-        u32 *ptr_nvalues = (u32_ptr_nvalues);                                                                          \
-        OPTIONAL_SET(ptr_type, it_ptr->field_type);                                                                    \
-        OPTIONAL_SET(ptr_nvalues, num_elements);                                                                       \
-        u32 skip = cap_elements * internal_get_type_value_size(it_ptr->field_type);                                    \
-        MEMFILE_SEEK(&it_ptr->file, payload_start + skip);                                                             \
-        result;                                                                                                        \
+        const char *col_it_values_result = NULL;                                                                                     \
+        {                                                                                                                       \
+                col_it *it_ptr = (_col_it_ptr_it_);                                                                                 \
+                MEMFILE_SEEK(&it_ptr->file, it_ptr->header_begin);                                                                     \
+                u32 num_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it_ptr->file); UNUSED(num_elements);                                     \
+                u32 cap_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it_ptr->file); UNUSED(cap_elements);                                     \
+                offset_t payload_start = MEMFILE_TELL(&it_ptr->file);                                                          \
+                col_it_values_result = MEMFILE_PEEK(&it_ptr->file, sizeof(char));                                                            \
+                field_e *ptr_type = (field_e_ptr); UNUSED(ptr_type);                                                                            \
+                u32 *ptr_nvalues = (_nvalues_u32_ptr_); UNUSED(ptr_nvalues);                                                                          \
+                OPTIONAL_SET(ptr_type, it_ptr->field_type);                                                                    \
+                OPTIONAL_SET(ptr_nvalues, num_elements);                                                                       \
+                u32 skip = cap_elements * internal_get_type_value_size(it_ptr->field_type);                                    \
+                MEMFILE_SEEK(&it_ptr->file, payload_start + skip);                                                             \
+        }                                                                                                                       \
+        col_it_values_result;                                                                                                        \
 })
 
-#define col_it_values_info(field_e, col_it)                                                                            \
+#define col_it_values_info(_field_e_, _col_it_)                                                                        \
 ({                                                                                                                     \
-        MEMFILE_SEEK(&(col_it)->file, (col_it)->header_begin);                                                         \
-        u32 nvalues = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &(col_it)->file);                                        \
-        OPTIONAL_SET((field_e), (col_it)->field_type);                                                                 \
-        nvalues;                                                                                                       \
+        u32 ___nvalues = 0;                                                                        \
+        {                                                                                                              \
+                MEMFILE_SEEK(&(_col_it_)->file, (_col_it_)->header_begin);                                             \
+                ___nvalues = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &(_col_it_)->file);                           \
+                OPTIONAL_SET((_field_e_), (_col_it_)->field_type);                                                     \
+        }                                                                                                              \
+        ___nvalues;                                                                                                    \
 })
 
 bool col_it_is_null(col_it *it, u32 pos);
@@ -86,55 +87,35 @@ bool col_it_is_i32(col_it *it);
 bool col_it_is_i64(col_it *it);
 bool col_it_is_float(col_it *it);
 
-static inline const boolean *col_it_boolean_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(boolean, nvalues, it, field_is_column_bool_or_subtype(type));
-}
+#define col_it_boolean_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                             \
+        (CAST_COL_VALUES(boolean, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_bool_or_subtype(type)))
 
-static inline const u8 *col_it_u8_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(u8, nvalues, it, field_is_column_u8_or_subtype(type));
-}
+#define col_it_u8_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
+        (CAST_COL_VALUES(u8, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u8_or_subtype(type)))
 
-static inline const u16 *col_it_u16_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(u16, nvalues, it, field_is_column_u16_or_subtype(type));
-}
+#define col_it_u16_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+        (CAST_COL_VALUES(u16, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u16_or_subtype(type)))
 
-static inline const u32 *col_it_u32_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(u32, nvalues, it, field_is_column_u32_or_subtype(type));
-}
+#define col_it_u32_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+        (CAST_COL_VALUES(u32, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u32_or_subtype(type)))
 
-static inline const u64 *col_it_u64_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(u64, nvalues, it, field_is_column_u64_or_subtype(type));
-}
+#define col_it_u64_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+        (CAST_COL_VALUES(u64, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u64_or_subtype(type)))
 
-static inline const i8 *col_it_i8_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(i8, nvalues, it, field_is_column_i8_or_subtype(type));
-}
+#define col_it_i8_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
+        (CAST_COL_VALUES(i8, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i8_or_subtype(type)))
 
-static inline const i16 *col_it_i16_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(i16, nvalues, it, field_is_column_i16_or_subtype(type));
-}
+#define col_it_i16_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+        (CAST_COL_VALUES(i16, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i16_or_subtype(type)))
 
-static inline const i32 *col_it_i32_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(i32, nvalues, it, field_is_column_i32_or_subtype(type));
-}
+#define col_it_i32_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+        (CAST_COL_VALUES(i32, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i32_or_subtype(type)))
 
-static inline const i64 *col_it_i64_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(i64, nvalues, it, field_is_column_i64_or_subtype(type));
-}
+#define col_it_i64_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+        (CAST_COL_VALUES(i64, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i64_or_subtype(type)))
 
-static inline const float *col_it_float_values(u32 *nvalues, col_it *it)
-{
-        return CAST_COL_VALUES(float, nvalues, it, field_is_column_float_or_subtype(type));
-}
+#define col_it_float_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                       \
+        (CAST_COL_VALUES(float, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_float_or_subtype(type)))
 
 bool col_it_remove(col_it *it, u32 pos);
 bool col_it_is_multiset(col_it *it);

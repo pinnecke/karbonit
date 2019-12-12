@@ -22,10 +22,10 @@ typedef struct memblock {
 
 #define memblock_create(block, size)						                                                           \
 ({												                                                                       \
-        bool status = true;                                                                                            \
+        bool memblock_create_status = true;                                                                                            \
         if (unlikely(size == 0)) {							                                                           \
             *(block) = NULL;                                                                                           \
-            status = error(ERR_ILLEGALARG, NULL);		                                                               \
+            memblock_create_status = error(ERR_ILLEGALARG, NULL);		                                                               \
         } else {									                                                                   \
             struct memblock *result = (struct memblock *) MALLOC(sizeof(struct memblock));	                           \
             ZERO_MEMORY(result, sizeof(memblock));			                                                           \
@@ -34,7 +34,7 @@ typedef struct memblock {
             result->base = MALLOC(size);					                                                           \
             *(block) = result;								                                                           \
         }                                                                                                              \
-        status;									                                                                       \
+        memblock_create_status;									                                                                       \
 })
 
 #define memblock_drop(block)                                                                                           \
@@ -64,15 +64,15 @@ typedef struct memblock {
 
 #define memblock_write(block, position, data, nbytes)										                           \
 ({										                                                                               \
-        bool status;										                                                           \
+        bool memblock_write_status;										                                                           \
         if (likely(position + nbytes < block->blockLength)) {										                   \
                 memcpy(((char *)block->base) + position, data, nbytes);										           \
                 block->last_byte = JAK_MAX(block->last_byte, position + nbytes);									   \
-                status = true;										                                                   \
+                memblock_write_status = true;										                                                   \
         } else {										                                                               \
-                status = false;										                                                   \
+                memblock_write_status = false;										                                                   \
         }										                                                                       \
-        status;										                                                                   \
+        memblock_write_status;										                                                                   \
 })
 
 #define memblock_cpy(dst, src)										                                                   \
@@ -161,9 +161,9 @@ typedef struct memblock {
 
 #define memblock_resize(block, size)							                                                       \
 ({							                                                                                           \
-        bool status = true;							                                                                   \
+        bool memblock_resize_status = true;							                                                                   \
         if (unlikely((size) == 0)) {							                                                       \
-                status = error(ERR_ILLEGALARG, NULL);							                                       \
+                memblock_resize_status = error(ERR_ILLEGALARG, NULL);							                                       \
         } else {							                                                                           \
             (block)->base = realloc((block)->base, (size));							                                   \
             if ((size) > (block)->blockLength) {							                                           \
@@ -171,7 +171,7 @@ typedef struct memblock {
             }							                                                                               \
             (block)->blockLength = (size);							                                                   \
         }							                                                                                   \
-        status;							                                                                               \
+        memblock_resize_status;							                                                                               \
 })
 
 #define memblock_move_contents_and_drop(block)					                                                       \

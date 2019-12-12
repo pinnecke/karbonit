@@ -122,7 +122,7 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *me
 
         state->current_column_group.current_column.current_entry.array_length = *memfile_read_type(memfile,
                                                                                                        u32);
-        state->current_column_group.current_column.current_entry.array_base = memfile_peek_type(memfile, void);
+        state->current_column_group.current_column.current_entry.array_base = MEMFILE_PEEK_TYPE(memfile, void);
 
         return (++state->current_column_group.current_column.current_entry.idx)
                < state->current_column_group.current_column.num_elem;
@@ -756,47 +756,47 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_INT8:
-                        value->data.basic.values.int8s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.int8s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                           archive_field_i8_t);
                         break;
                 case ARCHIVE_FIELD_INT16:
-                        value->data.basic.values.int16s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.int16s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                            archive_field_i16_t);
                         break;
                 case ARCHIVE_FIELD_INT32:
-                        value->data.basic.values.int32s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.int32s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                            archive_field_i32_t);
                         break;
                 case ARCHIVE_FIELD_INT64:
-                        value->data.basic.values.int64s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.int64s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                            archive_field_i64_t);
                         break;
                 case ARCHIVE_FIELD_UINT8:
-                        value->data.basic.values.uint8s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.uint8s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                            archive_field_u8_t);
                         break;
                 case ARCHIVE_FIELD_UINT16:
-                        value->data.basic.values.uint16s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.uint16s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                             archive_field_u16_t);
                         break;
                 case ARCHIVE_FIELD_UINT32:
-                        value->data.basic.values.uint32s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.uint32s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                             archive_field_u32_t);
                         break;
                 case ARCHIVE_FIELD_UINT64:
-                        value->data.basic.values.uint64s = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.uint64s = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                             archive_field_u64_t);
                         break;
                 case ARCHIVE_FIELD_FLOAT:
-                        value->data.basic.values.numbers = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.numbers = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                             archive_field_number_t);
                         break;
                 case ARCHIVE_FIELD_STRING:
-                        value->data.basic.values.strings = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.strings = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                             archive_field_sid_t);
                         break;
                 case ARCHIVE_FIELD_BOOLEAN:
-                        value->data.basic.values.booleans = memfile_peek_type(&value->record_table_memfile,
+                        value->data.basic.values.booleans = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                              archive_field_boolean_t);
                         break;
                 default: {
@@ -824,48 +824,48 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_INT8:
-                        value->data.arrays.values.int8s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.int8s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                 archive_field_i8_t);
                         break;
                 case ARCHIVE_FIELD_INT16:
-                        value->data.arrays.values.int16s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.int16s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                  archive_field_i16_t);
                         break;
                 case ARCHIVE_FIELD_INT32:
-                        value->data.arrays.values.int32s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.int32s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                  archive_field_i32_t);
                         break;
                 case ARCHIVE_FIELD_INT64:
-                        value->data.arrays.values.int64s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.int64s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                  archive_field_i64_t);
                         break;
                 case ARCHIVE_FIELD_UINT8:
-                        value->data.arrays.values.uint8s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.uint8s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                  archive_field_u8_t);
                         break;
                 case ARCHIVE_FIELD_UINT16:
-                        value->data.arrays.values.uint16s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.uint16s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                   archive_field_u16_t);
                         break;
                 case ARCHIVE_FIELD_UINT32:
-                        value->data.arrays.values.uint32s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.uint32s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                   archive_field_u32_t);
                         break;
                 case ARCHIVE_FIELD_UINT64:
-                        value->data.arrays.values.uint64s_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.uint64s_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                   archive_field_u64_t);
                         break;
                 case ARCHIVE_FIELD_FLOAT:
-                        value->data.arrays.values.numbers_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.numbers_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                   archive_field_number_t);
                         break;
                 case ARCHIVE_FIELD_STRING:
-                        value->data.arrays.values.strings_base = memfile_peek_type(&value->record_table_memfile,
+                        value->data.arrays.values.strings_base = MEMFILE_PEEK_TYPE(&value->record_table_memfile,
                                                                                   archive_field_sid_t);
                         break;
                 case ARCHIVE_FIELD_BOOLEAN:
                         value->data.arrays.values.booleans_base =
-                                memfile_peek_type(&value->record_table_memfile, archive_field_boolean_t);
+                                MEMFILE_PEEK_TYPE(&value->record_table_memfile, archive_field_boolean_t);
                         break;
                 default: {
                         error(ERR_INTERNALERR, NULL);

@@ -27,15 +27,15 @@ void vector_##type##_printer_func(memfile *dst, void ofType(T) *values, size_t n
     char *data;                                                                                                        \
     type *typedValues = (type *) values;                                                                               \
                                                                                                                        \
-    data = memfile_current_pos(dst, sizeof(char));                                                              \
+    data = MEMFILE_CURRENT_POS(dst, sizeof(char));                                                              \
     int nchars = sprintf(data, "[");                                                                                   \
     MEMFILE_SKIP(dst, nchars);                                                                                  \
     for (size_t i = 0; i < num_elems; i++) {                                                                           \
-        data = memfile_current_pos(dst, sizeof(type));                                                          \
+        data = MEMFILE_CURRENT_POS(dst, sizeof(type));                                                          \
         nchars = sprintf(data, format_string"%s", (castType) typedValues[i], i + 1 < num_elems ? ", " : "");           \
         MEMFILE_SKIP(dst, nchars);                                                                              \
     }                                                                                                                  \
-    data = memfile_current_pos(dst, sizeof(char));                                                              \
+    data = MEMFILE_CURRENT_POS(dst, sizeof(char));                                                              \
     nchars = sprintf(data, "]");                                                                                       \
     MEMFILE_SKIP(dst, nchars);                                                                                  \
 }

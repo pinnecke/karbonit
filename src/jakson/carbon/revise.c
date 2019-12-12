@@ -276,7 +276,7 @@ static bool internal_pack_array(arr_it *it)
                         MEMFILE_SEEK(&this_array.file, first_empty_slot_offset);
                         assert(last_empty_slot_offset > first_empty_slot_offset);
 
-                        memfile_inplace_remove(&this_array.file,
+                        MEMFILE_INPLACE_REMOVE(&this_array.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
                         final = *MEMFILE_READ(&this_array.file, sizeof(char));
@@ -419,7 +419,7 @@ static bool internal_pack_object(obj_it *it)
                         MEMFILE_SEEK(&this_object_it.file, first_empty_slot_offset);
                         assert(last_empty_slot_offset > first_empty_slot_offset);
 
-                        memfile_inplace_remove(&this_object_it.file,
+                        MEMFILE_INPLACE_REMOVE(&this_object_it.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
                         final = *MEMFILE_READ(&this_object_it.file, sizeof(char));
@@ -550,7 +550,7 @@ static bool internal_pack_column(col_it *it)
         MEMFILE_SKIP(&it->file, payload_size);
 
         if (free_space > 0) {
-                memfile_inplace_remove(&it->file, free_space);
+                MEMFILE_INPLACE_REMOVE(&it->file, free_space);
 
                 MEMFILE_SEEK(&it->file, it->header_begin);
                 MEMFILE_SKIP_UINTVAR_STREAM(&it->file); // skip num of elements counter

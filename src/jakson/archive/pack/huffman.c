@@ -97,7 +97,7 @@ bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_sym
                 /** this will be the number of bytes used to encode the significant part of the prefix code */
                 MEMFILE_SKIP(file, sizeof(u8));
 
-                memfile_begin_bit_mode(file);
+                MEMFILE_BEGIN_BIT_MODE(file);
                 bool first_bit_found = false;
                 for (int i = 31; entry->blocks && i >= 0; i--) {
                         u32 mask = 1 << i;
@@ -110,7 +110,7 @@ bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_sym
                         }
                 }
                 size_t num_bytes_written;
-                memfile_end_bit_mode(&num_bytes_written, file);
+                MEMFILE_END_BIT_MODE(&num_bytes_written, file);
                 MEMFILE_GET_OFFSET(&offset_continue, file);
                 MEMFILE_SEEK(file, offset_meta);
                 u8 num_bytes_written_uint8 = (u8) num_bytes_written;
@@ -136,7 +136,7 @@ static pack_huffman_entry *find_dic_entry(huffman *dic, unsigned char c)
 
 static size_t encodeString(memfile *file, huffman *dic, const char *string)
 {
-        memfile_begin_bit_mode(file);
+        MEMFILE_BEGIN_BIT_MODE(file);
 
         for (const char *c = string; *c != '\0'; c++) {
                 pack_huffman_entry *entry = find_dic_entry(dic, (unsigned char) *c);
@@ -166,7 +166,7 @@ static size_t encodeString(memfile *file, huffman *dic, const char *string)
         }
 
         size_t num_written_bytes;
-        memfile_end_bit_mode(&num_written_bytes, file);
+        MEMFILE_END_BIT_MODE(&num_written_bytes, file);
         return num_written_bytes;
 }
 

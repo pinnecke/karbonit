@@ -43,7 +43,7 @@ bool string_field_nomarker_remove(memfile *file)
         u8 len_nbytes;
         u64 str_len = MEMFILE_READ_UINTVAR_STREAM(&len_nbytes, file);
         MEMFILE_SKIP(file, -len_nbytes);
-        memfile_inplace_remove(file, len_nbytes + str_len);
+        MEMFILE_INPLACE_REMOVE(file, len_nbytes + str_len);
         return true;
 }
 
@@ -51,7 +51,7 @@ bool string_field_remove(memfile *file)
 {
         u8 marker = *MEMFILE_READ_TYPE(file, u8);
         if (likely(marker == FIELD_STRING)) {
-                memfile_inplace_remove(file, sizeof(u8));
+                MEMFILE_INPLACE_REMOVE(file, sizeof(u8));
                 return string_field_nomarker_remove(file);
         } else {
                 return error(ERR_MARKERMAPPING, NULL);
@@ -85,7 +85,7 @@ bool string_field_update_wnchar(memfile *file, const char *string, size_t str_le
                 MEMFILE_SKIP(file, old_len);
                 offset_t diff = MEMFILE_TELL(file) - payload_start;
                 MEMFILE_SEEK(file, payload_start);
-                memfile_inplace_remove(file, diff);
+                MEMFILE_INPLACE_REMOVE(file, diff);
 
                 write_payload(file, string, str_len);
                 return true;

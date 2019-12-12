@@ -119,7 +119,7 @@ typedef struct memfile {
                 char c = *MEMFILE_READ((file), 1);											                           \
                 if (unlikely(c != 0)) {											                                       \
                         MEMFILE_SEEK((file), current_off);											                   \
-                        memfile_inplace_insert((file), (nbytes) - i);											       \
+                        MEMFILE_INPLACE_INSERT((file), (nbytes) - i);											       \
                         shift += (nbytes) - i;											                               \
                         break;											                                               \
                 }											                                                           \
@@ -169,10 +169,10 @@ typedef struct memfile {
         bytes_used_then = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   	   \
         if (bytes_used_now < bytes_used_then) {															               \
                 u8 inc = bytes_used_then - bytes_used_now;															   \
-                memfile_inplace_insert((file), inc);															       \
+                MEMFILE_INPLACE_INSERT((file), inc);															       \
         } else if (bytes_used_now > bytes_used_then) {															       \
                 u8 dec = bytes_used_now - bytes_used_then;															   \
-                memfile_inplace_remove((file), dec);															       \
+                MEMFILE_INPLACE_REMOVE((file), dec);															       \
         }															                                                   \
         uintvar_stream_t dst = (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char));								   \
         u8 required_blocks = uintvar_stream_write(dst, (value));													   \
@@ -351,13 +351,13 @@ typedef struct memfile {
         result;												                                                           \
 })
 
-#define memfile_write_byte(file, data)							                                                       \
+#define MEMFILE_WRITE_BYTE(file, data)							                                                       \
 {																                                                       \
         u8 byte = data;												                                                   \
         MEMFILE_WRITE((file), &(byte), sizeof(u8));												                       \
 }
 
-#define memfile_begin_bit_mode(file)													                               \
+#define MEMFILE_BEGIN_BIT_MODE(file)													                               \
 ({													                                                                   \
         bool memfile_begin_bit_mode_status = true;													                                           \
         if ((file)->mode == READ_WRITE) {													                           \
@@ -413,7 +413,7 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
         }
 }
 
-#define memfile_read_bit(file)																		                   \
+#define MEMFILE_READ_BIT(file)																		                   \
 ({																		                                               \
         bool memfile_read_bit_status = true;																		                       \
         if (!(file)) {																		                           \
@@ -433,7 +433,7 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
 			        } else {																		                   \
 			                (file)->current_read_bit = 0;															   \
 			                MEMFILE_SKIP((file), sizeof(char));														   \
-			                memfile_read_bit_status = memfile_read_bit((file));														   \
+			                memfile_read_bit_status = MEMFILE_READ_BIT((file));														   \
 			        }																		                           \
 			} else {																		                           \
 			        error(ERR_NOBITMODE, NULL);																		   \
@@ -443,22 +443,22 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
         memfile_read_bit_status;																		                                   \
 })
 
-#define memfile_seek_to_start(file)											                                           \
+#define MEMFILE_SEEK_TO_START(file)											                                           \
         MEMFILE_SEEK((file), 0)
 
-#define memfile_seek_to_end(file)											                                           \
+#define MEMFILE_SEEK_TO_END(file)											                                           \
 ({											                                                                           \
         size_t size = memblock_last_used_byte((file)->memblock);											           \
         MEMFILE_SEEK((file), size);											                                           \
 })
 
-#define memfile_inplace_insert(file, nbytes)											                               \
+#define MEMFILE_INPLACE_INSERT(file, nbytes)											                               \
         memblock_move_right((file)->memblock, (file)->pos, (nbytes));
 
-#define memfile_inplace_remove(file, nbytes_from_here)											                       \
+#define MEMFILE_INPLACE_REMOVE(file, nbytes_from_here)											                       \
         memblock_move_left((file)->memblock, (file)->pos, (nbytes_from_here));
 
-#define memfile_end_bit_mode(num_bytes_written, file)											                       \
+#define MEMFILE_END_BIT_MODE(num_bytes_written, file)											                       \
 {											                                                                           \
         (file)->bit_mode = false;											                                           \
         if ((file)->current_write_bit <= 8) {											                               \
@@ -472,7 +472,7 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
         (file)->current_write_bit = (file)->bytes_completed = 0;											           \
 }
 
-#define memfile_current_pos(file, nbytes)																               \
+#define MEMFILE_CURRENT_POS(file, nbytes)																               \
 ({																                                                       \
 		void *data = NULL;																                               \
         if ((file) && (nbytes) > 0) {																                   \
@@ -492,22 +492,22 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
         data;																                                           \
 })
 
-#define memfile_hexdump(str_buf_sb, file)																               \
+#define MEMFILE_HEXDUMP(str_buf_sb, file)																               \
 {																                                                       \
         DECLARE_AND_INIT(offset_t, block_size)																           \
         memblock_size(&block_size, (file)->memblock);																   \
         hexdump((str_buf_sb), memblock_raw_data((file)->memblock), block_size);										   \
 }
 
-#define memfile_hexdump_printf(cfile, memfile)													                       \
+#define MEMFILE_HEXDUMP_PRINTF(cfile, memfile)													                       \
 ({													                                                                   \
         DECLARE_AND_INIT(offset_t, block_size)													                       \
         memblock_size(&block_size, (memfile)->memblock);													           \
         hexdump_print((cfile), memblock_raw_data((memfile)->memblock), block_size);									   \
 })
 
-#define memfile_hexdump_print(memfile)						                                                           \
-        memfile_hexdump_printf(stdout, (memfile));
+#define MEMFILE_HEXDUMP_PRINT(memfile)						                                                           \
+        MEMFILE_HEXDUMP_PRINTF(stdout, (memfile));
 
 #ifdef __cplusplus
 }

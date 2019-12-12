@@ -1028,7 +1028,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         return error(ERR_INTERNALERR, NULL);
         }
         MEMFILE_SEEK(memfile, start_off);
-        memfile_inplace_remove(memfile, rm_nbytes);
+        MEMFILE_INPLACE_REMOVE(memfile, rm_nbytes);
 
         return true;
 }
@@ -1580,7 +1580,7 @@ static void marker_insert(memfile *memfile, u8 marker)
         /** check whether marker can be written, otherwise make space for it */
         char c = *MEMFILE_PEEK(memfile, sizeof(u8));
         if (c != 0) {
-                memfile_inplace_insert(memfile, sizeof(u8));
+                MEMFILE_INPLACE_INSERT(memfile, sizeof(u8));
         }
         MEMFILE_WRITE(memfile, &marker, sizeof(u8));
 }

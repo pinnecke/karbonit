@@ -481,7 +481,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
 
 static void field_ref_write(memfile *file, struct pindex_node *node)
 {
-        memfile_write_byte(file, node->field_type);
+        MEMFILE_WRITE_BYTE(file, node->field_type);
         if (node->field_type != FIELD_NULL && node->field_type != FIELD_TRUE &&
             node->field_type != FIELD_FALSE) {
                 /** only in case of field type that is not null, true, or false, there is more information behind
@@ -592,7 +592,7 @@ static void container_field_flat(memfile *file, struct pindex_node *node)
 
 static void prop_flat(memfile *file, struct pindex_node *node)
 {
-        memfile_write_byte(file, PATH_MARKER_PROP_NODE);
+        MEMFILE_WRITE_BYTE(file, PATH_MARKER_PROP_NODE);
         field_ref_write(file, node);
         MEMFILE_WRITE_UINTVAR_STREAM(NULL, file, node->entry.key.offset);
         container_field_flat(file, node);
@@ -600,7 +600,7 @@ static void prop_flat(memfile *file, struct pindex_node *node)
 
 static void array_flat(memfile *file, struct pindex_node *node)
 {
-        memfile_write_byte(file, PATH_MARKER_ARRAY_NODE);
+        MEMFILE_WRITE_BYTE(file, PATH_MARKER_ARRAY_NODE);
         field_ref_write(file, node);
         if (unlikely(node->type == PINDEX_ROOT)) {
                 container_contents_flat(file, node);
@@ -1008,7 +1008,7 @@ array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level)
 
 static void column_flat(memfile *file, struct pindex_node *node)
 {
-        memfile_write_byte(file, PATH_MARKER_COLUMN_NODE);
+        MEMFILE_WRITE_BYTE(file, PATH_MARKER_COLUMN_NODE);
         field_ref_write(file, node);
         assert(node->sub_entries.num_elems == 0);
 }
@@ -1288,7 +1288,7 @@ bool pindex_it_open(pindex_it *it, pindex *index,
 
 bool pindex_hexdump(FILE *file, pindex *index)
 {
-        return memfile_hexdump_printf(file, &index->memfile);
+        return MEMFILE_HEXDUMP_PRINTF(file, &index->memfile);
 }
 
 void pindex_to_record(rec *doc, pindex *index)
@@ -1296,7 +1296,7 @@ void pindex_to_record(rec *doc, pindex *index)
         rec_new context;
         obj_state object;
 
-        memfile_seek_to_start(&index->memfile);
+        MEMFILE_SEEK_TO_START(&index->memfile);
 
         insert *ins = rec_create_begin(&context, doc, KEY_NOKEY, OPTIMIZE);
         insert *oins = insert_object_begin(&object, ins, 1024);
@@ -1321,7 +1321,7 @@ void pindex_to_record(rec *doc, pindex *index)
 
 const char *pindex_to_str(str_buf *str, pindex *index)
 {
-        memfile_seek_to_start(&index->memfile);
+        MEMFILE_SEEK_TO_START(&index->memfile);
         record_ref_to_str(str, index);
         array_to_str(str, index, true, 0);
         return str_buf_cstr(str);
@@ -1332,7 +1332,7 @@ bool pindex_print(FILE *file, pindex *index)
         str_buf str;
         str_buf_create(&str);
         MEMFILE_SAVE_POSITION(&index->memfile);
-        memfile_seek_to_start(&index->memfile);
+        MEMFILE_SEEK_TO_START(&index->memfile);
         fprintf(file, "%s", pindex_to_str(&str, index));
         MEMFILE_RESTORE_POSITION(&index->memfile);
         str_buf_drop(&str);

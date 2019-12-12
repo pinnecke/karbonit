@@ -333,11 +333,11 @@ bool col_it_remove(col_it *it, u32 pos)
         /** remove element */
         size_t elem_size = internal_get_type_value_size(it->field_type);
         MEMFILE_SEEK(&it->file, payload_start + pos * elem_size);
-        memfile_inplace_remove(&it->file, elem_size);
+        MEMFILE_INPLACE_REMOVE(&it->file, elem_size);
 
         /** add an empty element at the end to restore the column capacity property */
         MEMFILE_SEEK(&it->file, payload_start + it->num * elem_size);
-        memfile_inplace_insert(&it->file, elem_size);
+        MEMFILE_INPLACE_INSERT(&it->file, elem_size);
 
         /** update element counter */
         MEMFILE_SEEK(&it->file, it->header_begin);
@@ -547,7 +547,7 @@ static bool rewrite_column_to_array(col_it *it)
         abstract_class_to_list_derivable(&list_type, type_class);
 
         /** Potentially tailing space after the last ']' marker of the outer most array is used for temporary space */
-        memfile_seek_to_end(&it->file);
+        MEMFILE_SEEK_TO_END(&it->file);
         offset_t array_marker_begin = MEMFILE_TELL(&it->file);
 
         size_t capacity = it->num * internal_get_type_value_size(it->field_type);

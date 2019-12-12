@@ -34,7 +34,9 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, begin);
 
+#ifndef NDEBUG
         error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
+#endif
 
         if (!abstract_is_instanceof_column(&it->file)) {
             return error(ERR_ILLEGALOP, "column begin marker or sub type expected");

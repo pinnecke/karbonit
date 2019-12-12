@@ -1641,7 +1641,7 @@ static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end,
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)
 {
-        char c = *MEMFILE_PEEK(file, 1);
+        char c = *MEMFILE_PEEK__FAST(file);
         bool is_empty = c == 0, is_end = c == end_marker;
         OPTIONAL_SET(is_empty_slot, is_empty)
         OPTIONAL_SET(is_end_reached, is_end)

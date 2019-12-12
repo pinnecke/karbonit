@@ -37,7 +37,25 @@ bool col_it_insert(insert *in, col_it *it);
 bool col_it_fast_forward(col_it *it);
 offset_t col_it_memfilepos(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
-const void *col_it_values(field_e *type, u32 *nvalues, col_it *it);
+
+
+#define col_it_values(field_e_ptr, u32_ptr_nvalues, col_it_ptr)                                                        \
+({                                                                                                                     \
+        const void *result = NULL;                                                                                     \
+        col_it *it_ptr = (col_it_ptr);                                                                                 \
+        memfile_seek(&it->file, it->header_begin);                                                                     \
+        u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it_ptr->file);                                     \
+        u32 cap_elements = (u32) memfile_read_uintvar_stream(NULL, &it_ptr->file);                                     \
+        offset_t payload_start = memfile_tell(&it_ptr->file);                                                          \
+        result = memfile_peek(&it_ptr->file, sizeof(void));                                                            \
+        field_e *ptr_type = (field_e_ptr);                                                                             \
+        u32 *ptr_nvalues = (u32_ptr_nvalues);                                                                          \
+        OPTIONAL_SET(ptr_type, it_ptr->field_type);                                                                    \
+        OPTIONAL_SET(ptr_nvalues, num_elements);                                                                       \
+        u32 skip = cap_elements * internal_get_type_value_size(it_ptr->field_type);                                    \
+        memfile_seek(&it_ptr->file, payload_start + skip);                                                             \
+        result;                                                                                                        \
+})
 
 #define col_it_values_info(field_e, col_it)                                                                            \
 ({                                                                                                                     \

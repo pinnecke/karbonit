@@ -351,7 +351,7 @@ bool arr_it_has_next(arr_it *it)
 bool arr_it_is_unit(arr_it *it)
 {
         arr_it cpy;
-        internal_arr_it_clone(&cpy, it);
+        internal_arr_it_copy(&cpy, it);
         bool has_next = arr_it_next(&cpy);
         bool ret = false;
 

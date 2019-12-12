@@ -30,7 +30,6 @@
 ({                                                                                                                     \
         field_e type;                                                                                  \
         const void *raw = col_it_values(&type, nvalues, it);                                             \
-        error_if_and_return(!(field_expr), ERR_TYPEMISMATCH, NULL);                                              \
         (const builtin_type *) raw;                                                                                    \
 })
 
@@ -309,24 +308,6 @@ bool col_it_is_float(col_it *it)
                 default:
                         return false;
         }
-}
-
-const void *col_it_values(field_e *type, u32 *nvalues, col_it *it)
-{
-        memfile_seek(&it->file, it->header_begin);
-        u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->file);
-        u32 cap_elements = (u32) memfile_read_uintvar_stream(NULL, &it->file);
-        offset_t payload_start = memfile_tell(&it->file);
-
-        const void *result = memfile_peek(&it->file, sizeof(void));
-
-        OPTIONAL_SET(type, it->field_type);
-        OPTIONAL_SET(nvalues, num_elements);
-
-        u32 skip = cap_elements * internal_get_type_value_size(it->field_type);
-        memfile_seek(&it->file, payload_start + skip);
-
-        return result;
 }
 
 const boolean *col_it_boolean_values(u32 *nvalues, col_it *it)

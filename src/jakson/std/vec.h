@@ -217,13 +217,8 @@ bool vector_grow(size_t *numNewSlots, vec *vec);
 
 bool vector_grow_to(vec *vec, size_t capacity);
 
-/**
- * Returns the number of elements currently stored in the vec
- *
- * @param vec the vec for which the operation is started
- * @return 0 in case of NULL pointer to 'vec', or the number of elements otherwise.
- */
-size_t vector_length(const vec *vec);
+#define vector_length(vec)                                                                                             \
+        (vec)->num_elems
 
 #define VECTOR_GET(vec, pos, type) ((type *) vector_at(vec, pos))
 

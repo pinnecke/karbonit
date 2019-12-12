@@ -244,11 +244,6 @@ bool vector_grow_to(vec *vec, size_t capacity)
         return true;
 }
 
-size_t vector_length(const vec *vec)
-{
-        return vec->num_elems;
-}
-
 const void *vector_at(const vec *vec, size_t pos)
 {
         return (vec && pos < vec->num_elems) ? vec->base + pos * vec->elem_size : NULL;

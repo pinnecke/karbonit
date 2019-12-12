@@ -377,7 +377,6 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
         DECLARE_AND_INIT(pstatus_e, status)
         DECLARE_AND_INIT(u32, requested_array_idx)
         DECLARE_AND_INIT(u32, current_array_idx)
-        bool is_unit_array = arr_it_is_unit(it);
 
         dot_type_at(&node_type, current_path_pos, path);
 
@@ -387,12 +386,10 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                 /** empty document */
                 return PATH_EMPTY_DOC;
         } else {
+                bool is_unit_array = arr_it_is_unit(it);
                 switch (node_type) {
                         case DOT_NODE_IDX:
                                 dot_idx_at(&requested_array_idx, current_path_pos, path);
-                                if (is_unit_array) {
-
-                                }
 
                                 while (current_array_idx < requested_array_idx && arr_it_next(it)) {
                                         current_array_idx++;

@@ -118,14 +118,6 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
         }
 }
 
-u32 col_it_values_info(field_e *type, col_it *it)
-{
-        memfile_seek(&it->file, it->header_begin);
-        u32 nvalues = (u32) memfile_read_uintvar_stream(NULL, &it->file);
-        OPTIONAL_SET(type, it->field_type);
-        return nvalues;
-}
-
 bool col_it_is_null(col_it *it, u32 pos)
 {
         field_e type;

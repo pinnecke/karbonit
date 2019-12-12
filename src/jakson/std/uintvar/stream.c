@@ -18,10 +18,6 @@
 
 #include <jakson/std/uintvar/stream.h>
 
-#define MASK_LAST_BYTE                  (0 | ((char) ~0u))
-#define MASK_FORWARD_BIT                ((char) (1u << 7))
-#define MASK_BLOCK_DATA                 (~MASK_FORWARD_BIT)
-
 #define extract_data(x, byte_shift)     (MASK_BLOCK_DATA & (MASK_LAST_BYTE & (x >> byte_shift)))
 
 u8 uintvar_stream_write(uintvar_stream_t dst, u64 value)
@@ -41,19 +37,4 @@ u8 uintvar_stream_write(uintvar_stream_t dst, u64 value)
         } else {
                 return 0;
         }
-}
-
-u64 uintvar_stream_read(u8 *nbytes, uintvar_stream_t src)
-{
-        u64 value = 0;
-        bool has_next = true;
-        u8 ndecoded = 0;
-
-        for (char it = *(char *) src, block_val = 0; has_next; has_next = (it & MASK_FORWARD_BIT) == MASK_FORWARD_BIT,
-                block_val = it & MASK_BLOCK_DATA, value = (value << 7) | block_val, src++,
-                ndecoded++, it = *(char *) src) {}
-
-
-        OPTIONAL_SET(nbytes, ndecoded);
-        return value;
 }

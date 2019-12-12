@@ -31,6 +31,10 @@
 extern "C" {
 #endif
 
+#define MASK_LAST_BYTE                  (0 | ((char) ~0u))
+#define MASK_FORWARD_BIT                ((char) (1u << 7))
+#define MASK_BLOCK_DATA                 (~MASK_FORWARD_BIT)
+
 /**
  * This type is for variable-length unsigned integer types.
  *
@@ -112,7 +116,23 @@ u8 uintvar_stream_write(uintvar_stream_t dst, u64 value);
         num_blocks_required;                                                                                           \
 })
 
-u64 uintvar_stream_read(u8 *nbytes, uintvar_stream_t src);
+#define uintvar_stream_read(u8_ptr_nbytes, uintvar_stream)                                                             \
+({                                                                                                                     \
+        u64 value = 0;                                                                                                 \
+        bool has_next = true;                                                                                          \
+        uint_fast8_t ndecoded = 0;                                                                                     \
+                                                                                                                       \
+        const char *stream = (const char *)(uintvar_stream);                                                           \
+        for (char iterator = *(char *) stream, block_val = 0; has_next;                                                \
+             has_next = (iterator & MASK_FORWARD_BIT) == MASK_FORWARD_BIT,                                             \
+             block_val = iterator & MASK_BLOCK_DATA, value = (value << 7) | block_val, stream++,                       \
+             ndecoded++, iterator = *(char *) stream)                                                                  \
+        { }                                                                                                            \
+                                                                                                                       \
+        u8 *nbytes_ptr = (u8_ptr_nbytes);                                                                              \
+        OPTIONAL_SET(nbytes_ptr, ndecoded);                                                                            \
+        value;                                                                                                         \
+})
 
 #ifdef __cplusplus
 }

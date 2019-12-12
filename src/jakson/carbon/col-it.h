@@ -38,7 +38,14 @@ bool col_it_fast_forward(col_it *it);
 offset_t col_it_memfilepos(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
 const void *col_it_values(field_e *type, u32 *nvalues, col_it *it);
-u32 col_it_values_info(field_e *type, col_it *it);
+
+#define col_it_values_info(field_e, col_it)                                                                            \
+({                                                                                                                     \
+        memfile_seek(&(col_it)->file, (col_it)->header_begin);                                                         \
+        u32 nvalues = (u32) memfile_read_uintvar_stream(NULL, &(col_it)->file);                                        \
+        OPTIONAL_SET((field_e), (col_it)->field_type);                                                                 \
+        nvalues;                                                                                                       \
+})
 
 bool col_it_is_null(col_it *it, u32 pos);
 

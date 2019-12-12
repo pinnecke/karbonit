@@ -184,7 +184,7 @@ typedef struct memblock {
 
 #define MEMFILE_UPDATE_LAST_BYTE(block, where)							                                               \
 {							                                                                                           \
-        bool memfile_update_last_byte_status = true;							                                                                   \
+        bool memfile_update_last_byte_status = true; UNUSED(memfile_update_last_byte_status);							                                                                   \
         if (unlikely((where) >= (block)->blockLength)) {							                                   \
             memfile_update_last_byte_status = error(ERR_ILLEGALSTATE, NULL);							                                           \
         } else {							                                                                           \

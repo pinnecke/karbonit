@@ -130,7 +130,7 @@ typedef struct memfile {
 
 #define MEMFILE_READ_UINTVAR_STREAM(_nbytes_, _file_)													                   \
 ({													                                                                   \
-        u64 ___result;													                                               \
+        u64 ___result; UNUSED(___result);													                                               \
         {                                       \
                 u8 __nbytes_read_ = 0;             \
                 ___result = UINTVAR_STREAM_READ(&__nbytes_read_, (uintvar_stream_t) MEMFILE_PEEK((_file_), sizeof(char)));                   \

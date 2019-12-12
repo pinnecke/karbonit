@@ -758,8 +758,10 @@ static void result_from_object(find *find, obj_it *it)
 static inline bool
 result_from_column(find *find, u32 requested_idx, col_it *it)
 {
-        u32 num_contained_values = COL_IT_VALUES_INFO(&find->type, it);
-        assert(requested_idx < num_contained_values);
+#ifndef NDEBUG
+        u32 max_idx = COL_IT_VALUES_INFO(&find->type, it);
+        assert(requested_idx < max_idx);
+#endif
 
         switch (find->type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
@@ -787,7 +789,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U8;
-                                find->value.unsigned_number = COL_IT_U8_VALUES(NULL, it)[requested_idx];
+                                find->value.unsigned_number = field_value;
                         }
                 }
                         break;
@@ -800,7 +802,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U16;
-                                find->value.unsigned_number = COL_IT_U16_VALUES(NULL, it)[requested_idx];
+                                find->value.unsigned_number = field_value;
                         }
                 }
                         break;
@@ -813,7 +815,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U32;
-                                find->value.unsigned_number = COL_IT_U32_VALUES(NULL, it)[requested_idx];
+                                find->value.unsigned_number = field_value;
                         }
                 }
                         break;
@@ -826,7 +828,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U64;
-                                find->value.unsigned_number = COL_IT_U64_VALUES(NULL, it)[requested_idx];
+                                find->value.unsigned_number = field_value;
                         }
                 }
                         break;
@@ -839,7 +841,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I8;
-                                find->value.signed_number = COL_IT_I8_VALUES(NULL, it)[requested_idx];
+                                find->value.signed_number = field_value;
                         }
                 }
                         break;
@@ -852,7 +854,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I16;
-                                find->value.signed_number = COL_IT_I16_VALUES(NULL, it)[requested_idx];
+                                find->value.signed_number = field_value;
                         }
                 }
                         break;
@@ -865,7 +867,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I32;
-                                find->value.signed_number = COL_IT_I32_VALUES(NULL, it)[requested_idx];
+                                find->value.signed_number = field_value;
                         }
                 }
                         break;
@@ -878,7 +880,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I64;
-                                find->value.signed_number = COL_IT_I64_VALUES(NULL, it)[requested_idx];
+                                find->value.signed_number = field_value;
                         }
                 }
                         break;
@@ -891,7 +893,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_FLOAT;
-                                find->value.float_number = COL_IT_FLOAT_VALUES(NULL, it)[requested_idx];
+                                find->value.float_number = field_value;
                         }
                 }
                         break;

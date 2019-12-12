@@ -65,7 +65,7 @@ offset_t col_it_tell(col_it *it, u32 elem_idx);
 
 #define COL_IT_VALUES_INFO(_field_e_, _col_it_)                                                                        \
 ({                                                                                                                     \
-        u32 ___nvalues = 0;                                                                        \
+        u32 ___nvalues = 0; UNUSED(___nvalues);                                                                       \
         {                                                                                                              \
                 MEMFILE_SEEK(&(_col_it_)->file, (_col_it_)->header_begin);                                             \
                 ___nvalues = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &(_col_it_)->file);                           \

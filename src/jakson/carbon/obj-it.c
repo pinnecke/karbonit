@@ -80,8 +80,8 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
 
 bool obj_it_drop(obj_it *it)
 {
-        internal_field_auto_close(&it->field.value.data);
-        internal_field_drop(&it->field.value.data);
+        INTERNAL_FIELD_AUTO_CLOSE(&it->field.value.data);
+        INTERNAL_FIELD_DROP(&it->field.value.data);
         vector_drop(&it->history);
         return true;
 }
@@ -98,7 +98,7 @@ prop *obj_it_next(obj_it *it)
 {
         bool is_empty_slot;
         offset_t last_off = MEMFILE_TELL(&it->file);
-        internal_field_drop(&it->field.value.data);
+        INTERNAL_FIELD_DROP(&it->field.value.data);
         if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
                 internal_history_push(&it->history, last_off);
                 internal_prop_create(&it->prop, it);

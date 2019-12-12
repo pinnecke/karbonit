@@ -317,8 +317,8 @@ bool arr_it_is_empty(arr_it *it)
 
 void arr_it_drop(arr_it *it)
 {
-        internal_field_auto_close(&it->field);
-        internal_field_drop(&it->field);
+        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
+        INTERNAL_FIELD_DROP(&it->field);
 }
 
 bool arr_it_rewind(arr_it *it)
@@ -385,7 +385,7 @@ static bool _internal_array_next(arr_it *it)
                         }
                 }
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
-                internal_field_auto_close(&it->field);
+                INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 return false;
         }
 }

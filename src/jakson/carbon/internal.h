@@ -101,7 +101,7 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
 })
 
 /**
- * Returns the number of bytes required to store a field value of a particular type exclusing its type marker.
+ * Returns the number of bytes required to store a field value of a particular type excluding its type marker.
  */
 #define INTERNAL_GET_TYPE_VALUE_SIZE(field_e)                                                                          \
 ({                                                                         \
@@ -205,8 +205,36 @@ bool internal_history_has(vec ofType(offset_t) *vec);
 
 bool internal_field_create(field *field);
 bool internal_field_clone(field *dst, field *src);
-bool internal_field_drop(field *field);
-bool internal_field_auto_close(field *it);
+
+#define INTERNAL_FIELD_DROP(field)                                                                                     \
+{                                                                                                                      \
+        INTERNAL_FIELD_AUTO_CLOSE((field));                                                                            \
+        free((field)->array);                                                                                          \
+        free((field)->object);                                                                                         \
+        free((field)->column);                                                                                         \
+        (field)->array = NULL;                                                                                         \
+        (field)->object = NULL;                                                                                        \
+        (field)->column = NULL;                                                                                        \
+}
+
+#define INTERNAL_FIELD_AUTO_CLOSE(field)                                                                               \
+{                                                                                                                      \
+        if ((field)->arr_it.created && !(field)->arr_it.accessed) {                                                    \
+                internal_auto_close_nested_array(field);                                                               \
+                (field)->arr_it.created = false;                                                                       \
+                (field)->arr_it.accessed = false;                                                                      \
+        }                                                                                                              \
+        if ((field)->obj_it.created && !(field)->obj_it.accessed) {                                                    \
+                internal_auto_close_nested_object_it(field);                                                           \
+                (field)->obj_it.created = false;                                                                       \
+                (field)->obj_it.accessed = false;                                                                      \
+        }                                                                                                              \
+        if ((field)->col_it_created) {                                                                                 \
+                internal_auto_close_nested_column_it((field));                                                         \
+                (field)->obj_it.created = false;                                                                       \
+        }                                                                                                              \
+}
+
 bool internal_field_object_it_opened(field *field);
 bool internal_field_array_opened(field *field);
 bool internal_field_column_it_opened(field *field);

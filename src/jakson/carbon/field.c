@@ -261,6 +261,168 @@ bool carbon_field_skip(memfile *file)
         return true;
 }
 
+bool carbon_field_skip__fast(memfile *file, const field *field)
+{
+        switch (field->type) {
+                case FIELD_NULL:
+                case FIELD_TRUE:
+                case FIELD_FALSE:
+                        /* nothing to do */
+                        break;
+                case FIELD_NUMBER_U8:
+                case FIELD_NUMBER_I8:
+                        carbon_field_skip_8__fast(file);
+                        break;
+                case FIELD_NUMBER_U16:
+                case FIELD_NUMBER_I16:
+                        carbon_field_skip_16__fast(file);
+                        break;
+                case FIELD_NUMBER_U32:
+                case FIELD_NUMBER_I32:
+                        carbon_field_skip_32__fast(file);
+                        break;
+                case FIELD_NUMBER_U64:
+                case FIELD_NUMBER_I64:
+                        carbon_field_skip_64__fast(file);
+                        break;
+                case FIELD_NUMBER_FLOAT:
+                        carbon_field_skip_float__fast(file);
+                        break;
+                case FIELD_STRING:
+                        carbon_field_skip_string__fast(file, field);
+                        break;
+                case FIELD_BINARY:
+                        carbon_field_skip_binary__fast(file, field);
+                        break;
+                case FIELD_BINARY_CUSTOM:
+                        carbon_field_skip_custom_binary__fast(file, field);
+                        break;
+                case FIELD_ARRAY_UNSORTED_MULTISET:
+                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                case FIELD_DERIVED_ARRAY_SORTED_SET:
+                        carbon_field_skip_array__fast(file, field);
+                        break;
+                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
+                        carbon_field_skip_column__fast(file, field);
+                        break;
+                case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                case FIELD_DERIVED_OBJECT_SORTED_MAP:
+                        carbon_field_skip_object__fast(file, field);
+                        break;
+                default: error(ERR_CORRUPTED, NULL);
+                        return false;
+        }
+        return true;
+}
+
+void carbon_field_skip_object__fast(memfile *file, const field *field)
+{
+        obj_it skip_it;
+        internal_obj_it_clone(&skip_it, field->object);
+        internal_obj_it_fast_forward(&skip_it);
+        MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
+        obj_it_drop(&skip_it);
+}
+
+void carbon_field_skip_array__fast(memfile *file, const field *field)
+{
+        arr_it skip_it;
+        internal_arr_it_clone(&skip_it, field->array);
+        internal_arr_it_fast_forward(&skip_it);
+        MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
+        arr_it_drop(&skip_it);
+}
+
+void carbon_field_skip_column__fast(memfile *file, const field *field)
+{
+        internal_col_it_skip__fast(file, field);
+}
+
+void carbon_field_skip_binary__fast(memfile *file, const field *field)
+{
+        /** skip blob */
+        MEMFILE_SKIP(file, field->len);
+}
+
+void carbon_field_skip_custom_binary__fast(memfile *file, const field *field)
+{
+        /** skip blob */
+        MEMFILE_SKIP(file, field->len);
+}
+
+void carbon_field_skip_string__fast(memfile *file, const field *field)
+{
+        /** skip blob */
+        MEMFILE_SKIP(file, field->len);
+}
+
+void carbon_field_skip_float__fast(memfile *file)
+{
+        MEMFILE_SKIP(file, sizeof(float));
+}
+
+void carbon_field_skip_8__fast(memfile *file)
+{
+        MEMFILE_SKIP(file, sizeof(u8));
+}
+
+void carbon_field_skip_16__fast(memfile *file)
+{
+        MEMFILE_SKIP(file, sizeof(u16));
+}
+
+void carbon_field_skip_32__fast(memfile *file)
+{
+        MEMFILE_SKIP(file, sizeof(u32));
+}
+
+void carbon_field_skip_64__fast(memfile *file)
+{
+        MEMFILE_SKIP(file, sizeof(u64));
+}
+
 bool carbon_field_skip_object(memfile *file)
 {
         if (abstract_is_instanceof_object(file)) {

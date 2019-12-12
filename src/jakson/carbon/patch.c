@@ -31,14 +31,14 @@ void patch_end(arr_it *it)
         arr_it_drop(it);
 }
 
-bool patch_find_begin(find *out, const char *dot, rec *doc)
+void patch_find_begin(find *out, const char *dot, rec *doc)
 {
         doc->file.mode = READ_WRITE;
-        return find_begin(out, dot, doc);
+        find_begin_from_string(out, dot, doc);
 }
 
-bool patch_find_end(find *find)
+void patch_find_end(find *find)
 {
         find->doc->file.mode = READ_ONLY;
-        return find_end(find);
+        find_end(find);
 }

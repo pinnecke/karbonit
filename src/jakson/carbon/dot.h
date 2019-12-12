@@ -37,8 +37,7 @@ typedef struct dot_node {
 } dot_node;
 
 typedef struct dot {
-        dot_node nodes[256];
-        u32 len;
+        vec ofType(dot_node) nodes;
 } dot;
 
 typedef enum pstatus {
@@ -54,11 +53,12 @@ typedef enum pstatus {
 } pstatus_e;
 
 bool dot_create(dot *path);
+void dot_clear(dot *path);
 bool dot_from_string(dot *path, const char *path_string);
 bool dot_drop(dot *path);
-bool dot_add_key(dot *dst, const char *key);
-bool dot_add_nkey(dot *dst, const char *key, size_t len);
-bool dot_add_idx(dot *dst, u32 idx);
+void dot_add_key(dot *dst, const char *key);
+void dot_add_nkey(dot *dst, const char *key, size_t len);
+void dot_add_idx(dot *dst, u32 idx);
 bool dot_len(u32 *len, const dot *path);
 bool dot_is_empty(const dot *path);
 bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path);

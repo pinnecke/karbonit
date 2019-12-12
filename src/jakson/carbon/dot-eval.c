@@ -27,7 +27,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                  const dot *path, u32 current_path_pos,
                                                  arr_it *it, bool is_record);
 
-void dot_eval_begin(dot_eval *eval, dot *path,
+void dot_eval_begin(dot_eval *eval, const dot *path,
                                  rec *doc)
 {
         ZERO_MEMORY(eval, sizeof(dot_eval));
@@ -79,7 +79,8 @@ bool dot_eval_end(dot_eval *state)
 bool carbon_path_exists(rec *doc, const char *path)
 {
         find find;
-        bool result = find_begin(&find, path, doc);
+        find_begin_from_string(&find, path, doc);
+        bool result = find_has_result(&find);
         find_end(&find);
         return result;
 }
@@ -90,7 +91,7 @@ bool carbon_path_is_array(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_array_or_subtype(field_type);
         }
@@ -105,7 +106,7 @@ bool carbon_path_is_column(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_column_or_subtype(field_type);
         }
@@ -120,7 +121,7 @@ bool carbon_path_is_object(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_object_or_subtype(field_type);
         }
@@ -141,7 +142,7 @@ bool carbon_path_is_null(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_null(field_type);
         }
@@ -156,7 +157,7 @@ bool carbon_path_is_number(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_number(field_type);
         }
@@ -171,7 +172,7 @@ bool carbon_path_is_boolean(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_boolean(field_type);
         }
@@ -186,7 +187,7 @@ bool carbon_path_is_string(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin(&find, path, doc)) {
+        if (find_begin_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_string(field_type);
         }
@@ -373,7 +374,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
         assert(state);
         assert(path);
         assert(it);
-        assert(current_path_pos < path->len);
+        assert(current_path_pos < vector_length(&path->nodes));
 
         DECLARE_AND_INIT(field_e, elem_type)
         DECLARE_AND_INIT(dot_node_type_e, node_type)

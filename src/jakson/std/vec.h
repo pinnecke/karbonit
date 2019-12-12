@@ -225,7 +225,7 @@ bool vector_grow_to(vec *vec, size_t capacity);
  */
 size_t vector_length(const vec *vec);
 
-#define VECTOR_GET(vec, pos, type) (type *) vector_at(vec, pos)
+#define VECTOR_GET(vec, pos, type) ((type *) vector_at(vec, pos))
 
 #define VECTOR_NEW_AND_GET(vec, type)                                                                              \
 ({                                                                                                                     \

@@ -43,10 +43,11 @@ typedef struct find {
         } value;
 } find;
 
-bool find_begin(find *out, const char *dot, rec *doc);
-bool find_end(find *find);
-bool find_exec(find *find, dot *path, rec *doc);
-bool find_drop(find *find);
+bool find_begin_from_string(find *out, const char *dot, rec *doc);
+bool find_begin_from_dot(find *out, const dot *path, rec *doc);
+void find_end(find *find);
+bool find_exec(find *find, const dot *path, rec *doc);
+void find_drop(find *find);
 
 bool find_has_result(find *find);
 const char *find_result_to_str(str_buf *dst_str, find *find);

@@ -33,16 +33,22 @@ static void result_from_object(find *find, obj_it *it);
 static inline bool
 result_from_column(find *find, u32 requested_idx, col_it *it);
 
-bool find_begin(find *out, const char *dot, rec *doc)
+bool find_begin_from_string(find *out, const char *dot, rec *doc)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        find_exec(out, &path, doc);
+        bool ret = find_begin_from_dot(out, &path, doc);
         dot_drop(&path);
-        return true;
+        return ret;
 }
 
-bool find_end(find *find)
+bool find_begin_from_dot(find *out, const dot *path, rec *doc)
+{
+        find_exec(out, path, doc);
+        return find_has_result(out);
+}
+
+void find_end(find *find)
 {
         if (find_has_result(find)) {
                 field_e type;
@@ -104,18 +110,17 @@ bool find_end(find *find)
                         default:
                                 break;
                 }
-                return find_drop(find);
+                find_drop(find);
         }
-        return true;
 }
 
-bool find_exec(find *find, dot *path, rec *doc)
+bool find_exec(find *find, const dot *path, rec *doc)
 {
         ZERO_MEMORY(find, sizeof(find));
         find->doc = doc;
 
         dot_eval_begin(&find->eval, path, doc);
-        if (dot_eval_has_result(&find->eval)) {
+        if (find_has_result(find)) {
                 switch (find->eval.result.container) {
                         case ARRAY:
                                 result_from_array(find, &find->eval.result.containers.array);
@@ -131,7 +136,7 @@ bool find_exec(find *find, dot *path, rec *doc)
                                 return error(ERR_INTERNALERR, "unknown container type");
                 }
         }
-        return true;
+        return find_has_result(find);
 }
 
 bool find_has_result(find *find)
@@ -555,9 +560,9 @@ binary_field *find_result_binary(find *find)
         return &find->value.binary;
 }
 
-bool find_drop(find *find)
+void find_drop(find *find)
 {
-        return dot_eval_end(&find->eval);
+        dot_eval_end(&find->eval);
 }
 
 static void result_from_array(find *find, arr_it *it)

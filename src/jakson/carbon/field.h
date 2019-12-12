@@ -259,6 +259,167 @@ bool carbon_field_skip_64(memfile *file);
 field_e field_for_column(list_type_e derivation, col_it_type_e type);
 field_e field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true);
 
+
+
+#define field_is_traversable(field_e_type)                                                                             \
+        (field_is_object_or_subtype(field_e_type) ||                                                                   \
+         field_is_list_or_subtype(field_e_type))
+
+#define field_is_signed(field_e_type)                                                                                  \
+        ((field_e_type == FIELD_NUMBER_I8 || field_e_type == FIELD_NUMBER_I16 ||                                       \
+          field_e_type == FIELD_NUMBER_I32 || field_e_type == FIELD_NUMBER_I64 ||                                      \
+          field_e_type == FIELD_COLUMN_I8_UNSORTED_MULTISET ||                                                         \
+          field_e_type == FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||                                                   \
+          field_e_type == FIELD_DERIVED_COLUMN_I8_UNSORTED_SET ||                                                      \
+          field_e_type == FIELD_DERIVED_COLUMN_I8_SORTED_SET ||                                                        \
+          field_e_type == FIELD_COLUMN_I16_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_I16_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_I16_SORTED_SET ||                                                       \
+          field_e_type == FIELD_COLUMN_I32_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_I32_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_I32_SORTED_SET ||                                                       \
+          field_e_type == FIELD_COLUMN_I64_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_I64_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_I64_SORTED_SET))
+
+#define field_is_unsigned(field_e_type)                                                                                \
+        ((field_e_type == FIELD_NUMBER_U8 || field_e_type == FIELD_NUMBER_U16 ||                                       \
+          field_e_type == FIELD_NUMBER_U32 || field_e_type == FIELD_NUMBER_U64 ||                                      \
+          field_e_type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||                                                         \
+          field_e_type == FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET ||                                                   \
+          field_e_type == FIELD_DERIVED_COLUMN_U8_UNSORTED_SET ||                                                      \
+          field_e_type == FIELD_DERIVED_COLUMN_U8_SORTED_SET ||                                                        \
+          field_e_type == FIELD_COLUMN_U16_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_U16_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_U16_SORTED_SET ||                                                       \
+          field_e_type == FIELD_COLUMN_U32_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_U32_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_U32_SORTED_SET ||                                                       \
+          field_e_type == FIELD_COLUMN_U64_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_U64_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_U64_SORTED_SET))
+
+#define field_is_floating(field_e_type)                                                                                \
+        ((field_e_type == FIELD_NUMBER_FLOAT || field_e_type == FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||                \
+          field_e_type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||                                                \
+          field_e_type == FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET ||                                                   \
+          field_e_type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET))
+
+#define field_is_number(field_e_type)                                                                                  \
+        (field_is_integer(field_e_type) || field_is_floating(field_e_type))
+
+#define field_is_integer(field_e_type)                                                                                 \
+        (field_is_signed(field_e_type) || field_is_unsigned(field_e_type))
+
+#define field_is_binary(field_e_type)                                                                                  \
+        ((field_e_type == FIELD_BINARY || field_e_type == FIELD_BINARY_CUSTOM))
+
+#define field_is_boolean(field_e_type)                                                                                 \
+        ((field_e_type == FIELD_TRUE || field_e_type == FIELD_FALSE ||                                                 \
+          field_e_type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||                                                    \
+          field_e_type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET ||                                              \
+          field_e_type == FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET ||                                                 \
+          field_e_type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET))
+
+#define field_is_string(field_e_type)                                                                                  \
+        (field_e_type == FIELD_STRING)
+
+#define field_is_constant(field_e_type)                                                                                \
+        ((field_is_null(field_e_type) || field_is_boolean(field_e_type)))
+
+#define field_is_array_or_subtype(field_e_type)                                                                        \
+        ((field_e_type == FIELD_ARRAY_UNSORTED_MULTISET || field_e_type == FIELD_DERIVED_ARRAY_SORTED_MULTISET ||      \
+          field_e_type == FIELD_DERIVED_ARRAY_UNSORTED_SET || field_e_type == FIELD_DERIVED_ARRAY_SORTED_SET))
+
+#define field_is_column_u8_or_subtype(field_e_type)                                                                    \
+        ((field_e_type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||                                                         \
+          field_e_type == FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET ||                                                   \
+          field_e_type == FIELD_DERIVED_COLUMN_U8_UNSORTED_SET ||                                                      \
+          field_e_type == FIELD_DERIVED_COLUMN_U8_SORTED_SET))
+
+#define field_is_column_u16_or_subtype(field_e_type)                                                                   \
+        ((field_e_type == FIELD_COLUMN_U16_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_U16_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_U16_SORTED_SET))
+
+#define field_is_column_u32_or_subtype(field_e_type)                                                                   \
+        ((field_e_type == FIELD_COLUMN_U32_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_U32_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_U32_SORTED_SET))
+
+#define field_is_column_u64_or_subtype(field_e_type)                                                                   \
+        ((field_e_type == FIELD_COLUMN_U64_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_U64_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_U64_SORTED_SET))
+
+#define field_is_column_i8_or_subtype(field_e_type)                                                                    \
+        ((field_e_type == FIELD_COLUMN_I8_UNSORTED_MULTISET ||                                                         \
+          field_e_type == FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||                                                   \
+          field_e_type == FIELD_DERIVED_COLUMN_I8_UNSORTED_SET ||                                                      \
+          field_e_type == FIELD_DERIVED_COLUMN_I8_SORTED_SET))
+
+#define field_is_column_i16_or_subtype(field_e_type)                                                                   \
+        ((field_e_type == FIELD_COLUMN_I16_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_I16_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_I16_SORTED_SET))
+
+#define field_is_column_i32_or_subtype(field_e_type)                                                                   \
+        ((field_e_type == FIELD_COLUMN_I32_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_I32_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_I32_SORTED_SET))
+
+#define field_is_column_i64_or_subtype(field_e_type)                                                                   \
+        ((field_e_type == FIELD_COLUMN_I64_UNSORTED_MULTISET ||                                                        \
+          field_e_type == FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET ||                                                  \
+          field_e_type == FIELD_DERIVED_COLUMN_I64_UNSORTED_SET ||                                                     \
+          field_e_type == FIELD_DERIVED_COLUMN_I64_SORTED_SET))
+
+#define field_is_column_float_or_subtype(field_e_type)                                                                 \
+        ((field_e_type == FIELD_COLUMN_FLOAT_UNSORTED_MULTISET ||                                                      \
+          field_e_type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET ||                                                \
+          field_e_type == FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET ||                                                   \
+          field_e_type == FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET))
+
+#define field_is_column_bool_or_subtype(field_e_type)                                                                  \
+        ((field_e_type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET ||                                                    \
+          field_e_type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET ||                                              \
+          field_e_type == FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET ||                                                 \
+          field_e_type == FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET))
+
+#define field_is_list_or_subtype(field_e_type)                                                                         \
+        (field_is_array_or_subtype(field_e_type) || field_is_column_or_subtype(field_e_type))
+
+#define field_is_column_or_subtype(field_e_type)                                                                       \
+        (field_is_column_u8_or_subtype(field_e_type) ||                                                                \
+         field_is_column_u16_or_subtype(field_e_type) ||                                                               \
+         field_is_column_u32_or_subtype(field_e_type) ||                                                               \
+         field_is_column_u64_or_subtype(field_e_type) ||                                                               \
+         field_is_column_i8_or_subtype(field_e_type) ||                                                                \
+         field_is_column_i16_or_subtype(field_e_type) ||                                                               \
+         field_is_column_i32_or_subtype(field_e_type) ||                                                               \
+         field_is_column_i64_or_subtype(field_e_type) ||                                                               \
+         field_is_column_float_or_subtype(field_e_type) ||                                                             \
+         field_is_column_bool_or_subtype(field_e_type))
+
+#define field_is_object_or_subtype(field_e_type)                                                                       \
+        ((field_e_type == FIELD_OBJECT_UNSORTED_MULTIMAP || field_e_type == FIELD_DERIVED_OBJECT_SORTED_MULTIMAP ||    \
+          field_e_type == FIELD_DERIVED_OBJECT_UNSORTED_MAP ||                                                         \
+          field_e_type == FIELD_DERIVED_OBJECT_SORTED_MAP))
+
+#define field_is_null(field_e_type)                                                                                    \
+        (field_e_type == FIELD_NULL)
+
 #ifdef __cplusplus
 }
 #endif

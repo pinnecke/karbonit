@@ -164,9 +164,9 @@ bool revise_find_begin(find *out, const char *dot, rev *context)
         return status;
 }
 
-bool revise_find_end(find *find)
+void revise_find_end(find *find)
 {
-        return find_drop(find);
+        find_drop(find);
 }
 
 bool revise_remove_one(const char *dot, rec *rev_doc, rec *doc)

@@ -264,7 +264,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 revise_find_end(&find);
                 revise_end(&revise);
 
-                find_begin(&find, "x.0.y", &doc2);
+                find_begin_from_string(&find, "x.0.y", &doc2);
                 ASSERT_FALSE(find_array_is_multiset(&find));
                 ASSERT_TRUE(find_array_is_sorted(&find));
                 find_end(&find);
@@ -281,7 +281,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 revise_find_end(&find);
                 revise_end(&revise);
 
-                find_begin(&find, "x.0.y", &doc3);
+                find_begin_from_string(&find, "x.0.y", &doc3);
                 ASSERT_TRUE(find_array_is_multiset(&find));
                 ASSERT_TRUE(find_array_is_sorted(&find));
                 find_end(&find);
@@ -298,7 +298,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 revise_find_end(&find);
                 revise_end(&revise);
 
-                find_begin(&find, "x.0.y", &doc4);
+                find_begin_from_string(&find, "x.0.y", &doc4);
                 ASSERT_TRUE(find_array_is_multiset(&find));
                 ASSERT_FALSE(find_array_is_sorted(&find));
                 find_end(&find);
@@ -315,7 +315,7 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 revise_find_end(&find);
                 revise_end(&revise);
 
-                find_begin(&find, "x.0.y", &doc5);
+                find_begin_from_string(&find, "x.0.y", &doc5);
                 ASSERT_FALSE(find_array_is_multiset(&find));
                 ASSERT_FALSE(find_array_is_sorted(&find));
                 find_end(&find);

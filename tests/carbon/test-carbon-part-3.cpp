@@ -155,7 +155,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         i64 resulti64;
         float resultfloat;
 
-        find_begin(&find, "0", &rev_doc2);
+        find_begin_from_string(&find, "0", &rev_doc2);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
@@ -163,7 +163,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         find_end(&find);
         ASSERT_EQ(result, 1U);
 
-        find_begin(&find, "1", &rev_doc2);
+        find_begin_from_string(&find, "1", &rev_doc2);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_NUMBER_I64);
@@ -171,7 +171,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         find_end(&find);
         ASSERT_EQ(resulti64, 1024U);
 
-        find_begin(&find, "2", &rev_doc2);
+        find_begin_from_string(&find, "2", &rev_doc2);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_NUMBER_FLOAT);

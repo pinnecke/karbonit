@@ -903,7 +903,7 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
         value->object_id = prop_iter->object.object_id;
 
         MEMFILE_OPEN(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY);
-        if (!memfile_skip(&value->record_table_memfile, value->data_off)) {
+        if (!MEMFILE_SKIP(&value->record_table_memfile, value->data_off)) {
                 return error(ERR_MEMFILESKIP_FAILED, NULL);
         }
 

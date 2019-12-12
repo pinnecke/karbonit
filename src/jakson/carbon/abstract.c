@@ -331,7 +331,7 @@ void abstract_write_derived_type(memfile *memfile, derived_e type)
 
 bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)
 {
-        u8 marker = memfile_peek_byte(memfile);
+        u8 marker = MEMFILE_PEEK_BYTE(memfile);
         switch (marker) {
                 /** abstract types for object containers */
                 case UNSORTED_MULTIMAP:
@@ -740,7 +740,7 @@ bool abstract_derive_map_to(derived_e *concrete, map_type_e should)
 
 bool abstract_get_derived_type(derived_e *type, memfile *memfile)
 {
-        u8 c = memfile_peek_byte(memfile);
+        u8 c = MEMFILE_PEEK_BYTE(memfile);
         if (!(c == MUNSORTED_MULTIMAP || c == MSORTED_MULTIMAP || c == MUNSORTED_MAP ||
                        c == MSORTED_MAP || c == MUNSORTED_MULTISET_ARR ||
                        c == MSORTED_MULTISET_ARR || c == MUNSORTED_SET_ARR ||

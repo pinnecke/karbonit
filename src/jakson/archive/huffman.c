@@ -62,7 +62,7 @@ bool huffman_dump_dictionary(FILE *file, memfile *memfile)
         DECLARE_AND_INIT(offset_t, offset);
 
         while ((*MEMFILE_PEEK_TYPE(memfile, char)) == MARKER_SYMBOL_HUFFMAN_DIC_ENTRY) {
-                memfile_get_offset(&offset, memfile);
+                MEMFILE_GET_OFFSET(&offset, memfile);
                 coding_huffman_read_entry(&entry_info, memfile, MARKER_SYMBOL_HUFFMAN_DIC_ENTRY);
 
                 fprintf(file, "0x%04x ", (unsigned) offset);

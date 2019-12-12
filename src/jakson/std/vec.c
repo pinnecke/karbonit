@@ -29,15 +29,15 @@ void vector_##type##_printer_func(memfile *dst, void ofType(T) *values, size_t n
                                                                                                                        \
     data = memfile_current_pos(dst, sizeof(char));                                                              \
     int nchars = sprintf(data, "[");                                                                                   \
-    memfile_skip(dst, nchars);                                                                                  \
+    MEMFILE_SKIP(dst, nchars);                                                                                  \
     for (size_t i = 0; i < num_elems; i++) {                                                                           \
         data = memfile_current_pos(dst, sizeof(type));                                                          \
         nchars = sprintf(data, format_string"%s", (castType) typedValues[i], i + 1 < num_elems ? ", " : "");           \
-        memfile_skip(dst, nchars);                                                                              \
+        MEMFILE_SKIP(dst, nchars);                                                                              \
     }                                                                                                                  \
     data = memfile_current_pos(dst, sizeof(char));                                                              \
     nchars = sprintf(data, "]");                                                                                       \
-    memfile_skip(dst, nchars);                                                                                  \
+    MEMFILE_SKIP(dst, nchars);                                                                                  \
 }
 
 #define DEFINE_PRINTER_FUNCTION(type, format_string)                                                                   \

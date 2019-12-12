@@ -251,7 +251,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
 
-        if (memfile_remain_size(&it->file) < sizeof(u8)) {
+        if (MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8)) {
                 return error(ERR_CORRUPTED, NULL);
         }
 
@@ -261,7 +261,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
 
         __arr_it_load_abstract_type(it);
 
-        memfile_skip(&it->file, sizeof(u8));
+        MEMFILE_SKIP(&it->file, sizeof(u8));
 
         internal_field_create(&it->field);
 
@@ -323,7 +323,7 @@ void arr_it_drop(arr_it *it)
 
 bool arr_it_rewind(arr_it *it)
 {
-        error_if_and_return(it->begin >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
+        error_if_and_return(it->begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
         it->pos = (u64) -1;
         return MEMFILE_SEEK(&it->file, it->begin + sizeof(u8));
 }
@@ -331,9 +331,9 @@ bool arr_it_rewind(arr_it *it)
 static void auto_adjust_pos_after_mod(arr_it *it)
 {
         if (internal_field_object_it_opened(&it->field)) {
-                memfile_skip(&it->file, it->field.object->mod_size);
+                MEMFILE_SKIP(&it->file, it->field.object->mod_size);
         } else if (internal_field_array_opened(&it->field)) {
-                //memfile_skip(&it->mem, it->field.array->mod_size);
+                //MEMFILE_SKIP(&it->mem, it->field.array->mod_size);
                 //abort(); // TODO: implement!
         }
 }
@@ -381,7 +381,7 @@ static bool _internal_array_next(arr_it *it)
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
                         while (*MEMFILE_PEEK(&it->file, 1) == 0) {
-                                memfile_skip(&it->file, 1);
+                                MEMFILE_SKIP(&it->file, 1);
                         }
                 }
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
@@ -429,7 +429,7 @@ bool internal_arr_it_fast_forward(arr_it *it)
         while (arr_it_next(it)) {}
 
         assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
-        memfile_skip(&it->file, sizeof(char));
+        MEMFILE_SKIP(&it->file, sizeof(char));
         return true;
 }
 

@@ -36,7 +36,7 @@ bool commit_create(memfile *file)
 
 bool commit_skip(memfile *file)
 {
-        memfile_skip(file, sizeof(u64));
+        MEMFILE_SKIP(file, sizeof(u64));
         return true;
 }
 

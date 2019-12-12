@@ -93,9 +93,9 @@ bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_sym
 
                 /** block one is the block that holds the significant part of the prefix code */
                 offset_t offset_meta, offset_continue;
-                memfile_get_offset(&offset_meta, file);
+                MEMFILE_GET_OFFSET(&offset_meta, file);
                 /** this will be the number of bytes used to encode the significant part of the prefix code */
-                memfile_skip(file, sizeof(u8));
+                MEMFILE_SKIP(file, sizeof(u8));
 
                 memfile_begin_bit_mode(file);
                 bool first_bit_found = false;
@@ -111,7 +111,7 @@ bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_sym
                 }
                 size_t num_bytes_written;
                 memfile_end_bit_mode(&num_bytes_written, file);
-                memfile_get_offset(&offset_continue, file);
+                MEMFILE_GET_OFFSET(&offset_continue, file);
                 MEMFILE_SEEK(file, offset_meta);
                 u8 num_bytes_written_uint8 = (u8) num_bytes_written;
                 MEMFILE_WRITE(file, &num_bytes_written_uint8, sizeof(u8));
@@ -175,7 +175,7 @@ bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
         u32 num_bytes_encoded = 0;
 
         offset_t num_bytes_encoded_off = MEMFILE_TELL(file);
-        memfile_skip(file, sizeof(u32));
+        MEMFILE_SKIP(file, sizeof(u32));
 
         if ((num_bytes_encoded = (u32) encodeString(file, dic, string)) == 0) {
                 return false;
@@ -192,7 +192,7 @@ bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
 bool coding_huffman_read_string(pack_huffman_str_info *info, memfile *src)
 {
         info->nbytes_encoded = *MEMFILE_READ_TYPE(src, u32);
-        info->encoded_bytes = memfile_read(src, info->nbytes_encoded);
+        info->encoded_bytes = MEMFILE_READ(src, info->nbytes_encoded);
         return true;
 }
 
@@ -200,12 +200,12 @@ bool coding_huffman_read_entry(pack_huffman_info *info, memfile *file, char mark
 {
         char marker = *MEMFILE_PEEK_TYPE(file, char);
         if (marker == marker_symbol) {
-                memfile_skip(file, sizeof(char));
+                MEMFILE_SKIP(file, sizeof(char));
                 info->letter = *MEMFILE_READ_TYPE(file, unsigned char);
                 info->nbytes_prefix = *MEMFILE_READ_TYPE(file, u8);
                 info->prefix_code = MEMFILE_PEEK_TYPE(file, char);
 
-                memfile_skip(file, info->nbytes_prefix);
+                MEMFILE_SKIP(file, info->nbytes_prefix);
 
                 return true;
         } else {

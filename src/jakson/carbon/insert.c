@@ -487,11 +487,11 @@ bool insert_object_end(obj_state *state)
         while (obj_it_next(&scan)) {}
 
         assert(*MEMFILE_PEEK(&scan.file, sizeof(char)) == MOBJECT_END);
-        memfile_read(&scan.file, sizeof(char));
+        MEMFILE_READ(&scan.file, sizeof(char));
 
         state->end = MEMFILE_TELL(&scan.file);
 
-        memfile_skip(&scan.file, 1);
+        MEMFILE_SKIP(&scan.file, 1);
 
         MEMFILE_SEEK(&state->parent->file, MEMFILE_TELL(&scan.file) - 1);
         obj_it_drop(&scan);
@@ -554,7 +554,7 @@ bool insert_array_end(arr_state *state_in)
         internal_arr_it_fast_forward(&scan);
 
         state_in->end = MEMFILE_TELL(&scan.file);
-        memfile_skip(&scan.file, 1);
+        MEMFILE_SKIP(&scan.file, 1);
 
         MEMFILE_SEEK(&state_in->parent->file, MEMFILE_TELL(&scan.file) - 1);
         arr_it_drop(&scan);

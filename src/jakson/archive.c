@@ -54,9 +54,9 @@
 #define PRINT_SIMPLE_PROPS(file, memfile, offset, nesting_level, value_type, type_string, format_string)               \
 {                                                                                                                      \
     prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);             \
-    archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile, prop_header->num_entries *          \
+    archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop_header->num_entries *          \
                                    sizeof(archive_field_sid_t));                                                        \
-    value_type *values = (value_type *) memfile_read(memfile, prop_header->num_entries * sizeof(value_type));   \
+    value_type *values = (value_type *) MEMFILE_READ(memfile, prop_header->num_entries * sizeof(value_type));   \
     fprintf(file, "0x%04x ", (unsigned) offset);                                                                       \
     INTENT_LINE(nesting_level)                                                                                         \
     fprintf(file, "[marker: %c (" type_string ")] [num_entries: %d] [", entryMarker, prop_header->num_entries);        \
@@ -74,7 +74,7 @@
 {                                                                                                                      \
     prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);             \
                                                                                                                        \
-    archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile, prop_header->num_entries *          \
+    archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile, prop_header->num_entries *          \
                                         sizeof(archive_field_sid_t));                                                   \
     u32 *array_lengths;                                                                                           \
                                                                                                                        \
@@ -87,7 +87,7 @@
     }                                                                                                                  \
     fprintf(file, "] [");                                                                                              \
                                                                                                                        \
-    array_lengths = (u32 *) memfile_read(memfile, prop_header->num_entries * sizeof(u32));            \
+    array_lengths = (u32 *) MEMFILE_READ(memfile, prop_header->num_entries * sizeof(u32));            \
                                                                                                                        \
     for (u32 i = 0; i < prop_header->num_entries; i++) {                                                          \
         fprintf(file, "num_entries: %d%s", array_lengths[i], i + 1 < prop_header->num_entries ? ", " : "");            \
@@ -96,7 +96,7 @@
     fprintf(file, "] [");                                                                                              \
                                                                                                                        \
     for (u32 array_idx = 0; array_idx < prop_header->num_entries; array_idx++) {                                  \
-        type *values = (type *) memfile_read(memfile, array_lengths[array_idx] * sizeof(type));                 \
+        type *values = (type *) MEMFILE_READ(memfile, array_lengths[array_idx] * sizeof(type));                 \
         fprintf(file, "[");                                                                                            \
         for (u32 i = 0; i < array_lengths[array_idx]; i++) {                                                      \
             fprintf(file, "value: "format_string"%s", values[i], i + 1 < array_lengths[array_idx] ? ", " : "");        \
@@ -117,7 +117,7 @@
 #define PRINT_VALUE_ARRAY(type, memfile, header, format_string)                                                        \
 {                                                                                                                      \
     u32 num_elements = *MEMFILE_READ_TYPE(memfile, u32);                                              \
-    const type *values = (const type *) memfile_read(memfile, num_elements * sizeof(type));                     \
+    const type *values = (const type *) MEMFILE_READ(memfile, num_elements * sizeof(type));                     \
     fprintf(file, "0x%04x ", (unsigned) offset);                                                                       \
     INTENT_LINE(nesting_level);                                                                                        \
     fprintf(file, "   [num_elements: %d] [values: [", num_elements);                                                   \
@@ -394,7 +394,7 @@ bool archive_from_model(memblock **stream, column_doc *model, packer_e compresso
         update_record_header(&memfile, record_header_offset, model, record_size);
         OPTIONAL_CALL(callback, end_write_record_table);
 
-        memfile_shrink(&memfile);
+        MEMFILE_SHRINK(&memfile);
 
         if (bake_string_id_index) {
                 /** create str_buf id to offset index, and append it to the CARBON file */
@@ -443,7 +443,7 @@ bool archive_print(FILE *file, memblock *stream)
 {
         memfile memfile;
         MEMFILE_OPEN(&memfile, stream, READ_ONLY);
-        if (memfile_size(&memfile)
+        if (MEMFILE_SIZE(&memfile)
             < sizeof(archive_header) + sizeof(string_table_header) +
               sizeof(object_header)) {
                 error(ERR_NOCARBONSTREAM, NULL);
@@ -506,7 +506,7 @@ write_primitive_key_column(memfile *memfile, vec ofType(archive_field_sid_t) *ke
 static offset_t skip_var_value_offset_column(memfile *memfile, size_t num_keys)
 {
         offset_t result = MEMFILE_TELL(memfile);
-        memfile_skip(memfile, num_keys * sizeof(offset_t));
+        MEMFILE_SKIP(memfile, num_keys * sizeof(offset_t));
         return result;
 }
 
@@ -998,7 +998,7 @@ static bool write_column(memfile *memfile, column_doc_column *column,
 
         /** skip offset column to value entry points */
         offset_t value_entry_offsets = MEMFILE_TELL(memfile);
-        memfile_skip(memfile, column->values.num_elems * sizeof(offset_t));
+        MEMFILE_SKIP(memfile, column->values.num_elems * sizeof(offset_t));
 
         MEMFILE_WRITE(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
 
@@ -1036,7 +1036,7 @@ static bool write_object_array_props(memfile *memfile,
 
                 // skip offset column to column groups
                 offset_t column_offsets = MEMFILE_TELL(memfile);
-                memfile_skip(memfile, object_key_columns->num_elems * sizeof(offset_t));
+                MEMFILE_SKIP(memfile, object_key_columns->num_elems * sizeof(offset_t));
 
                 for (size_t i = 0; i < object_key_columns->num_elems; i++) {
                         column_doc_group *column_group = VECTOR_GET(object_key_columns, i,
@@ -1073,7 +1073,7 @@ static bool write_object_array_props(memfile *memfile,
                         MEMFILE_SEEK(memfile, continue_write);
 
                         offset_t offset_column_to_columns = continue_write;
-                        memfile_skip(memfile, column_group->columns.num_elems * sizeof(offset_t));
+                        MEMFILE_SKIP(memfile, column_group->columns.num_elems * sizeof(offset_t));
 
                         for (size_t k = 0; k < column_group->columns.num_elems; k++) {
                                 column_doc_column
@@ -1099,7 +1099,7 @@ static bool write_object_array_props(memfile *memfile,
 static offset_t skip_record_header(memfile *memfile)
 {
         offset_t offset = MEMFILE_TELL(memfile);
-        memfile_skip(memfile, sizeof(record_header));
+        MEMFILE_SKIP(memfile, sizeof(record_header));
         return offset;
 }
 
@@ -1111,7 +1111,7 @@ update_record_header(memfile *memfile, offset_t root_object_header_offset, colum
         record_header
                 header = {.marker = MARKER_SYMBOL_RECORD_HEADER, .flags = flags.value, .record_size = record_size};
         offset_t offset;
-        memfile_get_offset(&offset, memfile);
+        MEMFILE_GET_OFFSET(&offset, memfile);
         MEMFILE_SEEK(memfile, root_object_header_offset);
         MEMFILE_WRITE(memfile, &header, sizeof(record_header));
         MEMFILE_SEEK(memfile, offset);
@@ -1282,7 +1282,7 @@ static void prop_offsets_skip_write(memfile *memfile, const object_flags_u *flag
                 num_skip_offset_bytes++;
         }
 
-        memfile_skip(memfile, num_skip_offset_bytes * sizeof(offset_t));
+        MEMFILE_SKIP(memfile, num_skip_offset_bytes * sizeof(offset_t));
 }
 
 static bool __serialize(offset_t *offset, memfile *memfile,
@@ -1294,7 +1294,7 @@ static bool __serialize(offset_t *offset, memfile *memfile,
         get_flags(&flags, columndoc);
 
         offset_t header_offset = MEMFILE_TELL(memfile);
-        memfile_skip(memfile, sizeof(object_header));
+        MEMFILE_SKIP(memfile, sizeof(object_header));
 
         prop_offsets_skip_write(memfile, &flags);
         offset_t next_offset = MEMFILE_TELL(memfile);
@@ -1407,7 +1407,7 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
         SET_BITS(flags.value, flag_bit);
 
         offset_t header_pos = MEMFILE_TELL(memfile);
-        memfile_skip(memfile, sizeof(string_table_header));
+        MEMFILE_SKIP(memfile, sizeof(string_table_header));
 
         offset_t extra_begin_off = MEMFILE_TELL(memfile);
         pack_write_extra(&strategy, memfile, strings);
@@ -1426,7 +1426,7 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
                         .symbol, .next_entry_off = 0, .string_id = id, .string_len = strlen(string)};
 
                 offset_t header_pos_off = MEMFILE_TELL(memfile);
-                memfile_skip(memfile, sizeof(string_entry_header));
+                MEMFILE_SKIP(memfile, sizeof(string_entry_header));
 
                 if (!pack_encode(&strategy, memfile, string)) {
                         error_print(stderr);
@@ -1454,13 +1454,13 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
 
 static void skip_file_header(memfile *memfile)
 {
-        memfile_skip(memfile, sizeof(archive_header));
+        MEMFILE_SKIP(memfile, sizeof(archive_header));
 }
 
 static void update_file_header(memfile *memfile, offset_t record_header_offset)
 {
         offset_t current_pos;
-        memfile_get_offset(&current_pos, memfile);
+        MEMFILE_GET_OFFSET(&current_pos, memfile);
         MEMFILE_SEEK(memfile, 0);
         memcpy(&this_file_header.magic, CARBON_ARCHIVE_MAGIC, strlen(CARBON_ARCHIVE_MAGIC));
         this_file_header.root_object_header_offset = record_header_offset;
@@ -1473,7 +1473,7 @@ static bool
 print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
 {
         offset_t offset;
-        memfile_get_offset(&offset, memfile);
+        MEMFILE_GET_OFFSET(&offset, memfile);
         column_header *header = MEMFILE_READ_TYPE(memfile, column_header);
         if (header->marker != MARKER_SYMBOL_COLUMN) {
                 char buffer[256];
@@ -1500,7 +1500,7 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
                 fprintf(file, "offset: 0x%04x%s", (unsigned) entry_off, i + 1 < header->num_entries ? ", " : "");
         }
 
-        u32 *positions = (u32 *) memfile_read(memfile, header->num_entries * sizeof(u32));
+        u32 *positions = (u32 *) MEMFILE_READ(memfile, header->num_entries * sizeof(u32));
         fprintf(file, "] [positions: [");
         for (size_t i = 0; i < header->num_entries; i++) {
                 fprintf(file, "%d%s", positions[i], i + 1 < header->num_entries ? ", " : "");
@@ -1789,7 +1789,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         case MARKER_SYMBOL_PROP_NULL: {
                                 prop_header *prop_header = MEMFILE_READ_TYPE(memfile,
                                                                                                 struct prop_header);
-                                archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
+                                archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
                                 fprintf(file, "0x%04x ", offset);
@@ -1806,10 +1806,10 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_BOOLEAN: {
                                 prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);
-                                archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
+                                archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
-                                archive_field_boolean_t *values = (archive_field_boolean_t *) memfile_read(
+                                archive_field_boolean_t *values = (archive_field_boolean_t *) MEMFILE_READ(
                                         memfile,
                                         prop_header->num_entries *
                                         sizeof(archive_field_boolean_t));
@@ -1950,7 +1950,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         case MARKER_SYMBOL_PROP_NULL_ARRAY: {
                                 prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);
 
-                                archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
+                                archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
                                 u32 *nullArrayLengths;
@@ -1968,7 +1968,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 }
                                 fprintf(file, "] [");
 
-                                nullArrayLengths = (u32 *) memfile_read(memfile,
+                                nullArrayLengths = (u32 *) MEMFILE_READ(memfile,
                                                                                 prop_header->num_entries *
                                                                                 sizeof(u32));
 
@@ -1985,7 +1985,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         case MARKER_SYMBOL_PROP_BOOLEAN_ARRAY: {
                                 prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);
 
-                                archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
+                                archive_field_sid_t *keys = (archive_field_sid_t *) MEMFILE_READ(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
                                 u32 *array_lengths;
@@ -2003,7 +2003,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 }
                                 fprintf(file, "] [");
 
-                                array_lengths = (u32 *) memfile_read(memfile,
+                                array_lengths = (u32 *) MEMFILE_READ(memfile,
                                                                              prop_header->num_entries *
                                                                              sizeof(u32));
 
@@ -2017,7 +2017,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 fprintf(file, "] [");
 
                                 for (u32 array_idx = 0; array_idx < prop_header->num_entries; array_idx++) {
-                                        archive_field_boolean_t *values = (archive_field_boolean_t *) memfile_read(
+                                        archive_field_boolean_t *values = (archive_field_boolean_t *) MEMFILE_READ(
                                                 memfile,
                                                 array_lengths[array_idx] *
                                                 sizeof(archive_field_boolean_t));
@@ -2191,7 +2191,7 @@ static void print_record_header_from_memfile(FILE *file, memfile *memfile)
 static bool print_header_from_memfile(FILE *file, memfile *memfile)
 {
         unsigned offset = MEMFILE_TELL(memfile);
-        assert(memfile_size(memfile) > sizeof(archive_header));
+        assert(MEMFILE_SIZE(memfile) > sizeof(archive_header));
         archive_header *header = MEMFILE_READ_TYPE(memfile, archive_header);
         if (!is_valid_file(header)) {
                 return error(ERR_NOARCHIVEFILE, NULL);

@@ -315,7 +315,7 @@ bool carbon_field_skip_binary(memfile *file)
         u64 blob_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
         /** skip blob */
-        memfile_skip(file, blob_len);
+        MEMFILE_SKIP(file, blob_len);
         return true;
 }
 
@@ -326,11 +326,11 @@ bool carbon_field_skip_custom_binary(memfile *file)
         error_if_and_return(type_marker != FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
         /** read custom type str_buf length, and skip the type str_buf */
         u64 custom_type_str_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-        memfile_skip(file, custom_type_str_len);
+        MEMFILE_SKIP(file, custom_type_str_len);
 
         /** read blob length, and skip blob data */
         u64 blob_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-        memfile_skip(file, blob_len);
+        MEMFILE_SKIP(file, blob_len);
         return true;
 }
 
@@ -340,7 +340,7 @@ bool carbon_field_skip_string(memfile *file)
 
         error_if_and_return(type_marker != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         u64 strlen = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-        memfile_skip(file, strlen);
+        MEMFILE_SKIP(file, strlen);
         return true;
 }
 
@@ -349,7 +349,7 @@ bool carbon_field_skip_float(memfile *file)
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
         error_if_and_return(type_marker != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
-        memfile_skip(file, sizeof(float));
+        MEMFILE_SKIP(file, sizeof(float));
         return true;
 }
 
@@ -376,7 +376,7 @@ bool carbon_field_skip_8(memfile *file)
         error_if_and_return(type_marker != FIELD_NUMBER_I8 && type_marker != FIELD_NUMBER_U8,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u8) == sizeof(i8));
-        memfile_skip(file, sizeof(u8));
+        MEMFILE_SKIP(file, sizeof(u8));
         return true;
 }
 
@@ -387,7 +387,7 @@ bool carbon_field_skip_16(memfile *file)
         error_if_and_return(type_marker != FIELD_NUMBER_I16 && type_marker != FIELD_NUMBER_U16,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u16) == sizeof(i16));
-        memfile_skip(file, sizeof(u16));
+        MEMFILE_SKIP(file, sizeof(u16));
         return true;
 }
 
@@ -398,7 +398,7 @@ bool carbon_field_skip_32(memfile *file)
         error_if_and_return(type_marker != FIELD_NUMBER_I32 && type_marker != FIELD_NUMBER_U32,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u32) == sizeof(i32));
-        memfile_skip(file, sizeof(u32));
+        MEMFILE_SKIP(file, sizeof(u32));
         return true;
 }
 
@@ -409,7 +409,7 @@ bool carbon_field_skip_64(memfile *file)
         error_if_and_return(type_marker != FIELD_NUMBER_I64 && type_marker != FIELD_NUMBER_U64,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u64) == sizeof(i64));
-        memfile_skip(file, sizeof(u64));
+        MEMFILE_SKIP(file, sizeof(u64));
         return true;
 }
 

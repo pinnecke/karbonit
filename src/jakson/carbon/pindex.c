@@ -509,7 +509,7 @@ static void container_contents_flat(memfile *file, struct pindex_node *node)
                 signed_offset_t shift = MEMFILE_UPDATE_UINTVAR_STREAM(file, node_off);
                 position_off_latest = MEMFILE_TELL(file);
                 MEMFILE_RESTORE_POSITION(file);
-                memfile_seek_from_here(file, shift);
+                MEMFILE_SEEK_FROM_HERE(file, shift);
         }
 }
 
@@ -612,7 +612,7 @@ static void array_flat(memfile *file, struct pindex_node *node)
 MAYBE_UNUSED
 static void node_into_record(insert *ins, pindex *index)
 {
-        u8 next = memfile_peek_byte(&index->memfile);
+        u8 next = MEMFILE_PEEK_BYTE(&index->memfile);
         switch (next) {
                 case PATH_MARKER_PROP_NODE:
                         prop_into_record(ins, index);
@@ -629,7 +629,7 @@ static void node_into_record(insert *ins, pindex *index)
 
 static void node_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
-        u8 next = memfile_peek_byte(&index->memfile);
+        u8 next = MEMFILE_PEEK_BYTE(&index->memfile);
         intent_level++;
 
         switch (next) {
@@ -648,7 +648,7 @@ static void node_to_str(str_buf *str, pindex *index, unsigned intent_level)
 
 static u8 field_ref_into_record(insert *ins, pindex *index, bool is_root)
 {
-        u8 field_type = memfile_read_byte(&index->memfile);
+        u8 field_type = MEMFILE_READ_BYTE(&index->memfile);
 
         if (is_root) {
                 insert_prop_null(ins, "container");
@@ -679,7 +679,7 @@ static u8 field_ref_into_record(insert *ins, pindex *index, bool is_root)
 
 static u8 field_ref_to_str(str_buf *str, pindex *index)
 {
-        u8 field_type = memfile_read_byte(&index->memfile);
+        u8 field_type = MEMFILE_READ_BYTE(&index->memfile);
 
         str_buf_add_char(str, '[');
         str_buf_add_char(str, field_type);
@@ -701,7 +701,7 @@ static u8 field_ref_to_str(str_buf *str, pindex *index)
 static void column_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
         intent(str, intent_level);
-        u8 marker = memfile_read_byte(&index->memfile);
+        u8 marker = MEMFILE_READ_BYTE(&index->memfile);
         str_buf_add_char(str, '[');
         str_buf_add_char(str, marker);
         str_buf_add_char(str, ']');
@@ -935,7 +935,7 @@ static void prop_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
         intent(str, intent_level++);
 
-        u8 marker = memfile_read_byte(&index->memfile);
+        u8 marker = MEMFILE_READ_BYTE(&index->memfile);
         str_buf_add_char(str, '[');
         str_buf_add_char(str, marker);
         str_buf_add_char(str, ']');
@@ -992,7 +992,7 @@ array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level)
 {
         intent(str, intent_level++);
 
-        u8 marker = memfile_read_byte(&index->memfile);
+        u8 marker = MEMFILE_READ_BYTE(&index->memfile);
         str_buf_add_char(str, '[');
         str_buf_add_char(str, marker);
         str_buf_add_char(str, ']');
@@ -1059,7 +1059,7 @@ static void index_build(memfile *file, rec *doc)
         pindex_node_print_level(stdout, &root_array, 0); // TODO: Debug remove
 
         index_flat(file, &root_array);
-        memfile_shrink(file);
+        MEMFILE_SHRINK(file);
 
         /** cleanup */
         pindex_node_drop(&root_array);
@@ -1067,7 +1067,7 @@ static void index_build(memfile *file, rec *doc)
 
 static void record_ref_to_str(str_buf *str, pindex *index)
 {
-        u8 rec_key_type = memfile_read_byte(&index->memfile);
+        u8 rec_key_type = MEMFILE_READ_BYTE(&index->memfile);
         str_buf_add_char(str, '[');
         str_buf_add_char(str, rec_key_type);
         str_buf_add_char(str, ']');
@@ -1078,14 +1078,14 @@ static void record_ref_to_str(str_buf *str, pindex *index)
                         break;
                 case KEY_AUTOKEY:
                 case KEY_UKEY: {
-                        u64 key = memfile_read_u64(&index->memfile);
+                        u64 key = MEMFILE_READ_U64(&index->memfile);
                         str_buf_add_char(str, '[');
                         str_buf_add_u64(str, key);
                         str_buf_add_char(str, ']');
                 }
                         break;
                 case KEY_IKEY: {
-                        i64 key = memfile_read_i64(&index->memfile);
+                        i64 key = MEMFILE_READ_I64(&index->memfile);
                         str_buf_add_char(str, '[');;
                         str_buf_add_i64(str, key);
                         str_buf_add_char(str, ']');
@@ -1101,7 +1101,7 @@ static void record_ref_to_str(str_buf *str, pindex *index)
                         break;
                 default: error(ERR_INTERNALERR, NULL);
         }
-        u64 commit_hash = memfile_read_u64(&index->memfile);
+        u64 commit_hash = MEMFILE_READ_U64(&index->memfile);
         str_buf_add_char(str, '[');
         str_buf_add_u64(str, commit_hash);
         str_buf_add_char(str, ']');
@@ -1109,7 +1109,7 @@ static void record_ref_to_str(str_buf *str, pindex *index)
 
 static void record_ref_to_record(insert *roins, pindex *index)
 {
-        char rec_key_type = memfile_read_byte(&index->memfile);
+        char rec_key_type = MEMFILE_READ_BYTE(&index->memfile);
         insert_prop_string(roins, "key-type", key_type_str(rec_key_type));
 
         switch (rec_key_type) {
@@ -1118,12 +1118,12 @@ static void record_ref_to_record(insert *roins, pindex *index)
                         break;
                 case KEY_AUTOKEY:
                 case KEY_UKEY: {
-                        u64 key = memfile_read_u64(&index->memfile);
+                        u64 key = MEMFILE_READ_U64(&index->memfile);
                         insert_prop_unsigned(roins, "key-value", key);
                 }
                         break;
                 case KEY_IKEY: {
-                        i64 key = memfile_read_i64(&index->memfile);
+                        i64 key = MEMFILE_READ_I64(&index->memfile);
                         insert_prop_signed(roins, "key-value", key);
                 }
                         break;
@@ -1135,7 +1135,7 @@ static void record_ref_to_record(insert *roins, pindex *index)
                         break;
                 default: error(ERR_INTERNALERR, NULL);
         }
-        u64 commit_hash = memfile_read_u64(&index->memfile);
+        u64 commit_hash = MEMFILE_READ_U64(&index->memfile);
         str_buf str;
         str_buf_create(&str);
         commit_to_str(&str, commit_hash);

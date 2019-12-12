@@ -206,7 +206,7 @@ bool find_update_array_type(find *find, list_type_e derivation)
                 memfile mod;
                 arr_it *it = find_result_array(find);
                 MEMFILE_CLONE(&mod, &it->file);
-                memfile_seek_from_here(&mod, -sizeof(u8));
+                MEMFILE_SEEK_FROM_HERE(&mod, -sizeof(u8));
                 derived_e derive_marker;
                 abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
                 abstract_write_derived_type(&mod, derive_marker);

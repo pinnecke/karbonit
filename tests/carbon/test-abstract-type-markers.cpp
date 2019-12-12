@@ -21,7 +21,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
         /* object is base type */
         {
                 abstract_write_base_type(&memfile, CONTAINER_OBJECT);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -29,7 +29,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
         /* array is base type */
         {
                 abstract_write_base_type(&memfile, CONTAINER_ARRAY);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -37,52 +37,52 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
         /* column-... is base type */
         {
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U8);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U16);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U32);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U64);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I8);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I16);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I32);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I64);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_FLOAT);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_BOOLEAN);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -99,7 +99,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTIMAP is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTIMAP);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -107,7 +107,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_ARRAY is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_ARRAY);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -115,7 +115,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_U8 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U8);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -123,7 +123,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_U16 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U16);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -131,7 +131,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_U32 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U32);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -139,7 +139,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_U64 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U64);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -147,7 +147,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_I8 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I8);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -155,7 +155,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_I16 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I16);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -163,7 +163,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_I32 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I32);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -171,7 +171,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_I32 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I32);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -179,7 +179,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_I64 is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I64);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -187,7 +187,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_FLOAT is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_FLOAT);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -195,7 +195,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
         /* UNSORTED_MULTISET_COL_BOOLEAN is base type */
         {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_BOOLEAN);
-                memfile_seek_from_here(&memfile, -1);
+                MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 ASSERT_TRUE(abstract_type(&type, &memfile));
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
@@ -208,7 +208,7 @@ static void test_derived_is_base(memfile *memfile, derived_e type, bool is_base)
 {
         bool result;
         abstract_write_derived_type(memfile, type);
-        memfile_seek_from_here(memfile, -1);
+        MEMFILE_SEEK_FROM_HERE(memfile, -1);
         bool status = abstract_is_base(&result, memfile);
         ASSERT_EQ(status, true);
         ASSERT_EQ(result, is_base);
@@ -287,7 +287,7 @@ static void test_get_class_of_concrete_derived(memfile *file, derived_e concrete
 {
         abstract_type_class_e clazz;
         abstract_write_derived_type(file, concrete);
-        memfile_seek_from_here(file, -1);
+        MEMFILE_SEEK_FROM_HERE(file, -1);
         ASSERT_TRUE(abstract_get_class(&clazz, file));
         ASSERT_EQ(clazz, expected);
 }
@@ -365,7 +365,7 @@ static void test_get_container_for_derived_type(memfile *memfile, derived_e deri
 {
         sub_type_e sub_type;
         abstract_write_derived_type(memfile, derived);
-        memfile_seek_from_here(memfile, -1);
+        MEMFILE_SEEK_FROM_HERE(memfile, -1);
         ASSERT_TRUE(abstract_get_container_subtype(&sub_type, memfile));
         ASSERT_EQ(sub_type, expected);
 }

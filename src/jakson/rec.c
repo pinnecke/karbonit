@@ -306,7 +306,7 @@ bool rec_hexdump_print(FILE *file, rec *doc)
 {
         MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
-        bool status = hexdump_print(file, MEMFILE_PEEK(&doc->file, 1), memfile_size(&doc->file));
+        bool status = hexdump_print(file, MEMFILE_PEEK(&doc->file, 1), MEMFILE_SIZE(&doc->file));
         MEMFILE_RESTORE_POSITION(&doc->file);
         return status;
 }

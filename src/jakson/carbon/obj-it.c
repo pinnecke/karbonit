@@ -35,13 +35,13 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
 
-        error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
+        error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
 
         sub_type_e sub_type;
         abstract_get_container_subtype(&sub_type, &it->file);
         error_if_and_return(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
-        char marker = memfile_read_byte(&it->file);
+        char marker = MEMFILE_READ_BYTE(&it->file);
         it->type = (map_type_e) marker;
 
         it->content_begin += sizeof(u8);
@@ -88,7 +88,7 @@ bool obj_it_drop(obj_it *it)
 
 bool obj_it_rewind(obj_it *it)
 {
-        error_if_and_return(it->content_begin >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
+        error_if_and_return(it->content_begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
         internal_history_clear(&it->history);
         it->pos = 0;
         return MEMFILE_SEEK(&it->file, it->content_begin);
@@ -110,7 +110,7 @@ prop *obj_it_next(obj_it *it)
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
                         while (*MEMFILE_PEEK(&it->file, 1) == 0) {
-                                memfile_skip(&it->file, 1);
+                                MEMFILE_SKIP(&it->file, 1);
                         }
                 }
 
@@ -233,7 +233,7 @@ bool internal_obj_it_fast_forward(obj_it *it)
         while (obj_it_next(it)) {}
 
         assert(*MEMFILE_PEEK(&it->file, sizeof(u8)) == MOBJECT_END);
-        memfile_skip(&it->file, sizeof(u8));
+        MEMFILE_SKIP(&it->file, sizeof(u8));
         return true;
 }
 

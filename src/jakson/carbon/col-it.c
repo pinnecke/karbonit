@@ -34,7 +34,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, begin);
 
-        error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
+        error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
 
         if (!abstract_is_instanceof_column(&it->file)) {
             return error(ERR_ILLEGALOP, "column begin marker or sub type expected");
@@ -44,7 +44,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         abstract_get_class(&type_class, &it->file);
         abstract_class_to_list_derivable(&it->list_type, type_class);
 
-        u8 marker = *memfile_read(&it->file, sizeof(u8));
+        u8 marker = *MEMFILE_READ(&it->file, sizeof(u8));
 
         field_e type = (field_e) marker;
         it->field_type = type;
@@ -348,7 +348,7 @@ bool col_it_remove(col_it *it, u32 pos)
         it->num = num_elems;
 
         MEMFILE_RESTORE_POSITION(&it->file);
-        memfile_seek_from_here(&it->file, shift);
+        MEMFILE_SEEK_FROM_HERE(&it->file, shift);
 
         return true;
 }
@@ -541,7 +541,7 @@ static bool rewrite_column_to_array(col_it *it)
         insert array_ins;
 
         MEMFILE_SAVE_POSITION(&it->file);
-        assert(field_is_column_or_subtype(memfile_peek_byte(&it->file)));
+        assert(field_is_column_or_subtype(MEMFILE_PEEK_BYTE(&it->file)));
 
         abstract_get_class(&type_class, &it->file);
         abstract_class_to_list_derivable(&list_type, type_class);
@@ -830,7 +830,7 @@ bool col_it_update_set_float(col_it *it, u32 pos, float value)
 bool col_it_rewind(col_it *it)
 {
         offset_t playload_start = internal_column_get_payload_off(it);
-        error_if_and_return(playload_start >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
+        error_if_and_return(playload_start >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
         return MEMFILE_SEEK(&it->file, playload_start);
 }
 

@@ -133,7 +133,7 @@ void revise_set_list_type(rev *context, list_type_e derivation)
         arr_it it;
         revise_iterator_open(&it, context);
 
-        memfile_seek_from_here(&it.file, -sizeof(u8));
+        MEMFILE_SEEK_FROM_HERE(&it.file, -sizeof(u8));
         derived_e derive_marker;
         abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
         abstract_write_derived_type(&it.file, derive_marker);
@@ -228,11 +228,11 @@ bool revise_shrink(rev *context)
         arr_it it;
         revise_iterator_open(&it, context);
         internal_arr_it_fast_forward(&it);
-        if (memfile_remain_size(&it.file) > 0) {
+        if (MEMFILE_REMAIN_SIZE(&it.file) > 0) {
                 offset_t first_empty_slot = MEMFILE_TELL(&it.file);
-                assert(memfile_size(&it.file) > first_empty_slot);
-                offset_t shrink_size = memfile_size(&it.file) - first_empty_slot;
-                memfile_cut(&it.file, shrink_size);
+                assert(MEMFILE_SIZE(&it.file) > first_empty_slot);
+                offset_t shrink_size = MEMFILE_SIZE(&it.file) - first_empty_slot;
+                MEMFILE_CUT(&it.file, shrink_size);
         }
 
         offset_t size;
@@ -270,7 +270,7 @@ static bool internal_pack_array(arr_it *it)
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
                         offset_t first_empty_slot_offset = MEMFILE_TELL(&this_array.file);
                         char final;
-                        while ((final = *memfile_read(&this_array.file, sizeof(char))) == 0) {}
+                        while ((final = *MEMFILE_READ(&this_array.file, sizeof(char))) == 0) {}
                         assert(final == MARRAY_END);
                         offset_t last_empty_slot_offset = MEMFILE_TELL(&this_array.file) - sizeof(char);
                         MEMFILE_SEEK(&this_array.file, first_empty_slot_offset);
@@ -279,7 +279,7 @@ static bool internal_pack_array(arr_it *it)
                         memfile_inplace_remove(&this_array.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
-                        final = *memfile_read(&this_array.file, sizeof(char));
+                        final = *MEMFILE_READ(&this_array.file, sizeof(char));
                         assert(final == MARRAY_END);
                 }
 
@@ -319,7 +319,7 @@ static bool internal_pack_array(arr_it *it)
                                         internal_pack_array(&array);
                                         assert(*MEMFILE_PEEK(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
-                                        memfile_skip(&array.file, sizeof(char));
+                                        MEMFILE_SKIP(&array.file, sizeof(char));
                                         MEMFILE_SEEK(&it->file, MEMFILE_TELL(&array.file));
                                         arr_it_drop(&array);
                                 }
@@ -380,7 +380,7 @@ static bool internal_pack_array(arr_it *it)
                                         internal_pack_object(&object);
                                         assert(*MEMFILE_PEEK(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
-                                        memfile_skip(&object.file, sizeof(char));
+                                        MEMFILE_SKIP(&object.file, sizeof(char));
                                         MEMFILE_SEEK(&it->file, MEMFILE_TELL(&object.file));
                                         obj_it_drop(&object);
                                 }
@@ -413,7 +413,7 @@ static bool internal_pack_object(obj_it *it)
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
                         offset_t first_empty_slot_offset = MEMFILE_TELL(&this_object_it.file);
                         char final;
-                        while ((final = *memfile_read(&this_object_it.file, sizeof(char))) == 0) {}
+                        while ((final = *MEMFILE_READ(&this_object_it.file, sizeof(char))) == 0) {}
                         assert(final == MOBJECT_END);
                         offset_t last_empty_slot_offset = MEMFILE_TELL(&this_object_it.file) - sizeof(char);
                         MEMFILE_SEEK(&this_object_it.file, first_empty_slot_offset);
@@ -422,7 +422,7 @@ static bool internal_pack_object(obj_it *it)
                         memfile_inplace_remove(&this_object_it.file,
                                                last_empty_slot_offset - first_empty_slot_offset);
 
-                        final = *memfile_read(&this_object_it.file, sizeof(char));
+                        final = *MEMFILE_READ(&this_object_it.file, sizeof(char));
                         assert(final == MOBJECT_END);
                 }
 
@@ -462,7 +462,7 @@ static bool internal_pack_object(obj_it *it)
                                         internal_pack_array(&array);
                                         assert(*MEMFILE_PEEK(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
-                                        memfile_skip(&array.file, sizeof(char));
+                                        MEMFILE_SKIP(&array.file, sizeof(char));
                                         MEMFILE_SEEK(&it->file, MEMFILE_TELL(&array.file));
                                         arr_it_drop(&array);
                                 }
@@ -523,7 +523,7 @@ static bool internal_pack_object(obj_it *it)
                                         internal_pack_object(&object);
                                         assert(*MEMFILE_PEEK(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
-                                        memfile_skip(&object.file, sizeof(char));
+                                        MEMFILE_SKIP(&object.file, sizeof(char));
                                         MEMFILE_SEEK(&it->file, MEMFILE_TELL(&object.file));
                                         obj_it_drop(&object);
                                 }
@@ -547,7 +547,7 @@ static bool internal_pack_column(col_it *it)
         offset_t payload_start = internal_column_get_payload_off(it);
         u64 payload_size = it->num * internal_get_type_value_size(it->field_type);
         MEMFILE_SEEK(&it->file, payload_start);
-        memfile_skip(&it->file, payload_size);
+        MEMFILE_SKIP(&it->file, payload_size);
 
         if (free_space > 0) {
                 memfile_inplace_remove(&it->file, free_space);
@@ -557,7 +557,7 @@ static bool internal_pack_column(col_it *it)
                 MEMFILE_UPDATE_UINTVAR_STREAM(&it->file,
                                               it->num); // update capacity counter to num elems
 
-                memfile_skip(&it->file, payload_size);
+                MEMFILE_SKIP(&it->file, payload_size);
 
                 return true;
         } else {

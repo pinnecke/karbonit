@@ -214,7 +214,7 @@ bool internal_object_it_prop_key_access(obj_it *it)
         it->field.key.start = MEMFILE_TELL(&it->file);
         it->field.key.name_len = MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
         it->field.key.name = MEMFILE_PEEK(&it->file, it->field.key.name_len);
-        memfile_skip(&it->file, it->field.key.name_len);
+        MEMFILE_SKIP(&it->file, it->field.key.name_len);
         it->field.value.start = MEMFILE_TELL(&it->file);
         it->field.value.data.type = *MEMFILE_PEEK_TYPE(&it->file, u8);
 
@@ -230,7 +230,7 @@ bool internal_object_it_prop_value_skip(obj_it *it)
 bool internal_object_it_prop_skip(obj_it *it)
 {
         it->field.key.name_len = MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
-        memfile_skip(&it->file, it->field.key.name_len);
+        MEMFILE_SKIP(&it->file, it->field.key.name_len);
         return carbon_field_skip(&it->file);
 }
 
@@ -260,10 +260,10 @@ bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 
 bool internal_array_field_read(arr_it *it)
 {
-        error_if_and_return(memfile_remain_size(&it->file) < 1, ERR_ILLEGALOP, NULL);
+        error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < 1, ERR_ILLEGALOP, NULL);
         MEMFILE_SAVE_POSITION(&it->file);
         it->field_offset = MEMFILE_TELL(&it->file);
-        u8 media_type = *memfile_read(&it->file, 1);
+        u8 media_type = *MEMFILE_READ(&it->file, 1);
         error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
         error_if_and_return(media_type == MARRAY_END, ERR_OUTOFBOUNDS, NULL)
         it->field.type = media_type;
@@ -274,7 +274,7 @@ bool internal_array_field_read(arr_it *it)
 bool internal_field_data_access(memfile *file, field *field)
 {
         MEMFILE_SAVE_POSITION(file);
-        memfile_skip(file, sizeof(media_type));
+        MEMFILE_SKIP(file, sizeof(media_type));
 
         switch (field->type) {
                 case FIELD_NULL:
@@ -295,7 +295,7 @@ bool internal_field_data_access(memfile *file, field *field)
                         uintvar_stream_t len = (uintvar_stream_t) MEMFILE_PEEK(file, 1);
                         field->len = uintvar_stream_read(&nbytes, len);
 
-                        memfile_skip(file, nbytes);
+                        MEMFILE_SKIP(file, nbytes);
                 }
                         break;
                 case FIELD_BINARY: {
@@ -314,7 +314,7 @@ bool internal_field_data_access(memfile *file, field *field)
                 case FIELD_BINARY_CUSTOM: {
                         /** read mime type str_buf */
                         field->mime_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-                        field->mime = memfile_read(file, field->mime_len);
+                        field->mime = MEMFILE_READ(file, field->mime_len);
 
                         /** read blob length */
                         field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
@@ -875,7 +875,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
 {
         assert((field_e) *MEMFILE_PEEK(memfile, sizeof(u8)) == type);
         offset_t start_off = MEMFILE_TELL(memfile);
-        memfile_skip(memfile, sizeof(u8));
+        MEMFILE_SKIP(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
         switch (type) {
                 case FIELD_NULL:
@@ -933,7 +933,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
 
                         /** get bytes for custom type str_buf len, and the actual length */
                         custom_type_strlen = MEMFILE_READ_UINTVAR_STREAM(&custom_type_strlen_nbytes, memfile);
-                        memfile_skip(memfile, custom_type_strlen);
+                        MEMFILE_SKIP(memfile, custom_type_strlen);
 
                         /** get bytes used for blob length info */
                         blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);

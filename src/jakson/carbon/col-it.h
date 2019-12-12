@@ -57,7 +57,7 @@ offset_t col_it_tell(col_it *it, u32 elem_idx);
                 u32 *ptr_nvalues = (_nvalues_u32_ptr_); UNUSED(ptr_nvalues);                                                                          \
                 OPTIONAL_SET(ptr_type, it_ptr->field_type);                                                                    \
                 OPTIONAL_SET(ptr_nvalues, num_elements);                                                                       \
-                u32 skip = cap_elements * internal_get_type_value_size(it_ptr->field_type);                                    \
+                u32 skip = cap_elements * INTERNAL_GET_TYPE_VALUE_SIZE(it_ptr->field_type);                                    \
                 MEMFILE_SEEK(&it_ptr->file, payload_start + skip);                                                             \
         }                                                                                                                       \
         col_it_values_result;                                                                                                        \

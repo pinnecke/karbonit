@@ -101,7 +101,7 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
                 MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
                 offset_t payload_start = MEMFILE_TELL(&it->file);
                 error_if_and_return(elem_idx >= num_elements, ERR_OUTOFBOUNDS, NULL);
-                offset_t ret = payload_start + elem_idx * internal_get_type_value_size(it->field_type);
+                offset_t ret = payload_start + elem_idx * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type);
                 MEMFILE_RESTORE_POSITION(&it->file);
                 return ret;
         } else {
@@ -381,7 +381,7 @@ bool col_it_remove(col_it *it, u32 pos)
         offset_t payload_start = internal_column_get_payload_off(it);
 
         /** remove element */
-        size_t elem_size = internal_get_type_value_size(it->field_type);
+        size_t elem_size = INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type);
         MEMFILE_SEEK(&it->file, payload_start + pos * elem_size);
         MEMFILE_INPLACE_REMOVE(&it->file, elem_size);
 
@@ -444,7 +444,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
         MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
-        MEMFILE_SEEK(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
+        MEMFILE_SEEK(&it->file, payload_start + pos * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type));
 
         switch (it->field_type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
@@ -600,7 +600,7 @@ static bool rewrite_column_to_array(col_it *it)
         MEMFILE_SEEK_TO_END(&it->file);
         offset_t array_marker_begin = MEMFILE_TELL(&it->file);
 
-        size_t capacity = it->num * internal_get_type_value_size(it->field_type);
+        size_t capacity = it->num * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type);
         internal_insert_array(&it->file, list_type, capacity);
         internal_arr_it_create(&array, &it->file, array_marker_begin);
         arr_it_insert_begin(&array_ins, &array);
@@ -666,7 +666,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
         MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
-        MEMFILE_SEEK(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
+        MEMFILE_SEEK(&it->file, payload_start + pos * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type));
 
         switch (it->field_type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:

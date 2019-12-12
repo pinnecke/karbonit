@@ -101,7 +101,7 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
 
         offset_t payload_begin = MEMFILE_TELL(memfile_in);
 
-        size_t type_size = internal_get_type_value_size(column_type);
+        size_t type_size = INTERNAL_GET_TYPE_VALUE_SIZE(column_type);
 
         size_t nbytes = capactity * type_size;
         MEMFILE_ENSURE_SPACE(memfile_in, nbytes + sizeof(u8) + 2 * sizeof(u32));
@@ -110,72 +110,6 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         MEMFILE_SEEK(memfile_in, payload_begin);
 
         return true;
-}
-
-size_t internal_get_type_value_size(field_e type)
-{
-        switch (type) {
-                case FIELD_NULL:
-                case FIELD_TRUE:
-                case FIELD_FALSE:
-                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        return sizeof(media_type); /** these constant values are determined by their media type markers */
-                case FIELD_NUMBER_U8:
-                case FIELD_NUMBER_I8:
-                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        return sizeof(u8);
-                case FIELD_NUMBER_U16:
-                case FIELD_NUMBER_I16:
-                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        return sizeof(u16);
-                case FIELD_NUMBER_U32:
-                case FIELD_NUMBER_I32:
-                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        return sizeof(u32);
-                case FIELD_NUMBER_U64:
-                case FIELD_NUMBER_I64:
-                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        return sizeof(u64);
-                case FIELD_NUMBER_FLOAT:
-                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        return sizeof(float);
-                default: error(ERR_INTERNALERR, NULL);
-                        return 0;
-        }
 }
 
 bool internal_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it)
@@ -1136,7 +1070,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
 ({                                                                                                                     \
         col_state state;                                                                       \
         u64 approx_cap_nbytes = elem->value.value.array->elements.elements.num_elems *                                 \
-                                internal_get_type_value_size(field_type);                                            \
+                                INTERNAL_GET_TYPE_VALUE_SIZE(field_type);                                            \
         insert *cins = insert_column_begin(&state, ins,                                           \
                                                                 column_type, approx_cap_nbytes);                       \
         for (u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
@@ -1155,7 +1089,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
 ({                                                                                                                     \
         col_state state;                                                                       \
         u64 approx_cap_nbytes = prop->value.value.value.array->elements.elements.num_elems *                                 \
-                                internal_get_type_value_size(field_type);                                            \
+                                INTERNAL_GET_TYPE_VALUE_SIZE(field_type);                                            \
         insert *cins = insert_prop_column_begin(&state, ins, key,                                          \
                                                                 column_type, approx_cap_nbytes);                       \
         for (u32 k = 0; k < prop->value.value.value.array->elements.elements.num_elems; k++) {                               \

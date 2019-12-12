@@ -543,9 +543,9 @@ static bool internal_pack_column(col_it *it)
 {
         assert(it);
 
-        u32 free_space = (it->cap - it->num) * internal_get_type_value_size(it->field_type);
+        u32 free_space = (it->cap - it->num) * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type);
         offset_t payload_start = internal_column_get_payload_off(it);
-        u64 payload_size = it->num * internal_get_type_value_size(it->field_type);
+        u64 payload_size = it->num * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type);
         MEMFILE_SEEK(&it->file, payload_start);
         MEMFILE_SKIP(&it->file, payload_size);
 

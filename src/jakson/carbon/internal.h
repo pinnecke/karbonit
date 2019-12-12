@@ -103,7 +103,81 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
 /**
  * Returns the number of bytes required to store a field value of a particular type exclusing its type marker.
  */
-size_t internal_get_type_value_size(field_e type);
+#define INTERNAL_GET_TYPE_VALUE_SIZE(field_e)                                                                          \
+({                                                                         \
+        size_t internal_get_type_value_size_result = 0;                                                                         \
+        switch (field_e) {                                                                         \
+                case FIELD_NULL:                                                                         \
+                case FIELD_TRUE:                                                                         \
+                case FIELD_FALSE:                                                                         \
+                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:                                                                         \
+                        /** these constant values are determined by their media type markers */                                                                         \
+                        internal_get_type_value_size_result = sizeof(u8);                                                                         \
+                        break;                                                                         \
+                case FIELD_NUMBER_U8:                                                                         \
+                case FIELD_NUMBER_I8:                                                                         \
+                case FIELD_COLUMN_U8_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:                                                                         \
+                case FIELD_COLUMN_I8_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:                                                                         \
+                        internal_get_type_value_size_result = sizeof(u8);                                                                         \
+                        break;                                                                         \
+                case FIELD_NUMBER_U16:                                                                         \
+                case FIELD_NUMBER_I16:                                                                         \
+                case FIELD_COLUMN_U16_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:                                                                         \
+                case FIELD_COLUMN_I16_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:                                                                         \
+                        internal_get_type_value_size_result = sizeof(u16);                                                                         \
+                        break;                                                                         \
+                case FIELD_NUMBER_U32:                                                                         \
+                case FIELD_NUMBER_I32:                                                                         \
+                case FIELD_COLUMN_U32_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:                                                                         \
+                case FIELD_COLUMN_I32_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:                                                                         \
+                        internal_get_type_value_size_result = sizeof(u32);                                                                         \
+                        break;                                                                         \
+                case FIELD_NUMBER_U64:                                                                         \
+                case FIELD_NUMBER_I64:                                                                         \
+                case FIELD_COLUMN_U64_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:                                                                         \
+                case FIELD_COLUMN_I64_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:                                                                         \
+                        internal_get_type_value_size_result = sizeof(u64);                                                                         \
+                        break;                                                                         \
+                case FIELD_NUMBER_FLOAT:                                                                         \
+                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:                                                                         \
+                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:                                                                         \
+                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:                                                                         \
+                        internal_get_type_value_size_result = sizeof(float);                                                                         \
+                        break;                                                                         \
+                default:                                                                         \
+                        error(ERR_INTERNALERR, NULL);                                                                         \
+                        break;                                                                         \
+        }                                                                         \
+        internal_get_type_value_size_result;                                                                         \
+})
 
 bool internal_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it);
 bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it);

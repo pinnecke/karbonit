@@ -933,7 +933,7 @@ static bool push_in_column(insert *in, const void *base, field_e type)
 {
         assert(in->context_type == COLUMN);
 
-        size_t type_size = internal_get_type_value_size(type);
+        size_t type_size = INTERNAL_GET_TYPE_VALUE_SIZE(type);
 
         MEMFILE_SAVE_POSITION(&in->file);
 

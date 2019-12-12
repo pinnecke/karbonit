@@ -47,34 +47,34 @@ void revise_begin(rev *context, rec *revised, rec *original)
 static void key_unsigned_set(rec *doc, u64 key)
 {
         assert(doc);
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
 
         key_write_unsigned(&doc->file, key);
 
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
 }
 
 static void key_signed_set(rec *doc, i64 key)
 {
         assert(doc);
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
 
         key_write_signed(&doc->file, key);
 
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
 }
 
 static void key_string_set(rec *doc, const char *key)
 {
         assert(doc);
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
 
         key_update_string(&doc->file, key);
 
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
 }
 
 bool revise_key_generate(unique_id_t *out, rev *context)
@@ -553,7 +553,7 @@ static bool internal_pack_column(col_it *it)
                 memfile_inplace_remove(&it->file, free_space);
 
                 MEMFILE_SEEK(&it->file, it->header_begin);
-                memfile_skip_uintvar_stream(&it->file); // skip num of elements counter
+                MEMFILE_SKIP_UINTVAR_STREAM(&it->file); // skip num of elements counter
                 memfile_update_uintvar_stream(&it->file,
                                               it->num); // update capacity counter to num elems
 
@@ -576,7 +576,7 @@ static bool carbon_header_rev_inc(rec *doc)
         assert(doc);
 
         key_e rec_key_type;
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
         key_read(NULL, &rec_key_type, &doc->file);
         if (rec_has_key(rec_key_type)) {
@@ -584,7 +584,7 @@ static bool carbon_header_rev_inc(rec *doc)
                 const void *raw_data = rec_raw_data(&raw_data_len, doc);
                 commit_update(&doc->file, raw_data, raw_data_len);
         }
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
 
         return true;
 }

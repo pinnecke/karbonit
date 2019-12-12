@@ -247,7 +247,7 @@ bool find_update_column_type(find *find, list_type_e derivation)
         find_result_type(&type, find);
         if (field_is_column_or_subtype(type)) {
                 col_it *it = find_result_column(find);
-                memfile_save_position(&it->file);
+                MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->begin);
 
                 derived_e derive_marker;
@@ -256,7 +256,7 @@ bool find_update_column_type(find *find, list_type_e derivation)
                 abstract_derive_list_to(&derive_marker, list_container, derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 
-                memfile_restore_position(&it->file);
+                MEMFILE_RESTORE_POSITION(&it->file);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, "find: column type update must be invoked on column or sub type");
@@ -293,14 +293,14 @@ bool find_update_object_type(find *find, map_type_e derivation)
         find_result_type(&type, find);
         if (field_is_object_or_subtype(type)) {
                 obj_it *it = find_result_object(find);
-                memfile_save_position(&it->file);
+                MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->begin);
 
                 derived_e derive_marker;
                 abstract_derive_map_to(&derive_marker, derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 
-                memfile_restore_position(&it->file);
+                MEMFILE_RESTORE_POSITION(&it->file);
                 return true;
 
         } else {

@@ -32,10 +32,10 @@ bool internal_prop_create(prop *dst, obj_it *parent)
 
 u64 internal_prop_size(memfile *file)
 {
-        offset_t prop_start = memfile_save_position(file);
+        offset_t prop_start = MEMFILE_SAVE_POSITION(file);
         string_field_nomarker_skip(file);
         carbon_field_skip(file);
         offset_t prop_end = MEMFILE_TELL(file);
-        memfile_restore_position(file);
+        MEMFILE_RESTORE_POSITION(file);
         return prop_end - prop_start;
 }

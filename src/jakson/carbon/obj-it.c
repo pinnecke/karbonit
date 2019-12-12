@@ -207,14 +207,14 @@ bool obj_it_is_sorted(obj_it *it)
 
 void obj_it_update_type(obj_it *it, map_type_e derivation)
 {
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
         MEMFILE_SEEK(&it->file, it->begin);
 
         derived_e derive_marker;
         abstract_derive_map_to(&derive_marker, derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
 }
 
 bool internal_obj_it_insert_begin(insert *in, obj_it *it)

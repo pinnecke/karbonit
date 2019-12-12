@@ -200,12 +200,12 @@ static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsign
 static const void *
 record_ref_read(key_e *rec_key_type, u64 *key_length, u64 *commit_hash, memfile *memfile)
 {
-        memfile_save_position(memfile);
+        MEMFILE_SAVE_POSITION(memfile);
         MEMFILE_SEEK(memfile, 0);
         const void *ret = key_read(key_length, rec_key_type, memfile);
         u64 *hash = MEMFILE_READ_TYPE(memfile, u64);
         OPTIONAL_SET(commit_hash, *hash);
-        memfile_restore_position(memfile);
+        MEMFILE_RESTORE_POSITION(memfile);
         return ret;
 }
 
@@ -504,11 +504,11 @@ static void container_contents_flat(memfile *file, struct pindex_node *node)
                 offset_t node_off = MEMFILE_TELL(file);
                 struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
                 node_flat(file, sub);
-                memfile_save_position(file);
+                MEMFILE_SAVE_POSITION(file);
                 MEMFILE_SEEK(file, position_off_latest);
                 signed_offset_t shift = memfile_update_uintvar_stream(file, node_off);
                 position_off_latest = MEMFILE_TELL(file);
-                memfile_restore_position(file);
+                MEMFILE_RESTORE_POSITION(file);
                 memfile_seek_from_here(file, shift);
         }
 }
@@ -1331,10 +1331,10 @@ bool pindex_print(FILE *file, pindex *index)
 {
         str_buf str;
         str_buf_create(&str);
-        memfile_save_position(&index->memfile);
+        MEMFILE_SAVE_POSITION(&index->memfile);
         memfile_seek_to_start(&index->memfile);
         fprintf(file, "%s", pindex_to_str(&str, index));
-        memfile_restore_position(&index->memfile);
+        MEMFILE_RESTORE_POSITION(&index->memfile);
         str_buf_drop(&str);
         return true;
 }

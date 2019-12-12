@@ -36,11 +36,11 @@ bool internal_arr_it_update_##type_name(arr_it *it, type_name value)            
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
         if (likely(it->field.type == field_type)) {                                                    \
-                memfile_save_position(&it->file);                                                                   \
+                MEMFILE_SAVE_POSITION(&it->file);                                                                   \
                 internal_arr_it_offset(&datum, it);                                                                 \
                 MEMFILE_SEEK(&it->file, datum + sizeof(u8));                                                        \
                 MEMFILE_WRITE(&it->file, &value, sizeof(type_name));                                                \
-                memfile_restore_position(&it->file);                                                                \
+                MEMFILE_RESTORE_POSITION(&it->file);                                                                \
                 return true;                                                                                           \
         } else {                                                                                                       \
                 error(ERR_TYPEMISMATCH, NULL);                                                                 \
@@ -68,7 +68,7 @@ DEFINE_IN_PLACE_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT)
 
 static bool update_in_place_constant(arr_it *it, constant_e constant)
 {
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
 
         if (field_is_constant(it->field.type)) {
                 u8 value;
@@ -111,7 +111,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
                 arr_it_insert_end(&ins);
         }
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
         return true;
 }
 
@@ -482,14 +482,14 @@ bool arr_it_is_sorted(arr_it *it)
 
 void arr_it_update_type(arr_it *it, list_type_e derivation)
 {
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
         MEMFILE_SEEK(&it->file, it->begin);
 
         derived_e derive_marker;
         abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
 }
 
 bool arr_it_field_type(field_e *type, arr_it *it)

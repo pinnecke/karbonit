@@ -417,7 +417,7 @@ static void _insert_binary(insert *in, const void *value, size_t nbytes,
                 memfile_write_uintvar_stream(NULL, &in->file, user_type_strlen);
 
                 /** write 'user_type' str_buf */
-                memfile_ensure_space(&in->file, user_type_strlen);
+                MEMFILE_ENSURE_SPACE(&in->file, user_type_strlen);
                 MEMFILE_WRITE(&in->file, user_type, user_type_strlen);
 
                 /** write binary blob */
@@ -924,7 +924,7 @@ write_field_data(insert *in, u8 field_marker, const void *base, u64 nbytes)
 {
         assert(in->context_type == ARRAY || in->context_type == OBJECT);
 
-        memfile_ensure_space(&in->file, sizeof(u8) + nbytes);
+        MEMFILE_ENSURE_SPACE(&in->file, sizeof(u8) + nbytes);
         MEMFILE_WRITE(&in->file, &field_marker, sizeof(u8));
         return MEMFILE_WRITE(&in->file, base, nbytes);
 }
@@ -935,11 +935,11 @@ static bool push_in_column(insert *in, const void *base, field_e type)
 
         size_t type_size = internal_get_type_value_size(type);
 
-        memfile_save_position(&in->file);
+        MEMFILE_SAVE_POSITION(&in->file);
 
         // Increase element counter
         MEMFILE_SEEK(&in->file, in->context.column->header_begin);
-        u32 num_elems = memfile_peek_uintvar_stream(NULL, &in->file);
+        u32 num_elems = MEMFILE_PEEK_UINTVAR_STREAM(NULL, &in->file);
         num_elems++;
         memfile_update_uintvar_stream(&in->file, num_elems);
         in->context.column->num = num_elems;
@@ -947,34 +947,34 @@ static bool push_in_column(insert *in, const void *base, field_e type)
         u32 capacity = MEMFILE_READ_UINTVAR_STREAM(NULL, &in->file);
 
         if (unlikely(num_elems > capacity)) {
-                memfile_save_position(&in->file);
+                MEMFILE_SAVE_POSITION(&in->file);
 
                 u32 new_capacity = (capacity + 1) * 1.7f;
 
                 // Update capacity counter
                 MEMFILE_SEEK(&in->file, in->context.column->header_begin);
-                memfile_skip_uintvar_stream(&in->file); // skip num element counter
+                MEMFILE_SKIP_UINTVAR_STREAM(&in->file); // skip num element counter
                 memfile_update_uintvar_stream(&in->file, new_capacity);
                 in->context.column->cap = new_capacity;
 
                 size_t payload_start = internal_column_get_payload_off(in->context.column);
                 MEMFILE_SEEK(&in->file, payload_start + (num_elems - 1) * type_size);
-                memfile_ensure_space(&in->file, (new_capacity - capacity) * type_size);
+                MEMFILE_ENSURE_SPACE(&in->file, (new_capacity - capacity) * type_size);
 
-                memfile_restore_position(&in->file);
+                MEMFILE_RESTORE_POSITION(&in->file);
         }
 
         size_t payload_start = internal_column_get_payload_off(in->context.column);
         MEMFILE_SEEK(&in->file, payload_start + (num_elems - 1) * type_size);
         MEMFILE_WRITE(&in->file, base, type_size);
 
-        memfile_restore_position(&in->file);
+        MEMFILE_RESTORE_POSITION(&in->file);
         return true;
 }
 
 static bool push_media_type_for_array(insert *in, field_e type)
 {
-        memfile_ensure_space(&in->file, sizeof(media_type));
+        MEMFILE_ENSURE_SPACE(&in->file, sizeof(media_type));
         return mime_write(&in->file, type);
 }
 
@@ -991,6 +991,6 @@ static void write_binary_blob(insert *in, const void *value, size_t nbytes)
         memfile_write_uintvar_stream(NULL, &in->file, nbytes);
 
         /** write blob */
-        memfile_ensure_space(&in->file, nbytes);
+        MEMFILE_ENSURE_SPACE(&in->file, nbytes);
         MEMFILE_WRITE(&in->file, value, nbytes);
 }

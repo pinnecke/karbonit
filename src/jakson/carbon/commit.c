@@ -28,7 +28,7 @@ bool commit_create(memfile *file)
         u64 init_rev = 0;
         unique_id_create(&init_rev);
 
-        memfile_ensure_space(file, sizeof(u64));
+        MEMFILE_ENSURE_SPACE(file, sizeof(u64));
         MEMFILE_WRITE(file, &init_rev, sizeof(u64));
 
         return true;

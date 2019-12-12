@@ -78,7 +78,7 @@ typedef struct memfile {
         memfile_write_status;                                                                                                        \
 })
 
-#define memfile_save_position(file)										                                               \
+#define MEMFILE_SAVE_POSITION(file)										                                               \
 ({										                                                                               \
         offset_t pos = MEMFILE_TELL((file));										                                   \
         if (likely((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {								   \
@@ -90,7 +90,7 @@ typedef struct memfile {
         pos;										                                                                   \
 })
 
-#define memfile_restore_position(file)												                                   \
+#define MEMFILE_RESTORE_POSITION(file)												                                   \
 ({												                                                                       \
 	bool memfile_restore_position_status;												                                                   \
         if (likely((file)->saved_pos_ptr >= 0)) {												                       \
@@ -103,7 +103,7 @@ typedef struct memfile {
         memfile_restore_position_status;												                                                           \
 })
 
-#define memfile_ensure_space(file, nbytes)											                                   \
+#define MEMFILE_ENSURE_SPACE(file, nbytes)											                                   \
 ({											                                                                           \
         DECLARE_AND_INIT(offset_t, block_size);											                               \
         memblock_size(&block_size, (file)->memblock);											                       \
@@ -112,7 +112,7 @@ typedef struct memfile {
         if (diff < (nbytes)) {											                                               \
                 memfile_grow((file), (nbytes) - diff);											                       \
         }											                                                                   \
-        memfile_save_position((file));											                                       \
+        MEMFILE_SAVE_POSITION((file));											                                       \
         offset_t current_off = MEMFILE_TELL((file));											                       \
         signed_offset_t shift = 0;											                                           \
         for (u32 i = 0; i < (nbytes); i++) {											                               \
@@ -124,7 +124,7 @@ typedef struct memfile {
                         break;											                                               \
                 }											                                                           \
         }											                                                                   \
-        memfile_restore_position((file));											                                   \
+        MEMFILE_RESTORE_POSITION((file));											                                   \
         shift;											                                                               \
 })
 
@@ -140,21 +140,21 @@ typedef struct memfile {
         ___result;													                                                       \
 })
 
-#define memfile_skip_uintvar_stream(file)						                                                       \
+#define MEMFILE_SKIP_UINTVAR_STREAM(file)						                                                       \
         MEMFILE_READ_UINTVAR_STREAM(NULL, (file));
 
-#define memfile_peek_uintvar_stream(nbytes, file)									                                   \
+#define MEMFILE_PEEK_UINTVAR_STREAM(nbytes, file)									                                   \
 ({									                                                                                   \
-        memfile_save_position((file));									                                               \
+        MEMFILE_SAVE_POSITION((file));									                                               \
         u64 result = MEMFILE_READ_UINTVAR_STREAM((nbytes), (file));									                   \
-        memfile_restore_position((file));									                                           \
+        MEMFILE_RESTORE_POSITION((file));									                                           \
         result;									                                                                       \
 })
 
 #define memfile_write_uintvar_stream(nbytes_moved, file, value)												           \
 ({												                                                                       \
         u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   \
-        signed_offset_t shift = memfile_ensure_space((file), required_blocks);										   \
+        signed_offset_t shift = MEMFILE_ENSURE_SPACE((file), required_blocks);										   \
         uintvar_stream_t dst = (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char));								   \
         uintvar_stream_write(dst, (value));												                               \
         memfile_skip((file), required_blocks);												                           \
@@ -165,7 +165,7 @@ typedef struct memfile {
 #define memfile_update_uintvar_stream(file, value)															           \
 ({															                                                           \
         u8 bytes_used_now, bytes_used_then;															                   \
-        memfile_peek_uintvar_stream(&bytes_used_now, (file));														   \
+        MEMFILE_PEEK_UINTVAR_STREAM(&bytes_used_now, (file));														   \
         bytes_used_then = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   	   \
         if (bytes_used_now < bytes_used_then) {															               \
                 u8 inc = bytes_used_then - bytes_used_now;															   \

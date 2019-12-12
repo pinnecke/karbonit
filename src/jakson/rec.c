@@ -157,28 +157,28 @@ const void *rec_raw_data(u64 *len, rec *doc)
 
 bool rec_key_type(key_e *out, rec *doc)
 {
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         key_skip(out, &doc->file);
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         return true;
 }
 
 const void *rec_key_raw_value(u64 *len, key_e *type, rec *doc)
 {
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(len, type, &doc->file);
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         return result;
 }
 
 bool rec_key_signed_value(i64 *key, rec *doc)
 {
         key_e type;
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         if (likely(rec_key_is_signed(type))) {
                 *key = *((const i64 *) result);
                 return true;
@@ -191,10 +191,10 @@ bool rec_key_signed_value(i64 *key, rec *doc)
 bool rec_key_unsigned_value(u64 *key, rec *doc)
 {
         key_e type;
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         if (likely(rec_key_is_unsigned(type))) {
                 *key = *((const u64 *) result);
                 return true;
@@ -207,10 +207,10 @@ bool rec_key_unsigned_value(u64 *key, rec *doc)
 const char *key_string_value(u64 *len, rec *doc)
 {
         key_e type;
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(len, &type, &doc->file);
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         if (likely(rec_key_is_string(type))) {
                 return result;
         } else {
@@ -304,10 +304,10 @@ bool rec_is_array(const rec *doc)
 
 bool rec_hexdump_print(FILE *file, rec *doc)
 {
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
         bool status = hexdump_print(file, MEMFILE_PEEK(&doc->file, 1), memfile_size(&doc->file));
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         return status;
 }
 

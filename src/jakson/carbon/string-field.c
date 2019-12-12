@@ -23,7 +23,7 @@
 static void write_payload(memfile *file, const char *string, size_t str_len)
 {
         memfile_write_uintvar_stream(NULL, file, str_len);
-        memfile_ensure_space(file, str_len);
+        MEMFILE_ENSURE_SPACE(file, str_len);
         MEMFILE_WRITE(file, string, str_len);
 }
 
@@ -65,7 +65,7 @@ bool string_field_write(memfile *file, const char *string)
 
 bool string_field_nchar_write(memfile *file, const char *string, u64 str_len)
 {
-        memfile_ensure_space(file, sizeof(media_type));
+        MEMFILE_ENSURE_SPACE(file, sizeof(media_type));
         mime_write(file, FIELD_STRING);
         string_field_nomarker_nchar_write(file, string, str_len);
         return true;

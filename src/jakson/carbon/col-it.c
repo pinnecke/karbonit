@@ -95,14 +95,14 @@ offset_t col_it_memfilepos(col_it *it)
 offset_t col_it_tell(col_it *it, u32 elem_idx)
 {
         if (it) {
-                memfile_save_position(&it->file);
+                MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->header_begin);
                 u32 num_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
                 MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
                 offset_t payload_start = MEMFILE_TELL(&it->file);
                 error_if_and_return(elem_idx >= num_elements, ERR_OUTOFBOUNDS, NULL);
                 offset_t ret = payload_start + elem_idx * internal_get_type_value_size(it->field_type);
-                memfile_restore_position(&it->file);
+                MEMFILE_RESTORE_POSITION(&it->file);
                 return ret;
         } else {
                 error(ERR_NULLPTR, NULL);
@@ -326,7 +326,7 @@ bool col_it_is_float(col_it *it)
 bool col_it_remove(col_it *it, u32 pos)
 {
         error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL);
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
 
@@ -341,13 +341,13 @@ bool col_it_remove(col_it *it, u32 pos)
 
         /** update element counter */
         MEMFILE_SEEK(&it->file, it->header_begin);
-        u32 num_elems = memfile_peek_uintvar_stream(NULL, &it->file);
+        u32 num_elems = MEMFILE_PEEK_UINTVAR_STREAM(NULL, &it->file);
         assert(num_elems > 0);
         num_elems--;
         signed_offset_t shift = memfile_update_uintvar_stream(&it->file, num_elems);
         it->num = num_elems;
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
         memfile_seek_from_here(&it->file, shift);
 
         return true;
@@ -373,7 +373,7 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
                 return false;
         }
 
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
         MEMFILE_SEEK(&it->file, it->begin);
 
         derived_e derive_marker;
@@ -382,7 +382,7 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
         abstract_derive_list_to(&derive_marker, container, derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
 
         return true;
 }
@@ -391,7 +391,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
 {
         error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
 
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
         MEMFILE_SEEK(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
@@ -500,15 +500,15 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_NUMBER_FLOAT:
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        memfile_restore_position(&it->file);
+                        MEMFILE_RESTORE_POSITION(&it->file);
                         return error(ERR_UNSUPPCONTAINER, NULL);
                 default:
-                        memfile_restore_position(&it->file);
+                        MEMFILE_RESTORE_POSITION(&it->file);
                         error(ERR_INTERNALERR, NULL);
                         return false;
         }
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
 
         return true;
 }
@@ -540,7 +540,7 @@ static bool rewrite_column_to_array(col_it *it)
         arr_it array;
         insert array_ins;
 
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
         assert(field_is_column_or_subtype(memfile_peek_byte(&it->file)));
 
         abstract_get_class(&type_class, &it->file);
@@ -605,7 +605,7 @@ static bool rewrite_column_to_array(col_it *it)
         assert(array_marker_begin < internal_arr_it_memfilepos(&array));
         arr_it_drop(&array);
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
         return true;
 }
 
@@ -613,7 +613,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
 {
         error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
 
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
         MEMFILE_SEEK(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
@@ -725,15 +725,15 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_NUMBER_FLOAT:
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        memfile_restore_position(&it->file);
+                        MEMFILE_RESTORE_POSITION(&it->file);
                         return error(ERR_UNSUPPCONTAINER, NULL);
                 default:
-                        memfile_restore_position(&it->file);
+                        MEMFILE_RESTORE_POSITION(&it->file);
                         error(ERR_INTERNALERR, NULL);
                         return false;
         }
 
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
 
         return true;
 }

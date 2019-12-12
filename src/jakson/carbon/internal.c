@@ -48,10 +48,10 @@ static void int_insert_prop_object(insert *oins, json_object *obj);
 static void
 insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 capacity)
 {
-        memfile_ensure_space(memfile, sizeof(u8));
+        MEMFILE_ENSURE_SPACE(memfile, sizeof(u8));
         marker_insert(memfile, begin_marker);
 
-        memfile_ensure_space(memfile, capacity + sizeof(u8));
+        MEMFILE_ENSURE_SPACE(memfile, capacity + sizeof(u8));
 
         offset_t payload_begin = MEMFILE_TELL(memfile);
         MEMFILE_SEEK(memfile, payload_begin + capacity);
@@ -90,7 +90,7 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
 
         field_e column_type = field_for_column(derivation, type);
 
-        memfile_ensure_space(memfile_in, sizeof(u8));
+        MEMFILE_ENSURE_SPACE(memfile_in, sizeof(u8));
         marker_insert(memfile_in, column_type);
 
         u32 num_elements = 0;
@@ -104,7 +104,7 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         size_t type_size = internal_get_type_value_size(column_type);
 
         size_t nbytes = capactity * type_size;
-        memfile_ensure_space(memfile_in, nbytes + sizeof(u8) + 2 * sizeof(u32));
+        MEMFILE_ENSURE_SPACE(memfile_in, nbytes + sizeof(u8) + 2 * sizeof(u32));
 
         /** seek to first entry in column */
         MEMFILE_SEEK(memfile_in, payload_begin);
@@ -261,19 +261,19 @@ bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 bool internal_array_field_read(arr_it *it)
 {
         error_if_and_return(memfile_remain_size(&it->file) < 1, ERR_ILLEGALOP, NULL);
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
         it->field_offset = MEMFILE_TELL(&it->file);
         u8 media_type = *memfile_read(&it->file, 1);
         error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
         error_if_and_return(media_type == MARRAY_END, ERR_OUTOFBOUNDS, NULL)
         it->field.type = media_type;
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
         return true;
 }
 
 bool internal_field_data_access(memfile *file, field *field)
 {
-        memfile_save_position(file);
+        MEMFILE_SAVE_POSITION(file);
         memfile_skip(file, sizeof(media_type));
 
         switch (field->type) {
@@ -391,18 +391,18 @@ bool internal_field_data_access(memfile *file, field *field)
         }
 
         field->data = MEMFILE_PEEK(file, 1);
-        memfile_restore_position(file);
+        MEMFILE_RESTORE_POSITION(file);
         return true;
 }
 
 offset_t internal_column_get_payload_off(col_it *it)
 {
-        memfile_save_position(&it->file);
+        MEMFILE_SAVE_POSITION(&it->file);
         MEMFILE_SEEK(&it->file, it->header_begin);
-        memfile_skip_uintvar_stream(&it->file); // skip num of elements
-        memfile_skip_uintvar_stream(&it->file); // skip capacity of elements
+        MEMFILE_SKIP_UINTVAR_STREAM(&it->file); // skip num of elements
+        MEMFILE_SKIP_UINTVAR_STREAM(&it->file); // skip capacity of elements
         offset_t result = MEMFILE_TELL(&it->file);
-        memfile_restore_position(&it->file);
+        MEMFILE_RESTORE_POSITION(&it->file);
         return result;
 }
 
@@ -411,7 +411,7 @@ offset_t internal_payload_after_header(rec *doc)
         offset_t result = 0;
         key_e rec_key_type;
 
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
 
         if (likely(key_skip(&rec_key_type, &doc->file))) {
@@ -421,7 +421,7 @@ offset_t internal_payload_after_header(rec *doc)
                 result = MEMFILE_TELL(&doc->file);
         }
 
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
 
         return result;
 }
@@ -432,7 +432,7 @@ u64 internal_header_get_commit_hash(rec *doc)
         u64 rev = 0;
         key_e rec_key_type;
 
-        memfile_save_position(&doc->file);
+        MEMFILE_SAVE_POSITION(&doc->file);
         MEMFILE_SEEK(&doc->file, 0);
 
         key_skip(&rec_key_type, &doc->file);
@@ -440,7 +440,7 @@ u64 internal_header_get_commit_hash(rec *doc)
                 commit_read(&rev, &doc->file);
         }
 
-        memfile_restore_position(&doc->file);
+        MEMFILE_RESTORE_POSITION(&doc->file);
         return rev;
 }
 

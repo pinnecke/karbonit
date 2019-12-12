@@ -55,11 +55,6 @@ bool dot_eval_status(pstatus_e *status, dot_eval *state)
         return true;
 }
 
-bool dot_eval_has_result(dot_eval *state)
-{
-        return (state->status == PATH_RESOLVED);
-}
-
 bool dot_eval_end(dot_eval *state)
 {
         switch (state->result.container) {
@@ -535,7 +530,7 @@ static inline pstatus_e _dot_eval_traverse_column(dot_eval *state,
                 dot_type_at(&node_type, current_path_pos, path);
                 assert(node_type == DOT_NODE_IDX);
                 dot_idx_at(&requested_idx, current_path_pos, path);
-                col_it_values_info(&column_type, &nun_values_contained, it);
+                nun_values_contained = col_it_values_info(&column_type, it);
                 if (requested_idx >= nun_values_contained) {
                         /** requested index does not exists in this column */
                         return PATH_NOSUCHINDEX;

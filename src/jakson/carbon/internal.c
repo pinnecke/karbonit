@@ -112,40 +112,6 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         return true;
 }
 
-size_t internal_get_type_size_encoded(field_e type)
-{
-        size_t type_size = sizeof(media_type); /** at least the media type marker is required */
-        switch (type) {
-                case FIELD_NULL:
-                case FIELD_TRUE:
-                case FIELD_FALSE:
-                        /** only media type marker is required */
-                        break;
-                case FIELD_NUMBER_U8:
-                case FIELD_NUMBER_I8:
-                        type_size += sizeof(u8);
-                        break;
-                case FIELD_NUMBER_U16:
-                case FIELD_NUMBER_I16:
-                        type_size += sizeof(u16);
-                        break;
-                case FIELD_NUMBER_U32:
-                case FIELD_NUMBER_I32:
-                        type_size += sizeof(u32);
-                        break;
-                case FIELD_NUMBER_U64:
-                case FIELD_NUMBER_I64:
-                        type_size += sizeof(u64);
-                        break;
-                case FIELD_NUMBER_FLOAT:
-                        type_size += sizeof(float);
-                        break;
-                default: error(ERR_INTERNALERR, NULL);
-                        return 0;
-        }
-        return type_size;
-}
-
 size_t internal_get_type_value_size(field_e type)
 {
         switch (type) {

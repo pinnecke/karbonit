@@ -37,7 +37,10 @@ bool dot_eval_begin_mutable(dot_eval *eval, const dot *path, rev *context);
 bool dot_eval_end(dot_eval *state);
 
 bool dot_eval_status(pstatus_e *status, dot_eval *state);
-bool dot_eval_has_result(dot_eval *state);
+
+#define dot_eval_has_result(dot_eval)                                                                                  \
+        ((dot_eval)->status == PATH_RESOLVED)
+
 bool carbon_path_exists(rec *doc, const char *path);
 
 bool carbon_path_is_array(rec *doc, const char *path);

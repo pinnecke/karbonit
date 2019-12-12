@@ -118,24 +118,18 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
         }
 }
 
-bool col_it_values_info(field_e *type, u32 *nvalues, col_it *it)
+u32 col_it_values_info(field_e *type, col_it *it)
 {
-        if (nvalues) {
-                memfile_seek(&it->file, it->header_begin);
-                u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->file);
-                *nvalues = num_elements;
-        }
-
+        memfile_seek(&it->file, it->header_begin);
+        u32 nvalues = (u32) memfile_read_uintvar_stream(NULL, &it->file);
         OPTIONAL_SET(type, it->field_type);
-
-        return true;
+        return nvalues;
 }
 
 bool col_it_is_null(col_it *it, u32 pos)
 {
         field_e type;
-        u32 nvalues = 0;
-        col_it_values_info(&type, &nvalues, it);
+        u32 nvalues = col_it_values_info(&type, it);
         error_if_and_return(pos >= nvalues, ERR_OUTOFBOUNDS, NULL);
         switch (type) {
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:

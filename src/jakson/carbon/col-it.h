@@ -38,7 +38,7 @@ bool col_it_fast_forward(col_it *it);
 offset_t col_it_memfilepos(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
 const void *col_it_values(field_e *type, u32 *nvalues, col_it *it);
-bool col_it_values_info(field_e *type, u32 *nvalues, col_it *it);
+u32 col_it_values_info(field_e *type, col_it *it);
 
 bool col_it_is_null(col_it *it, u32 pos);
 

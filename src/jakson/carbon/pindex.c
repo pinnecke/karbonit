@@ -269,9 +269,7 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
 {
         field_e column_type;
         field_e entry_type;
-        u32 nvalues = 0;
-
-        col_it_values_info(&column_type, &nvalues, it);
+        u32 nvalues = col_it_values_info(&column_type, it);
 
         for (u32 i = 0; i < nvalues; i++) {
                 bool is_null = col_it_is_null(it, i);

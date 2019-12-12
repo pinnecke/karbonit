@@ -758,8 +758,7 @@ static void result_from_object(find *find, obj_it *it)
 static inline bool
 result_from_column(find *find, u32 requested_idx, col_it *it)
 {
-        u32 num_contained_values;
-        col_it_values_info(&find->type, &num_contained_values, it);
+        u32 num_contained_values = col_it_values_info(&find->type, it);
         assert(requested_idx < num_contained_values);
 
         switch (find->type) {

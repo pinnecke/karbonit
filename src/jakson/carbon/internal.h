@@ -65,7 +65,40 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.
  */
-size_t internal_get_type_size_encoded(field_e type);
+#define internal_get_type_size_encoded(field_e)                                                                        \
+({                                                                                                                     \
+        size_t type_size = sizeof(u8); /** at least the media type marker is required */                               \
+        switch (field_e) {                                                                                             \
+                case FIELD_NULL:                                                                                       \
+                case FIELD_TRUE:                                                                                       \
+                case FIELD_FALSE:                                                                                      \
+                        /** only media type marker is required */                                                      \
+                        break;                                                                                         \
+                case FIELD_NUMBER_U8:                                                                                  \
+                case FIELD_NUMBER_I8:                                                                                  \
+                        type_size += sizeof(u8);                                                                       \
+                        break;                                                                                         \
+                case FIELD_NUMBER_U16:                                                                                 \
+                case FIELD_NUMBER_I16:                                                                                 \
+                        type_size += sizeof(u16);                                                                      \
+                        break;                                                                                         \
+                case FIELD_NUMBER_U32:                                                                                 \
+                case FIELD_NUMBER_I32:                                                                                 \
+                        type_size += sizeof(u32);                                                                      \
+                        break;                                                                                         \
+                case FIELD_NUMBER_U64:                                                                                 \
+                case FIELD_NUMBER_I64:                                                                                 \
+                        type_size += sizeof(u64);                                                                      \
+                        break;                                                                                         \
+                case FIELD_NUMBER_FLOAT:                                                                               \
+                        type_size += sizeof(float);                                                                    \
+                        break;                                                                                         \
+                default: error(ERR_INTERNALERR, NULL);                                                                 \
+                        type_size = 0;                                                                                 \
+                        break;                                                                                         \
+        }                                                                                                              \
+        type_size;                                                                                                     \
+})
 
 /**
  * Returns the number of bytes required to store a field value of a particular type exclusing its type marker.

@@ -534,14 +534,13 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         ASSERT_TRUE(has_next);
         col_it *cit = item_get_column(&(rev_it.item));
         field_e type;
-        u32 num_elems;
-        col_it_values_info(&type, &num_elems, cit);
+        u32 num_elems = col_it_values_info(&type, cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 3u);
 
         status = col_it_remove(cit, 1);
         ASSERT_TRUE(status);
-        col_it_values_info(&type, &num_elems, cit);
+        num_elems = col_it_values_info(&type, cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 2u);
         values = col_it_u16_values(&num_elems, cit);
@@ -552,7 +551,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
 
         status = col_it_remove(cit, 0);
         ASSERT_TRUE(status);
-        col_it_values_info(&type, &num_elems, cit);
+        num_elems = col_it_values_info(&type, cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 1u);
         values = col_it_u16_values(&num_elems, cit);
@@ -562,7 +561,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
 
         status = col_it_remove(cit, 0);
         ASSERT_TRUE(status);
-        col_it_values_info(&type, &num_elems, cit);
+        num_elems = col_it_values_info(&type, cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 0u);
 

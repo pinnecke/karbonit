@@ -33,7 +33,7 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         vector_create(&it->history, sizeof(offset_t), 40);
 
         memfile_open(&it->file, memfile->memblock, memfile->mode);
-        memfile_seek(&it->file, payload_start);
+        MEMFILE_SEEK(&it->file, payload_start);
 
         error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
 
@@ -91,13 +91,13 @@ bool obj_it_rewind(obj_it *it)
         error_if_and_return(it->content_begin >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
         internal_history_clear(&it->history);
         it->pos = 0;
-        return memfile_seek(&it->file, it->content_begin);
+        return MEMFILE_SEEK(&it->file, it->content_begin);
 }
 
 prop *obj_it_next(obj_it *it)
 {
         bool is_empty_slot;
-        offset_t last_off = memfile_tell(&it->file);
+        offset_t last_off = MEMFILE_TELL(&it->file);
         internal_field_drop(&it->field.value.data);
         if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
                 internal_history_push(&it->history, last_off);
@@ -109,12 +109,12 @@ prop *obj_it_next(obj_it *it)
                 if (!it->eof) {
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
-                        while (*memfile_peek(&it->file, 1) == 0) {
+                        while (*MEMFILE_PEEK(&it->file, 1) == 0) {
                                 memfile_skip(&it->file, 1);
                         }
                 }
 
-                assert(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
+                assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MOBJECT_END);
                 return NULL;
         }
 }
@@ -131,7 +131,7 @@ bool obj_it_prev(obj_it *it)
         if (internal_history_has(&it->history)) {
                 offset_t prev_off = internal_history_pop(&it->history);
                 it->pos--;
-                memfile_seek(&it->file, prev_off);
+                MEMFILE_SEEK(&it->file, prev_off);
                 return internal_object_it_refresh(NULL, NULL, it);
         } else {
                 return false;
@@ -140,7 +140,7 @@ bool obj_it_prev(obj_it *it)
 
 offset_t internal_obj_it_memfile_pos(obj_it *it)
 {
-        return memfile_tell(&it->file);
+        return MEMFILE_TELL(&it->file);
 }
 
 bool internal_obj_it_tell(offset_t *key_off, offset_t *value_off, obj_it *it)
@@ -177,7 +177,7 @@ bool internal_obj_it_remove(obj_it *it)
         field_e type;
         if (internal_obj_it_prop_type(&type, it)) {
                 offset_t prop_off = internal_history_pop(&it->history);
-                memfile_seek(&it->file, prop_off);
+                MEMFILE_SEEK(&it->file, prop_off);
                 it->mod_size -= _prop_remove(it, type);
                 return true;
         } else {
@@ -208,7 +208,7 @@ bool obj_it_is_sorted(obj_it *it)
 void obj_it_update_type(obj_it *it, map_type_e derivation)
 {
         memfile_save_position(&it->file);
-        memfile_seek(&it->file, it->begin);
+        MEMFILE_SEEK(&it->file, it->begin);
 
         derived_e derive_marker;
         abstract_derive_map_to(&derive_marker, derivation);
@@ -232,7 +232,7 @@ bool internal_obj_it_fast_forward(obj_it *it)
 {
         while (obj_it_next(it)) {}
 
-        assert(*memfile_peek(&it->file, sizeof(u8)) == MOBJECT_END);
+        assert(*MEMFILE_PEEK(&it->file, sizeof(u8)) == MOBJECT_END);
         memfile_skip(&it->file, sizeof(u8));
         return true;
 }

@@ -386,11 +386,11 @@ bool archive_from_model(memblock **stream, column_doc *model, packer_e compresso
         OPTIONAL_CALL(callback, begin_write_record_table);
         offset_t record_header_offset = skip_record_header(&memfile);
         update_file_header(&memfile, record_header_offset);
-        offset_t root_object_header_offset = memfile_tell(&memfile);
+        offset_t root_object_header_offset = MEMFILE_TELL(&memfile);
         if (!__serialize(NULL, &memfile, &model->columndoc, root_object_header_offset)) {
                 return false;
         }
-        u64 record_size = memfile_tell(&memfile) - (record_header_offset + sizeof(record_header));
+        u64 record_size = MEMFILE_TELL(&memfile) - (record_header_offset + sizeof(record_header));
         update_record_header(&memfile, record_header_offset, model, record_size);
         OPTIONAL_CALL(callback, end_write_record_table);
 
@@ -505,7 +505,7 @@ write_primitive_key_column(memfile *memfile, vec ofType(archive_field_sid_t) *ke
 
 static offset_t skip_var_value_offset_column(memfile *memfile, size_t num_keys)
 {
-        offset_t result = memfile_tell(memfile);
+        offset_t result = MEMFILE_TELL(memfile);
         memfile_skip(memfile, num_keys * sizeof(offset_t));
         return result;
 }
@@ -514,9 +514,9 @@ static void write_var_value_offset_column(memfile *file, offset_t where, offset_
                                           const offset_t *values,
                                           size_t n)
 {
-        memfile_seek(file, where);
+        MEMFILE_SEEK(file, where);
         memfile_write(file, values, n * sizeof(offset_t));
-        memfile_seek(file, after);
+        MEMFILE_SEEK(file, after);
 }
 
 static bool
@@ -564,7 +564,7 @@ static offset_t *__write_primitive_column(memfile *memfile,
         column_doc_obj *mapped = VECTOR_ALL(values_vec, column_doc_obj);
         for (u32 i = 0; i < values_vec->num_elems; i++) {
                 column_doc_obj *obj = mapped + i;
-                result[i] = memfile_tell(memfile) - root_offset;
+                result[i] = MEMFILE_TELL(memfile) - root_offset;
                 if (!__serialize(NULL, memfile, obj, root_offset)) {
                         return NULL;
                 }
@@ -650,7 +650,7 @@ static bool write_array_prop(offset_t *offset, memfile *memfile,
                 prop_header header =
                         {.marker = global_marker_symbols[global_value_array_marker_mapping[type].marker].symbol, .num_entries = keys
                                 ->num_elems};
-                offset_t prop_ofOffset = memfile_tell(memfile);
+                offset_t prop_ofOffset = MEMFILE_TELL(memfile);
                 memfile_write(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
@@ -783,7 +783,7 @@ static bool write_fixed_props(offset_t *offset, memfile *memfile,
                         {.marker = global_marker_symbols[valueMarkerMapping[type].marker].symbol, .num_entries = keys
                                 ->num_elems};
 
-                offset_t prop_ofOffset = memfile_tell(memfile);
+                offset_t prop_ofOffset = MEMFILE_TELL(memfile);
                 memfile_write(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
@@ -812,7 +812,7 @@ static bool write_var_props(offset_t *offset, memfile *memfile,
         if (keys->num_elems > 0) {
                 prop_header header = {.marker = MARKER_SYMBOL_PROP_OBJECT, .num_entries = keys->num_elems};
 
-                offset_t prop_ofOffset = memfile_tell(memfile);
+                offset_t prop_ofOffset = MEMFILE_TELL(memfile);
                 memfile_write(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
@@ -823,7 +823,7 @@ static bool write_var_props(offset_t *offset, memfile *memfile,
                         return false;
                 }
 
-                offset_t last = memfile_tell(memfile);
+                offset_t last = MEMFILE_TELL(memfile);
                 write_var_value_offset_column(memfile, value_offset, last, value_offsets, keys->num_elems);
                 free(value_offsets);
                 *offset = prop_ofOffset;
@@ -967,11 +967,11 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
                         for (size_t i = 0; i < column->num_elems; i++) {
                                 column_doc_obj *object = VECTOR_GET(column, i, column_doc_obj);
                                 if (likely(preObjectNext != 0)) {
-                                        offset_t continuePos = memfile_tell(memfile);
+                                        offset_t continuePos = MEMFILE_TELL(memfile);
                                         offset_t relativeContinuePos = continuePos - root_object_header_offset;
-                                        memfile_seek(memfile, preObjectNext);
+                                        MEMFILE_SEEK(memfile, preObjectNext);
                                         memfile_write(memfile, &relativeContinuePos, sizeof(offset_t));
-                                        memfile_seek(memfile, continuePos);
+                                        MEMFILE_SEEK(memfile, continuePos);
                                 }
                                 if (!__serialize(&preObjectNext, memfile, object, root_object_header_offset)) {
                                         return false;
@@ -997,18 +997,18 @@ static bool write_column(memfile *memfile, column_doc_column *column,
         memfile_write(memfile, &header, sizeof(column_header));
 
         /** skip offset column to value entry points */
-        offset_t value_entry_offsets = memfile_tell(memfile);
+        offset_t value_entry_offsets = MEMFILE_TELL(memfile);
         memfile_skip(memfile, column->values.num_elems * sizeof(offset_t));
 
         memfile_write(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
 
         for (size_t i = 0; i < column->values.num_elems; i++) {
                 vec ofType(<T>) *column_data = VECTOR_GET(&column->values, i, vec);
-                offset_t column_entry_offset = memfile_tell(memfile);
+                offset_t column_entry_offset = MEMFILE_TELL(memfile);
                 offset_t relative_entry_offset = column_entry_offset - root_object_header_offset;
-                memfile_seek(memfile, value_entry_offsets + i * sizeof(offset_t));
+                MEMFILE_SEEK(memfile, value_entry_offsets + i * sizeof(offset_t));
                 memfile_write(memfile, &relative_entry_offset, sizeof(offset_t));
-                memfile_seek(memfile, column_entry_offset);
+                MEMFILE_SEEK(memfile, column_entry_offset);
                 if (!write_column_entry(memfile, column->type, column_data, root_object_header_offset)) {
                         return false;
                 }
@@ -1025,7 +1025,7 @@ static bool write_object_array_props(memfile *memfile,
                 object_array_header header = {.marker = global_marker_symbols[MARKER_TYPE_PROP_OBJECT_ARRAY]
                         .symbol, .num_entries = object_key_columns->num_elems};
 
-                offsets->object_arrays = memfile_tell(memfile) - root_object_header_offset;
+                offsets->object_arrays = MEMFILE_TELL(memfile) - root_object_header_offset;
                 memfile_write(memfile, &header, sizeof(object_array_header));
 
                 for (size_t i = 0; i < object_key_columns->num_elems; i++) {
@@ -1035,13 +1035,13 @@ static bool write_object_array_props(memfile *memfile,
                 }
 
                 // skip offset column to column groups
-                offset_t column_offsets = memfile_tell(memfile);
+                offset_t column_offsets = MEMFILE_TELL(memfile);
                 memfile_skip(memfile, object_key_columns->num_elems * sizeof(offset_t));
 
                 for (size_t i = 0; i < object_key_columns->num_elems; i++) {
                         column_doc_group *column_group = VECTOR_GET(object_key_columns, i,
                                                                             column_doc_group);
-                        offset_t this_column_offset_relative = memfile_tell(memfile) - root_object_header_offset;
+                        offset_t this_column_offset_relative = MEMFILE_TELL(memfile) - root_object_header_offset;
 
                         /** write an object-id for each position number */
                         size_t max_pos = 0;
@@ -1067,10 +1067,10 @@ static bool write_object_array_props(memfile *memfile,
                                 memfile_write(memfile, &oid, sizeof(unique_id_t));
                         }
 
-                        offset_t continue_write = memfile_tell(memfile);
-                        memfile_seek(memfile, column_offsets + i * sizeof(offset_t));
+                        offset_t continue_write = MEMFILE_TELL(memfile);
+                        MEMFILE_SEEK(memfile, column_offsets + i * sizeof(offset_t));
                         memfile_write(memfile, &this_column_offset_relative, sizeof(offset_t));
-                        memfile_seek(memfile, continue_write);
+                        MEMFILE_SEEK(memfile, continue_write);
 
                         offset_t offset_column_to_columns = continue_write;
                         memfile_skip(memfile, column_group->columns.num_elems * sizeof(offset_t));
@@ -1078,11 +1078,11 @@ static bool write_object_array_props(memfile *memfile,
                         for (size_t k = 0; k < column_group->columns.num_elems; k++) {
                                 column_doc_column
                                         *column = VECTOR_GET(&column_group->columns, k, column_doc_column);
-                                offset_t continue_write = memfile_tell(memfile);
+                                offset_t continue_write = MEMFILE_TELL(memfile);
                                 offset_t column_off = continue_write - root_object_header_offset;
-                                memfile_seek(memfile, offset_column_to_columns + k * sizeof(offset_t));
+                                MEMFILE_SEEK(memfile, offset_column_to_columns + k * sizeof(offset_t));
                                 memfile_write(memfile, &column_off, sizeof(offset_t));
-                                memfile_seek(memfile, continue_write);
+                                MEMFILE_SEEK(memfile, continue_write);
                                 if (!write_column(memfile, column, root_object_header_offset)) {
                                         return false;
                                 }
@@ -1098,7 +1098,7 @@ static bool write_object_array_props(memfile *memfile,
 
 static offset_t skip_record_header(memfile *memfile)
 {
-        offset_t offset = memfile_tell(memfile);
+        offset_t offset = MEMFILE_TELL(memfile);
         memfile_skip(memfile, sizeof(record_header));
         return offset;
 }
@@ -1112,9 +1112,9 @@ update_record_header(memfile *memfile, offset_t root_object_header_offset, colum
                 header = {.marker = MARKER_SYMBOL_RECORD_HEADER, .flags = flags.value, .record_size = record_size};
         offset_t offset;
         memfile_get_offset(&offset, memfile);
-        memfile_seek(memfile, root_object_header_offset);
+        MEMFILE_SEEK(memfile, root_object_header_offset);
         memfile_write(memfile, &header, sizeof(record_header));
-        memfile_seek(memfile, offset);
+        MEMFILE_SEEK(memfile, offset);
 }
 
 static void propOffsetsWrite(memfile *memfile, const object_flags_u *flags,
@@ -1293,11 +1293,11 @@ static bool __serialize(offset_t *offset, memfile *memfile,
         archive_prop_offs prop_offsets;
         get_flags(&flags, columndoc);
 
-        offset_t header_offset = memfile_tell(memfile);
+        offset_t header_offset = MEMFILE_TELL(memfile);
         memfile_skip(memfile, sizeof(object_header));
 
         prop_offsets_skip_write(memfile, &flags);
-        offset_t next_offset = memfile_tell(memfile);
+        offset_t next_offset = MEMFILE_TELL(memfile);
         offset_t default_next_nil = 0;
         memfile_write(memfile, &default_next_nil, sizeof(offset_t));
 
@@ -1316,8 +1316,8 @@ static bool __serialize(offset_t *offset, memfile *memfile,
 
         memfile_write(memfile, &global_marker_symbols[MARKER_TYPE_OBJECT_END].symbol, 1);
 
-        offset_t object_end_offset = memfile_tell(memfile);
-        memfile_seek(memfile, header_offset);
+        offset_t object_end_offset = MEMFILE_TELL(memfile);
+        MEMFILE_SEEK(memfile, header_offset);
 
         unique_id_t oid;
         if (!unique_id_create(&oid)) {
@@ -1335,7 +1335,7 @@ static bool __serialize(offset_t *offset, memfile *memfile,
 
         propOffsetsWrite(memfile, &flags, &prop_offsets);
 
-        memfile_seek(memfile, object_end_offset);
+        MEMFILE_SEEK(memfile, object_end_offset);
         OPTIONAL_SET(offset, next_offset);
         return true;
 }
@@ -1406,16 +1406,16 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
         u8 flag_bit = pack_flagbit_by_type(compressor);
         SET_BITS(flags.value, flag_bit);
 
-        offset_t header_pos = memfile_tell(memfile);
+        offset_t header_pos = MEMFILE_TELL(memfile);
         memfile_skip(memfile, sizeof(string_table_header));
 
-        offset_t extra_begin_off = memfile_tell(memfile);
+        offset_t extra_begin_off = MEMFILE_TELL(memfile);
         pack_write_extra(&strategy, memfile, strings);
-        offset_t extra_end_off = memfile_tell(memfile);
+        offset_t extra_end_off = MEMFILE_TELL(memfile);
 
         header = (string_table_header) {.marker = global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC]
                 .symbol, .flags = flags.value, .num_entries = strings
-                ->num_elems, .first_entry = memfile_tell(memfile), .compressor_extra_size = (extra_end_off
+                ->num_elems, .first_entry = MEMFILE_TELL(memfile), .compressor_extra_size = (extra_end_off
                                                                                              - extra_begin_off)};
 
         for (size_t i = 0; i < strings->num_elems; i++) {
@@ -1425,24 +1425,24 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
                 string_entry_header header = {.marker = global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR]
                         .symbol, .next_entry_off = 0, .string_id = id, .string_len = strlen(string)};
 
-                offset_t header_pos_off = memfile_tell(memfile);
+                offset_t header_pos_off = MEMFILE_TELL(memfile);
                 memfile_skip(memfile, sizeof(string_entry_header));
 
                 if (!pack_encode(&strategy, memfile, string)) {
                         error_print(stderr);
                         return false;
                 }
-                offset_t continue_off = memfile_tell(memfile);
-                memfile_seek(memfile, header_pos_off);
+                offset_t continue_off = MEMFILE_TELL(memfile);
+                MEMFILE_SEEK(memfile, header_pos_off);
                 header.next_entry_off = i + 1 < strings->num_elems ? continue_off : 0;
                 memfile_write(memfile, &header, sizeof(string_entry_header));
-                memfile_seek(memfile, continue_off);
+                MEMFILE_SEEK(memfile, continue_off);
         }
 
-        offset_t continue_pos = memfile_tell(memfile);
-        memfile_seek(memfile, header_pos);
+        offset_t continue_pos = MEMFILE_TELL(memfile);
+        MEMFILE_SEEK(memfile, header_pos);
         memfile_write(memfile, &header, sizeof(string_table_header));
-        memfile_seek(memfile, continue_pos);
+        MEMFILE_SEEK(memfile, continue_pos);
 
         vector_drop(strings);
         vector_drop(string_ids);
@@ -1461,12 +1461,12 @@ static void update_file_header(memfile *memfile, offset_t record_header_offset)
 {
         offset_t current_pos;
         memfile_get_offset(&current_pos, memfile);
-        memfile_seek(memfile, 0);
+        MEMFILE_SEEK(memfile, 0);
         memcpy(&this_file_header.magic, CARBON_ARCHIVE_MAGIC, strlen(CARBON_ARCHIVE_MAGIC));
         this_file_header.root_object_header_offset = record_header_offset;
         this_file_header.string_id_to_offset_index_offset = 0;
         memfile_write(memfile, &this_file_header, sizeof(archive_header));
-        memfile_seek(memfile, current_pos);
+        MEMFILE_SEEK(memfile, current_pos);
 }
 
 static bool
@@ -1588,7 +1588,7 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
 static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_file,
                                             unsigned nesting_level)
 {
-        unsigned offset = (unsigned) memfile_tell(mem_file);
+        unsigned offset = (unsigned) MEMFILE_TELL(mem_file);
         object_array_header *header = memfile_read_type(mem_file, object_array_header);
         if (header->marker != MARKER_SYMBOL_PROP_OBJECT_ARRAY) {
                 char buffer[256];
@@ -1619,7 +1619,7 @@ static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_fi
         nesting_level++;
 
         for (size_t i = 0; i < header->num_entries; i++) {
-                offset = memfile_tell(mem_file);
+                offset = MEMFILE_TELL(mem_file);
                 column_group_header
                         *column_group_header = memfile_read_type(mem_file, struct column_group_header);
                 if (column_group_header->marker != MARKER_SYMBOL_COLUMN_GROUP) {
@@ -1753,7 +1753,7 @@ static void print_prop_offsets(FILE *file, const object_flags_u *flags,
 
 bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
 {
-        unsigned offset = (unsigned) memfile_tell(memfile);
+        unsigned offset = (unsigned) MEMFILE_TELL(memfile);
         object_header *header = memfile_read_type(memfile, object_header);
 
         archive_prop_offs prop_offsets;
@@ -1782,7 +1782,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
 
         bool continue_read = true;
         while (continue_read) {
-                offset = memfile_tell(memfile);
+                offset = MEMFILE_TELL(memfile);
                 char entryMarker = *memfile_peek_type(memfile, char);
 
                 switch (entryMarker) {
@@ -1833,7 +1833,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_INT8: PRINT_SIMPLE_PROPS(file,
                                                                              memfile,
-                                                                             memfile_tell(memfile),
+                                                                             MEMFILE_TELL(memfile),
                                                                              nesting_level,
                                                                              archive_field_i8_t,
                                                                              "Int8",
@@ -1841,7 +1841,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_INT16: PRINT_SIMPLE_PROPS(file,
                                                                               memfile,
-                                                                              memfile_tell(memfile),
+                                                                              MEMFILE_TELL(memfile),
                                                                               nesting_level,
                                                                               archive_field_i16_t,
                                                                               "Int16",
@@ -1849,7 +1849,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_INT32: PRINT_SIMPLE_PROPS(file,
                                                                               memfile,
-                                                                              memfile_tell(memfile),
+                                                                              MEMFILE_TELL(memfile),
                                                                               nesting_level,
                                                                               archive_field_i32_t,
                                                                               "Int32",
@@ -1857,7 +1857,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_INT64: PRINT_SIMPLE_PROPS(file,
                                                                               memfile,
-                                                                              memfile_tell(memfile),
+                                                                              MEMFILE_TELL(memfile),
                                                                               nesting_level,
                                                                               archive_field_i64_t,
                                                                               "Int64",
@@ -1866,7 +1866,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_UINT8: PRINT_SIMPLE_PROPS(file,
                                                                               memfile,
-                                                                              memfile_tell(memfile),
+                                                                              MEMFILE_TELL(memfile),
                                                                               nesting_level,
                                                                               archive_field_u8_t,
                                                                               "UInt8",
@@ -1874,7 +1874,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_UINT16: PRINT_SIMPLE_PROPS(file,
                                                                                memfile,
-                                                                               memfile_tell(memfile),
+                                                                               MEMFILE_TELL(memfile),
                                                                                nesting_level,
                                                                                archive_field_u16_t,
                                                                                "UInt16",
@@ -1882,7 +1882,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_UINT32: PRINT_SIMPLE_PROPS(file,
                                                                                memfile,
-                                                                               memfile_tell(memfile),
+                                                                               MEMFILE_TELL(memfile),
                                                                                nesting_level,
                                                                                archive_field_u32_t,
                                                                                "UInt32",
@@ -1890,7 +1890,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_UINT64: PRINT_SIMPLE_PROPS(file,
                                                                                memfile,
-                                                                               memfile_tell(memfile),
+                                                                               MEMFILE_TELL(memfile),
                                                                                nesting_level,
                                                                                archive_field_u64_t,
                                                                                "UInt64",
@@ -1899,7 +1899,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_REAL: PRINT_SIMPLE_PROPS(file,
                                                                              memfile,
-                                                                             memfile_tell(memfile),
+                                                                             MEMFILE_TELL(memfile),
                                                                              nesting_level,
                                                                              archive_field_number_t,
                                                                              "Float",
@@ -1907,7 +1907,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_TEXT: PRINT_SIMPLE_PROPS(file,
                                                                              memfile,
-                                                                             memfile_tell(memfile),
+                                                                             MEMFILE_TELL(memfile),
                                                                              nesting_level,
                                                                              archive_field_sid_t,
                                                                              "Text",
@@ -2037,7 +2037,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                 break;
                         case MARKER_SYMBOL_PROP_INT8_ARRAY: {
                                 PRINT_ARRAY_PROPS(memfile,
-                                                  memfile_tell(memfile),
+                                                  MEMFILE_TELL(memfile),
                                                   nesting_level,
                                                   entryMarker,
                                                   archive_field_i8_t,
@@ -2046,7 +2046,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         }
                                 break;
                         case MARKER_SYMBOL_PROP_INT16_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                   memfile_tell(memfile),
+                                                                                   MEMFILE_TELL(memfile),
                                                                                    nesting_level,
                                                                                    entryMarker,
                                                                                    archive_field_i16_t,
@@ -2054,7 +2054,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                    "%d");
                                 break;
                         case MARKER_SYMBOL_PROP_INT32_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                   memfile_tell(memfile),
+                                                                                   MEMFILE_TELL(memfile),
                                                                                    nesting_level,
                                                                                    entryMarker,
                                                                                    archive_field_i32_t,
@@ -2062,7 +2062,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                    "%d");
                                 break;
                         case MARKER_SYMBOL_PROP_INT64_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                   memfile_tell(memfile),
+                                                                                   MEMFILE_TELL(memfile),
                                                                                    nesting_level,
                                                                                    entryMarker,
                                                                                    archive_field_i64_t,
@@ -2071,7 +2071,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                            PRIi64);
                                 break;
                         case MARKER_SYMBOL_PROP_UINT8_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                   memfile_tell(memfile),
+                                                                                   MEMFILE_TELL(memfile),
                                                                                    nesting_level,
                                                                                    entryMarker,
                                                                                    archive_field_u8_t,
@@ -2079,7 +2079,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                    "%d");
                                 break;
                         case MARKER_SYMBOL_PROP_UINT16_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                    memfile_tell(memfile),
+                                                                                    MEMFILE_TELL(memfile),
                                                                                     nesting_level,
                                                                                     entryMarker,
                                                                                     archive_field_u16_t,
@@ -2087,7 +2087,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                     "%d");
                                 break;
                         case MARKER_SYMBOL_PROP_UINT32_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                    memfile_tell(memfile),
+                                                                                    MEMFILE_TELL(memfile),
                                                                                     nesting_level,
                                                                                     entryMarker,
                                                                                     archive_field_u32_t,
@@ -2095,7 +2095,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                     "%d");
                                 break;
                         case MARKER_SYMBOL_PROP_UINT64_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                    memfile_tell(memfile),
+                                                                                    MEMFILE_TELL(memfile),
                                                                                     nesting_level,
                                                                                     entryMarker,
                                                                                     archive_field_u64_t,
@@ -2104,7 +2104,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                             PRIu64);
                                 break;
                         case MARKER_SYMBOL_PROP_REAL_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                  memfile_tell(memfile),
+                                                                                  MEMFILE_TELL(memfile),
                                                                                   nesting_level,
                                                                                   entryMarker,
                                                                                   archive_field_number_t,
@@ -2112,7 +2112,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                                                                                   "%f");
                                 break;
                         case MARKER_SYMBOL_PROP_TEXT_ARRAY: PRINT_ARRAY_PROPS(memfile,
-                                                                                  memfile_tell(memfile),
+                                                                                  MEMFILE_TELL(memfile),
                                                                                   nesting_level,
                                                                                   entryMarker,
                                                                                   archive_field_sid_t,
@@ -2141,7 +2141,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                 }
         }
 
-        offset = memfile_tell(memfile);
+        offset = MEMFILE_TELL(memfile);
         char end_marker = *memfile_read_type(memfile, char);
         assert (end_marker == MARKER_SYMBOL_OBJECT_END);
         nesting_level--;
@@ -2173,7 +2173,7 @@ static bool is_valid_file(const archive_header *header)
 
 static void print_record_header_from_memfile(FILE *file, memfile *memfile)
 {
-        unsigned offset = memfile_tell(memfile);
+        unsigned offset = MEMFILE_TELL(memfile);
         record_header *header = memfile_read_type(memfile, record_header);
         record_flags flags;
         memset(&flags, 0, sizeof(record_flags));
@@ -2190,7 +2190,7 @@ static void print_record_header_from_memfile(FILE *file, memfile *memfile)
 
 static bool print_header_from_memfile(FILE *file, memfile *memfile)
 {
-        unsigned offset = memfile_tell(memfile);
+        unsigned offset = MEMFILE_TELL(memfile);
         assert(memfile_size(memfile) > sizeof(archive_header));
         archive_header *header = memfile_read_type(memfile, archive_header);
         if (!is_valid_file(header)) {
@@ -2211,7 +2211,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
         packer strategy;
         string_tab_flags_u flags;
 
-        unsigned offset = memfile_tell(memfile);
+        unsigned offset = MEMFILE_TELL(memfile);
         string_table_header *header = memfile_read_type(memfile, string_table_header);
         if (header->marker != global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC].symbol) {
                 char buffer[256];
@@ -2242,7 +2242,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
         pack_print_extra(&strategy, file, memfile);
 
         while ((*memfile_peek_type(memfile, char)) == global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR].symbol) {
-                unsigned offset = memfile_tell(memfile);
+                unsigned offset = MEMFILE_TELL(memfile);
                 string_entry_header header = *memfile_read_type(memfile, string_entry_header);
                 fprintf(file,
                         "0x%04x    [marker: %c] [next-entry-off: 0x%04zx] [str_buf-id: %"PRIu64"] [str_buf-length: %"PRIu32"]",

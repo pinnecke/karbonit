@@ -248,7 +248,7 @@ bool find_update_column_type(find *find, list_type_e derivation)
         if (field_is_column_or_subtype(type)) {
                 col_it *it = find_result_column(find);
                 memfile_save_position(&it->file);
-                memfile_seek(&it->file, it->begin);
+                MEMFILE_SEEK(&it->file, it->begin);
 
                 derived_e derive_marker;
                 list_container_e list_container;
@@ -294,7 +294,7 @@ bool find_update_object_type(find *find, map_type_e derivation)
         if (field_is_object_or_subtype(type)) {
                 obj_it *it = find_result_object(find);
                 memfile_save_position(&it->file);
-                memfile_seek(&it->file, it->begin);
+                MEMFILE_SEEK(&it->file, it->begin);
 
                 derived_e derive_marker;
                 abstract_derive_map_to(&derive_marker, derivation);

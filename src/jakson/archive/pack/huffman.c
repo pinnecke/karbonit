@@ -112,11 +112,11 @@ bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_sym
                 size_t num_bytes_written;
                 memfile_end_bit_mode(&num_bytes_written, file);
                 memfile_get_offset(&offset_continue, file);
-                memfile_seek(file, offset_meta);
+                MEMFILE_SEEK(file, offset_meta);
                 u8 num_bytes_written_uint8 = (u8) num_bytes_written;
                 memfile_write(file, &num_bytes_written_uint8, sizeof(u8));
 
-                memfile_seek(file, offset_continue);
+                MEMFILE_SEEK(file, offset_continue);
         }
 
         return true;
@@ -174,17 +174,17 @@ bool coding_huffman_encode(memfile *file, huffman *dic, const char *string)
 {
         u32 num_bytes_encoded = 0;
 
-        offset_t num_bytes_encoded_off = memfile_tell(file);
+        offset_t num_bytes_encoded_off = MEMFILE_TELL(file);
         memfile_skip(file, sizeof(u32));
 
         if ((num_bytes_encoded = (u32) encodeString(file, dic, string)) == 0) {
                 return false;
         }
 
-        offset_t continue_off = memfile_tell(file);
-        memfile_seek(file, num_bytes_encoded_off);
+        offset_t continue_off = MEMFILE_TELL(file);
+        MEMFILE_SEEK(file, num_bytes_encoded_off);
         memfile_write(file, &num_bytes_encoded, sizeof(u32));
-        memfile_seek(file, continue_off);
+        MEMFILE_SEEK(file, continue_off);
 
         return true;
 }

@@ -110,7 +110,7 @@ void int_embedded_fixed_props_read(fixed_prop *prop, memfile *memfile)
         prop->header = memfile_read_type(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
-        prop->values = memfile_peek(memfile, 1);
+        prop->values = MEMFILE_PEEK(memfile, 1);
 }
 
 void int_embedded_var_props_read(var_prop *prop, memfile *memfile)
@@ -119,7 +119,7 @@ void int_embedded_var_props_read(var_prop *prop, memfile *memfile)
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->offsets = (offset_t *) memfile_read(memfile, prop->header->num_entries * sizeof(offset_t));
-        prop->values = memfile_peek(memfile, 1);
+        prop->values = MEMFILE_PEEK(memfile, 1);
 }
 
 void int_embedded_null_props_read(null_prop *prop, memfile *memfile)
@@ -135,7 +135,7 @@ void int_embedded_array_props_read(array_prop *prop, memfile *memfile)
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->lengths = (u32 *) memfile_read(memfile, prop->header->num_entries * sizeof(u32));
-        prop->values_begin = memfile_tell(memfile);
+        prop->values_begin = MEMFILE_TELL(memfile);
 }
 
 void int_embedded_table_props_read(table_prop *prop, memfile *memfile)

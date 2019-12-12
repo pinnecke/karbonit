@@ -166,7 +166,7 @@ bool rec_key_type(key_e *out, rec *doc)
 const void *rec_key_raw_value(u64 *len, key_e *type, rec *doc)
 {
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(len, type, &doc->file);
         memfile_restore_position(&doc->file);
         return result;
@@ -176,7 +176,7 @@ bool rec_key_signed_value(i64 *key, rec *doc)
 {
         key_e type;
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
         if (likely(rec_key_is_signed(type))) {
@@ -192,7 +192,7 @@ bool rec_key_unsigned_value(u64 *key, rec *doc)
 {
         key_e type;
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         memfile_restore_position(&doc->file);
         if (likely(rec_key_is_unsigned(type))) {
@@ -208,7 +208,7 @@ const char *key_string_value(u64 *len, rec *doc)
 {
         key_e type;
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(len, &type, &doc->file);
         memfile_restore_position(&doc->file);
         if (likely(rec_key_is_string(type))) {
@@ -305,8 +305,8 @@ bool rec_is_array(const rec *doc)
 bool rec_hexdump_print(FILE *file, rec *doc)
 {
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
-        bool status = hexdump_print(file, memfile_peek(&doc->file, 1), memfile_size(&doc->file));
+        MEMFILE_SEEK(&doc->file, 0);
+        bool status = hexdump_print(file, MEMFILE_PEEK(&doc->file, 1), memfile_size(&doc->file));
         memfile_restore_position(&doc->file);
         return status;
 }
@@ -324,7 +324,7 @@ static void carbon_header_init(rec *doc, key_e rec_key_type)
 {
         assert(doc);
 
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
         key_create(&doc->file, rec_key_type);
 
         if (rec_key_type != KEY_NOKEY) {

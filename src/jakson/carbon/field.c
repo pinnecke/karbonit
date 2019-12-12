@@ -265,9 +265,9 @@ bool carbon_field_skip_object(memfile *file)
 {
         if (abstract_is_instanceof_object(file)) {
                 obj_it skip_it;
-                internal_obj_it_create(&skip_it, file, memfile_tell(file));
+                internal_obj_it_create(&skip_it, file, MEMFILE_TELL(file));
                 internal_obj_it_fast_forward(&skip_it);
-                memfile_seek(file, memfile_tell(&skip_it.file));
+                MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
                 obj_it_drop(&skip_it);
                 return true;
         } else {
@@ -279,9 +279,9 @@ bool carbon_field_skip_array(memfile *file)
 {
         if (abstract_is_instanceof_array(file)) {
                 arr_it skip_it;
-                internal_arr_it_create(&skip_it, file, memfile_tell(file));
+                internal_arr_it_create(&skip_it, file, MEMFILE_TELL(file));
                 internal_arr_it_fast_forward(&skip_it);
-                memfile_seek(file, memfile_tell(&skip_it.file));
+                MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
                 arr_it_drop(&skip_it);
                 return true;
         } else {
@@ -296,9 +296,9 @@ bool carbon_field_skip_column(memfile *file)
         error_if_and_return(!field_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
         col_it skip_it;
-        col_it_create(&skip_it, file, memfile_tell(file) - sizeof(u8));
+        col_it_create(&skip_it, file, MEMFILE_TELL(file) - sizeof(u8));
         col_it_fast_forward(&skip_it);
-        memfile_seek(file, memfile_tell(&skip_it.file));
+        MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
         return true;
 }
 
@@ -308,11 +308,11 @@ bool carbon_field_skip_binary(memfile *file)
 
         error_if_and_return(type_marker != FIELD_BINARY, ERR_TYPEMISMATCH, NULL);
         /** read and skip mime type with variable-length integer type */
-        u64 mime = memfile_read_uintvar_stream(NULL, file);
+        u64 mime = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         UNUSED(mime);
 
         /** read blob length */
-        u64 blob_len = memfile_read_uintvar_stream(NULL, file);
+        u64 blob_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
         /** skip blob */
         memfile_skip(file, blob_len);
@@ -325,11 +325,11 @@ bool carbon_field_skip_custom_binary(memfile *file)
 
         error_if_and_return(type_marker != FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
         /** read custom type str_buf length, and skip the type str_buf */
-        u64 custom_type_str_len = memfile_read_uintvar_stream(NULL, file);
+        u64 custom_type_str_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         memfile_skip(file, custom_type_str_len);
 
         /** read blob length, and skip blob data */
-        u64 blob_len = memfile_read_uintvar_stream(NULL, file);
+        u64 blob_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         memfile_skip(file, blob_len);
         return true;
 }
@@ -339,7 +339,7 @@ bool carbon_field_skip_string(memfile *file)
         u8 type_marker = *memfile_read_type(file, u8);
 
         error_if_and_return(type_marker != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
-        u64 strlen = memfile_read_uintvar_stream(NULL, file);
+        u64 strlen = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         memfile_skip(file, strlen);
         return true;
 }

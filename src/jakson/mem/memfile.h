@@ -29,7 +29,7 @@ typedef struct memfile {
 #define memfile_peek_type(file, type)                                                                                  \
 ({                                                                                                                     \
         assert (memfile_remain_size((file)) >= sizeof(type));                                                          \
-        type* ret = (type*) memfile_peek((file), sizeof(type));                                                        \
+        type* ret = (type*) MEMFILE_PEEK((file), sizeof(type));                                                        \
         ret;                                                                                                           \
 })
 
@@ -42,7 +42,7 @@ typedef struct memfile {
 #define memfile_read_type_list(file, type, how_many)                                                                   \
      (const type *) memfile_read(file, how_many * sizeof(type))
 
-#define memfile_tell(file)                                                                                             \
+#define MEMFILE_TELL(file)                                                                                             \
 ({                                                                                                                     \
         offset_t __offset = 0;                                                                                         \
         memfile_get_offset(&__offset, (file));                                                                         \
@@ -80,7 +80,7 @@ typedef struct memfile {
 
 #define memfile_save_position(file)										                                               \
 ({										                                                                               \
-        offset_t pos = memfile_tell((file));										                                   \
+        offset_t pos = MEMFILE_TELL((file));										                                   \
         if (likely((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {								   \
                 (file)->saved_pos[(file)->saved_pos_ptr++] = pos;										               \
         } else {										                                                               \
@@ -95,7 +95,7 @@ typedef struct memfile {
 	bool status;												                                                   \
         if (likely((file)->saved_pos_ptr >= 0)) {												                       \
                 offset_t pos = (file)->saved_pos[--(file)->saved_pos_ptr];											   \
-                memfile_seek((file), pos);												                               \
+                MEMFILE_SEEK((file), pos);												                               \
                 status = true;												                                           \
         } else {												                                                       \
                 status = error(ERR_STACK_UNDERFLOW, NULL);												               \
@@ -113,12 +113,12 @@ typedef struct memfile {
                 memfile_grow((file), (nbytes) - diff);											                       \
         }											                                                                   \
         memfile_save_position((file));											                                       \
-        offset_t current_off = memfile_tell((file));											                       \
+        offset_t current_off = MEMFILE_TELL((file));											                       \
         signed_offset_t shift = 0;											                                           \
         for (u32 i = 0; i < (nbytes); i++) {											                               \
                 char c = *memfile_read((file), 1);											                           \
                 if (unlikely(c != 0)) {											                                       \
-                        memfile_seek((file), current_off);											                   \
+                        MEMFILE_SEEK((file), current_off);											                   \
                         memfile_inplace_insert((file), (nbytes) - i);											       \
                         shift += (nbytes) - i;											                               \
                         break;											                                               \
@@ -128,22 +128,22 @@ typedef struct memfile {
         shift;											                                                               \
 })
 
-#define memfile_read_uintvar_stream(nbytes, file)													                   \
+#define MEMFILE_READ_UINTVAR_STREAM(nbytes, file)													                   \
 ({													                                                                   \
         u8 nbytes_read;													                                               \
-        u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) memfile_peek((file), sizeof(char)));		   \
+        u64 result = uintvar_stream_read(&nbytes_read, (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char)));		   \
         memfile_skip((file), nbytes_read);													                           \
         if ((nbytes) != NULL) { u8 *assign_nbytes = (nbytes); *assign_nbytes = nbytes_read; }						   \
         result;													                                                       \
 })
 
 #define memfile_skip_uintvar_stream(file)						                                                       \
-        memfile_read_uintvar_stream(NULL, (file));
+        MEMFILE_READ_UINTVAR_STREAM(NULL, (file));
 
 #define memfile_peek_uintvar_stream(nbytes, file)									                                   \
 ({									                                                                                   \
         memfile_save_position((file));									                                               \
-        u64 result = memfile_read_uintvar_stream((nbytes), (file));									                   \
+        u64 result = MEMFILE_READ_UINTVAR_STREAM((nbytes), (file));									                   \
         memfile_restore_position((file));									                                           \
         result;									                                                                       \
 })
@@ -152,7 +152,7 @@ typedef struct memfile {
 ({												                                                                       \
         u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   \
         signed_offset_t shift = memfile_ensure_space((file), required_blocks);										   \
-        uintvar_stream_t dst = (uintvar_stream_t) memfile_peek((file), sizeof(char));								   \
+        uintvar_stream_t dst = (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char));								   \
         uintvar_stream_write(dst, (value));												                               \
         memfile_skip((file), required_blocks);												                           \
         if ((nbytes_moved) != NULL) { signed_offset_t *assign = nbytes_moved; *assign = shift; }					   \
@@ -171,7 +171,7 @@ typedef struct memfile {
                 u8 dec = bytes_used_now - bytes_used_then;															   \
                 memfile_inplace_remove((file), dec);															       \
         }															                                                   \
-        uintvar_stream_t dst = (uintvar_stream_t) memfile_peek((file), sizeof(char));								   \
+        uintvar_stream_t dst = (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char));								   \
         u8 required_blocks = uintvar_stream_write(dst, (value));													   \
         memfile_skip((file), required_blocks);															               \
         (bytes_used_then - bytes_used_now);															                   \
@@ -191,13 +191,13 @@ typedef struct memfile {
 #define memfile_clone(dst, src)																                           \
 {															                                                           \
         memfile_open((dst), (src)->memblock, (src)->mode);															   \
-        memfile_seek((dst), memfile_tell((src)));															           \
+        MEMFILE_SEEK((dst), MEMFILE_TELL((src)));															           \
         (dst)->bit_mode = (src)->bit_mode;															                   \
         (dst)->saved_pos_ptr = (src)->saved_pos_ptr;															       \
         memcpy(&(dst)->saved_pos, &(src)->saved_pos, ARRAY_LENGTH((src)->saved_pos));								   \
 }
 
-#define memfile_seek(file, position)												                                   \
+#define MEMFILE_SEEK(file, position)												                                   \
 ({												                                                                       \
         offset_t file_size = 0;												                                           \
         bool status = true;												                                               \
@@ -216,9 +216,9 @@ typedef struct memfile {
 
 #define memfile_seek_from_here(file, where)				                                                               \
 {				                                                                                                       \
-        offset_t now = memfile_tell((file));				                                                           \
+        offset_t now = MEMFILE_TELL((file));				                                                           \
         offset_t then = now + (where);				                                                                   \
-        memfile_seek((file), then);				                                                                       \
+        MEMFILE_SEEK((file), then);				                                                                       \
 }
 
 #define memfile_rewind(file)					                                                                       \
@@ -288,7 +288,7 @@ typedef struct memfile {
 
 #define memfile_read(file, nbytes)											                                           \
 ({											                                                                           \
-        const char *result = memfile_peek((file), (nbytes));											               \
+        const char *result = MEMFILE_PEEK((file), (nbytes));											               \
         (file)->pos += (nbytes);											                                           \
         result;											                                                               \
 })
@@ -328,7 +328,7 @@ typedef struct memfile {
         status;															                                               \
 })
 
-#define memfile_peek(file, nbytes)												                                       \
+#define MEMFILE_PEEK(file, nbytes)												                                       \
 ({												                                                                       \
         offset_t file_size = 0;												                                           \
         memblock_size(&file_size, (file)->memblock);												                   \
@@ -362,7 +362,7 @@ typedef struct memfile {
                 char empty = '\0';													                                   \
                 memfile_get_offset(&offset, (file));													               \
                 memfile_write((file), &empty, sizeof(char));													       \
-                memfile_seek((file), offset);													                       \
+                MEMFILE_SEEK((file), offset);													                       \
         } else {													                                                   \
                 status = error(ERR_WRITEPROT, NULL);													               \
         }													                                                           \
@@ -384,9 +384,9 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
                         } else {
                                 UNSET_BITS(byte, mask);
                         }
-                        memfile_seek(file, offset);
+                        MEMFILE_SEEK(file, offset);
                         memfile_write(file, &byte, sizeof(char));
-                        memfile_seek(file, offset);
+                        MEMFILE_SEEK(file, offset);
                         file->current_write_bit++;
                 } else {
                     file->current_write_bit = 0;
@@ -396,7 +396,7 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
                     memfile_skip(file, 1);
                     memfile_get_offset(&off, file);
                     memfile_write(file, &empty, sizeof(char));
-                    memfile_seek(file, off);
+                    MEMFILE_SEEK(file, off);
 
                     return memfile_write_bit(file, flag);
                 }
@@ -420,7 +420,7 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
 			                memfile_get_offset(&offset, (file));													   \
 			                char mask = 1 << (file)->current_read_bit;												   \
 			                char byte = *memfile_read((file), sizeof(char));										   \
-			                memfile_seek((file), offset);															   \
+			                MEMFILE_SEEK((file), offset);															   \
 			                bool result = ((byte & mask) >> (file)->current_read_bit) == true;						   \
 			                (file)->current_read_bit++;																   \
 			                status = result;																		   \
@@ -438,12 +438,12 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
 })
 
 #define memfile_seek_to_start(file)											                                           \
-        memfile_seek((file), 0)
+        MEMFILE_SEEK((file), 0)
 
 #define memfile_seek_to_end(file)											                                           \
 ({											                                                                           \
         size_t size = memblock_last_used_byte((file)->memblock);											           \
-        memfile_seek((file), size);											                                           \
+        MEMFILE_SEEK((file), size);											                                           \
 })
 
 #define memfile_inplace_insert(file, nbytes)											                               \
@@ -481,7 +481,7 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
                                 data = NULL;																           \
                         }																                               \
                 }																                                       \
-                data = (void *) memfile_peek((file), (nbytes));														   \
+                data = (void *) MEMFILE_PEEK((file), (nbytes));														   \
         }																                                               \
         data;																                                           \
 })

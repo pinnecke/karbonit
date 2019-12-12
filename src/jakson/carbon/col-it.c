@@ -29,7 +29,7 @@
 #define safe_cast(builtin_type, nvalues, it, field_expr)                                                          \
 ({                                                                                                                     \
         field_e type;                                                                                  \
-        const void *raw = col_it_values(&type, nvalues, it);                                             \
+        const void *raw = COL_IT_VALUES(&type, nvalues, it);                                             \
         (const builtin_type *) raw;                                                                                    \
 })
 
@@ -39,7 +39,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         it->mod_size = 0;
 
         memfile_open(&it->file, memfile->memblock, memfile->mode);
-        memfile_seek(&it->file, begin);
+        MEMFILE_SEEK(&it->file, begin);
 
         error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
 
@@ -56,9 +56,9 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         field_e type = (field_e) marker;
         it->field_type = type;
 
-        it->header_begin = memfile_tell(&it->file);
-        it->num = (u32) memfile_read_uintvar_stream(NULL, &it->file);
-        it->cap = (u32) memfile_read_uintvar_stream(NULL, &it->file);
+        it->header_begin = MEMFILE_TELL(&it->file);
+        it->num = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
+        it->cap = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
 
         col_it_rewind(it);
 
@@ -85,14 +85,14 @@ bool col_it_insert(insert *in, col_it *it)
 
 bool col_it_fast_forward(col_it *it)
 {
-        col_it_values(NULL, NULL, it);
+        COL_IT_VALUES(NULL, NULL, it);
         return true;
 }
 
 offset_t col_it_memfilepos(col_it *it)
 {
         if (likely(it != NULL)) {
-                return memfile_tell(&it->file);
+                return MEMFILE_TELL(&it->file);
         } else {
                 error(ERR_NULLPTR, NULL);
                 return 0;
@@ -103,10 +103,10 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
 {
         if (it) {
                 memfile_save_position(&it->file);
-                memfile_seek(&it->file, it->header_begin);
-                u32 num_elements = (u32) memfile_read_uintvar_stream(NULL, &it->file);
-                memfile_read_uintvar_stream(NULL, &it->file);
-                offset_t payload_start = memfile_tell(&it->file);
+                MEMFILE_SEEK(&it->file, it->header_begin);
+                u32 num_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
+                MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
+                offset_t payload_start = MEMFILE_TELL(&it->file);
                 error_if_and_return(elem_idx >= num_elements, ERR_OUTOFBOUNDS, NULL);
                 offset_t ret = payload_start + elem_idx * internal_get_type_value_size(it->field_type);
                 memfile_restore_position(&it->file);
@@ -369,15 +369,15 @@ bool col_it_remove(col_it *it, u32 pos)
 
         /** remove element */
         size_t elem_size = internal_get_type_value_size(it->field_type);
-        memfile_seek(&it->file, payload_start + pos * elem_size);
+        MEMFILE_SEEK(&it->file, payload_start + pos * elem_size);
         memfile_inplace_remove(&it->file, elem_size);
 
         /** add an empty element at the end to restore the column capacity property */
-        memfile_seek(&it->file, payload_start + it->num * elem_size);
+        MEMFILE_SEEK(&it->file, payload_start + it->num * elem_size);
         memfile_inplace_insert(&it->file, elem_size);
 
         /** update element counter */
-        memfile_seek(&it->file, it->header_begin);
+        MEMFILE_SEEK(&it->file, it->header_begin);
         u32 num_elems = memfile_peek_uintvar_stream(NULL, &it->file);
         assert(num_elems > 0);
         num_elems--;
@@ -411,7 +411,7 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
         }
 
         memfile_save_position(&it->file);
-        memfile_seek(&it->file, it->begin);
+        MEMFILE_SEEK(&it->file, it->begin);
 
         derived_e derive_marker;
         list_container_e container;
@@ -431,7 +431,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
         memfile_save_position(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
-        memfile_seek(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
+        MEMFILE_SEEK(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
 
         switch (it->field_type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
@@ -585,7 +585,7 @@ static bool rewrite_column_to_array(col_it *it)
 
         /** Potentially tailing space after the last ']' marker of the outer most array is used for temporary space */
         memfile_seek_to_end(&it->file);
-        offset_t array_marker_begin = memfile_tell(&it->file);
+        offset_t array_marker_begin = MEMFILE_TELL(&it->file);
 
         size_t capacity = it->num * internal_get_type_value_size(it->field_type);
         internal_insert_array(&it->file, list_type, capacity);
@@ -594,7 +594,7 @@ static bool rewrite_column_to_array(col_it *it)
 
         field_e type;
         u32 num_values;
-        const void *data = col_it_values(&type, &num_values, it);
+        const void *data = COL_IT_VALUES(&type, &num_values, it);
         switch (type) {
                 case FIELD_NULL:
                         while (num_values--) {
@@ -653,7 +653,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
         memfile_save_position(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
-        memfile_seek(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
+        MEMFILE_SEEK(&it->file, payload_start + pos * internal_get_type_value_size(it->field_type));
 
         switch (it->field_type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
@@ -868,7 +868,7 @@ bool col_it_rewind(col_it *it)
 {
         offset_t playload_start = internal_column_get_payload_off(it);
         error_if_and_return(playload_start >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
-        return memfile_seek(&it->file, playload_start);
+        return MEMFILE_SEEK(&it->file, playload_start);
 }
 
 #define COL_IT_PRINT(it, nvalues, type, null_check)                                             \

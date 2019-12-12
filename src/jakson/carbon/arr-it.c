@@ -38,7 +38,7 @@ bool internal_arr_it_update_##type_name(arr_it *it, type_name value)            
         if (likely(it->field.type == field_type)) {                                                    \
                 memfile_save_position(&it->file);                                                                   \
                 internal_arr_it_offset(&datum, it);                                                                 \
-                memfile_seek(&it->file, datum + sizeof(u8));                                                        \
+                MEMFILE_SEEK(&it->file, datum + sizeof(u8));                                                        \
                 memfile_write(&it->file, &value, sizeof(type_name));                                                \
                 memfile_restore_position(&it->file);                                                                \
                 return true;                                                                                           \
@@ -87,7 +87,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
                 }
                 offset_t datum = 0;
                 internal_arr_it_offset(&datum, it);
-                memfile_seek(&it->file, datum);
+                MEMFILE_SEEK(&it->file, datum);
                 memfile_write(&it->file, &value, sizeof(u8));
         } else {
                 insert ins;
@@ -249,7 +249,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
         it->last_off = 0;
 
         memfile_open(&it->file, memfile->memblock, memfile->mode);
-        memfile_seek(&it->file, payload_start);
+        MEMFILE_SEEK(&it->file, payload_start);
 
         if (memfile_remain_size(&it->file) < sizeof(u8)) {
                 return error(ERR_CORRUPTED, NULL);
@@ -325,7 +325,7 @@ bool arr_it_rewind(arr_it *it)
 {
         error_if_and_return(it->begin >= memfile_size(&it->file), ERR_OUTOFBOUNDS, NULL);
         it->pos = (u64) -1;
-        return memfile_seek(&it->file, it->begin + sizeof(u8));
+        return MEMFILE_SEEK(&it->file, it->begin + sizeof(u8));
 }
 
 static void auto_adjust_pos_after_mod(arr_it *it)
@@ -369,7 +369,7 @@ static bool _internal_array_next(arr_it *it)
         bool is_empty_slot = true;
 
         auto_adjust_pos_after_mod(it);
-        offset_t last_off = memfile_tell(&it->file);
+        offset_t last_off = MEMFILE_TELL(&it->file);
 
         if (internal_array_next(&is_empty_slot, &it->eof, it)) {
                 it->pos++;
@@ -380,11 +380,11 @@ static bool _internal_array_next(arr_it *it)
                 if (!it->eof) {
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
-                        while (*memfile_peek(&it->file, 1) == 0) {
+                        while (*MEMFILE_PEEK(&it->file, 1) == 0) {
                                 memfile_skip(&it->file, 1);
                         }
                 }
-                assert(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
+                assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
                 internal_field_auto_close(&it->field);
                 return false;
         }
@@ -403,7 +403,7 @@ item *arr_it_next(arr_it *it)
 offset_t internal_arr_it_memfilepos(arr_it *it)
 {
         if (likely(it != NULL)) {
-                return memfile_tell(&it->file);
+                return MEMFILE_TELL(&it->file);
         } else {
                 error(ERR_NULLPTR, NULL);
                 return 0;
@@ -428,7 +428,7 @@ bool internal_arr_it_fast_forward(arr_it *it)
 {
         while (arr_it_next(it)) {}
 
-        assert(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
+        assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
         memfile_skip(&it->file, sizeof(char));
         return true;
 }
@@ -449,7 +449,7 @@ bool internal_arr_it_remove(arr_it *it)
         field_e type;
         if (arr_it_field_type(&type, it)) {
                 offset_t prev_off = it->last_off;
-                memfile_seek(&it->file, prev_off);
+                MEMFILE_SEEK(&it->file, prev_off);
                 if (internal_field_remove(&it->file, type)) {
                         internal_array_refresh(NULL, NULL, it);
                         return true;
@@ -483,7 +483,7 @@ bool arr_it_is_sorted(arr_it *it)
 void arr_it_update_type(arr_it *it, list_type_e derivation)
 {
         memfile_save_position(&it->file);
-        memfile_seek(&it->file, it->begin);
+        MEMFILE_SEEK(&it->file, it->begin);
 
         derived_e derive_marker;
         abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);

@@ -48,7 +48,7 @@ static void key_unsigned_set(rec *doc, u64 key)
 {
         assert(doc);
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
 
         key_write_unsigned(&doc->file, key);
 
@@ -59,7 +59,7 @@ static void key_signed_set(rec *doc, i64 key)
 {
         assert(doc);
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
 
         key_write_signed(&doc->file, key);
 
@@ -70,7 +70,7 @@ static void key_string_set(rec *doc, const char *key)
 {
         assert(doc);
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
 
         key_update_string(&doc->file, key);
 
@@ -229,7 +229,7 @@ bool revise_shrink(rev *context)
         revise_iterator_open(&it, context);
         internal_arr_it_fast_forward(&it);
         if (memfile_remain_size(&it.file) > 0) {
-                offset_t first_empty_slot = memfile_tell(&it.file);
+                offset_t first_empty_slot = MEMFILE_TELL(&it.file);
                 assert(memfile_size(&it.file) > first_empty_slot);
                 offset_t shrink_size = memfile_size(&it.file) - first_empty_slot;
                 memfile_cut(&it.file, shrink_size);
@@ -268,12 +268,12 @@ static bool internal_pack_array(arr_it *it)
                 if (!is_array_end) {
 
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
-                        offset_t first_empty_slot_offset = memfile_tell(&this_array.file);
+                        offset_t first_empty_slot_offset = MEMFILE_TELL(&this_array.file);
                         char final;
                         while ((final = *memfile_read(&this_array.file, sizeof(char))) == 0) {}
                         assert(final == MARRAY_END);
-                        offset_t last_empty_slot_offset = memfile_tell(&this_array.file) - sizeof(char);
-                        memfile_seek(&this_array.file, first_empty_slot_offset);
+                        offset_t last_empty_slot_offset = MEMFILE_TELL(&this_array.file) - sizeof(char);
+                        MEMFILE_SEEK(&this_array.file, first_empty_slot_offset);
                         assert(last_empty_slot_offset > first_empty_slot_offset);
 
                         memfile_inplace_remove(&this_array.file,
@@ -317,10 +317,10 @@ static bool internal_pack_array(arr_it *it)
                                         internal_arr_it_create(&array, &it->file,
                                                                      it->field.array->begin);
                                         internal_pack_array(&array);
-                                        assert(*memfile_peek(&array.file, sizeof(char)) ==
+                                        assert(*MEMFILE_PEEK(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
-                                        memfile_seek(&it->file, memfile_tell(&array.file));
+                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&array.file));
                                         arr_it_drop(&array);
                                 }
                                         break;
@@ -366,8 +366,8 @@ static bool internal_pack_array(arr_it *it)
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                         col_it_rewind(it->field.column);
                                         internal_pack_column(it->field.column);
-                                        memfile_seek(&it->file,
-                                                     memfile_tell(&it->field.column->file));
+                                        MEMFILE_SEEK(&it->file,
+                                                     MEMFILE_TELL(&it->field.column->file));
                                         break;
                                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -378,10 +378,10 @@ static bool internal_pack_array(arr_it *it)
                                                                       it->field.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
-                                        assert(*memfile_peek(&object.file, sizeof(char)) ==
+                                        assert(*MEMFILE_PEEK(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
                                         memfile_skip(&object.file, sizeof(char));
-                                        memfile_seek(&it->file, memfile_tell(&object.file));
+                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&object.file));
                                         obj_it_drop(&object);
                                 }
                                         break;
@@ -391,7 +391,7 @@ static bool internal_pack_array(arr_it *it)
                 }
         }
 
-        assert(*memfile_peek(&it->file, sizeof(char)) == MARRAY_END);
+        assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
 
         return true;
 }
@@ -411,12 +411,12 @@ static bool internal_pack_object(obj_it *it)
                 if (!is_object_end) {
 
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
-                        offset_t first_empty_slot_offset = memfile_tell(&this_object_it.file);
+                        offset_t first_empty_slot_offset = MEMFILE_TELL(&this_object_it.file);
                         char final;
                         while ((final = *memfile_read(&this_object_it.file, sizeof(char))) == 0) {}
                         assert(final == MOBJECT_END);
-                        offset_t last_empty_slot_offset = memfile_tell(&this_object_it.file) - sizeof(char);
-                        memfile_seek(&this_object_it.file, first_empty_slot_offset);
+                        offset_t last_empty_slot_offset = MEMFILE_TELL(&this_object_it.file) - sizeof(char);
+                        MEMFILE_SEEK(&this_object_it.file, first_empty_slot_offset);
                         assert(last_empty_slot_offset > first_empty_slot_offset);
 
                         memfile_inplace_remove(&this_object_it.file,
@@ -460,10 +460,10 @@ static bool internal_pack_object(obj_it *it)
                                         internal_arr_it_create(&array, &it->file,
                                                                it->field.value.data.array->begin);
                                         internal_pack_array(&array);
-                                        assert(*memfile_peek(&array.file, sizeof(char)) ==
+                                        assert(*MEMFILE_PEEK(&array.file, sizeof(char)) ==
                                                    MARRAY_END);
                                         memfile_skip(&array.file, sizeof(char));
-                                        memfile_seek(&it->file, memfile_tell(&array.file));
+                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&array.file));
                                         arr_it_drop(&array);
                                 }
                                         break;
@@ -509,8 +509,8 @@ static bool internal_pack_object(obj_it *it)
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                         col_it_rewind(it->field.value.data.column);
                                         internal_pack_column(it->field.value.data.column);
-                                        memfile_seek(&it->file,
-                                                     memfile_tell(&it->field.value.data.column->file));
+                                        MEMFILE_SEEK(&it->file,
+                                                     MEMFILE_TELL(&it->field.value.data.column->file));
                                         break;
                                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
@@ -521,10 +521,10 @@ static bool internal_pack_object(obj_it *it)
                                                                       it->field.value.data.object->content_begin -
                                                                       sizeof(u8));
                                         internal_pack_object(&object);
-                                        assert(*memfile_peek(&object.file, sizeof(char)) ==
+                                        assert(*MEMFILE_PEEK(&object.file, sizeof(char)) ==
                                                    MOBJECT_END);
                                         memfile_skip(&object.file, sizeof(char));
-                                        memfile_seek(&it->file, memfile_tell(&object.file));
+                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&object.file));
                                         obj_it_drop(&object);
                                 }
                                         break;
@@ -534,7 +534,7 @@ static bool internal_pack_object(obj_it *it)
                 }
         }
 
-        assert(*memfile_peek(&it->file, sizeof(char)) == MOBJECT_END);
+        assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MOBJECT_END);
 
         return true;
 }
@@ -546,13 +546,13 @@ static bool internal_pack_column(col_it *it)
         u32 free_space = (it->cap - it->num) * internal_get_type_value_size(it->field_type);
         offset_t payload_start = internal_column_get_payload_off(it);
         u64 payload_size = it->num * internal_get_type_value_size(it->field_type);
-        memfile_seek(&it->file, payload_start);
+        MEMFILE_SEEK(&it->file, payload_start);
         memfile_skip(&it->file, payload_size);
 
         if (free_space > 0) {
                 memfile_inplace_remove(&it->file, free_space);
 
-                memfile_seek(&it->file, it->header_begin);
+                MEMFILE_SEEK(&it->file, it->header_begin);
                 memfile_skip_uintvar_stream(&it->file); // skip num of elements counter
                 memfile_update_uintvar_stream(&it->file,
                                               it->num); // update capacity counter to num elems
@@ -577,7 +577,7 @@ static bool carbon_header_rev_inc(rec *doc)
 
         key_e rec_key_type;
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
         key_read(NULL, &rec_key_type, &doc->file);
         if (rec_has_key(rec_key_type)) {
                 u64 raw_data_len = 0;

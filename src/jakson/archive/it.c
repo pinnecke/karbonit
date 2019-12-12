@@ -29,7 +29,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
         object_header *header;
         object_flags_u flags;
 
-        object_off = memfile_tell(memfile);
+        object_off = MEMFILE_TELL(memfile);
         header = memfile_read_type(memfile, object_header);
         if (unlikely(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
                 return false;
@@ -118,7 +118,7 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *me
 
         u32 current_idx = state->current_column_group.current_column.current_entry.idx;
         offset_t entry_off = state->current_column_group.current_column.elem_offsets[current_idx];
-        memfile_seek(memfile, entry_off);
+        MEMFILE_SEEK(memfile, entry_off);
 
         state->current_column_group.current_column.current_entry.array_length = *memfile_read_type(memfile,
                                                                                                        u32);
@@ -134,7 +134,7 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
 
         u32 current_idx = state->current_column_group.current_column.idx;
         offset_t column_off = state->current_column_group.column_offs[current_idx];
-        memfile_seek(memfile, column_off);
+        MEMFILE_SEEK(memfile, column_off);
         const column_header *header = memfile_read_type(memfile, column_header);
 
         assert(header->marker == MARKER_SYMBOL_COLUMN);
@@ -154,7 +154,7 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
 static bool collection_iter_read_next_column_group(collection_iter_state *state, memfile *memfile)
 {
         assert(state->current_column_group_idx < state->num_column_groups);
-        memfile_seek(memfile, state->column_group_offsets[state->current_column_group_idx]);
+        MEMFILE_SEEK(memfile, state->column_group_offsets[state->current_column_group_idx]);
         const column_group_header *header = memfile_read_type(memfile, column_group_header);
         assert(header->marker == MARKER_SYMBOL_COLUMN_GROUP);
         state->current_column_group.num_columns = header->num_columns;
@@ -199,7 +199,7 @@ static void prop_iter_cursor_init(prop_iter *iter)
 
         if (iter->mode == PROP_ITER_MODE_COLLECTION) {
                 iter->mode_collection.collection_start_off = offset_by_state(iter);
-                memfile_seek(&iter->record_table_memfile, iter->mode_collection.collection_start_off);
+                MEMFILE_SEEK(&iter->record_table_memfile, iter->mode_collection.collection_start_off);
                 const object_array_header
                         *header = memfile_read_type(&iter->record_table_memfile, object_array_header);
                 iter->mode_collection.num_column_groups = header->num_entries;
@@ -213,9 +213,9 @@ static void prop_iter_cursor_init(prop_iter *iter)
 
         } else {
                 iter->mode_object.current_prop_group_off = offset_by_state(iter);
-                memfile_seek(&iter->record_table_memfile, iter->mode_object.current_prop_group_off);
+                MEMFILE_SEEK(&iter->record_table_memfile, iter->mode_object.current_prop_group_off);
                 int_embedded_fixed_props_read(&iter->mode_object.prop_group_header, &iter->record_table_memfile);
-                iter->mode_object.prop_data_off = memfile_tell(&iter->record_table_memfile);
+                iter->mode_object.prop_data_off = MEMFILE_TELL(&iter->record_table_memfile);
         }
 
 }
@@ -400,7 +400,7 @@ static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
 {
         iter->mask = mask;
         memfile_open(&iter->record_table_memfile, memblock, READ_ONLY);
-        if (!memfile_seek(&iter->record_table_memfile, object_offset)) {
+        if (!MEMFILE_SEEK(&iter->record_table_memfile, object_offset)) {
                 return error(ERR_MEMFILESEEK_FAILED, NULL);
         }
         if (!init_object_from_memfile(&iter->object, &iter->record_table_memfile)) {
@@ -685,10 +685,10 @@ bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter
 {
         iter->entry_state = entry->state;
         memfile_open(&iter->memfile, entry->record_table_memfile.memblock, READ_ONLY);
-        memfile_seek(&iter->memfile,
+        MEMFILE_SEEK(&iter->memfile,
                      entry->state.current_column_group.current_column.elem_offsets[
                              entry->state.current_column_group.current_column.current_entry.idx - 1] + sizeof(u32));
-        iter->next_obj_off = memfile_tell(&iter->memfile);
+        iter->next_obj_off = MEMFILE_TELL(&iter->memfile);
         return true;
 }
 
@@ -696,7 +696,7 @@ const archive_object *archive_column_entry_object_iter_next_object(column_object
 {
         if (iter) {
                 if (iter->next_obj_off != 0) {
-                        memfile_seek(&iter->memfile, iter->next_obj_off);
+                        MEMFILE_SEEK(&iter->memfile, iter->next_obj_off);
                         if (init_object_from_memfile(&iter->obj, &iter->memfile)) {
                                 iter->next_obj_off = iter->obj.next_obj_off;
                                 return &iter->obj;
@@ -979,7 +979,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
         archive_value_vector_is_of_objects(&is_object, value);
 
         if (is_object) {
-                memfile_seek(&value->record_table_memfile, value->data.object.offsets[idx]);
+                MEMFILE_SEEK(&value->record_table_memfile, value->data.object.offsets[idx]);
                 init_object_from_memfile(&value->data.object.object, &value->record_table_memfile);
                 *object = value->data.object.object;
                 return true;
@@ -1125,6 +1125,6 @@ DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t,
 void archive_int_reset_obj_it_mem_file(archive_object *object)
 {
         UNUSED(object);
-        //  memfile_seek(&object->file, object->self);
+        //  MEMFILE_SEEK(&object->file, object->self);
         abort();
 }

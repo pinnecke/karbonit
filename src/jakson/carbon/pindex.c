@@ -201,7 +201,7 @@ static const void *
 record_ref_read(key_e *rec_key_type, u64 *key_length, u64 *commit_hash, memfile *memfile)
 {
         memfile_save_position(memfile);
-        memfile_seek(memfile, 0);
+        MEMFILE_SEEK(memfile, 0);
         const void *ret = key_read(key_length, rec_key_type, memfile);
         u64 *hash = memfile_read_type(memfile, u64);
         OPTIONAL_SET(commit_hash, *hash);
@@ -217,7 +217,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
         rec_commit_hash(&commit_hash, doc);
 
         /** write record key */
-        memfile_seek(memfile, 0);
+        MEMFILE_SEEK(memfile, 0);
         key_create(memfile, type);
         switch (type) {
                 case KEY_NOKEY: {
@@ -228,21 +228,21 @@ static void record_ref_create(memfile *memfile, rec *doc)
                 case KEY_UKEY: {
                         u64 key;
                         rec_key_unsigned_value(&key, doc);
-                        memfile_seek(memfile, 0);
+                        MEMFILE_SEEK(memfile, 0);
                         key_write_unsigned(memfile, key);
                 }
                         break;
                 case KEY_IKEY: {
                         DECLARE_AND_INIT(i64, key)
                         rec_key_signed_value(&key, doc);
-                        memfile_seek(memfile, 0);
+                        MEMFILE_SEEK(memfile, 0);
                         key_write_signed(memfile, key);
                 }
                         break;
                 case KEY_SKEY: {
                         u64 len;
                         const char *key = key_string_value(&len, doc);
-                        memfile_seek(memfile, 0);
+                        MEMFILE_SEEK(memfile, 0);
                         key_update_string_wnchar(memfile, key, len);
                 }
                         break;
@@ -495,19 +495,19 @@ static void container_contents_flat(memfile *file, struct pindex_node *node)
         memfile_write_uintvar_stream(NULL, file, node->sub_entries.num_elems);
 
         /** write position offsets */
-        offset_t position_off_latest = memfile_tell(file);
+        offset_t position_off_latest = MEMFILE_TELL(file);
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
                 memfile_write_uintvar_stream(NULL, file, 0);
         }
 
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-                offset_t node_off = memfile_tell(file);
+                offset_t node_off = MEMFILE_TELL(file);
                 struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
                 node_flat(file, sub);
                 memfile_save_position(file);
-                memfile_seek(file, position_off_latest);
+                MEMFILE_SEEK(file, position_off_latest);
                 signed_offset_t shift = memfile_update_uintvar_stream(file, node_off);
-                position_off_latest = memfile_tell(file);
+                position_off_latest = MEMFILE_TELL(file);
                 memfile_restore_position(file);
                 memfile_seek_from_here(file, shift);
         }
@@ -661,7 +661,7 @@ static u8 field_ref_into_record(insert *ins, pindex *index, bool is_root)
             field_type != FIELD_FALSE) {
                 /** only in case of field type that is not null, true, or false, there is more information behind
                  * the field offset */
-                u64 field_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
+                u64 field_offset = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
                 if (is_root) {
                         insert_prop_null(ins, "offset");
                 } else {
@@ -689,7 +689,7 @@ static u8 field_ref_to_str(str_buf *str, pindex *index)
             field_type != FIELD_FALSE) {
                 /** only in case of field type that is not null, true, or false, there is more information behind
                  * the field offset */
-                u64 field_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
+                u64 field_offset = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
                 str_buf_add_char(str, '(');
                 str_buf_add_u64_as_hex_0x_prefix_compact(str, field_offset);
                 str_buf_add_char(str, ')');
@@ -728,7 +728,7 @@ static void column_into_record(insert *ins, pindex *index)
 
 static void container_contents_into_record(insert *ins, pindex *index)
 {
-        u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
+        u64 num_elems = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
         insert_prop_unsigned(ins, "element-count", num_elems);
 
         arr_state array;
@@ -737,7 +737,7 @@ static void container_contents_into_record(insert *ins, pindex *index)
         str_buf str;
         str_buf_create(&str);
         for (u32 i = 0; i < num_elems; i++) {
-                u64 pos_offs = memfile_read_uintvar_stream(NULL, &index->memfile);
+                u64 pos_offs = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
                 str_buf_clear(&str);
                 str_buf_add_u64_as_hex_0x_prefix_compact(&str, pos_offs);
                 insert_string(ains, str_buf_cstr(&str));
@@ -761,13 +761,13 @@ static void container_contents_into_record(insert *ins, pindex *index)
 static void
 container_contents_to_str(str_buf *str, pindex *index, unsigned intent_level)
 {
-        u64 num_elems = memfile_read_uintvar_stream(NULL, &index->memfile);
+        u64 num_elems = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
         str_buf_add_char(str, '(');
         str_buf_add_u64(str, num_elems);
         str_buf_add_char(str, ')');
 
         for (u32 i = 0; i < num_elems; i++) {
-                u64 pos_offs = memfile_read_uintvar_stream(NULL, &index->memfile);
+                u64 pos_offs = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
                 str_buf_add_char(str, '(');
                 str_buf_add_u64_as_hex_0x_prefix_compact(str, pos_offs);
                 str_buf_add_char(str, ')');
@@ -942,7 +942,7 @@ static void prop_to_str(str_buf *str, pindex *index, unsigned intent_level)
 
         u8 field_type = field_ref_to_str(str, index);
 
-        u64 key_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
+        u64 key_offset = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
 
         str_buf_add_char(str, '(');
         str_buf_add_u64_as_hex_0x_prefix_compact(str, key_offset);
@@ -961,7 +961,7 @@ static void prop_into_record(insert *ins, pindex *index)
         str_buf str;
         str_buf_create(&str);
 
-        u64 key_offset = memfile_read_uintvar_stream(NULL, &index->memfile);
+        u64 key_offset = MEMFILE_READ_UINTVAR_STREAM(NULL, &index->memfile);
         str_buf_add_u64_as_hex_0x_prefix_compact(&str, key_offset);
         insert_prop_string(ins, "key", str_buf_cstr(&str));
         str_buf_drop(&str);

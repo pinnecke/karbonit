@@ -53,13 +53,13 @@ insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 c
 
         memfile_ensure_space(memfile, capacity + sizeof(u8));
 
-        offset_t payload_begin = memfile_tell(memfile);
-        memfile_seek(memfile, payload_begin + capacity);
+        offset_t payload_begin = MEMFILE_TELL(memfile);
+        MEMFILE_SEEK(memfile, payload_begin + capacity);
 
         marker_insert(memfile, end_marker);
 
         /** seek to first entry in container */
-        memfile_seek(memfile, payload_begin);
+        MEMFILE_SEEK(memfile, payload_begin);
 }
 
 bool internal_insert_object(memfile *file, map_type_e derivation, size_t nbytes)
@@ -99,7 +99,7 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         memfile_write_uintvar_stream(NULL, memfile_in, num_elements);
         memfile_write_uintvar_stream(NULL, memfile_in, cap_elements);
 
-        offset_t payload_begin = memfile_tell(memfile_in);
+        offset_t payload_begin = MEMFILE_TELL(memfile_in);
 
         size_t type_size = internal_get_type_value_size(column_type);
 
@@ -107,7 +107,7 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         memfile_ensure_space(memfile_in, nbytes + sizeof(u8) + 2 * sizeof(u32));
 
         /** seek to first entry in column */
-        memfile_seek(memfile_in, payload_begin);
+        MEMFILE_SEEK(memfile_in, payload_begin);
 
         return true;
 }
@@ -211,11 +211,11 @@ bool internal_object_it_refresh(bool *is_empty_slot, bool *is_object_end, obj_it
 
 bool internal_object_it_prop_key_access(obj_it *it)
 {
-        it->field.key.start = memfile_tell(&it->file);
-        it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->file);
-        it->field.key.name = memfile_peek(&it->file, it->field.key.name_len);
+        it->field.key.start = MEMFILE_TELL(&it->file);
+        it->field.key.name_len = MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
+        it->field.key.name = MEMFILE_PEEK(&it->file, it->field.key.name_len);
         memfile_skip(&it->file, it->field.key.name_len);
-        it->field.value.start = memfile_tell(&it->file);
+        it->field.value.start = MEMFILE_TELL(&it->file);
         it->field.value.data.type = *memfile_peek_type(&it->file, u8);
 
         return true;
@@ -223,13 +223,13 @@ bool internal_object_it_prop_key_access(obj_it *it)
 
 bool internal_object_it_prop_value_skip(obj_it *it)
 {
-        memfile_seek(&it->file, it->field.value.start);
+        MEMFILE_SEEK(&it->file, it->field.value.start);
         return carbon_field_skip(&it->file);
 }
 
 bool internal_object_it_prop_skip(obj_it *it)
 {
-        it->field.key.name_len = memfile_read_uintvar_stream(NULL, &it->file);
+        it->field.key.name_len = MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
         memfile_skip(&it->file, it->field.key.name_len);
         return carbon_field_skip(&it->file);
 }
@@ -262,7 +262,7 @@ bool internal_array_field_read(arr_it *it)
 {
         error_if_and_return(memfile_remain_size(&it->file) < 1, ERR_ILLEGALOP, NULL);
         memfile_save_position(&it->file);
-        it->field_offset = memfile_tell(&it->file);
+        it->field_offset = MEMFILE_TELL(&it->file);
         u8 media_type = *memfile_read(&it->file, 1);
         error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
         error_if_and_return(media_type == MARRAY_END, ERR_OUTOFBOUNDS, NULL)
@@ -292,7 +292,7 @@ bool internal_field_data_access(memfile *file, field *field)
                         break;
                 case FIELD_STRING: {
                         u8 nbytes;
-                        uintvar_stream_t len = (uintvar_stream_t) memfile_peek(file, 1);
+                        uintvar_stream_t len = (uintvar_stream_t) MEMFILE_PEEK(file, 1);
                         field->len = uintvar_stream_read(&nbytes, len);
 
                         memfile_skip(file, nbytes);
@@ -300,24 +300,24 @@ bool internal_field_data_access(memfile *file, field *field)
                         break;
                 case FIELD_BINARY: {
                         /** read mime type with variable-length integer type */
-                        u64 mime_id = memfile_read_uintvar_stream(NULL, file);
+                        u64 mime_id = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
                         field->mime = mime_by_id(mime_id);
                         field->mime_len = strlen(field->mime);
 
                         /** read blob length */
-                        field->len = memfile_read_uintvar_stream(NULL, file);
+                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                 }
                         break;
                 case FIELD_BINARY_CUSTOM: {
                         /** read mime type str_buf */
-                        field->mime_len = memfile_read_uintvar_stream(NULL, file);
+                        field->mime_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
                         field->mime = memfile_read(file, field->mime_len);
 
                         /** read blob length */
-                        field->len = memfile_read_uintvar_stream(NULL, file);
+                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                 }
@@ -329,7 +329,7 @@ bool internal_field_data_access(memfile *file, field *field)
                         internal_field_create(field);
                         field->arr_it.created = true;
                         internal_arr_it_create(field->array, file,
-                                               memfile_tell(file) - sizeof(u8));
+                                               MEMFILE_TELL(file) - sizeof(u8));
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -374,7 +374,7 @@ bool internal_field_data_access(memfile *file, field *field)
                         internal_field_create(field);
                         field->col_it_created = true;
                         col_it_create(field->column, file,
-                                                memfile_tell(file) - sizeof(u8));
+                                                MEMFILE_TELL(file) - sizeof(u8));
                 }
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -384,13 +384,13 @@ bool internal_field_data_access(memfile *file, field *field)
                         internal_field_create(field);
                         field->obj_it.created = true;
                         internal_obj_it_create(field->object, file,
-                                                      memfile_tell(file) - sizeof(u8));
+                                                      MEMFILE_TELL(file) - sizeof(u8));
                         break;
                 default:
                         return error(ERR_CORRUPTED, NULL);
         }
 
-        field->data = memfile_peek(file, 1);
+        field->data = MEMFILE_PEEK(file, 1);
         memfile_restore_position(file);
         return true;
 }
@@ -398,10 +398,10 @@ bool internal_field_data_access(memfile *file, field *field)
 offset_t internal_column_get_payload_off(col_it *it)
 {
         memfile_save_position(&it->file);
-        memfile_seek(&it->file, it->header_begin);
+        MEMFILE_SEEK(&it->file, it->header_begin);
         memfile_skip_uintvar_stream(&it->file); // skip num of elements
         memfile_skip_uintvar_stream(&it->file); // skip capacity of elements
-        offset_t result = memfile_tell(&it->file);
+        offset_t result = MEMFILE_TELL(&it->file);
         memfile_restore_position(&it->file);
         return result;
 }
@@ -412,13 +412,13 @@ offset_t internal_payload_after_header(rec *doc)
         key_e rec_key_type;
 
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
 
         if (likely(key_skip(&rec_key_type, &doc->file))) {
                 if (rec_key_type != KEY_NOKEY) {
                         commit_skip(&doc->file);
                 }
-                result = memfile_tell(&doc->file);
+                result = MEMFILE_TELL(&doc->file);
         }
 
         memfile_restore_position(&doc->file);
@@ -433,7 +433,7 @@ u64 internal_header_get_commit_hash(rec *doc)
         key_e rec_key_type;
 
         memfile_save_position(&doc->file);
-        memfile_seek(&doc->file, 0);
+        MEMFILE_SEEK(&doc->file, 0);
 
         key_skip(&rec_key_type, &doc->file);
         if (rec_key_type != KEY_NOKEY) {
@@ -873,8 +873,8 @@ col_it *internal_field_column_value(field *field)
 
 bool internal_field_remove(memfile *memfile, field_e type)
 {
-        assert((field_e) *memfile_peek(memfile, sizeof(u8)) == type);
-        offset_t start_off = memfile_tell(memfile);
+        assert((field_e) *MEMFILE_PEEK(memfile, sizeof(u8)) == type);
+        offset_t start_off = MEMFILE_TELL(memfile);
         memfile_skip(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
         switch (type) {
@@ -906,7 +906,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         u8 len_nbytes;  /** number of bytes used to store str_buf length */
                         u64 str_len; /** the number of characters of the str_buf field */
 
-                        str_len = memfile_read_uintvar_stream(&len_nbytes, memfile);
+                        str_len = MEMFILE_READ_UINTVAR_STREAM(&len_nbytes, memfile);
 
                         rm_nbytes += len_nbytes + str_len;
                 }
@@ -917,10 +917,10 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         u64 blob_nbytes; /** number of bytes to store actual blob data */
 
                         /** get bytes used for mime type id */
-                        memfile_read_uintvar_stream(&mime_nbytes, memfile);
+                        MEMFILE_READ_UINTVAR_STREAM(&mime_nbytes, memfile);
 
                         /** get bytes used for blob length info */
-                        blob_nbytes = memfile_read_uintvar_stream(&blob_length_nbytes, memfile);
+                        blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);
 
                         rm_nbytes += mime_nbytes + blob_length_nbytes + blob_nbytes;
                 }
@@ -932,11 +932,11 @@ bool internal_field_remove(memfile *memfile, field_e type)
                         u64 blob_nbytes; /** number of bytes to store actual blob data */
 
                         /** get bytes for custom type str_buf len, and the actual length */
-                        custom_type_strlen = memfile_read_uintvar_stream(&custom_type_strlen_nbytes, memfile);
+                        custom_type_strlen = MEMFILE_READ_UINTVAR_STREAM(&custom_type_strlen_nbytes, memfile);
                         memfile_skip(memfile, custom_type_strlen);
 
                         /** get bytes used for blob length info */
-                        blob_nbytes = memfile_read_uintvar_stream(&blob_length_nbytes, memfile);
+                        blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);
 
                         rm_nbytes += custom_type_strlen_nbytes + custom_type_strlen + blob_length_nbytes + blob_nbytes;
                 }
@@ -947,7 +947,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
                         arr_it it;
 
-                        offset_t begin_off = memfile_tell(memfile);
+                        offset_t begin_off = MEMFILE_TELL(memfile);
                         internal_arr_it_create(&it, memfile, begin_off - sizeof(u8));
                         internal_arr_it_fast_forward(&it);
                         offset_t end_off = internal_arr_it_memfilepos(&it);
@@ -999,7 +999,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         col_it it;
 
-                        offset_t begin_off = memfile_tell(memfile);
+                        offset_t begin_off = MEMFILE_TELL(memfile);
                         col_it_create(&it, memfile, begin_off - sizeof(u8));
                         col_it_fast_forward(&it);
                         offset_t end_off = col_it_memfilepos(&it);
@@ -1014,7 +1014,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         obj_it it;
 
-                        offset_t begin_off = memfile_tell(memfile);
+                        offset_t begin_off = MEMFILE_TELL(memfile);
                         internal_obj_it_create(&it, memfile, begin_off - sizeof(u8));
                         internal_obj_it_fast_forward(&it);
                         offset_t end_off = internal_obj_it_memfile_pos(&it);
@@ -1027,7 +1027,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
                 default:
                         return error(ERR_INTERNALERR, NULL);
         }
-        memfile_seek(memfile, start_off);
+        MEMFILE_SEEK(memfile, start_off);
         memfile_inplace_remove(memfile, rm_nbytes);
 
         return true;
@@ -1578,7 +1578,7 @@ void internal_from_json(rec *doc, const json *data,
 static void marker_insert(memfile *memfile, u8 marker)
 {
         /** check whether marker can be written, otherwise make space for it */
-        char c = *memfile_peek(memfile, sizeof(u8));
+        char c = *MEMFILE_PEEK(memfile, sizeof(u8));
         if (c != 0) {
                 memfile_inplace_insert(memfile, sizeof(u8));
         }
@@ -1599,7 +1599,7 @@ static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end,
 
 static bool is_slot_occupied(bool *is_empty_slot, bool *is_end_reached, memfile *file, u8 end_marker)
 {
-        char c = *memfile_peek(file, 1);
+        char c = *MEMFILE_PEEK(file, 1);
         bool is_empty = c == 0, is_end = c == end_marker;
         OPTIONAL_SET(is_empty_slot, is_empty)
         OPTIONAL_SET(is_end_reached, is_end)

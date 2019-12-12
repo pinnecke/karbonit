@@ -44,7 +44,7 @@ struct sid_to_offset {
                                                                                                                        \
     if (obj->flags.bits.bit_flag_name) {                                                                               \
         assert(obj->props.offset_name != 0);                                                                           \
-        memfile_seek(&obj->file, obj->props.offset_name);                                                       \
+        MEMFILE_SEEK(&obj->file, obj->props.offset_name);                                                       \
         fixed_prop prop;                                                                                      \
         int_embedded_fixed_props_read(&prop, &obj->file);                                                       \
         archive_int_reset_obj_it_mem_file(obj);                                                                   \

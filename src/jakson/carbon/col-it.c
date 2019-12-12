@@ -402,7 +402,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         u8 null_value = CARBON_BOOLEAN_COLUMN_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u8));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u8));
                 }
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -410,7 +410,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
                         u8 null_value = U8_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u8));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u8));
                 }
                         break;
                 case FIELD_COLUMN_U16_UNSORTED_MULTISET:
@@ -418,7 +418,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
                         u16 null_value = U16_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u16));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u16));
                 }
                         break;
                 case FIELD_COLUMN_U32_UNSORTED_MULTISET:
@@ -426,7 +426,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
                         u32 null_value = U32_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u32));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u32));
                 }
                         break;
                 case FIELD_COLUMN_U64_UNSORTED_MULTISET:
@@ -434,7 +434,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
                         u64 null_value = U64_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u64));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u64));
                 }
                         break;
                 case FIELD_COLUMN_I8_UNSORTED_MULTISET:
@@ -442,7 +442,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
                         i8 null_value = I8_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i8));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i8));
                 }
                         break;
                 case FIELD_COLUMN_I16_UNSORTED_MULTISET:
@@ -450,7 +450,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
                         i16 null_value = I16_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i16));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i16));
                 }
                         break;
                 case FIELD_COLUMN_I32_UNSORTED_MULTISET:
@@ -458,7 +458,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
                         i32 null_value = I32_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i32));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i32));
                 }
                         break;
                 case FIELD_COLUMN_I64_UNSORTED_MULTISET:
@@ -466,7 +466,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
                         i64 null_value = I64_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i64));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i64));
                 }
                         break;
                 case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
@@ -474,7 +474,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
                         float null_value = CARBON_NULL_FLOAT;
-                        memfile_write(&it->file, &null_value, sizeof(float));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(float));
                 }
                         break;
                 case FIELD_NULL:
@@ -624,7 +624,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                         u8 value = CARBON_BOOLEAN_COLUMN_TRUE;
-                        memfile_write(&it->file, &value, sizeof(u8));
+                        MEMFILE_WRITE(&it->file, &value, sizeof(u8));
                 }
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -632,7 +632,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
                         u8 null_value = U8_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u8));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u8));
                 }
                         break;
                 case FIELD_COLUMN_U16_UNSORTED_MULTISET:
@@ -640,7 +640,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
                         u16 null_value = U16_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u16));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u16));
                 }
                         break;
                 case FIELD_COLUMN_U32_UNSORTED_MULTISET:
@@ -648,7 +648,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
                         //u32 null_value = U32_NULL;
-                        //memfile_write(&it->mem, &null_value, sizeof(u32));
+                        //MEMFILE_WRITE(&it->mem, &null_value, sizeof(u32));
                         rewrite_column_to_array(it);
 
 
@@ -659,7 +659,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
                         u64 null_value = U64_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(u64));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u64));
                 }
                         break;
                 case FIELD_COLUMN_I8_UNSORTED_MULTISET:
@@ -667,7 +667,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
                         i8 null_value = I8_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i8));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i8));
                 }
                         break;
                 case FIELD_COLUMN_I16_UNSORTED_MULTISET:
@@ -675,7 +675,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
                         i16 null_value = I16_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i16));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i16));
                 }
                         break;
                 case FIELD_COLUMN_I32_UNSORTED_MULTISET:
@@ -683,7 +683,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
                         i32 null_value = I32_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i32));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i32));
                 }
                         break;
                 case FIELD_COLUMN_I64_UNSORTED_MULTISET:
@@ -691,7 +691,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
                         i64 null_value = I64_NULL;
-                        memfile_write(&it->file, &null_value, sizeof(i64));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i64));
                 }
                         break;
                 case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
@@ -699,7 +699,7 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
                         float null_value = CARBON_NULL_FLOAT;
-                        memfile_write(&it->file, &null_value, sizeof(float));
+                        MEMFILE_WRITE(&it->file, &null_value, sizeof(float));
                 }
                         break;
                 case FIELD_NULL:

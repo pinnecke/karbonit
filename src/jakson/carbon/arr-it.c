@@ -39,7 +39,7 @@ bool internal_arr_it_update_##type_name(arr_it *it, type_name value)            
                 memfile_save_position(&it->file);                                                                   \
                 internal_arr_it_offset(&datum, it);                                                                 \
                 MEMFILE_SEEK(&it->file, datum + sizeof(u8));                                                        \
-                memfile_write(&it->file, &value, sizeof(type_name));                                                \
+                MEMFILE_WRITE(&it->file, &value, sizeof(type_name));                                                \
                 memfile_restore_position(&it->file);                                                                \
                 return true;                                                                                           \
         } else {                                                                                                       \
@@ -88,7 +88,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
                 offset_t datum = 0;
                 internal_arr_it_offset(&datum, it);
                 MEMFILE_SEEK(&it->file, datum);
-                memfile_write(&it->file, &value, sizeof(u8));
+                MEMFILE_WRITE(&it->file, &value, sizeof(u8));
         } else {
                 insert ins;
                 internal_arr_it_remove(it);

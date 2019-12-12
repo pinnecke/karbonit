@@ -41,7 +41,7 @@
 bool mime_write(memfile *dst, field_e type)
 {
         media_type t = type;
-        memfile_write(dst, &t, sizeof(media_type));
+        MEMFILE_WRITE(dst, &t, sizeof(media_type));
         return true;
 }
 

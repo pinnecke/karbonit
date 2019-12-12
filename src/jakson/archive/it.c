@@ -30,7 +30,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
         object_flags_u flags;
 
         object_off = MEMFILE_TELL(memfile);
-        header = memfile_read_type(memfile, object_header);
+        header = MEMFILE_READ_TYPE(memfile, object_header);
         if (unlikely(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
                 return false;
         }
@@ -40,7 +40,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
 
         obj->object_id = header->oid;
         obj->offset = object_off;
-        obj->next_obj_off = *memfile_read_type(memfile, offset_t);
+        obj->next_obj_off = *MEMFILE_READ_TYPE(memfile, offset_t);
         memfile_open(&obj->memfile, memfile->memblock, READ_ONLY);
 
         return true;
@@ -120,7 +120,7 @@ static bool prop_iter_read_colum_entry(collection_iter_state *state, memfile *me
         offset_t entry_off = state->current_column_group.current_column.elem_offsets[current_idx];
         MEMFILE_SEEK(memfile, entry_off);
 
-        state->current_column_group.current_column.current_entry.array_length = *memfile_read_type(memfile,
+        state->current_column_group.current_column.current_entry.array_length = *MEMFILE_READ_TYPE(memfile,
                                                                                                        u32);
         state->current_column_group.current_column.current_entry.array_base = MEMFILE_PEEK_TYPE(memfile, void);
 
@@ -135,7 +135,7 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
         u32 current_idx = state->current_column_group.current_column.idx;
         offset_t column_off = state->current_column_group.column_offs[current_idx];
         MEMFILE_SEEK(memfile, column_off);
-        const column_header *header = memfile_read_type(memfile, column_header);
+        const column_header *header = MEMFILE_READ_TYPE(memfile, column_header);
 
         assert(header->marker == MARKER_SYMBOL_COLUMN);
         state->current_column_group.current_column.name = header->column_name;
@@ -143,9 +143,9 @@ static bool prop_iter_read_column(collection_iter_state *state, memfile *memfile
 
         state->current_column_group.current_column.num_elem = header->num_entries;
         state->current_column_group.current_column.elem_offsets =
-                memfile_read_type_list(memfile, offset_t, header->num_entries);
+                MEMFILE_READ_TYPE_LIST(memfile, offset_t, header->num_entries);
         state->current_column_group.current_column.elem_positions =
-                memfile_read_type_list(memfile, u32, header->num_entries);
+                MEMFILE_READ_TYPE_LIST(memfile, u32, header->num_entries);
         state->current_column_group.current_column.current_entry.idx = 0;
 
         return (++state->current_column_group.current_column.idx) < state->current_column_group.num_columns;
@@ -155,13 +155,13 @@ static bool collection_iter_read_next_column_group(collection_iter_state *state,
 {
         assert(state->current_column_group_idx < state->num_column_groups);
         MEMFILE_SEEK(memfile, state->column_group_offsets[state->current_column_group_idx]);
-        const column_group_header *header = memfile_read_type(memfile, column_group_header);
+        const column_group_header *header = MEMFILE_READ_TYPE(memfile, column_group_header);
         assert(header->marker == MARKER_SYMBOL_COLUMN_GROUP);
         state->current_column_group.num_columns = header->num_columns;
         state->current_column_group.num_objects = header->num_objects;
-        state->current_column_group.object_ids = memfile_read_type_list(memfile, unique_id_t,
+        state->current_column_group.object_ids = MEMFILE_READ_TYPE_LIST(memfile, unique_id_t,
                                                                             header->num_objects);
-        state->current_column_group.column_offs = memfile_read_type_list(memfile, offset_t,
+        state->current_column_group.column_offs = MEMFILE_READ_TYPE_LIST(memfile, offset_t,
                                                                              header->num_columns);
         state->current_column_group.current_column.idx = 0;
 
@@ -201,13 +201,13 @@ static void prop_iter_cursor_init(prop_iter *iter)
                 iter->mode_collection.collection_start_off = offset_by_state(iter);
                 MEMFILE_SEEK(&iter->record_table_memfile, iter->mode_collection.collection_start_off);
                 const object_array_header
-                        *header = memfile_read_type(&iter->record_table_memfile, object_array_header);
+                        *header = MEMFILE_READ_TYPE(&iter->record_table_memfile, object_array_header);
                 iter->mode_collection.num_column_groups = header->num_entries;
                 iter->mode_collection.current_column_group_idx = 0;
-                iter->mode_collection.column_group_keys = memfile_read_type_list(&iter->record_table_memfile,
+                iter->mode_collection.column_group_keys = MEMFILE_READ_TYPE_LIST(&iter->record_table_memfile,
                                                                                      archive_field_sid_t,
                                                                                      iter->mode_collection.num_column_groups);
-                iter->mode_collection.column_group_offsets = memfile_read_type_list(&iter->record_table_memfile,
+                iter->mode_collection.column_group_offsets = MEMFILE_READ_TYPE_LIST(&iter->record_table_memfile,
                                                                                         offset_t,
                                                                                         iter->mode_collection.num_column_groups);
 
@@ -747,7 +747,7 @@ archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
 static void value_vector_init_object_basic(archive_value_vector *value)
 {
         value->data.object.offsets =
-                memfile_read_type_list(&value->record_table_memfile, offset_t, value->value_max_idx);
+                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, offset_t, value->value_max_idx);
 }
 
 static bool value_vector_init_fixed_length_types_basic(archive_value_vector *value)
@@ -812,7 +812,7 @@ static void value_vector_init_fixed_length_types_null_arrays(archive_value_vecto
         assert(value->is_array);
         assert(value->prop_type == ARCHIVE_FIELD_NULL);
         value->data.arrays.meta.num_nulls_contained =
-                memfile_read_type_list(&value->record_table_memfile, u32, value->value_max_idx);
+                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 }
 
 static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
@@ -820,7 +820,7 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
         assert (value->is_array);
 
         value->data.arrays.meta.array_lengths =
-                memfile_read_type_list(&value->record_table_memfile, u32, value->value_max_idx);
+                MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_INT8:

@@ -418,7 +418,7 @@ static void _insert_binary(insert *in, const void *value, size_t nbytes,
 
                 /** write 'user_type' str_buf */
                 memfile_ensure_space(&in->file, user_type_strlen);
-                memfile_write(&in->file, user_type, user_type_strlen);
+                MEMFILE_WRITE(&in->file, user_type, user_type_strlen);
 
                 /** write binary blob */
                 write_binary_blob(in, value, nbytes);
@@ -925,8 +925,8 @@ write_field_data(insert *in, u8 field_marker, const void *base, u64 nbytes)
         assert(in->context_type == ARRAY || in->context_type == OBJECT);
 
         memfile_ensure_space(&in->file, sizeof(u8) + nbytes);
-        memfile_write(&in->file, &field_marker, sizeof(u8));
-        return memfile_write(&in->file, base, nbytes);
+        MEMFILE_WRITE(&in->file, &field_marker, sizeof(u8));
+        return MEMFILE_WRITE(&in->file, base, nbytes);
 }
 
 static bool push_in_column(insert *in, const void *base, field_e type)
@@ -966,7 +966,7 @@ static bool push_in_column(insert *in, const void *base, field_e type)
 
         size_t payload_start = internal_column_get_payload_off(in->context.column);
         MEMFILE_SEEK(&in->file, payload_start + (num_elems - 1) * type_size);
-        memfile_write(&in->file, base, type_size);
+        MEMFILE_WRITE(&in->file, base, type_size);
 
         memfile_restore_position(&in->file);
         return true;
@@ -992,5 +992,5 @@ static void write_binary_blob(insert *in, const void *value, size_t nbytes)
 
         /** write blob */
         memfile_ensure_space(&in->file, nbytes);
-        memfile_write(&in->file, value, nbytes);
+        MEMFILE_WRITE(&in->file, value, nbytes);
 }

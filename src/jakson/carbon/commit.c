@@ -29,7 +29,7 @@ bool commit_create(memfile *file)
         unique_id_create(&init_rev);
 
         memfile_ensure_space(file, sizeof(u64));
-        memfile_write(file, &init_rev, sizeof(u64));
+        MEMFILE_WRITE(file, &init_rev, sizeof(u64));
 
         return true;
 }
@@ -42,7 +42,7 @@ bool commit_skip(memfile *file)
 
 bool commit_read(u64 *commit_hash, memfile *file)
 {
-        *commit_hash = *memfile_read_type(file, u64);
+        *commit_hash = *MEMFILE_READ_TYPE(file, u64);
         return true;
 }
 
@@ -56,7 +56,7 @@ bool commit_update(memfile *file, const char *base, u64 len)
 {
         u64 commit_hash;
         commit_compute(&commit_hash, base, len);
-        memfile_write(file, &commit_hash, sizeof(u64));
+        MEMFILE_WRITE(file, &commit_hash, sizeof(u64));
         return true;
 }
 

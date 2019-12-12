@@ -1582,7 +1582,7 @@ static void marker_insert(memfile *memfile, u8 marker)
         if (c != 0) {
                 memfile_inplace_insert(memfile, sizeof(u8));
         }
-        memfile_write(memfile, &marker, sizeof(u8));
+        MEMFILE_WRITE(memfile, &marker, sizeof(u8));
 }
 
 static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, arr_it *it)

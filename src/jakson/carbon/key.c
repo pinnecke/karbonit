@@ -22,7 +22,7 @@
 static void write_nokey(memfile *file)
 {
         u8 marker = MNOKEY;
-        memfile_write(file, &marker, sizeof(u8));
+        MEMFILE_WRITE(file, &marker, sizeof(u8));
 }
 
 static void write_autokey(memfile *file)
@@ -30,31 +30,31 @@ static void write_autokey(memfile *file)
         u8 marker = MAUTOKEY;
         unique_id_t key;
         unique_id_create(&key);
-        memfile_write(file, &marker, sizeof(u8));
-        memfile_write(file, &key, sizeof(unique_id_t));
+        MEMFILE_WRITE(file, &marker, sizeof(u8));
+        MEMFILE_WRITE(file, &key, sizeof(unique_id_t));
 }
 
 static void write_ukey(memfile *file)
 {
         u8 marker = MUKEY;
         u64 key = 0;
-        memfile_write(file, &marker, sizeof(u8));
-        memfile_write(file, &key, sizeof(u64));
+        MEMFILE_WRITE(file, &marker, sizeof(u8));
+        MEMFILE_WRITE(file, &key, sizeof(u64));
 }
 
 static void write_ikey(memfile *file)
 {
         u8 marker = MIKEY;
         i64 key = 0;
-        memfile_write(file, &marker, sizeof(u8));
-        memfile_write(file, &key, sizeof(u64));
+        MEMFILE_WRITE(file, &marker, sizeof(u8));
+        MEMFILE_WRITE(file, &key, sizeof(u64));
 }
 
 static void write_skey(memfile *file)
 {
         u8 marker = MSKEY;
         const char *key = "";
-        memfile_write(file, &marker, sizeof(u8));
+        MEMFILE_WRITE(file, &marker, sizeof(u8));
         string_field_write(file, key);
 }
 
@@ -94,7 +94,7 @@ bool key_write_unsigned(memfile *file, u64 key)
 
         key_read_type(&rec_key_type, file);
         if (rec_key_is_unsigned(rec_key_type)) {
-                memfile_write(file, &key, sizeof(u64));
+                MEMFILE_WRITE(file, &key, sizeof(u64));
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
@@ -107,7 +107,7 @@ bool key_write_signed(memfile *file, i64 key)
 
         key_read_type(&rec_key_type, file);
         if (rec_key_is_signed(rec_key_type)) {
-                memfile_write(file, &key, sizeof(i64));
+                MEMFILE_WRITE(file, &key, sizeof(i64));
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, NULL);
@@ -146,7 +146,7 @@ bool key_write_string(memfile *file, const char *key)
 
 bool key_read_type(key_e *out, memfile *file)
 {
-        u8 marker = *memfile_read_type(file, u8);
+        u8 marker = *MEMFILE_READ_TYPE(file, u8);
 
         assert(marker == MNOKEY || marker == MAUTOKEY || marker ==
                                                                                                        MUKEY ||
@@ -187,13 +187,13 @@ const void *key_read(u64 *len, key_e *out, memfile *file)
                         return NULL;
                 case KEY_AUTOKEY:
                         OPTIONAL_SET(len, sizeof(unique_id_t))
-                        return memfile_read_type(file, unique_id_t);
+                        return MEMFILE_READ_TYPE(file, unique_id_t);
                 case KEY_UKEY:
                         OPTIONAL_SET(len, sizeof(u64))
-                        return memfile_read_type(file, u64);
+                        return MEMFILE_READ_TYPE(file, u64);
                 case KEY_IKEY:
                         OPTIONAL_SET(len, sizeof(i64))
-                        return memfile_read_type(file, i64);
+                        return MEMFILE_READ_TYPE(file, i64);
                 case KEY_SKEY:
                         return string_field_read(len, file);
                 default: error(ERR_INTERNALERR, NULL);

@@ -26,88 +26,88 @@ void int_read_prop_offsets(archive_prop_offs *prop_offsets, memfile *memfile,
 {
         ZERO_MEMORY(prop_offsets, sizeof(archive_prop_offs));
         if (flags->bits.has_null_props) {
-                prop_offsets->nulls = *memfile_read_type(memfile, offset_t);
+                prop_offsets->nulls = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_bool_props) {
-                prop_offsets->bools = *memfile_read_type(memfile, offset_t);
+                prop_offsets->bools = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int8_props) {
-                prop_offsets->int8s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int8s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int16_props) {
-                prop_offsets->int16s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int16s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int32_props) {
-                prop_offsets->int32s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int32s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int64_props) {
-                prop_offsets->int64s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int64s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint8_props) {
-                prop_offsets->uint8s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint8s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint16_props) {
-                prop_offsets->uint16s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint16s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint32_props) {
-                prop_offsets->uint32s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint32s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint64_props) {
-                prop_offsets->uint64s = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint64s = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_float_props) {
-                prop_offsets->floats = *memfile_read_type(memfile, offset_t);
+                prop_offsets->floats = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_string_props) {
-                prop_offsets->strings = *memfile_read_type(memfile, offset_t);
+                prop_offsets->strings = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_object_props) {
-                prop_offsets->objects = *memfile_read_type(memfile, offset_t);
+                prop_offsets->objects = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_null_array_props) {
-                prop_offsets->null_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->null_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_bool_array_props) {
-                prop_offsets->bool_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->bool_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int8_array_props) {
-                prop_offsets->int8_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int8_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int16_array_props) {
-                prop_offsets->int16_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int16_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int32_array_props) {
-                prop_offsets->int32_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int32_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_int64_array_props) {
-                prop_offsets->int64_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->int64_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint8_array_props) {
-                prop_offsets->uint8_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint8_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint16_array_props) {
-                prop_offsets->uint16_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint16_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint32_array_props) {
-                prop_offsets->uint32_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint32_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_uint64_array_props) {
-                prop_offsets->uint64_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->uint64_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_float_array_props) {
-                prop_offsets->float_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->float_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_string_array_props) {
-                prop_offsets->string_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->string_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
         if (flags->bits.has_object_array_props) {
-                prop_offsets->object_arrays = *memfile_read_type(memfile, offset_t);
+                prop_offsets->object_arrays = *MEMFILE_READ_TYPE(memfile, offset_t);
         }
 }
 
 void int_embedded_fixed_props_read(fixed_prop *prop, memfile *memfile)
 {
-        prop->header = memfile_read_type(memfile, prop_header);
+        prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->values = MEMFILE_PEEK(memfile, 1);
@@ -115,7 +115,7 @@ void int_embedded_fixed_props_read(fixed_prop *prop, memfile *memfile)
 
 void int_embedded_var_props_read(var_prop *prop, memfile *memfile)
 {
-        prop->header = memfile_read_type(memfile, prop_header);
+        prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->offsets = (offset_t *) memfile_read(memfile, prop->header->num_entries * sizeof(offset_t));
@@ -124,14 +124,14 @@ void int_embedded_var_props_read(var_prop *prop, memfile *memfile)
 
 void int_embedded_null_props_read(null_prop *prop, memfile *memfile)
 {
-        prop->header = memfile_read_type(memfile, prop_header);
+        prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
 }
 
 void int_embedded_array_props_read(array_prop *prop, memfile *memfile)
 {
-        prop->header = memfile_read_type(memfile, prop_header);
+        prop->header = MEMFILE_READ_TYPE(memfile, prop_header);
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->lengths = (u32 *) memfile_read(memfile, prop->header->num_entries * sizeof(u32));
@@ -140,8 +140,8 @@ void int_embedded_array_props_read(array_prop *prop, memfile *memfile)
 
 void int_embedded_table_props_read(table_prop *prop, memfile *memfile)
 {
-        prop->header->marker = *memfile_read_type(memfile, char);
-        prop->header->num_entries = *memfile_read_type(memfile, u8);
+        prop->header->marker = *MEMFILE_READ_TYPE(memfile, char);
+        prop->header->num_entries = *MEMFILE_READ_TYPE(memfile, u8);
         prop->keys = (archive_field_sid_t *) memfile_read(memfile, prop->header->num_entries *
                                                                            sizeof(archive_field_sid_t));
         prop->group_offs = (offset_t *) memfile_read(memfile, prop->header->num_entries * sizeof(offset_t));

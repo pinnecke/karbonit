@@ -92,7 +92,7 @@ bool pack_none_encode_string(packer *self, memfile *dst, const char *string)
 
         u32 string_length = strlen(string);
 
-        memfile_write(dst, string, string_length);
+        MEMFILE_WRITE(dst, string, string_length);
 
         return true;
 }

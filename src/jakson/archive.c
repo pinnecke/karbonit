@@ -40,7 +40,7 @@
 #define WRITE_PRIMITIVE_VALUES(memfile, values_vec, type)                                                              \
 {                                                                                                                      \
     type *values = VECTOR_ALL(values_vec, type);                                                                \
-    memfile_write(memfile, values, values_vec->num_elems * sizeof(type));                                       \
+    MEMFILE_WRITE(memfile, values, values_vec->num_elems * sizeof(type));                                       \
 }
 
 #define WRITE_ARRAY_VALUES(memfile, values_vec, type)                                                                  \
@@ -53,7 +53,7 @@
 
 #define PRINT_SIMPLE_PROPS(file, memfile, offset, nesting_level, value_type, type_string, format_string)               \
 {                                                                                                                      \
-    prop_header *prop_header = memfile_read_type(memfile, struct prop_header);             \
+    prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);             \
     archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile, prop_header->num_entries *          \
                                    sizeof(archive_field_sid_t));                                                        \
     value_type *values = (value_type *) memfile_read(memfile, prop_header->num_entries * sizeof(value_type));   \
@@ -72,7 +72,7 @@
 
 #define PRINT_ARRAY_PROPS(memfile, offset, nesting_level, entryMarker, type, type_string, format_string)               \
 {                                                                                                                      \
-    prop_header *prop_header = memfile_read_type(memfile, struct prop_header);             \
+    prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);             \
                                                                                                                        \
     archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile, prop_header->num_entries *          \
                                         sizeof(archive_field_sid_t));                                                   \
@@ -116,7 +116,7 @@
 
 #define PRINT_VALUE_ARRAY(type, memfile, header, format_string)                                                        \
 {                                                                                                                      \
-    u32 num_elements = *memfile_read_type(memfile, u32);                                              \
+    u32 num_elements = *MEMFILE_READ_TYPE(memfile, u32);                                              \
     const type *values = (const type *) memfile_read(memfile, num_elements * sizeof(type));                     \
     fprintf(file, "0x%04x ", (unsigned) offset);                                                                       \
     INTENT_LINE(nesting_level);                                                                                        \
@@ -500,7 +500,7 @@ static void
 write_primitive_key_column(memfile *memfile, vec ofType(archive_field_sid_t) *keys)
 {
         archive_field_sid_t *string_ids = VECTOR_ALL(keys, archive_field_sid_t);
-        memfile_write(memfile, string_ids, keys->num_elems * sizeof(archive_field_sid_t));
+        MEMFILE_WRITE(memfile, string_ids, keys->num_elems * sizeof(archive_field_sid_t));
 }
 
 static offset_t skip_var_value_offset_column(memfile *memfile, size_t num_keys)
@@ -515,7 +515,7 @@ static void write_var_value_offset_column(memfile *file, offset_t where, offset_
                                           size_t n)
 {
         MEMFILE_SEEK(file, where);
-        memfile_write(file, values, n * sizeof(offset_t));
+        MEMFILE_WRITE(file, values, n * sizeof(offset_t));
         MEMFILE_SEEK(file, after);
 }
 
@@ -591,7 +591,7 @@ static bool __write_array_len_column(memfile *memfile, archive_field_e type,
                 case ARCHIVE_FIELD_STRING:
                         for (u32 i = 0; i < values->num_elems; i++) {
                                 vec *arrays = VECTOR_GET(values, i, vec);
-                                memfile_write(memfile, &arrays->num_elems, sizeof(u32));
+                                MEMFILE_WRITE(memfile, &arrays->num_elems, sizeof(u32));
                         }
                         break;
                 case ARCHIVE_FIELD_OBJECT:
@@ -651,7 +651,7 @@ static bool write_array_prop(offset_t *offset, memfile *memfile,
                         {.marker = global_marker_symbols[global_value_array_marker_mapping[type].marker].symbol, .num_entries = keys
                                 ->num_elems};
                 offset_t prop_ofOffset = MEMFILE_TELL(memfile);
-                memfile_write(memfile, &header, sizeof(prop_header));
+                MEMFILE_WRITE(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
                 if (!__write_array_len_column(memfile, type, values)) {
@@ -784,7 +784,7 @@ static bool write_fixed_props(offset_t *offset, memfile *memfile,
                                 ->num_elems};
 
                 offset_t prop_ofOffset = MEMFILE_TELL(memfile);
-                memfile_write(memfile, &header, sizeof(prop_header));
+                MEMFILE_WRITE(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
                 if (!write_primitive_fixed_value_column(memfile, type, values)) {
@@ -813,7 +813,7 @@ static bool write_var_props(offset_t *offset, memfile *memfile,
                 prop_header header = {.marker = MARKER_SYMBOL_PROP_OBJECT, .num_entries = keys->num_elems};
 
                 offset_t prop_ofOffset = MEMFILE_TELL(memfile);
-                memfile_write(memfile, &header, sizeof(prop_header));
+                MEMFILE_WRITE(memfile, &header, sizeof(prop_header));
 
                 write_primitive_key_column(memfile, keys);
                 offset_t value_offset = skip_var_value_offset_column(memfile, keys->num_elems);
@@ -944,10 +944,10 @@ write_primitive_props(memfile *memfile, column_doc_obj *columndoc,
 static bool write_column_entry(memfile *memfile, archive_field_e type,
                                vec ofType(<T>) *column, offset_t root_object_header_offset)
 {
-        memfile_write(memfile, &column->num_elems, sizeof(u32));
+        MEMFILE_WRITE(memfile, &column->num_elems, sizeof(u32));
         switch (type) {
                 case ARCHIVE_FIELD_NULL:
-                        memfile_write(memfile, column->base, column->num_elems * sizeof(u32));
+                        MEMFILE_WRITE(memfile, column->base, column->num_elems * sizeof(u32));
                         break;
                 case ARCHIVE_FIELD_BOOLEAN:
                 case ARCHIVE_FIELD_INT8:
@@ -960,7 +960,7 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
                 case ARCHIVE_FIELD_UINT64:
                 case ARCHIVE_FIELD_FLOAT:
                 case ARCHIVE_FIELD_STRING:
-                        memfile_write(memfile, column->base, column->num_elems * GET_TYPE_SIZE(type));
+                        MEMFILE_WRITE(memfile, column->base, column->num_elems * GET_TYPE_SIZE(type));
                         break;
                 case ARCHIVE_FIELD_OBJECT: {
                         offset_t preObjectNext = 0;
@@ -970,7 +970,7 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
                                         offset_t continuePos = MEMFILE_TELL(memfile);
                                         offset_t relativeContinuePos = continuePos - root_object_header_offset;
                                         MEMFILE_SEEK(memfile, preObjectNext);
-                                        memfile_write(memfile, &relativeContinuePos, sizeof(offset_t));
+                                        MEMFILE_WRITE(memfile, &relativeContinuePos, sizeof(offset_t));
                                         MEMFILE_SEEK(memfile, continuePos);
                                 }
                                 if (!__serialize(&preObjectNext, memfile, object, root_object_header_offset)) {
@@ -994,20 +994,20 @@ static bool write_column(memfile *memfile, column_doc_column *column,
                 ->key_name, .value_type = global_marker_symbols[global_value_array_marker_mapping[column->type].marker]
                 .symbol, .num_entries = column->values.num_elems};
 
-        memfile_write(memfile, &header, sizeof(column_header));
+        MEMFILE_WRITE(memfile, &header, sizeof(column_header));
 
         /** skip offset column to value entry points */
         offset_t value_entry_offsets = MEMFILE_TELL(memfile);
         memfile_skip(memfile, column->values.num_elems * sizeof(offset_t));
 
-        memfile_write(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
+        MEMFILE_WRITE(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
 
         for (size_t i = 0; i < column->values.num_elems; i++) {
                 vec ofType(<T>) *column_data = VECTOR_GET(&column->values, i, vec);
                 offset_t column_entry_offset = MEMFILE_TELL(memfile);
                 offset_t relative_entry_offset = column_entry_offset - root_object_header_offset;
                 MEMFILE_SEEK(memfile, value_entry_offsets + i * sizeof(offset_t));
-                memfile_write(memfile, &relative_entry_offset, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &relative_entry_offset, sizeof(offset_t));
                 MEMFILE_SEEK(memfile, column_entry_offset);
                 if (!write_column_entry(memfile, column->type, column_data, root_object_header_offset)) {
                         return false;
@@ -1026,12 +1026,12 @@ static bool write_object_array_props(memfile *memfile,
                         .symbol, .num_entries = object_key_columns->num_elems};
 
                 offsets->object_arrays = MEMFILE_TELL(memfile) - root_object_header_offset;
-                memfile_write(memfile, &header, sizeof(object_array_header));
+                MEMFILE_WRITE(memfile, &header, sizeof(object_array_header));
 
                 for (size_t i = 0; i < object_key_columns->num_elems; i++) {
                         column_doc_group *column_group = VECTOR_GET(object_key_columns, i,
                                                                             column_doc_group);
-                        memfile_write(memfile, &column_group->key, sizeof(archive_field_sid_t));
+                        MEMFILE_WRITE(memfile, &column_group->key, sizeof(archive_field_sid_t));
                 }
 
                 // skip offset column to column groups
@@ -1056,7 +1056,7 @@ static bool write_object_array_props(memfile *memfile,
                         column_group_header column_group_header =
                                 {.marker = global_marker_symbols[MARKER_TYPE_COLUMN_GROUP].symbol, .num_columns = column_group
                                         ->columns.num_elems, .num_objects = max_pos + 1};
-                        memfile_write(memfile, &column_group_header, sizeof(column_group_header));
+                        MEMFILE_WRITE(memfile, &column_group_header, sizeof(column_group_header));
 
                         for (size_t i = 0; i < column_group_header.num_objects; i++) {
                                 unique_id_t oid;
@@ -1064,12 +1064,12 @@ static bool write_object_array_props(memfile *memfile,
                                         error(ERR_THREADOOOBJIDS, NULL);
                                         return false;
                                 }
-                                memfile_write(memfile, &oid, sizeof(unique_id_t));
+                                MEMFILE_WRITE(memfile, &oid, sizeof(unique_id_t));
                         }
 
                         offset_t continue_write = MEMFILE_TELL(memfile);
                         MEMFILE_SEEK(memfile, column_offsets + i * sizeof(offset_t));
-                        memfile_write(memfile, &this_column_offset_relative, sizeof(offset_t));
+                        MEMFILE_WRITE(memfile, &this_column_offset_relative, sizeof(offset_t));
                         MEMFILE_SEEK(memfile, continue_write);
 
                         offset_t offset_column_to_columns = continue_write;
@@ -1081,7 +1081,7 @@ static bool write_object_array_props(memfile *memfile,
                                 offset_t continue_write = MEMFILE_TELL(memfile);
                                 offset_t column_off = continue_write - root_object_header_offset;
                                 MEMFILE_SEEK(memfile, offset_column_to_columns + k * sizeof(offset_t));
-                                memfile_write(memfile, &column_off, sizeof(offset_t));
+                                MEMFILE_WRITE(memfile, &column_off, sizeof(offset_t));
                                 MEMFILE_SEEK(memfile, continue_write);
                                 if (!write_column(memfile, column, root_object_header_offset)) {
                                         return false;
@@ -1113,7 +1113,7 @@ update_record_header(memfile *memfile, offset_t root_object_header_offset, colum
         offset_t offset;
         memfile_get_offset(&offset, memfile);
         MEMFILE_SEEK(memfile, root_object_header_offset);
-        memfile_write(memfile, &header, sizeof(record_header));
+        MEMFILE_WRITE(memfile, &header, sizeof(record_header));
         MEMFILE_SEEK(memfile, offset);
 }
 
@@ -1121,82 +1121,82 @@ static void propOffsetsWrite(memfile *memfile, const object_flags_u *flags,
                              archive_prop_offs *prop_offsets)
 {
         if (flags->bits.has_null_props) {
-                memfile_write(memfile, &prop_offsets->nulls, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->nulls, sizeof(offset_t));
         }
         if (flags->bits.has_bool_props) {
-                memfile_write(memfile, &prop_offsets->bools, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->bools, sizeof(offset_t));
         }
         if (flags->bits.has_int8_props) {
-                memfile_write(memfile, &prop_offsets->int8s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int8s, sizeof(offset_t));
         }
         if (flags->bits.has_int16_props) {
-                memfile_write(memfile, &prop_offsets->int16s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int16s, sizeof(offset_t));
         }
         if (flags->bits.has_int32_props) {
-                memfile_write(memfile, &prop_offsets->int32s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int32s, sizeof(offset_t));
         }
         if (flags->bits.has_int64_props) {
-                memfile_write(memfile, &prop_offsets->int64s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int64s, sizeof(offset_t));
         }
         if (flags->bits.has_uint8_props) {
-                memfile_write(memfile, &prop_offsets->uint8s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint8s, sizeof(offset_t));
         }
         if (flags->bits.has_uint16_props) {
-                memfile_write(memfile, &prop_offsets->uint16s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint16s, sizeof(offset_t));
         }
         if (flags->bits.has_uint32_props) {
-                memfile_write(memfile, &prop_offsets->uint32s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint32s, sizeof(offset_t));
         }
         if (flags->bits.has_uint64_props) {
-                memfile_write(memfile, &prop_offsets->uint64s, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint64s, sizeof(offset_t));
         }
         if (flags->bits.has_float_props) {
-                memfile_write(memfile, &prop_offsets->floats, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->floats, sizeof(offset_t));
         }
         if (flags->bits.has_string_props) {
-                memfile_write(memfile, &prop_offsets->strings, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->strings, sizeof(offset_t));
         }
         if (flags->bits.has_object_props) {
-                memfile_write(memfile, &prop_offsets->objects, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->objects, sizeof(offset_t));
         }
         if (flags->bits.has_null_array_props) {
-                memfile_write(memfile, &prop_offsets->null_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->null_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_bool_array_props) {
-                memfile_write(memfile, &prop_offsets->bool_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->bool_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_int8_array_props) {
-                memfile_write(memfile, &prop_offsets->int8_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int8_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_int16_array_props) {
-                memfile_write(memfile, &prop_offsets->int16_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int16_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_int32_array_props) {
-                memfile_write(memfile, &prop_offsets->int32_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int32_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_int64_array_props) {
-                memfile_write(memfile, &prop_offsets->int64_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->int64_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_uint8_array_props) {
-                memfile_write(memfile, &prop_offsets->uint8_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint8_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_uint16_array_props) {
-                memfile_write(memfile, &prop_offsets->uint16_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint16_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_uint32_array_props) {
-                memfile_write(memfile, &prop_offsets->uint32_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint32_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_uint64_array_props) {
-                memfile_write(memfile, &prop_offsets->uint64_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->uint64_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_float_array_props) {
-                memfile_write(memfile, &prop_offsets->float_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->float_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_string_array_props) {
-                memfile_write(memfile, &prop_offsets->string_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->string_arrays, sizeof(offset_t));
         }
         if (flags->bits.has_object_array_props) {
-                memfile_write(memfile, &prop_offsets->object_arrays, sizeof(offset_t));
+                MEMFILE_WRITE(memfile, &prop_offsets->object_arrays, sizeof(offset_t));
         }
 }
 
@@ -1299,7 +1299,7 @@ static bool __serialize(offset_t *offset, memfile *memfile,
         prop_offsets_skip_write(memfile, &flags);
         offset_t next_offset = MEMFILE_TELL(memfile);
         offset_t default_next_nil = 0;
-        memfile_write(memfile, &default_next_nil, sizeof(offset_t));
+        MEMFILE_WRITE(memfile, &default_next_nil, sizeof(offset_t));
 
         if (!write_primitive_props(memfile, columndoc, &prop_offsets, root_object_header_offset)) {
                 return false;
@@ -1314,7 +1314,7 @@ static bool __serialize(offset_t *offset, memfile *memfile,
                 return false;
         }
 
-        memfile_write(memfile, &global_marker_symbols[MARKER_TYPE_OBJECT_END].symbol, 1);
+        MEMFILE_WRITE(memfile, &global_marker_symbols[MARKER_TYPE_OBJECT_END].symbol, 1);
 
         offset_t object_end_offset = MEMFILE_TELL(memfile);
         MEMFILE_SEEK(memfile, header_offset);
@@ -1331,7 +1331,7 @@ static bool __serialize(offset_t *offset, memfile *memfile,
 
                 };
 
-        memfile_write(memfile, &header, sizeof(object_header));
+        MEMFILE_WRITE(memfile, &header, sizeof(object_header));
 
         propOffsetsWrite(memfile, &flags, &prop_offsets);
 
@@ -1435,13 +1435,13 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
                 offset_t continue_off = MEMFILE_TELL(memfile);
                 MEMFILE_SEEK(memfile, header_pos_off);
                 header.next_entry_off = i + 1 < strings->num_elems ? continue_off : 0;
-                memfile_write(memfile, &header, sizeof(string_entry_header));
+                MEMFILE_WRITE(memfile, &header, sizeof(string_entry_header));
                 MEMFILE_SEEK(memfile, continue_off);
         }
 
         offset_t continue_pos = MEMFILE_TELL(memfile);
         MEMFILE_SEEK(memfile, header_pos);
-        memfile_write(memfile, &header, sizeof(string_table_header));
+        MEMFILE_WRITE(memfile, &header, sizeof(string_table_header));
         MEMFILE_SEEK(memfile, continue_pos);
 
         vector_drop(strings);
@@ -1465,7 +1465,7 @@ static void update_file_header(memfile *memfile, offset_t record_header_offset)
         memcpy(&this_file_header.magic, CARBON_ARCHIVE_MAGIC, strlen(CARBON_ARCHIVE_MAGIC));
         this_file_header.root_object_header_offset = record_header_offset;
         this_file_header.string_id_to_offset_index_offset = 0;
-        memfile_write(memfile, &this_file_header, sizeof(archive_header));
+        MEMFILE_WRITE(memfile, &this_file_header, sizeof(archive_header));
         MEMFILE_SEEK(memfile, current_pos);
 }
 
@@ -1474,7 +1474,7 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
 {
         offset_t offset;
         memfile_get_offset(&offset, memfile);
-        column_header *header = memfile_read_type(memfile, column_header);
+        column_header *header = MEMFILE_READ_TYPE(memfile, column_header);
         if (header->marker != MARKER_SYMBOL_COLUMN) {
                 char buffer[256];
                 sprintf(buffer, "expected marker [%c] but found [%c]", MARKER_SYMBOL_COLUMN, header->marker);
@@ -1496,7 +1496,7 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
                 header->num_entries);
 
         for (size_t i = 0; i < header->num_entries; i++) {
-                offset_t entry_off = *memfile_read_type(memfile, offset_t);
+                offset_t entry_off = *MEMFILE_READ_TYPE(memfile, offset_t);
                 fprintf(file, "offset: 0x%04x%s", (unsigned) entry_off, i + 1 < header->num_entries ? ", " : "");
         }
 
@@ -1566,7 +1566,7 @@ print_column_form_memfile(FILE *file, memfile *memfile, unsigned nesting_level)
                         }
                                 break;
                         case ARCHIVE_FIELD_OBJECT: {
-                                u32 num_elements = *memfile_read_type(memfile, u32);
+                                u32 num_elements = *MEMFILE_READ_TYPE(memfile, u32);
                                 INTENT_LINE(nesting_level);
                                 fprintf(file, "   [num_elements: %d] [values: [\n", num_elements);
                                 for (size_t i = 0; i < num_elements; i++) {
@@ -1589,7 +1589,7 @@ static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_fi
                                             unsigned nesting_level)
 {
         unsigned offset = (unsigned) MEMFILE_TELL(mem_file);
-        object_array_header *header = memfile_read_type(mem_file, object_array_header);
+        object_array_header *header = MEMFILE_READ_TYPE(mem_file, object_array_header);
         if (header->marker != MARKER_SYMBOL_PROP_OBJECT_ARRAY) {
                 char buffer[256];
                 sprintf(buffer, "expected marker [%c] but found [%c]", MARKER_SYMBOL_PROP_OBJECT_ARRAY,
@@ -1603,12 +1603,12 @@ static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_fi
         fprintf(file, "[marker: %c (Object Array)] [nentries: %d] [", header->marker, header->num_entries);
 
         for (size_t i = 0; i < header->num_entries; i++) {
-                archive_field_sid_t string_id = *memfile_read_type(mem_file, archive_field_sid_t);
+                archive_field_sid_t string_id = *MEMFILE_READ_TYPE(mem_file, archive_field_sid_t);
                 fprintf(file, "key: %"PRIu64"%s", string_id, i + 1 < header->num_entries ? ", " : "");
         }
         fprintf(file, "] [");
         for (size_t i = 0; i < header->num_entries; i++) {
-                offset_t columnGroupOffset = *memfile_read_type(mem_file, offset_t);
+                offset_t columnGroupOffset = *MEMFILE_READ_TYPE(mem_file, offset_t);
                 fprintf(file,
                         "offset: 0x%04x%s",
                         (unsigned) columnGroupOffset,
@@ -1621,7 +1621,7 @@ static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_fi
         for (size_t i = 0; i < header->num_entries; i++) {
                 offset = MEMFILE_TELL(mem_file);
                 column_group_header
-                        *column_group_header = memfile_read_type(mem_file, struct column_group_header);
+                        *column_group_header = MEMFILE_READ_TYPE(mem_file, struct column_group_header);
                 if (column_group_header->marker != MARKER_SYMBOL_COLUMN_GROUP) {
                         char buffer[256];
                         sprintf(buffer,
@@ -1639,14 +1639,14 @@ static bool _archive_print_object_array_from_memfile(FILE *file, memfile *mem_fi
                         column_group_header->num_columns,
                         column_group_header->num_objects);
                 const unique_id_t
-                        *oids = memfile_read_type_list(mem_file, unique_id_t,
+                        *oids = MEMFILE_READ_TYPE_LIST(mem_file, unique_id_t,
                                                            column_group_header->num_objects);
                 for (size_t k = 0; k < column_group_header->num_objects; k++) {
                         fprintf(file, "%"PRIu64"%s", oids[k], k + 1 < column_group_header->num_objects ? ", " : "");
                 }
                 fprintf(file, "] [offsets: ");
                 for (size_t k = 0; k < column_group_header->num_columns; k++) {
-                        offset_t column_off = *memfile_read_type(mem_file, offset_t);
+                        offset_t column_off = *MEMFILE_READ_TYPE(mem_file, offset_t);
                         fprintf(file,
                                 "0x%04x%s",
                                 (unsigned) column_off,
@@ -1754,13 +1754,13 @@ static void print_prop_offsets(FILE *file, const object_flags_u *flags,
 bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
 {
         unsigned offset = (unsigned) MEMFILE_TELL(memfile);
-        object_header *header = memfile_read_type(memfile, object_header);
+        object_header *header = MEMFILE_READ_TYPE(memfile, object_header);
 
         archive_prop_offs prop_offsets;
         object_flags_u flags = {.value = header->flags};
 
         int_read_prop_offsets(&prop_offsets, memfile, &flags);
-        offset_t nextObjectOrNil = *memfile_read_type(memfile, offset_t);
+        offset_t nextObjectOrNil = *MEMFILE_READ_TYPE(memfile, offset_t);
 
         if (header->marker != MARKER_SYMBOL_OBJECT_BEGIN) {
                 char buffer[256];
@@ -1787,7 +1787,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
 
                 switch (entryMarker) {
                         case MARKER_SYMBOL_PROP_NULL: {
-                                prop_header *prop_header = memfile_read_type(memfile,
+                                prop_header *prop_header = MEMFILE_READ_TYPE(memfile,
                                                                                                 struct prop_header);
                                 archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
                                                                                                              prop_header->num_entries *
@@ -1805,7 +1805,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         }
                                 break;
                         case MARKER_SYMBOL_PROP_BOOLEAN: {
-                                prop_header *prop_header = memfile_read_type(memfile, struct prop_header);
+                                prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);
                                 archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
                                                                                                              prop_header->num_entries *
                                                                                                              sizeof(archive_field_sid_t));
@@ -1948,7 +1948,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         }
                                 break;
                         case MARKER_SYMBOL_PROP_NULL_ARRAY: {
-                                prop_header *prop_header = memfile_read_type(memfile, struct prop_header);
+                                prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);
 
                                 archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
                                                                                                              prop_header->num_entries *
@@ -1983,7 +1983,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
                         }
                                 break;
                         case MARKER_SYMBOL_PROP_BOOLEAN_ARRAY: {
-                                prop_header *prop_header = memfile_read_type(memfile, struct prop_header);
+                                prop_header *prop_header = MEMFILE_READ_TYPE(memfile, struct prop_header);
 
                                 archive_field_sid_t *keys = (archive_field_sid_t *) memfile_read(memfile,
                                                                                                              prop_header->num_entries *
@@ -2142,7 +2142,7 @@ bool _archive_print_object(FILE *file, memfile *memfile, unsigned nesting_level)
         }
 
         offset = MEMFILE_TELL(memfile);
-        char end_marker = *memfile_read_type(memfile, char);
+        char end_marker = *MEMFILE_READ_TYPE(memfile, char);
         assert (end_marker == MARKER_SYMBOL_OBJECT_END);
         nesting_level--;
         fprintf(file, "0x%04x ", offset);
@@ -2174,7 +2174,7 @@ static bool is_valid_file(const archive_header *header)
 static void print_record_header_from_memfile(FILE *file, memfile *memfile)
 {
         unsigned offset = MEMFILE_TELL(memfile);
-        record_header *header = memfile_read_type(memfile, record_header);
+        record_header *header = MEMFILE_READ_TYPE(memfile, record_header);
         record_flags flags;
         memset(&flags, 0, sizeof(record_flags));
         flags.value = header->flags;
@@ -2192,7 +2192,7 @@ static bool print_header_from_memfile(FILE *file, memfile *memfile)
 {
         unsigned offset = MEMFILE_TELL(memfile);
         assert(memfile_size(memfile) > sizeof(archive_header));
-        archive_header *header = memfile_read_type(memfile, archive_header);
+        archive_header *header = MEMFILE_READ_TYPE(memfile, archive_header);
         if (!is_valid_file(header)) {
                 return error(ERR_NOARCHIVEFILE, NULL);
         }
@@ -2212,7 +2212,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
         string_tab_flags_u flags;
 
         unsigned offset = MEMFILE_TELL(memfile);
-        string_table_header *header = memfile_read_type(memfile, string_table_header);
+        string_table_header *header = MEMFILE_READ_TYPE(memfile, string_table_header);
         if (header->marker != global_marker_symbols[MARKER_TYPE_EMBEDDED_STR_DIC].symbol) {
                 char buffer[256];
                 sprintf(buffer,
@@ -2243,7 +2243,7 @@ static bool print_embedded_dic_from_memfile(FILE *file, memfile *memfile)
 
         while ((*MEMFILE_PEEK_TYPE(memfile, char)) == global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR].symbol) {
                 unsigned offset = MEMFILE_TELL(memfile);
-                string_entry_header header = *memfile_read_type(memfile, string_entry_header);
+                string_entry_header header = *MEMFILE_READ_TYPE(memfile, string_entry_header);
                 fprintf(file,
                         "0x%04x    [marker: %c] [next-entry-off: 0x%04zx] [str_buf-id: %"PRIu64"] [str_buf-length: %"PRIu32"]",
                         offset,

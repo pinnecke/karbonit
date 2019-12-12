@@ -203,7 +203,7 @@ record_ref_read(key_e *rec_key_type, u64 *key_length, u64 *commit_hash, memfile 
         memfile_save_position(memfile);
         MEMFILE_SEEK(memfile, 0);
         const void *ret = key_read(key_length, rec_key_type, memfile);
-        u64 *hash = memfile_read_type(memfile, u64);
+        u64 *hash = MEMFILE_READ_TYPE(memfile, u64);
         OPTIONAL_SET(commit_hash, *hash);
         memfile_restore_position(memfile);
         return ret;
@@ -250,7 +250,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
         }
 
         /** write record version */
-        memfile_write(memfile, &commit_hash, sizeof(u64));
+        MEMFILE_WRITE(memfile, &commit_hash, sizeof(u64));
 }
 
 static void array_traverse(struct pindex_node *parent, arr_it *it)

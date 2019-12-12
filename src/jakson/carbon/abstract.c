@@ -321,12 +321,12 @@ bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_type_e in)
 
 void abstract_write_base_type(memfile *memfile, sub_type_e type)
 {
-        memfile_write(memfile, &type, sizeof(u8));
+        MEMFILE_WRITE(memfile, &type, sizeof(u8));
 }
 
 void abstract_write_derived_type(memfile *memfile, derived_e type)
 {
-        memfile_write(memfile, &type, sizeof(u8));
+        MEMFILE_WRITE(memfile, &type, sizeof(u8));
 }
 
 bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)

@@ -174,14 +174,14 @@ bool archive_from_json(archive *out, const char *file, const char *json_string,
 
         if ((out_file = fopen(file, "w")) == NULL) {
                 error(ERR_FOPENWRITE, NULL);
-                memblock_drop(stream);
+                MEMBLOCK_DROP(stream);
                 return false;
         }
 
         if (!archive_write(out_file, stream)) {
                 error(ERR_WRITEARCHIVE, NULL);
                 fclose(out_file);
-                memblock_drop(stream);
+                MEMBLOCK_DROP(stream);
                 return false;
         }
 
@@ -198,7 +198,7 @@ bool archive_from_json(archive *out, const char *file, const char *json_string,
 
         OPTIONAL_CALL(callback, end_load_archive);
 
-        memblock_drop(stream);
+        MEMBLOCK_DROP(stream);
 
         OPTIONAL_CALL(callback, end_create_from_json);
 
@@ -359,8 +359,8 @@ static bool run_string_id_baking(memblock **stream)
 
         query_drop_index_string_id_to_offset(index);
 
-        memblock_drop(*stream);
-        memblock_from_file(stream, tmp_file, file_length);
+        MEMBLOCK_DROP(*stream);
+        MEMBLOCK_FROM_FILE(stream, tmp_file, file_length);
 
         remove(tmp_file_name);
 
@@ -372,7 +372,7 @@ bool archive_from_model(memblock **stream, column_doc *model, packer_e compresso
 {
         OPTIONAL_CALL(callback, begin_create_from_model)
 
-        memblock_create(stream, 1024 * 1024 * 1024);
+        MEMBLOCK_CREATE(stream, 1024 * 1024 * 1024);
         memfile memfile;
         MEMFILE_OPEN(&memfile, *stream, READ_WRITE);
 
@@ -425,7 +425,7 @@ archive_io_context *archive_io_context_create(archive *archive)
 
 bool archive_write(FILE *file, const memblock *stream)
 {
-        return memblock_write_to_file(file, stream);
+        return MEMBLOCK_WRITE_TO_FILE(file, stream);
 }
 
 bool archive_load(memblock **stream, FILE *file)
@@ -436,7 +436,7 @@ bool archive_load(memblock **stream, FILE *file)
         fseek(file, start, SEEK_SET);
         long fileSize = (end - start);
 
-        return memblock_from_file(stream, file, fileSize);
+        return MEMBLOCK_FROM_FILE(stream, file, fileSize);
 }
 
 bool archive_print(FILE *file, memblock *stream)
@@ -2410,7 +2410,7 @@ bool archive_close(archive *archive)
         archive_drop_indexes(archive);
         archive_drop_query_string_id_cache(archive);
         free(archive->disk_file_path);
-        memblock_drop(archive->record_table.record_db);
+        MEMBLOCK_DROP(archive->record_table.record_db);
         query_drop(archive->default_query);
         free(archive->default_query);
         return true;
@@ -2521,7 +2521,7 @@ static bool read_record(record_header *header_read, archive *archive, FILE *disk
                 return false;
         } else {
                 archive->record_table.flags.value = header.flags;
-                bool status = memblock_from_file(&archive->record_table.record_db, disk_file, header.record_size);
+                bool status = MEMBLOCK_FROM_FILE(&archive->record_table.record_db, disk_file, header.record_size);
                 if (!status) {
                         return false;
                 }

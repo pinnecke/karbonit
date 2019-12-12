@@ -8,7 +8,7 @@ TEST(VarUintTest, ReadWrite##test_name) {                               \
         char dst[10];                                                   \
         u8 nbytes = uintvar_stream_write(&dst, value);                         \
         ASSERT_TRUE(nbytes == expected_bytes);                          \
-        u64 read_value = uintvar_stream_read(&nbytes, &dst);                   \
+        u64 read_value = UINTVAR_STREAM_READ(&nbytes, &dst);                   \
         ASSERT_TRUE(nbytes == expected_bytes);                          \
         ASSERT_TRUE(read_value == value);                               \
 }
@@ -49,7 +49,7 @@ TEST(VarUintTest, ReadWriteRandValuesEncoding) {
                 u64 in_value = rand();
                 in_value = (in_value << 32) | rand();
                 uintvar_stream_write(&dst, in_value);
-                u64 out_value = uintvar_stream_read(NULL, &dst);
+                u64 out_value = UINTVAR_STREAM_READ(NULL, &dst);
                 ASSERT_EQ(in_value, out_value);
         }
 }

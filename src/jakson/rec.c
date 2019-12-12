@@ -107,8 +107,8 @@ void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
 {
         doc_cap = JAK_MAX(MIN_DOC_CAPACITY, doc_cap);
 
-        memblock_create(&doc->block, doc_cap);
-        memblock_zero_out(doc->block);
+        MEMBLOCK_CREATE(&doc->block, doc_cap);
+        MEMBLOCK_ZERO_OUT(doc->block);
         MEMFILE_OPEN(&doc->file, doc->block, READ_WRITE);
 
         carbon_header_init(doc, type);
@@ -134,7 +134,7 @@ bool rec_from_json(rec *doc, const char *json, key_e type,
 
 bool rec_from_raw_data(rec *doc, const void *data, u64 len)
 {
-        memblock_from_raw_data(&doc->block, data, len);
+        MEMBLOCK_FROM_RAW_DATA(&doc->block, data, len);
         MEMFILE_OPEN(&doc->file, doc->block, READ_WRITE);
 
         return true;
@@ -148,8 +148,8 @@ bool rec_drop(rec *doc)
 const void *rec_raw_data(u64 *len, rec *doc)
 {
         if (len && doc) {
-                memblock_size(len, doc->file.memblock);
-                return memblock_raw_data(doc->file.memblock);
+                MEMBLOCK_SIZE(len, doc->file.memblock);
+                return MEMBLOCK_RAW_DATA(doc->file.memblock);
         } else {
                 return NULL;
         }
@@ -241,7 +241,7 @@ bool rec_has_key(key_e type)
 
 void rec_clone(rec *clone, rec *doc)
 {
-        memblock_cpy(&clone->block, doc->block);
+        MEMBLOCK_CPY(&clone->block, doc->block);
         MEMFILE_OPEN(&clone->file, clone->block, READ_WRITE);
 }
 
@@ -316,7 +316,7 @@ bool rec_hexdump_print(FILE *file, rec *doc)
 static bool internal_drop(rec *doc)
 {
         assert(doc);
-        memblock_drop(doc->block);
+        MEMBLOCK_DROP(doc->block);
         return true;
 }
 

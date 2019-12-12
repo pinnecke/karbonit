@@ -3,12 +3,12 @@
 
 static void make_memfile(memfile *memfile) {
         memblock *memblock;
-        memblock_create(&memblock, 1024);
+        MEMBLOCK_CREATE(&memblock, 1024);
         MEMFILE_OPEN(memfile, memblock, READ_WRITE);
 }
 
 static void drop_memfile(memfile *memfile) {
-        memblock_drop(memfile->memblock);
+        MEMBLOCK_DROP(memfile->memblock);
 }
 
 TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {

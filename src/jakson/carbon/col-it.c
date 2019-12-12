@@ -113,77 +113,77 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
 bool col_it_is_null(col_it *it, u32 pos)
 {
         field_e type;
-        u32 nvalues = col_it_values_info(&type, it);
+        u32 nvalues = COL_IT_VALUES_INFO(&type, it);
         error_if_and_return(pos >= nvalues, ERR_OUTOFBOUNDS, NULL);
         switch (type) {
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
-                        const u8 *values = col_it_u8_values(NULL, it);
+                        const u8 *values = COL_IT_U8_VALUES(NULL, it);
                         return IS_NULL_U8(values[pos]);
                 }
                 case FIELD_COLUMN_U16_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
-                        const u16 *values = col_it_u16_values(NULL, it);
+                        const u16 *values = COL_IT_U16_VALUES(NULL, it);
                         return IS_NULL_U16(values[pos]);
                 }
                 case FIELD_COLUMN_U32_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
-                        const u32 *values = col_it_u32_values(NULL, it);
+                        const u32 *values = COL_IT_U32_VALUES(NULL, it);
                         return IS_NULL_U32(values[pos]);
                 }
                 case FIELD_COLUMN_U64_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
-                        const u64 *values = col_it_u64_values(NULL, it);
+                        const u64 *values = COL_IT_U64_VALUES(NULL, it);
                         return IS_NULL_U64(values[pos]);
                 }
                 case FIELD_COLUMN_I8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
-                        const i8 *values = col_it_i8_values(NULL, it);
+                        const i8 *values = COL_IT_I8_VALUES(NULL, it);
                         return IS_NULL_I8(values[pos]);
                 }
                 case FIELD_COLUMN_I16_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
-                        const i16 *values = col_it_i16_values(NULL, it);
+                        const i16 *values = COL_IT_I16_VALUES(NULL, it);
                         return IS_NULL_I16(values[pos]);
                 }
                 case FIELD_COLUMN_I32_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
-                        const i32 *values = col_it_i32_values(NULL, it);
+                        const i32 *values = COL_IT_I32_VALUES(NULL, it);
                         return IS_NULL_I32(values[pos]);
                 }
                 case FIELD_COLUMN_I64_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        const i64 *values = col_it_i64_values(NULL, it);
+                        const i64 *values = COL_IT_I64_VALUES(NULL, it);
                         return IS_NULL_I64(values[pos]);
                 }
                 case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
-                        const float *values = col_it_float_values(NULL, it);
+                        const float *values = COL_IT_FLOAT_VALUES(NULL, it);
                         return IS_NULL_FLOAT(values[pos]);
                 }
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        const boolean *values = col_it_boolean_values(NULL, it);
+                        const boolean *values = COL_IT_BOOLEAN_VALUES(NULL, it);
                         return IS_NULL_BOOLEAN(values[pos]);
                 }
                 default:
@@ -321,6 +321,56 @@ bool col_it_is_float(col_it *it)
                 default:
                         return false;
         }
+}
+
+const boolean *internal_col_it_boolean_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_BOOLEAN_VALUES(nvalues, it);
+}
+
+const u8 *internal_col_it_u8_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_U8_VALUES(nvalues, it);
+}
+
+const u16 *internal_col_it_u16_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_U16_VALUES(nvalues, it);
+}
+
+const u32 *internal_col_it_u32_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_U32_VALUES(nvalues, it);
+}
+
+const u64 *internal_col_it_u64_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_U64_VALUES(nvalues, it);
+}
+
+const i8 *internal_col_it_i8_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_I8_VALUES(nvalues, it);
+}
+
+const i16 *internal_col_it_i16_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_I16_VALUES(nvalues, it);
+}
+
+const i32 *internal_col_it_i32_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_I32_VALUES(nvalues, it);
+}
+
+const i64 *internal_col_it_i64_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_I64_VALUES(nvalues, it);
+}
+
+const float *internal_col_it_float_values(u32 *nvalues, col_it *it)
+{
+        return COL_IT_FLOAT_VALUES(nvalues, it);
 }
 
 bool col_it_remove(col_it *it, u32 pos)
@@ -836,7 +886,7 @@ bool col_it_rewind(col_it *it)
 
 #define COL_IT_PRINT(it, nvalues, type, null_check)                                             \
 {                                                                                               \
-        const type *value = col_it_##type##_values(&nvalues, it);                               \
+        const type *value = internal_col_it_##type##_values(&nvalues, it);                               \
         for (u32 i = 0; i < nvalues; i++) {                                                     \
                 type x = value[i];                                                              \
                 if (null_check(x)) {                                                            \

@@ -20,7 +20,7 @@ typedef struct memblock {
     void *base;
 } memblock;
 
-#define memblock_create(block, size)						                                                           \
+#define MEMBLOCK_CREATE(block, size)						                                                           \
 ({												                                                                       \
         bool memblock_create_status = true;                                                                                            \
         if (unlikely(size == 0)) {							                                                           \
@@ -37,20 +37,20 @@ typedef struct memblock {
         memblock_create_status;									                                                                       \
 })
 
-#define memblock_drop(block)                                                                                           \
+#define MEMBLOCK_DROP(block)                                                                                           \
 {                                                                                                                      \
     free((block)->base);                                                                                               \
     free((block));                                                                                                     \
 }
 
-#define memblock_from_file(block, file, nbytes)							                                               \
+#define MEMBLOCK_FROM_FILE(block, file, nbytes)							                                               \
 ({																		                                               \
-        memblock_create((block), nbytes);								                                               \
+        MEMBLOCK_CREATE((block), nbytes);								                                               \
         size_t numRead = fread((*(block))->base, 1, nbytes, file);							                           \
         ((size_t) numRead == (size_t) nbytes);												                           \
 })
 
-#define memblock_from_raw_data(block, data, nbytes)													                   \
+#define MEMBLOCK_FROM_RAW_DATA(block, data, nbytes)													                   \
 {																									                   \
         struct memblock *result = (struct memblock *) MALLOC(sizeof(struct memblock));				                   \
         result->blockLength = nbytes;																                   \
@@ -59,10 +59,10 @@ typedef struct memblock {
         memcpy(result->base, data, nbytes);															                   \
 }
 
-#define memblock_raw_data(block)									                                                   \
+#define MEMBLOCK_RAW_DATA(block)									                                                   \
         ((block) && (block)->base ? (block)->base : NULL)
 
-#define memblock_write(block, position, data, nbytes)										                           \
+#define MEMBLOCK_WRITE(block, position, data, nbytes)										                           \
 ({										                                                                               \
         bool memblock_write_status;										                                                           \
         if (likely(position + nbytes < block->blockLength)) {										                   \
@@ -75,9 +75,9 @@ typedef struct memblock {
         memblock_write_status;										                                                                   \
 })
 
-#define memblock_cpy(dst, src)										                                                   \
+#define MEMBLOCK_CPY(dst, src)										                                                   \
 {										                                                                               \
-        memblock_create((dst), (src)->blockLength);										                               \
+        MEMBLOCK_CREATE((dst), (src)->blockLength);										                               \
         memcpy((*(dst))->base, (src)->base, (src)->blockLength);										               \
         assert((*(dst))->base);										                                                   \
         assert((*(dst))->blockLength == (src)->blockLength);										                   \
@@ -85,16 +85,16 @@ typedef struct memblock {
         (*(dst))->last_byte = (src)->last_byte;										                                   \
 }
 
-#define memblock_shrink(block)																		                   \
+#define MEMBLOCK_SHRINK(block)																		                   \
 {																		                                               \
         (block)->blockLength = (block)->last_byte;																	   \
         (block)->base = realloc((block)->base, (block)->blockLength);												   \
 }
 
-#define memblock_move_right(block, where, nbytes)		                                                               \
-        memblock_move_ex((block), (where), nbytes, true);
+#define MEMBLOCK_MOVE_RIGHT(block, where, nbytes)		                                                               \
+        MEMBLOCK_MOVE_EX((block), (where), nbytes, true);
 
-#define memblock_move_left(block, where, nbytes)															           \
+#define MEMBLOCK_MOVE_LEFT(block, where, nbytes)															           \
 ({															                                                           \
         bool status = true;															                                   \
         if (unlikely((where) + (nbytes) >= (block)->blockLength)) {													   \
@@ -113,7 +113,7 @@ typedef struct memblock {
         status;															                                               \
 })
 
-#define memblock_move_ex(block, where, nbytes, zero_out)															   \
+#define MEMBLOCK_MOVE_EX(block, where, nbytes, zero_out)															   \
 ({																                                                       \
         bool status = true;																                               \
         if (unlikely(where >= (block)->blockLength)) {																   \
@@ -142,24 +142,24 @@ typedef struct memblock {
         status;																                                           \
 })
 
-#define memblock_zero_out(block)										                                               \
+#define MEMBLOCK_ZERO_OUT(block)										                                               \
         ZERO_MEMORY((block)->base, (block)->blockLength)
 
-#define memblock_size(size, block)										                                               \
+#define MEMBLOCK_SIZE(size, block)										                                               \
 {										                                                                               \
         *(size) = (block)->blockLength;										                                           \
 }
 
-#define memblock_last_used_byte(block)										                                           \
+#define MEMBLOCK_LAST_USED_BYTE(block)										                                           \
         ((block) ? (block)->last_byte : 0)
 
-#define memblock_write_to_file(cfile, block)												                           \
+#define MEMBLOCK_WRITE_TO_FILE(cfile, block)												                           \
 ({												                                                                       \
         size_t nwritten = fwrite((block)->base, (block)->blockLength, 1, (cfile));									   \
         (nwritten == 1);												                                               \
 })
 
-#define memblock_resize(block, size)							                                                       \
+#define MEMBLOCK_RESIZE(block, size)							                                                       \
 ({							                                                                                           \
         bool memblock_resize_status = true;							                                                                   \
         if (unlikely((size) == 0)) {							                                                       \
@@ -174,7 +174,7 @@ typedef struct memblock {
         memblock_resize_status;							                                                                               \
 })
 
-#define memblock_move_contents_and_drop(block)					                                                       \
+#define MEMBLOCK_MOVE_CONTENTS_AND_DROP(block)					                                                       \
 ({					                                                                                                   \
         void *result = (block)->base;					                                                               \
         (block)->base = NULL;					                                                                       \
@@ -182,15 +182,15 @@ typedef struct memblock {
         result;					                                                                                       \
 })
 
-#define memfile_update_last_byte(block, where)							                                               \
+#define MEMFILE_UPDATE_LAST_BYTE(block, where)							                                               \
 {							                                                                                           \
-        bool status = true;							                                                                   \
+        bool memfile_update_last_byte_status = true;							                                                                   \
         if (unlikely((where) >= (block)->blockLength)) {							                                   \
-            status = error(ERR_ILLEGALSTATE, NULL);							                                           \
+            memfile_update_last_byte_status = error(ERR_ILLEGALSTATE, NULL);							                                           \
         } else {							                                                                           \
             (block)->last_byte = JAK_MAX((block)->last_byte, (where));							                       \
         }							                                                                                   \
-        status;							                                                                               \
+        memfile_update_last_byte_status;							                                                                               \
 }
 
 #ifdef __cplusplus

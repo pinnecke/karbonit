@@ -493,7 +493,7 @@ bool moduleJs2CabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
 //        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
 //
 //        CONSOLE_WRITE(file, "  - Clean up in-memory CARBON file%s", "");
-//        memblock_drop(carbonFile);
+//        MEMBLOCK_DROP(carbonFile);
 //        CONSOLE_WRITE_CONT(file, "[%s]\n", "OK");
 //
 //        cleanup(file, &cabContext);
@@ -529,7 +529,7 @@ bool moduleViewCabInvoke(int argc, char **argv, FILE *file, command_opt_mgr *man
         if (!archive_print(stdout, stream)) {
             error_print(stderr);
         }
-        memblock_drop(stream);
+        MEMBLOCK_DROP(stream);
         fclose(inputFile);
 
     }

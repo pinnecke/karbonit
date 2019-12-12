@@ -63,7 +63,7 @@ offset_t col_it_tell(col_it *it, u32 elem_idx);
         col_it_values_result;                                                                                                        \
 })
 
-#define col_it_values_info(_field_e_, _col_it_)                                                                        \
+#define COL_IT_VALUES_INFO(_field_e_, _col_it_)                                                                        \
 ({                                                                                                                     \
         u32 ___nvalues = 0;                                                                        \
         {                                                                                                              \
@@ -87,34 +87,45 @@ bool col_it_is_i32(col_it *it);
 bool col_it_is_i64(col_it *it);
 bool col_it_is_float(col_it *it);
 
-#define col_it_boolean_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                             \
+const boolean *internal_col_it_boolean_values(u32 *nvalues, col_it *it);
+const u8 *internal_col_it_u8_values(u32 *nvalues, col_it *it);
+const u16 *internal_col_it_u16_values(u32 *nvalues, col_it *it);
+const u32 *internal_col_it_u32_values(u32 *nvalues, col_it *it);
+const u64 *internal_col_it_u64_values(u32 *nvalues, col_it *it);
+const i8 *internal_col_it_i8_values(u32 *nvalues, col_it *it);
+const i16 *internal_col_it_i16_values(u32 *nvalues, col_it *it);
+const i32 *internal_col_it_i32_values(u32 *nvalues, col_it *it);
+const i64 *internal_col_it_i64_values(u32 *nvalues, col_it *it);
+const float *internal_col_it_float_values(u32 *nvalues, col_it *it);
+
+#define COL_IT_BOOLEAN_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                             \
         (CAST_COL_VALUES(boolean, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_bool_or_subtype(type)))
 
-#define col_it_u8_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
+#define COL_IT_U8_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
         (CAST_COL_VALUES(u8, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u8_or_subtype(type)))
 
-#define col_it_u16_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+#define COL_IT_U16_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
         (CAST_COL_VALUES(u16, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u16_or_subtype(type)))
 
-#define col_it_u32_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+#define COL_IT_U32_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
         (CAST_COL_VALUES(u32, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u32_or_subtype(type)))
 
-#define col_it_u64_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+#define COL_IT_U64_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
         (CAST_COL_VALUES(u64, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u64_or_subtype(type)))
 
-#define col_it_i8_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
+#define COL_IT_I8_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
         (CAST_COL_VALUES(i8, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i8_or_subtype(type)))
 
-#define col_it_i16_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+#define COL_IT_I16_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
         (CAST_COL_VALUES(i16, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i16_or_subtype(type)))
 
-#define col_it_i32_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+#define COL_IT_I32_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
         (CAST_COL_VALUES(i32, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i32_or_subtype(type)))
 
-#define col_it_i64_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
+#define COL_IT_I64_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
         (CAST_COL_VALUES(i64, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i64_or_subtype(type)))
 
-#define col_it_float_values(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                       \
+#define COL_IT_FLOAT_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                       \
         (CAST_COL_VALUES(float, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_float_or_subtype(type)))
 
 bool col_it_remove(col_it *it, u32 pos);

@@ -116,22 +116,24 @@ u8 uintvar_stream_write(uintvar_stream_t dst, u64 value);
         num_blocks_required;                                                                                           \
 })
 
-#define uintvar_stream_read(u8_ptr_nbytes, uintvar_stream)                                                             \
+#define UINTVAR_STREAM_READ(u8_ptr_nbytes, uintvar_stream)                                                             \
 ({                                                                                                                     \
-        u64 value = 0;                                                                                                 \
-        bool has_next = true;                                                                                          \
-        uint_fast8_t ndecoded = 0;                                                                                     \
-                                                                                                                       \
-        const char *stream = (const char *)(uintvar_stream);                                                           \
-        for (char iterator = *(char *) stream, block_val = 0; has_next;                                                \
-             has_next = (iterator & MASK_FORWARD_BIT) == MASK_FORWARD_BIT,                                             \
-             block_val = iterator & MASK_BLOCK_DATA, value = (value << 7) | block_val, stream++,                       \
-             ndecoded++, iterator = *(char *) stream)                                                                  \
-        { }                                                                                                            \
-                                                                                                                       \
-        u8 *nbytes_ptr = (u8_ptr_nbytes);                                                                              \
-        OPTIONAL_SET(nbytes_ptr, ndecoded);                                                                            \
-        value;                                                                                                         \
+        u64 uintvar_stream_read_value = 0;                                                                                                 \
+        {                                                                                                       \
+                bool ___has_next__ = true;                                                                                          \
+                uint_fast8_t ___ndecoded__ = 0;                                                                                     \
+                                                                                                                               \
+                const char *___stream__ = (const char *)(uintvar_stream);                                                           \
+                for (char ___byte__ = *(char *) ___stream__, block_val = 0; ___has_next__;                                                \
+                     ___has_next__ = (___byte__ & MASK_FORWARD_BIT) == MASK_FORWARD_BIT,                                             \
+                     block_val = ___byte__ & MASK_BLOCK_DATA, uintvar_stream_read_value = (uintvar_stream_read_value << 7) | block_val, ___stream__++,                       \
+                     ___ndecoded__++, ___byte__ = *(char *) ___stream__)                                                                  \
+                { }                                                                                                            \
+                                                                                                                               \
+                u8 *___nbytes_ptr__ = (u8_ptr_nbytes);                                                                              \
+                OPTIONAL_SET(___nbytes_ptr__, ___ndecoded__);                                                                            \
+        }                                                                                                                       \
+        uintvar_stream_read_value;                                                                                                         \
 })
 
 #ifdef __cplusplus

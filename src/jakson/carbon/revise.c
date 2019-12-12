@@ -236,7 +236,7 @@ bool revise_shrink(rev *context)
         }
 
         offset_t size;
-        memblock_size(&size, it.file.memblock);
+        MEMBLOCK_SIZE(&size, it.file.memblock);
         revise_iterator_close(&it);
         return true;
 }

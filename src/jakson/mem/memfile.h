@@ -58,13 +58,13 @@ typedef struct memfile {
         if ((file)->mode == READ_WRITE) {																		       \
                 if (likely(nbytes != 0)) {																		       \
                         offset_t file_size = 0;																		   \
-                        memblock_size(&file_size, (file)->memblock);												   \
+                        MEMBLOCK_SIZE(&file_size, (file)->memblock);												   \
                         offset_t required_size = (file)->pos + nbytes;												   \
                         if (unlikely(required_size >= file_size)) {													   \
-                                memblock_resize((file)->memblock, required_size * 1.7f);							   \
+                                MEMBLOCK_RESIZE((file)->memblock, required_size * 1.7f);							   \
                         }																		                       \
 																		                                               \
-                        if (unlikely(!memblock_write((file)->memblock, (file)->pos, ((char *)data), nbytes))) {		   \
+                        if (unlikely(!MEMBLOCK_WRITE((file)->memblock, (file)->pos, ((char *)data), nbytes))) {		   \
                                 memfile_write_status = false;																		   \
                         } else {	 																	               \
                                 (file)->pos += nbytes;																   \
@@ -106,7 +106,7 @@ typedef struct memfile {
 #define MEMFILE_ENSURE_SPACE(file, nbytes)											                                   \
 ({											                                                                           \
         DECLARE_AND_INIT(offset_t, block_size);											                               \
-        memblock_size(&block_size, (file)->memblock);											                       \
+        MEMBLOCK_SIZE(&block_size, (file)->memblock);											                       \
         assert((file)->pos < block_size);											                                   \
         size_t diff = block_size - (file)->pos;											                               \
         if (diff < (nbytes)) {											                                               \
@@ -133,7 +133,7 @@ typedef struct memfile {
         u64 ___result;													                                               \
         {                                       \
                 u8 __nbytes_read_ = 0;             \
-                ___result = uintvar_stream_read(&__nbytes_read_, (uintvar_stream_t) MEMFILE_PEEK((_file_), sizeof(char)));                   \
+                ___result = UINTVAR_STREAM_READ(&__nbytes_read_, (uintvar_stream_t) MEMFILE_PEEK((_file_), sizeof(char)));                   \
                 MEMFILE_SKIP((_file_), __nbytes_read_);                                                                                                                                   \
                 if ((_nbytes_) != NULL) { u8 *assign_nbytes = (_nbytes_); *assign_nbytes = __nbytes_read_; }                                                   \
         }                               \
@@ -205,11 +205,11 @@ typedef struct memfile {
         bool ___status = true;												                                               \
         {                                                                                                               \
                 offset_t ___file_size = 0;                                                                                                                                           \
-                memblock_size(&___file_size, (_file_)->memblock);                                                                                                                   \
+                MEMBLOCK_SIZE(&___file_size, (_file_)->memblock);                                                                                                                   \
                 if (unlikely((_position_) >= ___file_size)) {                                                                                                                       \
                         if ((_file_)->mode == READ_WRITE) {                                                                                                                       \
                                 offset_t new_size = (_position_) + 1;                                                                                                               \
-                                memblock_resize((_file_)->memblock, new_size);                                                                                                   \
+                                MEMBLOCK_RESIZE((_file_)->memblock, new_size);                                                                                                   \
                         } else {                                                                                                                                               \
                                 ___status = error(ERR_MEMSTATE, NULL);                                                                                                               \
                         }                                                                                                                                                       \
@@ -230,8 +230,8 @@ typedef struct memfile {
 {									                                                                                   \
         if (likely((grow_by_bytes) > 0)) {									                                           \
                 offset_t block_size = 0;									                                           \
-                memblock_size(&block_size, (file_in)->memblock);									                   \
-                memblock_resize((file_in)->memblock, (block_size + (grow_by_bytes)));								   \
+                MEMBLOCK_SIZE(&block_size, (file_in)->memblock);									                   \
+                MEMBLOCK_RESIZE((file_in)->memblock, (block_size + (grow_by_bytes)));								   \
         }									                                                                           \
 }
 
@@ -246,7 +246,7 @@ typedef struct memfile {
         if (!(file) || !(file)->memblock) {							                                                   \
                 ret = 0;							                                                                   \
         } else {							                                                                           \
-                memblock_size(&ret, (file)->memblock);							                                       \
+                MEMBLOCK_SIZE(&ret, (file)->memblock);							                                       \
         }							                                                                                   \
         ret;							                                                                               \
 })
@@ -254,11 +254,11 @@ typedef struct memfile {
 #define MEMFILE_CUT(file, how_many_bytes)							                                                   \
 ({							                                                                                           \
         offset_t block_size = 0;							                                                           \
-        memblock_size(&block_size, (file)->memblock);							                                       \
+        MEMBLOCK_SIZE(&block_size, (file)->memblock);							                                       \
         bool memfile_cut_status;							                                                                       \
         if ((how_many_bytes) > 0 && block_size > (how_many_bytes)) {							                       \
                 size_t new_block_size = block_size - (how_many_bytes);							                       \
-                memblock_resize((file)->memblock, new_block_size);							                           \
+                MEMBLOCK_RESIZE((file)->memblock, new_block_size);							                           \
                 (file)->pos = JAK_MIN((file)->pos, new_block_size);							                           \
                 memfile_cut_status = true;							                                                               \
         } else {							                                                                           \
@@ -277,9 +277,9 @@ typedef struct memfile {
 ({														                                                               \
         bool memfile_shrink_status;														                                           \
         if ((file)->mode == READ_WRITE) {														                       \
-                memblock_shrink((file)->memblock);														               \
+                MEMBLOCK_SHRINK((file)->memblock);														               \
                 u64 size;														                                       \
-                memblock_size(&size, (file)->memblock);														           \
+                MEMBLOCK_SIZE(&size, (file)->memblock);														           \
                 assert(size == (file)->pos);														                   \
                 memfile_shrink_status = true;														                                   \
         } else {														                                               \
@@ -315,17 +315,17 @@ typedef struct memfile {
                 offset_t required_size = (file)->pos + (nbytes);                                                                                                                           \
                 (file)->pos += (nbytes);                                                                                                                                                   \
                 offset_t file_size = 0;                                                                                                                                                       \
-                memblock_size(&file_size, (file)->memblock);                                                                                                                               \
+                MEMBLOCK_SIZE(&file_size, (file)->memblock);                                                                                                                               \
                 if (unlikely(required_size >= file_size)) {                                                                                                                                   \
                         if ((file)->mode == READ_WRITE) {                                                                                                                                   \
-                                memblock_resize((file)->memblock, required_size * 1.7f);                                                                           \
+                                MEMBLOCK_RESIZE((file)->memblock, required_size * 1.7f);                                                                           \
                         } else {                                                                                                                                                           \
                                 error(ERR_WRITEPROT, NULL);                                                                                                                                   \
                                 memfile_skip_status = false;                                                                                                                                               \
                         }                                                                                                                                                                   \
                 }                                                                                                                                                                           \
                 if (likely(memfile_skip_status)) {                                                                                                                                                       \
-                        memfile_update_last_byte((file)->memblock, (file)->pos);                                                                                                   \
+                        MEMFILE_UPDATE_LAST_BYTE((file)->memblock, (file)->pos);                                                                                                   \
                 }                                                                                                                                                                           \
                 assert((file)->pos < MEMFILE_SIZE((file)));                                                                                                                                   \
         }                                                                               \
@@ -337,12 +337,12 @@ typedef struct memfile {
         const char *result = NULL;												                                       \
         {                                                                                                       \
                 offset_t file_size = 0;												                                           \
-                memblock_size(&file_size, (file)->memblock);												                   \
+                MEMBLOCK_SIZE(&file_size, (file)->memblock);												                   \
                 if (unlikely((file)->pos + (nbytes) > file_size)) {												               \
                         error(ERR_READOUTOFBOUNDS, NULL);												                       \
                         result = NULL;												                                           \
                 } else {												                                                       \
-                                char *ptr = (char *) memblock_raw_data((file)->memblock);											   \
+                                char *ptr = (char *) MEMBLOCK_RAW_DATA((file)->memblock);											   \
                                 if (ptr) {																				               \
                                 result = ptr + (file)->pos;												                           \
                                 }														                                               \
@@ -448,15 +448,15 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
 
 #define MEMFILE_SEEK_TO_END(file)											                                           \
 ({											                                                                           \
-        size_t size = memblock_last_used_byte((file)->memblock);											           \
+        size_t size = MEMBLOCK_LAST_USED_BYTE((file)->memblock);											           \
         MEMFILE_SEEK((file), size);											                                           \
 })
 
 #define MEMFILE_INPLACE_INSERT(file, nbytes)											                               \
-        memblock_move_right((file)->memblock, (file)->pos, (nbytes));
+        MEMBLOCK_MOVE_RIGHT((file)->memblock, (file)->pos, (nbytes));
 
 #define MEMFILE_INPLACE_REMOVE(file, nbytes_from_here)											                       \
-        memblock_move_left((file)->memblock, (file)->pos, (nbytes_from_here));
+        MEMBLOCK_MOVE_LEFT((file)->memblock, (file)->pos, (nbytes_from_here));
 
 #define MEMFILE_END_BIT_MODE(num_bytes_written, file)											                       \
 {											                                                                           \
@@ -477,11 +477,11 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
 		void *data = NULL;																                               \
         if ((file) && (nbytes) > 0) {																                   \
                 offset_t file_size = 0;																                   \
-                memblock_size(&file_size, (file)->memblock);														   \
+                MEMBLOCK_SIZE(&file_size, (file)->memblock);														   \
                 offset_t required_size = (file)->pos + (nbytes);													   \
                 if (unlikely((file)->pos + (nbytes) >= file_size)) {												   \
                         if ((file)->mode == READ_WRITE) {															   \
-                                memblock_resize((file)->memblock, required_size * 1.7f);							   \
+                                MEMBLOCK_RESIZE((file)->memblock, required_size * 1.7f);							   \
                         } else {																                       \
                                 error(ERR_WRITEPROT, NULL);															   \
                                 data = NULL;																           \
@@ -495,15 +495,15 @@ static inline bool memfile_write_bit(memfile *file, bool flag)
 #define MEMFILE_HEXDUMP(str_buf_sb, file)																               \
 {																                                                       \
         DECLARE_AND_INIT(offset_t, block_size)																           \
-        memblock_size(&block_size, (file)->memblock);																   \
-        hexdump((str_buf_sb), memblock_raw_data((file)->memblock), block_size);										   \
+        MEMBLOCK_SIZE(&block_size, (file)->memblock);																   \
+        hexdump((str_buf_sb), MEMBLOCK_RAW_DATA((file)->memblock), block_size);										   \
 }
 
 #define MEMFILE_HEXDUMP_PRINTF(cfile, memfile)													                       \
 ({													                                                                   \
         DECLARE_AND_INIT(offset_t, block_size)													                       \
-        memblock_size(&block_size, (memfile)->memblock);													           \
-        hexdump_print((cfile), memblock_raw_data((memfile)->memblock), block_size);									   \
+        MEMBLOCK_SIZE(&block_size, (memfile)->memblock);													           \
+        hexdump_print((cfile), MEMBLOCK_RAW_DATA((memfile)->memblock), block_size);									   \
 })
 
 #define MEMFILE_HEXDUMP_PRINT(memfile)						                                                           \

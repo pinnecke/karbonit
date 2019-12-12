@@ -317,8 +317,8 @@ char *vector_string(const vec ofType(T) *vec,
 {
         memblock *block;
         memfile file;
-        memblock_create(&block, vec->num_elems * vec->elem_size);
+        MEMBLOCK_CREATE(&block, vec->num_elems * vec->elem_size);
         MEMFILE_OPEN(&file, block, READ_WRITE);
         printerFunc(&file, vec->base, vec->num_elems);
-        return memblock_move_contents_and_drop(block);
+        return MEMBLOCK_MOVE_CONTENTS_AND_DROP(block);
 }

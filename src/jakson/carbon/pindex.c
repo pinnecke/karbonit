@@ -269,13 +269,13 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
 {
         field_e column_type;
         field_e entry_type;
-        u32 nvalues = col_it_values_info(&column_type, it);
+        u32 nvalues = COL_IT_VALUES_INFO(&column_type, it);
 
         for (u32 i = 0; i < nvalues; i++) {
                 bool is_null = col_it_is_null(it, i);
                 bool is_true = false;
                 if (field_is_column_bool_or_subtype(column_type)) {
-                        is_true = col_it_boolean_values(NULL, it)[i];
+                        is_true = COL_IT_BOOLEAN_VALUES(NULL, it)[i];
                 }
                 entry_type = field_column_entry_to_regular_type(column_type, is_null, is_true);
                 offset_t sub_elem_off = col_it_tell(it, i);
@@ -1149,7 +1149,7 @@ static void record_ref_to_record(insert *roins, pindex *index)
 
 bool pindex_create(pindex *index, rec *doc)
 {
-        memblock_create(&index->memblock, pindex_CAPACITY);
+        MEMBLOCK_CREATE(&index->memblock, pindex_CAPACITY);
         MEMFILE_OPEN(&index->memfile, index->memblock, READ_WRITE);
         record_ref_create(&index->memfile, doc);
         index_build(&index->memfile, doc);
@@ -1169,8 +1169,8 @@ bool pindex_drop(pindex *index)
 const void *pindex_raw_data(u64 *size, pindex *index)
 {
         if (size && index) {
-                const char *raw = memblock_raw_data(index->memfile.memblock);
-                memblock_size(size, index->memfile.memblock);
+                const char *raw = MEMBLOCK_RAW_DATA(index->memfile.memblock);
+                MEMBLOCK_SIZE(size, index->memfile.memblock);
                 return raw;
         } else {
                 return NULL;

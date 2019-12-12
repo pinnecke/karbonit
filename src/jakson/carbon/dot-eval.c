@@ -527,7 +527,7 @@ static inline pstatus_e _dot_eval_traverse_column(dot_eval *state,
                 dot_type_at(&node_type, current_path_pos, path);
                 assert(node_type == DOT_NODE_IDX);
                 dot_idx_at(&requested_idx, current_path_pos, path);
-                nun_values_contained = col_it_values_info(&column_type, it);
+                nun_values_contained = COL_IT_VALUES_INFO(&column_type, it);
                 if (requested_idx >= nun_values_contained) {
                         /** requested index does not exists in this column */
                         return PATH_NOSUCHINDEX;

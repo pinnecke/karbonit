@@ -758,7 +758,7 @@ static void result_from_object(find *find, obj_it *it)
 static inline bool
 result_from_column(find *find, u32 requested_idx, col_it *it)
 {
-        u32 num_contained_values = col_it_values_info(&find->type, it);
+        u32 num_contained_values = COL_IT_VALUES_INFO(&find->type, it);
         assert(requested_idx < num_contained_values);
 
         switch (find->type) {
@@ -766,7 +766,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        u8 field_value = col_it_boolean_values(NULL, it)[requested_idx];
+                        u8 field_value = COL_IT_BOOLEAN_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_BOOLEAN(field_value)) {
                                 find->type = FIELD_NULL;
                         } else if (field_value == CARBON_BOOLEAN_COLUMN_TRUE) {
@@ -782,12 +782,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
-                        u8 field_value = col_it_u8_values(NULL, it)[requested_idx];
+                        u8 field_value = COL_IT_U8_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_U8(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U8;
-                                find->value.unsigned_number = col_it_u8_values(NULL, it)[requested_idx];
+                                find->value.unsigned_number = COL_IT_U8_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -795,12 +795,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
-                        u16 field_value = col_it_u16_values(NULL, it)[requested_idx];
+                        u16 field_value = COL_IT_U16_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_U16(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U16;
-                                find->value.unsigned_number = col_it_u16_values(NULL, it)[requested_idx];
+                                find->value.unsigned_number = COL_IT_U16_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -808,12 +808,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
-                        u32 field_value = col_it_u32_values(NULL, it)[requested_idx];
+                        u32 field_value = COL_IT_U32_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_U32(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U32;
-                                find->value.unsigned_number = col_it_u32_values(NULL, it)[requested_idx];
+                                find->value.unsigned_number = COL_IT_U32_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -821,12 +821,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
-                        u64 field_value = col_it_u64_values(NULL, it)[requested_idx];
+                        u64 field_value = COL_IT_U64_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_U64(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_U64;
-                                find->value.unsigned_number = col_it_u64_values(NULL, it)[requested_idx];
+                                find->value.unsigned_number = COL_IT_U64_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -834,12 +834,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
-                        i8 field_value = col_it_i8_values(NULL, it)[requested_idx];
+                        i8 field_value = COL_IT_I8_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_I8(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I8;
-                                find->value.signed_number = col_it_i8_values(NULL, it)[requested_idx];
+                                find->value.signed_number = COL_IT_I8_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -847,12 +847,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
-                        i16 field_value = col_it_i16_values(NULL, it)[requested_idx];
+                        i16 field_value = COL_IT_I16_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_I16(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I16;
-                                find->value.signed_number = col_it_i16_values(NULL, it)[requested_idx];
+                                find->value.signed_number = COL_IT_I16_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -860,12 +860,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
-                        i32 field_value = col_it_i32_values(NULL, it)[requested_idx];
+                        i32 field_value = COL_IT_I32_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_I32(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I32;
-                                find->value.signed_number = col_it_i32_values(NULL, it)[requested_idx];
+                                find->value.signed_number = COL_IT_I32_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -873,12 +873,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        i64 field_value = col_it_i64_values(NULL, it)[requested_idx];
+                        i64 field_value = COL_IT_I64_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_I64(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_I64;
-                                find->value.signed_number = col_it_i64_values(NULL, it)[requested_idx];
+                                find->value.signed_number = COL_IT_I64_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;
@@ -886,12 +886,12 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
-                        float field_value = col_it_float_values(NULL, it)[requested_idx];
+                        float field_value = COL_IT_FLOAT_VALUES(NULL, it)[requested_idx];
                         if (IS_NULL_FLOAT(field_value)) {
                                 find->type = FIELD_NULL;
                         } else {
                                 find->type = FIELD_NUMBER_FLOAT;
-                                find->value.float_number = col_it_float_values(NULL, it)[requested_idx];
+                                find->value.float_number = COL_IT_FLOAT_VALUES(NULL, it)[requested_idx];
                         }
                 }
                         break;

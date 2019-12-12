@@ -293,7 +293,7 @@ bool internal_field_data_access(memfile *file, field *field)
                 case FIELD_STRING: {
                         u8 nbytes;
                         uintvar_stream_t len = (uintvar_stream_t) MEMFILE_PEEK(file, 1);
-                        field->len = uintvar_stream_read(&nbytes, len);
+                        field->len = UINTVAR_STREAM_READ(&nbytes, len);
 
                         MEMFILE_SKIP(file, nbytes);
                 }

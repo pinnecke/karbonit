@@ -14,7 +14,7 @@ TEST(CarbonArchiveOpsTest, CreateStreamFromJsonString)
     bool status = archive_stream_from_json(&stream, json_string,
                                                   PACK_NONE, SYNC, 0, read_optimized, false, NULL);
 
-    memblock_drop(stream);
+    MEMBLOCK_DROP(stream);
     ASSERT_TRUE(status);
 }
 

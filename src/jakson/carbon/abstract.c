@@ -18,10 +18,10 @@
 #include <jakson/carbon/abstract.h>
 #include <jakson/mem/memfile.h>
 
-bool abstract_type(abstract_e *type, memfile *memfile)
+bool abstract_type(abstract_e *type, u8 marker)
 {
         derived_e derived;
-        if (likely(abstract_get_derived_type(&derived, memfile))) {
+        if (likely(abstract_get_derived_type(&derived, marker))) {
                 switch (derived) {
                         case UNSORTED_MULTIMAP:
                         case UNSORTED_MULTISET_ARRAY:
@@ -85,10 +85,10 @@ return_true:
         }
 }
 
-bool abstract_is_base(bool *result, memfile *memfile)
+bool abstract_is_base(bool *result, u8 marker)
 {
         abstract_e type;
-        if (likely(abstract_type(&type, memfile))) {
+        if (likely(abstract_type(&type, marker))) {
                 *result = type == ABSTRACT_BASE;
                 return true;
         } else {
@@ -96,10 +96,10 @@ bool abstract_is_base(bool *result, memfile *memfile)
         }
 }
 
-bool abstract_is_derived(bool *result, memfile *memfile)
+bool abstract_is_derived(bool *result, u8 marker)
 {
         bool ret = false;
-        if (abstract_is_base(&ret, memfile)) {
+        if (abstract_is_base(&ret, marker)) {
             *result = !ret;
             return true;
         } else {
@@ -107,10 +107,10 @@ bool abstract_is_derived(bool *result, memfile *memfile)
         }
 }
 
-bool abstract_get_class(abstract_type_class_e *type, memfile *memfile)
+bool abstract_get_class(abstract_type_class_e *type, u8 marker)
 {
         derived_e derived;
-        if (likely(abstract_get_derived_type(&derived, memfile))) {
+        if (likely(abstract_get_derived_type(&derived, marker))) {
                 switch (derived) {
                         case SORTED_MAP:
                                 *type = TYPE_SORTED_MAP;
@@ -329,9 +329,8 @@ void abstract_write_derived_type(memfile *memfile, derived_e type)
         MEMFILE_WRITE(memfile, &type, sizeof(u8));
 }
 
-bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)
+bool abstract_get_container_subtype(sub_type_e *type, u8 marker)
 {
-        u8 marker = MEMFILE_PEEK_BYTE(memfile);
         switch (marker) {
                 /** abstract types for object containers */
                 case UNSORTED_MULTIMAP:
@@ -422,98 +421,98 @@ bool abstract_get_container_subtype(sub_type_e *type, memfile *memfile)
         }
 }
 
-static bool __abstract_is_instanceof(memfile *memfile, sub_type_e T)
+static bool __abstract_is_instanceof(u8 marker, sub_type_e T)
 {
         sub_type_e type;
-        if (likely(abstract_get_container_subtype(&type, memfile))) {
+        if (likely(abstract_get_container_subtype(&type, marker))) {
                 return type == T;
         } else {
                 return false;
         }
 }
 
-bool abstract_is_instanceof_object(memfile *memfile)
+bool abstract_is_instanceof_object(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_OBJECT);
+        return __abstract_is_instanceof(marker, CONTAINER_OBJECT);
 }
 
-bool abstract_is_instanceof_array(memfile *memfile)
+bool abstract_is_instanceof_array(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_ARRAY);
+        return __abstract_is_instanceof(marker, CONTAINER_ARRAY);
 }
 
-bool abstract_is_instanceof_column_u8(memfile *memfile)
+bool abstract_is_instanceof_column_u8(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U8);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_U8);
 }
 
-bool abstract_is_instanceof_column_u16(memfile *memfile)
+bool abstract_is_instanceof_column_u16(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U16);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_U16);
 }
 
-bool abstract_is_instanceof_column_u32(memfile *memfile)
+bool abstract_is_instanceof_column_u32(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U32);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_U32);
 }
 
-bool abstract_is_instanceof_column_u64(memfile *memfile)
+bool abstract_is_instanceof_column_u64(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_U64);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_U64);
 }
 
-bool abstract_is_instanceof_column_i8(memfile *memfile)
+bool abstract_is_instanceof_column_i8(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I8);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_I8);
 }
 
-bool abstract_is_instanceof_column_i16(memfile *memfile)
+bool abstract_is_instanceof_column_i16(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I16);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_I16);
 }
 
-bool abstract_is_instanceof_column_i32(memfile *memfile)
+bool abstract_is_instanceof_column_i32(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I32);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_I32);
 }
 
-bool abstract_is_instanceof_column_i64(memfile *memfile)
+bool abstract_is_instanceof_column_i64(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_I64);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_I64);
 }
 
-bool abstract_is_instanceof_column_float(memfile *memfile)
+bool abstract_is_instanceof_column_float(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_FLOAT);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_FLOAT);
 }
 
-bool abstract_is_instanceof_column_boolean(memfile *memfile)
+bool abstract_is_instanceof_column_boolean(u8 marker)
 {
-        return __abstract_is_instanceof(memfile, CONTAINER_COLUMN_BOOLEAN);
+        return __abstract_is_instanceof(marker, CONTAINER_COLUMN_BOOLEAN);
 }
 
-bool abstract_is_instanceof_column(memfile *memfile)
+bool abstract_is_instanceof_column(u8 marker)
 {
-       if (abstract_is_instanceof_column_u8(memfile) ||
-                abstract_is_instanceof_column_u16(memfile) ||
-                abstract_is_instanceof_column_u32(memfile) ||
-                abstract_is_instanceof_column_u64(memfile) ||
-                abstract_is_instanceof_column_i8(memfile) ||
-                abstract_is_instanceof_column_i16(memfile) ||
-                abstract_is_instanceof_column_i32(memfile) ||
-                abstract_is_instanceof_column_i64(memfile) ||
-                abstract_is_instanceof_column_float(memfile) ||
-                abstract_is_instanceof_column_boolean(memfile)) {
+       if (abstract_is_instanceof_column_u8(marker) ||
+                abstract_is_instanceof_column_u16(marker) ||
+                abstract_is_instanceof_column_u32(marker) ||
+                abstract_is_instanceof_column_u64(marker) ||
+                abstract_is_instanceof_column_i8(marker) ||
+                abstract_is_instanceof_column_i16(marker) ||
+                abstract_is_instanceof_column_i32(marker) ||
+                abstract_is_instanceof_column_i64(marker) ||
+                abstract_is_instanceof_column_float(marker) ||
+                abstract_is_instanceof_column_boolean(marker)) {
                 return true;
         } else {
                 return false;
         }
 }
 
-bool abstract_is_instanceof_list(memfile *memfile)
+bool abstract_is_instanceof_list(u8 marker)
 {
-        if (abstract_is_instanceof_array(memfile) ||
-            abstract_is_instanceof_column(memfile)) {
+        if (abstract_is_instanceof_array(marker) ||
+            abstract_is_instanceof_column(marker)) {
                 return true;
         } else {
                 return false;
@@ -738,35 +737,34 @@ bool abstract_derive_map_to(derived_e *concrete, map_type_e should)
         }
 }
 
-bool abstract_get_derived_type(derived_e *type, memfile *memfile)
+bool abstract_get_derived_type(derived_e *type, u8 marker)
 {
-        u8 c = MEMFILE_PEEK_BYTE(memfile);
-        if (!(c == MUNSORTED_MULTIMAP || c == MSORTED_MULTIMAP || c == MUNSORTED_MAP ||
-                       c == MSORTED_MAP || c == MUNSORTED_MULTISET_ARR ||
-                       c == MSORTED_MULTISET_ARR || c == MUNSORTED_SET_ARR ||
-                       c == MSORTED_SET_ARR || c == MUNSORTED_MULTISET_U8 ||
-                       c == MSORTED_MULTISET_U8 || c == MUNSORTED_SET_U8 ||
-                       c == MSORTED_SET_U8 || c == MUNSORTED_MULTISET_U16 ||
-                       c == MSORTED_MULTISET_U16 || c == MUNSORTED_SET_U16 ||
-                       c == MSORTED_SET_U16 || c == MUNSORTED_MULTISET_U32 ||
-                       c == MSORTED_MULTISET_U32 || c == MUNSORTED_SET_U32 ||
-                       c == MSORTED_SET_U32 || c == MUNSORTED_MULTISET_U64 ||
-                       c == MSORTED_MULTISET_U64 || c == MUNSORTED_SET_U64 ||
-                       c == MSORTED_SET_U64 || c == MUNSORTED_MULTISET_I8 ||
-                       c == MSORTED_MULTISET_I8 || c == MUNSORTED_SET_I8 ||
-                       c == MSORTED_SET_I8 || c == MUNSORTED_MULTISET_I16 ||
-                       c == MSORTED_MULTISET_I16 || c == MUNSORTED_SET_I16 ||
-                       c == MSORTED_SET_I16 || c == MUNSORTED_MULTISET_I32 ||
-                       c == MSORTED_MULTISET_I32 || c == MUNSORTED_SET_I32 ||
-                       c == MSORTED_SET_I32 || c == MUNSORTED_MULTISET_I64 ||
-                       c == MSORTED_MULTISET_I64 || c == MUNSORTED_SET_I64 ||
-                       c == MSORTED_SET_I64 || c == MUNSORTED_MULTISET_FLOAT ||
-                       c == MSORTED_MULTISET_FLOAT || c == MUNSORTED_SET_FLOAT ||
-                       c == MSORTED_SET_FLOAT || c == MUNSORTED_MULTISET_BOOLEAN ||
-                       c == MSORTED_MULTISET_BOOLEAN || c == MUNSORTED_SET_BOOLEAN ||
-                       c == MSORTED_SET_BOOLEAN)) {
+        if (!(marker == MUNSORTED_MULTIMAP || marker == MSORTED_MULTIMAP || marker == MUNSORTED_MAP ||
+                       marker == MSORTED_MAP || marker == MUNSORTED_MULTISET_ARR ||
+                       marker == MSORTED_MULTISET_ARR || marker == MUNSORTED_SET_ARR ||
+                       marker == MSORTED_SET_ARR || marker == MUNSORTED_MULTISET_U8 ||
+                       marker == MSORTED_MULTISET_U8 || marker == MUNSORTED_SET_U8 ||
+                       marker == MSORTED_SET_U8 || marker == MUNSORTED_MULTISET_U16 ||
+                       marker == MSORTED_MULTISET_U16 || marker == MUNSORTED_SET_U16 ||
+                       marker == MSORTED_SET_U16 || marker == MUNSORTED_MULTISET_U32 ||
+                       marker == MSORTED_MULTISET_U32 || marker == MUNSORTED_SET_U32 ||
+                       marker == MSORTED_SET_U32 || marker == MUNSORTED_MULTISET_U64 ||
+                       marker == MSORTED_MULTISET_U64 || marker == MUNSORTED_SET_U64 ||
+                       marker == MSORTED_SET_U64 || marker == MUNSORTED_MULTISET_I8 ||
+                       marker == MSORTED_MULTISET_I8 || marker == MUNSORTED_SET_I8 ||
+                       marker == MSORTED_SET_I8 || marker == MUNSORTED_MULTISET_I16 ||
+                       marker == MSORTED_MULTISET_I16 || marker == MUNSORTED_SET_I16 ||
+                       marker == MSORTED_SET_I16 || marker == MUNSORTED_MULTISET_I32 ||
+                       marker == MSORTED_MULTISET_I32 || marker == MUNSORTED_SET_I32 ||
+                       marker == MSORTED_SET_I32 || marker == MUNSORTED_MULTISET_I64 ||
+                       marker == MSORTED_MULTISET_I64 || marker == MUNSORTED_SET_I64 ||
+                       marker == MSORTED_SET_I64 || marker == MUNSORTED_MULTISET_FLOAT ||
+                       marker == MSORTED_MULTISET_FLOAT || marker == MUNSORTED_SET_FLOAT ||
+                       marker == MSORTED_SET_FLOAT || marker == MUNSORTED_MULTISET_BOOLEAN ||
+                       marker == MSORTED_MULTISET_BOOLEAN || marker == MUNSORTED_SET_BOOLEAN ||
+                       marker == MSORTED_SET_BOOLEAN)) {
                 return error(ERR_MARKERMAPPING, "unknown marker for abstract derived type");
         }
-        *type = c;
+        *type = marker;
         return true;
 }

@@ -230,10 +230,10 @@ bool internal_arr_it_update_from_column(arr_it *it, const col_it *src)
 }
 
 
-static void __arr_it_load_abstract_type(arr_it *it)
+static void __arr_it_load_abstract_type(arr_it *it, u8 marker)
 {
         abstract_type_class_e type_class;
-        abstract_get_class(&type_class, &it->file);
+        abstract_get_class(&type_class, marker);
         abstract_class_to_list_derivable(&it->list_type, type_class);
 }
 
@@ -255,13 +255,13 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
                 return error(ERR_CORRUPTED, NULL);
         }
 
-        if (!abstract_is_instanceof_array(&it->file)) {
+        u8 marker = MEMFILE_READ_BYTE(&it->file);
+
+        if (!abstract_is_instanceof_array(marker)) {
             return error(ERR_MARKERMAPPING, "expected array or sub type marker");
         }
 
-        __arr_it_load_abstract_type(it);
-
-        MEMFILE_SKIP(&it->file, sizeof(u8));
+        __arr_it_load_abstract_type(it, marker);
 
         internal_field_create(&it->field);
 

@@ -205,7 +205,7 @@ bool carbon_field_skip(memfile *file)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        carbon_field_skip_array(file);
+                        carbon_field_skip_array(file, type_marker);
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -253,7 +253,7 @@ bool carbon_field_skip(memfile *file)
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        carbon_field_skip_object(file);
+                        carbon_field_skip_object(file, type_marker);
                         break;
                 default: error(ERR_CORRUPTED, NULL);
                         return false;
@@ -423,9 +423,9 @@ void carbon_field_skip_64__fast(memfile *file)
         MEMFILE_SKIP(file, sizeof(u64));
 }
 
-bool carbon_field_skip_object(memfile *file)
+bool carbon_field_skip_object(memfile *file, u8 marker)
 {
-        if (abstract_is_instanceof_object(file)) {
+        if (abstract_is_instanceof_object(marker)) {
                 obj_it skip_it;
                 internal_obj_it_create(&skip_it, file, MEMFILE_TELL(file));
                 internal_obj_it_fast_forward(&skip_it);
@@ -437,9 +437,9 @@ bool carbon_field_skip_object(memfile *file)
         }
 }
 
-bool carbon_field_skip_array(memfile *file)
+bool carbon_field_skip_array(memfile *file, u8 marker)
 {
-        if (abstract_is_instanceof_array(file)) {
+        if (abstract_is_instanceof_array(marker)) {
                 arr_it skip_it;
                 internal_arr_it_create(&skip_it, file, MEMFILE_TELL(file));
                 internal_arr_it_fast_forward(&skip_it);

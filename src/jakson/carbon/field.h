@@ -216,8 +216,8 @@ field_class_e field_get_class(field_e type);
 bool carbon_field_skip(memfile *file);
 bool carbon_field_skip__fast(memfile *file, const field *field);
 
-bool carbon_field_skip_object(memfile *file);
-bool carbon_field_skip_array(memfile *file);
+bool carbon_field_skip_object(memfile *file, u8 marker);
+bool carbon_field_skip_array(memfile *file, u8 marker);
 bool carbon_field_skip_column(memfile *file);
 bool carbon_field_skip_binary(memfile *file);
 bool carbon_field_skip_custom_binary(memfile *file);

@@ -35,13 +35,17 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
 
+#ifndef NDEBUG
         error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
+#endif
+
+        char marker = MEMFILE_READ_BYTE(&it->file);
 
         sub_type_e sub_type;
-        abstract_get_container_subtype(&sub_type, &it->file);
+        abstract_get_container_subtype(&sub_type, marker);
         error_if_and_return(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
-        char marker = MEMFILE_READ_BYTE(&it->file);
+
         it->type = (map_type_e) marker;
 
         it->content_begin += sizeof(u8);

@@ -191,6 +191,7 @@ extern _Thread_local struct err_info {
 #define error(code, msg)                        \
 ({                                              \
     error_set(code, __FILE__, __LINE__, msg);   \
+    error_print(stderr);                        \
     false;                                      \
 })
 

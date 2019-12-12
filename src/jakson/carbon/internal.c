@@ -96,8 +96,8 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         u32 num_elements = 0;
         u32 cap_elements = capactity;
 
-        memfile_write_uintvar_stream(NULL, memfile_in, num_elements);
-        memfile_write_uintvar_stream(NULL, memfile_in, cap_elements);
+        MEMFILE_WRITE_UINTVAR_STREAM(NULL, memfile_in, num_elements);
+        MEMFILE_WRITE_UINTVAR_STREAM(NULL, memfile_in, cap_elements);
 
         offset_t payload_begin = MEMFILE_TELL(memfile_in);
 

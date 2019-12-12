@@ -109,7 +109,7 @@ void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
 
         memblock_create(&doc->block, doc_cap);
         memblock_zero_out(doc->block);
-        memfile_open(&doc->file, doc->block, READ_WRITE);
+        MEMFILE_OPEN(&doc->file, doc->block, READ_WRITE);
 
         carbon_header_init(doc, type);
         internal_insert_array(&doc->file, derivation, array_cap);
@@ -135,7 +135,7 @@ bool rec_from_json(rec *doc, const char *json, key_e type,
 bool rec_from_raw_data(rec *doc, const void *data, u64 len)
 {
         memblock_from_raw_data(&doc->block, data, len);
-        memfile_open(&doc->file, doc->block, READ_WRITE);
+        MEMFILE_OPEN(&doc->file, doc->block, READ_WRITE);
 
         return true;
 }
@@ -242,7 +242,7 @@ bool rec_has_key(key_e type)
 void rec_clone(rec *clone, rec *doc)
 {
         memblock_cpy(&clone->block, doc->block);
-        memfile_open(&clone->file, clone->block, READ_WRITE);
+        MEMFILE_OPEN(&clone->file, clone->block, READ_WRITE);
 }
 
 bool rec_commit_hash(u64 *hash, rec *doc)

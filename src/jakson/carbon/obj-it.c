@@ -32,7 +32,7 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
 
         vector_create(&it->history, sizeof(offset_t), 40);
 
-        memfile_open(&it->file, memfile->memblock, memfile->mode);
+        MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
 
         error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
@@ -61,7 +61,7 @@ bool internal_obj_it_copy(obj_it *dst, obj_it *src)
 
 bool internal_obj_it_clone(obj_it *dst, obj_it *src)
 {
-        memfile_clone(&dst->file, &src->file);
+        MEMFILE_CLONE(&dst->file, &src->file);
         dst->content_begin = src->content_begin;
         dst->begin = src->begin;
         dst->mod_size = src->mod_size;

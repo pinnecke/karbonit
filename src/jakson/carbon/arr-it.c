@@ -248,7 +248,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
         it->pos = (u64) -1;
         it->last_off = 0;
 
-        memfile_open(&it->file, memfile->memblock, memfile->mode);
+        MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
 
         if (memfile_remain_size(&it->file) < sizeof(u8)) {
@@ -278,7 +278,7 @@ bool internal_arr_it_copy(arr_it *dst, arr_it *src)
 
 bool internal_arr_it_clone(arr_it *dst, arr_it *src)
 {
-        memfile_clone(&dst->file, &src->file);
+        MEMFILE_CLONE(&dst->file, &src->file);
         dst->begin = src->begin;
         dst->mod_size = src->mod_size;
         dst->eof = src->eof;

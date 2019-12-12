@@ -22,7 +22,7 @@
 
 static void write_payload(memfile *file, const char *string, size_t str_len)
 {
-        memfile_write_uintvar_stream(NULL, file, str_len);
+        MEMFILE_WRITE_UINTVAR_STREAM(NULL, file, str_len);
         MEMFILE_ENSURE_SPACE(file, str_len);
         MEMFILE_WRITE(file, string, str_len);
 }

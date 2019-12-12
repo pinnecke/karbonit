@@ -554,7 +554,7 @@ static bool internal_pack_column(col_it *it)
 
                 MEMFILE_SEEK(&it->file, it->header_begin);
                 MEMFILE_SKIP_UINTVAR_STREAM(&it->file); // skip num of elements counter
-                memfile_update_uintvar_stream(&it->file,
+                MEMFILE_UPDATE_UINTVAR_STREAM(&it->file,
                                               it->num); // update capacity counter to num elems
 
                 memfile_skip(&it->file, payload_size);

@@ -4,7 +4,7 @@
 static void make_memfile(memfile *memfile) {
         memblock *memblock;
         memblock_create(&memblock, 1024);
-        memfile_open(memfile, memblock, READ_WRITE);
+        MEMFILE_OPEN(memfile, memblock, READ_WRITE);
 }
 
 static void drop_memfile(memfile *memfile) {

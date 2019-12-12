@@ -486,18 +486,18 @@ static void field_ref_write(memfile *file, struct pindex_node *node)
             node->field_type != FIELD_FALSE) {
                 /** only in case of field type that is not null, true, or false, there is more information behind
                  * the field offset */
-                memfile_write_uintvar_stream(NULL, file, node->field_offset);
+                MEMFILE_WRITE_UINTVAR_STREAM(NULL, file, node->field_offset);
         }
 }
 
 static void container_contents_flat(memfile *file, struct pindex_node *node)
 {
-        memfile_write_uintvar_stream(NULL, file, node->sub_entries.num_elems);
+        MEMFILE_WRITE_UINTVAR_STREAM(NULL, file, node->sub_entries.num_elems);
 
         /** write position offsets */
         offset_t position_off_latest = MEMFILE_TELL(file);
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-                memfile_write_uintvar_stream(NULL, file, 0);
+                MEMFILE_WRITE_UINTVAR_STREAM(NULL, file, 0);
         }
 
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
@@ -506,7 +506,7 @@ static void container_contents_flat(memfile *file, struct pindex_node *node)
                 node_flat(file, sub);
                 MEMFILE_SAVE_POSITION(file);
                 MEMFILE_SEEK(file, position_off_latest);
-                signed_offset_t shift = memfile_update_uintvar_stream(file, node_off);
+                signed_offset_t shift = MEMFILE_UPDATE_UINTVAR_STREAM(file, node_off);
                 position_off_latest = MEMFILE_TELL(file);
                 MEMFILE_RESTORE_POSITION(file);
                 memfile_seek_from_here(file, shift);
@@ -594,7 +594,7 @@ static void prop_flat(memfile *file, struct pindex_node *node)
 {
         memfile_write_byte(file, PATH_MARKER_PROP_NODE);
         field_ref_write(file, node);
-        memfile_write_uintvar_stream(NULL, file, node->entry.key.offset);
+        MEMFILE_WRITE_UINTVAR_STREAM(NULL, file, node->entry.key.offset);
         container_field_flat(file, node);
 }
 
@@ -1150,7 +1150,7 @@ static void record_ref_to_record(insert *roins, pindex *index)
 bool pindex_create(pindex *index, rec *doc)
 {
         memblock_create(&index->memblock, pindex_CAPACITY);
-        memfile_open(&index->memfile, index->memblock, READ_WRITE);
+        MEMFILE_OPEN(&index->memfile, index->memblock, READ_WRITE);
         record_ref_create(&index->memfile, doc);
         index_build(&index->memfile, doc);
         return true;
@@ -1273,7 +1273,7 @@ bool pindex_it_open(pindex_it *it, pindex *index,
 {
         if (pindex_indexes_doc(index, doc)) {
                 ZERO_MEMORY(it, sizeof(pindex_it));
-                memfile_open(&it->memfile, index->memfile.memblock, READ_ONLY);
+                MEMFILE_OPEN(&it->memfile, index->memfile.memblock, READ_ONLY);
                 it->doc = doc;
                 it->container = ARRAY;
                 return true;

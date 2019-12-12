@@ -374,7 +374,7 @@ bool archive_from_model(memblock **stream, column_doc *model, packer_e compresso
 
         memblock_create(stream, 1024 * 1024 * 1024);
         memfile memfile;
-        memfile_open(&memfile, *stream, READ_WRITE);
+        MEMFILE_OPEN(&memfile, *stream, READ_WRITE);
 
         OPTIONAL_CALL(callback, begin_write_string_table);
         skip_file_header(&memfile);
@@ -442,7 +442,7 @@ bool archive_load(memblock **stream, FILE *file)
 bool archive_print(FILE *file, memblock *stream)
 {
         memfile memfile;
-        memfile_open(&memfile, stream, READ_ONLY);
+        MEMFILE_OPEN(&memfile, stream, READ_ONLY);
         if (memfile_size(&memfile)
             < sizeof(archive_header) + sizeof(string_table_header) +
               sizeof(object_header)) {
@@ -2527,7 +2527,7 @@ static bool read_record(record_header *header_read, archive *archive, FILE *disk
                 }
 
                 memfile memfile;
-                memfile_open(&memfile, archive->record_table.record_db, READ_ONLY);
+                MEMFILE_OPEN(&memfile, archive->record_table.record_db, READ_ONLY);
                 if (*MEMFILE_PEEK_TYPE(&memfile, char) != MARKER_SYMBOL_OBJECT_BEGIN) {
                         error(ERR_CORRUPTED, NULL);
                         status = false;

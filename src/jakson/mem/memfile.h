@@ -151,7 +151,7 @@ typedef struct memfile {
         result;									                                                                       \
 })
 
-#define memfile_write_uintvar_stream(nbytes_moved, file, value)												           \
+#define MEMFILE_WRITE_UINTVAR_STREAM(nbytes_moved, file, value)												           \
 ({												                                                                       \
         u8 required_blocks = UINTVAR_STREAM_REQUIRED_BLOCKS((value));												   \
         signed_offset_t shift = MEMFILE_ENSURE_SPACE((file), required_blocks);										   \
@@ -162,7 +162,7 @@ typedef struct memfile {
         required_blocks;												                                               \
 })
 
-#define memfile_update_uintvar_stream(file, value)															           \
+#define MEMFILE_UPDATE_UINTVAR_STREAM(file, value)															           \
 ({															                                                           \
         u8 bytes_used_now, bytes_used_then;															                   \
         MEMFILE_PEEK_UINTVAR_STREAM(&bytes_used_now, (file));														   \
@@ -181,7 +181,7 @@ typedef struct memfile {
 })
 
 
-#define memfile_open(file, block, access_mode_e_mode)								                                   \
+#define MEMFILE_OPEN(file, block, access_mode_e_mode)								                                   \
 {								                                                                                       \
         ZERO_MEMORY((file), sizeof(memfile))								                                           \
         (file)->memblock = (block);								                                                       \
@@ -191,9 +191,9 @@ typedef struct memfile {
         (file)->saved_pos_ptr = 0;								                                                       \
 }
 
-#define memfile_clone(dst, src)																                           \
+#define MEMFILE_CLONE(dst, src)																                           \
 {															                                                           \
-        memfile_open((dst), (src)->memblock, (src)->mode);															   \
+        MEMFILE_OPEN((dst), (src)->memblock, (src)->mode);															   \
         MEMFILE_SEEK((dst), MEMFILE_TELL((src)));															           \
         (dst)->bit_mode = (src)->bit_mode;															                   \
         (dst)->saved_pos_ptr = (src)->saved_pos_ptr;															       \

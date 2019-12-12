@@ -41,7 +41,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
         obj->object_id = header->oid;
         obj->offset = object_off;
         obj->next_obj_off = *MEMFILE_READ_TYPE(memfile, offset_t);
-        memfile_open(&obj->memfile, memfile->memblock, READ_ONLY);
+        MEMFILE_OPEN(&obj->memfile, memfile->memblock, READ_ONLY);
 
         return true;
 }
@@ -399,7 +399,7 @@ static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
                                             memblock *memblock, offset_t object_offset)
 {
         iter->mask = mask;
-        memfile_open(&iter->record_table_memfile, memblock, READ_ONLY);
+        MEMFILE_OPEN(&iter->record_table_memfile, memblock, READ_ONLY);
         if (!MEMFILE_SEEK(&iter->record_table_memfile, object_offset)) {
                 return error(ERR_MEMFILESEEK_FAILED, NULL);
         }
@@ -533,7 +533,7 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
                                 break;
                         case PROP_ITER_MODE_COLLECTION: {
                                 collection_iter->state = prop_iter->mode_collection;
-                                memfile_open(&collection_iter->record_table_memfile,
+                                MEMFILE_OPEN(&collection_iter->record_table_memfile,
                                              prop_iter->record_table_memfile.memblock,
                                              READ_ONLY);
                         } break;
@@ -565,7 +565,7 @@ bool archive_collection_next_column_group(independent_iter_state *group_iter,
 {
         if (iter->state.current_column_group_idx < iter->state.num_column_groups) {
                 collection_iter_read_next_column_group(&iter->state, &iter->record_table_memfile);
-                memfile_open(&group_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
+                MEMFILE_OPEN(&group_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
                 group_iter->state = iter->state;
                 return true;
         } else {
@@ -590,7 +590,7 @@ bool archive_column_group_next_column(independent_iter_state *column_iter,
 {
         if (iter->state.current_column_group.current_column.idx < iter->state.current_column_group.num_columns) {
                 prop_iter_read_column(&iter->state, &iter->record_table_memfile);
-                memfile_open(&column_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
+                MEMFILE_OPEN(&column_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
                 column_iter->state = iter->state;
                 return true;
         } else {
@@ -624,7 +624,7 @@ archive_column_next_entry(independent_iter_state *entry_iter, independent_iter_s
         if (iter->state.current_column_group.current_column.current_entry.idx
             < iter->state.current_column_group.current_column.num_elem) {
                 prop_iter_read_colum_entry(&iter->state, &iter->record_table_memfile);
-                memfile_open(&entry_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
+                MEMFILE_OPEN(&entry_iter->record_table_memfile, iter->record_table_memfile.memblock, READ_ONLY);
                 entry_iter->state = iter->state;
                 return true;
         } else {
@@ -684,7 +684,7 @@ DECLARE_ARCHIVE_COLUMN_ENTRY_GET_BASIC_TYPE(archive_field_u32_t, nulls, ARCHIVE_
 bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter_state *entry)
 {
         iter->entry_state = entry->state;
-        memfile_open(&iter->memfile, entry->record_table_memfile.memblock, READ_ONLY);
+        MEMFILE_OPEN(&iter->memfile, entry->record_table_memfile.memblock, READ_ONLY);
         MEMFILE_SEEK(&iter->memfile,
                      entry->state.current_column_group.current_column.elem_offsets[
                              entry->state.current_column_group.current_column.current_entry.idx - 1] + sizeof(u32));
@@ -902,7 +902,7 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
         value->data_off = prop_iter->mode_object.prop_data_off;
         value->object_id = prop_iter->object.object_id;
 
-        memfile_open(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY);
+        MEMFILE_OPEN(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY);
         if (!memfile_skip(&value->record_table_memfile, value->data_off)) {
                 return error(ERR_MEMFILESKIP_FAILED, NULL);
         }

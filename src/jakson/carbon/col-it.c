@@ -31,7 +31,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         it->begin = begin;
         it->mod_size = 0;
 
-        memfile_open(&it->file, memfile->memblock, memfile->mode);
+        MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, begin);
 
         error_if_and_return(memfile_remain_size(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
@@ -60,7 +60,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
 
 bool col_it_clone(col_it *dst, col_it *src)
 {
-        memfile_clone(&dst->file, &src->file);
+        MEMFILE_CLONE(&dst->file, &src->file);
         dst->header_begin = src->header_begin;
         dst->begin = src->begin;
         dst->field_type = src->field_type;
@@ -344,7 +344,7 @@ bool col_it_remove(col_it *it, u32 pos)
         u32 num_elems = MEMFILE_PEEK_UINTVAR_STREAM(NULL, &it->file);
         assert(num_elems > 0);
         num_elems--;
-        signed_offset_t shift = memfile_update_uintvar_stream(&it->file, num_elems);
+        signed_offset_t shift = MEMFILE_UPDATE_UINTVAR_STREAM(&it->file, num_elems);
         it->num = num_elems;
 
         MEMFILE_RESTORE_POSITION(&it->file);

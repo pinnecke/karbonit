@@ -14,11 +14,19 @@
 #include <jakson/stdinc.h>
 #include <jakson/error.h>
 #include <jakson/carbon/field.h>
+#include <jakson/carbon/internal.h>
 #include <jakson/rec.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define CAST_COL_VALUES(builtin_type, nvalues, iterator, field_expr)                                                   \
+({                                                                                                                     \
+        field_e type;                                                                                                  \
+        const void *raw = COL_IT_VALUES(&type, nvalues, iterator);                                                     \
+        (const builtin_type *) raw;                                                                                    \
+})
 
 typedef struct col_it {
         memfile file;
@@ -41,13 +49,13 @@ offset_t col_it_tell(col_it *it, u32 elem_idx);
 
 #define COL_IT_VALUES(field_e_ptr, u32_ptr_nvalues, col_it_ptr)                                                        \
 ({                                                                                                                     \
-        const void *result = NULL;                                                                                     \
+        const char *result = NULL;                                                                                     \
         col_it *it_ptr = (col_it_ptr);                                                                                 \
         MEMFILE_SEEK(&it->file, it->header_begin);                                                                     \
         u32 num_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it_ptr->file);                                     \
         u32 cap_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it_ptr->file);                                     \
         offset_t payload_start = MEMFILE_TELL(&it_ptr->file);                                                          \
-        result = MEMFILE_PEEK(&it_ptr->file, sizeof(void));                                                            \
+        result = MEMFILE_PEEK(&it_ptr->file, sizeof(char));                                                            \
         field_e *ptr_type = (field_e_ptr);                                                                             \
         u32 *ptr_nvalues = (u32_ptr_nvalues);                                                                          \
         OPTIONAL_SET(ptr_type, it_ptr->field_type);                                                                    \
@@ -78,16 +86,56 @@ bool col_it_is_i32(col_it *it);
 bool col_it_is_i64(col_it *it);
 bool col_it_is_float(col_it *it);
 
-const boolean *col_it_boolean_values(u32 *nvalues, col_it *it);
-const u8 *col_it_u8_values(u32 *nvalues, col_it *it);
-const u16 *col_it_u16_values(u32 *nvalues, col_it *it);
-const u32 *col_it_u32_values(u32 *nvalues, col_it *it);
-const u64 *col_it_u64_values(u32 *nvalues, col_it *it);
-const i8 *col_it_i8_values(u32 *nvalues, col_it *it);
-const i16 *col_it_i16_values(u32 *nvalues, col_it *it);
-const i32 *col_it_i32_values(u32 *nvalues, col_it *it);
-const i64 *col_it_i64_values(u32 *nvalues, col_it *it);
-const float *col_it_float_values(u32 *nvalues, col_it *it);
+static inline const boolean *col_it_boolean_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(boolean, nvalues, it, field_is_column_bool_or_subtype(type));
+}
+
+static inline const u8 *col_it_u8_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(u8, nvalues, it, field_is_column_u8_or_subtype(type));
+}
+
+static inline const u16 *col_it_u16_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(u16, nvalues, it, field_is_column_u16_or_subtype(type));
+}
+
+static inline const u32 *col_it_u32_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(u32, nvalues, it, field_is_column_u32_or_subtype(type));
+}
+
+static inline const u64 *col_it_u64_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(u64, nvalues, it, field_is_column_u64_or_subtype(type));
+}
+
+static inline const i8 *col_it_i8_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(i8, nvalues, it, field_is_column_i8_or_subtype(type));
+}
+
+static inline const i16 *col_it_i16_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(i16, nvalues, it, field_is_column_i16_or_subtype(type));
+}
+
+static inline const i32 *col_it_i32_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(i32, nvalues, it, field_is_column_i32_or_subtype(type));
+}
+
+static inline const i64 *col_it_i64_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(i64, nvalues, it, field_is_column_i64_or_subtype(type));
+}
+
+static inline const float *col_it_float_values(u32 *nvalues, col_it *it)
+{
+        return CAST_COL_VALUES(float, nvalues, it, field_is_column_float_or_subtype(type));
+}
+
 bool col_it_remove(col_it *it, u32 pos);
 bool col_it_is_multiset(col_it *it);
 bool col_it_is_sorted(col_it *it);

@@ -26,13 +26,6 @@
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/internal.h>
 
-#define safe_cast(builtin_type, nvalues, it, field_expr)                                                          \
-({                                                                                                                     \
-        field_e type;                                                                                  \
-        const void *raw = COL_IT_VALUES(&type, nvalues, it);                                             \
-        (const builtin_type *) raw;                                                                                    \
-})
-
 bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
 {
         it->begin = begin;
@@ -308,56 +301,6 @@ bool col_it_is_float(col_it *it)
                 default:
                         return false;
         }
-}
-
-const boolean *col_it_boolean_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(boolean, nvalues, it, field_is_column_bool_or_subtype(type));
-}
-
-const u8 *col_it_u8_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(u8, nvalues, it, field_is_column_u8_or_subtype(type));
-}
-
-const u16 *col_it_u16_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(u16, nvalues, it, field_is_column_u16_or_subtype(type));
-}
-
-const u32 *col_it_u32_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(u32, nvalues, it, field_is_column_u32_or_subtype(type));
-}
-
-const u64 *col_it_u64_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(u64, nvalues, it, field_is_column_u64_or_subtype(type));
-}
-
-const i8 *col_it_i8_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(i8, nvalues, it, field_is_column_i8_or_subtype(type));
-}
-
-const i16 *col_it_i16_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(i16, nvalues, it, field_is_column_i16_or_subtype(type));
-}
-
-const i32 *col_it_i32_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(i32, nvalues, it, field_is_column_i32_or_subtype(type));
-}
-
-const i64 *col_it_i64_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(i64, nvalues, it, field_is_column_i64_or_subtype(type));
-}
-
-const float *col_it_float_values(u32 *nvalues, col_it *it)
-{
-        return safe_cast(float, nvalues, it, field_is_column_float_or_subtype(type));
 }
 
 bool col_it_remove(col_it *it, u32 pos)

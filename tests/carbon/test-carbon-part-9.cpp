@@ -17,7 +17,7 @@
 //#endif
 
 #define MIN_LIST_SIZE 2500
-#define MAX_LIST_SIZE 10000
+#define MAX_LIST_SIZE 30000
 #define N_STEP_SIZE 2500
 
 TEST(CarbonTest, BENCH_COLUMN)

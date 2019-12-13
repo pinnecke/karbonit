@@ -214,7 +214,6 @@ const char *field_str(field_e type);
 field_class_e field_get_class(field_e type);
 
 bool carbon_field_skip(memfile *file);
-bool carbon_field_skip__fast(memfile *file, const field *field);
 
 bool carbon_field_skip_object(memfile *file, u8 marker);
 bool carbon_field_skip_array(memfile *file, u8 marker);

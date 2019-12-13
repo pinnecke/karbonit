@@ -45,28 +45,37 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
 
 static void int_insert_prop_object(insert *oins, json_object *obj);
 
-static inline void internal_array_field_read__fast(arr_it *it)
-{
-        it->field_offset = MEMFILE_TELL(&it->file);
-        u8 media_type = *MEMFILE_READ(&it->file, 1);
-        it->field.type = media_type;
-}
-
 static inline void internal_field_data_access__fast(memfile *file, field *field)
 {
         switch (field->type) {
                 case FIELD_NULL:
                 case FIELD_TRUE:
                 case FIELD_FALSE:
+                        /* nothing to do */
+                        break;
                 case FIELD_NUMBER_U8:
-                case FIELD_NUMBER_U16:
-                case FIELD_NUMBER_U32:
-                case FIELD_NUMBER_U64:
                 case FIELD_NUMBER_I8:
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_8__fast(file);
+                        break;
+                case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_I16:
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_16__fast(file);
+                        break;
+                case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_I32:
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_32__fast(file);
+                        break;
+                case FIELD_NUMBER_U64:
                 case FIELD_NUMBER_I64:
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_64__fast(file);
+                        break;
                 case FIELD_NUMBER_FLOAT:
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_float__fast(file);
                         break;
                 case FIELD_STRING: {
                         u8 nbytes;
@@ -74,6 +83,9 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         field->len = UINTVAR_STREAM_READ(&nbytes, len);
 
                         MEMFILE_SKIP(file, nbytes);
+                        field->data = MEMFILE_PEEK(file, 1);
+
+                        carbon_field_skip_string__fast(file, field);
                 }
                         break;
                 case FIELD_BINARY: {
@@ -87,6 +99,9 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
+                        field->data = MEMFILE_PEEK(file, 1);
+
+                        carbon_field_skip_binary__fast(file, field);
                 }
                         break;
                 case FIELD_BINARY_CUSTOM: {
@@ -98,6 +113,9 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
 
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
+                        field->data = MEMFILE_PEEK(file, 1);
+
+                        carbon_field_skip_custom_binary__fast(file, field);
                 }
                         break;
                 case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -108,6 +126,8 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         field->arr_it.created = true;
                         internal_arr_it_create(field->array, file,
                                                MEMFILE_TELL(file) - sizeof(u8));
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_array__fast(file, field);
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -153,6 +173,8 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         field->col_it_created = true;
                         col_it_create(field->column, file,
                                       MEMFILE_TELL(file) - sizeof(u8));
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_column__fast(file, field);
                 }
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -163,13 +185,15 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         field->obj_it.created = true;
                         internal_obj_it_create(field->object, file,
                                                MEMFILE_TELL(file) - sizeof(u8));
+                        field->data = MEMFILE_PEEK(file, 1);
+                        carbon_field_skip_object__fast(file, field);
                         break;
                 default:
                         error(ERR_CORRUPTED, NULL);
                         break;
         }
 
-        field->data = MEMFILE_PEEK(file, 1);
+
 }
 
 static bool array_is_slot_occupied__quick(arr_it *it)
@@ -178,9 +202,16 @@ static bool array_is_slot_occupied__quick(arr_it *it)
         char c = *MEMFILE_PEEK__FAST(&it->file);
         bool is_taken = c != MARRAY_END;
         if (is_taken) {
-                internal_array_field_read__fast(it);
-                internal_field_data_access__fast(&it->file, &it->field);
-                carbon_field_skip__fast(&it->file, &it->field);
+                // read array field read fast
+                {
+                        it->field_offset = MEMFILE_TELL(&it->file);
+                        u8 media_type = *MEMFILE_READ(&it->file, 1);
+                        it->field.type = media_type;
+                }
+                {
+                        internal_field_data_access__fast(&it->file, &it->field);
+                }
+
         }
         return is_taken;
 }

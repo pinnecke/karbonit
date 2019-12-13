@@ -275,7 +275,7 @@ void carbon_field_skip_array__fast(memfile *file, const field *field)
         arr_it skip_it;
         internal_arr_it_clone(&skip_it, field->array);
         internal_arr_it_fast_forward(&skip_it);
-        MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
+        MEMFILE_SEEK__UNSAFE(file, MEMFILE_TELL(&skip_it.file));
         arr_it_drop(&skip_it);
 }
 

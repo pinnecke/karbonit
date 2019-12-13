@@ -84,9 +84,11 @@ static u64 bench_execute(struct read_bench_fn *self, unsigned milliseconds, u64 
                 u64 needle_idx = JAK_MAX(0, JAK_MIN((u64) num_fields - 1, rand_idx));
 
                 rec_read_begin(&it, &extra->record);
+
                 for (u64 i = 0; i < needle_idx; i++) {
                         arr_it_next(&it);
                 }
+
                 rec_read_end(&it);
 
               //  dot_clear(&extra->dot_path);

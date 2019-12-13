@@ -63,10 +63,10 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
 
 void internal_col_it_skip__fast(memfile *memfile, const field *field)
 {
-        MEMFILE_SKIP_UINTVAR_STREAM(memfile);
-        u32 cap_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, memfile);
-        u32 skip = cap_elements * INTERNAL_GET_TYPE_VALUE_SIZE(field->type);
-        MEMFILE_SEEK_FROM_HERE(memfile, skip);
+        u32 skip = field->column->cap * INTERNAL_GET_TYPE_VALUE_SIZE(field->type);
+        MEMFILE_SEEK__UNSAFE(memfile, field->column->header_begin +
+                                       UINTVAR_STREAM_REQUIRED_BLOCKS(field->column->num) +
+                                       UINTVAR_STREAM_REQUIRED_BLOCKS(field->column->cap) + skip);
 }
 
 bool col_it_clone(col_it *dst, col_it *src)

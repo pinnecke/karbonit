@@ -196,6 +196,9 @@ typedef struct memfile {
         memcpy(&(dst)->saved_pos, &(src)->saved_pos, ARRAY_LENGTH((src)->saved_pos));								   \
 }
 
+#define MEMFILE_SEEK__UNSAFE(file, position)												                                   \
+        (file)->pos = (position)
+
 #define MEMFILE_SEEK(_file_, _position_)												                                   \
 ({												                                                                       \
         bool ___status = true;												                                               \

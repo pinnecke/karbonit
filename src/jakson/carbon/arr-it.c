@@ -361,31 +361,29 @@ item *arr_it_next(arr_it *it)
         }
 
         offset_t last_off = MEMFILE_TELL(&it->file);
-        offset_t current_off = last_off;
-        //u8 *raw = MEMFILE_RAW_DATA(&it->file);
+
+        u8 *begin_raw = MEMFILE_RAW_DATA(&it->file);
+        u8 *cur_raw = begin_raw;
 
         char c;
 
         /** skip remaining zeros until end of array is reached */
-        while ((c = *MEMFILE_PEEK__FAST(&it->file)) == 0) {
-                MEMFILE_SKIP__UNSAFE(&it->file, 1);
-                current_off++;
+        while ((c = *cur_raw) == 0) {
+                cur_raw++;
         }
 
         INTERNAL_FIELD_DROP(&it->field);
-
         INTERNAL_FIELD_AUTO_CLOSE(&it->field);
 
         bool is_taken = c != MARRAY_END;
         if (is_taken) {
                 // read array field read fast
                 {
-                        it->field_offset = current_off;
-                        it->field.type = *MEMFILE_READ_UNSAEF(&it->file, 1);
+                        it->field_offset = last_off + (cur_raw - begin_raw);
+                        it->field.type = *(cur_raw++);
                 }
                 // access field data
                 {
-                        memfile *file = &it->file;
                         field *field = &it->field;
 
                         switch (field->type) {
@@ -396,67 +394,74 @@ item *arr_it_next(arr_it *it)
                                         break;
                                 case FIELD_NUMBER_U8:
                                 case FIELD_NUMBER_I8:
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        CARBON_FIELD_SKIP_8__FAST(file);
+                                        field->data = cur_raw;
+                                        cur_raw += sizeof(u8);
                                         break;
                                 case FIELD_NUMBER_U16:
                                 case FIELD_NUMBER_I16:
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        CARBON_FIELD_SKIP_16__FAST(file);
+                                        field->data = cur_raw;
+                                        cur_raw += sizeof(u16);
                                         break;
                                 case FIELD_NUMBER_U32:
                                 case FIELD_NUMBER_I32:
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        CARBON_FIELD_SKIP_32__FAST(file);
+                                        field->data = cur_raw;
+                                        cur_raw += sizeof(u32);
                                         break;
                                 case FIELD_NUMBER_U64:
                                 case FIELD_NUMBER_I64:
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        CARBON_FIELD_SKIP_64__FAST(file);
+                                        field->data = cur_raw;
+                                        cur_raw += sizeof(u64);
                                         break;
                                 case FIELD_NUMBER_FLOAT:
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        CARBON_FIELD_SKIP_FLOAT__FAST(file);
+                                        field->data = cur_raw;
+                                        cur_raw += sizeof(float);
                                         break;
                                 case FIELD_STRING: {
                                         u8 nbytes;
-                                        uintvar_stream_t len = (uintvar_stream_t) MEMFILE_PEEK__FAST(file);
+                                        uintvar_stream_t len = (uintvar_stream_t) cur_raw;
                                         field->len = UINTVAR_STREAM_READ(&nbytes, len);
-
-                                        MEMFILE_SKIP(file, nbytes);
-                                        field->data = MEMFILE_PEEK__FAST(file);
-
-                                        CARBON_FIELD_SKIP_STRING__FAST(file, field);
+                                        cur_raw += nbytes;
+                                        field->data = cur_raw;
+                                        cur_raw += field->len; /* skip string value */
                                 }
                                         break;
                                 case FIELD_BINARY: {
+                                        u8 nbytes;
                                         /** read mime type with variable-length integer type */
-                                        u64 mime_id = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-
+                                        uintvar_stream_t id = (uintvar_stream_t) cur_raw;
+                                        u64 mime_id = UINTVAR_STREAM_READ(&nbytes, id);
+                                        cur_raw += nbytes;
                                         field->mime = mime_by_id(mime_id);
                                         field->mime_len = strlen(field->mime);
 
                                         /** read blob length */
-                                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
+                                        uintvar_stream_t len = (uintvar_stream_t) cur_raw;
+                                        field->len = UINTVAR_STREAM_READ(&nbytes, len);
+                                        cur_raw += nbytes;
 
                                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
-                                        field->data = MEMFILE_PEEK__FAST(file);
-
-                                        CARBON_FIELD_SKIP_BINARY__FAST(file, field);
+                                        field->data = cur_raw;
+                                        cur_raw += field->len;
                                 }
                                         break;
                                 case FIELD_BINARY_CUSTOM: {
+                                        u8 nbytes;
                                         /** read mime type str_buf */
-                                        field->mime_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-                                        field->mime = MEMFILE_READ(file, field->mime_len);
+                                        uintvar_stream_t mlen = (uintvar_stream_t) cur_raw;
+                                        field->mime_len = UINTVAR_STREAM_READ(&nbytes, mlen);
+                                        cur_raw += nbytes;
+
+                                        field->mime = (const char *) cur_raw;
+                                        cur_raw += field->mime_len;
 
                                         /** read blob length */
-                                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
+                                        uintvar_stream_t len = (uintvar_stream_t) cur_raw;
+                                        field->len = UINTVAR_STREAM_READ(&nbytes, len);
+                                        cur_raw += nbytes;
 
                                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
-                                        field->data = MEMFILE_PEEK__FAST(file);
-
-                                        CARBON_FIELD_SKIP_CUSTOM_BINARY__FAST(file, field);
+                                        field->data = cur_raw;
+                                        cur_raw += field->len;
                                 }
                                         break;
                                 case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -465,10 +470,10 @@ item *arr_it_next(arr_it *it)
                                 case FIELD_DERIVED_ARRAY_SORTED_SET:
                                         internal_field_create(field);
                                         field->arr_it.created = true;
-                                        internal_arr_it_create(field->array, file,
-                                                               MEMFILE_TELL(file) - sizeof(u8));
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        carbon_field_skip_array__fast(file, field);
+                                        internal_arr_it_create(field->array, &it->file, last_off);
+                                        field->data = MEMFILE_PEEK__FAST(&it->file);
+                                        carbon_field_skip_array__fast(&it->file, field);
+                                        cur_raw = MEMFILE_RAW_DATA(&it->file);
                                         break;
                                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -512,10 +517,11 @@ item *arr_it_next(arr_it *it)
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                         internal_field_create(field);
                                         field->col_it_created = true;
-                                        col_it_create(field->column, file,
-                                                      MEMFILE_TELL(file) - sizeof(u8));
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        carbon_field_skip_column__fast(file, field);
+
+                                        col_it_create(field->column, &it->file, last_off);
+                                        field->data = begin_raw;
+                                        carbon_field_skip_column__fast(&it->file, field);
+                                        cur_raw = MEMFILE_RAW_DATA(&it->file);
                                 }
                                         break;
                                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -524,10 +530,11 @@ item *arr_it_next(arr_it *it)
                                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
                                         internal_field_create(field);
                                         field->obj_it.created = true;
-                                        internal_obj_it_create(field->object, file,
-                                                               MEMFILE_TELL(file) - sizeof(u8));
-                                        field->data = MEMFILE_PEEK__FAST(file);
-                                        carbon_field_skip_object__fast(file, field);
+
+                                        internal_obj_it_create(field->object, &it->file, last_off);
+                                        field->data = cur_raw;
+                                        carbon_field_skip_object__fast(&it->file, field);
+                                        cur_raw = MEMFILE_RAW_DATA(&it->file);
                                         break;
                                 default:
                                         error(ERR_CORRUPTED, NULL);
@@ -537,10 +544,12 @@ item *arr_it_next(arr_it *it)
 
                 it->pos++;
                 it->last_off = last_off;
+                MEMFILE_SEEK__UNSAFE(&it->file, last_off + (cur_raw - begin_raw));
 
                 INTERNAL_ITEM_CREATE_FROM_ARRAY(&(it->item), it);
                 return &(it->item);
         } else {
+                MEMFILE_SEEK__UNSAFE(&it->file, last_off + (cur_raw - begin_raw));
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
                 INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 it->eof = true;

@@ -56,26 +56,26 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_I8:
                         field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_8__fast(file);
+                        CARBON_FIELD_SKIP_8__FAST(file);
                         break;
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_I16:
                         field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_16__fast(file);
+                        CARBON_FIELD_SKIP_16__FAST(file);
                         break;
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_I32:
                         field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_32__fast(file);
+                        CARBON_FIELD_SKIP_32__FAST(file);
                         break;
                 case FIELD_NUMBER_U64:
                 case FIELD_NUMBER_I64:
                         field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_64__fast(file);
+                        CARBON_FIELD_SKIP_64__FAST(file);
                         break;
                 case FIELD_NUMBER_FLOAT:
                         field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_float__fast(file);
+                        CARBON_FIELD_SKIP_FLOAT__FAST(file);
                         break;
                 case FIELD_STRING: {
                         u8 nbytes;
@@ -85,7 +85,7 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         MEMFILE_SKIP(file, nbytes);
                         field->data = MEMFILE_PEEK(file, 1);
 
-                        carbon_field_skip_string__fast(file, field);
+                        CARBON_FIELD_SKIP_STRING__FAST(file, field);
                 }
                         break;
                 case FIELD_BINARY: {
@@ -101,7 +101,7 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                         field->data = MEMFILE_PEEK(file, 1);
 
-                        carbon_field_skip_binary__fast(file, field);
+                        CARBON_FIELD_SKIP_BINARY__FAST(file, field);
                 }
                         break;
                 case FIELD_BINARY_CUSTOM: {
@@ -115,7 +115,7 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
                         field->data = MEMFILE_PEEK(file, 1);
 
-                        carbon_field_skip_custom_binary__fast(file, field);
+                        CARBON_FIELD_SKIP_CUSTOM_BINARY__FAST(file, field);
                 }
                         break;
                 case FIELD_ARRAY_UNSORTED_MULTISET:

@@ -233,31 +233,31 @@ void carbon_field_skip_object__fast(memfile *file, const field *field);
 void carbon_field_skip_array__fast(memfile *file, const field *field);
 void carbon_field_skip_column__fast(memfile *file, const field *field);
 
-#define carbon_field_skip_binary__fast(memfile, field)                                                                \
+#define CARBON_FIELD_SKIP_BINARY__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
         MEMFILE_SKIP((memfile), (field)->len);
 
-#define carbon_field_skip_custom_binary__fast(memfile, field)                                                                \
+#define CARBON_FIELD_SKIP_CUSTOM_BINARY__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
         MEMFILE_SKIP((memfile), (field)->len);
 
-#define carbon_field_skip_string__fast(memfile, field)                                                                \
+#define CARBON_FIELD_SKIP_STRING__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
         MEMFILE_SKIP((memfile), (field)->len);
 
-#define carbon_field_skip_float__fast(memfile)                                                                \
+#define CARBON_FIELD_SKIP_FLOAT__FAST(memfile)                                                                \
         MEMFILE_SKIP((memfile), sizeof(float));
 
-#define carbon_field_skip_8__fast(memfile)                                                                \
+#define CARBON_FIELD_SKIP_8__FAST(memfile)                                                                \
         MEMFILE_SKIP((memfile), sizeof(u8));
 
-#define carbon_field_skip_16__fast(memfile)                                                                \
+#define CARBON_FIELD_SKIP_16__FAST(memfile)                                                                \
         MEMFILE_SKIP((memfile), sizeof(u16));
 
-#define carbon_field_skip_32__fast(memfile)                                                                \
+#define CARBON_FIELD_SKIP_32__FAST(memfile)                                                                \
         MEMFILE_SKIP((memfile), sizeof(u32));
 
-#define carbon_field_skip_64__fast(memfile)                                                                 \
+#define CARBON_FIELD_SKIP_64__FAST(memfile)                                                                 \
         MEMFILE_SKIP((memfile), sizeof(u64));
 
 field_e field_for_column(list_type_e derivation, col_it_type_e type);

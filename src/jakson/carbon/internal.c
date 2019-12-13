@@ -45,176 +45,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
 
 static void int_insert_prop_object(insert *oins, json_object *obj);
 
-static inline void internal_field_data_access__fast(memfile *file, field *field)
-{
-        switch (field->type) {
-                case FIELD_NULL:
-                case FIELD_TRUE:
-                case FIELD_FALSE:
-                        /* nothing to do */
-                        break;
-                case FIELD_NUMBER_U8:
-                case FIELD_NUMBER_I8:
-                        field->data = MEMFILE_PEEK(file, 1);
-                        CARBON_FIELD_SKIP_8__FAST(file);
-                        break;
-                case FIELD_NUMBER_U16:
-                case FIELD_NUMBER_I16:
-                        field->data = MEMFILE_PEEK(file, 1);
-                        CARBON_FIELD_SKIP_16__FAST(file);
-                        break;
-                case FIELD_NUMBER_U32:
-                case FIELD_NUMBER_I32:
-                        field->data = MEMFILE_PEEK(file, 1);
-                        CARBON_FIELD_SKIP_32__FAST(file);
-                        break;
-                case FIELD_NUMBER_U64:
-                case FIELD_NUMBER_I64:
-                        field->data = MEMFILE_PEEK(file, 1);
-                        CARBON_FIELD_SKIP_64__FAST(file);
-                        break;
-                case FIELD_NUMBER_FLOAT:
-                        field->data = MEMFILE_PEEK(file, 1);
-                        CARBON_FIELD_SKIP_FLOAT__FAST(file);
-                        break;
-                case FIELD_STRING: {
-                        u8 nbytes;
-                        uintvar_stream_t len = (uintvar_stream_t) MEMFILE_PEEK(file, 1);
-                        field->len = UINTVAR_STREAM_READ(&nbytes, len);
 
-                        MEMFILE_SKIP(file, nbytes);
-                        field->data = MEMFILE_PEEK(file, 1);
-
-                        CARBON_FIELD_SKIP_STRING__FAST(file, field);
-                }
-                        break;
-                case FIELD_BINARY: {
-                        /** read mime type with variable-length integer type */
-                        u64 mime_id = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-
-                        field->mime = mime_by_id(mime_id);
-                        field->mime_len = strlen(field->mime);
-
-                        /** read blob length */
-                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-
-                        /** the mem points now to the actual blob data, which is used by the iterator to set the field */
-                        field->data = MEMFILE_PEEK(file, 1);
-
-                        CARBON_FIELD_SKIP_BINARY__FAST(file, field);
-                }
-                        break;
-                case FIELD_BINARY_CUSTOM: {
-                        /** read mime type str_buf */
-                        field->mime_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-                        field->mime = MEMFILE_READ(file, field->mime_len);
-
-                        /** read blob length */
-                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
-
-                        /** the mem points now to the actual blob data, which is used by the iterator to set the field */
-                        field->data = MEMFILE_PEEK(file, 1);
-
-                        CARBON_FIELD_SKIP_CUSTOM_BINARY__FAST(file, field);
-                }
-                        break;
-                case FIELD_ARRAY_UNSORTED_MULTISET:
-                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        internal_field_create(field);
-                        field->arr_it.created = true;
-                        internal_arr_it_create(field->array, file,
-                                               MEMFILE_TELL(file) - sizeof(u8));
-                        field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_array__fast(file, field);
-                        break;
-                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        internal_field_create(field);
-                        field->col_it_created = true;
-                        col_it_create(field->column, file,
-                                      MEMFILE_TELL(file) - sizeof(u8));
-                        field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_column__fast(file, field);
-                }
-                        break;
-                case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        internal_field_create(field);
-                        field->obj_it.created = true;
-                        internal_obj_it_create(field->object, file,
-                                               MEMFILE_TELL(file) - sizeof(u8));
-                        field->data = MEMFILE_PEEK(file, 1);
-                        carbon_field_skip_object__fast(file, field);
-                        break;
-                default:
-                        error(ERR_CORRUPTED, NULL);
-                        break;
-        }
-
-
-}
-
-static bool array_is_slot_occupied__quick(arr_it *it)
-{
-        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
-        char c = *MEMFILE_PEEK__FAST(&it->file);
-        bool is_taken = c != MARRAY_END;
-        if (is_taken) {
-                // read array field read fast
-                {
-                        it->field_offset = MEMFILE_TELL(&it->file);
-                        u8 media_type = *MEMFILE_READ(&it->file, 1);
-                        it->field.type = media_type;
-                }
-                {
-                        internal_field_data_access__fast(&it->file, &it->field);
-                }
-
-        }
-        return is_taken;
-}
 
 static void
 insert_embedded_container(memfile *memfile, u8 begin_marker, u8 end_marker, u8 capacity)
@@ -281,22 +112,6 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         MEMFILE_SEEK(memfile_in, payload_begin);
 
         return true;
-}
-
-bool internal_array_next__quick(arr_it *it)
-{
-        /** skip remaining zeros until end of array is reached */
-        while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
-                MEMFILE_SKIP__UNSAFE(&it->file, 1);
-        }
-
-        INTERNAL_FIELD_DROP(&it->field);
-
-        if (array_is_slot_occupied__quick(it)) {
-                return true;
-        } else {
-                return false;
-        }
 }
 
 bool internal_object_it_next(bool *is_empty_slot, bool *is_object_end, obj_it *it)
@@ -616,37 +431,19 @@ bool internal_field_clone(field *dst, field *src)
         dst->object = MALLOC(sizeof(obj_it));
         dst->column = MALLOC(sizeof(col_it));
 
-        if (internal_field_object_it_opened(src)) {
+        if (INTERNAL_FIELD_OBJECT_IT_OPENED(src)) {
                 internal_obj_it_clone(dst->object, src->object);
-        } else if (internal_field_column_it_opened(src)) {
+        } else if (INTERNAL_FIELD_COLUMN_IT_OPENED(src)) {
                 col_it_clone(dst->column, src->column);
-        } else if (internal_field_array_opened(src)) {
+        } else if (INTERNAL_FIELD_ARRAY_OPENED(src)) {
                 internal_arr_it_clone(dst->array, src->array);
         }
         return true;
 }
 
-bool internal_field_object_it_opened(field *field)
-{
-        assert(field);
-        return field->obj_it.created && field->object != NULL;
-}
-
-bool internal_field_array_opened(field *field)
-{
-        assert(field);
-        return field->arr_it.created && field->array != NULL;
-}
-
-bool internal_field_column_it_opened(field *field)
-{
-        assert(field);
-        return field->col_it_created && field->column != NULL;
-}
-
 void internal_auto_close_nested_array(field *field)
 {
-        if (internal_field_array_opened(field)) {
+        if (INTERNAL_FIELD_ARRAY_OPENED(field)) {
                 arr_it_drop(field->array);
                 ZERO_MEMORY(field->array, sizeof(arr_it));
         }
@@ -654,7 +451,7 @@ void internal_auto_close_nested_array(field *field)
 
 void internal_auto_close_nested_object_it(field *field)
 {
-        if (internal_field_object_it_opened(field)) {
+        if (INTERNAL_FIELD_OBJECT_IT_OPENED(field)) {
                 obj_it_drop(field->object);
                 ZERO_MEMORY(field->object, sizeof(obj_it));
         }
@@ -662,7 +459,7 @@ void internal_auto_close_nested_object_it(field *field)
 
 void internal_auto_close_nested_column_it(field *field)
 {
-        if (internal_field_column_it_opened(field)) {
+        if (INTERNAL_FIELD_COLUMN_IT_OPENED(field)) {
                 ZERO_MEMORY(field->column, sizeof(col_it));
         }
 }

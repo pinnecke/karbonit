@@ -62,6 +62,9 @@ typedef struct memblock {
 #define MEMBLOCK_RAW_DATA(block)									                                                   \
         ((block) && (block)->base ? (block)->base : NULL)
 
+#define MEMBLOCK_RAW_DATA_UNSAFE(block)									                                                   \
+        (block->base)
+
 #define MEMBLOCK_WRITE(block, position, data, nbytes)										                           \
 ({										                                                                               \
         bool memblock_write_status;										                                                           \

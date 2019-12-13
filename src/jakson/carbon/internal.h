@@ -179,7 +179,6 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
         internal_get_type_value_size_result;                                                                         \
 })
 
-bool internal_array_next__quick(arr_it *it);
 bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it);
 bool internal_array_field_read(arr_it *it);
 bool internal_array_skip_contents(bool *is_empty_slot, bool *is_array_end, arr_it *it);
@@ -235,9 +234,16 @@ bool internal_field_clone(field *dst, field *src);
         }                                                                                                              \
 }
 
-bool internal_field_object_it_opened(field *field);
-bool internal_field_array_opened(field *field);
-bool internal_field_column_it_opened(field *field);
+
+#define INTERNAL_FIELD_OBJECT_IT_OPENED(field)                                                                  \
+        ((field)->obj_it.created && (field)->object != NULL)
+
+#define INTERNAL_FIELD_ARRAY_OPENED(field)                                                                  \
+        ((field)->arr_it.created && (field)->array != NULL)
+
+#define INTERNAL_FIELD_COLUMN_IT_OPENED(field)                                                                  \
+        ((field)->col_it_created && (field)->column != NULL)
+
 bool internal_field_field_type(field_e *type, field *field);
 bool internal_field_bool_value(bool *value, field *field);
 bool internal_field_is_null(bool *is_null, field *field);

@@ -291,6 +291,13 @@ typedef struct memfile {
         memfile_peek_result;											                                                               \
 })
 
+#define MEMFILE_READ_UNSAEF(file, nbytes)											                                           \
+({											                                                                           \
+        const char *memfile_peek_result = MEMFILE_PEEK__FAST((file));											               \
+        (file)->pos += (nbytes);											                                           \
+        memfile_peek_result;											                                                               \
+})
+
 #define MEMFILE_READ_BYTE(file)								                                                           \
         *MEMFILE_READ_TYPE((file), u8)
 
@@ -350,7 +357,7 @@ typedef struct memfile {
 })
 
 #define MEMFILE_PEEK__FAST(file)												                                       \
-                (((char *) MEMBLOCK_RAW_DATA((file)->memblock)) + (file)->pos)
+                (((char *) MEMBLOCK_RAW_DATA_UNSAFE((file)->memblock)) + (file)->pos)
 
 #define MEMFILE_WRITE_BYTE(file, data)							                                                       \
 {																                                                       \

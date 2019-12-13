@@ -328,16 +328,6 @@ bool arr_it_rewind(arr_it *it)
         return MEMFILE_SEEK(&it->file, it->begin + sizeof(u8));
 }
 
-static void auto_adjust_pos_after_mod(arr_it *it)
-{
-        if (internal_field_object_it_opened(&it->field)) {
-                MEMFILE_SKIP(&it->file, it->field.object->mod_size);
-        } else if (internal_field_array_opened(&it->field)) {
-                //MEMFILE_SKIP(&it->mem, it->field.array->mod_size);
-                //abort(); // TODO: implement!
-        }
-}
-
 bool arr_it_has_next(arr_it *it)
 {
         arr_it cpy;
@@ -366,11 +356,186 @@ bool arr_it_is_unit(arr_it *it)
 
 item *arr_it_next(arr_it *it)
 {
-        auto_adjust_pos_after_mod(it);
+        // auto adjust pos after mod
+        {
+                if (INTERNAL_FIELD_OBJECT_IT_OPENED(&it->field)) {
+                        MEMFILE_SKIP(&it->file, it->field.object->mod_size);
+                } else if (INTERNAL_FIELD_ARRAY_OPENED(&it->field)) {
+                        //MEMFILE_SKIP(&it->mem, it->field.array->mod_size);
+                        //abort(); // TODO: implement!
+                }
+        }
 
         offset_t last_off = MEMFILE_TELL(&it->file);
 
-        if (internal_array_next__quick(it)) {
+        /** skip remaining zeros until end of array is reached */
+        while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
+                MEMFILE_SKIP__UNSAFE(&it->file, 1);
+        }
+
+        INTERNAL_FIELD_DROP(&it->field);
+
+        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
+        char c = *MEMFILE_PEEK__FAST(&it->file);
+        bool is_taken = c != MARRAY_END;
+        if (is_taken) {
+                // read array field read fast
+                {
+                        it->field_offset = MEMFILE_TELL(&it->file);
+                        it->field.type = *MEMFILE_READ_UNSAEF(&it->file, 1);
+                }
+                // access field data
+                {
+                        memfile *file = &it->file;
+                        field *field = &it->field;
+
+                        switch (field->type) {
+                                case FIELD_NULL:
+                                case FIELD_TRUE:
+                                case FIELD_FALSE:
+                                        /* nothing to do */
+                                        break;
+                                case FIELD_NUMBER_U8:
+                                case FIELD_NUMBER_I8:
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        CARBON_FIELD_SKIP_8__FAST(file);
+                                        break;
+                                case FIELD_NUMBER_U16:
+                                case FIELD_NUMBER_I16:
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        CARBON_FIELD_SKIP_16__FAST(file);
+                                        break;
+                                case FIELD_NUMBER_U32:
+                                case FIELD_NUMBER_I32:
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        CARBON_FIELD_SKIP_32__FAST(file);
+                                        break;
+                                case FIELD_NUMBER_U64:
+                                case FIELD_NUMBER_I64:
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        CARBON_FIELD_SKIP_64__FAST(file);
+                                        break;
+                                case FIELD_NUMBER_FLOAT:
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        CARBON_FIELD_SKIP_FLOAT__FAST(file);
+                                        break;
+                                case FIELD_STRING: {
+                                        u8 nbytes;
+                                        uintvar_stream_t len = (uintvar_stream_t) MEMFILE_PEEK__FAST(file);
+                                        field->len = UINTVAR_STREAM_READ(&nbytes, len);
+
+                                        MEMFILE_SKIP(file, nbytes);
+                                        field->data = MEMFILE_PEEK__FAST(file);
+
+                                        CARBON_FIELD_SKIP_STRING__FAST(file, field);
+                                }
+                                        break;
+                                case FIELD_BINARY: {
+                                        /** read mime type with variable-length integer type */
+                                        u64 mime_id = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
+
+                                        field->mime = mime_by_id(mime_id);
+                                        field->mime_len = strlen(field->mime);
+
+                                        /** read blob length */
+                                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
+
+                                        /** the mem points now to the actual blob data, which is used by the iterator to set the field */
+                                        field->data = MEMFILE_PEEK__FAST(file);
+
+                                        CARBON_FIELD_SKIP_BINARY__FAST(file, field);
+                                }
+                                        break;
+                                case FIELD_BINARY_CUSTOM: {
+                                        /** read mime type str_buf */
+                                        field->mime_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
+                                        field->mime = MEMFILE_READ(file, field->mime_len);
+
+                                        /** read blob length */
+                                        field->len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
+
+                                        /** the mem points now to the actual blob data, which is used by the iterator to set the field */
+                                        field->data = MEMFILE_PEEK__FAST(file);
+
+                                        CARBON_FIELD_SKIP_CUSTOM_BINARY__FAST(file, field);
+                                }
+                                        break;
+                                case FIELD_ARRAY_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+                                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+                                case FIELD_DERIVED_ARRAY_SORTED_SET:
+                                        internal_field_create(field);
+                                        field->arr_it.created = true;
+                                        internal_arr_it_create(field->array, file,
+                                                               MEMFILE_TELL(file) - sizeof(u8));
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        carbon_field_skip_array__fast(file, field);
+                                        break;
+                                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+                                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+                                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+                                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+                                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+                                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+                                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+                                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+                                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+                                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                                        internal_field_create(field);
+                                        field->col_it_created = true;
+                                        col_it_create(field->column, file,
+                                                      MEMFILE_TELL(file) - sizeof(u8));
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        carbon_field_skip_column__fast(file, field);
+                                }
+                                        break;
+                                case FIELD_OBJECT_UNSORTED_MULTIMAP:
+                                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+                                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+                                case FIELD_DERIVED_OBJECT_SORTED_MAP:
+                                        internal_field_create(field);
+                                        field->obj_it.created = true;
+                                        internal_obj_it_create(field->object, file,
+                                                               MEMFILE_TELL(file) - sizeof(u8));
+                                        field->data = MEMFILE_PEEK__FAST(file);
+                                        carbon_field_skip_object__fast(file, field);
+                                        break;
+                                default:
+                                        error(ERR_CORRUPTED, NULL);
+                                        break;
+                        }
+                }
+
                 it->pos++;
                 it->last_off = last_off;
 

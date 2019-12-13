@@ -377,7 +377,7 @@ static bool _internal_array_next(arr_it *it)
                 return true;
         } else {
                 /** skip remaining zeros until end of array is reached */
-                while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
+                while (!it->eof && *MEMFILE_PEEK__FAST(&it->file) == 0) {
                         MEMFILE_SKIP__UNSAFE(&it->file, 1);
                 }
 

@@ -176,20 +176,13 @@ static bool array_is_slot_occupied__quick(arr_it *it)
 {
         INTERNAL_FIELD_AUTO_CLOSE(&it->field);
         char c = *MEMFILE_PEEK__FAST(&it->file);
-        bool is_end = c == MARRAY_END;
-        return !is_end;
-}
-
-static inline field *internal_array_refresh__fast__quick(arr_it *it)
-{
-        INTERNAL_FIELD_DROP(&it->field);
-        if (array_is_slot_occupied__quick(it)) {
+        bool is_taken = c != MARRAY_END;
+        if (is_taken) {
                 internal_array_field_read__fast(it);
                 internal_field_data_access__fast(&it->file, &it->field);
-                return &it->field;
-        } else {
-                return NULL;
+                carbon_field_skip__fast(&it->file, &it->field);
         }
+        return is_taken;
 }
 
 static void
@@ -261,18 +254,16 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
 
 bool internal_array_next__quick(arr_it *it)
 {
-        field *field;
-
         /** skip remaining zeros until end of array is reached */
         while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
                 MEMFILE_SKIP__UNSAFE(&it->file, 1);
         }
 
-        if ((field = internal_array_refresh__fast__quick(it))) {
-                carbon_field_skip__fast(&it->file, field);
+        INTERNAL_FIELD_DROP(&it->field);
+
+        if (array_is_slot_occupied__quick(it)) {
                 return true;
         } else {
-                it->eof = true;
                 return false;
         }
 }

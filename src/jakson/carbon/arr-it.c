@@ -379,6 +379,7 @@ item *arr_it_next(arr_it *it)
         } else {
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
                 INTERNAL_FIELD_AUTO_CLOSE(&it->field);
+                it->eof = true;
                 return NULL;
         }
 }

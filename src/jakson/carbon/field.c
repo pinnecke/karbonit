@@ -284,48 +284,6 @@ void carbon_field_skip_column__fast(memfile *file, const field *field)
         internal_col_it_skip__fast(file, field);
 }
 
-void carbon_field_skip_binary__fast(memfile *file, const field *field)
-{
-        /** skip blob */
-        MEMFILE_SKIP(file, field->len);
-}
-
-void carbon_field_skip_custom_binary__fast(memfile *file, const field *field)
-{
-        /** skip blob */
-        MEMFILE_SKIP(file, field->len);
-}
-
-void carbon_field_skip_string__fast(memfile *file, const field *field)
-{
-        /** skip blob */
-        MEMFILE_SKIP(file, field->len);
-}
-
-void carbon_field_skip_float__fast(memfile *file)
-{
-        MEMFILE_SKIP(file, sizeof(float));
-}
-
-void carbon_field_skip_8__fast(memfile *file)
-{
-        MEMFILE_SKIP(file, sizeof(u8));
-}
-
-void carbon_field_skip_16__fast(memfile *file)
-{
-        MEMFILE_SKIP(file, sizeof(u16));
-}
-
-void carbon_field_skip_32__fast(memfile *file)
-{
-        MEMFILE_SKIP(file, sizeof(u32));
-}
-
-void carbon_field_skip_64__fast(memfile *file)
-{
-        MEMFILE_SKIP(file, sizeof(u64));
-}
 
 bool carbon_field_skip_object(memfile *file, u8 marker)
 {

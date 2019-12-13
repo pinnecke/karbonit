@@ -180,6 +180,7 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
 })
 
 bool internal_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it);
+bool internal_array_next__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it);
 bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it);
 bool internal_array_field_read(arr_it *it);
 bool internal_array_skip_contents(bool *is_empty_slot, bool *is_array_end, arr_it *it);

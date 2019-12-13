@@ -115,7 +115,7 @@ static void bench_finalize(struct read_bench_fn *self, void *arg)
 }
 
 static read_bench_fn fn = {
-        .driver_name = "libcarbon",
+        .driver_name = "libcarbon-improved",
         .create = create,
         .drop = drop,
         .startup = NULL,

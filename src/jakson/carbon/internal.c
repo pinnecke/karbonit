@@ -172,10 +172,24 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
         field->data = MEMFILE_PEEK(file, 1);
 }
 
-static inline field *internal_array_refresh__fast(bool *is_empty_slot, bool *is_array_end, arr_it *it)
+static bool array_is_slot_occupied__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it)
+{
+        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
+        char c = *MEMFILE_PEEK__FAST(&it->file);
+        bool is_empty = c == 0, is_end = c == MARRAY_END;
+        OPTIONAL_SET(is_empty_slot, is_empty)
+        OPTIONAL_SET(is_array_end, is_end)
+        if (!is_empty && !is_end) {
+                return true;
+        } else {
+                return false;
+        }
+}
+
+static inline field *internal_array_refresh__fast__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
         INTERNAL_FIELD_DROP(&it->field);
-        if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
+        if (array_is_slot_occupied__quick(is_empty_slot, is_array_end, it)) {
                 internal_array_field_read__fast(it);
                 internal_field_data_access__fast(&it->file, &it->field);
                 return &it->field;
@@ -254,7 +268,18 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
 bool internal_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
         field *field;
-        if ((field = internal_array_refresh__fast(is_empty_slot, is_array_end, it))) {
+        if ((field = internal_array_refresh__fast__quick(is_empty_slot, is_array_end, it))) {
+                carbon_field_skip__fast(&it->file, field);
+                return true;
+        } else {
+                return false;
+        }
+}
+
+bool internal_array_next__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it)
+{
+        field *field;
+        if ((field = internal_array_refresh__fast__quick(is_empty_slot, is_array_end, it))) {
                 carbon_field_skip__fast(&it->file, field);
                 return true;
         } else {

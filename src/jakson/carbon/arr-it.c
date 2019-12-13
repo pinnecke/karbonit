@@ -364,14 +364,14 @@ bool arr_it_is_unit(arr_it *it)
         return ret;
 }
 
-static bool _internal_array_next(arr_it *it)
+static inline bool _internal_array_next__quick(arr_it *it)
 {
         bool is_empty_slot = true;
 
         auto_adjust_pos_after_mod(it);
         offset_t last_off = MEMFILE_TELL(&it->file);
 
-        if (internal_array_next(&is_empty_slot, &it->eof, it)) {
+        if (internal_array_next__quick(&is_empty_slot, &it->eof, it)) {
                 it->pos++;
                 it->last_off = last_off;
                 return true;
@@ -389,7 +389,7 @@ static bool _internal_array_next(arr_it *it)
 
 item *arr_it_next(arr_it *it)
 {
-        if (_internal_array_next(it)) {
+        if (_internal_array_next__quick(it)) {
                 internal_item_create_from_array(&(it->item), it);
                 return &(it->item);
         } else {

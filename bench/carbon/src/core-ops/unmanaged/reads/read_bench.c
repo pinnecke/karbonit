@@ -4,7 +4,7 @@
 #include "read_bench.h"
 
 #define READ_BENCH_NAME "core-reads"
-#define READ_BENCH_SINGLE_DURATION_MS 2000
+#define READ_BENCH_SINGLE_DURATION_MS 3000
 #define READ_BENCH_NUM_SAMPLES 1
 #define READ_BENCH_N_START 1
 #define READ_BENCH_N_MAX 132

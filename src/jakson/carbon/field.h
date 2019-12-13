@@ -235,30 +235,30 @@ void carbon_field_skip_column__fast(memfile *file, const field *field);
 
 #define CARBON_FIELD_SKIP_BINARY__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
-        MEMFILE_SKIP((memfile), (field)->len);
+        MEMFILE_SKIP__UNSAFE((memfile), (field)->len);
 
 #define CARBON_FIELD_SKIP_CUSTOM_BINARY__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
-        MEMFILE_SKIP((memfile), (field)->len);
+        MEMFILE_SKIP__UNSAFE((memfile), (field)->len);
 
 #define CARBON_FIELD_SKIP_STRING__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
-        MEMFILE_SKIP((memfile), (field)->len);
+        MEMFILE_SKIP__UNSAFE((memfile), (field)->len);
 
 #define CARBON_FIELD_SKIP_FLOAT__FAST(memfile)                                                                \
-        MEMFILE_SKIP((memfile), sizeof(float));
+        MEMFILE_SKIP__UNSAFE((memfile), sizeof(float));
 
 #define CARBON_FIELD_SKIP_8__FAST(memfile)                                                                \
-        MEMFILE_SKIP((memfile), sizeof(u8));
+        MEMFILE_SKIP__UNSAFE((memfile), sizeof(u8));
 
 #define CARBON_FIELD_SKIP_16__FAST(memfile)                                                                \
-        MEMFILE_SKIP((memfile), sizeof(u16));
+        MEMFILE_SKIP__UNSAFE((memfile), sizeof(u16));
 
 #define CARBON_FIELD_SKIP_32__FAST(memfile)                                                                \
-        MEMFILE_SKIP((memfile), sizeof(u32));
+        MEMFILE_SKIP__UNSAFE((memfile), sizeof(u32));
 
 #define CARBON_FIELD_SKIP_64__FAST(memfile)                                                                 \
-        MEMFILE_SKIP((memfile), sizeof(u64));
+        MEMFILE_SKIP__UNSAFE((memfile), sizeof(u64));
 
 field_e field_for_column(list_type_e derivation, col_it_type_e type);
 field_e field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true);

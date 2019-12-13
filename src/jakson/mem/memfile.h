@@ -43,11 +43,7 @@ typedef struct memfile {
      (const type *) MEMFILE_READ(file, how_many * sizeof(type))
 
 #define MEMFILE_TELL(file)                                                                                             \
-({                                                                                                                     \
-        offset_t __offset = 0;                                                                                         \
-        MEMFILE_GET_OFFSET(&__offset, (file));                                                                         \
-        __offset;                                                                                                      \
-})
+        ((file)->pos)
 
 #define MEMFILE_SKIP_BYTE(file)                                                                                        \
         MEMFILE_SKIP(file, sizeof(u8))
@@ -307,6 +303,8 @@ typedef struct memfile {
 #define MEMFILE_READ_I64(file)						                                                                   \
 		*MEMFILE_READ_TYPE((file), i64)
 
+#define MEMFILE_SKIP__UNSAFE(file, nbytes)                              \
+        (file)->pos += (nbytes)
 
 #define MEMFILE_SKIP(file, nbytes)															                           \
 ({															                                                           \

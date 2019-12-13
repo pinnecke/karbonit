@@ -380,8 +380,8 @@ static bool _internal_array_next(arr_it *it)
                 if (!it->eof) {
                         error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
 
-                        while (*MEMFILE_PEEK(&it->file, 1) == 0) {
-                                MEMFILE_SKIP(&it->file, 1);
+                        while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
+                                MEMFILE_SKIP__UNSAFE(&it->file, 1);
                         }
                 }
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);

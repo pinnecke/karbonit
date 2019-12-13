@@ -287,7 +287,7 @@ bool internal_arr_it_clone(arr_it *dst, arr_it *src)
         internal_field_clone(&dst->field, &src->field);
         dst->field_offset = src->field_offset;
         dst->pos = src->pos;
-        internal_item_create_from_array(&dst->item, dst);
+        INTERNAL_ITEM_CREATE_FROM_ARRAY(&dst->item, dst);
         return true;
 }
 
@@ -374,7 +374,7 @@ item *arr_it_next(arr_it *it)
                 it->pos++;
                 it->last_off = last_off;
 
-                internal_item_create_from_array(&(it->item), it);
+                INTERNAL_ITEM_CREATE_FROM_ARRAY(&(it->item), it);
                 return &(it->item);
         } else {
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);

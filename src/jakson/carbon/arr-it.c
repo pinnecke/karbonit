@@ -366,21 +366,15 @@ bool arr_it_is_unit(arr_it *it)
 
 static inline bool _internal_array_next__quick(arr_it *it)
 {
-        bool is_empty_slot = true;
-
         auto_adjust_pos_after_mod(it);
+
         offset_t last_off = MEMFILE_TELL(&it->file);
 
-        if (internal_array_next__quick(&is_empty_slot, &it->eof, it)) {
+        if (internal_array_next__quick(it)) {
                 it->pos++;
                 it->last_off = last_off;
                 return true;
         } else {
-                /** skip remaining zeros until end of array is reached */
-                while (!it->eof && *MEMFILE_PEEK__FAST(&it->file) == 0) {
-                        MEMFILE_SKIP__UNSAFE(&it->file, 1);
-                }
-
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
                 INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 return false;

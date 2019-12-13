@@ -8,7 +8,7 @@
 
 //#ifdef SAMPLE_SMALL_LIST
 #define MIN_LIST_SIZE 1
-#define MAX_LIST_SIZE 200
+#define MAX_LIST_SIZE 10
 #define N_STEP_SIZE 1
 //#else
 //#define MIN_LIST_SIZE 2500

@@ -172,24 +172,18 @@ static inline void internal_field_data_access__fast(memfile *file, field *field)
         field->data = MEMFILE_PEEK(file, 1);
 }
 
-static bool array_is_slot_occupied__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it)
+static bool array_is_slot_occupied__quick(arr_it *it)
 {
         INTERNAL_FIELD_AUTO_CLOSE(&it->field);
         char c = *MEMFILE_PEEK__FAST(&it->file);
-        bool is_empty = c == 0, is_end = c == MARRAY_END;
-        OPTIONAL_SET(is_empty_slot, is_empty)
-        OPTIONAL_SET(is_array_end, is_end)
-        if (!is_empty && !is_end) {
-                return true;
-        } else {
-                return false;
-        }
+        bool is_end = c == MARRAY_END;
+        return !is_end;
 }
 
-static inline field *internal_array_refresh__fast__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it)
+static inline field *internal_array_refresh__fast__quick(arr_it *it)
 {
         INTERNAL_FIELD_DROP(&it->field);
-        if (array_is_slot_occupied__quick(is_empty_slot, is_array_end, it)) {
+        if (array_is_slot_occupied__quick(it)) {
                 internal_array_field_read__fast(it);
                 internal_field_data_access__fast(&it->file, &it->field);
                 return &it->field;
@@ -265,24 +259,20 @@ bool internal_insert_column(memfile *memfile_in, list_type_e derivation, col_it_
         return true;
 }
 
-bool internal_array_next(bool *is_empty_slot, bool *is_array_end, arr_it *it)
+bool internal_array_next__quick(arr_it *it)
 {
         field *field;
-        if ((field = internal_array_refresh__fast__quick(is_empty_slot, is_array_end, it))) {
-                carbon_field_skip__fast(&it->file, field);
-                return true;
-        } else {
-                return false;
-        }
-}
 
-bool internal_array_next__quick(bool *is_empty_slot, bool *is_array_end, arr_it *it)
-{
-        field *field;
-        if ((field = internal_array_refresh__fast__quick(is_empty_slot, is_array_end, it))) {
+        /** skip remaining zeros until end of array is reached */
+        while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
+                MEMFILE_SKIP__UNSAFE(&it->file, 1);
+        }
+
+        if ((field = internal_array_refresh__fast__quick(it))) {
                 carbon_field_skip__fast(&it->file, field);
                 return true;
         } else {
+                it->eof = true;
                 return false;
         }
 }

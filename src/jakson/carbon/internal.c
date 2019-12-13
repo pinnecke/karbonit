@@ -332,26 +332,6 @@ offset_t internal_column_get_payload_off(col_it *it)
         return result;
 }
 
-offset_t internal_payload_after_header(rec *doc)
-{
-        offset_t result = 0;
-        key_e rec_key_type;
-
-        MEMFILE_SAVE_POSITION(&doc->file);
-        MEMFILE_SEEK(&doc->file, 0);
-
-        if (likely(key_skip(&rec_key_type, &doc->file))) {
-                if (rec_key_type != KEY_NOKEY) {
-                        commit_skip(&doc->file);
-                }
-                result = MEMFILE_TELL(&doc->file);
-        }
-
-        MEMFILE_RESTORE_POSITION(&doc->file);
-
-        return result;
-}
-
 u64 internal_header_get_commit_hash(rec *doc)
 {
         assert(doc);

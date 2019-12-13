@@ -113,7 +113,11 @@ void arr_it_update_type(arr_it *it, list_type_e derivation);
 bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start);
 bool internal_arr_it_copy(arr_it *dst, arr_it *src);
 bool internal_arr_it_clone(arr_it *dst, arr_it *src);
-bool internal_arr_it_set_mode(arr_it *it, access_mode_e mode);
+
+#define INTERNAL_ARR_IT_SET_MODE(it, access_mode_e)                                                                    \
+        (it)->file.mode = (access_mode_e)
+
+
 
 bool internal_arr_it_remove(arr_it *it);
 

@@ -291,12 +291,6 @@ bool internal_arr_it_clone(arr_it *dst, arr_it *src)
         return true;
 }
 
-bool internal_arr_it_set_mode(arr_it *it, access_mode_e mode)
-{
-        it->file.mode = mode;
-        return true;
-}
-
 bool arr_it_length(u64 *len, arr_it *it)
 {
         u64 num_elem = 0;
@@ -367,21 +361,26 @@ item *arr_it_next(arr_it *it)
         }
 
         offset_t last_off = MEMFILE_TELL(&it->file);
+        offset_t current_off = last_off;
+        //u8 *raw = MEMFILE_RAW_DATA(&it->file);
+
+        char c;
 
         /** skip remaining zeros until end of array is reached */
-        while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
+        while ((c = *MEMFILE_PEEK__FAST(&it->file)) == 0) {
                 MEMFILE_SKIP__UNSAFE(&it->file, 1);
+                current_off++;
         }
 
         INTERNAL_FIELD_DROP(&it->field);
 
         INTERNAL_FIELD_AUTO_CLOSE(&it->field);
-        char c = *MEMFILE_PEEK__FAST(&it->file);
+
         bool is_taken = c != MARRAY_END;
         if (is_taken) {
                 // read array field read fast
                 {
-                        it->field_offset = MEMFILE_TELL(&it->file);
+                        it->field_offset = current_off;
                         it->field.type = *MEMFILE_READ_UNSAEF(&it->file, 1);
                 }
                 // access field data

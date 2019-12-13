@@ -356,6 +356,9 @@ typedef struct memfile {
         result;												                                                           \
 })
 
+#define MEMFILE_RAW_DATA(file)                          \
+        ((u8 *)MEMFILE_PEEK__FAST(file))
+
 #define MEMFILE_PEEK__FAST(file)												                                       \
                 (((char *) MEMBLOCK_RAW_DATA_UNSAFE((file)->memblock)) + (file)->pos)
 

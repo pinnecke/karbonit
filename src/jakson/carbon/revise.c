@@ -143,7 +143,7 @@ void revise_set_list_type(rev *context, list_type_e derivation)
 
 bool revise_iterator_open(arr_it *it, rev *context)
 {
-        offset_t payload_start = internal_payload_after_header(context->revised);
+        offset_t payload_start = INTERNAL_PAYLOAD_AFTER_HEADER(context->revised);
         if (unlikely(context->revised->file.mode != READ_WRITE)) {
                 return error(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }

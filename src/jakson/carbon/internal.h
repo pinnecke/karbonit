@@ -192,7 +192,10 @@ bool internal_object_skip_contents(bool *is_empty_slot, bool *is_array_end, obj_
 bool internal_field_data_access(memfile *file, field *field);
 
 offset_t internal_column_get_payload_off(col_it *it);
-offset_t internal_payload_after_header(rec *doc);
+
+#define INTERNAL_PAYLOAD_AFTER_HEADER(rec)                                                                             \
+        ((rec)->data_off)
+
 
 u64 internal_header_get_commit_hash(rec *doc);
 

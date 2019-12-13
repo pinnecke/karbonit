@@ -21,9 +21,9 @@
 
 void patch_begin(arr_it *it, rec *doc)
 {
-        offset_t payload_start = internal_payload_after_header(doc);
+        offset_t payload_start = INTERNAL_PAYLOAD_AFTER_HEADER(doc);
         internal_arr_it_create(it, &doc->file, payload_start);
-        internal_arr_it_set_mode(it, READ_WRITE);
+        INTERNAL_ARR_IT_SET_MODE(it, READ_WRITE);
 }
 
 void patch_end(arr_it *it)

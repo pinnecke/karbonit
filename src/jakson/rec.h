@@ -31,6 +31,7 @@ extern "C" {
 typedef struct rec {
         memblock *block;
         memfile file;
+        offset_t data_off;
 } rec;
 
 /* record revision context */

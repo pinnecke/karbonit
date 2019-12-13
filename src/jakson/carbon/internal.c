@@ -692,81 +692,59 @@ bool internal_field_is_null(bool *is_null, field *field)
         return true;
 }
 
-bool internal_field_u8_value(u8 *value, field *field)
+void internal_field_u8_value(u8 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_U8, ERR_TYPEMISMATCH, NULL);
         *value = *(u8 *) field->data;
-        return true;
 }
 
-bool internal_field_u16_value(u16 *value, field *field)
+void internal_field_u16_value(u16 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_U16, ERR_TYPEMISMATCH, NULL);
         *value = *(u16 *) field->data;
-        return true;
 }
 
-bool internal_field_u32_value(u32 *value, field *field)
+void internal_field_u32_value(u32 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_U32, ERR_TYPEMISMATCH, NULL);
         *value = *(u32 *) field->data;
-        return true;
 }
 
-bool internal_field_u64_value(u64 *value, field *field)
+void internal_field_u64_value(u64 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_U64, ERR_TYPEMISMATCH, NULL);
         *value = *(u64 *) field->data;
-        return true;
 }
 
-bool internal_field_i8_value(i8 *value, field *field)
+void internal_field_i8_value(i8 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_I8, ERR_TYPEMISMATCH, NULL);
         *value = *(i8 *) field->data;
-        return true;
 }
 
-bool internal_field_i16_value(i16 *value, field *field)
+void internal_field_i16_value(i16 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_I16, ERR_TYPEMISMATCH, NULL);
         *value = *(i16 *) field->data;
-        return true;
 }
 
-bool internal_field_i32_value(i32 *value, field *field)
+void internal_field_i32_value(i32 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_I32, ERR_TYPEMISMATCH, NULL);
         *value = *(i32 *) field->data;
-        return true;
 }
 
-bool internal_field_i64_value(i64 *value, field *field)
+void internal_field_i64_value(i64 *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_I64, ERR_TYPEMISMATCH, NULL);
         *value = *(i64 *) field->data;
-        return true;
 }
 
-bool internal_field_float_value(float *value, field *field)
+void internal_field_float_value(float *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         *value = *(float *) field->data;
-        return true;
 }
 
-bool
-internal_field_float_value_nullable(bool *is_null_in, float *value, field *field)
+void internal_field_float_value_nullable(bool *is_null_in, float *value, field *field)
 {
-        error_if_and_return(field->type != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         float read_value = *(float *) field->data;
         OPTIONAL_SET(value, read_value);
         OPTIONAL_SET(is_null_in, IS_NULL_FLOAT(read_value));
-
-        return true;
 }
 
-bool internal_field_signed_value_nullable(bool *is_null_in, i64 *value, field *field)
+void internal_field_signed_value_nullable(bool *is_null_in, i64 *value, field *field)
 {
         switch (field->type) {
                 case FIELD_NUMBER_I8: {
@@ -798,12 +776,10 @@ bool internal_field_signed_value_nullable(bool *is_null_in, i64 *value, field *f
                 }
                         break;
                 default: error(ERR_TYPEMISMATCH, NULL);
-                        return false;
         }
-        return true;
 }
 
-bool internal_field_unsigned_value_nullable(bool *is_null_in, u64 *value, field *field)
+void internal_field_unsigned_value_nullable(bool *is_null_in, u64 *value, field *field)
 {
         switch (field->type) {
                 case FIELD_NUMBER_U8: {
@@ -835,12 +811,10 @@ bool internal_field_unsigned_value_nullable(bool *is_null_in, u64 *value, field 
                 }
                         break;
                 default: error(ERR_TYPEMISMATCH, NULL);
-                        return false;
         }
-        return true;
 }
 
-bool internal_field_signed_value(i64 *value, field *field)
+void internal_field_signed_value(i64 *value, field *field)
 {
         switch (field->type) {
                 case FIELD_NUMBER_I8: {
@@ -868,12 +842,10 @@ bool internal_field_signed_value(i64 *value, field *field)
                 }
                         break;
                 default: error(ERR_TYPEMISMATCH, NULL);
-                        return false;
         }
-        return true;
 }
 
-bool internal_field_unsigned_value(u64 *value, field *field)
+void internal_field_unsigned_value(u64 *value, field *field)
 {
         switch (field->type) {
                 case FIELD_NUMBER_U8: {
@@ -901,15 +873,11 @@ bool internal_field_unsigned_value(u64 *value, field *field)
                 }
                         break;
                 default: error(ERR_TYPEMISMATCH, NULL);
-                        return false;
         }
-        return true;
 }
 
 const char *internal_field_string_value(u64 *strlen, field *field)
 {
-        error_if_and_return(field == NULL, ERR_NULLPTR, NULL);
-        error_if_and_return(field->type != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         *strlen = field->len;
         return field->data;
 }

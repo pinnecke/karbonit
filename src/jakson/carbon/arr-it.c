@@ -377,13 +377,10 @@ static bool _internal_array_next(arr_it *it)
                 return true;
         } else {
                 /** skip remaining zeros until end of array is reached */
-                if (!it->eof) {
-                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
-
-                        while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
-                                MEMFILE_SKIP__UNSAFE(&it->file, 1);
-                        }
+                while (*MEMFILE_PEEK__FAST(&it->file) == 0) {
+                        MEMFILE_SKIP__UNSAFE(&it->file, 1);
                 }
+
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
                 INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 return false;

@@ -364,7 +364,7 @@ bool arr_it_is_unit(arr_it *it)
         return ret;
 }
 
-static inline bool _internal_array_next__quick(arr_it *it)
+item *arr_it_next(arr_it *it)
 {
         auto_adjust_pos_after_mod(it);
 
@@ -373,20 +373,12 @@ static inline bool _internal_array_next__quick(arr_it *it)
         if (internal_array_next__quick(it)) {
                 it->pos++;
                 it->last_off = last_off;
-                return true;
-        } else {
-                assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
-                INTERNAL_FIELD_AUTO_CLOSE(&it->field);
-                return false;
-        }
-}
 
-item *arr_it_next(arr_it *it)
-{
-        if (_internal_array_next__quick(it)) {
                 internal_item_create_from_array(&(it->item), it);
                 return &(it->item);
         } else {
+                assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
+                INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 return NULL;
         }
 }

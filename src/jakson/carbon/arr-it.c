@@ -360,27 +360,25 @@ item *arr_it_next(arr_it *it)
                 }
         }
 
-        offset_t last_off = MEMFILE_TELL(&it->file);
+        offset_t begin_off = MEMFILE_TELL(&it->file);
+        u8 *raw_begin = MEMFILE_RAW_DATA(&it->file);
+        u8 *raw_it = raw_begin;
 
-        u8 *begin_raw = MEMFILE_RAW_DATA(&it->file);
-        u8 *cur_raw = begin_raw;
-
-        char c;
+        uint_fast8_t c;
 
         /** skip remaining zeros until end of array is reached */
-        while ((c = *cur_raw) == 0) {
-                cur_raw++;
+        while ((c = *raw_it) == 0) {
+                raw_it++;
         }
 
         INTERNAL_FIELD_DROP(&it->field);
         INTERNAL_FIELD_AUTO_CLOSE(&it->field);
 
-        bool is_taken = c != MARRAY_END;
-        if (is_taken) {
+        if (c != MARRAY_END) {
                 // read array field read fast
                 {
-                        it->field_offset = last_off + (cur_raw - begin_raw);
-                        it->field.type = *(cur_raw++);
+                        it->field_offset = begin_off + (raw_it - raw_begin);
+                        it->field.type = *(raw_it++);
                 }
                 // access field data
                 {
@@ -394,74 +392,74 @@ item *arr_it_next(arr_it *it)
                                         break;
                                 case FIELD_NUMBER_U8:
                                 case FIELD_NUMBER_I8:
-                                        field->data = cur_raw;
-                                        cur_raw += sizeof(u8);
+                                        field->data = raw_it;
+                                        raw_it += sizeof(u8);
                                         break;
                                 case FIELD_NUMBER_U16:
                                 case FIELD_NUMBER_I16:
-                                        field->data = cur_raw;
-                                        cur_raw += sizeof(u16);
+                                        field->data = raw_it;
+                                        raw_it += sizeof(u16);
                                         break;
                                 case FIELD_NUMBER_U32:
                                 case FIELD_NUMBER_I32:
-                                        field->data = cur_raw;
-                                        cur_raw += sizeof(u32);
+                                        field->data = raw_it;
+                                        raw_it += sizeof(u32);
                                         break;
                                 case FIELD_NUMBER_U64:
                                 case FIELD_NUMBER_I64:
-                                        field->data = cur_raw;
-                                        cur_raw += sizeof(u64);
+                                        field->data = raw_it;
+                                        raw_it += sizeof(u64);
                                         break;
                                 case FIELD_NUMBER_FLOAT:
-                                        field->data = cur_raw;
-                                        cur_raw += sizeof(float);
+                                        field->data = raw_it;
+                                        raw_it += sizeof(float);
                                         break;
                                 case FIELD_STRING: {
                                         u8 nbytes;
-                                        uintvar_stream_t len = (uintvar_stream_t) cur_raw;
+                                        uintvar_stream_t len = (uintvar_stream_t) raw_it;
                                         field->len = UINTVAR_STREAM_READ(&nbytes, len);
-                                        cur_raw += nbytes;
-                                        field->data = cur_raw;
-                                        cur_raw += field->len; /* skip string value */
+                                        raw_it += nbytes;
+                                        field->data = raw_it;
+                                        raw_it += field->len; /* skip string value */
                                 }
                                         break;
                                 case FIELD_BINARY: {
                                         u8 nbytes;
                                         /** read mime type with variable-length integer type */
-                                        uintvar_stream_t id = (uintvar_stream_t) cur_raw;
+                                        uintvar_stream_t id = (uintvar_stream_t) raw_it;
                                         u64 mime_id = UINTVAR_STREAM_READ(&nbytes, id);
-                                        cur_raw += nbytes;
+                                        raw_it += nbytes;
                                         field->mime = mime_by_id(mime_id);
                                         field->mime_len = strlen(field->mime);
 
                                         /** read blob length */
-                                        uintvar_stream_t len = (uintvar_stream_t) cur_raw;
+                                        uintvar_stream_t len = (uintvar_stream_t) raw_it;
                                         field->len = UINTVAR_STREAM_READ(&nbytes, len);
-                                        cur_raw += nbytes;
+                                        raw_it += nbytes;
 
                                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
-                                        field->data = cur_raw;
-                                        cur_raw += field->len;
+                                        field->data = raw_it;
+                                        raw_it += field->len;
                                 }
                                         break;
                                 case FIELD_BINARY_CUSTOM: {
                                         u8 nbytes;
                                         /** read mime type str_buf */
-                                        uintvar_stream_t mlen = (uintvar_stream_t) cur_raw;
+                                        uintvar_stream_t mlen = (uintvar_stream_t) raw_it;
                                         field->mime_len = UINTVAR_STREAM_READ(&nbytes, mlen);
-                                        cur_raw += nbytes;
+                                        raw_it += nbytes;
 
-                                        field->mime = (const char *) cur_raw;
-                                        cur_raw += field->mime_len;
+                                        field->mime = (const char *) raw_it;
+                                        raw_it += field->mime_len;
 
                                         /** read blob length */
-                                        uintvar_stream_t len = (uintvar_stream_t) cur_raw;
+                                        uintvar_stream_t len = (uintvar_stream_t) raw_it;
                                         field->len = UINTVAR_STREAM_READ(&nbytes, len);
-                                        cur_raw += nbytes;
+                                        raw_it += nbytes;
 
                                         /** the mem points now to the actual blob data, which is used by the iterator to set the field */
-                                        field->data = cur_raw;
-                                        cur_raw += field->len;
+                                        field->data = raw_it;
+                                        raw_it += field->len;
                                 }
                                         break;
                                 case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -470,10 +468,10 @@ item *arr_it_next(arr_it *it)
                                 case FIELD_DERIVED_ARRAY_SORTED_SET:
                                         internal_field_create(field);
                                         field->arr_it.created = true;
-                                        internal_arr_it_create(field->array, &it->file, last_off);
+                                        internal_arr_it_create(field->array, &it->file, begin_off);
                                         field->data = MEMFILE_PEEK__FAST(&it->file);
                                         carbon_field_skip_array__fast(&it->file, field);
-                                        cur_raw = MEMFILE_RAW_DATA(&it->file);
+                                        raw_it = MEMFILE_RAW_DATA(&it->file);
                                         break;
                                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -518,10 +516,10 @@ item *arr_it_next(arr_it *it)
                                         internal_field_create(field);
                                         field->col_it_created = true;
 
-                                        col_it_create(field->column, &it->file, last_off);
-                                        field->data = begin_raw;
+                                        col_it_create(field->column, &it->file, begin_off);
+                                        field->data = raw_begin;
                                         carbon_field_skip_column__fast(&it->file, field);
-                                        cur_raw = MEMFILE_RAW_DATA(&it->file);
+                                        raw_it = MEMFILE_RAW_DATA(&it->file);
                                 }
                                         break;
                                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
@@ -531,10 +529,10 @@ item *arr_it_next(arr_it *it)
                                         internal_field_create(field);
                                         field->obj_it.created = true;
 
-                                        internal_obj_it_create(field->object, &it->file, last_off);
-                                        field->data = cur_raw;
+                                        internal_obj_it_create(field->object, &it->file, begin_off);
+                                        field->data = raw_it;
                                         carbon_field_skip_object__fast(&it->file, field);
-                                        cur_raw = MEMFILE_RAW_DATA(&it->file);
+                                        raw_it = MEMFILE_RAW_DATA(&it->file);
                                         break;
                                 default:
                                         error(ERR_CORRUPTED, NULL);
@@ -543,13 +541,13 @@ item *arr_it_next(arr_it *it)
                 }
 
                 it->pos++;
-                it->last_off = last_off;
-                MEMFILE_SEEK__UNSAFE(&it->file, last_off + (cur_raw - begin_raw));
+                it->last_off = begin_off;
+                MEMFILE_SEEK__UNSAFE(&it->file, begin_off + (raw_it - raw_begin));
 
                 INTERNAL_ITEM_CREATE_FROM_ARRAY(&(it->item), it);
                 return &(it->item);
         } else {
-                MEMFILE_SEEK__UNSAFE(&it->file, last_off + (cur_raw - begin_raw));
+                MEMFILE_SEEK__UNSAFE(&it->file, begin_off + (raw_it - raw_begin));
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
                 INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 it->eof = true;

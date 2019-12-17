@@ -420,15 +420,13 @@ bool col_it_remove(col_it *it, u32 pos)
 
 bool col_it_is_multiset(col_it *it)
 {
-        abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->list_type);
+        abstract_type_class_e type_class = abstract_list_derivable_to_class(it->list_type);
         return abstract_is_multiset(type_class);
 }
 
 bool col_it_is_sorted(col_it *it)
 {
-        abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->list_type);
+        abstract_type_class_e type_class = abstract_list_derivable_to_class(it->list_type);
         return abstract_is_sorted(type_class);
 }
 

@@ -365,14 +365,62 @@ typedef enum map_type
         abstract_class_to_list_derivable_ret;                                                            \
 })
 
-/** Converts a list derivable type to an abstract type class. In case of error, the function fails. */
-bool abstract_list_derivable_to_class(abstract_type_class_e *out, list_type_e in);
+#define abstract_list_derivable_to_class(in)                                                            \
+({                                                            \
+        abstract_type_class_e abstract_list_derivable_to_class_ret;                                                            \
+        switch (in) {                                                            \
+                case LIST_UNSORTED_MULTISET:                                                            \
+                        abstract_list_derivable_to_class_ret = TYPE_UNSORTED_MULTISET;                                                            \
+                        break;                                                            \
+                case LIST_SORTED_MULTISET:                                                            \
+                        abstract_list_derivable_to_class_ret = TYPE_SORTED_MULTISET;                                                            \
+                        break;                                                            \
+                case LIST_UNSORTED_SET:                                                            \
+                        abstract_list_derivable_to_class_ret = TYPE_UNSORTED_SET;                                                            \
+                        break;                                                            \
+                case LIST_SORTED_SET:                                                            \
+                        abstract_list_derivable_to_class_ret = TYPE_SORTED_SET;                                                            \
+                        break;                                                            \
+                default:                                                            \
+                        error(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");                                                            \
+                        abstract_list_derivable_to_class_ret = TYPE_ERR;                                                            \
+                        break;                                                            \
+        }                                                            \
+        abstract_list_derivable_to_class_ret;                                                            \
+})
 
-bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_type_e in);
+#define abstract_map_derivable_to_class(in)                                                            \
+({                                                            \
+        abstract_type_class_e abstract_map_derivable_to_class_ret;                                                            \
+        switch (in) {                                                            \
+                case MAP_UNSORTED_MULTIMAP:                                                            \
+                        abstract_map_derivable_to_class_ret = TYPE_UNSORTED_MULTIMAP;                                                            \
+                        break;                                                            \
+                case MAP_SORTED_MULTIMAP:                                                            \
+                        abstract_map_derivable_to_class_ret = TYPE_SORTED_MULTIMAP;                                                            \
+                        break;                                                            \
+                case MAP_UNSORTED_MAP:                                                            \
+                        abstract_map_derivable_to_class_ret = TYPE_UNSORTED_MAP;                                                            \
+                        break;                                                            \
+                case MAP_SORTED_MAP:                                                            \
+                        abstract_map_derivable_to_class_ret = TYPE_SORTED_MAP;                                                            \
+                        break;                                                            \
+                default:                                                            \
+                        error(ERR_TYPEMISMATCH, "abstract class type does not encode a map type");                                                            \
+                        abstract_map_derivable_to_class_ret = TYPE_ERR;                                                            \
+                        break;                                                            \
+        }                                                            \
+        abstract_map_derivable_to_class_ret;                                                            \
+})
 
-/** Writes the marker for a particular base type to the actual position in the memory file, and steps
- * the memory file cursor one byte towards the end. */
-void abstract_write_base_type(memfile *memfile, sub_type_e type);
+#define abstract_write_base_type(memfile, type)                                                                        \
+{                                                                        \
+        sub_type_e abstract_write_base_type_type = type;                                                                        \
+        MEMFILE_WRITE((memfile), &abstract_write_base_type_type, sizeof(u8));                                                                        \
+}
+
+
+
 
 /** Writes the marker for the particular derived abstract type to the actual position in the memory file, and
  * steps the memory file cursor one byte towards the end. */

@@ -18,52 +18,6 @@
 #include <jakson/carbon/abstract.h>
 #include <jakson/mem/memfile.h>
 
-bool abstract_list_derivable_to_class(abstract_type_class_e *out, list_type_e in)
-{
-        switch (in) {
-                case LIST_UNSORTED_MULTISET:
-                        *out = TYPE_UNSORTED_MULTISET;
-                        break;
-                case LIST_SORTED_MULTISET:
-                        *out = TYPE_SORTED_MULTISET;
-                        break;
-                case LIST_UNSORTED_SET:
-                        *out = TYPE_UNSORTED_SET;
-                        break;
-                case LIST_SORTED_SET:
-                        *out = TYPE_SORTED_SET;
-                        break;
-                default:
-                        return error(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");
-        }
-        return true;
-}
-
-bool abstract_map_derivable_to_class(abstract_type_class_e *out, map_type_e in)
-{
-        switch (in) {
-                case MAP_UNSORTED_MULTIMAP:
-                        *out = TYPE_UNSORTED_MULTIMAP;
-                        break;
-                case MAP_SORTED_MULTIMAP:
-                        *out = TYPE_SORTED_MULTIMAP;
-                        break;
-                case MAP_UNSORTED_MAP:
-                        *out = TYPE_UNSORTED_MAP;
-                        break;
-                case MAP_SORTED_MAP:
-                        *out = TYPE_SORTED_MAP;
-                        break;
-                default:
-                        return error(ERR_TYPEMISMATCH, "abstract class type does not encode a map type");
-        }
-        return true;
-}
-
-void abstract_write_base_type(memfile *memfile, sub_type_e type)
-{
-        MEMFILE_WRITE(memfile, &type, sizeof(u8));
-}
 
 void abstract_write_derived_type(memfile *memfile, derived_e type)
 {

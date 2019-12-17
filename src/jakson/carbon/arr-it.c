@@ -609,8 +609,7 @@ bool internal_arr_it_remove(arr_it *it)
  * it is a set. In case of any error, a failure is returned. */
 bool arr_it_is_multiset(arr_it *it)
 {
-        abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->list_type);
+        abstract_type_class_e type_class = abstract_list_derivable_to_class(it->list_type);
         return abstract_is_multiset(type_class);
 }
 
@@ -618,8 +617,7 @@ bool arr_it_is_multiset(arr_it *it)
  * otherwise false. In case of any error, a failure is returned. */
 bool arr_it_is_sorted(arr_it *it)
 {
-        abstract_type_class_e type_class;
-        abstract_list_derivable_to_class(&type_class, it->list_type);
+        abstract_type_class_e type_class = abstract_list_derivable_to_class(it->list_type);
         return abstract_is_sorted(type_class);
 }
 

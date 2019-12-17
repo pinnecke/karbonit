@@ -198,15 +198,13 @@ bool internal_obj_it_prop_type(field_e *type, obj_it *it)
 
 bool obj_it_is_multimap(obj_it *it)
 {
-        abstract_type_class_e type_class;
-        abstract_map_derivable_to_class(&type_class, it->type);
+        abstract_type_class_e type_class = abstract_map_derivable_to_class(it->type);
         return abstract_is_multimap(type_class);
 }
 
 bool obj_it_is_sorted(obj_it *it)
 {
-        abstract_type_class_e type_class;
-        abstract_map_derivable_to_class(&type_class, it->type);
+        abstract_type_class_e type_class = abstract_map_derivable_to_class(it->type);
         return abstract_is_sorted(type_class);
 }
 

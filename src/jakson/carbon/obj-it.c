@@ -21,6 +21,7 @@
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/string-field.h>
 #include <jakson/carbon/prop.h>
+#include "internal.h"
 
 bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start)
 {
@@ -49,8 +50,6 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         it->type = (map_type_e) marker;
 
         it->content_begin += sizeof(u8);
-
-        internal_field_create(&it->field.value.data);
 
         obj_it_rewind(it);
 
@@ -84,8 +83,6 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
 
 bool obj_it_drop(obj_it *it)
 {
-        INTERNAL_FIELD_AUTO_CLOSE(&it->field.value.data);
-        INTERNAL_FIELD_DROP(&it->field.value.data);
         vector_drop(&it->history);
         return true;
 }
@@ -102,7 +99,6 @@ prop *obj_it_next(obj_it *it)
 {
         bool is_empty_slot;
         offset_t last_off = MEMFILE_TELL(&it->file);
-        INTERNAL_FIELD_DROP(&it->field.value.data);
         if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
                 internal_history_push(&it->history, last_off);
                 internal_prop_create(&it->prop, it);
@@ -140,6 +136,11 @@ bool obj_it_prev(obj_it *it)
         } else {
                 return false;
         }
+}
+
+void *internal_obj_it_memfile(obj_it *it)
+{
+        return MEMFILE_RAW_DATA(&it->file);
 }
 
 offset_t internal_obj_it_memfile_pos(obj_it *it)
@@ -228,8 +229,19 @@ bool internal_obj_it_insert_begin(insert *in, obj_it *it)
 
 void internal_obj_it_insert_end(insert *in)
 {
-        UNUSED(in)
-        /* nothing to do */
+        switch (in->context_type) {
+                case OBJECT: internal_obj_it_adjust(in->context.object); break;
+                case ARRAY:  internal_arr_it_adjust(in->context.array); break;
+                case COLUMN: /* nothing to do */ break;
+                default:
+                        panic(ERR_NOTIMPLEMENTED);
+        }
+}
+
+void internal_obj_it_adjust(obj_it *it)
+{
+        MEMFILE_SEEK_FROM_HERE(&it->file, it->mod_size);
+        it->mod_size = 0;
 }
 
 bool internal_obj_it_fast_forward(obj_it *it)

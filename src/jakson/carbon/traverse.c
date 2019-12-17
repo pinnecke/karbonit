@@ -90,7 +90,6 @@ void traverser_run_from_record(traverser *traverse, rec *record, void *arg)
                 while ((item = arr_it_next(&it))) {
                         traverser_run_from_item(traverse, item, arg);
                 }
-                rec_read_end(&it);
         }
 
         if (traverse->visit_ops & VISIT_CALL_RECORD_EXIT) {
@@ -161,11 +160,13 @@ void traverser_run_from_item(traverser *traverse, item *i, void *arg)
 
         if (expand == PATH_EXPAND) {
                 if (item_is_array(i)) {
-                        arr_it *nested_it = item_get_array(i);
-                        traverser_run_from_array(traverse, nested_it, arg);
+                        arr_it nested_it;
+                        item_get_array(&nested_it, i);
+                        traverser_run_from_array(traverse, &nested_it, arg);
                 } else if (item_is_object(i)) {
-                        obj_it *nested_it = item_get_object(i);
-                        traverser_run_from_object(traverse, nested_it, arg);
+                        obj_it nested_it;
+                        item_get_object(&nested_it, i);
+                        traverser_run_from_object(traverse, &nested_it, arg);
                 }
         }
 
@@ -188,11 +189,13 @@ void traverser_run_from_prop(traverser *traverse, prop *p, void *arg)
 
         if (expand == PATH_EXPAND) {
                 if (prop_is_array(p)) {
-                        arr_it *nested_it = prop_get_array(p);
-                        traverser_run_from_array(traverse, nested_it, arg);
+                        arr_it nested_it;
+                        prop_get_array(&nested_it, p);
+                        traverser_run_from_array(traverse, &nested_it, arg);
                 } else if (prop_is_object(p)) {
-                        obj_it *nested_it = prop_get_object(p);
-                        traverser_run_from_object(traverse, nested_it, arg);
+                        obj_it nested_it;
+                        prop_get_object(&nested_it, p);
+                        traverser_run_from_object(traverse, &nested_it, arg);
                 }
         }
 

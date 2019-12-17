@@ -34,7 +34,6 @@ TEST(CarbonTest, CarbonRemoveCustomBinaryToEmpty)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -90,7 +89,6 @@ TEST(CarbonTest, CarbonRemoveFirstCustomBinary)
         field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_BINARY_CUSTOM);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -145,7 +143,6 @@ TEST(CarbonTest, CarbonRemoveLastCustomBinary)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -208,7 +205,6 @@ TEST(CarbonTest, CarbonRemoveMiddleCustomBinary)
         ASSERT_EQ(type, FIELD_BINARY_CUSTOM);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -273,7 +269,6 @@ TEST(CarbonTest, CarbonRemoveArrayToEmpty)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -338,7 +333,6 @@ TEST(CarbonTest, CarbonRemoveFirstArray)
         field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_ARRAY_UNSORTED_MULTISET);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -402,7 +396,6 @@ TEST(CarbonTest, CarbonRemoveLastArray)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -477,7 +470,6 @@ TEST(CarbonTest, CarbonRemoveMiddleArray)
         ASSERT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -532,42 +524,42 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         revise_iterator_open(&rev_it, &revise);
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
-        col_it *cit = item_get_column(&(rev_it.item));
+        col_it cit;
+        item_get_column(&cit, &(rev_it.item));
         field_e type;
-        u32 num_elems = COL_IT_VALUES_INFO(&type, cit);
+        u32 num_elems = COL_IT_VALUES_INFO(&type, &cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 3u);
 
-        status = col_it_remove(cit, 1);
+        status = col_it_remove(&cit, 1);
         ASSERT_TRUE(status);
-        num_elems = COL_IT_VALUES_INFO(&type, cit);
+        num_elems = COL_IT_VALUES_INFO(&type, &cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 2u);
-        values = COL_IT_U16_VALUES(&num_elems, cit);
+        values = COL_IT_U16_VALUES(&num_elems, &cit);
         ASSERT_EQ(values[0], 1);
         ASSERT_EQ(values[1], 3);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
 
-        status = col_it_remove(cit, 0);
+        status = col_it_remove(&cit, 0);
         ASSERT_TRUE(status);
-        num_elems = COL_IT_VALUES_INFO(&type, cit);
+        num_elems = COL_IT_VALUES_INFO(&type, &cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 1u);
-        values = COL_IT_U16_VALUES(&num_elems, cit);
+        values = COL_IT_U16_VALUES(&num_elems, &cit);
         ASSERT_EQ(values[0], 3);
 
         char *json_3 = strdup(rec_to_json(&sb, &rev_doc));
 
-        status = col_it_remove(cit, 0);
+        status = col_it_remove(&cit, 0);
         ASSERT_TRUE(status);
-        num_elems = COL_IT_VALUES_INFO(&type, cit);
+        num_elems = COL_IT_VALUES_INFO(&type, &cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);
         ASSERT_EQ(num_elems, 0u);
 
         char *json_4 = strdup(rec_to_json(&sb, &rev_doc));
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         // -------------------------------------------------------------------------------------------------------------
@@ -776,7 +768,6 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         insert_float(&in, 23);
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 

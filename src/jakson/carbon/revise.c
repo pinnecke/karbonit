@@ -137,8 +137,6 @@ void revise_set_list_type(rev *context, list_type_e derivation)
         derived_e derive_marker;
         abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
         abstract_write_derived_type(&it.file, derive_marker);
-
-        revise_iterator_close(&it);
 }
 
 bool revise_iterator_open(arr_it *it, rev *context)
@@ -150,11 +148,6 @@ bool revise_iterator_open(arr_it *it, rev *context)
         return internal_arr_it_create(it, &context->revised->file, payload_start);
 }
 
-void revise_iterator_close(arr_it *it)
-{
-        arr_it_drop(it);
-}
-
 bool revise_find_begin(find *out, const char *dot, rev *context)
 {
         struct dot path;
@@ -162,11 +155,6 @@ bool revise_find_begin(find *out, const char *dot, rev *context)
         bool status = find_exec(out, &path, context->revised);
         dot_drop(&path);
         return status;
-}
-
-void revise_find_end(find *find)
-{
-        find_drop(find);
 }
 
 bool revise_remove_one(const char *dot, rec *rev_doc, rec *doc)
@@ -206,7 +194,6 @@ bool revise_remove(const char *path, rev *context)
                                         result = false;
                         }
                 }
-                dot_eval_end(&eval);
                 return result;
         } else {
                 error(ERR_DOT_PATH_PARSERR, NULL);
@@ -219,7 +206,6 @@ bool revise_pack(rev *context)
         arr_it it;
         revise_iterator_open(&it, context);
         internal_pack_array(&it);
-        revise_iterator_close(&it);
         return true;
 }
 
@@ -237,7 +223,6 @@ bool revise_shrink(rev *context)
 
         offset_t size;
         MEMBLOCK_SIZE(&size, it.file.memblock);
-        revise_iterator_close(&it);
         return true;
 }
 
@@ -251,6 +236,29 @@ bool revise_abort(rev *context)
 {
         rec_drop(context->revised);
         return true;
+}
+
+static void optimize_column(col_it *column, memfile *file)
+{
+        internal_pack_column(column);
+        MEMFILE_SEEK__UNSAFE(file, MEMFILE_TELL(&column->file));
+}
+
+static void optimize_array(arr_it *array, memfile *file)
+{
+        internal_pack_array(array);
+        assert(*MEMFILE_PEEK(&array->file, sizeof(char)) == MARRAY_END);
+        MEMFILE_SKIP(&array->file, sizeof(char));
+        MEMFILE_SEEK__UNSAFE(file, MEMFILE_TELL(&array->file));
+}
+
+static void optimize_object(obj_it *object, memfile *file)
+{
+        internal_pack_object(object);
+        assert(*MEMFILE_PEEK(&object->file, sizeof(char)) == MOBJECT_END);
+        MEMFILE_SKIP(&object->file, sizeof(char));
+        MEMFILE_SEEK__UNSAFE(file, MEMFILE_TELL(&object->file));
+        obj_it_drop(object);
 }
 
 static bool internal_pack_array(arr_it *it)
@@ -282,111 +290,24 @@ static bool internal_pack_array(arr_it *it)
                         final = *MEMFILE_READ(&this_array.file, sizeof(char));
                         assert(final == MARRAY_END);
                 }
-
-                arr_it_drop(&this_array);
         }
 
         /** shrink contained containers */
         {
-                while (arr_it_next(it)) {
-                        field_e type;
-                        arr_it_field_type(&type, it);
-                        switch (type) {
-                                case FIELD_NULL:
-                                case FIELD_TRUE:
-                                case FIELD_FALSE:
-                                case FIELD_STRING:
-                                case FIELD_NUMBER_U8:
-                                case FIELD_NUMBER_U16:
-                                case FIELD_NUMBER_U32:
-                                case FIELD_NUMBER_U64:
-                                case FIELD_NUMBER_I8:
-                                case FIELD_NUMBER_I16:
-                                case FIELD_NUMBER_I32:
-                                case FIELD_NUMBER_I64:
-                                case FIELD_NUMBER_FLOAT:
-                                case FIELD_BINARY:
-                                case FIELD_BINARY_CUSTOM:
-                                        /** nothing to shrink, because there are no padded zeros here */
-                                        break;
-                                case FIELD_ARRAY_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                                case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                        arr_it array;
-                                        internal_arr_it_create(&array, &it->file,
-                                                                     it->field.array->begin);
-                                        internal_pack_array(&array);
-                                        assert(*MEMFILE_PEEK(&array.file, sizeof(char)) ==
-                                                   MARRAY_END);
-                                        MEMFILE_SKIP(&array.file, sizeof(char));
-                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&array.file));
-                                        arr_it_drop(&array);
-                                }
-                                        break;
-                                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        col_it_rewind(it->field.column);
-                                        internal_pack_column(it->field.column);
-                                        MEMFILE_SEEK(&it->file,
-                                                     MEMFILE_TELL(&it->field.column->file));
-                                        break;
-                                case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                        obj_it object;
-                                        internal_obj_it_create(&object, &it->file,
-                                                                      it->field.object->content_begin -
-                                                                      sizeof(u8));
-                                        internal_pack_object(&object);
-                                        assert(*MEMFILE_PEEK(&object.file, sizeof(char)) ==
-                                                   MOBJECT_END);
-                                        MEMFILE_SKIP(&object.file, sizeof(char));
-                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&object.file));
-                                        obj_it_drop(&object);
-                                }
-                                        break;
-                                default: error(ERR_INTERNALERR, NULL);
-                                        return false;
+                item *item;
+                while ((item = arr_it_next(it))) {
+                        if (item_is_column(item)) {
+                                col_it column;
+                                item_get_column(&column, item);
+                                optimize_column(&column, &it->file);
+                        } else if (item_is_object(item)) {
+                                obj_it object;
+                                item_get_object(&object, item);
+                                optimize_object(&object, &it->file);
+                        } else if (item_is_array(item)) {
+                                arr_it array;
+                                item_get_array(&array, item);
+                                optimize_array(&array, &it->file);
                         }
                 }
         }
@@ -431,105 +352,20 @@ static bool internal_pack_object(obj_it *it)
 
         /** shrink contained containers */
         {
-                while (obj_it_next(it)) {
-                        field_e type;
-                        internal_obj_it_prop_type(&type, it);
-                        switch (type) {
-                                case FIELD_NULL:
-                                case FIELD_TRUE:
-                                case FIELD_FALSE:
-                                case FIELD_STRING:
-                                case FIELD_NUMBER_U8:
-                                case FIELD_NUMBER_U16:
-                                case FIELD_NUMBER_U32:
-                                case FIELD_NUMBER_U64:
-                                case FIELD_NUMBER_I8:
-                                case FIELD_NUMBER_I16:
-                                case FIELD_NUMBER_I32:
-                                case FIELD_NUMBER_I64:
-                                case FIELD_NUMBER_FLOAT:
-                                case FIELD_BINARY:
-                                case FIELD_BINARY_CUSTOM:
-                                        /** nothing to shrink, because there are no padded zeros here */
-                                        break;
-                                case FIELD_ARRAY_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                                case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                                        arr_it array;
-                                        internal_arr_it_create(&array, &it->file,
-                                                               it->field.value.data.array->begin);
-                                        internal_pack_array(&array);
-                                        assert(*MEMFILE_PEEK(&array.file, sizeof(char)) ==
-                                                   MARRAY_END);
-                                        MEMFILE_SKIP(&array.file, sizeof(char));
-                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&array.file));
-                                        arr_it_drop(&array);
-                                }
-                                        break;
-                                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                        col_it_rewind(it->field.value.data.column);
-                                        internal_pack_column(it->field.value.data.column);
-                                        MEMFILE_SEEK(&it->file,
-                                                     MEMFILE_TELL(&it->field.value.data.column->file));
-                                        break;
-                                case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                                        obj_it object;
-                                        internal_obj_it_create(&object, &it->file,
-                                                                      it->field.value.data.object->content_begin -
-                                                                      sizeof(u8));
-                                        internal_pack_object(&object);
-                                        assert(*MEMFILE_PEEK(&object.file, sizeof(char)) ==
-                                                   MOBJECT_END);
-                                        MEMFILE_SKIP(&object.file, sizeof(char));
-                                        MEMFILE_SEEK(&it->file, MEMFILE_TELL(&object.file));
-                                        obj_it_drop(&object);
-                                }
-                                        break;
-                                default: error(ERR_INTERNALERR, NULL);
-                                        return false;
+                prop *prop;
+                while ((prop = obj_it_next(it))) {
+                        if (prop_is_column(prop)) {
+                                col_it column;
+                                prop_get_column(&column, prop);
+                                optimize_column(&column, &it->file);
+                        } else if (prop_is_object(prop)) {
+                                obj_it object;
+                                prop_get_object(&object, prop);
+                                optimize_object(&object, &it->file);
+                        } else if (prop_is_array(prop)) {
+                                arr_it array;
+                                prop_get_array(&array, prop);
+                                optimize_array(&array, &it->file);
                         }
                 }
         }

@@ -36,11 +36,12 @@ typedef struct col_it {
 } col_it;
 
 bool col_it_create(col_it *it, memfile *memfile, offset_t begin);
-void internal_col_it_skip__fast(memfile *memfile, const field *field);
+void internal_col_it_skip__fast(col_it *col);
 bool col_it_clone(col_it *dst, col_it *src);
 bool col_it_insert(insert *in, col_it *it);
 bool col_it_fast_forward(col_it *it);
 offset_t col_it_memfilepos(col_it *it);
+void *col_it_memfile_raw(col_it *it);
 offset_t col_it_tell(col_it *it, u32 elem_idx);
 
 

@@ -467,13 +467,12 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *oit = item_get_object(&(it.item));
-        ASSERT_TRUE(obj_it_next(oit));
-        internal_obj_it_prop_type(&field_type, oit);
+        obj_it oit;
+        item_get_object(&oit, &(it.item));
+        ASSERT_TRUE(obj_it_next(&oit));
+        internal_obj_it_prop_type(&field_type, &oit);
         ASSERT_TRUE(field_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == FIELD_COLUMN_U8_UNSORTED_MULTISET);
-        obj_it_drop(oit);
-        rec_read_end(&it);
 
         str_buf sb1;
         str_buf_create(&sb1);
@@ -506,13 +505,12 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *oit = item_get_object(&(it.item));
-        ASSERT_TRUE(obj_it_next(oit));
-        internal_obj_it_prop_type(&field_type, oit);
+        obj_it oit;
+        item_get_object(&oit, &(it.item));
+        ASSERT_TRUE(obj_it_next(&oit));
+        internal_obj_it_prop_type(&field_type, &oit);
         ASSERT_TRUE(field_is_column_or_subtype(field_type));
         ASSERT_TRUE(field_type == FIELD_COLUMN_U8_UNSORTED_MULTISET);
-        obj_it_drop(oit);
-        rec_read_end(&it);
 
         str_buf sb1;
         str_buf_create(&sb1);
@@ -546,7 +544,6 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_is_number(field_type));
-        rec_read_end(&it);
 
         str_buf sb1;
         str_buf_create(&sb1);
@@ -731,33 +728,27 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        find_end(&find);
 
         ASSERT_FALSE(find_begin_from_string(&find, "1", &doc));
         ASSERT_FALSE(find_has_result(&find));
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.a", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        find_end(&find);
 
         ASSERT_FALSE(find_begin_from_string(&find, "0.c", &doc));
         ASSERT_FALSE(find_has_result(&find));
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.c", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_COLUMN_U8_UNSORTED_MULTISET);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.c.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -765,7 +756,6 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 1U);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.c.1", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -773,7 +763,6 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 2U);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.c.2", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -781,41 +770,34 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 3U);
-        find_end(&find);
 
         ASSERT_FALSE(find_begin_from_string(&find, "0.b.c.3", &doc));
         ASSERT_FALSE(find_has_result(&find));
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.d", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_ARRAY_UNSORTED_MULTISET);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.d.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "Hello", number) == 0);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.d.1", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "World", number) == 0);
-        find_end(&find);
 
         ASSERT_FALSE(find_begin_from_string(&find, "0.b.d.2", &doc));
         ASSERT_FALSE(find_has_result(&find));
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.e", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_COLUMN_U8_UNSORTED_MULTISET);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.e.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -823,17 +805,14 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 4U);
-        find_end(&find);
 
         ASSERT_FALSE(find_begin_from_string(&find, "0.b.e.1", &doc));
         ASSERT_FALSE(find_has_result(&find));
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.f", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_ARRAY_UNSORTED_MULTISET);
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.f.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -841,18 +820,15 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         ASSERT_EQ(result_type, FIELD_STRING);
 
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "!", number) == 0);
-        find_end(&find);
 
         ASSERT_FALSE(find_begin_from_string(&find, "0.b.f.1", &doc));
         ASSERT_FALSE(find_has_result(&find));
-        find_end(&find);
 
         ASSERT_TRUE(find_begin_from_string(&find, "0.b.\"the key\"", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "x", number) == 0);
-        find_end(&find);
 
         rec_drop(&doc);
 }
@@ -903,103 +879,78 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
                 for (u32 i = 0; i < max; i++) {
                         ASSERT_TRUE(find_exec(&find, &path1, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_FALSE(find_exec(&find, &path2, &doc));
                         ASSERT_FALSE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path3, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path4, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_FALSE(find_exec(&find, &path5, &doc));
                         ASSERT_FALSE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path6, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path7, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path8, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path9, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_FALSE(find_exec(&find, &path10, &doc));
                         ASSERT_FALSE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path11, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path12, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path13, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_FALSE(find_exec(&find, &path14, &doc));
                         ASSERT_FALSE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path15, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path16, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_FALSE(find_exec(&find, &path17, &doc));
                         ASSERT_FALSE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path18, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path19, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_FALSE(find_exec(&find, &path20, &doc));
                         ASSERT_FALSE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path21, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path22, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path23, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path24, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
 
                         ASSERT_TRUE(find_exec(&find, &path25, &doc));
                         ASSERT_TRUE(find_has_result(&find));
-                        find_end(&find);
                 }
                 timestamp t2 = wallclock();
                 printf("%.4f\n", 1.0f/((t2-t1)/(float)max/(26*1000.0f)));

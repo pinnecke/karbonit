@@ -245,7 +245,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
         it->mod_size = 0;
         it->eof = false;
         it->field_offset = 0;
-        it->pos = (u64) -1;
+        it->pos = 0;
         it->last_off = 0;
 
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
@@ -262,8 +262,6 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
         }
 
         __arr_it_load_abstract_type(it, marker);
-
-        internal_field_create(&it->field);
 
         arr_it_rewind(it);
 
@@ -287,7 +285,7 @@ bool internal_arr_it_clone(arr_it *dst, arr_it *src)
         internal_field_clone(&dst->field, &src->field);
         dst->field_offset = src->field_offset;
         dst->pos = src->pos;
-        INTERNAL_ITEM_CREATE_FROM_ARRAY(&dst->item, dst);
+        INTERNAL_ITEM_CREATE_FROM_ARRAY(&dst->item, dst, src->pos, &dst->field, dst->field.type);
         return true;
 }
 
@@ -309,16 +307,10 @@ bool arr_it_is_empty(arr_it *it)
         return arr_it_next(it);
 }
 
-void arr_it_drop(arr_it *it)
-{
-        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
-        INTERNAL_FIELD_DROP(&it->field);
-}
-
 bool arr_it_rewind(arr_it *it)
 {
         error_if_and_return(it->begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
-        it->pos = (u64) -1;
+        it->pos = 0;
         return MEMFILE_SEEK(&it->file, it->begin + sizeof(u8));
 }
 
@@ -327,8 +319,6 @@ bool arr_it_has_next(arr_it *it)
         arr_it cpy;
         internal_arr_it_clone(&cpy, it);
         bool has_next = arr_it_next(&cpy);
-        arr_it_drop(&cpy);
-
         return has_next;
 }
 
@@ -344,22 +334,17 @@ bool arr_it_is_unit(arr_it *it)
                 ret = !has_next;
         }
 
-        arr_it_drop(&cpy);
         return ret;
+}
+
+void internal_arr_it_adjust(arr_it *it)
+{
+        MEMFILE_SEEK_FROM_HERE(&it->file, it->mod_size);
+        it->mod_size = 0;
 }
 
 item *arr_it_next(arr_it *it)
 {
-        // auto adjust pos after mod
-        {
-                if (INTERNAL_FIELD_OBJECT_IT_OPENED(&it->field)) {
-                        MEMFILE_SKIP(&it->file, it->field.object->mod_size);
-                } else if (INTERNAL_FIELD_ARRAY_OPENED(&it->field)) {
-                        //MEMFILE_SKIP(&it->mem, it->field.array->mod_size);
-                        //abort(); // TODO: implement!
-                }
-        }
-
         offset_t begin_off = MEMFILE_TELL(&it->file);
         u8 *raw_begin = MEMFILE_RAW_DATA(&it->file);
         u8 *raw_it = raw_begin;
@@ -370,9 +355,6 @@ item *arr_it_next(arr_it *it)
         while ((c = *raw_it) == 0) {
                 raw_it++;
         }
-
-        INTERNAL_FIELD_DROP(&it->field);
-        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
 
         if (c != MARRAY_END) {
                 // read array field read fast
@@ -465,14 +447,14 @@ item *arr_it_next(arr_it *it)
                                 case FIELD_ARRAY_UNSORTED_MULTISET:
                                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                                case FIELD_DERIVED_ARRAY_SORTED_SET:
-                                        internal_field_create(field);
-                                        field->arr_it.created = true;
-                                        internal_arr_it_create(field->array, &it->file, begin_off);
-                                        field->data = MEMFILE_PEEK__FAST(&it->file);
-                                        carbon_field_skip_array__fast(&it->file, field);
-                                        raw_it = MEMFILE_RAW_DATA(&it->file);
-                                        break;
+                                case FIELD_DERIVED_ARRAY_SORTED_SET: {
+                                        arr_it forward_it;
+                                        field->data = raw_begin;
+
+                                        internal_arr_it_create(&forward_it, &it->file, begin_off);
+                                        internal_arr_it_fast_forward(&forward_it);
+                                        raw_it = internal_arr_it_memfile(&forward_it);
+                                } break;
                                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
@@ -513,46 +495,49 @@ item *arr_it_next(arr_it *it)
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                                        internal_field_create(field);
-                                        field->col_it_created = true;
-
-                                        col_it_create(field->column, &it->file, begin_off);
+                                        col_it forward_it;
                                         field->data = raw_begin;
-                                        carbon_field_skip_column__fast(&it->file, field);
-                                        raw_it = MEMFILE_RAW_DATA(&it->file);
-                                }
-                                        break;
+
+                                        col_it_create(&forward_it, &it->file, begin_off);
+                                        internal_col_it_skip__fast(&forward_it);
+                                        raw_it = col_it_memfile_raw(&forward_it);
+                                } break;
                                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                                case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                                        internal_field_create(field);
-                                        field->obj_it.created = true;
-
-                                        internal_obj_it_create(field->object, &it->file, begin_off);
+                                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                                        obj_it forward_it;
                                         field->data = raw_it;
-                                        carbon_field_skip_object__fast(&it->file, field);
-                                        raw_it = MEMFILE_RAW_DATA(&it->file);
-                                        break;
+
+                                        internal_obj_it_create(&forward_it, &it->file, begin_off);
+                                        internal_obj_it_fast_forward(&forward_it);
+                                        raw_it = internal_obj_it_memfile(&forward_it);
+                                        obj_it_drop(&forward_it);
+                                } break;
                                 default:
                                         error(ERR_CORRUPTED, NULL);
                                         break;
                         }
                 }
 
+                INTERNAL_ITEM_CREATE_FROM_ARRAY(&(it->item), it, it->pos, &(it->field),it->field.type);
                 it->pos++;
+
                 it->last_off = begin_off;
                 MEMFILE_SEEK__UNSAFE(&it->file, begin_off + (raw_it - raw_begin));
 
-                INTERNAL_ITEM_CREATE_FROM_ARRAY(&(it->item), it);
                 return &(it->item);
         } else {
                 MEMFILE_SEEK__UNSAFE(&it->file, begin_off + (raw_it - raw_begin));
                 assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
-                INTERNAL_FIELD_AUTO_CLOSE(&it->field);
                 it->eof = true;
                 return NULL;
         }
+}
+
+void *internal_arr_it_memfile(arr_it *it)
+{
+        return MEMFILE_RAW_DATA(&it->file);
 }
 
 offset_t internal_arr_it_memfilepos(arr_it *it)
@@ -581,7 +566,8 @@ bool internal_arr_it_offset(offset_t *off, arr_it *it)
 
 bool internal_arr_it_fast_forward(arr_it *it)
 {
-        while (arr_it_next(it)) {}
+        while (arr_it_next(it))
+                { }
 
         assert(*MEMFILE_PEEK(&it->file, sizeof(char)) == MARRAY_END);
         MEMFILE_SKIP(&it->file, sizeof(char));

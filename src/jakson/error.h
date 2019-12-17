@@ -186,17 +186,32 @@ extern _Thread_local struct err_info {
         const char *file;
         u32 line;
         char *details;
+        bool noabort;
 } g_err;
 
+#ifndef NDEBUG
+#define error(code, msg)                        \
+({                                              \
+    error_set(code, __FILE__, __LINE__, msg);   \
+    error_print(stderr);                        \
+    if (!g_err.noabort) { abort(); }            \
+    false;                                      \
+})
+#else
 #define error(code, msg)                        \
 ({                                              \
     error_set(code, __FILE__, __LINE__, msg);   \
     error_print(stderr);                        \
     false;                                      \
 })
+#endif
+
 
 #define error_if_and_return(expr, code, msg) { if ((expr)) { error(code, msg); return false; }}
 #define panic(code) { error(code, "panic condition"); abort(); }
+
+void error_abort_enable();
+void error_abort_disable();
 
 void error_set(int code, const char *file, u32 line, const char *details);
 void error_clear();

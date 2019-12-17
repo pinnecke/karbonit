@@ -116,8 +116,9 @@ static void json_print_field(str_buf *str, const item *field, const traverse_inf
                         binary_field value = item_get_binary(field, NULL_BINARY);
                         _json_from_binary(str, &value);
                 } else if (item_is_column(field)) {
-                        col_it *it = item_get_column(field);
-                        _json_from_column(str, it);
+                        col_it it;
+                        item_get_column(&it, field);
+                        _json_from_column(str, &it);
                 }
         }
 }

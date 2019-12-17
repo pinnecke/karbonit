@@ -229,10 +229,6 @@ bool carbon_field_skip_16(memfile *file);
 bool carbon_field_skip_32(memfile *file);
 bool carbon_field_skip_64(memfile *file);
 
-void carbon_field_skip_object__fast(memfile *file, const field *field);
-void carbon_field_skip_array__fast(memfile *file, const field *field);
-void carbon_field_skip_column__fast(memfile *file, const field *field);
-
 #define CARBON_FIELD_SKIP_BINARY__FAST(memfile, field)                                                                \
         /** skip blob */                                                                \
         MEMFILE_SKIP__UNSAFE((memfile), (field)->len);

@@ -26,7 +26,6 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         insert_u8(&in, 'X');
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 
@@ -42,7 +41,6 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         update_set_u8(&revise, "0", 'Y');
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 
@@ -61,7 +59,6 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         update_set_u8(&revise, "2", 'C');
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 
@@ -80,7 +77,6 @@ TEST(CarbonTest, CarbonUpdateU8Simple)
         update_set_u8(&revise, "2", 3);
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 
@@ -122,7 +118,6 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         insert_float(&in, 23);
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 
@@ -139,7 +134,6 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         update_set_i64(&revise, "1", 1024);
 
         arr_it_insert_end(&in);
-        revise_iterator_close(&it);
         revise_end(&revise);
 
 
@@ -160,7 +154,6 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         find_result_unsigned(&result, &find);
-        find_end(&find);
         ASSERT_EQ(result, 1U);
 
         find_begin_from_string(&find, "1", &rev_doc2);
@@ -168,7 +161,6 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_NUMBER_I64);
         find_result_signed(&resulti64, &find);
-        find_end(&find);
         ASSERT_EQ(resulti64, 1024U);
 
         find_begin_from_string(&find, "2", &rev_doc2);
@@ -176,7 +168,6 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesSimple)
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_NUMBER_FLOAT);
         find_result_float(&resultfloat, &find);
-        find_end(&find);
         ASSERT_GE(resultfloat, 22.9f);
         ASSERT_LE(resultfloat, 24.0f);
 
@@ -218,7 +209,6 @@ TEST(CarbonTest, CarbonRemoveConstantsToEmpty)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -271,7 +261,6 @@ TEST(CarbonTest, CarbonRemoveFirstConstants)
         field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_FALSE);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -323,7 +312,6 @@ TEST(CarbonTest, CarbonRemoveLastConstants)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -381,7 +369,6 @@ TEST(CarbonTest, CarbonRemoveMiddleConstants)
         ASSERT_EQ(type, FIELD_FALSE);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -429,7 +416,6 @@ TEST(CarbonTest, CarbonRemoveNumberToEmpty)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -482,7 +468,6 @@ TEST(CarbonTest, CarbonRemoveFirstNumber)
         field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_NUMBER_U32);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -534,7 +519,6 @@ TEST(CarbonTest, CarbonRemoveLastNumber)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -592,7 +576,6 @@ TEST(CarbonTest, CarbonRemoveMiddleNumber)
         ASSERT_EQ(type, FIELD_NUMBER_U32);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -641,7 +624,6 @@ TEST(CarbonTest, CarbonRemoveStringToEmpty)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -694,7 +676,6 @@ TEST(CarbonTest, CarbonRemoveFirstString)
         field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_STRING);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -746,7 +727,6 @@ TEST(CarbonTest, CarbonRemoveLastString)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -804,7 +784,6 @@ TEST(CarbonTest, CarbonRemoveMiddleString)
         ASSERT_EQ(type, FIELD_STRING);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -857,7 +836,6 @@ TEST(CarbonTest, CarbonRemoveBinaryToEmpty)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -913,7 +891,6 @@ TEST(CarbonTest, CarbonRemoveFirstBinary)
         field_e next_type;
         arr_it_field_type(&next_type, &rev_it);
         ASSERT_EQ(next_type, FIELD_BINARY);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -968,7 +945,6 @@ TEST(CarbonTest, CarbonRemoveLastBinary)
         internal_arr_it_remove(&rev_it);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 
@@ -1031,7 +1007,6 @@ TEST(CarbonTest, CarbonRemoveMiddleBinary)
         ASSERT_EQ(type, FIELD_BINARY);
         has_next = arr_it_next(&rev_it);
         ASSERT_FALSE(has_next);
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
         // -------------------------------------------------------------------------------------------------------------
 

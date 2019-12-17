@@ -166,8 +166,9 @@ static void markers_print_field(str_buf *str, const item *field, const traverse_
                         str_buf_add(str, "]]");
                 } else if (item_is_column(field)) {
                         str_buf_add(str, "[column:<");
-                        col_it *it = item_get_column(field);
-                        col_it_print(str, it);
+                        col_it it;
+                        item_get_column(&it, field);
+                        col_it_print(str, &it);
                         str_buf_add(str, ">]");
                 }
         }

@@ -34,7 +34,6 @@ typedef struct dot_eval {
 
 void dot_eval_begin(dot_eval *eval, const dot *path, rec *doc);
 bool dot_eval_begin_mutable(dot_eval *eval, const dot *path, rev *context);
-bool dot_eval_end(dot_eval *state);
 
 bool dot_eval_status(pstatus_e *status, dot_eval *state);
 

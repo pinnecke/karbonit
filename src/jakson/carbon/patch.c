@@ -26,11 +26,6 @@ void patch_begin(arr_it *it, rec *doc)
         INTERNAL_ARR_IT_SET_MODE(it, READ_WRITE);
 }
 
-void patch_end(arr_it *it)
-{
-        arr_it_drop(it);
-}
-
 void patch_find_begin(find *out, const char *dot, rec *doc)
 {
         doc->file.mode = READ_WRITE;
@@ -40,5 +35,4 @@ void patch_find_begin(find *out, const char *dot, rec *doc)
 void patch_find_end(find *find)
 {
         find->doc->file.mode = READ_ONLY;
-        find_end(find);
 }

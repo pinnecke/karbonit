@@ -65,6 +65,7 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src);
 
 bool internal_obj_it_fast_forward(obj_it *it);
 
+void *internal_obj_it_memfile(obj_it *it);
 offset_t internal_obj_it_memfile_pos(obj_it *it);
 bool internal_obj_it_tell(offset_t *key_off, offset_t *value_off, obj_it *it);
 
@@ -74,6 +75,8 @@ bool internal_obj_it_prop_type(field_e *type, obj_it *it);
 
 bool internal_obj_it_insert_begin(insert *in, obj_it *it);
 void internal_obj_it_insert_end(insert *in);
+
+void internal_obj_it_adjust(obj_it *it);
 
 bool internal_obj_it_update_name(obj_it *it, const char *key);
 bool internal_obj_it_update_u8(obj_it *it, u8 value);

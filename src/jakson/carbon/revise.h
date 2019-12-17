@@ -43,10 +43,8 @@ bool revise_key_set_string(rev *context, const char *key_value);
 void revise_set_list_type(rev *context, list_type_e derivation);
 
 bool revise_iterator_open(arr_it *it, rev *context);
-void revise_iterator_close(arr_it *it);
 
 bool revise_find_begin(find *out, const char *dot, rev *context);
-void revise_find_end(find *find);
 
 bool revise_remove(const char *dot, rev *context);
 bool revise_remove_one(const char *dot, rec *rev_doc, rec *doc);

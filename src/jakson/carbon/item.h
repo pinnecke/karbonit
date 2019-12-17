@@ -50,9 +50,6 @@ typedef struct item
         float number_float;
         string_field string;
         binary_field binary;
-        arr_it *array;
-        col_it *column;
-        obj_it *object;
     } value;
 } item;
 
@@ -131,14 +128,21 @@ typedef struct item
 #define item_get_binary(item, default_value)                                                                    \
         INTERNAL_ITEM_GET_VALUE(item, binary, default_value)
 
-#define item_get_array(item)                                                                                    \
-        INTERNAL_ITEM_GET_VALUE(item, array, NULL)
+#define INTERNAL_ITEM_GET_ITERATOR(it, item, create_fn)                                                                 \
+        if (likely((item)->parent_type == UNTYPED_ARRAY)) {                                                                                   \
+                create_fn((it), &((item)->parent.object->file), (item)->parent.array->field_offset);                                                                                        \
+        } else {                                                                                   \
+                create_fn((it), &((item)->parent.array->file), (item)->parent.object->field.value.start);                                                                                      \
+        }
 
-#define item_get_column(item)                                                                                   \
-        INTERNAL_ITEM_GET_VALUE(item, column, NULL)
+#define item_get_array(it, item)                                                                                    \
+        INTERNAL_ITEM_GET_ITERATOR(it, item, internal_arr_it_create)
 
-#define item_get_object(item)                                                                                   \
-        INTERNAL_ITEM_GET_VALUE(item, object, NULL)
+#define item_get_column(it, item)                                                                                   \
+        INTERNAL_ITEM_GET_ITERATOR(it, item, col_it_create)
+
+#define item_get_object(it, item)                                                                                   \
+        INTERNAL_ITEM_GET_ITERATOR(it, item, internal_obj_it_create)
 
 #define item_remove(item)                                                                                       \
         ((item)->parent == UNTYPED_ARRAY ? internal_arr_it_remove((item)->parent.array) :                  \
@@ -316,13 +320,10 @@ typedef struct item
         } else if (field_is_boolean(field_type) && !field_is_list_or_subtype(field_type)) {                                                               \
                 (item)->value_type = field_type == FIELD_TRUE ? ITEM_TRUE : ITEM_FALSE;                                                               \
         } else if (field_is_array_or_subtype(field_type)) {                                                               \
-                (item)->value.array = internal_field_array_value((field));                                                               \
                 (item)->value_type = ITEM_ARRAY;                                                               \
         } else if (field_is_column_or_subtype(field_type)) {                                                               \
-                (item)->value.column = internal_field_column_value((field));                                                               \
                 (item)->value_type = ITEM_COLUMN;                                                               \
         } else if (field_is_object_or_subtype(field_type)) {                                                               \
-                (item)->value.object = internal_field_object_value((field));                                                               \
                 (item)->value_type = ITEM_OBJECT;                                                               \
         } else if (field_is_null(field_type)) {                                                               \
                 (item)->value_type = ITEM_NULL;                                                               \
@@ -336,13 +337,12 @@ typedef struct item
         status;                                                               \
 })
 
-#define INTERNAL_ITEM_CREATE_FROM_ARRAY(item, arr_it)                                                   \
+#define INTERNAL_ITEM_CREATE_FROM_ARRAY(item, parent_arr_it, pos, field, field_type)                                                   \
 ({                                                                                                       \
         (item)->parent_type = UNTYPED_ARRAY;                                                              \
-        (item)->parent.array = (arr_it);                                                                    \
-        (item)->idx = (arr_it)->pos;                                                                        \
-        field_e field_type = (arr_it)->field.type;                                                        \
-        (ITEM_SETUP_VALUE((item), field_type, &(arr_it)->field));                                           \
+        (item)->parent.array = parent_arr_it;                                                                  \
+        (item)->idx = (pos);                                                                        \
+        ITEM_SETUP_VALUE((item), (field_type), (field));                                           \
 })
 
 bool internal_item_create_from_object(item *item, obj_it *parent);

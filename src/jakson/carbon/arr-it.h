@@ -27,23 +27,12 @@ extern "C" {
 //  public structures
 // ---------------------------------------------------------------------------------------------------------------------
 
-typedef struct {
-        bool created;
-        bool accessed;
-} nested_it;
-
 typedef struct field {
         field_e type;
         const void *data;
         u64 len;
         const char *mime;
         u64 mime_len;
-        nested_it arr_it;
-        nested_it obj_it;
-        bool col_it_created;
-        struct arr_it *array;
-        struct col_it *column;
-        struct obj_it *object;
 } field;
 
 typedef struct arr_it {
@@ -58,16 +47,12 @@ typedef struct arr_it {
         offset_t last_off;
         field field;
         offset_t field_offset;
+        void *data;
 } arr_it;
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  public interface
 // ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Drops the iterator.
- */
-void arr_it_drop(arr_it *it);
 
 /**
  * Positions the iterator at the beginning of this array.
@@ -113,6 +98,7 @@ void arr_it_update_type(arr_it *it, list_type_e derivation);
 bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start);
 bool internal_arr_it_copy(arr_it *dst, arr_it *src);
 bool internal_arr_it_clone(arr_it *dst, arr_it *src);
+void internal_arr_it_adjust(arr_it *it);
 
 #define INTERNAL_ARR_IT_SET_MODE(it, access_mode_e)                                                                    \
         (it)->file.mode = (access_mode_e)
@@ -156,6 +142,7 @@ bool internal_arr_it_update_from_column(arr_it *it, const col_it *src);
 
 bool arr_it_field_type(field_e *type, arr_it *it);
 
+void *internal_arr_it_memfile(arr_it *it);
 offset_t internal_arr_it_memfilepos(arr_it *it);
 offset_t internal_arr_it_tell(arr_it *it);
 bool internal_arr_it_offset(offset_t *off, arr_it *it);

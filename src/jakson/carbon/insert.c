@@ -557,8 +557,6 @@ bool insert_array_end(arr_state *state_in)
         MEMFILE_SKIP(&scan.file, 1);
 
         MEMFILE_SEEK(&state_in->parent->file, MEMFILE_TELL(&scan.file) - 1);
-        arr_it_drop(&scan);
-        arr_it_drop(state_in->array);
         free(state_in->array);
         return true;
 }

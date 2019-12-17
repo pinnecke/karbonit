@@ -8,14 +8,18 @@
 TEST(CarbonTest, InvalidObject) {
         rec carbon;
         const char *json_in = "{\"foo\"}";
+        error_abort_disable();
         bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        error_abort_enable();
         ASSERT_FALSE(status);
 }
 
 TEST(CarbonTest, EmptyInput) {
         rec carbon;
         const char *json_in = "";
+        error_abort_disable();
         bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        error_abort_enable();
         ASSERT_FALSE(status);
 }
 

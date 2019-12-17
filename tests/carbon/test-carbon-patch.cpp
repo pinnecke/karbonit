@@ -6,8 +6,8 @@ TEST(TestCarbonPatch, CreatePatch) {
 
         rec doc;
         u64 hash_original, hash_patch_1, hash_patch_2;
-        arr_it it, *arr;
-        obj_it *obj;
+        arr_it it, arr;
+        obj_it obj;
         field_e type;
         str_buf buffer1, buffer2, buffer3;
 
@@ -27,22 +27,21 @@ TEST(TestCarbonPatch, CreatePatch) {
                 {
                         arr_it_field_type(&type, &it);
                         EXPECT_TRUE(type == FIELD_OBJECT_UNSORTED_MULTIMAP);
-                        obj = item_get_object(&(it.item));
+                        item_get_object(&obj, &(it.item))
                         {
-                                obj_it_next(obj);
-                                internal_obj_it_prop_type(&type, obj);
+                                obj_it_next(&obj);
+                                internal_obj_it_prop_type(&type, &obj);
                                 EXPECT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
-                                arr = item_get_array(&obj->prop.value);
+                                item_get_array(&arr, &obj.prop.value);
                                 {
-                                        arr_it_next(arr); /* { ...: [1,...] } */
-                                        internal_arr_it_update_u8(arr, 42);
-                                        arr_it_next(arr); /* { ...: [..., "y",...] } */
-                                        arr_it_next(arr); /* { ...: [..., ..., 3] } */
-                                        internal_arr_it_update_u8(arr, 23);
+                                        arr_it_next(&arr); /* { ...: [1,...] } */
+                                        internal_arr_it_update_u8(&arr, 42);
+                                        arr_it_next(&arr); /* { ...: [..., "y",...] } */
+                                        arr_it_next(&arr); /* { ...: [..., ..., 3] } */
+                                        internal_arr_it_update_u8(&arr, 23);
                                 }
                         }
                 }
-                patch_end(&it);
         }
 
         const char *json_patch_1 = rec_to_json(&buffer2, &doc);

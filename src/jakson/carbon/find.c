@@ -48,72 +48,6 @@ bool find_begin_from_dot(find *out, const dot *path, rec *doc)
         return find_has_result(out);
 }
 
-void find_end(find *find)
-{
-        if (find_has_result(find)) {
-                field_e type;
-                find_result_type(&type, find);
-                switch (type) {
-                        case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                        case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                        case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                        case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                                obj_it_drop(find->value.object);
-                                break;
-                        case FIELD_ARRAY_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                        case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                        case FIELD_DERIVED_ARRAY_SORTED_SET:
-                                arr_it_drop(find->value.array);
-                                break;
-                        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                                break;
-                        default:
-                                break;
-                }
-                find_drop(find);
-        }
-}
-
 bool find_exec(find *find, const dot *path, rec *doc)
 {
         ZERO_MEMORY(find, sizeof(find));
@@ -445,7 +379,7 @@ arr_it *find_result_array(find *find)
                 return NULL;
         }
 
-        return find->value.array;
+        return &find->value.array;
 }
 
 obj_it *find_result_object(find *find)
@@ -459,7 +393,7 @@ obj_it *find_result_object(find *find)
                 return NULL;
         }
 
-        return find->value.object;
+        return &find->value.object;
 }
 
 col_it *find_result_column(find *find)
@@ -473,7 +407,7 @@ col_it *find_result_column(find *find)
                 return NULL;
         }
 
-        return find->value.column;
+        return &find->value.column;
 }
 
 bool find_result_boolean(bool *result, find *find)
@@ -560,11 +494,6 @@ binary_field *find_result_binary(find *find)
         return &find->value.binary;
 }
 
-void find_drop(find *find)
-{
-        dot_eval_end(&find->eval);
-}
-
 static void result_from_array(find *find, arr_it *it)
 {
         find->type = it->field.type;
@@ -580,8 +509,8 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = item_get_array(&(it->item));
-                        find->value.array->file.mode = find->doc->file.mode;
+                        item_get_array(&find->value.array, &(it->item));
+                        find->value.array.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -623,15 +552,15 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column = item_get_column(&(it->item));
-                        find->value.column->file.mode = find->doc->file.mode;
+                        item_get_column(&find->value.column, &(it->item));
+                        find->value.column.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        find->value.object = item_get_object(&(it->item));
-                        find->value.object->file.mode = find->doc->file.mode;
+                        item_get_object(&find->value.object, &(it->item));
+                        find->value.object.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
                         find->value.string = item_get_string(&(it->item), NULL_STRING);
@@ -675,8 +604,8 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        find->value.array = item_get_array(&(it->prop.value));
-                        find->value.array->file.mode = find->doc->file.mode;
+                        item_get_array(&find->value.array, &(it->prop.value));
+                        find->value.array.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -718,15 +647,15 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        find->value.column = item_get_column(&(it->prop.value));
-                        find->value.column->file.mode = find->doc->file.mode;
+                        item_get_column(&find->value.column, &(it->prop.value));
+                        find->value.column.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        find->value.object = item_get_object(&(it->prop.value));
-                        find->value.object->file.mode = find->doc->file.mode;
+                        item_get_object(&find->value.object, &(it->prop.value));
+                        find->value.object.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
                         find->value.string = item_get_string(&(it->prop.value), NULL_STRING);

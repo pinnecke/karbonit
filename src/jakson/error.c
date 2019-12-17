@@ -21,8 +21,19 @@ _Thread_local struct err_info g_err = {
         .line = 0,
         .file = NULL,
         .code = ERR_NOERR,
-        .details = NULL
+        .details = NULL,
+        .noabort = false
 };
+
+void error_abort_enable()
+{
+        g_err.noabort = false;
+}
+
+void error_abort_disable()
+{
+        g_err.noabort = true;
+}
 
 void error_set(int code, const char *file, u32 line, const char *details)
 {

@@ -31,9 +31,9 @@ typedef struct find {
         field_e type;
         dot_eval eval;
         union {
-                arr_it *array;
-                col_it *column;
-                obj_it *object;
+                arr_it array;
+                col_it column;
+                obj_it object;
                 bool boolean;
                 u64 unsigned_number;
                 i64 signed_number;
@@ -45,9 +45,7 @@ typedef struct find {
 
 bool find_begin_from_string(find *out, const char *dot, rec *doc);
 bool find_begin_from_dot(find *out, const dot *path, rec *doc);
-void find_end(find *find);
 bool find_exec(find *find, const dot *path, rec *doc);
-void find_drop(find *find);
 
 bool find_has_result(find *find);
 const char *find_result_to_str(str_buf *dst_str, find *find);

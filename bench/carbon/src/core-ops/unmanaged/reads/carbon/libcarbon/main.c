@@ -89,8 +89,6 @@ static u64 bench_execute(struct read_bench_fn *self, unsigned milliseconds, u64 
                         arr_it_next(&it);
                 }
 
-                rec_read_end(&it);
-
               //  dot_clear(&extra->dot_path);
                 //  dot_add_idx(&extra->dot_path, needle_idx);
 

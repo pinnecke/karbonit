@@ -84,7 +84,6 @@ insert * rec_create_begin(rec_new *context, rec *doc,
 void rec_create_end(rec_new *context)
 {
         arr_it_insert_end(context->in);
-        revise_iterator_close(context->array);
         if (context->mode & COMPACT) {
                 revise_pack(&context->context);
         }
@@ -258,7 +257,6 @@ bool rec_is_multiset(rec *doc)
         arr_it it;
         rec_read_begin(&it, doc);
         bool ret = arr_it_is_multiset(&it);
-        rec_read_end(&it);
         return ret;
 }
 
@@ -267,7 +265,6 @@ bool rec_is_sorted(rec *doc)
         arr_it it;
         rec_read_begin(&it, doc);
         bool ret = arr_it_is_sorted(&it);
-        rec_read_end(&it);
         return ret;
 }
 
@@ -290,17 +287,11 @@ void rec_read_begin(arr_it *it, rec *doc)
         INTERNAL_ARR_IT_SET_MODE(it, READ_ONLY);
 }
 
-void rec_read_end(arr_it *it)
-{
-        patch_end(it);
-}
-
 bool rec_is_array(const rec *doc)
 {
         arr_it it;
         rec_read_begin(&it, (rec *) doc);
         bool ret = !arr_it_is_unit(&it);
-        rec_read_end(&it);
         return ret;
 }
 

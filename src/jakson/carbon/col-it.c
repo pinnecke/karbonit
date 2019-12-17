@@ -61,12 +61,12 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         return true;
 }
 
-void internal_col_it_skip__fast(memfile *memfile, const field *field)
+void internal_col_it_skip__fast(col_it *col)
 {
-        u32 skip = field->column->cap * INTERNAL_GET_TYPE_VALUE_SIZE(field->type);
-        MEMFILE_SEEK__UNSAFE(memfile, field->column->header_begin +
-                                       UINTVAR_STREAM_REQUIRED_BLOCKS(field->column->num) +
-                                       UINTVAR_STREAM_REQUIRED_BLOCKS(field->column->cap) + skip);
+        u32 skip = col->cap * INTERNAL_GET_TYPE_VALUE_SIZE(col->field_type);
+        MEMFILE_SEEK__UNSAFE(&col->file, col->header_begin +
+                                       UINTVAR_STREAM_REQUIRED_BLOCKS(col->num) +
+                                       UINTVAR_STREAM_REQUIRED_BLOCKS(col->cap) + skip);
 }
 
 bool col_it_clone(col_it *dst, col_it *src)
@@ -101,6 +101,11 @@ offset_t col_it_memfilepos(col_it *it)
                 error(ERR_NULLPTR, NULL);
                 return 0;
         }
+}
+
+void *col_it_memfile_raw(col_it *it)
+{
+        return MEMFILE_RAW_DATA(&it->file);
 }
 
 offset_t col_it_tell(col_it *it, u32 elem_idx)
@@ -665,7 +670,6 @@ static bool rewrite_column_to_array(col_it *it)
 
         arr_it_insert_end(&array_ins);
         assert(array_marker_begin < internal_arr_it_memfilepos(&array));
-        arr_it_drop(&array);
 
         MEMFILE_RESTORE_POSITION(&it->file);
         return true;

@@ -174,7 +174,6 @@ bool internal_array_skip_contents(bool *is_empty_slot, bool *is_array_end, arr_i
 
 bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
-        INTERNAL_FIELD_DROP(&it->field);
         if (array_is_slot_occupied(is_empty_slot, is_array_end, it)) {
                 internal_array_field_read(it);
                 internal_field_data_access(&it->file, &it->field);
@@ -252,11 +251,7 @@ bool internal_field_data_access(memfile *file, field *field)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        internal_field_create(field);
-                        field->arr_it.created = true;
-                        internal_arr_it_create(field->array, file,
-                                               MEMFILE_TELL(file) - sizeof(u8));
-                        break;
+
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
@@ -296,21 +291,13 @@ bool internal_field_data_access(memfile *file, field *field)
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        internal_field_create(field);
-                        field->col_it_created = true;
-                        col_it_create(field->column, file,
-                                                MEMFILE_TELL(file) - sizeof(u8));
-                }
-                        break;
+                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
+
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        internal_field_create(field);
-                        field->obj_it.created = true;
-                        internal_obj_it_create(field->object, file,
-                                                      MEMFILE_TELL(file) - sizeof(u8));
+                        field->data = MEMFILE_PEEK__FAST(file) - sizeof(u8);
                         break;
                 default:
                         return error(ERR_CORRUPTED, NULL);
@@ -382,19 +369,6 @@ bool internal_history_has(vec ofType(offset_t) *vec)
         return !vector_is_empty(vec);
 }
 
-bool internal_field_create(field *field)
-{
-        field->arr_it.created = false;
-        field->arr_it.accessed = false;
-        field->obj_it.created = false;
-        field->obj_it.accessed = false;
-        field->col_it_created = false;
-        field->array = MALLOC(sizeof(arr_it));
-        field->object = MALLOC(sizeof(obj_it));
-        field->column = MALLOC(sizeof(col_it));
-        return true;
-}
-
 bool internal_field_clone(field *dst, field *src)
 {
         dst->type = src->type;
@@ -402,46 +376,7 @@ bool internal_field_clone(field *dst, field *src)
         dst->len = src->len;
         dst->mime = src->mime;
         dst->mime_len = src->mime_len;
-        dst->arr_it.created = src->arr_it.created;
-        dst->arr_it.accessed = src->arr_it.accessed;
-        dst->obj_it.created = src->obj_it.created;
-        dst->obj_it.accessed = src->obj_it.accessed;
-        dst->col_it_created = src->col_it_created;
-        dst->array = MALLOC(sizeof(arr_it));
-        dst->object = MALLOC(sizeof(obj_it));
-        dst->column = MALLOC(sizeof(col_it));
-
-        if (INTERNAL_FIELD_OBJECT_IT_OPENED(src)) {
-                internal_obj_it_clone(dst->object, src->object);
-        } else if (INTERNAL_FIELD_COLUMN_IT_OPENED(src)) {
-                col_it_clone(dst->column, src->column);
-        } else if (INTERNAL_FIELD_ARRAY_OPENED(src)) {
-                internal_arr_it_clone(dst->array, src->array);
-        }
         return true;
-}
-
-void internal_auto_close_nested_array(field *field)
-{
-        if (INTERNAL_FIELD_ARRAY_OPENED(field)) {
-                arr_it_drop(field->array);
-                ZERO_MEMORY(field->array, sizeof(arr_it));
-        }
-}
-
-void internal_auto_close_nested_object_it(field *field)
-{
-        if (INTERNAL_FIELD_OBJECT_IT_OPENED(field)) {
-                obj_it_drop(field->object);
-                ZERO_MEMORY(field->object, sizeof(obj_it));
-        }
-}
-
-void internal_auto_close_nested_column_it(field *field)
-{
-        if (INTERNAL_FIELD_COLUMN_IT_OPENED(field)) {
-                ZERO_MEMORY(field->column, sizeof(col_it));
-        }
 }
 
 bool internal_field_field_type(field_e *type, field *field)
@@ -488,29 +423,6 @@ internal_field_binary_value(binary_field *out, field *field)
         return true;
 }
 
-arr_it *internal_field_array_value(field *field)
-{
-        error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!field_is_array_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
-        field->arr_it.accessed = true;
-        return field->array;
-}
-
-obj_it *internal_field_object_value(field *field)
-{
-        error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!field_is_object_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
-        field->obj_it.accessed = true;
-        return field->object;
-}
-
-col_it *internal_field_column_value(field *field)
-{
-        error_if_and_return(!field, ERR_NULLPTR, NULL);
-        error_if_and_return(!field_is_column_or_subtype(field->type), ERR_TYPEMISMATCH, NULL);
-        return field->column;
-}
-
 bool internal_field_remove(memfile *memfile, field_e type)
 {
         assert((field_e) *MEMFILE_PEEK(memfile, sizeof(u8)) == type);
@@ -518,154 +430,153 @@ bool internal_field_remove(memfile *memfile, field_e type)
         MEMFILE_SKIP(memfile, sizeof(u8));
         size_t rm_nbytes = sizeof(u8); /** at least the type marker must be removed */
         switch (type) {
-                case FIELD_NULL:
-                case FIELD_TRUE:
-                case FIELD_FALSE:
-                        /** nothing to do */
-                        break;
-                case FIELD_NUMBER_U8:
-                case FIELD_NUMBER_I8:
-                        rm_nbytes += sizeof(u8);
-                        break;
-                case FIELD_NUMBER_U16:
-                case FIELD_NUMBER_I16:
-                        rm_nbytes += sizeof(u16);
-                        break;
-                case FIELD_NUMBER_U32:
-                case FIELD_NUMBER_I32:
-                        rm_nbytes += sizeof(u32);
-                        break;
-                case FIELD_NUMBER_U64:
-                case FIELD_NUMBER_I64:
-                        rm_nbytes += sizeof(u64);
-                        break;
-                case FIELD_NUMBER_FLOAT:
-                        rm_nbytes += sizeof(float);
-                        break;
-                case FIELD_STRING: {
-                        u8 len_nbytes;  /** number of bytes used to store str_buf length */
-                        u64 str_len; /** the number of characters of the str_buf field */
+        case FIELD_NULL:
+        case FIELD_TRUE:
+        case FIELD_FALSE:
+                /** nothing to do */
+                break;
+        case FIELD_NUMBER_U8:
+        case FIELD_NUMBER_I8:
+                rm_nbytes += sizeof(u8);
+                break;
+        case FIELD_NUMBER_U16:
+        case FIELD_NUMBER_I16:
+                rm_nbytes += sizeof(u16);
+                break;
+        case FIELD_NUMBER_U32:
+        case FIELD_NUMBER_I32:
+                rm_nbytes += sizeof(u32);
+                break;
+        case FIELD_NUMBER_U64:
+        case FIELD_NUMBER_I64:
+                rm_nbytes += sizeof(u64);
+                break;
+        case FIELD_NUMBER_FLOAT:
+                rm_nbytes += sizeof(float);
+                break;
+        case FIELD_STRING: {
+                u8 len_nbytes;  /** number of bytes used to store str_buf length */
+                u64 str_len; /** the number of characters of the str_buf field */
 
-                        str_len = MEMFILE_READ_UINTVAR_STREAM(&len_nbytes, memfile);
+                str_len = MEMFILE_READ_UINTVAR_STREAM(&len_nbytes, memfile);
 
-                        rm_nbytes += len_nbytes + str_len;
-                }
-                        break;
-                case FIELD_BINARY: {
-                        u8 mime_nbytes; /** number of bytes for mime type */
-                        u8 blob_length_nbytes; /** number of bytes to store blob length */
-                        u64 blob_nbytes; /** number of bytes to store actual blob data */
+                rm_nbytes += len_nbytes + str_len;
+        }
+                break;
+        case FIELD_BINARY: {
+                u8 mime_nbytes; /** number of bytes for mime type */
+                u8 blob_length_nbytes; /** number of bytes to store blob length */
+                u64 blob_nbytes; /** number of bytes to store actual blob data */
 
-                        /** get bytes used for mime type id */
-                        MEMFILE_READ_UINTVAR_STREAM(&mime_nbytes, memfile);
+                /** get bytes used for mime type id */
+                MEMFILE_READ_UINTVAR_STREAM(&mime_nbytes, memfile);
 
-                        /** get bytes used for blob length info */
-                        blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);
+                /** get bytes used for blob length info */
+                blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);
 
-                        rm_nbytes += mime_nbytes + blob_length_nbytes + blob_nbytes;
-                }
-                        break;
-                case FIELD_BINARY_CUSTOM: {
-                        u8 custom_type_strlen_nbytes; /** number of bytes for type name str_buf length info */
-                        u8 custom_type_strlen; /** number of characters to encode type name str_buf */
-                        u8 blob_length_nbytes; /** number of bytes to store blob length */
-                        u64 blob_nbytes; /** number of bytes to store actual blob data */
+                rm_nbytes += mime_nbytes + blob_length_nbytes + blob_nbytes;
+        }
+                break;
+        case FIELD_BINARY_CUSTOM: {
+                u8 custom_type_strlen_nbytes; /** number of bytes for type name str_buf length info */
+                u8 custom_type_strlen; /** number of characters to encode type name str_buf */
+                u8 blob_length_nbytes; /** number of bytes to store blob length */
+                u64 blob_nbytes; /** number of bytes to store actual blob data */
 
-                        /** get bytes for custom type str_buf len, and the actual length */
-                        custom_type_strlen = MEMFILE_READ_UINTVAR_STREAM(&custom_type_strlen_nbytes, memfile);
-                        MEMFILE_SKIP(memfile, custom_type_strlen);
+                /** get bytes for custom type str_buf len, and the actual length */
+                custom_type_strlen = MEMFILE_READ_UINTVAR_STREAM(&custom_type_strlen_nbytes, memfile);
+                MEMFILE_SKIP(memfile, custom_type_strlen);
 
-                        /** get bytes used for blob length info */
-                        blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);
+                /** get bytes used for blob length info */
+                blob_nbytes = MEMFILE_READ_UINTVAR_STREAM(&blob_length_nbytes, memfile);
 
-                        rm_nbytes += custom_type_strlen_nbytes + custom_type_strlen + blob_length_nbytes + blob_nbytes;
-                }
-                        break;
-                case FIELD_ARRAY_UNSORTED_MULTISET:
-                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        arr_it it;
+                rm_nbytes += custom_type_strlen_nbytes + custom_type_strlen + blob_length_nbytes + blob_nbytes;
+        }
+                break;
+        case FIELD_ARRAY_UNSORTED_MULTISET:
+        case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
+        case FIELD_DERIVED_ARRAY_UNSORTED_SET:
+        case FIELD_DERIVED_ARRAY_SORTED_SET: {
+                arr_it it;
 
-                        offset_t begin_off = MEMFILE_TELL(memfile);
-                        internal_arr_it_create(&it, memfile, begin_off - sizeof(u8));
-                        internal_arr_it_fast_forward(&it);
-                        offset_t end_off = internal_arr_it_memfilepos(&it);
-                        arr_it_drop(&it);
+                offset_t begin_off = MEMFILE_TELL(memfile);
+                internal_arr_it_create(&it, memfile, begin_off - sizeof(u8));
+                internal_arr_it_fast_forward(&it);
+                offset_t end_off = internal_arr_it_memfilepos(&it);
 
-                        assert(begin_off < end_off);
-                        rm_nbytes += (end_off - begin_off);
-                }
-                        break;
-                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
-                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
-                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
-                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
-                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
-                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
-                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
-                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
-                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
-                case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        col_it it;
+                assert(begin_off < end_off);
+                rm_nbytes += (end_off - begin_off);
+        }
+                break;
+        case FIELD_COLUMN_U8_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_U8_SORTED_SET:
+        case FIELD_COLUMN_U16_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_U16_SORTED_SET:
+        case FIELD_COLUMN_U32_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_U32_SORTED_SET:
+        case FIELD_COLUMN_U64_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_U64_SORTED_SET:
+        case FIELD_COLUMN_I8_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_I8_SORTED_SET:
+        case FIELD_COLUMN_I16_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_I16_SORTED_SET:
+        case FIELD_COLUMN_I32_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_I32_SORTED_SET:
+        case FIELD_COLUMN_I64_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_I64_SORTED_SET:
+        case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET:
+        case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
+        case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
+        case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
+                col_it it;
 
-                        offset_t begin_off = MEMFILE_TELL(memfile);
-                        col_it_create(&it, memfile, begin_off - sizeof(u8));
-                        col_it_fast_forward(&it);
-                        offset_t end_off = col_it_memfilepos(&it);
+                offset_t begin_off = MEMFILE_TELL(memfile);
+                col_it_create(&it, memfile, begin_off - sizeof(u8));
+                col_it_fast_forward(&it);
+                offset_t end_off = col_it_memfilepos(&it);
 
-                        assert(begin_off < end_off);
-                        rm_nbytes += (end_off - begin_off);
-                }
-                        break;
-                case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                        obj_it it;
+                assert(begin_off < end_off);
+                rm_nbytes += (end_off - begin_off);
+        }
+                break;
+        case FIELD_OBJECT_UNSORTED_MULTIMAP:
+        case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
+        case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
+        case FIELD_DERIVED_OBJECT_SORTED_MAP: {
+                obj_it it;
 
-                        offset_t begin_off = MEMFILE_TELL(memfile);
-                        internal_obj_it_create(&it, memfile, begin_off - sizeof(u8));
-                        internal_obj_it_fast_forward(&it);
-                        offset_t end_off = internal_obj_it_memfile_pos(&it);
-                        obj_it_drop(&it);
+                offset_t begin_off = MEMFILE_TELL(memfile);
+                internal_obj_it_create(&it, memfile, begin_off - sizeof(u8));
+                internal_obj_it_fast_forward(&it);
+                offset_t end_off = internal_obj_it_memfile_pos(&it);
+                obj_it_drop(&it);
 
-                        assert(begin_off < end_off);
-                        rm_nbytes += (end_off - begin_off);
-                }
-                        break;
-                default:
-                        return error(ERR_INTERNALERR, NULL);
+                assert(begin_off < end_off);
+                rm_nbytes += (end_off - begin_off);
+        }
+                break;
+        default:
+                return error(ERR_INTERNALERR, NULL);
         }
         MEMFILE_SEEK(memfile, start_off);
         MEMFILE_INPLACE_REMOVE(memfile, rm_nbytes);
@@ -1227,13 +1138,11 @@ static void marker_insert(memfile *memfile, u8 marker)
 
 static bool array_is_slot_occupied(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 {
-        INTERNAL_FIELD_AUTO_CLOSE(&it->field);
         return is_slot_occupied(is_empty_slot, is_array_end, &it->file, MARRAY_END);
 }
 
 static bool object_it_is_slot_occupied(bool *is_empty_slot, bool *is_object_end, obj_it *it)
 {
-        INTERNAL_FIELD_AUTO_CLOSE(&it->field.value.data);
         return is_slot_occupied(is_empty_slot, is_object_end, &it->file, MOBJECT_END);
 }
 

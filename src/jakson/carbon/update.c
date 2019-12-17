@@ -94,8 +94,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_f
                                 return error(ERR_INTERNALERR, "unknown container type for update operation");                                            \
                         }                                                                                              \
                 }                                                                                                      \
-                dot_eval_end(&updater.eval);                                                    \
-                }                                                                                                              \
+        }                                                                                                              \
         true;                                                                                                        \
 })
 

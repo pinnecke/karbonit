@@ -58,8 +58,8 @@ TEST(TestCarbonItem, CreateId) {
                 case 7:
                         EXPECT_TRUE(item_is_array(item));
                         {
-                                arr_it *value = item_get_array(item);
-                                EXPECT_TRUE(value != NULL);
+                                arr_it value;
+                                item_get_array(&value, item)
                         }
                 break;
                 case 8:
@@ -69,7 +69,6 @@ TEST(TestCarbonItem, CreateId) {
                         FAIL();
                 }
         }
-        rec_read_end(&array);
         rec_drop(&doc);
 }
 

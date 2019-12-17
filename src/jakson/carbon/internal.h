@@ -205,19 +205,7 @@ offset_t internal_history_pop(vec ofType(offset_t) *vec);
 offset_t internal_history_peek(vec ofType(offset_t) *vec);
 bool internal_history_has(vec ofType(offset_t) *vec);
 
-bool internal_field_create(field *field);
 bool internal_field_clone(field *dst, field *src);
-
-#define INTERNAL_FIELD_DROP(field)                                                                                     \
-{                                                                                                                      \
-        INTERNAL_FIELD_AUTO_CLOSE((field));                                                                            \
-        free((field)->array);                                                                                          \
-        free((field)->object);                                                                                         \
-        free((field)->column);                                                                                         \
-        (field)->array = NULL;                                                                                         \
-        (field)->object = NULL;                                                                                        \
-        (field)->column = NULL;                                                                                        \
-}
 
 #define INTERNAL_FIELD_AUTO_CLOSE(field)                                                                               \
 {                                                                                                                      \
@@ -236,16 +224,6 @@ bool internal_field_clone(field *dst, field *src);
                 (field)->obj_it.created = false;                                                                       \
         }                                                                                                              \
 }
-
-
-#define INTERNAL_FIELD_OBJECT_IT_OPENED(field)                                                                  \
-        ((field)->obj_it.created && (field)->object != NULL)
-
-#define INTERNAL_FIELD_ARRAY_OPENED(field)                                                                  \
-        ((field)->arr_it.created && (field)->array != NULL)
-
-#define INTERNAL_FIELD_COLUMN_IT_OPENED(field)                                                                  \
-        ((field)->col_it_created && (field)->column != NULL)
 
 bool internal_field_field_type(field_e *type, field *field);
 bool internal_field_bool_value(bool *value, field *field);
@@ -319,13 +297,6 @@ bool internal_field_is_null(bool *is_null, field *field);
 
 const char *internal_field_string_value(u64 *strlen, field *field);
 bool internal_field_binary_value(binary_field *out, field *field);
-arr_it *internal_field_array_value(field *field);
-obj_it *internal_field_object_value(field *field);
-col_it *internal_field_column_value(field *field);
-
-void internal_auto_close_nested_array(field *field);
-void internal_auto_close_nested_object_it(field *field);
-void internal_auto_close_nested_column_it(field *field);
 
 bool internal_field_remove(memfile *memfile, field_e type);
 

@@ -46,25 +46,24 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        ASSERT_TRUE(obj_it_next(obj_it));
-        ASSERT_TRUE(obj_it_next(obj_it));
-        ASSERT_TRUE(obj_it_next(obj_it));
-        ASSERT_TRUE(obj_it_next(obj_it));
-        ASSERT_TRUE(obj_it_next(obj_it));
-        ASSERT_FALSE(obj_it_next(obj_it));
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        ASSERT_TRUE(obj_it_next(&obj_it));
+        ASSERT_TRUE(obj_it_next(&obj_it));
+        ASSERT_TRUE(obj_it_next(&obj_it));
+        ASSERT_TRUE(obj_it_next(&obj_it));
+        ASSERT_TRUE(obj_it_next(&obj_it));
+        ASSERT_FALSE(obj_it_next(&obj_it));
 
-        internal_obj_it_insert_begin(&nested_ins, obj_it);
+        internal_obj_it_insert_begin(&nested_ins, &obj_it);
         insert_prop_string(&nested_ins, "Hello Long Key", "Hello Long Value");
         internal_obj_it_insert_end(&nested_ins);
-        obj_it_drop(obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
@@ -123,21 +122,20 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        has_next = obj_it_next(obj_it);
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
-        auto prop_key = internal_obj_it_prop_name(obj_it);
+        auto prop_key = internal_obj_it_prop_name(&obj_it);
         ASSERT_TRUE(strncmp(prop_key.str, "1", strlen("1")) == 0);
 
-        internal_obj_it_remove(obj_it);
-        obj_it_drop(obj_it);
+        internal_obj_it_remove(&obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
@@ -203,21 +201,20 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        has_next = obj_it_next(obj_it);
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
-        auto prop_key = internal_obj_it_prop_name(obj_it);
+        auto prop_key = internal_obj_it_prop_name(&obj_it);
         ASSERT_TRUE(strncmp(prop_key.str, "1", strlen("1")) == 0);
 
-        internal_obj_it_remove(obj_it);
-        obj_it_drop(obj_it);
+        internal_obj_it_remove(&obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
@@ -280,21 +277,20 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        has_next = obj_it_next(obj_it);
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
-        auto prop_key = internal_obj_it_prop_name(obj_it);
+        auto prop_key = internal_obj_it_prop_name(&obj_it);
         ASSERT_TRUE(strncmp(prop_key.str, "1", strlen("1")) == 0);
 
-        internal_obj_it_remove(obj_it);
-        obj_it_drop(obj_it);
+        internal_obj_it_remove(&obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
@@ -362,21 +358,20 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        has_next = obj_it_next(obj_it);
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
-        auto prop_key = internal_obj_it_prop_name(obj_it);
+        auto prop_key = internal_obj_it_prop_name(&obj_it);
         ASSERT_TRUE(strncmp(prop_key.str, "1", strlen("1")) == 0);
 
-        internal_obj_it_remove(obj_it);
-        obj_it_drop(obj_it);
+        internal_obj_it_remove(&obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
@@ -439,21 +434,20 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        has_next = obj_it_next(obj_it);
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
-        auto prop_key = internal_obj_it_prop_name(obj_it);
+        auto prop_key = internal_obj_it_prop_name(&obj_it);
         ASSERT_TRUE(strncmp(prop_key.str, "1", strlen("1")) == 0);
 
-        internal_obj_it_remove(obj_it);
-        obj_it_drop(obj_it);
+        internal_obj_it_remove(&obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));
@@ -515,21 +509,20 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         field_e field_type;
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
-        obj_it *obj_it = item_get_object(&(rev_it.item));
-        has_next = obj_it_next(obj_it);
+        obj_it obj_it;
+        item_get_object(&obj_it, &(rev_it.item));
+        has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
-        auto prop_key = internal_obj_it_prop_name(obj_it);
+        auto prop_key = internal_obj_it_prop_name(&obj_it);
         ASSERT_TRUE(strncmp(prop_key.str, "1", strlen("1")) == 0);
 
-        internal_obj_it_remove(obj_it);
-        obj_it_drop(obj_it);
+        internal_obj_it_remove(&obj_it);
 
         // -------------------------------------------------------------------------------------------------------------
 
-        has_next = arr_it_next(&rev_it);
-        ASSERT_FALSE(has_next);
+        //has_next = arr_it_next(&rev_it);
+        //ASSERT_FALSE(has_next);
 
-        revise_iterator_close(&rev_it);
         revise_end(&revise);
 
         char *json_2 = strdup(rec_to_json(&sb, &rev_doc));

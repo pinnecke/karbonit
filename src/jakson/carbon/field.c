@@ -261,30 +261,6 @@ bool carbon_field_skip(memfile *file)
         return true;
 }
 
-void carbon_field_skip_object__fast(memfile *file, const field *field)
-{
-        obj_it skip_it;
-        internal_obj_it_clone(&skip_it, field->object);
-        internal_obj_it_fast_forward(&skip_it);
-        MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
-        obj_it_drop(&skip_it);
-}
-
-void carbon_field_skip_array__fast(memfile *file, const field *field)
-{
-        arr_it skip_it;
-        internal_arr_it_clone(&skip_it, field->array);
-        internal_arr_it_fast_forward(&skip_it);
-        MEMFILE_SEEK__UNSAFE(file, MEMFILE_TELL(&skip_it.file));
-        arr_it_drop(&skip_it);
-}
-
-void carbon_field_skip_column__fast(memfile *file, const field *field)
-{
-        internal_col_it_skip__fast(file, field);
-}
-
-
 bool carbon_field_skip_object(memfile *file, u8 marker)
 {
         if (abstract_is_instanceof_object(marker)) {
@@ -306,7 +282,6 @@ bool carbon_field_skip_array(memfile *file, u8 marker)
                 internal_arr_it_create(&skip_it, file, MEMFILE_TELL(file));
                 internal_arr_it_fast_forward(&skip_it);
                 MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
-                arr_it_drop(&skip_it);
                 return true;
         } else {
                 return error(ERR_TYPEMISMATCH, "marker does not encode an array container or sub type");

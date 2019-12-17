@@ -169,33 +169,33 @@ static struct pindex_node *pindex_node_add_key_elem(struct pindex_node *parent, 
         return sub;
 }
 
-static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsigned level)
-{
-        for (unsigned i = 0; i < level; i++) {
-                fprintf(file, " ");
-        }
-        if (node->type == PINDEX_ROOT) {
-                fprintf(file, "root");
-        } else if (node->type == PINDEX_ARRAY_INDEX) {
-                fprintf(file, "array_idx(%"PRIu64"), ", node->entry.pos);
-        } else if (node->type == PINDEX_COLUMN_INDEX) {
-                fprintf(file, "column_idx(%"PRIu64"), ", node->entry.pos);
-        } else {
-                fprintf(file, "key('%*.*s', offset: 0x%x), ", 0, (int) node->entry.key.name_len, node->entry.key.name,
-                        (unsigned) node->entry.key.offset);
-        }
-        if (node->type != PINDEX_ROOT) {
-                fprintf(file, "field(type: %s, offset: 0x%x)\n", field_str(node->field_type),
-                        (unsigned) node->field_offset);
-        } else {
-                fprintf(file, "\n");
-        }
-
-        for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
-                pindex_node_print_level(file, sub, level + 1);
-        }
-}
+//static void pindex_node_print_level(FILE *file, struct pindex_node *node, unsigned level)
+//{
+//        for (unsigned i = 0; i < level; i++) {
+//                fprintf(file, " ");
+//        }
+//        if (node->type == PINDEX_ROOT) {
+//                fprintf(file, "root");
+//        } else if (node->type == PINDEX_ARRAY_INDEX) {
+//                fprintf(file, "array_idx(%"PRIu64"), ", node->entry.pos);
+//        } else if (node->type == PINDEX_COLUMN_INDEX) {
+//                fprintf(file, "column_idx(%"PRIu64"), ", node->entry.pos);
+//        } else {
+//                fprintf(file, "key('%*.*s', offset: 0x%x), ", 0, (int) node->entry.key.name_len, node->entry.key.name,
+//                        (unsigned) node->entry.key.offset);
+//        }
+//        if (node->type != PINDEX_ROOT) {
+//                fprintf(file, "field(type: %s, offset: 0x%x)\n", field_str(node->field_type),
+//                        (unsigned) node->field_offset);
+//        } else {
+//                fprintf(file, "\n");
+//        }
+//
+//        for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
+//                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
+//                pindex_node_print_level(file, sub, level + 1);
+//        }
+//}
 
 static const void *
 record_ref_read(key_e *rec_key_type, u64 *key_length, u64 *commit_hash, memfile *memfile)
@@ -361,8 +361,9 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        col_it *it = item_get_column(&(elem_it->prop.value));
-                        column_traverse(parent, it);
+                        col_it it;
+                        item_get_column(&it, &(elem_it->prop.value));
+                        column_traverse(parent, &it);
 
                 }
                         break;
@@ -370,18 +371,18 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        arr_it *it = item_get_array(&(elem_it->prop.value));
-                        array_traverse(parent, it);
-                        arr_it_drop(it);
+                        arr_it it;
+                        item_get_array(&it, &(elem_it->prop.value));
+                        array_traverse(parent, &it);
                 }
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                        obj_it *it = item_get_object(&(elem_it->prop.value));
-                        object_traverse(parent, it);
-                        obj_it_drop(it);
+                        obj_it it;
+                        item_get_object(&it, &(elem_it->prop.value));
+                        object_traverse(parent, &it);
                 }
                         break;
                 default: error(ERR_INTERNALERR, NULL);
@@ -452,27 +453,27 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        col_it *it = item_get_column(&elem_it->item);
-                        column_traverse(parent, it);
-
+                        col_it it;
+                        item_get_column(&it, &elem_it->item);
+                        column_traverse(parent, &it);
                 }
                         break;
                 case FIELD_ARRAY_UNSORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
-                        arr_it *it = item_get_array(&elem_it->item);
-                        array_traverse(parent, it);
-                        arr_it_drop(it);
+                        arr_it it;
+                        item_get_array(&it, &elem_it->item);
+                        array_traverse(parent, &it);
                 }
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
-                        obj_it *it = item_get_object(&elem_it->item);
-                        object_traverse(parent, it);
-                        obj_it_drop(it);
+                        obj_it it;
+                        item_get_object(&it, &elem_it->item);
+                        object_traverse(parent, &it);
                 }
                         break;
                 default: error(ERR_INTERNALERR, NULL);
@@ -1053,10 +1054,6 @@ static void index_build(memfile *file, rec *doc)
                 array_build_index(node, &it);
                 array_pos++;
         }
-        rec_read_end(&it);
-
-        /** for debug */
-        pindex_node_print_level(stdout, &root_array, 0); // TODO: Debug remove
 
         index_flat(file, &root_array);
         MEMFILE_SHRINK(file);

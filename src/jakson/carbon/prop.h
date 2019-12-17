@@ -89,14 +89,14 @@ typedef struct prop
 #define prop_get_binary(prop, default_value)                                                                    \
         ((prop) ? item_get_binary(&(prop)->value) : default_value)
 
-#define prop_get_array(prop)                                                                                    \
-        ((prop) ? item_get_array(&(prop)->value) : NULL)
+#define prop_get_array(it, prop)                                                                                    \
+        item_get_array((it), &(prop)->value)
 
-#define prop_get_column(prop, default_value)                                                                    \
-        ((prop) ? item_get_column(&(prop)->value) : default_value)
+#define prop_get_column(it, prop)                                                                    \
+        item_get_column((it), &(prop)->value)
 
-#define prop_get_object(prop)                                                                                   \
-        ((prop) ? item_get_object(&(prop)->value) : NULL)
+#define prop_get_object(it, prop)                                                                                   \
+        item_get_object((it), &(prop)->value)
 
 #define prop_remove(prop)                                                                                       \
         ((prop) ? internal_obj_it_remove(&(prop)->value) : default_value)

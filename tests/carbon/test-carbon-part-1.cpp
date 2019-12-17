@@ -222,7 +222,6 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
         bool has_next = arr_it_next(&it);
         EXPECT_EQ(has_next, false);
         revise_end(&revise);
-        arr_it_drop(&it);
 
         // rec_print(stdout, &rev_doc);
         //rec_hexdump_print(stdout, &rev_doc);
@@ -245,7 +244,6 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
         arr_it_insert_begin(&in, &it);
         insert_null(&in);
         revise_end(&revise);
-        arr_it_drop(&it);
 
         // rec_print(stdout, &rev_doc);
         //rec_hexdump_print(stdout, &rev_doc);
@@ -281,7 +279,6 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
                 //rec_hexdump_print(stdout, &rev_doc);
                 // fprintf(stdout, "\n\n");
         }
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -311,7 +308,6 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
                         insert_false(&in);
                 }
         }
-        arr_it_drop(&it);
         revise_end(&revise);
 
         revise_begin(&revise, &rev_doc2, &rev_doc);
@@ -320,7 +316,6 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
         for (i32 i = 0; i < 2; i++) {
                 insert_true(&in);
         }
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc2);
@@ -352,7 +347,6 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
                 // fprintf(stdout, "after initial push:\n");
                 // //rec_hexdump_print(stdout, &rev_doc);
         }
-        arr_it_drop(&it);
         revise_end(&revise);
 
         revise_begin(&revise, &rev_doc2, &rev_doc);
@@ -365,7 +359,6 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiteralsWithDocOverflow) {
                 // fprintf(stdout, "after:\n");
                 //rec_hexdump_print(stdout, &rev_doc2);
         }
-        arr_it_drop(&it);
         revise_end(&revise);
         // rec_print(stdout, &rev_doc2);
         rec_drop(&doc);
@@ -404,7 +397,6 @@ TEST(CarbonTest, CarbonArrayIteratorUnsignedAndConstants) {
                 //fprintf(stdout, "after initial push:\n");
                 ////rec_hexdump_print(stdout, &rev_doc);
         }
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -437,7 +429,6 @@ TEST(CarbonTest, CarbonArrayIteratorStrings) {
                 //fprintf(stdout, "after initial push:\n");
                 ////rec_hexdump_print(stdout, &rev_doc);
         }
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -461,7 +452,6 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlob) {
         bool status = insert_binary(&in, data, strlen(data), "json", NULL);
         ASSERT_TRUE(status);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -486,7 +476,6 @@ TEST(CarbonTest, CarbonInsertCustomTypedBlob) {
         ASSERT_TRUE(status);
         ////rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -514,7 +503,6 @@ TEST(CarbonTest, CarbonInsertTwoMimeTypedBlob) {
         ASSERT_TRUE(status);
         ////rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -543,7 +531,6 @@ TEST(CarbonTest, CarbonInsertMimeTypedBlobsWithOverflow) {
         }
         //rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -571,7 +558,6 @@ TEST(CarbonTest, CarbonInsertMixedTypedBlobsWithOverflow) {
                 ASSERT_TRUE(status);
         }
         ////rec_hexdump_print(stdout, &rev_doc);
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_print(stdout, &rev_doc);
@@ -599,7 +585,6 @@ TEST(CarbonTest, CarbonInsertArrayWithNoOverflow) {
         insert_array_end(&array_state);
 
         //rec_hexdump_print(stdout, &rev_doc);
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -639,7 +624,6 @@ TEST(CarbonTest, CarbonInsertValuesIntoNestedArrayWithNoOverflow) {
 
 
         //rec_hexdump_print(stdout, &rev_doc);
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -686,7 +670,6 @@ TEST(CarbonTest, CarbonInsert2xNestedArrayWithNoOverflow) {
 
 
         //rec_hexdump_print(stdout, &rev_doc);
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -726,7 +709,6 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithoutOverflow) {
         insert_false(&in);
 
         //rec_hexdump_print(stdout, &rev_doc);
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_print(stdout, &rev_doc);
@@ -781,7 +763,6 @@ TEST(CarbonTest, CarbonInsertXxNestedArrayWithOverflow) {
         insert_false(&in);
         insert_false(&in);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         // rec_print(stdout, &rev_doc);
@@ -818,7 +799,6 @@ TEST(CarbonTest, CarbonInsertInsertColumnWithoutOverflow) {
         insert_u8(nested_inserter_l1, 3);
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -855,7 +835,6 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithoutOverflow) {
         insert_u8(nested_inserter_l1, 44);
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -892,7 +871,6 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithoutOverflow) {
         insert_u8(nested_inserter_l1, 0);
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -994,7 +972,6 @@ TEST(CarbonTest, CarbonInsertInsertMultileTypedColumnsWithoutOverflow) {
         insert_float(ins, 23.4221f);
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);

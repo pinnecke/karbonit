@@ -118,7 +118,7 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
         insert *ins;
         rec doc, doc2;
         arr_state s1;
-        arr_it it, *sub_it;
+        arr_it it, sub_it;
         field_e ft;
         rev rev_context;
 
@@ -147,39 +147,37 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_TRUE(arr_it_is_multiset(sub_it));
-                ASSERT_FALSE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_TRUE(arr_it_is_multiset(sub_it));
-                ASSERT_FALSE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_TRUE(arr_it_is_multiset(sub_it));
-                ASSERT_TRUE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_FALSE(arr_it_is_multiset(sub_it));
-                ASSERT_FALSE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_FALSE(arr_it_is_multiset(sub_it));
-                ASSERT_TRUE(arr_it_is_sorted(sub_it));
-
-                rec_read_end(&it);
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
         }
 
         {
@@ -187,22 +185,21 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 revise_iterator_open(&it, &rev_context);
 
                 arr_it_next(&it);
-                sub_it = item_get_array(&(it.item));
-                arr_it_update_type(sub_it, LIST_SORTED_MULTISET);
+                item_get_array(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_SORTED_MULTISET);
 
                 arr_it_next(&it);
-                sub_it = item_get_array(&(it.item));
-                arr_it_update_type(sub_it, LIST_UNSORTED_SET);
+                item_get_array(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_UNSORTED_SET);
 
                 arr_it_next(&it);
-                sub_it = item_get_array(&(it.item));
-                arr_it_update_type(sub_it, LIST_SORTED_SET);
+                item_get_array(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_SORTED_SET);
 
                 arr_it_next(&it);
-                sub_it = item_get_array(&(it.item));
-                arr_it_update_type(sub_it, LIST_UNSORTED_MULTISET);
+                item_get_array(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_UNSORTED_MULTISET);
 
-                revise_iterator_close(&it);
                 revise_end(&rev_context);
         }
 
@@ -212,32 +209,30 @@ TEST(TestAbstractTypes, ArraySetAbstractType) {
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_TRUE(arr_it_is_multiset(sub_it));
-                ASSERT_TRUE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_FALSE(arr_it_is_multiset(sub_it));
-                ASSERT_FALSE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_FALSE(arr_it_is_multiset(sub_it));
-                ASSERT_TRUE(arr_it_is_sorted(sub_it));
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
                 ASSERT_TRUE(field_is_array_or_subtype(ft));
-                sub_it = item_get_array(&(it.item));
-                ASSERT_TRUE(arr_it_is_multiset(sub_it));
-                ASSERT_FALSE(arr_it_is_sorted(sub_it));
-
-                rec_read_end(&it);
+                item_get_array(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
         }
 
         rec_drop(&doc);
@@ -261,13 +256,11 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_array_type(&find, LIST_SORTED_SET);
-                revise_find_end(&find);
                 revise_end(&revise);
 
                 find_begin_from_string(&find, "x.0.y", &doc2);
                 ASSERT_FALSE(find_array_is_multiset(&find));
                 ASSERT_TRUE(find_array_is_sorted(&find));
-                find_end(&find);
         }
 
         {
@@ -278,13 +271,11 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_array_type(&find, LIST_SORTED_MULTISET);
-                revise_find_end(&find);
                 revise_end(&revise);
 
                 find_begin_from_string(&find, "x.0.y", &doc3);
                 ASSERT_TRUE(find_array_is_multiset(&find));
                 ASSERT_TRUE(find_array_is_sorted(&find));
-                find_end(&find);
         }
 
         {
@@ -295,13 +286,11 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_array_type(&find, LIST_UNSORTED_MULTISET);
-                revise_find_end(&find);
                 revise_end(&revise);
 
                 find_begin_from_string(&find, "x.0.y", &doc4);
                 ASSERT_TRUE(find_array_is_multiset(&find));
                 ASSERT_FALSE(find_array_is_sorted(&find));
-                find_end(&find);
         }
 
         {
@@ -312,13 +301,11 @@ TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
                 arr_it * find_result = find_result_array(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_array_type(&find, LIST_UNSORTED_SET);
-                revise_find_end(&find);
                 revise_end(&revise);
 
                 find_begin_from_string(&find, "x.0.y", &doc5);
                 ASSERT_FALSE(find_array_is_multiset(&find));
                 ASSERT_FALSE(find_array_is_sorted(&find));
-                find_end(&find);
         }
 
         rec_drop(&doc);

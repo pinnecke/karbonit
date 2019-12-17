@@ -26,7 +26,6 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersZeroWithOverflow) {
         insert_u8(nested_inserter_l1, 3);
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -68,7 +67,6 @@ TEST(CarbonTest, CarbonInsertInsertColumnNumbersWithHighOverflow) {
 
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -112,7 +110,6 @@ TEST(CarbonTest, CarbonInsertInsertMultipleColumnsNumbersWithHighOverflow) {
                 insert_column_end(&column_state);
         }
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         ////rec_hexdump_print(stdout, &rev_doc);
@@ -216,7 +213,6 @@ TEST(CarbonTest, CarbonInsertNullTest) {
         insert_float(ins, 23.4221f);
         insert_column_end(&column_state);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -316,7 +312,6 @@ TEST(CarbonTest, CarbonShrinkColumnListTest) {
         revise_shrink(&revise);
         //rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -368,7 +363,6 @@ TEST(CarbonTest, CarbonShrinkArrayListTest) {
         revise_shrink(&revise);
         //rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -442,7 +436,6 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListTest) {
         revise_shrink(&revise);
         //rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -503,7 +496,6 @@ TEST(CarbonTest, CarbonShrinkNestedArrayListAndColumnListTest) {
         revise_shrink(&revise);
         //rec_hexdump_print(stdout, &rev_doc);
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);
@@ -649,7 +641,6 @@ TEST(CarbonTest, CarbonFind) {
         insert_u8(&ins, 'b');
         insert_u8(&ins, 'c');
         arr_it_insert_end(&ins);
-        revise_iterator_close(&it);
 
         revise_end(&revise);
 
@@ -663,8 +654,6 @@ TEST(CarbonTest, CarbonFind) {
 
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, (u64) 'a');
-
-                find_end(&finder);
         }
 
         {
@@ -677,8 +666,6 @@ TEST(CarbonTest, CarbonFind) {
 
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, (u64) 'b');
-
-                find_end(&finder);
         }
 
         {
@@ -691,16 +678,12 @@ TEST(CarbonTest, CarbonFind) {
 
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, (u64) 'c');
-
-                find_end(&finder);
         }
 
         {
                 find_begin_from_string(&finder, "3", &rev_doc);
 
                 ASSERT_FALSE(find_has_result(&finder));
-
-                find_end(&finder);
         }
 
         // rec_print(stdout, &rev_doc);
@@ -762,7 +745,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U64);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 4223U);
-                find_end(&finder);
         }
 
         {
@@ -772,7 +754,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
                 arr_it *retval = find_result_array(&finder);
                 ASSERT_TRUE(retval != NULL);
-                find_end(&finder);
         }
 
         {
@@ -791,7 +772,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                             type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
                 col_it *retval = find_result_column(&finder);
                 ASSERT_TRUE(retval != NULL);
-                find_end(&finder);
         }
 
         {
@@ -801,7 +781,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 88U);
-                find_end(&finder);
         }
 
         {
@@ -811,7 +790,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 89U);
-                find_end(&finder);
         }
 
         {
@@ -821,13 +799,11 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 90U);
-                find_end(&finder);
         }
 
         {
                 find_begin_from_string(&finder, "1.0.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
-                find_end(&finder);
         }
 
         {
@@ -837,7 +813,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
                 arr_it *retval = find_result_array(&finder);
                 ASSERT_TRUE(retval != NULL);
-                find_end(&finder);
         }
 
         {
@@ -848,7 +823,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 u64 str_len;
                 const char *retval = find_result_string(&str_len, &finder);
                 ASSERT_TRUE(strncmp(retval, "Hello", str_len) == 0);
-                find_end(&finder);
         }
 
         {
@@ -867,7 +841,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                             type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
                 col_it *retval = find_result_column(&finder);
                 ASSERT_TRUE(retval != NULL);
-                find_end(&finder);
         }
 
         {
@@ -877,7 +850,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 65U);
-                find_end(&finder);
         }
 
         {
@@ -887,7 +859,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 66U);
-                find_end(&finder);
         }
 
         {
@@ -897,7 +868,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 67U);
-                find_end(&finder);
         }
 
         {
@@ -913,13 +883,11 @@ TEST(CarbonTest, CarbonFindTypes) {
                 u64 str_len;
                 const char *retval = find_result_string(&str_len, &finder);
                 ASSERT_TRUE(strncmp(retval, "World", str_len) == 0);
-                find_end(&finder);
         }
 
         {
                 find_begin_from_string(&finder, "1.1.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
-                find_end(&finder);
         }
 
         {
@@ -929,7 +897,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U8);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 1U);
-                find_end(&finder);
         }
 
         {
@@ -939,7 +906,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U8);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 1U);
-                find_end(&finder);
         }
 
         {
@@ -958,7 +924,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                             type == FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
                 col_it *retval = find_result_column(&finder);
                 ASSERT_TRUE(retval != NULL);
-                find_end(&finder);
         }
 
         {
@@ -968,7 +933,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 23U);
-                find_end(&finder);
         }
 
         {
@@ -978,7 +942,6 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 24U);
-                find_end(&finder);
         }
 
         {
@@ -988,13 +951,11 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 25U);
-                find_end(&finder);
         }
 
         {
                 find_begin_from_string(&finder, "1.4.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
-                find_end(&finder);
         }
 
         {
@@ -1004,16 +965,13 @@ TEST(CarbonTest, CarbonFindTypes) {
                 ASSERT_EQ(type, FIELD_NUMBER_U8);
                 find_result_unsigned(&result_unsigned, &finder);
                 ASSERT_EQ(result_unsigned, 1U);
-                find_end(&finder);
         }
 
         {
                 find_begin_from_string(&finder, "1.6", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
-                find_end(&finder);
         }
 
-        arr_it_drop(&it);
         revise_end(&revise);
 
         //rec_hexdump_print(stdout, &rev_doc);

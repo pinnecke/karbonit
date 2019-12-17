@@ -29,8 +29,8 @@ typedef struct memfile {
 #define MEMFILE_PEEK_TYPE(file, type)                                                                                  \
 ({                                                                                                                     \
         assert (MEMFILE_REMAIN_SIZE((file)) >= sizeof(type));                                                          \
-        type* ret = (type*) MEMFILE_PEEK((file), sizeof(type));                                                        \
-        ret;                                                                                                           \
+        type* memfile_peek_type_ret = (type*) MEMFILE_PEEK((file), sizeof(type));                                                        \
+        memfile_peek_type_ret;                                                                                                           \
 })
 
 #define MEMFILE_READ_TYPE(file, type)                                                                                  \

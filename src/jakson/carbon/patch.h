@@ -17,9 +17,6 @@ extern "C" {
 /* Opens a read-write enabled iterator for patching a record revision without creating a new one. */
 void patch_begin(arr_it *it, rec *doc);
 
-/* Closes a read-write ennabled iterator , which was previously opened via 'patch_end' */
-void patch_end(arr_it *it);
-
 void patch_find_begin(find *out, const char *dot, rec *doc);
 
 void patch_find_end(find *find);

@@ -45,7 +45,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         }
 
         abstract_type_class_e type_class = abstract_get_class(marker);
-        abstract_class_to_list_derivable(&it->list_type, type_class);
+        it->list_type = abstract_class_to_list_derivable(type_class);
 
 
         field_e type = (field_e) marker;
@@ -610,7 +610,7 @@ static bool rewrite_column_to_array(col_it *it)
         assert(field_is_column_or_subtype(marker));
 
         type_class = abstract_get_class(marker);
-        abstract_class_to_list_derivable(&list_type, type_class);
+        list_type = abstract_class_to_list_derivable(type_class);
 
         /** Potentially tailing space after the last ']' marker of the outer most array is used for temporary space */
         MEMFILE_SEEK_TO_END(&it->file);

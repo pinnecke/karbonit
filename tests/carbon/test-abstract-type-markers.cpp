@@ -231,11 +231,10 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
 
 static void test_derived_is_base(memfile *memfile, derived_e type, bool is_base)
 {
-        bool result;
         abstract_write_derived_type(memfile, type);
         MEMFILE_SEEK_FROM_HERE(memfile, -1);
         u8 marker = MEMFILE_READ_BYTE(memfile);
-        abstract_is_base(&result, marker);
+        bool result = abstract_is_base(marker);
         ASSERT_EQ(result, is_base);
 }
 

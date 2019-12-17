@@ -105,19 +105,17 @@ typedef enum abstract {
 #define abstract_is_multiset(type)                                                                                     \
         (type == TYPE_UNSORTED_MULTISET || type == TYPE_SORTED_MULTISET)
 
-/** Calls abstract_type and returns true in case of an abstract base type for a particular
- * derived container marker that is read from the current position of the mem without moving
- * the memory files cursor.
- *
- * In case of success, a boolean value is returned, indicating whether the particular container marker is an
- * abstract base type, or not.
- *
- * In case of any failure (such as the read maker does not belong to any known derived container), the function
- * returns an err. */
-void abstract_is_base(bool *result, u8 marker);
+#define abstract_is_base(marker)                                                        \
+({                                                        \
+        abstract_e abstract_is_type = abstract_type(marker);                                                        \
+        (abstract_is_type == ABSTRACT_BASE);                                                        \
+})
 
-/** Calls abstract_is_base and negates its result */
-void abstract_is_derived(bool *result, u8 marker);
+
+
+#define abstract_is_derived(marker)                                                             \
+        (!abstract_is_base(marker));
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  abstract type (multiset, set, sorted or unsorted)
@@ -219,25 +217,23 @@ typedef enum abstract_type_class {
         abstract_get_class_ret;                                 \
 })
 
-/** Returns true if the abstract type class is of set (i.e., if the class is TYPE_UNSORTED_SET, or
- * TYPE_SORTED_SET. */
-bool abstract_is_set(abstract_type_class_e type);
+#define abstract_is_set(type)                                           \
+        (type == TYPE_UNSORTED_SET || type == TYPE_SORTED_SET)
 
-/** Returns true if the abstract type class is of multimap (i.e., if the class is TYPE_UNSORTED_MULTIMAP, or
- * TYPE_SORTED_MULTIMAP. */
-bool abstract_is_multimap(abstract_type_class_e type);
 
-/** Returns true if the abstract type class is of map (i.e., if the class is TYPE_SORTED_MAP, or
- * TYPE_UNSORTED_MAP. */
-bool abstract_is_map(abstract_type_class_e type);
+#define abstract_is_multimap(type)                                           \
+        (type == TYPE_UNSORTED_MULTIMAP || type == TYPE_SORTED_MULTIMAP)
 
-/** Returns true if the abstract type class is sorted (i.e., if the class is TYPE_SORTED_MULTISET,
- * TYPE_SORTED_SET, TYPE_SORTED_MAP, or TYPE_SORTED_MULTIMAP */
-bool abstract_is_sorted(abstract_type_class_e type);
+#define abstract_is_map(type)                                           \
+        (type == TYPE_SORTED_MAP || type == TYPE_UNSORTED_MAP)
 
-/** Returns true if the abstract type class does not contain duplicate entries (i.e., if the class is
- * TYPE_UNSORTED_SET, TYPE_SORTED_SET, TYPE_SORTED_MAP, or TYPE_UNSORTED_MAP) */
-bool abstract_is_distinct(abstract_type_class_e type);
+
+#define abstract_is_sorted(type)                                           \
+        (type == TYPE_SORTED_MULTISET || type == TYPE_SORTED_SET ||                                            \
+         type == TYPE_SORTED_MAP || type == TYPE_SORTED_MULTIMAP)
+
+#define abstract_is_distinct(type)                                                                                     \
+        (type == TYPE_UNSORTED_SET || type == TYPE_SORTED_SET || type == TYPE_SORTED_MAP || type == TYPE_UNSORTED_MAP)
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  derived type (actual abstract type and which container is used)
@@ -328,7 +324,8 @@ typedef enum list_type
         /** mark list as non-distinct */
         LIST_UNSORTED_SET,
         /** mark list as sorted and distinct */
-        LIST_SORTED_SET
+        LIST_SORTED_SET,
+        LIST_ERR
 } list_type_e;
 
 /** derivable types for a map container (object) */
@@ -344,9 +341,29 @@ typedef enum map_type
         MAP_SORTED_MAP = MSORTED_MAP
 } map_type_e;
 
-/** Converts an abstract type class to a list derivable type. In case the abstract type class does not define
- * a list type, the function fails */
-bool abstract_class_to_list_derivable(list_type_e *out, abstract_type_class_e in);
+#define abstract_class_to_list_derivable(in)                                                            \
+({                                                            \
+        list_type_e abstract_class_to_list_derivable_ret;                                                            \
+        switch (in) {                                                            \
+                case TYPE_UNSORTED_MULTISET:                                                            \
+                        abstract_class_to_list_derivable_ret = LIST_UNSORTED_MULTISET;                                                            \
+                        break;                                                            \
+                case TYPE_SORTED_MULTISET:                                                            \
+                        abstract_class_to_list_derivable_ret = LIST_SORTED_MULTISET;                                                            \
+                        break;                                                            \
+                case TYPE_UNSORTED_SET:                                                            \
+                        abstract_class_to_list_derivable_ret = LIST_UNSORTED_SET;                                                            \
+                        break;                                                            \
+                case TYPE_SORTED_SET:                                                            \
+                        abstract_class_to_list_derivable_ret = LIST_SORTED_SET;                                                            \
+                        break;                                                            \
+                default:                                                            \
+                        error(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");                                                            \
+                        abstract_class_to_list_derivable_ret = LIST_ERR;                                                            \
+                        break;                                                            \
+        }                                                            \
+        abstract_class_to_list_derivable_ret;                                                            \
+})
 
 /** Converts a list derivable type to an abstract type class. In case of error, the function fails. */
 bool abstract_list_derivable_to_class(abstract_type_class_e *out, list_type_e in);

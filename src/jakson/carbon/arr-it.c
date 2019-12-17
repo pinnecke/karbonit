@@ -233,7 +233,7 @@ bool internal_arr_it_update_from_column(arr_it *it, const col_it *src)
 static void __arr_it_load_abstract_type(arr_it *it, u8 marker)
 {
         abstract_type_class_e type_class = abstract_get_class(marker);
-        abstract_class_to_list_derivable(&it->list_type, type_class);
+        it->list_type = abstract_class_to_list_derivable(type_class);
 }
 
 bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start)

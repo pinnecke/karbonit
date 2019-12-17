@@ -44,8 +44,7 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
             return error(ERR_ILLEGALOP, "column begin marker or sub type expected");
         }
 
-        abstract_type_class_e type_class;
-        abstract_get_class(&type_class, marker);
+        abstract_type_class_e type_class = abstract_get_class(marker);
         abstract_class_to_list_derivable(&it->list_type, type_class);
 
 
@@ -610,7 +609,7 @@ static bool rewrite_column_to_array(col_it *it)
         u8 marker = MEMFILE_PEEK_BYTE(&it->file);
         assert(field_is_column_or_subtype(marker));
 
-        abstract_get_class(&type_class, marker);
+        type_class = abstract_get_class(marker);
         abstract_class_to_list_derivable(&list_type, type_class);
 
         /** Potentially tailing space after the last ']' marker of the outer most array is used for temporary space */

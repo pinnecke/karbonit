@@ -315,7 +315,7 @@ static void test_get_class_of_concrete_derived(memfile *file, derived_e concrete
         abstract_write_derived_type(file, concrete);
         MEMFILE_SEEK_FROM_HERE(file, -1);
         u8 marker = MEMFILE_READ_BYTE(file);
-        ASSERT_TRUE(abstract_get_class(&clazz, marker));
+        clazz = abstract_get_class(marker);
         ASSERT_EQ(clazz, expected);
 }
 

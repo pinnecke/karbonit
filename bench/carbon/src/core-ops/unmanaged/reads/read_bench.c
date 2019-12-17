@@ -7,7 +7,7 @@
 #define READ_BENCH_SINGLE_DURATION_MS 3000
 #define READ_BENCH_NUM_SAMPLES 1
 #define READ_BENCH_N_START 1
-#define READ_BENCH_N_MAX 100
+#define READ_BENCH_N_MAX 12
 #define READ_BENCH_N_STEP ((READ_BENCH_N_MAX - READ_BENCH_N_START) / 11)
 
 void read_bench_run(read_bench_fn *fn, void *args)

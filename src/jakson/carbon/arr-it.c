@@ -232,14 +232,13 @@ bool internal_arr_it_update_from_column(arr_it *it, const col_it *src)
 
 static void __arr_it_load_abstract_type(arr_it *it, u8 marker)
 {
-        abstract_type_class_e type_class;
-        abstract_get_class(&type_class, marker);
+        abstract_type_class_e type_class = abstract_get_class(marker);
         abstract_class_to_list_derivable(&it->list_type, type_class);
 }
 
 bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start)
 {
-        ZERO_MEMORY(it, sizeof(arr_it));
+        //ZERO_MEMORY(it, sizeof(arr_it));
 
         it->begin = payload_start;
         it->mod_size = 0;
@@ -251,15 +250,19 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
 
+#ifndef NDEBUG
         if (MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8)) {
                 return error(ERR_CORRUPTED, NULL);
         }
+#endif
 
         u8 marker = MEMFILE_READ_BYTE(&it->file);
 
+#ifndef NDEBUG
         if (!abstract_is_instanceof_array(marker)) {
             return error(ERR_MARKERMAPPING, "expected array or sub type marker");
         }
+#endif
 
         __arr_it_load_abstract_type(it, marker);
 
@@ -307,11 +310,10 @@ bool arr_it_is_empty(arr_it *it)
         return arr_it_next(it);
 }
 
-bool arr_it_rewind(arr_it *it)
+void arr_it_rewind(arr_it *it)
 {
-        error_if_and_return(it->begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
         it->pos = 0;
-        return MEMFILE_SEEK(&it->file, it->begin + sizeof(u8));
+        MEMFILE_SEEK__UNSAFE(&it->file, it->begin + sizeof(u8));
 }
 
 bool arr_it_has_next(arr_it *it)

@@ -23,7 +23,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
                 abstract_write_base_type(&memfile, CONTAINER_OBJECT);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -32,7 +32,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
                 abstract_write_base_type(&memfile, CONTAINER_ARRAY);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -41,61 +41,61 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByBase) {
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U8);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U16);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U32);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_U64);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I8);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I16);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I32);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_I64);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_FLOAT);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
 
                 abstract_write_base_type(&memfile, CONTAINER_COLUMN_BOOLEAN);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
         drop_memfile(&memfile);
@@ -113,7 +113,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTIMAP);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -122,7 +122,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_ARRAY);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -131,7 +131,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U8);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -140,7 +140,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U16);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -149,7 +149,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U32);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -158,7 +158,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_U64);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -167,7 +167,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I8);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -176,7 +176,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I16);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -185,7 +185,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I32);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -194,7 +194,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I32);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -203,7 +203,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_I64);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -212,7 +212,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_FLOAT);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -221,7 +221,7 @@ TEST(TestAbstractTypeMarker, DetectBaseTypeByDerivedType) {
                 abstract_write_derived_type(&memfile, UNSORTED_MULTISET_COL_BOOLEAN);
                 MEMFILE_SEEK_FROM_HERE(&memfile, -1);
                 u8 marker = MEMFILE_READ_BYTE(&memfile);
-                ASSERT_TRUE(abstract_type(&type, marker));
+                type = abstract_type(marker);
                 ASSERT_EQ(type, ABSTRACT_BASE);
         }
 
@@ -235,8 +235,7 @@ static void test_derived_is_base(memfile *memfile, derived_e type, bool is_base)
         abstract_write_derived_type(memfile, type);
         MEMFILE_SEEK_FROM_HERE(memfile, -1);
         u8 marker = MEMFILE_READ_BYTE(memfile);
-        bool status = abstract_is_base(&result, marker);
-        ASSERT_EQ(status, true);
+        abstract_is_base(&result, marker);
         ASSERT_EQ(result, is_base);
 }
 

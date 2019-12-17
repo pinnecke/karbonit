@@ -18,93 +18,17 @@
 #include <jakson/carbon/abstract.h>
 #include <jakson/mem/memfile.h>
 
-bool abstract_type(abstract_e *type, u8 marker)
+void abstract_is_base(bool *result, u8 marker)
 {
-        derived_e derived;
-        if (likely(abstract_get_derived_type(&derived, marker))) {
-                switch (derived) {
-                        case UNSORTED_MULTIMAP:
-                        case UNSORTED_MULTISET_ARRAY:
-                        case UNSORTED_MULTISET_COL_U8:
-                        case UNSORTED_MULTISET_COL_U16:
-                        case UNSORTED_MULTISET_COL_U32:
-                        case UNSORTED_MULTISET_COL_U64:
-                        case UNSORTED_MULTISET_COL_I8:
-                        case UNSORTED_MULTISET_COL_I16:
-                        case UNSORTED_MULTISET_COL_I32:
-                        case UNSORTED_MULTISET_COL_I64:
-                        case UNSORTED_MULTISET_COL_FLOAT:
-                        case UNSORTED_MULTISET_COL_BOOLEAN:
-                                OPTIONAL_SET(type, ABSTRACT_BASE);
-                                goto return_true;
-                        case SORTED_MULTIMAP:
-                        case UNSORTED_MAP:
-                        case SORTED_MAP:
-                        case SORTED_MULTISET_ARRAY:
-                        case UNSORTED_SET_ARRAY:
-                        case SORTED_SET_ARRAY:
-                        case SORTED_MULTISET_COL_U8:
-                        case UNSORTED_SET_COL_U8:
-                        case SORTED_SET_COL_U8:
-                        case SORTED_MULTISET_COL_U16:
-                        case UNSORTED_SET_COL_U16:
-                        case SORTED_SET_COL_U16:
-                        case SORTED_MULTISET_COL_U32:
-                        case UNSORTED_SET_COL_U32:
-                        case SORTED_SET_COL_U32:
-                        case SORTED_MULTISET_COL_U64:
-                        case UNSORTED_SET_COL_U64:
-                        case SORTED_SET_COL_U64:
-                        case SORTED_MULTISET_COL_I8:
-                        case UNSORTED_SET_COL_I8:
-                        case SORTED_SET_COL_I8:
-                        case SORTED_MULTISET_COL_I16:
-                        case UNSORTED_SET_COL_I16:
-                        case SORTED_SET_COL_I16:
-                        case SORTED_MULTISET_COL_I32:
-                        case UNSORTED_SET_COL_I32:
-                        case SORTED_SET_COL_I32:
-                        case SORTED_MULTISET_COL_I64:
-                        case UNSORTED_SET_COL_I64:
-                        case SORTED_SET_COL_I64:
-                        case SORTED_MULTISET_COL_FLOAT:
-                        case UNSORTED_SET_COL_FLOAT:
-                        case SORTED_SET_COL_FLOAT:
-                        case SORTED_MULTISET_COL_BOOLEAN:
-                        case UNSORTED_SET_COL_BOOLEAN:
-                        case SORTED_SET_COL_BOOLEAN:
-                                OPTIONAL_SET(type, ABSTRACT_DERIVED);
-                                goto return_true;
-                        default:
-                                return error(ERR_MARKERMAPPING, "unknown abstract type marker detected");
-                }
-return_true:
-                return true;
-        } else {
-                return false;
-        }
+        abstract_e type = abstract_type(marker);
+        *result = type == ABSTRACT_BASE;
 }
 
-bool abstract_is_base(bool *result, u8 marker)
-{
-        abstract_e type;
-        if (likely(abstract_type(&type, marker))) {
-                *result = type == ABSTRACT_BASE;
-                return true;
-        } else {
-                return false;
-        }
-}
-
-bool abstract_is_derived(bool *result, u8 marker)
+void abstract_is_derived(bool *result, u8 marker)
 {
         bool ret = false;
-        if (abstract_is_base(&ret, marker)) {
-            *result = !ret;
-            return true;
-        } else {
-            return false;
-        }
+        abstract_is_base(&ret, marker);
+        *result = !ret;
 }
 
 bool abstract_is_set(abstract_type_class_e type)

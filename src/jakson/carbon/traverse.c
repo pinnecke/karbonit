@@ -86,7 +86,7 @@ void traverser_run_from_record(traverser *traverse, rec *record, void *arg)
         if (expand == PATH_EXPAND) {
                 arr_it it;
                 item *item;
-                rec_read_begin(&it, (rec *) record);
+                rec_read(&it, (rec *) record);
                 while ((item = arr_it_next(&it))) {
                         traverser_run_from_item(traverse, item, arg);
                 }

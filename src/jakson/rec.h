@@ -149,7 +149,7 @@ const char *rec_to_json(str_buf *dst, rec *doc);
 
 /* Opens a read-only iterator for navigating though the records contents.
  *
- * For readers, use 'rec_read_begin', and 'revise_begin()' for writers.
+ * For readers, use 'rec_read', and 'revise_begin()' for writers.
  *
  * In case a single record must be updated while the upfront costs for the entire revision process is not sustainable,
  * a record might be patched using a patch iterator, see
@@ -157,7 +157,7 @@ const char *rec_to_json(str_buf *dst, rec *doc);
  *
  * An opened iterator must be closed by calling 'rec_read_end'. Not closing an iterator leads to undefined
  * behavior. */
-void rec_read_begin(arr_it *it, rec *doc);
+void rec_read(arr_it *it, rec *doc);
 
 bool rec_is_array(const rec *doc);
 

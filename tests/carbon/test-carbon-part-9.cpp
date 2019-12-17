@@ -15,13 +15,13 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
 
         /* without shortened dot path rule, the json object as given is embedded in an record container (aka array)
          * such that the object must be referenced by its index in the record container (i.e., 0) */
-        find_begin_from_string(&find, "0.x", &doc);
+        find_from_string(&find, "0.x", &doc);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_STRING);
 
         /* with shortened dot path rule, the json object can be referenced without providing its index in the record */
-        find_begin_from_string(&find, "x", &doc);
+        find_from_string(&find, "x", &doc);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_STRING);
@@ -32,24 +32,24 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
         /* The shortened dot path rule does not apply here since the user input is an array  */
-        find_begin_from_string(&find, "0.x", &doc);
+        find_from_string(&find, "0.x", &doc);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_STRING);
 
-        find_begin_from_string(&find, "1.x", &doc);
+        find_from_string(&find, "1.x", &doc);
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&result_type, &find);
         ASSERT_EQ(result_type, FIELD_ARRAY_UNSORTED_MULTISET);
 
-        find_begin_from_string(&find, "x", &doc);
+        find_from_string(&find, "x", &doc);
         ASSERT_FALSE(find_has_result(&find));
 
         /* The shortened dot path rule does also never apply outside the record container  */
-        find_begin_from_string(&find, "1.x.0.z", &doc);
+        find_from_string(&find, "1.x.0.z", &doc);
         ASSERT_TRUE(find_has_result(&find));
 
-        find_begin_from_string(&find, "1.x.z", &doc);
+        find_from_string(&find, "1.x.z", &doc);
         ASSERT_FALSE(find_has_result(&find));
 
         rec_drop(&doc);
@@ -65,116 +65,116 @@ TEST(CarbonTest, CarbonFindPrint)
         str_buf_create(&sb1);
 
         rec_from_json(&doc, "8", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "8") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "-8", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "-8") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "\"A\"", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "32.4", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "null", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "true", KEY_NOKEY, NULL);
         rec_hexdump_print(stderr, &doc);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "false", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "false") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "1") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "1", &doc));
+        ASSERT_TRUE(find_from_string(&find, "1", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "2") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "2", &doc));
+        ASSERT_TRUE(find_from_string(&find, "2", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "3") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "3", &doc));
+        ASSERT_TRUE(find_from_string(&find, "3", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
-        ASSERT_FALSE(find_begin_from_string(&find, "4", &doc));
+        ASSERT_FALSE(find_from_string(&find, "4", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "undef") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "1", &doc));
+        ASSERT_TRUE(find_from_string(&find, "1", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"B\"") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "2", &doc));
+        ASSERT_TRUE(find_from_string(&find, "2", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"C\"") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "3", &doc));
+        ASSERT_TRUE(find_from_string(&find, "3", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "\"Hello, World!\"", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "{}", KEY_NOKEY, NULL);
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{}") == 0);
         rec_drop(&doc);
 
         rec_from_json(&doc, "[]", KEY_NOKEY, NULL);
-        ASSERT_FALSE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_FALSE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "undef") == 0);
         rec_drop(&doc);
@@ -214,84 +214,84 @@ TEST(CarbonTest, CarbonFindPrint)
 
         rec_from_json(&doc, complex, KEY_NOKEY, NULL);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m", &doc));
         result = find_result_to_str(&sb1, &find);
 
         ASSERT_TRUE(strcmp(result, "{\"n\":8, \"o\":-8, \"p\":\"A\", \"q\":32.40, \"r\":null, \"s\":true, \"t\":false, \"u\":[1, 2, 3, null], \"v\":[\"A\", \"B\", null], \"w\":\"Hello, World!\", \"x\":{\"a\":null}, \"y\":[], \"z\":{}}") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.n", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.n", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "8") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.o", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.o", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "-8") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.p", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.p", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.q", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.q", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.r", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.r", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.s", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.s", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.t", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.t", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "false") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.u", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.u", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "[1, 2, 3, null]") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.u.0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.u.0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "1") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.u.1", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.u.1", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "2") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.u.2", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.u.2", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "3") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.u.3", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.u.3", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "m.u.4", &doc));
+        ASSERT_FALSE(find_from_string(&find, "m.u.4", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "undef") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.v", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.v", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "[\"A\", \"B\", null]") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.w", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.w", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.x", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.x", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{\"a\":null}") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.x.a", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.x.a", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.y", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.y", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "[]") == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "m.z", &doc));
+        ASSERT_TRUE(find_from_string(&find, "m.z", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{}") == 0);
 
@@ -312,22 +312,22 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 
         printf("input: '%s'\n", json);
 
-        find_begin_from_string(&find, "x", &doc);
+        find_from_string(&find, "x", &doc);
         printf("x\t\t\t->\t%s\n", find_result_to_str(&result, &find));
 
-        find_begin_from_string(&find, "x.y", &doc);
+        find_from_string(&find, "x.y", &doc);
         printf("x.y\t\t\t->\t%s\n", find_result_to_str(&result, &find));
 
-        find_begin_from_string(&find, "x.z", &doc);
+        find_from_string(&find, "x.z", &doc);
         printf("x.z\t\t\t->\t%s\n", find_result_to_str(&result, &find));
 
-        find_begin_from_string(&find, "x.y.z", &doc);
+        find_from_string(&find, "x.y.z", &doc);
         printf("x.y.z\t\t->\t%s\n", find_result_to_str(&result, &find));
 
-        find_begin_from_string(&find, "x.y.0.z", &doc);
+        find_from_string(&find, "x.y.0.z", &doc);
         printf("x.y.0.z\t\t->\t%s\n", find_result_to_str(&result, &find));
 
-        find_begin_from_string(&find, "x.y.1.z", &doc);
+        find_from_string(&find, "x.y.1.z", &doc);
         printf("x.y.0.z\t\t->\t%s\n", find_result_to_str(&result, &find));
 
         str_buf_drop(&result);
@@ -342,22 +342,22 @@ TEST(CarbonTest, ParseBooleanArray) {
 
         rec_from_json(&doc, json, KEY_NOKEY, NULL);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.col", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.col", &doc));
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&type, &find);
         ASSERT_EQ(type, FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.col.0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.col.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&type, &find);
         ASSERT_EQ(type, FIELD_TRUE);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.col.1", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.col.1", &doc));
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&type, &find);
         ASSERT_EQ(type, FIELD_NULL);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.col.2", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.col.2", &doc));
         ASSERT_TRUE(find_has_result(&find));
         find_result_type(&type, &find);
         ASSERT_EQ(type, FIELD_FALSE);

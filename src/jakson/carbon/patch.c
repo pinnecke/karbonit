@@ -19,7 +19,7 @@
 #include <jakson/carbon/internal.h>
 #include <jakson/carbon/find.h>
 
-void patch_begin(arr_it *it, rec *doc)
+void patch(arr_it *it, rec *doc)
 {
         offset_t payload_start = INTERNAL_PAYLOAD_AFTER_HEADER(doc);
         internal_arr_it_create(it, &doc->file, payload_start);
@@ -29,7 +29,7 @@ void patch_begin(arr_it *it, rec *doc)
 void patch_find_begin(find *out, const char *dot, rec *doc)
 {
         doc->file.mode = READ_WRITE;
-        find_begin_from_string(out, dot, doc);
+        find_from_string(out, dot, doc);
 }
 
 void patch_find_end(find *find)

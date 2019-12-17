@@ -32,7 +32,7 @@ void dot_eval_begin(dot_eval *eval, const dot *path,
 {
         ZERO_MEMORY(eval, sizeof(dot_eval));
         eval->doc = doc;
-        rec_read_begin(&eval->root_it, eval->doc);
+        rec_read(&eval->root_it, eval->doc);
         eval->status = _dot_eval_traverse_array(eval, path, 0, &eval->root_it, true);
 }
 
@@ -56,7 +56,7 @@ bool dot_eval_status(pstatus_e *status, dot_eval *state)
 bool carbon_path_exists(rec *doc, const char *path)
 {
         find find;
-        find_begin_from_string(&find, path, doc);
+        find_from_string(&find, path, doc);
         bool result = find_has_result(&find);
         return result;
 }
@@ -67,7 +67,7 @@ bool carbon_path_is_array(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_array_or_subtype(field_type);
         }
@@ -81,7 +81,7 @@ bool carbon_path_is_column(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_column_or_subtype(field_type);
         }
@@ -95,7 +95,7 @@ bool carbon_path_is_object(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_object_or_subtype(field_type);
         }
@@ -115,7 +115,7 @@ bool carbon_path_is_null(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_null(field_type);
         }
@@ -129,7 +129,7 @@ bool carbon_path_is_number(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_number(field_type);
         }
@@ -143,7 +143,7 @@ bool carbon_path_is_boolean(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_boolean(field_type);
         }
@@ -157,7 +157,7 @@ bool carbon_path_is_string(rec *doc, const char *path)
         field_e field_type;
         bool result = false;
 
-        if (find_begin_from_string(&find, path, doc)) {
+        if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
                 result = field_is_string(field_type);
         }

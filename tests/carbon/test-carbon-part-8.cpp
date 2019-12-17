@@ -463,7 +463,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
 
         arr_it it;
         field_e field_type;
-        rec_read_begin(&it, &doc);
+        rec_read(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == FIELD_OBJECT_UNSORTED_MULTIMAP);
@@ -501,7 +501,7 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
 
         arr_it it;
         field_e field_type;
-        rec_read_begin(&it, &doc);
+        rec_read(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == FIELD_OBJECT_UNSORTED_MULTIMAP);
@@ -540,7 +540,7 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
 
         arr_it it;
         field_e field_type;
-        rec_read_begin(&it, &doc);
+        rec_read(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_is_number(field_type));
@@ -724,107 +724,107 @@ TEST(CarbonTest, CarbonResolveDotPathForObjects)
         const char *json_in = "{\"a\":1, \"b\":{\"c\":[1,2,3], \"d\":[\"Hello\", \"World\"], \"e\":[4], \"f\":[\"!\"], \"the key\":\"x\"}}";
         rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "1", &doc));
+        ASSERT_FALSE(find_from_string(&find, "1", &doc));
         ASSERT_FALSE(find_has_result(&find));
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.a", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.a", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "0.c", &doc));
+        ASSERT_FALSE(find_from_string(&find, "0.c", &doc));
         ASSERT_FALSE(find_has_result(&find));
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.c", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.c", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_COLUMN_U8_UNSORTED_MULTISET);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.c.0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.c.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 1U);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.c.1", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.c.1", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 2U);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.c.2", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.c.2", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 3U);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "0.b.c.3", &doc));
+        ASSERT_FALSE(find_from_string(&find, "0.b.c.3", &doc));
         ASSERT_FALSE(find_has_result(&find));
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.d", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.d", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_ARRAY_UNSORTED_MULTISET);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.d.0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.d.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "Hello", number) == 0);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.d.1", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.d.1", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "World", number) == 0);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "0.b.d.2", &doc));
+        ASSERT_FALSE(find_from_string(&find, "0.b.d.2", &doc));
         ASSERT_FALSE(find_has_result(&find));
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.e", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.e", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_COLUMN_U8_UNSORTED_MULTISET);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.e.0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.e.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_NUMBER_U8);
         ASSERT_TRUE(find_result_unsigned(&number, &find));
         ASSERT_EQ(number, 4U);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "0.b.e.1", &doc));
+        ASSERT_FALSE(find_from_string(&find, "0.b.e.1", &doc));
         ASSERT_FALSE(find_has_result(&find));
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.f", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.f", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_ARRAY_UNSORTED_MULTISET);
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.f.0", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.f.0", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
 
         ASSERT_TRUE(strncmp(find_result_string(&number, &find), "!", number) == 0);
 
-        ASSERT_FALSE(find_begin_from_string(&find, "0.b.f.1", &doc));
+        ASSERT_FALSE(find_from_string(&find, "0.b.f.1", &doc));
         ASSERT_FALSE(find_has_result(&find));
 
-        ASSERT_TRUE(find_begin_from_string(&find, "0.b.\"the key\"", &doc));
+        ASSERT_TRUE(find_from_string(&find, "0.b.\"the key\"", &doc));
         ASSERT_TRUE(find_has_result(&find));
         ASSERT_TRUE(find_result_type(&result_type, &find));
         ASSERT_EQ(result_type, FIELD_STRING);
@@ -877,79 +877,79 @@ TEST(CarbonTest, CarbonResolveDotPathForObjectsBench)
                 u32 max = 1000;
                 timestamp t1 = wallclock();
                 for (u32 i = 0; i < max; i++) {
-                        ASSERT_TRUE(find_exec(&find, &path1, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path1, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_FALSE(find_exec(&find, &path2, &doc));
+                        ASSERT_FALSE(internal_find_exec(&find, &path2, &doc));
                         ASSERT_FALSE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path3, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path3, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path4, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path4, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_FALSE(find_exec(&find, &path5, &doc));
+                        ASSERT_FALSE(internal_find_exec(&find, &path5, &doc));
                         ASSERT_FALSE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path6, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path6, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path7, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path7, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path8, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path8, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path9, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path9, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_FALSE(find_exec(&find, &path10, &doc));
+                        ASSERT_FALSE(internal_find_exec(&find, &path10, &doc));
                         ASSERT_FALSE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path11, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path11, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path12, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path12, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path13, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path13, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_FALSE(find_exec(&find, &path14, &doc));
+                        ASSERT_FALSE(internal_find_exec(&find, &path14, &doc));
                         ASSERT_FALSE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path15, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path15, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path16, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path16, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_FALSE(find_exec(&find, &path17, &doc));
+                        ASSERT_FALSE(internal_find_exec(&find, &path17, &doc));
                         ASSERT_FALSE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path18, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path18, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path19, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path19, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_FALSE(find_exec(&find, &path20, &doc));
+                        ASSERT_FALSE(internal_find_exec(&find, &path20, &doc));
                         ASSERT_FALSE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path21, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path21, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path22, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path22, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path23, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path23, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path24, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path24, &doc));
                         ASSERT_TRUE(find_has_result(&find));
 
-                        ASSERT_TRUE(find_exec(&find, &path25, &doc));
+                        ASSERT_TRUE(internal_find_exec(&find, &path25, &doc));
                         ASSERT_TRUE(find_has_result(&find));
                 }
                 timestamp t2 = wallclock();

@@ -33,22 +33,22 @@ static void result_from_object(find *find, obj_it *it);
 static inline bool
 result_from_column(find *find, u32 requested_idx, col_it *it);
 
-bool find_begin_from_string(find *out, const char *dot, rec *doc)
+bool find_from_string(find *out, const char *dot, rec *doc)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        bool ret = find_begin_from_dot(out, &path, doc);
+        bool ret = find_from_dot(out, &path, doc);
         dot_drop(&path);
         return ret;
 }
 
-bool find_begin_from_dot(find *out, const dot *path, rec *doc)
+bool find_from_dot(find *out, const dot *path, rec *doc)
 {
-        find_exec(out, path, doc);
+        internal_find_exec(out, path, doc);
         return find_has_result(out);
 }
 
-bool find_exec(find *find, const dot *path, rec *doc)
+bool internal_find_exec(find *find, const dot *path, rec *doc)
 {
         ZERO_MEMORY(find, sizeof(find));
         find->doc = doc;

@@ -83,7 +83,7 @@ static u64 bench_execute(struct read_bench_fn *self, unsigned milliseconds, u64 
                 u64 rand_idx = (rand() % num_fields);
                 u64 needle_idx = JAK_MAX(0, JAK_MIN((u64) num_fields - 1, rand_idx));
 
-                rec_read_begin(&it, &extra->record);
+                rec_read(&it, &extra->record);
 
                 for (u64 i = 0; i < needle_idx; i++) {
                         arr_it_next(&it);
@@ -92,7 +92,7 @@ static u64 bench_execute(struct read_bench_fn *self, unsigned milliseconds, u64 
               //  dot_clear(&extra->dot_path);
                 //  dot_add_idx(&extra->dot_path, needle_idx);
 
-                //find_begin_from_dot(&extra->find, &extra->dot_path, &extra->record);
+                //find_from_dot(&extra->find, &extra->dot_path, &extra->record);
                 //assert(find_has_result(&extra->find));
 
                 //find_end(&extra->find);

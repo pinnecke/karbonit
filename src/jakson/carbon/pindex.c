@@ -1045,7 +1045,7 @@ static void index_build(memfile *file, rec *doc)
 
         arr_it it;
         u64 array_pos = 0;
-        rec_read_begin(&it, doc);
+        rec_read(&it, doc);
 
         /** build index as tree structure */
         while (arr_it_next(&it)) {

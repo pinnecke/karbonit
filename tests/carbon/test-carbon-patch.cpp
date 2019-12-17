@@ -22,7 +22,7 @@ TEST(TestCarbonPatch, CreatePatch) {
 
         /* patching via patch iterators */
         {
-                patch_begin(&it, &doc);
+                patch(&it, &doc);
                 arr_it_next(&it);
                 {
                         arr_it_field_type(&type, &it);

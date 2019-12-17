@@ -255,7 +255,7 @@ bool rec_commit_hash(u64 *hash, rec *doc)
 bool rec_is_multiset(rec *doc)
 {
         arr_it it;
-        rec_read_begin(&it, doc);
+        rec_read(&it, doc);
         bool ret = arr_it_is_multiset(&it);
         return ret;
 }
@@ -263,7 +263,7 @@ bool rec_is_multiset(rec *doc)
 bool rec_is_sorted(rec *doc)
 {
         arr_it it;
-        rec_read_begin(&it, doc);
+        rec_read(&it, doc);
         bool ret = arr_it_is_sorted(&it);
         return ret;
 }
@@ -281,16 +281,16 @@ const char *rec_to_json(str_buf *dst, rec *doc)
         return json_from_record(dst, doc);
 }
 
-void rec_read_begin(arr_it *it, rec *doc)
+void rec_read(arr_it *it, rec *doc)
 {
-        patch_begin(it, doc);
+        patch(it, doc);
         INTERNAL_ARR_IT_SET_MODE(it, READ_ONLY);
 }
 
 bool rec_is_array(const rec *doc)
 {
         arr_it it;
-        rec_read_begin(&it, (rec *) doc);
+        rec_read(&it, (rec *) doc);
         bool ret = !arr_it_is_unit(&it);
         return ret;
 }

@@ -34,7 +34,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec_create_end(&context);
 
         {
-                rec_read_begin(&it, &doc);
+                rec_read(&it, &doc);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -96,7 +96,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                rec_read_begin(&it, &doc2);
+                rec_read(&it, &doc2);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -151,7 +151,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 find_update_object_type(&find, MAP_SORTED_MAP);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc2);
+                find_from_string(&find, "x.0.y", &doc2);
                 ASSERT_FALSE(find_object_is_multimap(&find));
                 ASSERT_TRUE(find_object_is_sorted(&find));
         }
@@ -166,7 +166,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 find_update_object_type(&find, MAP_SORTED_MULTIMAP);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc3);
+                find_from_string(&find, "x.0.y", &doc3);
                 ASSERT_TRUE(find_object_is_multimap(&find));
                 ASSERT_TRUE(find_object_is_sorted(&find));
         }
@@ -181,7 +181,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 find_update_object_type(&find, MAP_UNSORTED_MULTIMAP);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc4);
+                find_from_string(&find, "x.0.y", &doc4);
                 ASSERT_TRUE(find_object_is_multimap(&find));
                 ASSERT_FALSE(find_object_is_sorted(&find));
         }
@@ -196,7 +196,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 find_update_object_type(&find, MAP_UNSORTED_MAP);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc5);
+                find_from_string(&find, "x.0.y", &doc5);
                 ASSERT_FALSE(find_object_is_multimap(&find));
                 ASSERT_FALSE(find_object_is_sorted(&find));
         }

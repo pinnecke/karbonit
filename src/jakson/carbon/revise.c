@@ -152,7 +152,7 @@ bool revise_find_begin(find *out, const char *dot, rev *context)
 {
         struct dot path;
         dot_from_string(&path, dot);
-        bool status = find_exec(out, &path, context->revised);
+        bool status = internal_find_exec(out, &path, context->revised);
         dot_drop(&path);
         return status;
 }

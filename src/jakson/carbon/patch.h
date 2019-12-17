@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 /* Opens a read-write enabled iterator for patching a record revision without creating a new one. */
-void patch_begin(arr_it *it, rec *doc);
+void patch(arr_it *it, rec *doc);
 
 void patch_find_begin(find *out, const char *dot, rec *doc);
 

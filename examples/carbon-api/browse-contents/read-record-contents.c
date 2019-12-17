@@ -11,7 +11,7 @@ int main (void)
 
         rec_from_json(&record, "[\"Hello\", \"Number\", 23]", KEY_NOKEY, NULL);
 
-        rec_read_begin(&it, &record);
+        rec_read(&it, &record);
         while (arr_it_next(&it)) {
                 //arr_it_
         }

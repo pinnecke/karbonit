@@ -645,7 +645,7 @@ TEST(CarbonTest, CarbonFind) {
         revise_end(&revise);
 
         {
-                find_begin_from_string(&finder, "0", &rev_doc);
+                find_from_string(&finder, "0", &rev_doc);
 
                 ASSERT_TRUE(find_has_result(&finder));
 
@@ -657,7 +657,7 @@ TEST(CarbonTest, CarbonFind) {
         }
 
         {
-                find_begin_from_string(&finder, "1", &rev_doc);
+                find_from_string(&finder, "1", &rev_doc);
 
                 ASSERT_TRUE(find_has_result(&finder));
 
@@ -669,7 +669,7 @@ TEST(CarbonTest, CarbonFind) {
         }
 
         {
-                find_begin_from_string(&finder, "2", &rev_doc);
+                find_from_string(&finder, "2", &rev_doc);
 
                 ASSERT_TRUE(find_has_result(&finder));
 
@@ -681,7 +681,7 @@ TEST(CarbonTest, CarbonFind) {
         }
 
         {
-                find_begin_from_string(&finder, "3", &rev_doc);
+                find_from_string(&finder, "3", &rev_doc);
 
                 ASSERT_FALSE(find_has_result(&finder));
         }
@@ -739,7 +739,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         //rec_print(stdout, &rev_doc);
 
         {
-                find_begin_from_string(&finder, "0", &rev_doc);
+                find_from_string(&finder, "0", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U64);
@@ -748,7 +748,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1", &rev_doc);
+                find_from_string(&finder, "1", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
@@ -757,7 +757,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.0", &rev_doc);
+                find_from_string(&finder, "1.0", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_TRUE(type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||
@@ -775,7 +775,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.0.0", &rev_doc);
+                find_from_string(&finder, "1.0.0", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -784,7 +784,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.0.1", &rev_doc);
+                find_from_string(&finder, "1.0.1", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -793,7 +793,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.0.2", &rev_doc);
+                find_from_string(&finder, "1.0.2", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -802,12 +802,12 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.0.3", &rev_doc);
+                find_from_string(&finder, "1.0.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
         }
 
         {
-                find_begin_from_string(&finder, "1.1", &rev_doc);
+                find_from_string(&finder, "1.1", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
@@ -816,7 +816,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.0", &rev_doc);
+                find_from_string(&finder, "1.1.0", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_STRING);
@@ -826,7 +826,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.1", &rev_doc);
+                find_from_string(&finder, "1.1.1", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_TRUE(type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||
@@ -844,7 +844,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.1.0", &rev_doc);
+                find_from_string(&finder, "1.1.1.0", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -853,7 +853,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.1.1", &rev_doc);
+                find_from_string(&finder, "1.1.1.1", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -862,7 +862,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.1.2", &rev_doc);
+                find_from_string(&finder, "1.1.1.2", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -871,12 +871,12 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.1.3", &rev_doc);
+                find_from_string(&finder, "1.1.1.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
         }
 
         {
-                find_begin_from_string(&finder, "1.1.2", &rev_doc);
+                find_from_string(&finder, "1.1.2", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_STRING);
@@ -886,12 +886,12 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.1.3", &rev_doc);
+                find_from_string(&finder, "1.1.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
         }
 
         {
-                find_begin_from_string(&finder, "1.2", &rev_doc);
+                find_from_string(&finder, "1.2", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U8);
@@ -900,7 +900,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.3", &rev_doc);
+                find_from_string(&finder, "1.3", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U8);
@@ -909,7 +909,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.4", &rev_doc);
+                find_from_string(&finder, "1.4", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_TRUE(type == FIELD_COLUMN_U8_UNSORTED_MULTISET ||
@@ -927,7 +927,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.4.0", &rev_doc);
+                find_from_string(&finder, "1.4.0", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -936,7 +936,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.4.1", &rev_doc);
+                find_from_string(&finder, "1.4.1", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -945,7 +945,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.4.2", &rev_doc);
+                find_from_string(&finder, "1.4.2", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U32);
@@ -954,12 +954,12 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.4.3", &rev_doc);
+                find_from_string(&finder, "1.4.3", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
         }
 
         {
-                find_begin_from_string(&finder, "1.5", &rev_doc);
+                find_from_string(&finder, "1.5", &rev_doc);
                 ASSERT_TRUE(find_has_result(&finder));
                 find_result_type(&type, &finder);
                 ASSERT_EQ(type, FIELD_NUMBER_U8);
@@ -968,7 +968,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         }
 
         {
-                find_begin_from_string(&finder, "1.6", &rev_doc);
+                find_from_string(&finder, "1.6", &rev_doc);
                 ASSERT_FALSE(find_has_result(&finder));
         }
 

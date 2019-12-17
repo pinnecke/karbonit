@@ -34,7 +34,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         rec_create_end(&context);
 
         {
-                rec_read_begin(&it, &doc);
+                rec_read(&it, &doc);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -98,7 +98,7 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
         }
 
         {
-                rec_read_begin(&it, &doc2);
+                rec_read(&it, &doc2);
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
@@ -153,7 +153,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 find_update_column_type(&find, LIST_SORTED_SET);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc2);
+                find_from_string(&find, "x.0.y", &doc2);
                 ASSERT_FALSE(find_column_is_multiset(&find));
                 ASSERT_TRUE(find_column_is_sorted(&find));
         }
@@ -168,7 +168,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 find_update_column_type(&find, LIST_SORTED_MULTISET);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc3);
+                find_from_string(&find, "x.0.y", &doc3);
                 ASSERT_TRUE(find_column_is_multiset(&find));
                 ASSERT_TRUE(find_column_is_sorted(&find));
         }
@@ -183,7 +183,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 find_update_column_type(&find, LIST_UNSORTED_MULTISET);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc4);
+                find_from_string(&find, "x.0.y", &doc4);
                 ASSERT_TRUE(find_column_is_multiset(&find));
                 ASSERT_FALSE(find_column_is_sorted(&find));
         }
@@ -198,7 +198,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 find_update_column_type(&find, LIST_UNSORTED_SET);
                 revise_end(&revise);
 
-                find_begin_from_string(&find, "x.0.y", &doc5);
+                find_from_string(&find, "x.0.y", &doc5);
                 ASSERT_FALSE(find_column_is_multiset(&find));
                 ASSERT_FALSE(find_column_is_sorted(&find));
         }

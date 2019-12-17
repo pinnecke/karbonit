@@ -21,7 +21,7 @@
 #include <jakson/carbon/insert.h>
 #include <jakson/carbon/string-field.h>
 #include <jakson/carbon/prop.h>
-#include "internal.h"
+#include <jakson/carbon/internal.h>
 
 bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start)
 {

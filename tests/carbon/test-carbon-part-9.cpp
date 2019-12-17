@@ -415,11 +415,14 @@ TEST(CarbonTest, CommitHashStr) {
         ASSERT_EQ(1U, commit_from_str(commit_to_str(&s, 1)));
         ASSERT_EQ(42U, commit_from_str(commit_to_str(&s, 42)));
         ASSERT_EQ(432432532532323U, commit_from_str(commit_to_str(&s, 432432532532323)));
+
+        error_abort_disable();
         ASSERT_EQ(0U, commit_from_str(""));
         ASSERT_EQ(0U, commit_from_str("hello"));
         ASSERT_EQ(0U, commit_from_str("000000000000001"));
         ASSERT_EQ(0U, commit_from_str("000000000000001Z"));
         ASSERT_EQ(0U, commit_from_str(NULL));
+        error_abort_enable();
 
         str_buf_drop(&s);
 }

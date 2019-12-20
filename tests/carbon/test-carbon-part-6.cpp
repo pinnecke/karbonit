@@ -700,7 +700,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringIt)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);
@@ -776,7 +776,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex1)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
 
@@ -849,7 +849,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex2)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
@@ -923,7 +923,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex3)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
@@ -998,7 +998,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex4)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));

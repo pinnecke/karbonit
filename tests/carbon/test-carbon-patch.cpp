@@ -27,12 +27,12 @@ TEST(TestCarbonPatch, CreatePatch) {
                 {
                         arr_it_field_type(&type, &it);
                         EXPECT_TRUE(type == FIELD_OBJECT_UNSORTED_MULTIMAP);
-                        item_get_object(&obj, &(it.item))
+                        ITEM_GET_OBJECT(&obj, &(it.item))
                         {
                                 obj_it_next(&obj);
                                 internal_obj_it_prop_type(&type, &obj);
                                 EXPECT_EQ(type, FIELD_ARRAY_UNSORTED_MULTISET);
-                                item_get_array(&arr, &obj.prop.value);
+                                ITEM_GET_ARRAY(&arr, &obj.prop.value);
                                 {
                                         arr_it_next(&arr); /* { ...: [1,...] } */
                                         internal_arr_it_update_u8(&arr, 42);

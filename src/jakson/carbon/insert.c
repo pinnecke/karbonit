@@ -92,7 +92,7 @@ bool internal_insert_create_for_object(insert *in, obj_it *context)
 bool insert_null(insert *in)
 {
         if (UNLIKELY(in->context_type == COLUMN &&
-                !field_is_column_or_subtype(in->context.column->field_type))) {
+                !FIELD_IS_COLUMN_OR_SUBTYPE(in->context.column->field_type))) {
                 ERROR(ERR_TYPEMISMATCH, "Element type does not match container type");
         }
 
@@ -182,7 +182,7 @@ bool insert_null(insert *in)
 
 bool insert_true(insert *in)
 {
-        check_type_if_container_is_column(in, field_is_column_bool_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_BOOL_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         return push_media_type_for_array(in, FIELD_TRUE);
@@ -197,7 +197,7 @@ bool insert_true(insert *in)
 
 bool insert_false(insert *in)
 {
-        check_type_if_container_is_column(in, field_is_column_bool_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_BOOL_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         return push_media_type_for_array(in, FIELD_FALSE);
@@ -212,7 +212,7 @@ bool insert_false(insert *in)
 
 bool insert_u8(insert *in, u8 value)
 {
-        check_type_if_container_is_column(in, field_is_column_u8_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_U8_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_U8, &value, sizeof(u8));
@@ -228,7 +228,7 @@ bool insert_u8(insert *in, u8 value)
 
 bool insert_u16(insert *in, u16 value)
 {
-        check_type_if_container_is_column(in, field_is_column_u16_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_U16_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_U16, &value, sizeof(u16));
@@ -244,7 +244,7 @@ bool insert_u16(insert *in, u16 value)
 
 bool insert_u32(insert *in, u32 value)
 {
-        check_type_if_container_is_column(in, field_is_column_u32_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_U32_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_U32, &value, sizeof(u32));
@@ -260,7 +260,7 @@ bool insert_u32(insert *in, u32 value)
 
 bool insert_u64(insert *in, u64 value)
 {
-        check_type_if_container_is_column(in, field_is_column_u64_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_U64_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_U64, &value, sizeof(u64));
@@ -276,7 +276,7 @@ bool insert_u64(insert *in, u64 value)
 
 bool insert_i8(insert *in, i8 value)
 {
-        check_type_if_container_is_column(in, field_is_column_i8_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_I8_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_I8, &value, sizeof(i8));
@@ -292,7 +292,7 @@ bool insert_i8(insert *in, i8 value)
 
 bool insert_i16(insert *in, i16 value)
 {
-        check_type_if_container_is_column(in, field_is_column_i16_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_I16_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_I16, &value, sizeof(i16));
@@ -308,7 +308,7 @@ bool insert_i16(insert *in, i16 value)
 
 bool insert_i32(insert *in, i32 value)
 {
-        check_type_if_container_is_column(in, field_is_column_i32_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_I32_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_I32, &value, sizeof(i32));
@@ -324,7 +324,7 @@ bool insert_i32(insert *in, i32 value)
 
 bool insert_i64(insert *in, i64 value)
 {
-        check_type_if_container_is_column(in, field_is_column_i64_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_I64_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_I64, &value, sizeof(i64));
@@ -376,7 +376,7 @@ bool insert_signed(insert *in, i64 value)
 
 bool insert_float(insert *in, float value)
 {
-        check_type_if_container_is_column(in, field_is_column_float_or_subtype(in->context.column->field_type));
+        check_type_if_container_is_column(in, FIELD_IS_COLUMN_FLOAT_OR_SUBTYPE(in->context.column->field_type));
         switch (in->context_type) {
                 case ARRAY:
                         write_field_data(in, FIELD_NUMBER_FLOAT, &value, sizeof(float));

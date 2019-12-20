@@ -65,7 +65,7 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
 /**
  * Returns the number of bytes required to store a field type including its type marker in a byte sequence.
  */
-#define internal_get_type_size_encoded(field_e)                                                                        \
+#define INTERNAL_GET_TYPE_SIZE_ENCODED(field_e)                                                                        \
 ({                                                                                                                     \
         size_t type_size = sizeof(u8); /** at least the media type marker is required */                               \
         switch (field_e) {                                                                                             \
@@ -229,45 +229,45 @@ bool internal_field_field_type(field_e *type, field *field);
 bool internal_field_bool_value(bool *value, field *field);
 bool internal_field_is_null(bool *is_null, field *field);
 
-#define internal_field_u8_value(field)                                                                             \
+#define INTERNAL_FIELD_U8_VALUE(field)                                                                             \
         (*(u8 *) field->data)
 
-#define internal_field_u16_value(field)                                                                             \
+#define INTERNAL_FIELD_U16_VALUE(field)                                                                             \
         (*(u16 *) field->data)
 
-#define internal_field_u32_value(field)                                                                             \
+#define INTERNAL_FIELD_U32_VALUE(field)                                                                             \
         (*(u32 *) field->data)
 
-#define internal_field_u64_value(field)                                                                             \
+#define INTERNAL_FIELD_U64_VALUE(field)                                                                             \
         (*(u64 *) field->data)
 
-#define internal_field_i8_value(field)                                                                             \
+#define INTERNAL_FIELD_I8_VALUE(field)                                                                             \
         (*(i8 *) field->data)
 
-#define internal_field_i16_value(field)                                                                             \
+#define INTERNAL_FIELD_I16_VALUE(field)                                                                             \
         (*(i16 *) field->data)
 
-#define internal_field_i32_value(field)                                                                             \
+#define INTERNAL_FIELD_I32_VALUE(field)                                                                             \
         (*(i32 *) field->data)
 
-#define internal_field_i64_value(field)                                                                             \
+#define INTERNAL_FIELD_I64_VALUE(field)                                                                             \
         (*(i64 *) field->data)
 
-#define internal_field_float_value(field)                                                                             \
+#define INTERNAL_FIELD_FLOAT_VALUE(field)                                                                             \
         (*(float *) field->data)
 
 
-#define internal_field_signed_value(field)                                                                            \
+#define INTERNAL_FIELD_SIGNED_VALUE(field)                                                                            \
 ({                                                                                                               \
         i64 ret = 0;                                                                            \
         switch (field->type) {                                                                            \
-                case FIELD_NUMBER_I8:   ret = internal_field_i8_value(field);                                                                            \
+                case FIELD_NUMBER_I8:   ret = INTERNAL_FIELD_I8_VALUE(field);                                                                            \
                         break;                                                                            \
-                case FIELD_NUMBER_I16:  ret = internal_field_i16_value(field);                                                                            \
+                case FIELD_NUMBER_I16:  ret = INTERNAL_FIELD_I16_VALUE(field);                                                                            \
                         break;                                                                            \
-                case FIELD_NUMBER_I32:  ret = internal_field_i32_value(field);                                                                            \
+                case FIELD_NUMBER_I32:  ret = INTERNAL_FIELD_I32_VALUE(field);                                                                            \
                         break;                                                                            \
-                case FIELD_NUMBER_I64:  ret = internal_field_i64_value(field);                                                                            \
+                case FIELD_NUMBER_I64:  ret = INTERNAL_FIELD_I64_VALUE(field);                                                                            \
                         break;                                                                            \
                 default: ERROR(ERR_TYPEMISMATCH, NULL);                                                                            \
                         ret = 0;                                                                            \
@@ -276,17 +276,17 @@ bool internal_field_is_null(bool *is_null, field *field);
         ret;                                                                                                     \
 })
 
-#define internal_field_unsigned_value(field)                                                                            \
+#define INTERNAL_FIELD_UNSIGNED_VALUE(field)                                                                            \
 ({                                                                            \
         u64 ret = 0;                                                                            \
         switch (field->type) {                                                                            \
-                case FIELD_NUMBER_U8:  ret = internal_field_u8_value(field);                                                                            \
+                case FIELD_NUMBER_U8:  ret = INTERNAL_FIELD_U8_VALUE(field);                                                                            \
                         break;                                                                            \
-                case FIELD_NUMBER_U16: ret = internal_field_u16_value(field);                                                                            \
+                case FIELD_NUMBER_U16: ret = INTERNAL_FIELD_U16_VALUE(field);                                                                            \
                         break;                                                                            \
-                case FIELD_NUMBER_U32: ret = internal_field_u32_value(field);                                                                            \
+                case FIELD_NUMBER_U32: ret = INTERNAL_FIELD_U32_VALUE(field);                                                                            \
                         break;                                                                            \
-                case FIELD_NUMBER_U64: ret = internal_field_u64_value(field);                                                                            \
+                case FIELD_NUMBER_U64: ret = INTERNAL_FIELD_U64_VALUE(field);                                                                            \
                         break;                                                                            \
                 default: ERROR(ERR_TYPEMISMATCH, NULL);                                                                            \
                         ret = 0;                                                                            \

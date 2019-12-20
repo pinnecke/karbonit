@@ -468,10 +468,10 @@ TEST(CarbonTest, CarbonFromJsonColumnNumber)
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it oit;
-        item_get_object(&oit, &(it.item));
+        ITEM_GET_OBJECT(&oit, &(it.item));
         ASSERT_TRUE(obj_it_next(&oit));
         internal_obj_it_prop_type(&field_type, &oit);
-        ASSERT_TRUE(field_is_column_or_subtype(field_type));
+        ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(field_type));
         ASSERT_TRUE(field_type == FIELD_COLUMN_U8_UNSORTED_MULTISET);
 
         str_buf sb1;
@@ -506,10 +506,10 @@ TEST(CarbonTest, CarbonFromJsonColumnNullableNumber)
         arr_it_field_type(&field_type, &it);
         ASSERT_TRUE(field_type == FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it oit;
-        item_get_object(&oit, &(it.item));
+        ITEM_GET_OBJECT(&oit, &(it.item));
         ASSERT_TRUE(obj_it_next(&oit));
         internal_obj_it_prop_type(&field_type, &oit);
-        ASSERT_TRUE(field_is_column_or_subtype(field_type));
+        ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(field_type));
         ASSERT_TRUE(field_type == FIELD_COLUMN_U8_UNSORTED_MULTISET);
 
         str_buf sb1;
@@ -543,7 +543,7 @@ TEST(CarbonTest, CarbonFromJsonNonColumn)
         rec_read(&it, &doc);
         ASSERT_TRUE(arr_it_next(&it));
         arr_it_field_type(&field_type, &it);
-        ASSERT_TRUE(field_is_number(field_type));
+        ASSERT_TRUE(FIELD_IS_NUMBER(field_type));
 
         str_buf sb1;
         str_buf_create(&sb1);

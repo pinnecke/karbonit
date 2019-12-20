@@ -101,34 +101,34 @@ const i64 *internal_col_it_i64_values(u32 *nvalues, col_it *it);
 const float *internal_col_it_float_values(u32 *nvalues, col_it *it);
 
 #define COL_IT_BOOLEAN_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                             \
-        (CAST_COL_VALUES(boolean, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_bool_or_subtype(type)))
+        (CAST_COL_VALUES(boolean, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_BOOL_OR_SUBTYPE(type)))
 
 #define COL_IT_U8_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
-        (CAST_COL_VALUES(u8, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u8_or_subtype(type)))
+        (CAST_COL_VALUES(u8, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_U8_OR_SUBTYPE(type)))
 
 #define COL_IT_U16_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
-        (CAST_COL_VALUES(u16, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u16_or_subtype(type)))
+        (CAST_COL_VALUES(u16, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_U16_OR_SUBTYPE(type)))
 
 #define COL_IT_U32_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
-        (CAST_COL_VALUES(u32, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u32_or_subtype(type)))
+        (CAST_COL_VALUES(u32, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_U32_OR_SUBTYPE(type)))
 
 #define COL_IT_U64_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
-        (CAST_COL_VALUES(u64, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_u64_or_subtype(type)))
+        (CAST_COL_VALUES(u64, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_U64_OR_SUBTYPE(type)))
 
 #define COL_IT_I8_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                          \
-        (CAST_COL_VALUES(i8, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i8_or_subtype(type)))
+        (CAST_COL_VALUES(i8, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_I8_OR_SUBTYPE(type)))
 
 #define COL_IT_I16_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
-        (CAST_COL_VALUES(i16, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i16_or_subtype(type)))
+        (CAST_COL_VALUES(i16, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_I16_OR_SUBTYPE(type)))
 
 #define COL_IT_I32_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
-        (CAST_COL_VALUES(i32, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i32_or_subtype(type)))
+        (CAST_COL_VALUES(i32, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_I32_OR_SUBTYPE(type)))
 
 #define COL_IT_I64_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                         \
-        (CAST_COL_VALUES(i64, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_i64_or_subtype(type)))
+        (CAST_COL_VALUES(i64, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_I64_OR_SUBTYPE(type)))
 
 #define COL_IT_FLOAT_VALUES(_nvalues_u32_ptr_, _col_it_ptr_it_)                                                       \
-        (CAST_COL_VALUES(float, _nvalues_u32_ptr_, _col_it_ptr_it_, field_is_column_float_or_subtype(type)))
+        (CAST_COL_VALUES(float, _nvalues_u32_ptr_, _col_it_ptr_it_, FIELD_IS_COLUMN_FLOAT_OR_SUBTYPE(type)))
 
 bool col_it_remove(col_it *it, u32 pos);
 bool col_it_is_multiset(col_it *it);

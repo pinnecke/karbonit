@@ -47,7 +47,7 @@ TEST(CarbonTest, CarbonObjectInsertPropDuringItAtIndex5)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
         ASSERT_TRUE(obj_it_next(&obj_it));
@@ -123,7 +123,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKey)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);
@@ -202,7 +202,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectNonEmpty)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);
@@ -278,7 +278,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayEmpty)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);
@@ -359,7 +359,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeArrayNonEmpty)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);
@@ -435,7 +435,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeColumnEmpty)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);
@@ -510,7 +510,7 @@ TEST(CarbonTest, CarbonObjectRemovePropByKeyTypeObjectEmpty)
         arr_it_field_type(&field_type, &rev_it);
         ASSERT_EQ(field_type, FIELD_OBJECT_UNSORTED_MULTIMAP);
         obj_it obj_it;
-        item_get_object(&obj_it, &(rev_it.item));
+        ITEM_GET_OBJECT(&obj_it, &(rev_it.item));
         has_next = obj_it_next(&obj_it);
         ASSERT_TRUE(has_next);
         auto prop_key = internal_obj_it_prop_name(&obj_it);

@@ -69,7 +69,7 @@ bool carbon_path_is_array(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_array_or_subtype(field_type);
+                result = FIELD_IS_ARRAY_OR_SUBTYPE(field_type);
         }
 
         return result;
@@ -83,7 +83,7 @@ bool carbon_path_is_column(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_column_or_subtype(field_type);
+                result = FIELD_IS_COLUMN_OR_SUBTYPE(field_type);
         }
 
         return result;
@@ -97,7 +97,7 @@ bool carbon_path_is_object(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_object_or_subtype(field_type);
+                result = FIELD_IS_OBJECT_OR_SUBTYPE(field_type);
         }
 
         return result;
@@ -117,7 +117,7 @@ bool carbon_path_is_null(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_null(field_type);
+                result = FIELD_IS_NULL(field_type);
         }
 
         return result;
@@ -131,7 +131,7 @@ bool carbon_path_is_number(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_number(field_type);
+                result = FIELD_IS_NUMBER(field_type);
         }
 
         return result;
@@ -145,7 +145,7 @@ bool carbon_path_is_boolean(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_boolean(field_type);
+                result = FIELD_IS_BOOLEAN(field_type);
         }
 
         return result;
@@ -159,7 +159,7 @@ bool carbon_path_is_string(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = field_is_string(field_type);
+                result = FIELD_IS_STRING(field_type);
         }
 
         return result;
@@ -201,7 +201,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                         field_e prop_type;
                                         internal_obj_it_prop_type(&prop_type, it);
 
-                                        if (!field_is_traversable(prop_type)) {
+                                        if (!FIELD_IS_TRAVERSABLE(prop_type)) {
                                                 return PATH_NOTTRAVERSABLE;
                                         } else {
                                                 assert(prop_type == FIELD_OBJECT_UNSORTED_MULTIMAP ||
@@ -258,7 +258,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                                                         case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                                                                 obj_it sub_it;
-                                                                item_get_object(&sub_it, &(it->prop.value));
+                                                                ITEM_GET_OBJECT(&sub_it, &(it->prop.value));
                                                                 pstatus_e ret = _dot_eval_traverse_object(state,
                                                                                                           path,
                                                                                                           next_path_pos,
@@ -271,7 +271,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                                                         case FIELD_DERIVED_ARRAY_SORTED_SET: {
                                                                 arr_it sub_it;
-                                                                item_get_array(&sub_it, &(it->prop.value));
+                                                                ITEM_GET_ARRAY(&sub_it, &(it->prop.value));
                                                                 pstatus_e ret = _dot_eval_traverse_array(state,
                                                                                                          path,
                                                                                                          next_path_pos,
@@ -320,7 +320,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                                                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
                                                                 col_it sub_it;
-                                                                item_get_column(&sub_it, &(it->prop.value));
+                                                                ITEM_GET_COLUMN(&sub_it, &(it->prop.value));
                                                                 return _dot_eval_traverse_column(state,
                                                                                                  path,
                                                                                                  next_path_pos,
@@ -380,9 +380,9 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                 arr_it_field_type(&elem_type, it);
                                 u32 next_path_pos = current_path_pos + 1;
                                 if (is_unit_array && is_record &&
-                                        field_is_column_or_subtype(elem_type)) {
+                                        FIELD_IS_COLUMN_OR_SUBTYPE(elem_type)) {
                                         col_it sub_it;
-                                        item_get_column(&sub_it, &(it->item));
+                                        ITEM_GET_COLUMN(&sub_it, &(it->item));
                                         return _dot_eval_traverse_column(state,
                                                                          path,
                                                                          next_path_pos,
@@ -393,7 +393,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                  * type (for traversability) */
                                                 dot_node_type_e next_node_type;
                                                 dot_type_at(&next_node_type, next_path_pos, path);
-                                                if (!field_is_traversable(elem_type)) {
+                                                if (!FIELD_IS_TRAVERSABLE(elem_type)) {
                                                         /** the array element is not a container; path evaluation stops here */
                                                         return PATH_NOTTRAVERSABLE;
                                                 } else {
@@ -402,12 +402,12 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                 case DOT_NODE_IDX:
                                                                         /** next node in path is an array index which requires that
                                                                          * the current array element is an array or column */
-                                                                        if (!field_is_list_or_subtype(elem_type)) {
+                                                                        if (!FIELD_IS_LIST_OR_SUBTYPE(elem_type)) {
                                                                                 return PATH_NOCONTAINER;
                                                                         } else {
-                                                                                if (field_is_array_or_subtype(elem_type)) {
+                                                                                if (FIELD_IS_ARRAY_OR_SUBTYPE(elem_type)) {
                                                                                         arr_it sub_it;
-                                                                                        item_get_array(&sub_it, &(it->item));
+                                                                                        ITEM_GET_ARRAY(&sub_it, &(it->item));
                                                                                         status = _dot_eval_traverse_array(
                                                                                                 state,
                                                                                                 path,
@@ -415,9 +415,9 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                                                 &sub_it, false);
                                                                                         return status;
                                                                                 } else {
-                                                                                        assert(field_is_column_or_subtype(elem_type));
+                                                                                        assert(FIELD_IS_COLUMN_OR_SUBTYPE(elem_type));
                                                                                         col_it sub_it;
-                                                                                        item_get_column(&sub_it, &(it->item));
+                                                                                        ITEM_GET_COLUMN(&sub_it, &(it->item));
                                                                                         return _dot_eval_traverse_column(
                                                                                                 state,
                                                                                                 path,
@@ -428,12 +428,12 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                 case DOT_NODE_KEY:
                                                                         /** next node in path is a key name which requires that
                                                                          * the current array element is of type object */
-                                                                        if (!field_is_object_or_subtype(
+                                                                        if (!FIELD_IS_OBJECT_OR_SUBTYPE(
                                                                                 elem_type)) {
                                                                                 return PATH_NOTANOBJECT;
                                                                         } else {
                                                                                 obj_it sub_it;
-                                                                                item_get_object(&sub_it, &(it->item));
+                                                                                ITEM_GET_OBJECT(&sub_it, &(it->item));
                                                                                 status = _dot_eval_traverse_object(
                                                                                         state,
                                                                                         path,
@@ -457,19 +457,19 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                 case DOT_NODE_KEY:
                         /** first array element exists, which must be of type object */
                         arr_it_field_type(&elem_type, it);
-                        if (!field_is_object_or_subtype(elem_type)) {
+                        if (!FIELD_IS_OBJECT_OR_SUBTYPE(elem_type)) {
                                 /** first array element is not of type object and a key lookup cannot
                                  * be executed, consequentially */
                                 return PATH_NOTANOBJECT;
                         } else {
                                 /** next node in path is a key name which requires that
                                                                  * the current array element is of type object */
-                                if (!field_is_object_or_subtype(elem_type)) {
+                                if (!FIELD_IS_OBJECT_OR_SUBTYPE(elem_type)) {
                                         return PATH_NOTANOBJECT;
                                 } else {
                                         if (is_unit_array && is_record) {
                                                 obj_it sub_it;
-                                                item_get_object(&sub_it, &(it->item));
+                                                ITEM_GET_OBJECT(&sub_it, &(it->item));
                                                 status = _dot_eval_traverse_object(state,
                                                                                    path,
                                                                                    current_path_pos,

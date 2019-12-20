@@ -54,78 +54,78 @@ typedef struct item
 } item;
 
 #define INTERNAL_ITEM_IS_TYPE(item, type)                                                                       \
-        (item_get_type(item) == type)
+        (ITEM_GET_TYPE(item) == type)
 
 #define INTERNAL_ITEM_GET_VALUE(item, member, default_value)                                                    \
         ((item) ? (item)->value.member : default_value)
 
-#define item_is_field(item)                                                                                     \
+#define ITEM_IS_FIELD(item)                                                                                     \
         ((item) ? (item)->parent_type == UNTYPED_ARRAY : false)
 
-#define item_is_prop(item)                                                                                      \
+#define ITEM_IS_PROP(item)                                                                                      \
         ((item) ? (item)->parent_type == UNTYPED_OBJECT : false)
 
-#define item_get_type(item)                                                                                     \
+#define ITEM_GET_TYPE(item)                                                                                     \
         ((item) ? (item)->value_type : ITEM_UNDEF)
 
-#define item_is_undef(item)                                                                                     \
+#define ITEM_IS_UNDEF(item)                                                                                     \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_UNDEF)
 
-#define item_is_null(item)                                                                                      \
+#define ITEM_IS_NULL(item)                                                                                      \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_NULL)
 
-#define item_is_true(item)                                                                                      \
+#define ITEM_IS_TRUE(item)                                                                                      \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_TRUE)
 
-#define item_is_false(item)                                                                                     \
+#define ITEM_IS_FALSE(item)                                                                                     \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_FALSE)
 
-#define item_is_boolean(item)                                                                                   \
-        (item_is_true(item) || item_is_false(item))
+#define ITEM_IS_BOOLEAN(item)                                                                                   \
+        (ITEM_IS_TRUE(item) || ITEM_IS_FALSE(item))
 
-#define item_is_string(item)                                                                                    \
+#define ITEM_IS_STRING(item)                                                                                    \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_STRING)
 
-#define item_is_signed(item)                                                                                    \
+#define ITEM_IS_SIGNED(item)                                                                                    \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_NUMBER_SIGNED)
 
-#define item_is_unsigned(item)                                                                                  \
+#define ITEM_IS_UNSIGNED(item)                                                                                  \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_NUMBER_UNSIGNED)
 
-#define item_is_float(item)                                                                                     \
+#define ITEM_IS_FLOAT(item)                                                                                     \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_NUMBER_FLOAT)
 
-#define item_is_number(item)                                                                                    \
-        (item_is_signed(item) || item_is_unsigned(item) || item_is_float(item))
+#define ITEM_IS_NUMBER(item)                                                                                    \
+        (ITEM_IS_SIGNED(item) || ITEM_IS_UNSIGNED(item) || ITEM_IS_FLOAT(item))
 
-#define item_is_binary(item)                                                                                    \
+#define ITEM_IS_BINARY(item)                                                                                    \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_BINARY)
 
-#define item_is_array(item)                                                                                     \
+#define ITEM_IS_ARRAY(item)                                                                                     \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_ARRAY)
 
-#define item_is_column(item)                                                                                    \
+#define ITEM_IS_COLUMN(item)                                                                                    \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_COLUMN)
 
-#define item_is_object(item)                                                                                    \
+#define ITEM_IS_OBJECT(item)                                                                                    \
         INTERNAL_ITEM_IS_TYPE(item, ITEM_OBJECT)
 
-#define item_get_index(item)                                                                                    \
+#define ITEM_GET_INDEX(item)                                                                                    \
         ((item) ? (item)->idx : 0)
 
-#define item_get_number_signed(item, default_value)                                                             \
+#define ITEM_GET_NUMBER_SIGNED(item, default_value)                                                             \
         INTERNAL_ITEM_GET_VALUE(item, number_signed, default_value)
 
-#define item_get_number_unsigned(item, default_value)                                                           \
+#define ITEM_GET_NUMBER_UNSIGNED(item, default_value)                                                           \
         INTERNAL_ITEM_GET_VALUE(item, number_unsigned, default_value)
 
-#define item_get_number_float(item, default_value)                                                              \
+#define ITEM_GET_NUMBER_FLOAT(item, default_value)                                                              \
         INTERNAL_ITEM_GET_VALUE(item, number_float, default_value)
 
-#define item_get_string(item, default_value)                                                                    \
+#define ITEM_GET_STRING(item, default_value)                                                                    \
         INTERNAL_ITEM_GET_VALUE(item, string, default_value)
 
-#define item_get_binary(item, default_value)                                                                    \
+#define ITEM_GET_BINARY(item, default_value)                                                                    \
         INTERNAL_ITEM_GET_VALUE(item, binary, default_value)
 
 #define INTERNAL_ITEM_GET_ITERATOR(it, item, create_fn)                                                                 \
@@ -135,36 +135,36 @@ typedef struct item
                 create_fn((it), &((item)->parent.array->file), (item)->parent.object->field.value.start);                                                                                      \
         }
 
-#define item_get_array(it, item)                                                                                    \
+#define ITEM_GET_ARRAY(it, item)                                                                                    \
         INTERNAL_ITEM_GET_ITERATOR(it, item, internal_arr_it_create)
 
-#define item_get_column(it, item)                                                                                   \
+#define ITEM_GET_COLUMN(it, item)                                                                                   \
         INTERNAL_ITEM_GET_ITERATOR(it, item, col_it_create)
 
-#define item_get_object(it, item)                                                                                   \
+#define ITEM_GET_OBJECT(it, item)                                                                                   \
         INTERNAL_ITEM_GET_ITERATOR(it, item, internal_obj_it_create)
 
-#define item_remove(item)                                                                                       \
+#define ITEM_REMOVE(item)                                                                                       \
         ((item)->parent == UNTYPED_ARRAY ? internal_arr_it_remove((item)->parent.array) :                  \
                                                  internal_obj_it_remove((item)->parent.object))
 
-#define item_set_null(item)                                                                                     \
+#define ITEM_SET_NULL(item)                                                                                     \
         ((item)->parent == UNTYPED_ARRAY ? internal_arr_it_update_null((item)->parent.array) :             \
                                                  internal_obj_it_update_null((item)->parent.object))            \
 
-#define item_set_true(item)                                                                                     \
+#define ITEM_SET_TRUE(item)                                                                                     \
         ((item)->parent == UNTYPED_ARRAY ? internal_arr_it_update_true((item)->parent.array) :             \
                                                  internal_obj_it_update_true((item)->parent.object))
 
-#define item_set_false(item)                                                                                    \
+#define ITEM_SET_FALSE(item)                                                                                    \
         ((item)->parent == UNTYPED_ARRAY ? internal_arr_it_update_false((item)->parent.array) :            \
                                                  internal_obj_it_update_false((item)->parent.object)
 
-#define item_set_number_float(item, float_value)                                                                \
+#define ITEM_SET_NUMBER_FLOAT(item, float_value)                                                                \
         ((item)->parent == UNTYPED_ARRAY ? internal_arr_it_update_float((item)->parent.array, float_value):\
                                                  internal_obj_it_update_float((item)->parent.object, float_value))
 
-#define item_set_number_signed(item, i64_value)                                                                 \
+#define ITEM_SET_NUMBER_SIGNED(item, i64_value)                                                                 \
 ({                                                                                                                     \
         bool ret = false;                                                                                              \
         switch (number_min_type_signed(value)) {                                                                       \
@@ -195,7 +195,7 @@ typedef struct item
         ret;                                                                                                           \
 })
 
-#define item_set_number_unsigned(item, u64_value)                                                               \
+#define ITEM_SET_NUMBER_UNSIGNED(item, u64_value)                                                               \
 ({                                                                                                                     \
         bool ret = false;                                                                                              \
         switch (number_min_type_unsigned(value)) {                                                                     \
@@ -226,12 +226,12 @@ typedef struct item
         ret;                                                                                                           \
 })
 
-#define item_set_string(item, const_char_str)                                                                   \
+#define ITEM_SET_STRING(item, const_char_str)                                                                   \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_string((item)->parent.array, const_char_str) :            \
                                 internal_obj_it_update_string((item)->parent.object, const_char_str))
 
-#define item_set_binary(item, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext,                     \
+#define ITEM_SET_BINARY(item, const_void_ptr_value, size_t_nbytes, const_char_ptr_file_ext,                     \
                                const_char_ptr_user_type)                                                               \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_binary((item)->parent.array, const_void_ptr_value,        \
@@ -241,56 +241,56 @@ typedef struct item
                                                                     size_t_nbytes, const_char_ptr_file_ext,            \
                                                                     const_char_ptr_user_type))
 
-#define item_set_array_begin(state, item)                                                                       \
+#define ITEM_SET_ARRAY_BEGIN(state, item)                                                                       \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_array_begin((state), (item)->parent.array) :              \
                                 internal_obj_it_update_array_begin((state), (item)->parent.object))             \
 
-#define item_set_array_end(state)                                                                               \
+#define ITEM_SET_ARRAY_END(state)                                                                               \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_array_end((state)) :                                      \
                                 internal_obj_it_update_array_end((state)))
 
-#define item_set_column_begin(state, item)                                                                      \
+#define ITEM_SET_COLUMN_BEGIN(state, item)                                                                      \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_column_begin((state), (item)->parent.array) :             \
                                 internal_obj_it_update_column_begin((state), (item)->parent.object))
 
-#define item_set_column_end(state)                                                                              \
+#define ITEM_SET_COLUMN_END(state)                                                                              \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_column_end((state)) :                                     \
                                 internal_obj_it_update_column_end((state)))
 
-#define item_set_object_begin(state, item)                                                                      \
+#define ITEM_SET_OBJECT_BEGIN(state, item)                                                                      \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_object_begin((state), (item)->parent.array) :             \
                                 internal_obj_it_update_object_begin((state), (item)->parent.object))
 
-#define item_set_object_end(state)                                                                              \
+#define ITEM_SET_OBJECT_END(state)                                                                              \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_object_end((state)) :                                     \
                                 internal_obj_it_update_object_end((state))
 
-#define item_set_from_record(item, const_carbon_ptr_src)                                                        \
+#define ITEM_SET_FROM_REC(item, const_carbon_ptr_src)                                                        \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_from_carbon((item)->parent.array, const_carbon_ptr_src) : \
                                 internal_obj_it_update_from_carbon((item)->parent.object, const_carbon_ptr_src))
 
-#define item_set_from_array(item, const_arr_it_ptr_src)                                                   \
+#define ITEM_SET_FROM_ARRAY(item, const_arr_it_ptr_src)                                                   \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_from_array((item)->>parent.array,                         \
                                                                         const_arr_it_ptr_src) :                  \
                                 internal_obj_it_update_from_array((item)->>parent.object,                       \
                                                                         const_arr_it_ptr_src))
 
-#define item_set_from_object(item, const_obj_it_ptr_src)                                                 \
+#define ITEM_SET_FROM_OBJECT(item, const_obj_it_ptr_src)                                                 \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_from_object((item)->parent.array,                         \
                                                                          const_obj_it_ptr_src) :                \
                                 internal_obj_it_update_from_object((item)->parent.object,                       \
                                                                          const_obj_it_ptr_src))
 
-#define item_set_from_column(item, const_col_it_ptr_src)                                                 \
+#define ITEM_SET_FROM_COLUMN(item, const_col_it_ptr_src)                                                 \
         ((item)->parent == UNTYPED_ARRAY ?                                                                       \
                                 internal_arr_it_update_from_column((item)->parent.array,                         \
                                                                          const_col_it_ptr_src) :                \
@@ -305,29 +305,29 @@ typedef struct item
 #define ITEM_SETUP_VALUE(item, field_type, field)                                                               \
 ({                                                               \
         bool status = true;                                                            \
-        if (field_is_signed(field_type) && !field_is_list_or_subtype(field_type)) {                                                               \
-                (item)->value.number_signed = internal_field_signed_value((field));                                                               \
+        if (FIELD_IS_SIGNED(field_type) && !FIELD_IS_LIST_OR_SUBTYPE(field_type)) {                                                               \
+                (item)->value.number_signed = INTERNAL_FIELD_SIGNED_VALUE((field));                                                               \
                 (item)->value_type = ITEM_NUMBER_SIGNED;                                                               \
-        } else if (field_is_unsigned(field_type) && !field_is_list_or_subtype(field_type)) {                                                               \
-                (item)->value.number_unsigned = internal_field_unsigned_value((field));                                                               \
+        } else if (FIELD_IS_UNSIGNED(field_type) && !FIELD_IS_LIST_OR_SUBTYPE(field_type)) {                                                               \
+                (item)->value.number_unsigned = INTERNAL_FIELD_UNSIGNED_VALUE((field));                                                               \
                 (item)->value_type = ITEM_NUMBER_UNSIGNED;                                                               \
-        } else if (field_is_floating(field_type) && !field_is_list_or_subtype(field_type)) {                                                               \
-                (item)->value.number_float = internal_field_float_value((field));                                                               \
+        } else if (FIELD_IS_FLOATING(field_type) && !FIELD_IS_LIST_OR_SUBTYPE(field_type)) {                                                               \
+                (item)->value.number_float = INTERNAL_FIELD_FLOAT_VALUE((field));                                                               \
                 (item)->value_type = ITEM_NUMBER_FLOAT;                                                               \
-        } else if (field_is_binary(field_type)) {                                                               \
+        } else if (FIELD_IS_BINARY(field_type)) {                                                               \
                 internal_field_binary_value(&(item)->value.binary, (field));                                                               \
                 (item)->value_type = ITEM_BINARY;                                                               \
-        } else if (field_is_boolean(field_type) && !field_is_list_or_subtype(field_type)) {                                                               \
+        } else if (FIELD_IS_BOOLEAN(field_type) && !FIELD_IS_LIST_OR_SUBTYPE(field_type)) {                                                               \
                 (item)->value_type = field_type == FIELD_TRUE ? ITEM_TRUE : ITEM_FALSE;                                                               \
-        } else if (field_is_array_or_subtype(field_type)) {                                                               \
+        } else if (FIELD_IS_ARRAY_OR_SUBTYPE(field_type)) {                                                               \
                 (item)->value_type = ITEM_ARRAY;                                                               \
-        } else if (field_is_column_or_subtype(field_type)) {                                                               \
+        } else if (FIELD_IS_COLUMN_OR_SUBTYPE(field_type)) {                                                               \
                 (item)->value_type = ITEM_COLUMN;                                                               \
-        } else if (field_is_object_or_subtype(field_type)) {                                                               \
+        } else if (FIELD_IS_OBJECT_OR_SUBTYPE(field_type)) {                                                               \
                 (item)->value_type = ITEM_OBJECT;                                                               \
-        } else if (field_is_null(field_type)) {                                                               \
+        } else if (FIELD_IS_NULL(field_type)) {                                                               \
                 (item)->value_type = ITEM_NULL;                                                               \
-        } else if (field_is_string(field_type)) {                                                               \
+        } else if (FIELD_IS_STRING(field_type)) {                                                               \
                 (item)->value.string.str = internal_field_string_value(&(item)->value.string.len, (field));                                                               \
                 (item)->value_type = ITEM_STRING;                                                               \
         } else {                                                               \

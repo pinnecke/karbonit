@@ -136,7 +136,7 @@ bool find_update_array_type(find *find, list_type_e derivation)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_array_or_subtype(type)) {
+        if (FIELD_IS_ARRAY_OR_SUBTYPE(type)) {
                 memfile mod;
                 arr_it *it = find_result_array(find);
                 MEMFILE_CLONE(&mod, &it->file);
@@ -155,7 +155,7 @@ bool find_array_is_multiset(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_array_or_subtype(type)) {
+        if (FIELD_IS_ARRAY_OR_SUBTYPE(type)) {
                 arr_it *it = find_result_array(find);
                 return arr_it_is_multiset(it);
         } else {
@@ -167,7 +167,7 @@ bool find_array_is_sorted(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_array_or_subtype(type)) {
+        if (FIELD_IS_ARRAY_OR_SUBTYPE(type)) {
                 arr_it *it = find_result_array(find);
                 return arr_it_is_sorted(it);
         } else {
@@ -179,7 +179,7 @@ bool find_update_column_type(find *find, list_type_e derivation)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_column_or_subtype(type)) {
+        if (FIELD_IS_COLUMN_OR_SUBTYPE(type)) {
                 col_it *it = find_result_column(find);
                 MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->begin);
@@ -201,7 +201,7 @@ bool find_column_is_multiset(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_column_or_subtype(type)) {
+        if (FIELD_IS_COLUMN_OR_SUBTYPE(type)) {
                 col_it *it = find_result_column(find);
                 return col_it_is_multiset(it);
         } else {
@@ -213,7 +213,7 @@ bool find_column_is_sorted(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_column_or_subtype(type)) {
+        if (FIELD_IS_COLUMN_OR_SUBTYPE(type)) {
                 col_it *it = find_result_column(find);
                 return col_it_is_sorted(it);
         } else {
@@ -225,7 +225,7 @@ bool find_update_object_type(find *find, map_type_e derivation)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_object_or_subtype(type)) {
+        if (FIELD_IS_OBJECT_OR_SUBTYPE(type)) {
                 obj_it *it = find_result_object(find);
                 MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->begin);
@@ -246,7 +246,7 @@ bool find_object_is_multimap(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_object_or_subtype(type)) {
+        if (FIELD_IS_OBJECT_OR_SUBTYPE(type)) {
                 obj_it *it = find_result_object(find);
                 return obj_it_is_multimap(it);
         } else {
@@ -258,7 +258,7 @@ bool find_object_is_sorted(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_object_or_subtype(type)) {
+        if (FIELD_IS_OBJECT_OR_SUBTYPE(type)) {
                 obj_it *it = find_result_object(find);
                 return obj_it_is_sorted(it);
         } else {
@@ -270,7 +270,7 @@ bool find_multimap(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_object_or_subtype(type)) {
+        if (FIELD_IS_OBJECT_OR_SUBTYPE(type)) {
                 return find_object_is_multimap(find);
         } else {
                 return false;
@@ -281,9 +281,9 @@ bool find_multiset(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_array_or_subtype(type)) {
+        if (FIELD_IS_ARRAY_OR_SUBTYPE(type)) {
                 return find_array_is_multiset(find);
-        } else if (field_is_column_or_subtype(type)) {
+        } else if (FIELD_IS_COLUMN_OR_SUBTYPE(type)) {
                 return find_column_is_multiset(find);
         } else {
                 return false;
@@ -294,9 +294,9 @@ bool find_sorted(find *find)
 {
         field_e type;
         find_result_type(&type, find);
-        if (field_is_array_or_subtype(type)) {
+        if (FIELD_IS_ARRAY_OR_SUBTYPE(type)) {
                 return find_array_is_sorted(find);
-        } else if (field_is_column_or_subtype(type)) {
+        } else if (FIELD_IS_COLUMN_OR_SUBTYPE(type)) {
                 return find_column_is_sorted(find);
         } else {
                 return find_object_is_sorted(find);
@@ -305,22 +305,22 @@ bool find_sorted(find *find)
 
 bool find_result_is_array(find *find)
 {
-        return field_is_array_or_subtype(find->type);
+        return FIELD_IS_ARRAY_OR_SUBTYPE(find->type);
 }
 
 bool find_result_is_object(find *find)
 {
-        return field_is_object_or_subtype(find->type);
+        return FIELD_IS_OBJECT_OR_SUBTYPE(find->type);
 }
 
 bool find_result_is_column(find *find)
 {
-        return field_is_column_or_subtype(find->type);
+        return FIELD_IS_COLUMN_OR_SUBTYPE(find->type);
 }
 
 bool find_result_is_boolean(find *find)
 {
-        return field_is_boolean(find->type);
+        return FIELD_IS_BOOLEAN(find->type);
 }
 
 bool find_result_is_undefined(find *find)
@@ -330,32 +330,32 @@ bool find_result_is_undefined(find *find)
 
 bool find_result_is_unsigned(find *find)
 {
-        return field_is_unsigned(find->type);
+        return FIELD_IS_UNSIGNED(find->type);
 }
 
 bool find_result_is_signed(find *find)
 {
-        return field_is_signed(find->type);
+        return FIELD_IS_SIGNED(find->type);
 }
 
 bool find_result_is_float(find *find)
 {
-        return field_is_floating(find->type);
+        return FIELD_IS_FLOATING(find->type);
 }
 
 bool find_result_is_null(find *find)
 {
-        return field_is_null(find->type);
+        return FIELD_IS_NULL(find->type);
 }
 
 bool find_result_is_string(find *find)
 {
-        return field_is_string(find->type);
+        return FIELD_IS_STRING(find->type);
 }
 
 bool find_result_is_binary(find *find)
 {
-        return field_is_binary(find->type);
+        return FIELD_IS_BINARY(find->type);
 }
 
 bool __check_path_evaluator_has_result(find *find)
@@ -374,7 +374,7 @@ arr_it *find_result_array(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_array_or_subtype(find->type))) {
+        if (UNLIKELY(!FIELD_IS_ARRAY_OR_SUBTYPE(find->type))) {
                 ERROR(ERR_TYPEMISMATCH, "container must be array or sub type");
                 return NULL;
         }
@@ -388,7 +388,7 @@ obj_it *find_result_object(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_object_or_subtype(find->type))) {
+        if (UNLIKELY(!FIELD_IS_OBJECT_OR_SUBTYPE(find->type))) {
                 ERROR(ERR_TYPEMISMATCH, "container must be object or sub type");
                 return NULL;
         }
@@ -402,7 +402,7 @@ col_it *find_result_column(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_column_or_subtype(find->type))) {
+        if (UNLIKELY(!FIELD_IS_COLUMN_OR_SUBTYPE(find->type))) {
                 ERROR(ERR_TYPEMISMATCH, "container must be column or sub type");
                 return NULL;
         }
@@ -416,7 +416,7 @@ bool find_result_boolean(bool *result, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_boolean(find->type))) {
+        if (UNLIKELY(!FIELD_IS_BOOLEAN(find->type))) {
                 return ERROR(ERR_TYPEMISMATCH, "result value must be of boolean type");
         }
 
@@ -430,7 +430,7 @@ bool find_result_unsigned(u64 *out, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_unsigned(find->type))) {
+        if (UNLIKELY(!FIELD_IS_UNSIGNED(find->type))) {
                 return ERROR(ERR_TYPEMISMATCH, "result value must be of unsigned type");
         }
 
@@ -444,7 +444,7 @@ bool find_result_signed(i64 *out, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_signed(find->type))) {
+        if (UNLIKELY(!FIELD_IS_SIGNED(find->type))) {
                 return ERROR(ERR_TYPEMISMATCH, "result value must be of signed type");
         }
 
@@ -458,7 +458,7 @@ bool find_result_float(float *out, find *find)
             return false;
         }
 
-        if (UNLIKELY(!field_is_floating(find->type))) {
+        if (UNLIKELY(!FIELD_IS_FLOATING(find->type))) {
                 return ERROR(ERR_TYPEMISMATCH, "result value must be of float type");
         }
 
@@ -472,7 +472,7 @@ const char *find_result_string(u64 *str_len, find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_string(find->type))) {
+        if (UNLIKELY(!FIELD_IS_STRING(find->type))) {
                 ERROR(ERR_TYPEMISMATCH, "result value must be of string type");
                 return NULL;
         }
@@ -486,7 +486,7 @@ binary_field *find_result_binary(find *find)
             return NULL;
         }
 
-        if (UNLIKELY(!field_is_binary(find->type))) {
+        if (UNLIKELY(!FIELD_IS_BINARY(find->type))) {
                 ERROR(ERR_TYPEMISMATCH, "result value must be of binary type");
                 return NULL;
         }
@@ -509,7 +509,7 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        item_get_array(&find->value.array, &(it->item));
+                        ITEM_GET_ARRAY(&find->value.array, &(it->item));
                         find->value.array.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -552,37 +552,37 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        item_get_column(&find->value.column, &(it->item));
+                        ITEM_GET_COLUMN(&find->value.column, &(it->item));
                         find->value.column.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        item_get_object(&find->value.object, &(it->item));
+                        ITEM_GET_OBJECT(&find->value.object, &(it->item));
                         find->value.object.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
-                        find->value.string = item_get_string(&(it->item), NULL_STRING);
+                        find->value.string = ITEM_GET_STRING(&(it->item), NULL_STRING);
                         break;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_U64:
-                        find->value.unsigned_number = item_get_number_unsigned(&(it->item), CARBON_NULL_UNSIGNED);
+                        find->value.unsigned_number = ITEM_GET_NUMBER_UNSIGNED(&(it->item), CARBON_NULL_UNSIGNED);
                         break;
                 case FIELD_NUMBER_I8:
                 case FIELD_NUMBER_I16:
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
-                        find->value.signed_number = item_get_number_signed(&(it->item), CARBON_NULL_SIGNED);
+                        find->value.signed_number = ITEM_GET_NUMBER_SIGNED(&(it->item), CARBON_NULL_SIGNED);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        find->value.float_number = item_get_number_float(&(it->item), CARBON_NULL_FLOAT);
+                        find->value.float_number = ITEM_GET_NUMBER_FLOAT(&(it->item), CARBON_NULL_FLOAT);
                         break;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        find->value.binary = item_get_binary(&(it->item), NULL_BINARY);
+                        find->value.binary = ITEM_GET_BINARY(&(it->item), NULL_BINARY);
                         break;
                 default: ERROR(ERR_INTERNALERR, NULL);
                         break;
@@ -604,7 +604,7 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET:
-                        item_get_array(&find->value.array, &(it->prop.value));
+                        ITEM_GET_ARRAY(&find->value.array, &(it->prop.value));
                         find->value.array.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
@@ -647,37 +647,37 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
-                        item_get_column(&find->value.column, &(it->prop.value));
+                        ITEM_GET_COLUMN(&find->value.column, &(it->prop.value));
                         find->value.column.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_OBJECT_UNSORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                        item_get_object(&find->value.object, &(it->prop.value));
+                        ITEM_GET_OBJECT(&find->value.object, &(it->prop.value));
                         find->value.object.file.mode = find->doc->file.mode;
                         break;
                 case FIELD_STRING:
-                        find->value.string = item_get_string(&(it->prop.value), NULL_STRING);
+                        find->value.string = ITEM_GET_STRING(&(it->prop.value), NULL_STRING);
                         break;
                 case FIELD_NUMBER_U8:
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_U64:
-                        find->value.unsigned_number = item_get_number_unsigned(&(it->prop.value), CARBON_NULL_UNSIGNED);
+                        find->value.unsigned_number = ITEM_GET_NUMBER_UNSIGNED(&(it->prop.value), CARBON_NULL_UNSIGNED);
                         break;
                 case FIELD_NUMBER_I8:
                 case FIELD_NUMBER_I16:
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
-                        find->value.signed_number = item_get_number_signed(&(it->prop.value), CARBON_NULL_SIGNED);
+                        find->value.signed_number = ITEM_GET_NUMBER_SIGNED(&(it->prop.value), CARBON_NULL_SIGNED);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        find->value.float_number = item_get_number_float(&(it->prop.value), CARBON_NULL_FLOAT);
+                        find->value.float_number = ITEM_GET_NUMBER_FLOAT(&(it->prop.value), CARBON_NULL_FLOAT);
                         break;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
-                        find->value.binary = item_get_binary(&(it->prop.value), NULL_BINARY);
+                        find->value.binary = ITEM_GET_BINARY(&(it->prop.value), NULL_BINARY);
                         break;
                 default: ERROR(ERR_INTERNALERR, NULL);
                         break;

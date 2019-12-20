@@ -432,7 +432,7 @@ bool col_it_is_sorted(col_it *it)
 
 bool col_it_update_type(col_it *it, list_type_e derivation)
 {
-        if (!field_is_column_or_subtype(it->field_type)) {
+        if (!FIELD_IS_COLUMN_OR_SUBTYPE(it->field_type)) {
                 return false;
         }
 
@@ -605,7 +605,7 @@ static bool rewrite_column_to_array(col_it *it)
 
         MEMFILE_SAVE_POSITION(&it->file);
         u8 marker = MEMFILE_PEEK_BYTE(&it->file);
-        assert(field_is_column_or_subtype(marker));
+        assert(FIELD_IS_COLUMN_OR_SUBTYPE(marker));
 
         type_class = abstract_get_class(marker);
         list_type = abstract_class_to_list_derivable(type_class);

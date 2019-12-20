@@ -70,7 +70,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
 {
         MEMFILE_SAVE_POSITION(&it->file);
 
-        if (field_is_constant(it->field.type)) {
+        if (FIELD_IS_CONSTANT(it->field.type)) {
                 u8 value;
                 switch (constant) {
                         case CONST_TRUE:

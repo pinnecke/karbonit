@@ -38,36 +38,36 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_TRUE(col_it_is_multiset(&col_it));
                 ASSERT_FALSE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_TRUE(col_it_is_multiset(&col_it));
                 ASSERT_FALSE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_TRUE(col_it_is_multiset(&col_it));
                 ASSERT_TRUE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_FALSE(col_it_is_multiset(&col_it));
                 ASSERT_FALSE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_FALSE(col_it_is_multiset(&col_it));
                 ASSERT_TRUE(col_it_is_sorted(&col_it));
         }
@@ -79,19 +79,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 revise_iterator_open(&it, &rev_context);
 
                 arr_it_next(&it);
-                item_get_column(&column_it, &(it.item));
+                ITEM_GET_COLUMN(&column_it, &(it.item));
                 col_it_update_type(&column_it, LIST_SORTED_MULTISET);
 
                 arr_it_next(&it);
-                item_get_column(&column_it, &(it.item));
+                ITEM_GET_COLUMN(&column_it, &(it.item));
                 col_it_update_type(&column_it, LIST_UNSORTED_SET);
 
                 arr_it_next(&it);
-                item_get_column(&column_it, &(it.item));
+                ITEM_GET_COLUMN(&column_it, &(it.item));
                 col_it_update_type(&column_it, LIST_SORTED_SET);
 
                 arr_it_next(&it);
-                item_get_column(&column_it, &(it.item));
+                ITEM_GET_COLUMN(&column_it, &(it.item));
                 col_it_update_type(&column_it, LIST_UNSORTED_MULTISET);
 
                 revise_end(&rev_context);
@@ -102,29 +102,29 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_TRUE(col_it_is_multiset(&col_it));
                 ASSERT_TRUE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_FALSE(col_it_is_multiset(&col_it));
                 ASSERT_FALSE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_FALSE(col_it_is_multiset(&col_it));
                 ASSERT_TRUE(col_it_is_sorted(&col_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
-                item_get_column(&col_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
+                ITEM_GET_COLUMN(&col_it, &(it.item));
                 ASSERT_TRUE(col_it_is_multiset(&col_it));
                 ASSERT_FALSE(col_it_is_sorted(&col_it));
         }
@@ -147,7 +147,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 revise_begin(&revise, &doc2, &doc);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
                 col_it *find_result = find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_column_type(&find, LIST_SORTED_SET);
@@ -162,7 +162,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 revise_begin(&revise, &doc3, &doc2);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
                 col_it *find_result = find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_column_type(&find, LIST_SORTED_MULTISET);
@@ -177,7 +177,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 revise_begin(&revise, &doc4, &doc3);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
                 col_it * find_result = find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_column_type(&find, LIST_UNSORTED_MULTISET);
@@ -192,7 +192,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
                 revise_begin(&revise, &doc5, &doc4);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_column_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_COLUMN_OR_SUBTYPE(ft));
                 col_it *find_result = find_result_column(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_column_type(&find, LIST_UNSORTED_SET);

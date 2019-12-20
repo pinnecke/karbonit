@@ -94,30 +94,30 @@ static path_policy_e json_from_fn_object(const obj_it *object, const traverse_in
 static void json_print_field(str_buf *str, const item *field, const traverse_info *context)
 {
         if (context->type == ON_ENTER) {
-                if (item_is_null(field)) {
+                if (ITEM_IS_NULL(field)) {
                         _json_from_null(str);
-                } else if (item_is_true(field)) {
+                } else if (ITEM_IS_TRUE(field)) {
                         _json_from_boolean(str, true);
-                } else if (item_is_false(field)) {
+                } else if (ITEM_IS_FALSE(field)) {
                         _json_from_boolean(str, false);
-                } else if (item_is_string(field)) {
-                        string_field sf = item_get_string(field, NULL_STRING);
+                } else if (ITEM_IS_STRING(field)) {
+                        string_field sf = ITEM_GET_STRING(field, NULL_STRING);
                         _json_from_string(str, &sf);
-                } else if (item_is_signed(field)) {
-                        i64 value = item_get_number_signed(field, NULL_INT64);
+                } else if (ITEM_IS_SIGNED(field)) {
+                        i64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_INT64);
                         _json_from_signed(str, value);
-                } else if (item_is_unsigned(field)) {
-                        u64 value = item_get_number_signed(field, NULL_UINT64);
+                } else if (ITEM_IS_UNSIGNED(field)) {
+                        u64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_UINT64);
                         _json_from_unsigned(str, value);
-                } else if (item_is_float(field)) {
-                        float value = item_get_number_float(field, NULL_FLOAT);
+                } else if (ITEM_IS_FLOAT(field)) {
+                        float value = ITEM_GET_NUMBER_FLOAT(field, NULL_FLOAT);
                         _json_from_float(str, value);
-                } else if (item_is_binary(field)) {
-                        binary_field value = item_get_binary(field, NULL_BINARY);
+                } else if (ITEM_IS_BINARY(field)) {
+                        binary_field value = ITEM_GET_BINARY(field, NULL_BINARY);
                         _json_from_binary(str, &value);
-                } else if (item_is_column(field)) {
+                } else if (ITEM_IS_COLUMN(field)) {
                         col_it it;
-                        item_get_column(&it, field);
+                        ITEM_GET_COLUMN(&it, field);
                         _json_from_column(str, &it);
                 }
         }
@@ -126,7 +126,7 @@ static void json_print_field(str_buf *str, const item *field, const traverse_inf
 static path_policy_e json_from_fn_field(const item *item, const traverse_info *context, traverse_hidden *extra)
 {
         str_buf *str = (str_buf *) extra->arg;
-        str_buf_add(str, item_get_index(item) > 0 && context->type == ON_ENTER ? ", " : "");
+        str_buf_add(str, ITEM_GET_INDEX(item) > 0 && context->type == ON_ENTER ? ", " : "");
         json_print_field(str, item, context);
         return PATH_EXPAND;
 }

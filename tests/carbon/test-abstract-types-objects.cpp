@@ -38,36 +38,36 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_TRUE(obj_it_is_multimap(&obj_it));
                 ASSERT_FALSE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_TRUE(obj_it_is_multimap(&obj_it));
                 ASSERT_FALSE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_TRUE(obj_it_is_multimap(&obj_it));
                 ASSERT_TRUE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_FALSE(obj_it_is_multimap(&obj_it));
                 ASSERT_FALSE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_FALSE(obj_it_is_multimap(&obj_it));
                 ASSERT_TRUE(obj_it_is_sorted(&obj_it));
         }
@@ -77,19 +77,19 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
                 revise_iterator_open(&it, &rev_context);
 
                 arr_it_next(&it);
-                item_get_object(&obj_it, &(it.item));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 obj_it_update_type(&obj_it, MAP_SORTED_MULTIMAP);
 
                 arr_it_next(&it);
-                item_get_object(&obj_it, &(it.item));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 obj_it_update_type(&obj_it, MAP_UNSORTED_MAP);
 
                 arr_it_next(&it);
-                item_get_object(&obj_it, &(it.item));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 obj_it_update_type(&obj_it, MAP_SORTED_MAP);
 
                 arr_it_next(&it);
-                item_get_object(&obj_it, &(it.item));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 obj_it_update_type(&obj_it, MAP_UNSORTED_MULTIMAP);
 
                 revise_end(&rev_context);
@@ -100,29 +100,29 @@ TEST(TestAbstractTypes, ColumnSetAbstractType) {
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_TRUE(obj_it_is_multimap(&obj_it));
                 ASSERT_TRUE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_FALSE(obj_it_is_multimap(&obj_it));
                 ASSERT_FALSE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_FALSE(obj_it_is_multimap(&obj_it));
                 ASSERT_TRUE(obj_it_is_sorted(&obj_it));
 
                 arr_it_next(&it);
                 arr_it_field_type(&ft, &it);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
-                item_get_object(&obj_it, &(it.item));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
+                ITEM_GET_OBJECT(&obj_it, &(it.item));
                 ASSERT_TRUE(obj_it_is_multimap(&obj_it));
                 ASSERT_FALSE(obj_it_is_sorted(&obj_it));
         }
@@ -145,7 +145,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 revise_begin(&revise, &doc2, &doc);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_SORTED_MAP);
@@ -160,7 +160,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 revise_begin(&revise, &doc3, &doc2);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_SORTED_MULTIMAP);
@@ -175,7 +175,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 revise_begin(&revise, &doc4, &doc3);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_UNSORTED_MULTIMAP);
@@ -190,7 +190,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
                 revise_begin(&revise, &doc5, &doc4);
                 revise_find_begin(&find, "x.0.y", &revise);
                 find_result_type(&ft, &find);
-                ASSERT_TRUE(field_is_object_or_subtype(ft));
+                ASSERT_TRUE(FIELD_IS_OBJECT_OR_SUBTYPE(ft));
                 obj_it *find_result = find_result_object(&find);
                 ASSERT_TRUE(find_result != NULL);
                 find_update_object_type(&find, MAP_UNSORTED_MAP);

@@ -296,17 +296,17 @@ static bool internal_pack_array(arr_it *it)
         {
                 item *item;
                 while ((item = arr_it_next(it))) {
-                        if (item_is_column(item)) {
+                        if (ITEM_IS_COLUMN(item)) {
                                 col_it column;
-                                item_get_column(&column, item);
+                                ITEM_GET_COLUMN(&column, item);
                                 optimize_column(&column, &it->file);
-                        } else if (item_is_object(item)) {
+                        } else if (ITEM_IS_OBJECT(item)) {
                                 obj_it object;
-                                item_get_object(&object, item);
+                                ITEM_GET_OBJECT(&object, item);
                                 optimize_object(&object, &it->file);
-                        } else if (item_is_array(item)) {
+                        } else if (ITEM_IS_ARRAY(item)) {
                                 arr_it array;
-                                item_get_array(&array, item);
+                                ITEM_GET_ARRAY(&array, item);
                                 optimize_array(&array, &it->file);
                         }
                 }

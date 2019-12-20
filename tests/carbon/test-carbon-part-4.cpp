@@ -525,7 +525,7 @@ TEST(CarbonTest, CarbonColumnRemoveTest)
         has_next = arr_it_next(&rev_it);
         ASSERT_TRUE(has_next);
         col_it cit;
-        item_get_column(&cit, &(rev_it.item));
+        ITEM_GET_COLUMN(&cit, &(rev_it.item));
         field_e type;
         u32 num_elems = COL_IT_VALUES_INFO(&type, &cit);
         ASSERT_EQ(type, FIELD_COLUMN_U16_UNSORTED_MULTISET);

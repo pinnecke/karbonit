@@ -292,7 +292,7 @@ bool carbon_field_skip_column(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        ERROR_IF_AND_RETURN(!field_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(!FIELD_IS_COLUMN_OR_SUBTYPE(type_marker), ERR_TYPEMISMATCH, NULL);
 
         col_it skip_it;
         col_it_create(&skip_it, file, MEMFILE_TELL(file) - sizeof(u8));

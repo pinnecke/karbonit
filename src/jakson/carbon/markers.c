@@ -126,14 +126,14 @@ static path_policy_e markers_print_fn_object(const obj_it *object, const travers
 static void markers_print_field(str_buf *str, const item *field, const traverse_info *context)
 {
         if (context->type == ON_ENTER) {
-                if (item_is_null(field)) {
+                if (ITEM_IS_NULL(field)) {
                         str_buf_add(str, "[null]");
-                } else if (item_is_true(field)) {
+                } else if (ITEM_IS_TRUE(field)) {
                         str_buf_add(str, "[true]");
-                } else if (item_is_false(field)) {
+                } else if (ITEM_IS_FALSE(field)) {
                         str_buf_add(str, "[false]");
-                } else if (item_is_string(field)) {
-                        string_field sf = item_get_string(field, NULL_STRING);
+                } else if (ITEM_IS_STRING(field)) {
+                        string_field sf = ITEM_GET_STRING(field, NULL_STRING);
                         str_buf_add(str, "[string]");
                         str_buf_add(str, "(len:");
                         str_buf_add_u64(str, sf.len);
@@ -141,33 +141,33 @@ static void markers_print_field(str_buf *str, const item *field, const traverse_
                         str_buf_add(str, "[value:");
                         str_buf_add_nchar(str, sf.str, sf.len);
                         str_buf_add(str, "]");
-                } else if (item_is_signed(field)) {
-                        i64 value = item_get_number_signed(field, NULL_INT64);
+                } else if (ITEM_IS_SIGNED(field)) {
+                        i64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_INT64);
                         str_buf_add(str, "[signed:");
                         str_buf_add_i64(str, value);
                         str_buf_add_char(str, ']');
-                } else if (item_is_unsigned(field)) {
-                        u64 value = item_get_number_signed(field, NULL_UINT64);
+                } else if (ITEM_IS_UNSIGNED(field)) {
+                        u64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_UINT64);
                         str_buf_add(str, "[unsigned:");
                         str_buf_add_u64(str, value);
                         str_buf_add_char(str, ']');
-                } else if (item_is_float(field)) {
-                        float value = item_get_number_float(field, NULL_FLOAT);
+                } else if (ITEM_IS_FLOAT(field)) {
+                        float value = ITEM_GET_NUMBER_FLOAT(field, NULL_FLOAT);
                         str_buf_add(str, "[float:");
                         str_buf_add_float(str, value);
                         str_buf_add_char(str, ']');
-                } else if (item_is_binary(field)) {
+                } else if (ITEM_IS_BINARY(field)) {
                         str_buf_add(str, "[binary:");
-                        binary_field value = item_get_binary(field, NULL_BINARY);
+                        binary_field value = ITEM_GET_BINARY(field, NULL_BINARY);
                         str_buf_add(str, "[mime:");
                         str_buf_add_nchar(str, value.mime, value.mime_len);
                         str_buf_add(str, "][value:");
                         binary_field_value_print(str, &value);
                         str_buf_add(str, "]]");
-                } else if (item_is_column(field)) {
+                } else if (ITEM_IS_COLUMN(field)) {
                         str_buf_add(str, "[column:<");
                         col_it it;
-                        item_get_column(&it, field);
+                        ITEM_GET_COLUMN(&it, field);
                         col_it_print(str, &it);
                         str_buf_add(str, ">]");
                 }

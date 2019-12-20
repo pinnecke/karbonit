@@ -152,20 +152,20 @@ void traverser_run_from_item(traverser *traverse, item *i, void *arg)
         push_context(traverse, CNTX_ITEM, i);
         traverse->impl.extra.arg = arg;
 
-        assert(item_is_field(i));
+        assert(ITEM_IS_FIELD(i));
 
         traverse->info.type = ON_ENTER;
         path_policy_e expand = (traverse->visit_ops & VISIT_CALL_FIELD_ENTER) ? traverse_impl_visit_field(traverse) :
                 PATH_EXPAND;
 
         if (expand == PATH_EXPAND) {
-                if (item_is_array(i)) {
+                if (ITEM_IS_ARRAY(i)) {
                         arr_it nested_it;
-                        item_get_array(&nested_it, i);
+                        ITEM_GET_ARRAY(&nested_it, i);
                         traverser_run_from_array(traverse, &nested_it, arg);
-                } else if (item_is_object(i)) {
+                } else if (ITEM_IS_OBJECT(i)) {
                         obj_it nested_it;
-                        item_get_object(&nested_it, i);
+                        ITEM_GET_OBJECT(&nested_it, i);
                         traverser_run_from_object(traverse, &nested_it, arg);
                 }
         }

@@ -274,7 +274,7 @@ static void column_traverse(struct pindex_node *parent, col_it *it)
         for (u32 i = 0; i < nvalues; i++) {
                 bool is_null = col_it_is_null(it, i);
                 bool is_true = false;
-                if (field_is_column_bool_or_subtype(column_type)) {
+                if (FIELD_IS_COLUMN_BOOL_OR_SUBTYPE(column_type)) {
                         is_true = COL_IT_BOOLEAN_VALUES(NULL, it)[i];
                 }
                 entry_type = field_column_entry_to_regular_type(column_type, is_null, is_true);
@@ -362,7 +362,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
                         col_it it;
-                        item_get_column(&it, &(elem_it->prop.value));
+                        ITEM_GET_COLUMN(&it, &(elem_it->prop.value));
                         column_traverse(parent, &it);
 
                 }
@@ -372,7 +372,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
                         arr_it it;
-                        item_get_array(&it, &(elem_it->prop.value));
+                        ITEM_GET_ARRAY(&it, &(elem_it->prop.value));
                         array_traverse(parent, &it);
                 }
                         break;
@@ -381,7 +381,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         obj_it it;
-                        item_get_object(&it, &(elem_it->prop.value));
+                        ITEM_GET_OBJECT(&it, &(elem_it->prop.value));
                         object_traverse(parent, &it);
                 }
                         break;
@@ -454,7 +454,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
                         col_it it;
-                        item_get_column(&it, &elem_it->item);
+                        ITEM_GET_COLUMN(&it, &elem_it->item);
                         column_traverse(parent, &it);
                 }
                         break;
@@ -463,7 +463,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_ARRAY_UNSORTED_SET:
                 case FIELD_DERIVED_ARRAY_SORTED_SET: {
                         arr_it it;
-                        item_get_array(&it, &elem_it->item);
+                        ITEM_GET_ARRAY(&it, &elem_it->item);
                         array_traverse(parent, &it);
                 }
                         break;
@@ -472,7 +472,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                 case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
                 case FIELD_DERIVED_OBJECT_SORTED_MAP: {
                         obj_it it;
-                        item_get_object(&it, &elem_it->item);
+                        ITEM_GET_OBJECT(&it, &elem_it->item);
                         object_traverse(parent, &it);
                 }
                         break;

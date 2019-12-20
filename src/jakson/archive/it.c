@@ -525,7 +525,7 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
                                 value_vector->is_array = prop_iter->mode_object.is_array;
 
                                 if (value_vector
-                                    && !archive_value_vector_from_prop_iter(value_vector, prop_iter)) {
+                                    && !archive_value_vec_from_prop_iter(value_vector, prop_iter)) {
                                         ERROR(ERR_VITEROPEN_FAILED, NULL);
                                         return false;
                                 }
@@ -726,14 +726,14 @@ bool archive_object_get_prop_iter(prop_iter *iter, const archive_object *object)
         return false;
 }
 
-bool archive_value_vector_get_object_id(unique_id_t *id, const archive_value_vector *iter)
+bool archive_value_vec_get_object_id(unique_id_t *id, const archive_value_vector *iter)
 {
         *id = iter->object_id;
         return true;
 }
 
 const archive_field_sid_t *
-archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
+archive_value_vec_get_keys(u32 *num_keys, archive_value_vector *iter)
 {
         if (num_keys && iter) {
                 *num_keys = iter->value_max_idx;
@@ -744,13 +744,13 @@ archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
         }
 }
 
-static void value_vector_init_object_basic(archive_value_vector *value)
+static void value_vec_init_object_basic(archive_value_vector *value)
 {
         value->data.object.offsets =
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, offset_t, value->value_max_idx);
 }
 
-static bool value_vector_init_fixed_length_types_basic(archive_value_vector *value)
+static bool value_vec_init_fixed_length_types_basic(archive_value_vector *value)
 {
         assert(!value->is_array);
 
@@ -807,7 +807,7 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
         return true;
 }
 
-static void value_vector_init_fixed_length_types_null_arrays(archive_value_vector *value)
+static void value_vec_init_fixed_length_types_null_arrays(archive_value_vector *value)
 {
         assert(value->is_array);
         assert(value->prop_type == ARCHIVE_FIELD_NULL);
@@ -815,7 +815,7 @@ static void value_vector_init_fixed_length_types_null_arrays(archive_value_vecto
                 MEMFILE_READ_TYPE_LIST(&value->record_table_memfile, u32, value->value_max_idx);
 }
 
-static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
+static bool value_vec_init_fixed_length_types_non_null_arrays(archive_value_vector *value)
 {
         assert (value->is_array);
 
@@ -875,25 +875,25 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
         return true;
 }
 
-static void value_vector_init_fixed_length_types(archive_value_vector *value)
+static void value_vec_init_fixed_length_types(archive_value_vector *value)
 {
         if (value->is_array) {
-                value_vector_init_fixed_length_types_non_null_arrays(value);
+                value_vec_init_fixed_length_types_non_null_arrays(value);
         } else {
-                value_vector_init_fixed_length_types_basic(value);
+                value_vec_init_fixed_length_types_basic(value);
         }
 }
 
-static void value_vector_init_object(archive_value_vector *value)
+static void value_vec_init_object(archive_value_vector *value)
 {
         if (value->is_array) {
-                //value_vector_init_object_array(value);
+                //value_vec_init_object_array(value);
         } else {
-                value_vector_init_object_basic(value);
+                value_vec_init_object_basic(value);
         }
 }
 
-bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter)
+bool archive_value_vec_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter)
 {
         if (prop_iter->mode != PROP_ITER_MODE_OBJECT) {
                 return ERROR(ERR_ITER_OBJECT_NEEDED, NULL);
@@ -913,11 +913,11 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
 
         switch (value->prop_type) {
                 case ARCHIVE_FIELD_OBJECT:
-                        value_vector_init_object(value);
+                        value_vec_init_object(value);
                         break;
                 case ARCHIVE_FIELD_NULL:
                         if (value->is_array) {
-                                value_vector_init_fixed_length_types_null_arrays(value);
+                                value_vec_init_fixed_length_types_null_arrays(value);
                         }
                         break;
                 case ARCHIVE_FIELD_INT8:
@@ -931,7 +931,7 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
                 case ARCHIVE_FIELD_FLOAT:
                 case ARCHIVE_FIELD_STRING:
                 case ARCHIVE_FIELD_BOOLEAN:
-                        value_vector_init_fixed_length_types(value);
+                        value_vec_init_fixed_length_types(value);
                         break;
                 default: {
                         ERROR(ERR_INTERNALERR, NULL);
@@ -942,32 +942,32 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
         return true;
 }
 
-bool archive_value_vector_get_basic_type(enum archive_field_type *type,
+bool archive_value_vec_get_basic_type(enum archive_field_type *type,
                                                  const archive_value_vector *value)
 {
         *type = value->prop_type;
         return true;
 }
 
-bool archive_value_vector_is_array_type(bool *is_array, const archive_value_vector *value)
+bool archive_value_vec_is_array_type(bool *is_array, const archive_value_vector *value)
 {
         *is_array = value->is_array;
         return true;
 }
 
-bool archive_value_vector_get_length(u32 *length, const archive_value_vector *value)
+bool archive_value_vec_get_length(u32 *length, const archive_value_vector *value)
 {
         *length = value->value_max_idx;
         return true;
 }
 
-bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *value)
+bool archive_value_vec_is_of_objects(bool *is_object, archive_value_vector *value)
 {
         *is_object = value->prop_type == ARCHIVE_FIELD_OBJECT && !value->is_array;
         return true;
 }
 
-bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
+bool archive_value_vec_get_object_at(archive_object *object, u32 idx,
                                                 archive_value_vector *value)
 {
         if (idx >= value->value_max_idx) {
@@ -976,7 +976,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
 
         bool is_object;
 
-        archive_value_vector_is_of_objects(&is_object, value);
+        archive_value_vec_is_of_objects(&is_object, value);
 
         if (is_object) {
                 MEMFILE_SEEK(&value->record_table_memfile, value->data.object.offsets[idx]);
@@ -988,47 +988,47 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
         }
 }
 
-#define DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(name, basic_type)                                            \
+#define DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(name, basic_type)                                            \
 bool                                                                                                    \
-archive_value_vector_is_##name(bool *type_match, archive_value_vector *value)                          \
+archive_value_vec_is_##name(bool *type_match, archive_value_vector *value)                          \
 {                                                                                                                      \
     *type_match = value->prop_type == basic_type;                                                                      \
     return true;                                                                                                       \
 }
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int8, ARCHIVE_FIELD_INT8)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int8, ARCHIVE_FIELD_INT8)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int16, ARCHIVE_FIELD_INT16)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int16, ARCHIVE_FIELD_INT16)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int32, ARCHIVE_FIELD_INT32)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int32, ARCHIVE_FIELD_INT32)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int64, ARCHIVE_FIELD_INT64)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int64, ARCHIVE_FIELD_INT64)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint8, ARCHIVE_FIELD_UINT8)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint8, ARCHIVE_FIELD_UINT8)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint16, ARCHIVE_FIELD_UINT16)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint16, ARCHIVE_FIELD_UINT16)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint32, ARCHIVE_FIELD_UINT32)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint32, ARCHIVE_FIELD_UINT32)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint64, ARCHIVE_FIELD_UINT64)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint64, ARCHIVE_FIELD_UINT64)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(string, ARCHIVE_FIELD_STRING)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(string, ARCHIVE_FIELD_STRING)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(number, ARCHIVE_FIELD_FLOAT)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(number, ARCHIVE_FIELD_FLOAT)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(boolean, ARCHIVE_FIELD_BOOLEAN)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(boolean, ARCHIVE_FIELD_BOOLEAN)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null, ARCHIVE_FIELD_NULL)
+DECLARE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(null, ARCHIVE_FIELD_NULL)
 
-#define DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(names, name, built_in_type, err_code)                       \
+#define DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(names, name, built_in_type, err_code)                       \
 const built_in_type *                                                                                   \
-archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)                    \
+archive_value_vec_get_##names(u32 *num_values, archive_value_vector *value)                    \
 {                                                                                                                      \
     bool is_array;                                                                                                     \
     bool type_match;                                                                                                   \
                                                                                                                        \
-    if (archive_value_vector_is_array_type(&is_array, value) &&                                                 \
-        archive_value_vector_is_##name(&type_match, value) && !is_array)                                        \
+    if (archive_value_vec_is_array_type(&is_array, value) &&                                                 \
+        archive_value_vec_is_##name(&type_match, value) && !is_array)                                        \
     {                                                                                                                  \
         OPTIONAL_SET(num_values, value->value_max_idx)                                                          \
         return value->data.basic.values.names;                                                                         \
@@ -1039,36 +1039,36 @@ archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)  
     }                                                                                                                  \
 }
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int8s, int8, archive_field_i8_t, ERR_ITER_NOINT8)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int8s, int8, archive_field_i8_t, ERR_ITER_NOINT8)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int16s, int16, archive_field_i16_t, ERR_ITER_NOINT16)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int16s, int16, archive_field_i16_t, ERR_ITER_NOINT16)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int32s, int32, archive_field_i32_t, ERR_ITER_NOINT32)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int32s, int32, archive_field_i32_t, ERR_ITER_NOINT32)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int64s, int64, archive_field_i64_t, ERR_ITER_NOINT64)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int64s, int64, archive_field_i64_t, ERR_ITER_NOINT64)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint8s, uint8, archive_field_u8_t, ERR_ITER_NOUINT8)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint8s, uint8, archive_field_u8_t, ERR_ITER_NOUINT8)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint16s, uint16, archive_field_u16_t, ERR_ITER_NOUINT16)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint16s, uint16, archive_field_u16_t, ERR_ITER_NOUINT16)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint32s, uint32, archive_field_u32_t, ERR_ITER_NOUINT32)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint32s, uint32, archive_field_u32_t, ERR_ITER_NOUINT32)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint64s, uint64, archive_field_u64_t, ERR_ITER_NOUINT64)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint64s, uint64, archive_field_u64_t, ERR_ITER_NOUINT64)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(strings, string, archive_field_sid_t, ERR_ITER_NOSTRING)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(strings, string, archive_field_sid_t, ERR_ITER_NOSTRING)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(numbers, number, archive_field_number_t, ERR_ITER_NONUMBER)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(numbers, number, archive_field_number_t, ERR_ITER_NONUMBER)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(booleans, boolean, archive_field_boolean_t, ERR_ITER_NOBOOL)
+DECLARE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(booleans, boolean, archive_field_boolean_t, ERR_ITER_NOBOOL)
 
 const archive_field_u32_t *
-archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *value)
+archive_value_vec_get_null_arrays(u32 *num_values, archive_value_vector *value)
 {
         bool is_array;
         bool type_match;
 
-        if (archive_value_vector_is_array_type(&is_array, value) &&
-            archive_value_vector_is_null(&type_match, value)
+        if (archive_value_vec_is_array_type(&is_array, value) &&
+            archive_value_vec_is_null(&type_match, value)
             && is_array) {
                 OPTIONAL_SET(num_values, value->value_max_idx);
                 return value->data.arrays.meta.num_nulls_contained;
@@ -1077,16 +1077,16 @@ archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *valu
         }
 }
 
-#define DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(name, built_in_type, base)                               \
+#define DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(name, built_in_type, base)                               \
 const built_in_type *                                                                                   \
-archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,                               \
+archive_value_vec_get_##name##_arrays_at(u32 *array_length, u32 idx,                               \
                                                archive_value_vector *value)                                   \
 {                                                                                                                      \
     bool is_array;                                                                                                     \
     bool type_match;                                                                                                   \
                                                                                                                        \
-    if (idx < value->value_max_idx && archive_value_vector_is_array_type(&is_array, value) &&                   \
-        archive_value_vector_is_##name(&type_match, value) && is_array)                                         \
+    if (idx < value->value_max_idx && archive_value_vec_is_array_type(&is_array, value) &&                   \
+        archive_value_vec_is_##name(&type_match, value) && is_array)                                         \
     {                                                                                                                  \
         u32 skip_length = 0;                                                                                      \
         for (u32 i = 0; i < idx; i++) {                                                                           \
@@ -1100,27 +1100,27 @@ archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,         
     }                                                                                                                  \
 }
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int8, archive_field_i8_t, int8s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int8, archive_field_i8_t, int8s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int16, archive_field_i16_t, int16s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int16, archive_field_i16_t, int16s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int32, archive_field_i32_t, int32s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int32, archive_field_i32_t, int32s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int64, archive_field_i64_t, int64s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int64, archive_field_i64_t, int64s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint8, archive_field_u8_t, uint8s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint8, archive_field_u8_t, uint8s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint16, archive_field_u16_t, uint16s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint16, archive_field_u16_t, uint16s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint32, archive_field_u32_t, uint32s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint32, archive_field_u32_t, uint32s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint64, archive_field_u64_t, uint64s_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint64, archive_field_u64_t, uint64s_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(string, archive_field_sid_t, strings_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(string, archive_field_sid_t, strings_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(number, archive_field_number_t, numbers_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(number, archive_field_number_t, numbers_base)
 
-DECLARE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t, booleans_base)
+DECLARE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t, booleans_base)
 
 void archive_int_reset_obj_it_mem_file(archive_object *object)
 {

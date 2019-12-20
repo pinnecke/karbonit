@@ -23,10 +23,10 @@
 
 bool bitmap_create(bitmap *bitmap, u16 num_bits)
 {
-        vector_create(&bitmap->data, sizeof(u32), ceil(num_bits / (double) BIT_NUM_OF(u32)));
-        size_t cap = vector_capacity(&bitmap->data);
+        vec_create(&bitmap->data, sizeof(u32), ceil(num_bits / (double) BIT_NUM_OF(u32)));
+        size_t cap = vec_capacity(&bitmap->data);
         u32 zero = 0;
-        vector_repeated_push(&bitmap->data, &zero, cap);
+        vec_repeated_push(&bitmap->data, &zero, cap);
         bitmap->num_bits = num_bits;
 
         return true;
@@ -35,12 +35,12 @@ bool bitmap_create(bitmap *bitmap, u16 num_bits)
 bool bitmap_cpy(bitmap *dst, const bitmap *src)
 {
         dst->num_bits = src->num_bits;
-        return vector_cpy(&dst->data, &src->data);
+        return vec_cpy(&dst->data, &src->data);
 }
 
 bool bitmap_drop(bitmap *bitset)
 {
-        return vector_drop(&bitset->data);
+        return vec_drop(&bitset->data);
 }
 
 size_t bitmap_nbits(const bitmap *bitset)
@@ -50,8 +50,8 @@ size_t bitmap_nbits(const bitmap *bitset)
 
 bool bitmap_clear(bitmap *bitset)
 {
-        void *data = (void *) vector_data(&bitset->data);
-        memset(data, 0, sizeof(u32) * vector_capacity(&bitset->data));
+        void *data = (void *) vec_data(&bitset->data);
+        memset(data, 0, sizeof(u32) * vec_capacity(&bitset->data));
         return true;
 }
 
@@ -59,14 +59,14 @@ bool bitmap_set(bitmap *bitset, u16 bit_position, bool on)
 {
         size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(u32));
         size_t block_bit = bit_position % BIT_NUM_OF(u32);
-        u32 block = *VECTOR_GET(&bitset->data, block_pos, u32);
+        u32 block = *VEC_GET(&bitset->data, block_pos, u32);
         u32 mask = SET_BIT(block_bit);
         if (on) {
                 SET_BITS(block, mask);
         } else {
                 UNSET_BITS(block, mask);
         }
-        vector_set(&bitset->data, block_pos, &block);
+        vec_set(&bitset->data, block_pos, &block);
         return true;
 }
 
@@ -74,7 +74,7 @@ bool bitmap_get(bitmap *bitset, u16 bit_position)
 {
         size_t block_pos = floor(bit_position / (double) BIT_NUM_OF(u32));
         size_t block_bit = bit_position % BIT_NUM_OF(u32);
-        u32 block = *VECTOR_GET(&bitset->data, block_pos, u32);
+        u32 block = *VEC_GET(&bitset->data, block_pos, u32);
         u32 mask = SET_BIT(block_bit);
         return ((mask & block) >> bit_position) == true;
 }
@@ -112,7 +112,7 @@ bool bitmap_blocks(u32 **blocks, u32 *num_blocks, const bitmap *map)
         u32 *result = MALLOC(map->data.num_elems * sizeof(u32));
         i32 k = 0;
         for (i32 i = map->data.num_elems - 1; i >= 0; i--) {
-                result[k++] = *VECTOR_GET(&map->data, i, u32);
+                result[k++] = *VEC_GET(&map->data, i, u32);
         }
         *blocks = result;
         *num_blocks = map->data.num_elems;
@@ -133,7 +133,7 @@ bool bitmap_print(FILE *file, const bitmap *map)
         free(blocks);
 
         for (i32 i = map->data.num_elems - 1; i >= 0; i--) {
-                u32 block = *VECTOR_GET(&map->data, i, u32);
+                u32 block = *VEC_GET(&map->data, i, u32);
                 bitmap_print_bits(stdout, block);
                 fprintf(file, " |");
         }

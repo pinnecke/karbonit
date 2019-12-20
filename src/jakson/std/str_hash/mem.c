@@ -120,9 +120,9 @@ static int _str_hash_mem_drop(str_hash *self)
 {
         assert(self->tag == MEMORY_RESIDENT);
         struct mem_extra *extra = this_get_exta(self);
-        struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
+        struct bucket *data = (struct bucket *) vec_data(&extra->buckets);
         CHECK_SUCCESS(bucket_drop(data, extra->buckets.cap_elems));
-        vector_drop(&extra->buckets);
+        vec_drop(&extra->buckets);
         free(self->extra);
         return true;
 }
@@ -195,7 +195,7 @@ this_fetch_bulk(vec ofType(bucket) *buckets, archive_field_sid_t *values_out, bo
 
         slice_handle result_handle;
         size_t num_not_found = 0;
-        struct bucket *data = (struct bucket *) vector_data(buckets);
+        struct bucket *data = (struct bucket *) vec_data(buckets);
 
         PREFETCH_WRITE(values_out);
 
@@ -225,7 +225,7 @@ this_fetch_single(vec ofType(bucket) *buckets, archive_field_sid_t *value_out, b
         UNUSED(counter);
 
         slice_handle handle;
-        struct bucket *data = (struct bucket *) vector_data(buckets);
+        struct bucket *data = (struct bucket *) vec_data(buckets);
 
         PREFETCH_WRITE(value_out);
         PREFETCH_WRITE(key_found);
@@ -262,7 +262,7 @@ this_get_safe(str_hash *self, archive_field_sid_t **out, bool **found_mask, size
                 const char *key = keys[i];
                 hash32_t hash = key && strcmp("", key) != 0 ? STR_HASH_MEM_HASHCODE_OF(key) : 0;
                 bucket_idxs[i] = hash % extra->buckets.cap_elems;
-                PREFETCH_READ((struct bucket *) vector_data(&extra->buckets) + bucket_idxs[i]);
+                PREFETCH_READ((struct bucket *) vec_data(&extra->buckets) + bucket_idxs[i]);
         }
 
         TRACE(SMART_MAP_TAG, "'get_safe' function invoke fetch...for %zu strings", num_keys)
@@ -300,7 +300,7 @@ this_get_safe_exact(str_hash *self, archive_field_sid_t *out, bool *found_mask, 
 
         hash32_t hash = strcmp("", key) != 0 ? STR_HASH_MEM_HASHCODE_OF(key) : 0;
         size_t bucket_idx = hash % extra->buckets.cap_elems;
-        PREFETCH_READ((struct bucket *) vector_data(&extra->buckets) + bucket_idx);
+        PREFETCH_READ((struct bucket *) vec_data(&extra->buckets) + bucket_idx);
 
         CHECK_SUCCESS(this_fetch_single(&extra->buckets, out, found_mask, bucket_idx, key, &self->counters));
 
@@ -333,7 +333,7 @@ static int simple_map_remove(struct mem_extra *extra, size_t *bucket_idxs, char 
         UNUSED(counter)
 
         slice_handle handle;
-        struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
+        struct bucket *data = (struct bucket *) vec_data(&extra->buckets);
 
         for (register size_t i = 0; i < num_keys; i++) {
                 struct bucket *bucket = data + bucket_idxs[i];
@@ -377,12 +377,12 @@ static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t
 {
         if ((self->extra = MALLOC(sizeof(struct mem_extra))) != NULL) {
                 struct mem_extra *extra = this_get_exta(self);
-                vector_create(&extra->buckets, sizeof(struct bucket), num_buckets);
+                vec_create(&extra->buckets, sizeof(struct bucket), num_buckets);
 
                 /** Optimization: notify the kernel that the list of buckets are accessed randomly (since hash based access)*/
-                vector_memadvice(&extra->buckets, MADV_RANDOM | MADV_WILLNEED);
+                vec_madvise(&extra->buckets, MADV_RANDOM | MADV_WILLNEED);
 
-                struct bucket *data = (struct bucket *) vector_data(&extra->buckets);
+                struct bucket *data = (struct bucket *) vec_data(&extra->buckets);
                 CHECK_SUCCESS(bucket_create(data, num_buckets, cap_buckets));
                 return true;
         } else {
@@ -447,7 +447,7 @@ static int this_insert_bulk(vec ofType(bucket) *buckets, char *const *restrict k
                             const archive_field_sid_t *restrict values, size_t *restrict bucket_idxs,
                             size_t num_pairs, str_hash_counters *counter)
 {
-        struct bucket *buckets_data = (struct bucket *) vector_data(buckets);
+        struct bucket *buckets_data = (struct bucket *) vec_data(buckets);
         int status = true;
         for (register size_t i = 0; status == true && i < num_pairs; i++) {
                 size_t bucket_idx = bucket_idxs[i];
@@ -465,7 +465,7 @@ static int
 this_insert_exact(vec ofType(bucket) *buckets, const char *restrict key, archive_field_sid_t value,
                   size_t bucket_idx, str_hash_counters *counter)
 {
-        struct bucket *buckets_data = (struct bucket *) vector_data(buckets);
+        struct bucket *buckets_data = (struct bucket *) vec_data(buckets);
         struct bucket *bucket = buckets_data + bucket_idx;
         return bucket_insert(bucket, key, value, counter);
 }

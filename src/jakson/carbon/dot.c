@@ -113,13 +113,13 @@ static const char *next_token(struct dot_token *token, const char *str)
 
 bool dot_create(dot *path)
 {
-        vector_create(&path->nodes, sizeof(dot_node), 256);
+        vec_create(&path->nodes, sizeof(dot_node), 256);
         return true;
 }
 
 void dot_clear(dot *path)
 {
-        vector_clear(&path->nodes);
+        vec_clear(&path->nodes);
 }
 
 bool dot_from_string(dot *path, const char *path_string)
@@ -184,7 +184,7 @@ void dot_add_key(dot *dst, const char *key)
 
 void dot_add_nkey(dot *dst, const char *key, size_t len)
 {
-        dot_node *node = VECTOR_NEW_AND_GET(&dst->nodes, dot_node);
+        dot_node *node = VEC_NEW_AND_GET(&dst->nodes, dot_node);
         bool enquoted = strings_is_enquoted_wlen(key, len);
         node->type = DOT_NODE_KEY;
         node->name.string = strndup(enquoted ? key + 1 : key, len);
@@ -198,26 +198,26 @@ void dot_add_nkey(dot *dst, const char *key, size_t len)
 
 void dot_add_idx(dot *dst, u32 idx)
 {
-        dot_node *node = VECTOR_NEW_AND_GET(&dst->nodes, dot_node);
+        dot_node *node = VEC_NEW_AND_GET(&dst->nodes, dot_node);
         node->type = DOT_NODE_IDX;
         node->name.idx = idx;
 }
 
 bool dot_len(u32 *len, const dot *path)
 {
-        *len = vector_length(&path->nodes);
+        *len = VEC_LENGTH(&path->nodes);
         return true;
 }
 
 bool dot_is_empty(const dot *path)
 {
-        return (vector_length(&path->nodes) == 0);
+        return (VEC_LENGTH(&path->nodes) == 0);
 }
 
 bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path)
 {
-        if (LIKELY(pos < vector_length(&path->nodes))) {
-                *type_out = VECTOR_GET(&path->nodes, pos, dot_node)->type;
+        if (LIKELY(pos < VEC_LENGTH(&path->nodes))) {
+                *type_out = VEC_GET(&path->nodes, pos, dot_node)->type;
         } else {
                 return ERROR(ERR_OUTOFBOUNDS, NULL);
         }
@@ -226,37 +226,37 @@ bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path)
 
 bool dot_idx_at(u32 *idx, u32 pos, const dot *path)
 {
-        ERROR_IF_AND_RETURN(pos >= vector_length(&path->nodes), ERR_OUTOFBOUNDS, NULL);
-        ERROR_IF_AND_RETURN(VECTOR_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_IDX, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(pos >= VEC_LENGTH(&path->nodes), ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(VEC_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_IDX, ERR_TYPEMISMATCH, NULL);
 
-        *idx = VECTOR_GET(&path->nodes, pos, dot_node)->name.idx;
+        *idx = VEC_GET(&path->nodes, pos, dot_node)->name.idx;
         return true;
 }
 
 const char *dot_key_at(u32 pos, const dot *path)
 {
-        ERROR_IF_AND_RETURN(pos >= vector_length(&path->nodes), ERR_OUTOFBOUNDS, NULL);
-        ERROR_IF_AND_RETURN(VECTOR_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_KEY, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(pos >= VEC_LENGTH(&path->nodes), ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(VEC_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_KEY, ERR_TYPEMISMATCH, NULL);
 
-        return VECTOR_GET(&path->nodes, pos, dot_node)->name.string;
+        return VEC_GET(&path->nodes, pos, dot_node)->name.string;
 }
 
 bool dot_drop(dot *path)
 {
-        for (u32 i = 0; i < vector_length(&path->nodes); i++) {
-                dot_node *node = VECTOR_GET(&path->nodes, i, dot_node);
+        for (u32 i = 0; i < VEC_LENGTH(&path->nodes); i++) {
+                dot_node *node = VEC_GET(&path->nodes, i, dot_node);
                 if (node->type == DOT_NODE_KEY) {
                         free(node->name.string);
                 }
         }
-        vector_drop(&path->nodes);
+        vec_drop(&path->nodes);
         return true;
 }
 
 bool dot_to_str(str_buf *sb, dot *path)
 {
-        for (u32 i = 0; i < vector_length(&path->nodes); i++) {
-                dot_node *node = VECTOR_GET(&path->nodes, i, dot_node);
+        for (u32 i = 0; i < VEC_LENGTH(&path->nodes); i++) {
+                dot_node *node = VEC_GET(&path->nodes, i, dot_node);
                 switch (node->type) {
                         case DOT_NODE_KEY: {
                                 bool empty_str = strlen(node->name.string) == 0;
@@ -277,7 +277,7 @@ bool dot_to_str(str_buf *sb, dot *path)
                                 str_buf_add_u32(sb, node->name.idx);
                                 break;
                 }
-                if (i + 1 < vector_length(&path->nodes)) {
+                if (i + 1 < VEC_LENGTH(&path->nodes)) {
                         str_buf_add_char(sb, '.');
                 }
         }

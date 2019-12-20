@@ -91,7 +91,7 @@ bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query 
 {
         strid_iter strid_iter;
         strid_info *info;
-        size_t vector_len;
+        size_t vec_len;
         bool status;
         bool success;
         u32 capacity;
@@ -112,8 +112,8 @@ bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query 
         status = query_scan_strids(&strid_iter, query);
 
         if (status) {
-                while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
-                        for (size_t i = 0; i < vector_len; i++) {
+                while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+                        for (size_t i = 0; i < vec_len; i++) {
                                 struct sid_to_offset_arg arg = {.offset = info[i].offset, .strlen = info[i].strlen};
                                 hashtable_insert_or_update(&result->mapping, &info[i].id, &arg, 1);
                         }
@@ -202,15 +202,15 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
 
         strid_iter strid_iter;
         strid_info *info;
-        size_t vector_len;
+        size_t vec_len;
         bool status;
         bool success;
 
         status = query_scan_strids(&strid_iter, query);
 
         if (status) {
-                while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
-                        for (size_t i = 0; i < vector_len; i++) {
+                while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+                        for (size_t i = 0; i < vec_len; i++) {
                                 if (info[i].id == id) {
                                         bool decode_result;
                                         char *result = fetch_string_from_file(&decode_result,

@@ -40,7 +40,7 @@ bool strid_iter_next(bool *success, strid_info **info, size_t *info_length,
 {
         if (it->disk_offset != 0 && it->is_open) {
                 string_entry_header header;
-                size_t vector_pos = 0;
+                size_t vec_pos = 0;
                 do {
                         fseek(it->disk_file, it->disk_offset, SEEK_SET);
                         int num_read = fread(&header, sizeof(string_entry_header), 1, it->disk_file);
@@ -52,15 +52,15 @@ bool strid_iter_next(bool *success, strid_info **info, size_t *info_length,
                                 *success = false;
                                 return false;
                         } else {
-                                it->vec[vector_pos].id = header.string_id;
-                                it->vec[vector_pos].offset = ftell(it->disk_file);
-                                it->vec[vector_pos].strlen = header.string_len;
+                                it->vec[vec_pos].id = header.string_id;
+                                it->vec[vec_pos].offset = ftell(it->disk_file);
+                                it->vec[vec_pos].strlen = header.string_len;
                                 it->disk_offset = header.next_entry_off;
-                                vector_pos++;
+                                vec_pos++;
                         }
-                } while (header.next_entry_off != 0 && vector_pos < ARRAY_LENGTH(it->vec));
+                } while (header.next_entry_off != 0 && vec_pos < ARRAY_LENGTH(it->vec));
 
-                *info_length = vector_pos;
+                *info_length = vec_pos;
                 *success = true;
                 *info = &it->vec[0];
                 return true;

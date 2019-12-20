@@ -237,7 +237,7 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 #define  MARKER_SYMBOL_HUFFMAN_DIC_ENTRY   'd'
 #define  MARKER_SYMBOL_RECORD_HEADER       'r'
 #define  MARKER_SYMBOL_HASHTABLE_HEADER    '#'
-#define  MARKER_SYMBOL_VECTOR_HEADER       '|'
+#define  MARKER_SYMBOL_VEC_HEADER       '|'
 
 #define DECLARE_AND_INIT(type, name)                                                                               \
         type name;                                                                                                     \

@@ -31,7 +31,7 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         it->pos = 0;
         it->eof = false;
 
-        vector_create(&it->history, sizeof(offset_t), 40);
+        vec_create(&it->history, sizeof(offset_t), 40);
 
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
@@ -71,7 +71,7 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
         dst->pos = src->pos;
         dst->eof = src->eof;
         dst->type = src->type;
-        vector_cpy(&dst->history, &src->history);
+        vec_cpy(&dst->history, &src->history);
         dst->field.key.name_len = src->field.key.name_len;
         dst->field.key.name = src->field.key.name;
         dst->field.key.start = src->field.key.start;
@@ -83,7 +83,7 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
 
 bool obj_it_drop(obj_it *it)
 {
-        vector_drop(&it->history);
+        vec_drop(&it->history);
         return true;
 }
 

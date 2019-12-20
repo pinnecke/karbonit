@@ -340,33 +340,33 @@ u64 internal_header_get_commit_hash(rec *doc)
 void internal_history_push(vec ofType(offset_t) *vec, offset_t off)
 {
         assert(vec);
-        vector_push(vec, &off, 1);
+        vec_push(vec, &off, 1);
 }
 
 void internal_history_clear(vec ofType(offset_t) *vec)
 {
         assert(vec);
-        vector_clear(vec);
+        vec_clear(vec);
 }
 
 offset_t internal_history_pop(vec ofType(offset_t) *vec)
 {
         assert(vec);
         assert(internal_history_has(vec));
-        return *(offset_t *) vector_pop(vec);
+        return *(offset_t *) vec_pop(vec);
 }
 
 offset_t internal_history_peek(vec ofType(offset_t) *vec)
 {
         assert(vec);
         assert(internal_history_has(vec));
-        return *(offset_t *) vector_peek(vec);
+        return *(offset_t *) vec_peek(vec);
 }
 
 bool internal_history_has(vec ofType(offset_t) *vec)
 {
         assert(vec);
-        return !vector_is_empty(vec);
+        return !vec_is_empty(vec);
 }
 
 bool internal_field_clone(field *dst, field *src)
@@ -590,7 +590,7 @@ static void int_insert_array_array(insert *array_ins, json_array *array)
         insert *sub_ins = insert_array_begin(&state, array_ins,
                                                                       array->elements.elements.num_elems * 256);
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
-                const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
+                const json_element *elem = VEC_GET(&array->elements.elements, i, json_element);
                 int_carbon_from_json_elem(sub_ins, elem, false);
         }
         insert_array_end(&state);
@@ -635,7 +635,7 @@ static void int_insert_array_null(insert *array_ins)
 static void int_insert_array_elements(insert *array_ins, json_array *array)
 {
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
-                json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
+                json_element *elem = VEC_GET(&array->elements.elements, i, json_element);
                 switch (elem->value.value_type) {
                         case JSON_VALUE_OBJECT: {
                                 obj_state state;
@@ -673,7 +673,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
 #define insert_into_array(ins, elem, ctype, accessor)                                                                  \
 {                                                                                                                      \
         for (u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
-                json_element *array_elem = VECTOR_GET(                                                             \
+                json_element *array_elem = VEC_GET(                                                             \
                         &elem->value.value.array->elements.elements, k, json_element);                          \
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
                         insert_null(ins);                                                                       \
@@ -691,7 +691,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
         insert *cins = insert_column_begin(&state, ins,                                           \
                                                                 column_type, approx_cap_nbytes);                       \
         for (u32 k = 0; k < elem->value.value.array->elements.elements.num_elems; k++) {                               \
-                json_element *array_elem = VECTOR_GET(&elem->value.value.array->elements.elements,                 \
+                json_element *array_elem = VEC_GET(&elem->value.value.array->elements.elements,                 \
                                                           k, json_element);                                     \
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
                         insert_null(cins);                                                                      \
@@ -710,7 +710,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
         insert *cins = insert_prop_column_begin(&state, ins, key,                                          \
                                                                 column_type, approx_cap_nbytes);                       \
         for (u32 k = 0; k < prop->value.value.value.array->elements.elements.num_elems; k++) {                               \
-                json_element *array_elem = VECTOR_GET(&prop->value.value.value.array->elements.elements,                 \
+                json_element *array_elem = VEC_GET(&prop->value.value.value.array->elements.elements,                 \
                                                           k, json_element);                                     \
                 if (array_elem->value.value_type == JSON_VALUE_NULL) {                                                 \
                         insert_null(cins);                                                                      \
@@ -724,7 +724,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
 static void int_insert_prop_object(insert *oins, json_object *obj)
 {
         for (u32 i = 0; i < obj->value->members.num_elems; i++) {
-                json_prop *prop = VECTOR_GET(&obj->value->members, i, json_prop);
+                json_prop *prop = VEC_GET(&obj->value->members, i, json_prop);
                 switch (prop->value.value.value_type) {
                         case JSON_VALUE_OBJECT: {
                                 obj_state state;
@@ -834,7 +834,7 @@ static void int_insert_prop_object(insert *oins, json_object *obj)
                                                         COLUMN_BOOLEAN, cap_nbytes);
                                                 for (u32 k = 0; k <
                                                                     prop->value.value.value.array->elements.elements.num_elems; k++) {
-                                                        json_element *array_elem = VECTOR_GET(
+                                                        json_element *array_elem = VEC_GET(
                                                                 &prop->value.value.value.array->elements.elements, k,
                                                                 json_element);
                                                         if (array_elem->value.value_type == JSON_VALUE_TRUE) {
@@ -1037,7 +1037,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
                                         if (is_root) {
                                                 for (u32 i = 0;
                                                      i < elem->value.value.array->elements.elements.num_elems; i++) {
-                                                        json_element *array_elem = VECTOR_GET(
+                                                        json_element *array_elem = VEC_GET(
                                                                 &elem->value.value.array->elements.elements, i,
                                                                 json_element);
                                                         if (array_elem->value.value_type == JSON_VALUE_TRUE) {
@@ -1059,7 +1059,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
                                                                                                                  cap_nbytes);
                                                 for (u32 i = 0;
                                                      i < elem->value.value.array->elements.elements.num_elems; i++) {
-                                                        json_element *array_elem = VECTOR_GET(
+                                                        json_element *array_elem = VEC_GET(
                                                                 &elem->value.value.array->elements.elements, i,
                                                                 json_element);
                                                         if (array_elem->value.value_type == JSON_VALUE_TRUE) {

@@ -43,9 +43,9 @@ static void sort_columndoc_entries(column_doc_obj *columndoc);
 bool doc_bulk_create(doc_bulk *bulk, string_dict *dic)
 {
         bulk->dic = dic;
-        vector_create(&bulk->keys, sizeof(char *), 500);
-        vector_create(&bulk->values, sizeof(char *), 1000);
-        vector_create(&bulk->models, sizeof(doc), 50);
+        vec_create(&bulk->keys, sizeof(char *), 500);
+        vec_create(&bulk->values, sizeof(char *), 1000);
+        vec_create(&bulk->models, sizeof(doc), 50);
         return true;
 }
 
@@ -54,7 +54,7 @@ doc_obj *doc_bulk_new_obj(doc *model)
         if (!model) {
                 return NULL;
         } else {
-                doc_obj *retval = VECTOR_NEW_AND_GET(&model->obj_model, doc_obj);
+                doc_obj *retval = VEC_NEW_AND_GET(&model->obj_model, doc_obj);
                 create_doc(retval, model);
                 return retval;
         }
@@ -68,8 +68,8 @@ bool doc_bulk_get_dic_contents(vec ofType (const char *) **strings,
         string_dict_num_distinct(&num_distinct_values, context->dic);
         vec ofType (const char *) *result_strings = MALLOC(sizeof(vec));
         vec ofType (archive_field_sid_t) *resultstring_id_ts = MALLOC(sizeof(vec));
-        vector_create(result_strings, sizeof(const char *), num_distinct_values);
-        vector_create(resultstring_id_ts, sizeof(archive_field_sid_t), num_distinct_values);
+        vec_create(result_strings, sizeof(const char *), num_distinct_values);
+        vec_create(resultstring_id_ts, sizeof(archive_field_sid_t), num_distinct_values);
 
         int status = string_dict_get_contents(result_strings, resultstring_id_ts, context->dic);
         CHECK_SUCCESS(status);
@@ -86,13 +86,13 @@ doc *doc_bulk_new_doc(doc_bulk *context, archive_field_e type)
         }
 
         doc template, *model;
-        size_t idx = vector_length(&context->models);
-        vector_push(&context->models, &template, 1);
-        model = VECTOR_GET(&context->models, idx, doc);
+        size_t idx = VEC_LENGTH(&context->models);
+        vec_push(&context->models, &template, 1);
+        model = VEC_GET(&context->models, idx, doc);
         model->context = context;
         model->type = type;
 
-        vector_create(&model->obj_model, sizeof(doc_obj), 500);
+        vec_create(&model->obj_model, sizeof(doc_obj), 500);
 
         return model;
 }
@@ -100,46 +100,46 @@ doc *doc_bulk_new_doc(doc_bulk *context, archive_field_e type)
 bool doc_bulk_drop(doc_bulk *bulk)
 {
         for (size_t i = 0; i < bulk->keys.num_elems; i++) {
-                char *string = *VECTOR_GET(&bulk->keys, i, char *);
+                char *string = *VEC_GET(&bulk->keys, i, char *);
                 free(string);
         }
         for (size_t i = 0; i < bulk->values.num_elems; i++) {
-                char *string = *VECTOR_GET(&bulk->values, i, char *);
+                char *string = *VEC_GET(&bulk->values, i, char *);
                 free(string);
         }
         for (size_t i = 0; i < bulk->models.num_elems; i++) {
-                doc *model = VECTOR_GET(&bulk->models, i, doc);
+                doc *model = VEC_GET(&bulk->models, i, doc);
                 for (size_t j = 0; j < model->obj_model.num_elems; j++) {
-                        doc_obj *doc = VECTOR_GET(&model->obj_model, j, doc_obj);
+                        doc_obj *doc = VEC_GET(&model->obj_model, j, doc_obj);
                         doc_drop(doc);
                 }
-                vector_drop(&model->obj_model);
+                vec_drop(&model->obj_model);
         }
 
-        vector_drop(&bulk->keys);
-        vector_drop(&bulk->values);
-        vector_drop(&bulk->models);
+        vec_drop(&bulk->keys);
+        vec_drop(&bulk->values);
+        vec_drop(&bulk->models);
         return true;
 }
 
 bool doc_bulk_shrink(doc_bulk *bulk)
 {
-        vector_shrink(&bulk->keys);
-        vector_shrink(&bulk->values);
+        vec_shrink(&bulk->keys);
+        vec_shrink(&bulk->values);
         return true;
 }
 
 bool doc_bulk_print(FILE *file, doc_bulk *bulk)
 {
         fprintf(file, "{");
-        char **key_strings = VECTOR_ALL(&bulk->keys, char *);
+        char **key_strings = VEC_ALL(&bulk->keys, char *);
         fprintf(file, "\"Key Strings\": [");
         for (size_t i = 0; i < bulk->keys.num_elems; i++) {
                 fprintf(file, "\"%s\"%s", key_strings[i], i + 1 < bulk->keys.num_elems ? ", " : "");
         }
         fprintf(file, "], ");
 
-        char **valueStrings = VECTOR_ALL(&bulk->values, char *);
+        char **valueStrings = VEC_ALL(&bulk->values, char *);
         fprintf(file, "\"Value Strings\": [");
         for (size_t i = 0; i < bulk->values.num_elems; i++) {
                 fprintf(file, "\"%s\"%s", valueStrings[i], i + 1 < bulk->values.num_elems ? ", " : "");
@@ -160,7 +160,7 @@ bool doc_print(FILE *file, const doc *doc)
         }
 
         for (size_t num_entries = 0; num_entries < doc->obj_model.num_elems; num_entries++) {
-                doc_obj *object = VECTOR_GET(&doc->obj_model, num_entries, doc_obj);
+                doc_obj *object = VEC_GET(&doc->obj_model, num_entries, doc_obj);
                 _doc_print_object(file, object);
                 fprintf(file, "%s", num_entries + 1 < doc->obj_model.num_elems ? ", " : "");
         }
@@ -185,10 +185,10 @@ void doc_print_entries(FILE *file, const doc_entries *entries)
 void doc_drop(doc_obj *model)
 {
         for (size_t i = 0; i < model->entries.num_elems; i++) {
-                doc_entries *entry = VECTOR_GET(&model->entries, i, doc_entries);
+                doc_entries *entry = VEC_GET(&model->entries, i, doc_entries);
                 entries_drop(entry);
         }
-        vector_drop(&model->entries);
+        vec_drop(&model->entries);
 }
 
 bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_field_e type)
@@ -199,12 +199,12 @@ bool doc_obj_add_key(doc_entries **out, doc_obj *obj, const char *key, archive_f
         doc_entries entry_model = {.type = type, .key = key_dup, .context = obj};
 
         create_typed_vector(&entry_model);
-        vector_push(&obj->doc->context->keys, &key_dup, 1);
+        vec_push(&obj->doc->context->keys, &key_dup, 1);
 
-        entry_idx = vector_length(&obj->entries);
-        vector_push(&obj->entries, &entry_model, 1);
+        entry_idx = VEC_LENGTH(&obj->entries);
+        vec_push(&obj->entries, &entry_model, 1);
 
-        *out = VECTOR_GET(&obj->entries, entry_idx, doc_entries);
+        *out = VEC_GET(&obj->entries, entry_idx, doc_entries);
 
         return true;
 }
@@ -213,16 +213,16 @@ bool doc_obj_push_primtive(doc_entries *entry, const void *value)
 {
         switch (entry->type) {
                 case ARCHIVE_FIELD_NULL:
-                        vector_push(&entry->values, &VALUE_NULL, 1);
+                        vec_push(&entry->values, &VALUE_NULL, 1);
                         break;
                 case ARCHIVE_FIELD_STRING: {
                         char *string = value ? strdup((char *) value) : NULL;
-                        vector_push(&entry->context->doc->context->values, &string, 1);
-                        vector_push(&entry->values, &string, 1);
+                        vec_push(&entry->context->doc->context->values, &string, 1);
+                        vec_push(&entry->values, &string, 1);
                 }
                         break;
                 default:
-                        vector_push(&entry->values, value, 1);
+                        vec_push(&entry->values, value, 1);
                         break;
         }
         return true;
@@ -235,10 +235,10 @@ bool doc_obj_push_object(doc_obj **out, doc_entries *entry)
         doc_obj objectModel;
 
         create_doc(&objectModel, entry->context->doc);
-        size_t length = vector_length(&entry->values);
-        vector_push(&entry->values, &objectModel, 1);
+        size_t length = VEC_LENGTH(&entry->values);
+        vec_push(&entry->values, &objectModel, 1);
 
-        *out = VECTOR_GET(&entry->values, length, doc_obj);
+        *out = VEC_GET(&entry->values, length, doc_obj);
 
         return true;
 }
@@ -330,7 +330,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
 {
         doc_entries *entry;
 
-        if (!vector_is_empty(&array->elements.elements)) {
+        if (!vec_is_empty(&array->elements.elements)) {
                 size_t num_elements = array->elements.elements.num_elems;
 
                 /** Find first type that is not null unless the entire array is of type null */
@@ -338,7 +338,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                 archive_field_e field_type;
 
                 for (size_t i = 0; i < num_elements && array_data_type == JSON_VALUE_NULL; i++) {
-                        const json_element *element = VECTOR_GET(&array->elements.elements, i,
+                        const json_element *element = VEC_GET(&array->elements.elements, i,
                                                                          json_element);
                         array_data_type = element->value.value_type;
                 }
@@ -355,7 +355,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                 archive_field_e array_number_type = ARCHIVE_FIELD_NULL;
                                 for (size_t i = 0; i < num_elements; i++) {
                                         const json_element
-                                                *element = VECTOR_GET(&array->elements.elements, i,
+                                                *element = VEC_GET(&array->elements.elements, i,
                                                                    json_element);
                                         if (UNLIKELY(element->value.value_type == JSON_VALUE_NULL)) {
                                                 continue;
@@ -439,7 +439,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                 doc_obj_add_key(&entry, target, key, field_type);
 
                 for (size_t i = 0; i < num_elements; i++) {
-                        const json_element *element = VECTOR_GET(&array->elements.elements, i,
+                        const json_element *element = VEC_GET(&array->elements.elements, i,
                                                                          json_element);
                         json_value_type_e ast_node_data_type = element->value.value_type;
 
@@ -595,7 +595,7 @@ static bool
 import_json_object(doc_obj *target, const json_object *json_obj)
 {
         for (size_t i = 0; i < json_obj->value->members.num_elems; i++) {
-                json_prop *member = VECTOR_GET(&json_obj->value->members, i, json_prop);
+                json_prop *member = VEC_GET(&json_obj->value->members, i, json_prop);
                 json_value_type_e value_type = member->value.value.value_type;
                 switch (value_type) {
                         case JSON_VALUE_STRING:
@@ -654,8 +654,8 @@ import_json(doc_obj *target, const json *json,
                 case JSON_VALUE_ARRAY: {
                         const vec ofType(json_element)
                                 *arrayContent = &json->element->value.value.array->elements.elements;
-                        if (!vector_is_empty(arrayContent)) {
-                                const json_element *first = VECTOR_GET(arrayContent, 0,
+                        if (!vec_is_empty(arrayContent)) {
+                                const json_element *first = VEC_GET(arrayContent, 0,
                                                                                json_element);
                                 switch (first->value.value_type) {
                                         case JSON_VALUE_OBJECT:
@@ -664,7 +664,7 @@ import_json(doc_obj *target, const json *json,
                                                 }
                                                 for (size_t i = 1; i < arrayContent->num_elems; i++) {
                                                         const json_element
-                                                                *element = VECTOR_GET(arrayContent, i,
+                                                                *element = VEC_GET(arrayContent, i,
                                                                                    json_element);
                                                         doc_obj *nested;
                                                         doc_obj_push_object(&nested, partition);
@@ -768,7 +768,7 @@ static void sort_nested_primitive_object(column_doc_obj *columndoc)
 {
         if (columndoc->parent->read_optimized) {
                 for (size_t i = 0; i < columndoc->obj_prop_vals.num_elems; i++) {
-                        column_doc_obj *nestedModel = VECTOR_GET(&columndoc->obj_prop_vals, i,
+                        column_doc_obj *nestedModel = VEC_GET(&columndoc->obj_prop_vals, i,
                                                                          column_doc_obj);
                         sort_columndoc_entries(nestedModel);
                 }
@@ -780,8 +780,8 @@ static bool compare_##type##_array_leq(const void *lhs, const void *rhs)        
 {                                                                                                                      \
     vec ofType(archive_##type) *a = (vec *) lhs;                                                               \
     vec ofType(archive_##type) *b = (vec *) rhs;                                                               \
-    const archive_##type *aValues = VECTOR_ALL(a, archive_##type);                                                                  \
-    const archive_##type *bValues = VECTOR_ALL(b, archive_##type);                                                                  \
+    const archive_##type *aValues = VEC_ALL(a, archive_##type);                                                                  \
+    const archive_##type *bValues = VEC_ALL(b, archive_##type);                                                                  \
     size_t max_compare_idx = a->num_elems < b->num_elems ? a->num_elems : b->num_elems;                                \
     for (size_t i = 0; i < max_compare_idx; i++) {                                                                     \
         if (aValues[i] > bValues[i]) {                                                                                 \
@@ -816,8 +816,8 @@ static bool compare_encoded_string_array_less_eq_func(const void *lhs, const voi
         string_dict *dic = (string_dict *) args;
         vec ofType(archive_field_sid_t) *a = (vec *) lhs;
         vec ofType(archive_field_sid_t) *b = (vec *) rhs;
-        const archive_field_sid_t *aValues = VECTOR_ALL(a, archive_field_sid_t);
-        const archive_field_sid_t *bValues = VECTOR_ALL(b, archive_field_sid_t);
+        const archive_field_sid_t *aValues = VEC_ALL(a, archive_field_sid_t);
+        const archive_field_sid_t *bValues = VEC_ALL(b, archive_field_sid_t);
         size_t max_compare_idx = a->num_elems < b->num_elems ? a->num_elems : b->num_elems;
         for (size_t i = 0; i < max_compare_idx; i++) {
                 char **aString = string_dict_extract(dic, aValues + i, 1);
@@ -837,10 +837,10 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
         if (columndoc->parent->read_optimized) {
                 for (size_t i = 0; i < columndoc->obj_array_props.num_elems; i++) {
                         column_doc_group
-                                *array_columns = VECTOR_GET(&columndoc->obj_array_props, i, column_doc_group);
+                                *array_columns = VEC_GET(&columndoc->obj_array_props, i, column_doc_group);
                         for (size_t j = 0; j < array_columns->columns.num_elems; j++) {
                                 column_doc_column
-                                        *column = VECTOR_GET(&array_columns->columns, j, column_doc_column);
+                                        *column = VEC_GET(&array_columns->columns, j, column_doc_column);
                                 vec ofType(u32) *array_indices = &column->array_positions;
                                 vec ofType(
                                         vec ofType(<T>)) *values_for_indicies = &column->values;
@@ -848,11 +848,11 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
 
                                 for (size_t k = 0; k < array_indices->num_elems; k++) {
                                         vec ofType(<T>)
-                                                *values_for_index = VECTOR_GET(values_for_indicies, k, vec);
+                                                *values_for_index = VEC_GET(values_for_indicies, k, vec);
                                         if (column->type == ARCHIVE_FIELD_OBJECT) {
                                                 for (size_t l = 0; l < values_for_index->num_elems; l++) {
                                                         column_doc_obj *nested_object =
-                                                                VECTOR_GET(values_for_index, l, column_doc_obj);
+                                                                VEC_GET(values_for_index, l, column_doc_obj);
                                                         sort_columndoc_entries(nested_object);
                                                 }
                                         }
@@ -864,7 +864,7 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
 
 #define SORT_META_MODEL_VALUES(key_vector, value_vector, value_type, compareValueFunc)                                 \
 {                                                                                                                      \
-    size_t num_elements = vector_length(&key_vector);                                                              \
+    size_t num_elements = VEC_LENGTH(&key_vector);                                                              \
                                                                                                                        \
     if (num_elements > 0) {                                                                                            \
         size_t *value_indicies = MALLOC(sizeof(size_t) * num_elements);                                                \
@@ -875,22 +875,22 @@ static void sorted_nested_array_objects(column_doc_obj *columndoc)
         vec ofType(archive_field_sid_t) key_cpy;                                                               \
         vec ofType(value_type) value_cpy;                                                                     \
                                                                                                                        \
-        vector_cpy(&key_cpy, &key_vector);                                                                         \
-        vector_cpy(&value_cpy, &value_vector);                                                                     \
+        vec_cpy(&key_cpy, &key_vector);                                                                         \
+        vec_cpy(&value_cpy, &value_vector);                                                                     \
                                                                                                                        \
-        value_type *values = VECTOR_ALL(&value_cpy, value_type);                                                \
+        value_type *values = VEC_ALL(&value_cpy, value_type);                                                \
                                                                                                                        \
         sort_qsort_indicies(value_indicies, values, sizeof(value_type), compareValueFunc, num_elements);                                                                           \
                                                                                                                        \
         for (size_t i = 0; i < num_elements; i++) {                                                                    \
-            vector_set(&key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
-            vector_set(&value_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], value_type));            \
+            vec_set(&key_vector, i, VEC_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
+            vec_set(&value_vector, i, VEC_GET(&value_cpy, value_indicies[i], value_type));            \
         }                                                                                                              \
                                                                                                                        \
                                                                                                                        \
         free(value_indicies);                                                                                          \
-        vector_drop(&key_cpy);                                                                                     \
-        vector_drop(&value_cpy);                                                                                   \
+        vec_drop(&key_cpy);                                                                                     \
+        vec_drop(&value_cpy);                                                                                   \
     }                                                                                                                  \
 }
 
@@ -898,7 +898,7 @@ static void sort_meta_model_string_values(vec ofType(archive_field_sid_t) *key_v
                                           vec ofType(archive_field_sid_t) *value_vector,
                                           string_dict *dic)
 {
-        size_t num_elements = vector_length(key_vector);
+        size_t num_elements = VEC_LENGTH(key_vector);
 
         if (num_elements > 0) {
                 size_t *value_indicies = MALLOC(sizeof(size_t) * num_elements);
@@ -909,10 +909,10 @@ static void sort_meta_model_string_values(vec ofType(archive_field_sid_t) *key_v
                 vec ofType(archive_field_sid_t) key_cpy;
                 vec ofType(archive_field_sid_t) value_cpy;
 
-                vector_cpy(&key_cpy, key_vector);
-                vector_cpy(&value_cpy, value_vector);
+                vec_cpy(&key_cpy, key_vector);
+                vec_cpy(&value_cpy, value_vector);
 
-                archive_field_sid_t *values = VECTOR_ALL(&value_cpy, archive_field_sid_t);
+                archive_field_sid_t *values = VEC_ALL(&value_cpy, archive_field_sid_t);
 
                 sort_qsort_indicies_wargs(value_indicies,
                                           values,
@@ -922,19 +922,19 @@ static void sort_meta_model_string_values(vec ofType(archive_field_sid_t) *key_v
                                           dic);
 
                 for (size_t i = 0; i < num_elements; i++) {
-                        vector_set(key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));
-                        vector_set(value_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], archive_field_sid_t));
+                        vec_set(key_vector, i, VEC_GET(&key_cpy, value_indicies[i], archive_field_sid_t));
+                        vec_set(value_vector, i, VEC_GET(&value_cpy, value_indicies[i], archive_field_sid_t));
                 }
 
                 free(value_indicies);
-                vector_drop(&key_cpy);
-                vector_drop(&value_cpy);
+                vec_drop(&key_cpy);
+                vec_drop(&value_cpy);
         }
 }
 
 #define SORT_META_MODEL_ARRAYS(key_vector, value_array_vector, compare_func)                                           \
 {                                                                                                                      \
-    size_t num_elements = vector_length(&key_vector);                                                              \
+    size_t num_elements = VEC_LENGTH(&key_vector);                                                              \
                                                                                                                        \
     if (num_elements > 0) {                                                                                            \
         size_t *value_indicies = MALLOC(sizeof(size_t) * num_elements);                                                \
@@ -945,21 +945,21 @@ static void sort_meta_model_string_values(vec ofType(archive_field_sid_t) *key_v
         vec ofType(archive_field_sid_t) key_cpy;                                                               \
         vec ofType(vec) value_cpy;                                                                   \
                                                                                                                        \
-        vector_cpy(&key_cpy, &key_vector);                                                                         \
-        vector_cpy(&value_cpy, &value_array_vector);                                                               \
+        vec_cpy(&key_cpy, &key_vector);                                                                         \
+        vec_cpy(&value_cpy, &value_array_vector);                                                               \
                                                                                                                        \
-        const vec *values = VECTOR_ALL(&value_array_vector, vec);                             \
+        const vec *values = VEC_ALL(&value_array_vector, vec);                             \
                                                                                                                        \
         sort_qsort_indicies(value_indicies, values, sizeof(vec), compare_func, num_elements);                                                                           \
                                                                                                                        \
         for (size_t i = 0; i < num_elements; i++) {                                                                    \
-            vector_set(&key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
-            vector_set(&value_array_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], vec));    \
+            vec_set(&key_vector, i, VEC_GET(&key_cpy, value_indicies[i], archive_field_sid_t));        \
+            vec_set(&value_array_vector, i, VEC_GET(&value_cpy, value_indicies[i], vec));    \
         }                                                                                                              \
                                                                                                                        \
         free(value_indicies);                                                                                          \
-        vector_drop(&key_cpy);                                                                                     \
-        vector_drop(&value_cpy);                                                                                   \
+        vec_drop(&key_cpy);                                                                                     \
+        vec_drop(&value_cpy);                                                                                   \
     }                                                                                                                  \
 }
 
@@ -967,7 +967,7 @@ static void sort_columndoc_strings_arrays(vec ofType(archive_field_sid_t) *key_v
                                           vec ofType(archive_field_sid_t) *value_array_vector,
                                           string_dict *dic)
 {
-        size_t num_elements = vector_length(key_vector);
+        size_t num_elements = VEC_LENGTH(key_vector);
 
         if (num_elements > 0) {
                 size_t *value_indicies = MALLOC(sizeof(size_t) * num_elements);
@@ -978,10 +978,10 @@ static void sort_columndoc_strings_arrays(vec ofType(archive_field_sid_t) *key_v
                 vec ofType(archive_field_sid_t) key_cpy;
                 vec ofType(vec) value_cpy;
 
-                vector_cpy(&key_cpy, key_vector);
-                vector_cpy(&value_cpy, value_array_vector);
+                vec_cpy(&key_cpy, key_vector);
+                vec_cpy(&value_cpy, value_array_vector);
 
-                const vec *values = VECTOR_ALL(value_array_vector, vec);
+                const vec *values = VEC_ALL(value_array_vector, vec);
 
                 sort_qsort_indicies_wargs(value_indicies,
                                           values,
@@ -991,13 +991,13 @@ static void sort_columndoc_strings_arrays(vec ofType(archive_field_sid_t) *key_v
                                           dic);
 
                 for (size_t i = 0; i < num_elements; i++) {
-                        vector_set(key_vector, i, VECTOR_GET(&key_cpy, value_indicies[i], archive_field_sid_t));
-                        vector_set(value_array_vector, i, VECTOR_GET(&value_cpy, value_indicies[i], vec));
+                        vec_set(key_vector, i, VEC_GET(&key_cpy, value_indicies[i], archive_field_sid_t));
+                        vec_set(value_array_vector, i, VEC_GET(&value_cpy, value_indicies[i], vec));
                 }
 
                 free(value_indicies);
-                vector_drop(&key_cpy);
-                vector_drop(&value_cpy);
+                vec_drop(&key_cpy);
+                vec_drop(&value_cpy);
         }
 }
 
@@ -1036,8 +1036,8 @@ struct com_column_leq_arg {
 #define ARRAY_LEQ_PRIMITIVE_FUNC(max_num_elem, type, valueVectorAPtr, valueVectorBPtr)                                 \
 {                                                                                                                      \
     for (size_t i = 0; i < max_num_elem; i++) {                                                                        \
-        type o1 = *VECTOR_GET(valueVectorAPtr, i, type);                                                        \
-        type o2 = *VECTOR_GET(valueVectorBPtr, i, type);                                                        \
+        type o1 = *VEC_GET(valueVectorAPtr, i, type);                                                        \
+        type o2 = *VEC_GET(valueVectorBPtr, i, type);                                                        \
         if (o1 > o2) {                                                                                                 \
             return false;                                                                                              \
         }                                                                                                              \
@@ -1079,8 +1079,8 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
                         break;
                 case ARCHIVE_FIELD_STRING:
                         for (size_t i = 0; i < max_num_elem; i++) {
-                                archive_field_sid_t o1 = *VECTOR_GET(a, i, archive_field_sid_t);
-                                archive_field_sid_t o2 = *VECTOR_GET(b, i, archive_field_sid_t);
+                                archive_field_sid_t o1 = *VEC_GET(a, i, archive_field_sid_t);
+                                archive_field_sid_t o2 = *VEC_GET(b, i, archive_field_sid_t);
                                 char **o1_string = string_dict_extract(func_arg->dic, &o1, 1);
                                 char **o2_string = string_dict_extract(func_arg->dic, &o2, 1);
                                 bool greater = strcmp(*o1_string, *o2_string) > 0;
@@ -1105,8 +1105,8 @@ static void sort_columndoc_column(column_doc_column *column, string_dict *dic)
         vec ofType(u32) array_position_cpy;
         vec ofType(vec ofType(<T>)) values_cpy;
 
-        vector_cpy(&array_position_cpy, &column->array_positions);
-        vector_cpy(&values_cpy, &column->values);
+        vec_cpy(&array_position_cpy, &column->array_positions);
+        vec_cpy(&values_cpy, &column->values);
 
         assert(column->array_positions.num_elems == column->values.num_elems);
         assert(array_position_cpy.num_elems == values_cpy.num_elems);
@@ -1127,19 +1127,19 @@ static void sort_columndoc_column(column_doc_column *column, string_dict *dic)
                                   &func_arg);
 
         for (size_t i = 0; i < values_cpy.num_elems; i++) {
-                vector_set(&column->values, i, vector_at(&values_cpy, indices[i]));
-                vector_set(&column->array_positions, i, vector_at(&array_position_cpy, indices[i]));
+                vec_set(&column->values, i, vec_at(&values_cpy, indices[i]));
+                vec_set(&column->array_positions, i, vec_at(&array_position_cpy, indices[i]));
         }
 
         free(indices);
-        vector_drop(&array_position_cpy);
-        vector_drop(&values_cpy);
+        vec_drop(&array_position_cpy);
+        vec_drop(&values_cpy);
 }
 
 static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
 {
         vec ofType(column_doc_group) cpy;
-        vector_cpy(&cpy, &columndoc->obj_array_props);
+        vec_cpy(&cpy, &columndoc->obj_array_props);
         size_t *indices = MALLOC(cpy.num_elems * sizeof(size_t));
         for (size_t i = 0; i < cpy.num_elems; i++) {
                 indices[i] = i;
@@ -1151,16 +1151,16 @@ static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
                                   cpy.num_elems,
                                   columndoc->parent->dic);
         for (size_t i = 0; i < cpy.num_elems; i++) {
-                vector_set(&columndoc->obj_array_props, i, VECTOR_GET(&cpy, indices[i], column_doc_group));
+                vec_set(&columndoc->obj_array_props, i, VEC_GET(&cpy, indices[i], column_doc_group));
         }
         free(indices);
 
         for (size_t i = 0; i < cpy.num_elems; i++) {
-                column_doc_group *key_columns = VECTOR_GET(&columndoc->obj_array_props, i,
+                column_doc_group *key_columns = VEC_GET(&columndoc->obj_array_props, i,
                                                                    column_doc_group);
                 size_t *columnIndices = MALLOC(key_columns->columns.num_elems * sizeof(size_t));
                 vec ofType(column_doc_column) columnCpy;
-                vector_cpy(&columnCpy, &key_columns->columns);
+                vec_cpy(&columnCpy, &key_columns->columns);
                 for (size_t i = 0; i < key_columns->columns.num_elems; i++) {
                         columnIndices[i] = i;
                 }
@@ -1173,18 +1173,18 @@ static void sort_columndoc_column_arrays(column_doc_obj *columndoc)
                                           key_columns->columns.num_elems,
                                           columndoc->parent->dic);
                 for (size_t i = 0; i < key_columns->columns.num_elems; i++) {
-                        vector_set(&key_columns->columns,
+                        vec_set(&key_columns->columns,
                                 i,
-                                VECTOR_GET(&columnCpy, columnIndices[i], column_doc_column));
-                        column_doc_column *column = VECTOR_GET(&key_columns->columns, i,
+                                VEC_GET(&columnCpy, columnIndices[i], column_doc_column));
+                        column_doc_column *column = VEC_GET(&key_columns->columns, i,
                                                                        column_doc_column);
                         sort_columndoc_column(column, columndoc->parent->dic);
                 }
 
-                vector_drop(&columnCpy);
+                vec_drop(&columnCpy);
                 free(columnIndices);
         }
-        vector_drop(&cpy);
+        vec_drop(&cpy);
 }
 
 static void sort_columndoc_values(column_doc_obj *columndoc)
@@ -1289,13 +1289,13 @@ column_doc *doc_entries_columndoc(const doc_bulk *bulk, const doc_entries *parti
         }
 
         // Step 1: encode all strings at once in a bulk
-        char *const *key_strings = VECTOR_ALL(&bulk->keys, char *);
-        char *const *valueStrings = VECTOR_ALL(&bulk->values, char *);
-        string_dict_insert(bulk->dic, NULL, key_strings, vector_length(&bulk->keys), 0);
-        string_dict_insert(bulk->dic, NULL, valueStrings, vector_length(&bulk->values), 0);
+        char *const *key_strings = VEC_ALL(&bulk->keys, char *);
+        char *const *valueStrings = VEC_ALL(&bulk->values, char *);
+        string_dict_insert(bulk->dic, NULL, key_strings, VEC_LENGTH(&bulk->keys), 0);
+        string_dict_insert(bulk->dic, NULL, valueStrings, VEC_LENGTH(&bulk->values), 0);
 
         // Step 2: for each document doc, create a meta doc, and construct a binary compressed document
-        const doc *models = VECTOR_ALL(&bulk->models, doc);
+        const doc *models = VEC_ALL(&bulk->models, doc);
         assert (bulk->models.num_elems == 1);
 
         const doc *model = models;
@@ -1321,7 +1321,7 @@ bool doc_entries_drop(doc_entries *partition)
 
 static void create_doc(doc_obj *model, doc *doc)
 {
-        vector_create(&model->entries, sizeof(doc_entries), 50);
+        vec_create(&model->entries, sizeof(doc_entries), 50);
         model->doc = doc;
 }
 
@@ -1371,18 +1371,18 @@ static void create_typed_vector(doc_entries *entry)
                 default: ERROR(ERR_INTERNALERR, "unknown type"); /** unknown type */
                         return;
         }
-        vector_create(&entry->values, size, 50);
+        vec_create(&entry->values, size, 50);
 }
 
 static void entries_drop(doc_entries *entry)
 {
         if (entry->type == ARCHIVE_FIELD_OBJECT) {
                 for (size_t i = 0; i < entry->values.num_elems; i++) {
-                        doc_obj *model = VECTOR_GET(&entry->values, i, doc_obj);
+                        doc_obj *model = VEC_GET(&entry->values, i, doc_obj);
                         doc_drop(model);
                 }
         }
-        vector_drop(&entry->values);
+        vec_drop(&entry->values);
 }
 
 static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) *values)
@@ -1404,7 +1404,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_BOOLEAN: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_boolean_t value = *(VECTOR_GET(values, i, archive_field_boolean_t));
+                                archive_field_boolean_t value = *(VEC_GET(values, i, archive_field_boolean_t));
                                 if (value != NULL_BOOLEAN) {
                                         fprintf(file, "%s%s", value == 0 ? "false" : "true",
                                                 i + 1 < num_values ? ", " : "");
@@ -1416,7 +1416,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_INT8: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_i8_t value = *(VECTOR_GET(values, i, archive_field_i8_t));
+                                archive_field_i8_t value = *(VEC_GET(values, i, archive_field_i8_t));
                                 if (value != NULL_INT8) {
                                         fprintf(file, "%d%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1427,7 +1427,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_INT16: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_i16_t value = *(VECTOR_GET(values, i, archive_field_i16_t));
+                                archive_field_i16_t value = *(VEC_GET(values, i, archive_field_i16_t));
                                 if (value != NULL_INT16) {
                                         fprintf(file, "%d%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1438,7 +1438,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_INT32: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_i32_t value = *(VECTOR_GET(values, i, archive_field_i32_t));
+                                archive_field_i32_t value = *(VEC_GET(values, i, archive_field_i32_t));
                                 if (value != NULL_INT32) {
                                         fprintf(file, "%d%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1449,7 +1449,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_INT64: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_i64_t value = *(VECTOR_GET(values, i, archive_field_i64_t));
+                                archive_field_i64_t value = *(VEC_GET(values, i, archive_field_i64_t));
                                 if (value != NULL_INT64) {
                                         fprintf(file, "%" PRIi64 "%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1460,7 +1460,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_UINT8: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_u8_t value = *(VECTOR_GET(values, i, archive_field_u8_t));
+                                archive_field_u8_t value = *(VEC_GET(values, i, archive_field_u8_t));
                                 if (value != NULL_UINT8) {
                                         fprintf(file, "%d%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1471,7 +1471,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_UINT16: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_u16_t value = *(VECTOR_GET(values, i, archive_field_u16_t));
+                                archive_field_u16_t value = *(VEC_GET(values, i, archive_field_u16_t));
                                 if (value != NULL_UINT16) {
                                         fprintf(file, "%d%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1482,7 +1482,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_UINT32: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_u32_t value = *(VECTOR_GET(values, i, archive_field_u32_t));
+                                archive_field_u32_t value = *(VEC_GET(values, i, archive_field_u32_t));
                                 if (value != NULL_UINT32) {
                                         fprintf(file, "%d%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1493,7 +1493,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_UINT64: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_u64_t value = *(VECTOR_GET(values, i, archive_field_u64_t));
+                                archive_field_u64_t value = *(VEC_GET(values, i, archive_field_u64_t));
                                 if (value != NULL_UINT64) {
                                         fprintf(file, "%" PRIu64 "%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1504,7 +1504,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_FLOAT: {
                         for (size_t i = 0; i < num_values; i++) {
-                                archive_field_number_t value = *(VECTOR_GET(values, i, archive_field_number_t));
+                                archive_field_number_t value = *(VEC_GET(values, i, archive_field_number_t));
                                 if (!isnan(value)) {
                                         fprintf(file, "%f%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1515,7 +1515,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_STRING: {
                         for (size_t i = 0; i < num_values; i++) {
-                                field_string_t value = *(VECTOR_GET(values, i, field_string_t));
+                                field_string_t value = *(VEC_GET(values, i, field_string_t));
                                 if (value) {
                                         fprintf(file, "\"%s\"%s", value, i + 1 < num_values ? ", " : "");
                                 } else {
@@ -1526,7 +1526,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         break;
                 case ARCHIVE_FIELD_OBJECT: {
                         for (size_t i = 0; i < num_values; i++) {
-                                doc_obj *obj = VECTOR_GET(values, i, doc_obj);
+                                doc_obj *obj = VEC_GET(values, i, doc_obj);
                                 if (!NULL_OBJECT_MODEL(obj)) {
                                         _doc_print_object(file, obj);
                                 } else {
@@ -1548,7 +1548,7 @@ static void _doc_print_object(FILE *file, const doc_obj *model)
 {
         fprintf(file, "{");
         for (size_t i = 0; i < model->entries.num_elems; i++) {
-                doc_entries *entry = VECTOR_GET(&model->entries, i, doc_entries);
+                doc_entries *entry = VEC_GET(&model->entries, i, doc_entries);
                 fprintf(file, "\"%s\": ", entry->key);
                 print_value(file, entry->type, &entry->values);
                 fprintf(file, "%s", i + 1 < model->entries.num_elems ? ", " : "");

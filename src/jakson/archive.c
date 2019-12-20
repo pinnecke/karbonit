@@ -39,14 +39,14 @@
 
 #define WRITE_PRIMITIVE_VALUES(memfile, values_vec, type)                                                              \
 {                                                                                                                      \
-    type *values = VECTOR_ALL(values_vec, type);                                                                \
+    type *values = VEC_ALL(values_vec, type);                                                                \
     MEMFILE_WRITE(memfile, values, values_vec->num_elems * sizeof(type));                                       \
 }
 
 #define WRITE_ARRAY_VALUES(memfile, values_vec, type)                                                                  \
 {                                                                                                                      \
     for (u32 i = 0; i < values_vec->num_elems; i++) {                                                             \
-        vec ofType(type) *nested_values = VECTOR_GET(values_vec, i, vec);                     \
+        vec ofType(type) *nested_values = VEC_GET(values_vec, i, vec);                     \
         WRITE_PRIMITIVE_VALUES(memfile, nested_values, type);                                                          \
     }                                                                                                                  \
 }
@@ -499,7 +499,7 @@ static const char *array_value_type_to_string(archive_field_e type)
 static void
 write_primitive_key_column(memfile *memfile, vec ofType(archive_field_sid_t) *keys)
 {
-        archive_field_sid_t *string_ids = VECTOR_ALL(keys, archive_field_sid_t);
+        archive_field_sid_t *string_ids = VEC_ALL(keys, archive_field_sid_t);
         MEMFILE_WRITE(memfile, string_ids, keys->num_elems * sizeof(archive_field_sid_t));
 }
 
@@ -561,7 +561,7 @@ static offset_t *__write_primitive_column(memfile *memfile,
                                               offset_t root_offset)
 {
         offset_t *result = MALLOC(values_vec->num_elems * sizeof(offset_t));
-        column_doc_obj *mapped = VECTOR_ALL(values_vec, column_doc_obj);
+        column_doc_obj *mapped = VEC_ALL(values_vec, column_doc_obj);
         for (u32 i = 0; i < values_vec->num_elems; i++) {
                 column_doc_obj *obj = mapped + i;
                 result[i] = MEMFILE_TELL(memfile) - root_offset;
@@ -590,7 +590,7 @@ static bool __write_array_len_column(memfile *memfile, archive_field_e type,
                 case ARCHIVE_FIELD_FLOAT:
                 case ARCHIVE_FIELD_STRING:
                         for (u32 i = 0; i < values->num_elems; i++) {
-                                vec *arrays = VECTOR_GET(values, i, vec);
+                                vec *arrays = VEC_GET(values, i, vec);
                                 MEMFILE_WRITE(memfile, &arrays->num_elems, sizeof(u32));
                         }
                         break;
@@ -965,7 +965,7 @@ static bool write_column_entry(memfile *memfile, archive_field_e type,
                 case ARCHIVE_FIELD_OBJECT: {
                         offset_t preObjectNext = 0;
                         for (size_t i = 0; i < column->num_elems; i++) {
-                                column_doc_obj *object = VECTOR_GET(column, i, column_doc_obj);
+                                column_doc_obj *object = VEC_GET(column, i, column_doc_obj);
                                 if (LIKELY(preObjectNext != 0)) {
                                         offset_t continuePos = MEMFILE_TELL(memfile);
                                         offset_t relativeContinuePos = continuePos - root_object_header_offset;
@@ -1003,7 +1003,7 @@ static bool write_column(memfile *memfile, column_doc_column *column,
         MEMFILE_WRITE(memfile, column->array_positions.base, column->array_positions.num_elems * sizeof(u32));
 
         for (size_t i = 0; i < column->values.num_elems; i++) {
-                vec ofType(<T>) *column_data = VECTOR_GET(&column->values, i, vec);
+                vec ofType(<T>) *column_data = VEC_GET(&column->values, i, vec);
                 offset_t column_entry_offset = MEMFILE_TELL(memfile);
                 offset_t relative_entry_offset = column_entry_offset - root_object_header_offset;
                 MEMFILE_SEEK(memfile, value_entry_offsets + i * sizeof(offset_t));
@@ -1029,7 +1029,7 @@ static bool write_object_array_props(memfile *memfile,
                 MEMFILE_WRITE(memfile, &header, sizeof(object_array_header));
 
                 for (size_t i = 0; i < object_key_columns->num_elems; i++) {
-                        column_doc_group *column_group = VECTOR_GET(object_key_columns, i,
+                        column_doc_group *column_group = VEC_GET(object_key_columns, i,
                                                                             column_doc_group);
                         MEMFILE_WRITE(memfile, &column_group->key, sizeof(archive_field_sid_t));
                 }
@@ -1039,7 +1039,7 @@ static bool write_object_array_props(memfile *memfile,
                 MEMFILE_SKIP(memfile, object_key_columns->num_elems * sizeof(offset_t));
 
                 for (size_t i = 0; i < object_key_columns->num_elems; i++) {
-                        column_doc_group *column_group = VECTOR_GET(object_key_columns, i,
+                        column_doc_group *column_group = VEC_GET(object_key_columns, i,
                                                                             column_doc_group);
                         offset_t this_column_offset_relative = MEMFILE_TELL(memfile) - root_object_header_offset;
 
@@ -1047,8 +1047,8 @@ static bool write_object_array_props(memfile *memfile,
                         size_t max_pos = 0;
                         for (size_t k = 0; k < column_group->columns.num_elems; k++) {
                                 column_doc_column
-                                        *column = VECTOR_GET(&column_group->columns, k, column_doc_column);
-                                const u32 *array_pos = VECTOR_ALL(&column->array_positions, u32);
+                                        *column = VEC_GET(&column_group->columns, k, column_doc_column);
+                                const u32 *array_pos = VEC_ALL(&column->array_positions, u32);
                                 for (size_t m = 0; m < column->array_positions.num_elems; m++) {
                                         max_pos = JAK_MAX(max_pos, array_pos[m]);
                                 }
@@ -1077,7 +1077,7 @@ static bool write_object_array_props(memfile *memfile,
 
                         for (size_t k = 0; k < column_group->columns.num_elems; k++) {
                                 column_doc_column
-                                        *column = VECTOR_GET(&column_group->columns, k, column_doc_column);
+                                        *column = VEC_GET(&column_group->columns, k, column_doc_column);
                                 offset_t continue_write = MEMFILE_TELL(memfile);
                                 offset_t column_off = continue_write - root_object_header_offset;
                                 MEMFILE_SEEK(memfile, offset_column_to_columns + k * sizeof(offset_t));
@@ -1419,8 +1419,8 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
                                                                                              - extra_begin_off)};
 
         for (size_t i = 0; i < strings->num_elems; i++) {
-                archive_field_sid_t id = *VECTOR_GET(string_ids, i, archive_field_sid_t);
-                const char *string = *VECTOR_GET(strings, i, char *);
+                archive_field_sid_t id = *VEC_GET(string_ids, i, archive_field_sid_t);
+                const char *string = *VEC_GET(strings, i, char *);
 
                 string_entry_header header = {.marker = global_marker_symbols[MARKER_TYPE_EMBEDDED_UNCOMP_STR]
                         .symbol, .next_entry_off = 0, .string_id = id, .string_len = strlen(string)};
@@ -1444,8 +1444,8 @@ static bool serialize_string_dic(memfile *memfile, const doc_bulk *context, pack
         MEMFILE_WRITE(memfile, &header, sizeof(string_table_header));
         MEMFILE_SEEK(memfile, continue_pos);
 
-        vector_drop(strings);
-        vector_drop(string_ids);
+        vec_drop(strings);
+        vec_drop(string_ids);
         free(strings);
         free(string_ids);
 

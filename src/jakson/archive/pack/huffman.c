@@ -32,13 +32,13 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
 
 bool coding_huffman_create(huffman *dic)
 {
-        vector_create(&dic->table, sizeof(pack_huffman_entry), UCHAR_MAX / 4);
+        vec_create(&dic->table, sizeof(pack_huffman_entry), UCHAR_MAX / 4);
         return true;
 }
 
 bool coding_huffman_cpy(huffman *dst, huffman *src)
 {
-        if (!vector_cpy(&dst->table, &src->table)) {
+        if (!vec_cpy(&dst->table, &src->table)) {
                 ERROR(ERR_HARDCOPYFAILED, NULL);
                 return false;
         } else {
@@ -46,17 +46,17 @@ bool coding_huffman_cpy(huffman *dst, huffman *src)
         }
 }
 
-bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
+bool coding_huffman_build(huffman *encoder, const string_vec_t *strings)
 {
         vec ofType(u32) frequencies;
-        vector_create(&frequencies, sizeof(u32), UCHAR_MAX);
-        vector_enlarge_size_to_capacity(&frequencies);
+        vec_create(&frequencies, sizeof(u32), UCHAR_MAX);
+        vec_enlarge_size_to_capacity(&frequencies);
 
-        u32 *freq_data = VECTOR_ALL(&frequencies, u32);
+        u32 *freq_data = VEC_ALL(&frequencies, u32);
         ZERO_MEMORY(freq_data, UCHAR_MAX * sizeof(u32));
 
         for (size_t i = 0; i < strings->num_elems; i++) {
-                const char *string = *VECTOR_GET(strings, i, const char *);
+                const char *string = *VEC_GET(strings, i, const char *);
                 size_t string_length = strlen(string);
                 for (size_t k = 0; k < string_length; k++) {
                         size_t c = (unsigned char) string[k];
@@ -65,7 +65,7 @@ bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
         }
 
         huff_tree_create(&encoder->table, &frequencies);
-        vector_drop(&frequencies);
+        vec_drop(&frequencies);
 
         return true;
 }
@@ -73,11 +73,11 @@ bool coding_huffman_build(huffman *encoder, const string_vector_t *strings)
 bool coding_huffman_drop(huffman *dic)
 {
         for (size_t i = 0; i < dic->table.num_elems; i++) {
-                pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
+                pack_huffman_entry *entry = VEC_GET(&dic->table, i, pack_huffman_entry);
                 free(entry->blocks);
         }
 
-        vector_drop(&dic->table);
+        vec_drop(&dic->table);
 
         free(dic);
 
@@ -87,7 +87,7 @@ bool coding_huffman_drop(huffman *dic)
 bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_symbol)
 {
         for (size_t i = 0; i < dic->table.num_elems; i++) {
-                pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
+                pack_huffman_entry *entry = VEC_GET(&dic->table, i, pack_huffman_entry);
                 MEMFILE_WRITE(file, &marker_symbol, sizeof(char));
                 MEMFILE_WRITE(file, &entry->letter, sizeof(unsigned char));
 
@@ -125,7 +125,7 @@ bool coding_huffman_serialize(memfile *file, const huffman *dic, char marker_sym
 static pack_huffman_entry *find_dic_entry(huffman *dic, unsigned char c)
 {
         for (size_t i = 0; i < dic->table.num_elems; i++) {
-                pack_huffman_entry *entry = VECTOR_GET(&dic->table, i, pack_huffman_entry);
+                pack_huffman_entry *entry = VEC_GET(&dic->table, i, pack_huffman_entry);
                 if (entry->letter == c) {
                         return entry;
                 }
@@ -302,7 +302,7 @@ static void assign_code(struct huff_node *node, const bitmap *path,
                         vec ofType(pack_huffman_entry) *table)
 {
         if (!node->left && !node->right) {
-                pack_huffman_entry *entry = VECTOR_NEW_AND_GET(table, pack_huffman_entry);
+                pack_huffman_entry *entry = VEC_NEW_AND_GET(table, pack_huffman_entry);
                 import_into_entry(entry, node, path);
         } else {
                 if (node->left) {
@@ -327,7 +327,7 @@ static void assign_code(struct huff_node *node, const bitmap *path,
 static struct huff_node *trim_and_begin(vec ofType(HuffNode) *candidates)
 {
         struct huff_node *begin = NULL;
-        for (struct huff_node *it = VECTOR_GET(candidates, 0, struct huff_node);; it++) {
+        for (struct huff_node *it = VEC_GET(candidates, 0, struct huff_node);; it++) {
                 if (it->freq == 0) {
                         if (it->prev) {
                                 it->prev->next = it->next;
@@ -353,19 +353,19 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
         assert(UCHAR_MAX == frequencies->num_elems);
 
         vec ofType(HuffNode) candidates;
-        vector_create(&candidates, sizeof(struct huff_node), UCHAR_MAX * UCHAR_MAX);
+        vec_create(&candidates, sizeof(struct huff_node), UCHAR_MAX * UCHAR_MAX);
         size_t appender_idx = UCHAR_MAX;
 
         for (unsigned char i = 0; i < UCHAR_MAX; i++) {
-                struct huff_node *node = VECTOR_NEW_AND_GET(&candidates, struct huff_node);
+                struct huff_node *node = VEC_NEW_AND_GET(&candidates, struct huff_node);
                 node->letter = i;
-                node->freq = *VECTOR_GET(frequencies, i, u32);
+                node->freq = *VEC_GET(frequencies, i, u32);
         }
 
         for (unsigned char i = 0; i < UCHAR_MAX; i++) {
-                struct huff_node *node = VECTOR_GET(&candidates, i, struct huff_node);
-                struct huff_node *prev = i > 0 ? VECTOR_GET(&candidates, i - 1, struct huff_node) : NULL;
-                struct huff_node *next = i + 1 < UCHAR_MAX ? VECTOR_GET(&candidates, i + 1, struct huff_node) : NULL;
+                struct huff_node *node = VEC_GET(&candidates, i, struct huff_node);
+                struct huff_node *prev = i > 0 ? VEC_GET(&candidates, i - 1, struct huff_node) : NULL;
+                struct huff_node *next = i + 1 < UCHAR_MAX ? VEC_GET(&candidates, i + 1, struct huff_node) : NULL;
                 node->next = next;
                 node->prev = prev;
                 node->left = node->right = NULL;
@@ -380,7 +380,7 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
                 small = find_smallest(handle, smallest->freq, smallest);
 
                 appender_idx++;
-                new_node = VECTOR_NEW_AND_GET(&candidates, struct huff_node);
+                new_node = VEC_NEW_AND_GET(&candidates, struct huff_node);
                 new_node->freq = small->freq + smallest->freq;
                 new_node->letter = '\0';
                 new_node->left = small;
@@ -437,7 +437,7 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
 
         seek_to_begin(handle);
         if (handle->next) {
-                struct huff_node *finalNode = VECTOR_NEW_AND_GET(&candidates, struct huff_node);
+                struct huff_node *finalNode = VEC_NEW_AND_GET(&candidates, struct huff_node);
                 finalNode->freq = small->freq + smallest->freq;
                 finalNode->letter = '\0';
                 if (handle->freq > handle->next->freq) {
@@ -462,5 +462,5 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
         assign_code(new_node, &root_path, table);
         bitmap_drop(&root_path);
 
-        vector_drop(&candidates);
+        vec_drop(&candidates);
 }

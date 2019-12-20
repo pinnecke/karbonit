@@ -68,15 +68,15 @@ bool slice_list_create(slice_list_t *list, size_t slice_capacity)
 {
         spinlock_init(&list->lock);
 
-        vector_create(&list->slices, sizeof(slice), slice_capacity);
-        vector_create(&list->descriptors, sizeof(slice_descriptor), slice_capacity);
-        vector_create(&list->filters, sizeof(bitmap), slice_capacity);
-        vector_create(&list->bounds, sizeof(hash_bounds), slice_capacity);
+        vec_create(&list->slices, sizeof(slice), slice_capacity);
+        vec_create(&list->descriptors, sizeof(slice_descriptor), slice_capacity);
+        vec_create(&list->filters, sizeof(bitmap), slice_capacity);
+        vec_create(&list->bounds, sizeof(hash_bounds), slice_capacity);
 
-        ZERO_MEMORY(vector_data(&list->slices), slice_capacity * sizeof(slice));
-        ZERO_MEMORY(vector_data(&list->descriptors), slice_capacity * sizeof(slice_descriptor));
-        ZERO_MEMORY(vector_data(&list->filters), slice_capacity * sizeof(bitmap));
-        ZERO_MEMORY(vector_data(&list->bounds), slice_capacity * sizeof(hash_bounds));
+        ZERO_MEMORY(vec_data(&list->slices), slice_capacity * sizeof(slice));
+        ZERO_MEMORY(vec_data(&list->descriptors), slice_capacity * sizeof(slice_descriptor));
+        ZERO_MEMORY(vec_data(&list->filters), slice_capacity * sizeof(bitmap));
+        ZERO_MEMORY(vec_data(&list->bounds), slice_capacity * sizeof(hash_bounds));
 
         appenderNew(list);
 
@@ -87,20 +87,20 @@ bool slice_list_drop(slice_list_t *list)
 {
         UNUSED(list);
 
-        vector_drop(&list->slices);
-        vector_drop(&list->descriptors);
-        vector_drop(&list->bounds);
+        vec_drop(&list->slices);
+        vec_drop(&list->descriptors);
+        vec_drop(&list->bounds);
         for (size_t i = 0; i < list->filters.num_elems; i++) {
-                bitmap *filter = VECTOR_GET(&list->filters, i, bitmap);
+                bitmap *filter = VEC_GET(&list->filters, i, bitmap);
                 bloom_drop(filter);
         }
-        vector_drop(&list->filters);
+        vec_drop(&list->filters);
         return true;
 }
 
 bool slice_list_is_empty(const slice_list_t *list)
 {
-        return (vector_is_empty(&list->slices));
+        return (vec_is_empty(&list->slices));
 }
 
 bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *ids, size_t num_pairs)
@@ -125,9 +125,9 @@ bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *
                         continue;
                 } else {
                         /** pair is not found; append it */
-                        hash_bounds *restrict bounds = VECTOR_ALL(&list->bounds, hash_bounds);
-                        bitmap *restrict filters = VECTOR_ALL(&list->filters, bitmap);
-                        slice *restrict slices = VECTOR_ALL(&list->slices, slice);
+                        hash_bounds *restrict bounds = VEC_ALL(&list->bounds, hash_bounds);
+                        bitmap *restrict filters = VEC_ALL(&list->filters, bitmap);
+                        slice *restrict slices = VEC_ALL(&list->slices, slice);
 
                         slice *restrict appender = slices + list->appender_idx;
                         bitmap *restrict appenderFilter = filters + list->appender_idx;
@@ -163,13 +163,13 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
         UNUSED(needle);
 
         hash32_t keyHash = get_hashcode(needle);
-        u32 numSlices = vector_length(&list->slices);
+        u32 numSlices = VEC_LENGTH(&list->slices);
 
         /** check whether the keys-values pair is already contained in one slice */
-        hash_bounds *restrict bounds = VECTOR_ALL(&list->bounds, hash_bounds);
-        bitmap *restrict filters = VECTOR_ALL(&list->filters, bitmap);
-        slice *restrict slices = VECTOR_ALL(&list->slices, slice);
-        slice_descriptor *restrict descs = VECTOR_ALL(&list->descriptors, slice_descriptor);
+        hash_bounds *restrict bounds = VEC_ALL(&list->bounds, hash_bounds);
+        bitmap *restrict filters = VEC_ALL(&list->filters, bitmap);
+        slice *restrict slices = VEC_ALL(&list->slices, slice);
+        slice_descriptor *restrict descs = VEC_ALL(&list->descriptors, slice_descriptor);
 
         for (register u32 i = 0; i < numSlices; i++) {
                 slice_descriptor *restrict desc = descs + i;
@@ -246,15 +246,15 @@ static void appenderNew(slice_list_t *list)
         /** the slice itself */
         slice slice = {.strat     = SLICE_LOOKUP_SCAN, .num_elems = 0, .cache_idx = (u32) -1};
 
-        u32 numSlices = vector_length(&list->slices);
-        vector_push(&list->slices, &slice, 1);
+        u32 numSlices = VEC_LENGTH(&list->slices);
+        vec_push(&list->slices, &slice, 1);
 
         assert(SLICE_KEY_COLUMN_MAX_ELEMS > 0);
 
         /** the descriptor */
         slice_descriptor desc = {.num_reads_hit  = 0, .num_reads_all  = 0,};
 
-        vector_push(&list->descriptors, &desc, 1);
+        vec_push(&list->descriptors, &desc, 1);
 
         /** the lookup guards */
         assert(sizeof(bitmap) <= SLICE_LIST_BLOOMFILTER_TARGET_MEMORY_SIZE_IN_BYTE);
@@ -267,9 +267,9 @@ static void appenderNew(slice_list_t *list)
          * keys-values pair - and that still works ;) */
         bloom_create(&filter,
                          (SLICE_LIST_BLOOMFILTER_TARGET_MEMORY_SIZE_IN_BYTE - sizeof(bitmap)) * 8);
-        vector_push(&list->filters, &filter, 1);
+        vec_push(&list->filters, &filter, 1);
         hash_bounds bounds = {.min_hash        = (hash32_t) -1, .max_hash        = (hash32_t) 0};
-        vector_push(&list->bounds, &bounds, 1);
+        vec_push(&list->bounds, &bounds, 1);
 
         INFO(SLICE_LIST_TAG,
                  "created new appender in slice list %p\n\t"

@@ -122,11 +122,11 @@ create_extra(string_dict *self, size_t capacity, size_t num_index_buckets, size_
         self->extra = MALLOC(sizeof(struct sync_extra));
         struct sync_extra *extra = this_extra(self);
         spinlock_init(&extra->_encode_sync_lock);
-        CHECK_SUCCESS(vector_create(&extra->contents, sizeof(struct entry), capacity));
-        CHECK_SUCCESS(vector_create(&extra->freelist, sizeof(archive_field_sid_t), capacity));
+        CHECK_SUCCESS(vec_create(&extra->contents, sizeof(struct entry), capacity));
+        CHECK_SUCCESS(vec_create(&extra->freelist, sizeof(archive_field_sid_t), capacity));
         struct entry empty = {.str    = NULL, .in_use = false};
         for (size_t i = 0; i < capacity; i++) {
-                CHECK_SUCCESS(vector_push(&extra->contents, &empty, 1));
+                CHECK_SUCCESS(vec_push(&extra->contents, &empty, 1));
                 freelist_push(self, i);
         }
         UNUSED(num_threads);
@@ -147,19 +147,19 @@ static int freelist_pop(archive_field_sid_t *out, string_dict *self)
 {
         assert (self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
-        if (UNLIKELY(vector_is_empty(&extra->freelist))) {
+        if (UNLIKELY(vec_is_empty(&extra->freelist))) {
                 size_t num_new_pos;
-                CHECK_SUCCESS(vector_grow(&num_new_pos, &extra->freelist));
-                CHECK_SUCCESS(vector_grow(NULL, &extra->contents));
+                CHECK_SUCCESS(vec_grow(&num_new_pos, &extra->freelist));
+                CHECK_SUCCESS(vec_grow(NULL, &extra->contents));
                 assert (extra->freelist.cap_elems == extra->contents.cap_elems);
                 struct entry empty = {.in_use = false, .str    = NULL};
                 while (num_new_pos--) {
-                        size_t new_pos = vector_length(&extra->contents);
-                        CHECK_SUCCESS(vector_push(&extra->freelist, &new_pos, 1));
-                        CHECK_SUCCESS(vector_push(&extra->contents, &empty, 1));
+                        size_t new_pos = VEC_LENGTH(&extra->contents);
+                        CHECK_SUCCESS(vec_push(&extra->freelist, &new_pos, 1));
+                        CHECK_SUCCESS(vec_push(&extra->contents, &empty, 1));
                 }
         }
-        *out = *(archive_field_sid_t *) vector_pop(&extra->freelist);
+        *out = *(archive_field_sid_t *) vec_pop(&extra->freelist);
         return true;
 }
 
@@ -167,7 +167,7 @@ static int freelist_push(string_dict *self, archive_field_sid_t idx)
 {
         assert (self->tag == SYNC);
         struct sync_extra *extra = this_extra(self);
-        CHECK_SUCCESS(vector_push(&extra->freelist, &idx, 1));
+        CHECK_SUCCESS(vec_push(&extra->freelist, &idx, 1));
         assert (extra->freelist.cap_elems == extra->contents.cap_elems);
         return true;
 }
@@ -186,8 +186,8 @@ static bool _encode_sync_drop(string_dict *self)
                 }
         }
 
-        vector_drop(&extra->freelist);
-        vector_drop(&extra->contents);
+        vec_drop(&extra->freelist);
+        vec_drop(&extra->contents);
         str_hash_drop(&extra->index);
         free(self->extra);
 
@@ -268,7 +268,7 @@ _encode_sync_insert(string_dict *self, archive_field_sid_t **out, char *const *s
                                 /** register in contents list */
                                 bool pop_result = freelist_pop(&string_id, self);
                                 ERROR_IF_AND_RETURN(!pop_result, ERR_SLOTBROKEN, NULL)
-                                struct entry *entries = (struct entry *) vector_data(&extra->contents);
+                                struct entry *entries = (struct entry *) vec_data(&extra->contents);
                                 struct entry *entry = entries + string_id;
                                 assert (!entry->in_use);
                                 entry->in_use = true;
@@ -313,7 +313,7 @@ static bool _encode_sync_remove(string_dict *self, archive_field_sid_t *strings,
         /** remove strings from contents vec, and skip duplicates */
         for (size_t i = 0; i < num_strings; i++) {
                 archive_field_sid_t archive_field_sid_t = strings[i];
-                struct entry *entry = (struct entry *) vector_data(&extra->contents) + archive_field_sid_t;
+                struct entry *entry = (struct entry *) vec_data(&extra->contents) + archive_field_sid_t;
                 if (LIKELY(entry->in_use)) {
                         string_to_delete[num_strings_to_delete] = entry->str;
                         string_ids_to_delete[num_strings_to_delete] = strings[i];
@@ -385,14 +385,14 @@ static char **_encode_sync_extract(string_dict *self, const archive_field_sid_t 
 
         struct sync_extra *extra = this_extra(self);
         char **result = MALLOC(num_ids * sizeof(char *));
-        struct entry *entries = (struct entry *) vector_data(&extra->contents);
+        struct entry *entries = (struct entry *) vec_data(&extra->contents);
 
         /** Optimization: notify the kernel that the content list is accessed randomly (since hash based access)*/
-        vector_memadvice(&extra->contents, MADV_RANDOM | MADV_WILLNEED);
+        vec_madvise(&extra->contents, MADV_RANDOM | MADV_WILLNEED);
 
         for (size_t i = 0; i < num_ids; i++) {
                 archive_field_sid_t archive_field_sid_t = ids[i];
-                assert(archive_field_sid_t < vector_length(&extra->contents));
+                assert(archive_field_sid_t < VEC_LENGTH(&extra->contents));
                 assert(
                         archive_field_sid_t == NULL_ENCODED_STRING || entries[archive_field_sid_t].in_use);
                 result[i] = archive_field_sid_t != NULL_ENCODED_STRING ? entries[archive_field_sid_t].str
@@ -427,7 +427,7 @@ static bool _encode_sync_counters(string_dict *self, str_hash_counters *counters
 static bool _encode_sync_num_distinct(string_dict *self, size_t *num)
 {
         struct sync_extra *extra = this_extra(self);
-        *num = vector_length(&extra->contents);
+        *num = VEC_LENGTH(&extra->contents);
         return true;
 }
 
@@ -437,10 +437,10 @@ static bool _encode_sync_get_contents(string_dict *self, vec ofType (char *) *st
         struct sync_extra *extra = this_extra(self);
 
         for (archive_field_sid_t i = 0; i < extra->contents.num_elems; i++) {
-                const struct entry *e = VECTOR_GET(&extra->contents, i, struct entry);
+                const struct entry *e = VEC_GET(&extra->contents, i, struct entry);
                 if (e->in_use) {
-                        vector_push(strings, &e->str, 1);
-                        vector_push(string_ids, &i, 1);
+                        vec_push(strings, &e->str, 1);
+                        vec_push(string_ids, &i, 1);
                 }
         }
         return true;

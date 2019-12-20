@@ -223,7 +223,7 @@ typedef struct column_object_iter {
 
 bool archive_prop_iter_from_archive(prop_iter *iter, u16 mask, archive *archive);
 bool archive_prop_iter_from_object(prop_iter *iter, u16 mask, const archive_object *obj);
-bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter);
+bool archive_value_vec_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter);
 bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_vector, independent_iter_state *collection_iter, prop_iter *prop_iter);
 const archive_field_sid_t *archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter);
 bool archive_collection_next_column_group(independent_iter_state *group_iter, independent_iter_state *iter);
@@ -255,66 +255,66 @@ bool archive_column_entry_get_objects(column_object_iter *iter, independent_iter
 const archive_object *archive_column_entry_object_iter_next_object(column_object_iter *iter);
 bool archive_object_get_object_id(unique_id_t *id, const archive_object *object);
 bool archive_object_get_prop_iter(prop_iter *iter, const archive_object *object);
-bool archive_value_vector_get_object_id(unique_id_t *id, const archive_value_vector *iter);
-const archive_field_sid_t *archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter);
-bool archive_value_vector_get_basic_type(enum archive_field_type *type, const archive_value_vector *value);
-bool archive_value_vector_is_array_type(bool *is_array, const archive_value_vector *value);
-bool archive_value_vector_get_length(u32 *length, const archive_value_vector *value);
-bool archive_value_vector_is_of_objects(bool *is_object, archive_value_vector *value);
-bool archive_value_vector_get_object_at(archive_object *object, u32 idx, archive_value_vector *value);
+bool archive_value_vec_get_object_id(unique_id_t *id, const archive_value_vector *iter);
+const archive_field_sid_t *archive_value_vec_get_keys(u32 *num_keys, archive_value_vector *iter);
+bool archive_value_vec_get_basic_type(enum archive_field_type *type, const archive_value_vector *value);
+bool archive_value_vec_is_array_type(bool *is_array, const archive_value_vector *value);
+bool archive_value_vec_get_length(u32 *length, const archive_value_vector *value);
+bool archive_value_vec_is_of_objects(bool *is_object, archive_value_vector *value);
+bool archive_value_vec_get_object_at(archive_object *object, u32 idx, archive_value_vector *value);
 
-#define DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(name)                                                            \
+#define DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(name)                                                            \
 bool                                                                                                       \
-archive_value_vector_is_##name(bool *type_match, archive_value_vector *value);
+archive_value_vec_is_##name(bool *type_match, archive_value_vector *value);
 
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int8);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int16);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int32);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(int64);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint8);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint16);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint32);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(uint64);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(string);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(number);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(boolean);
-DEFINE_ARCHIVE_VALUE_VECTOR_IS_BASIC_TYPE(null);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int8);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int16);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int32);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(int64);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint8);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint16);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint32);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(uint64);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(string);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(number);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(boolean);
+DEFINE_ARCHIVE_VALUE_VEC_IS_BASIC_TYPE(null);
 
-#define DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(name, built_in_type)                                            \
+#define DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(name, built_in_type)                                            \
 const built_in_type *                                                                                      \
-archive_value_vector_get_##name(u32 *num_values, archive_value_vector *value);
+archive_value_vec_get_##name(u32 *num_values, archive_value_vector *value);
 
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int8s, archive_field_i8_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int16s, archive_field_i16_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int32s, archive_field_i32_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(int64s, archive_field_i64_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint8s, archive_field_u8_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint16s, archive_field_u16_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint32s, archive_field_u32_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(uint64s, archive_field_u64_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(strings, archive_field_sid_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(numbers, archive_field_number_t)
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_BASIC_TYPE(booleans, archive_field_boolean_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int8s, archive_field_i8_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int16s, archive_field_i16_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int32s, archive_field_i32_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(int64s, archive_field_i64_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint8s, archive_field_u8_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint16s, archive_field_u16_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint32s, archive_field_u32_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(uint64s, archive_field_u64_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(strings, archive_field_sid_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(numbers, archive_field_number_t)
+DEFINE_ARCHIVE_VALUE_VEC_GET_BASIC_TYPE(booleans, archive_field_boolean_t)
 
-const archive_field_u32_t *archive_value_vector_get_null_arrays(u32 *num_values, archive_value_vector *value);
+const archive_field_u32_t *archive_value_vec_get_null_arrays(u32 *num_values, archive_value_vector *value);
 
-#define DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(name, built_in_type)                                         \
+#define DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(name, built_in_type)                                         \
 const built_in_type *                                                                                      \
-archive_value_vector_get_##name##_arrays_at(u32 *array_length, u32 idx,                                                \
+archive_value_vec_get_##name##_arrays_at(u32 *array_length, u32 idx,                                                \
                                                archive_value_vector *value);                                    \
 
 
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int8, archive_field_i8_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int16, archive_field_i16_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int32, archive_field_i32_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(int64, archive_field_i64_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint8, archive_field_u8_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint16, archive_field_u16_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint32, archive_field_u32_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(uint64, archive_field_u64_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(string, archive_field_sid_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(number, archive_field_number_t);
-DEFINE_ARCHIVE_VALUE_VECTOR_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int8, archive_field_i8_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int16, archive_field_i16_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int32, archive_field_i32_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(int64, archive_field_i64_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint8, archive_field_u8_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint16, archive_field_u16_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint32, archive_field_u32_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(uint64, archive_field_u64_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(string, archive_field_sid_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(number, archive_field_number_t);
+DEFINE_ARCHIVE_VALUE_VEC_GET_ARRAY_TYPE_AT(boolean, archive_field_boolean_t);
 
 void archive_int_reset_obj_it_mem_file(archive_object *object);
 

@@ -345,7 +345,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
         assert(state);
         assert(path);
         assert(it);
-        assert(current_path_pos < vector_length(&path->nodes));
+        assert(current_path_pos < VEC_LENGTH(&path->nodes));
 
         DECLARE_AND_INIT(field_e, elem_type)
         DECLARE_AND_INIT(dot_node_type_e, node_type)

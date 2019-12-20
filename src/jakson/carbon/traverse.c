@@ -36,7 +36,7 @@ static inline path_policy_e traverse_impl_##fn_name(traverser *t)               
 {                                                                                                                      \
         assert(t);                                                                                                     \
         if (LIKELY(t->impl.fn.fn_name != NULL)) {                                                                      \
-                return t->impl.fn.fn_name((VECTOR_PEEK(&t->context, container_cntx))->container.arg_name,              \
+                return t->impl.fn.fn_name((VEC_PEEK(&t->context, container_cntx))->container.arg_name,              \
                                           &t->info, &t->impl.extra);                                                   \
         } else {                                                                                                       \
                 return PATH_EXPAND;                                                                                    \
@@ -55,7 +55,7 @@ void traverser_create(traverser *traverse, const traverser_fn *fns, unsigned vis
 {
     traverse->visit_ops = visit_ops;
     traverse->impl.fn = *fns;
-    vector_create(&traverse->context, sizeof(container_cntx), 15);
+    vec_create(&traverse->context, sizeof(container_cntx), 15);
     traverse_impl_create(traverse);
 }
 
@@ -65,13 +65,13 @@ static void push_context(traverser *traverse, cntx_type_e type, const void *ptr)
                 .type = type,
                 .container.any = ptr
         };
-        vector_push(&traverse->context, &cntx, 1);
+        vec_push(&traverse->context, &cntx, 1);
 }
 
 static void pop_context(traverser *traverse)
 {
-        assert(!vector_is_empty(&traverse->context));
-        vector_pop(&traverse->context);
+        assert(!vec_is_empty(&traverse->context));
+        vec_pop(&traverse->context);
 }
 
 void traverser_run_from_record(traverser *traverse, rec *record, void *arg)
@@ -210,5 +210,5 @@ void traverser_run_from_prop(traverser *traverse, prop *p, void *arg)
 void traverser_drop(traverser *traverse)
 {
         traverse_impl_drop(traverse);
-        vector_drop(&traverse->context);
+        vec_drop(&traverse->context);
 }

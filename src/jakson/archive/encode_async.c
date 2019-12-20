@@ -157,9 +157,9 @@ static bool _encode_async_create_extra(string_dict *self, size_t capacity, size_
         self->extra = MALLOC(sizeof(struct async_extra));
         struct async_extra *extra = THIS_EXTRAS(self);
         spinlock_init(&extra->lock);
-        vector_create(&extra->carriers, sizeof(struct carrier), num_threads);
+        vec_create(&extra->carriers, sizeof(struct carrier), num_threads);
         this_setup_carriers(self, capacity, num_index_buckets, approx_num_unique_str, num_threads);
-        vector_create(&extra->carrier_mapping, sizeof(struct carrier *), capacity);
+        vec_create(&extra->carrier_mapping, sizeof(struct carrier *), capacity);
 
         return true;
 }
@@ -168,11 +168,11 @@ static bool _encode_async_drop(string_dict *self)
 {
         struct async_extra *extra = THIS_EXTRAS(self);
         for (size_t i = 0; i < extra->carriers.num_elems; i++) {
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, i, struct carrier);
+                struct carrier *carrier = VEC_GET(&extra->carriers, i, struct carrier);
                 string_dict_drop(&carrier->local_dictionary);
         }
-        CHECK_SUCCESS(vector_drop(&extra->carriers));
-        CHECK_SUCCESS(vector_drop(&extra->carrier_mapping));
+        CHECK_SUCCESS(vec_drop(&extra->carriers));
+        CHECK_SUCCESS(vec_drop(&extra->carrier_mapping));
         free(extra);
         return true;
 }
@@ -180,16 +180,16 @@ static bool _encode_async_drop(string_dict *self)
 void *parallel_remove_function(void *args)
 {
         struct parallel_remove_arg *carrier_arg = (struct parallel_remove_arg *) args;
-        archive_field_sid_t len = vector_length(carrier_arg->local_ids);
+        archive_field_sid_t len = VEC_LENGTH(carrier_arg->local_ids);
         carrier_arg->did_work = len > 0;
 
         DEBUG(STRING_DIC_ASYNC_TAG,
                   "thread %zu spawned for remove task (%zu elements)",
                   carrier_arg->carrier->id,
-                  vector_length(carrier_arg->local_ids));
+                  VEC_LENGTH(carrier_arg->local_ids));
         if (len > 0) {
                 string_dict *dic = &carrier_arg->carrier->local_dictionary;
-                archive_field_sid_t *ids = VECTOR_ALL(carrier_arg->local_ids, archive_field_sid_t);
+                archive_field_sid_t *ids = VEC_ALL(carrier_arg->local_ids, archive_field_sid_t);
                 carrier_arg->result = string_dict_remove(dic, ids, len);
                 DEBUG(STRING_DIC_ASYNC_TAG, "thread %zu task done", carrier_arg->carrier->id);
         } else {
@@ -209,19 +209,19 @@ void *parallel_insert_function(void *args)
         DEBUG(STRING_DIC_ASYNC_TAG,
                   "thread %zu spawned for insert task (%zu elements)",
                   this_args->carrier->id,
-                  vector_length(&this_args->strings));
+                  VEC_LENGTH(&this_args->strings));
 
         if (this_args->did_work) {
                 TRACE(STRING_DIC_ASYNC_TAG,
                           "thread %zu starts insertion of %zu strings",
                           this_args->carrier->id,
-                          vector_length(&this_args->strings));
-                char **data = (char **) vector_data(&this_args->strings);
+                          VEC_LENGTH(&this_args->strings));
+                char **data = (char **) vec_data(&this_args->strings);
 
                 int status = string_dict_insert(&this_args->carrier->local_dictionary,
                                            this_args->enable_write_out ? &this_args->out : NULL,
                                            data,
-                                           vector_length(&this_args->strings),
+                                           VEC_LENGTH(&this_args->strings),
                                            this_args->insert_num_threads);
 
                 /** internal ERROR during thread-local string dictionary building process */
@@ -237,7 +237,7 @@ void *parallel_insert_function(void *args)
 void *parallel_locate_safe_function(void *args)
 {
         struct parallel_locate_arg *restrict this_args = (struct parallel_locate_arg *restrict) args;
-        this_args->did_work = vector_length(&this_args->keys_in) > 0;
+        this_args->did_work = VEC_LENGTH(&this_args->keys_in) > 0;
 
         TRACE(STRING_DIC_ASYNC_TAG,
                   "thread-local 'locate' function invoked for thread %zu...",
@@ -246,15 +246,15 @@ void *parallel_locate_safe_function(void *args)
         DEBUG(STRING_DIC_ASYNC_TAG,
                   "thread %zu spawned for locate (safe) task (%zu elements)",
                   this_args->carrier->id,
-                  vector_length(&this_args->keys_in));
+                  VEC_LENGTH(&this_args->keys_in));
 
         if (this_args->did_work) {
                 this_args->result = string_dict_locate_safe(&this_args->ids_out,
                                                        &this_args->found_mask_out,
                                                        &this_args->num_not_found_out,
                                                        &this_args->carrier->local_dictionary,
-                                                       VECTOR_ALL(&this_args->keys_in, char *),
-                                                       vector_length(&this_args->keys_in));
+                                                       VEC_ALL(&this_args->keys_in, char *),
+                                                       VEC_LENGTH(&this_args->keys_in));
 
                 DEBUG(STRING_DIC_ASYNC_TAG, "thread %zu done", this_args->carrier->id);
         } else {
@@ -267,17 +267,17 @@ void *parallel_locate_safe_function(void *args)
 void *parallel_extract_function(void *args)
 {
         struct parallel_extract_arg *restrict this_args = (struct parallel_extract_arg *restrict) args;
-        this_args->did_work = vector_length(&this_args->local_ids_in) > 0;
+        this_args->did_work = VEC_LENGTH(&this_args->local_ids_in) > 0;
 
         DEBUG(STRING_DIC_ASYNC_TAG,
                   "thread %zu spawned for extract task (%zu elements)",
                   this_args->carrier->id,
-                  vector_length(&this_args->local_ids_in));
+                  VEC_LENGTH(&this_args->local_ids_in));
 
         if (this_args->did_work) {
                 this_args->strings_out = string_dict_extract(&this_args->carrier->local_dictionary,
-                                                        VECTOR_ALL(&this_args->local_ids_in, archive_field_sid_t),
-                                                        vector_length(&this_args->local_ids_in));
+                                                        VEC_ALL(&this_args->local_ids_in, archive_field_sid_t),
+                                                        VEC_LENGTH(&this_args->local_ids_in));
                 DEBUG(STRING_DIC_ASYNC_TAG, "thread %zu done", this_args->carrier->id);
         } else {
                 WARN(STRING_DIC_ASYNC_TAG, "thread %zu had nothing to do", this_args->carrier->id);
@@ -292,7 +292,7 @@ static void synchronize(vec ofType(carrier) *carriers, size_t num_threads)
 
         timestamp begin = wallclock();
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                volatile struct carrier *carrier = VECTOR_GET(carriers, thread_id, struct carrier);
+                volatile struct carrier *carrier = VEC_GET(carriers, thread_id, struct carrier);
                 pthread_join(carrier->thread, NULL);
                 DEBUG(STRING_DIC_ASYNC_TAG, "thread %d joined", carrier->id);
         }
@@ -389,7 +389,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
-        uint_fast16_t num_threads = vector_length(&extra->carriers);
+        uint_fast16_t num_threads = VEC_LENGTH(&extra->carriers);
 
         atomic_uint_fast16_t *str_carrier_mapping;
         size_t *str_carrier_idx_mapping;
@@ -402,7 +402,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
                                  num_threads);
 
         vec ofType(struct parallel_insert_arg *) carrier_args;
-        vector_create(&carrier_args, sizeof(struct parallel_insert_arg *), num_threads);
+        vec_create(&carrier_args, sizeof(struct parallel_insert_arg *), num_threads);
 
         /** compute which carrier is responsible for which string */
         compute_thread_assignment(str_carrier_mapping, carrier_num_strings, strings, num_strings, num_threads);
@@ -410,14 +410,14 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         /** prepare to move string subsets to carriers */
         for (uint_fast16_t i = 0; i < num_threads; i++) {
                 struct parallel_insert_arg *entry = MALLOC(sizeof(struct parallel_insert_arg));
-                entry->carrier = VECTOR_GET(&extra->carriers, i, struct carrier);
+                entry->carrier = VEC_GET(&extra->carriers, i, struct carrier);
                 entry->insert_num_threads = num_threads;
 
-                vector_create(&entry->strings, sizeof(char *), JAK_MAX(1, carrier_num_strings[i]));
-                vector_push(&carrier_args, &entry, 1);
+                vec_create(&entry->strings, sizeof(char *), JAK_MAX(1, carrier_num_strings[i]));
+                vec_push(&carrier_args, &entry, 1);
                 assert (entry->strings.base != NULL);
 
-                struct parallel_insert_arg *carrier_arg = *VECTOR_GET(&carrier_args, i, struct parallel_insert_arg *);
+                struct parallel_insert_arg *carrier_arg = *VEC_GET(&carrier_args, i, struct parallel_insert_arg *);
                 carrier_arg->out = NULL;
         }
 
@@ -426,13 +426,13 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         for (size_t i = 0; i < num_strings; i++) {
                 uint_fast16_t thread_id = str_carrier_mapping[i];
                 struct parallel_insert_arg
-                        *carrier_arg = *VECTOR_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
+                        *carrier_arg = *VEC_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
                 carrier_arg->enable_write_out = out != NULL;
 
                 /** store local index of string i inside the thread */
-                str_carrier_idx_mapping[i] = vector_length(&carrier_arg->strings);
+                str_carrier_idx_mapping[i] = VEC_LENGTH(&carrier_arg->strings);
 
-                vector_push(&carrier_arg->strings, &strings[i], 1);
+                vec_push(&carrier_arg->strings, &strings[i], 1);
         }
 
 
@@ -440,8 +440,8 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         TRACE(STRING_DIC_ASYNC_TAG, "schedule insert operation to %zu threads", num_threads)
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_insert_arg
-                        *carrier_arg = *VECTOR_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
+                        *carrier_arg = *VEC_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
                 TRACE(STRING_DIC_ASYNC_TAG, "create thread %zu...", thread_id)
                 pthread_create(&carrier->thread, NULL, parallel_insert_function, carrier_arg);
                 TRACE(STRING_DIC_ASYNC_TAG, "thread %zu created", thread_id)
@@ -473,7 +473,7 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
                         uint_fast16_t thread_id = str_carrier_mapping[string_idx];
                         size_t localIdx = str_carrier_idx_mapping[string_idx];
                         struct parallel_insert_arg
-                                *carrier_arg = *VECTOR_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
+                                *carrier_arg = *VEC_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
                         archive_field_sid_t global_string_owner_id = thread_id;
                         archive_field_sid_t global_string_local_id = carrier_arg->out[localIdx];
                         archive_field_sid_t global_string_id = MAKE_GLOBAL(global_string_owner_id,
@@ -487,17 +487,17 @@ _encode_async_insert(string_dict *self, archive_field_sid_t **out, char *const *
         /** cleanup */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_insert_arg
-                        *carrier_arg = *VECTOR_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
+                        *carrier_arg = *VEC_GET(&carrier_args, thread_id, struct parallel_insert_arg *);
                 if (carrier_arg->did_work) {
                         string_dict_free(&carrier_arg->carrier->local_dictionary, carrier_arg->out);
                 }
-                vector_drop(&carrier_arg->strings);
+                vec_drop(&carrier_arg->strings);
                 free(carrier_arg);
         }
 
         /** cleanup */
         drop_thread_assignment(str_carrier_mapping, carrier_num_strings, str_carrier_idx_mapping);
-        vector_drop(&carrier_args);
+        vec_drop(&carrier_args);
 
         this_unlock(self);
 
@@ -518,17 +518,17 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
 
         struct parallel_remove_arg empty;
         struct async_extra *extra = THIS_EXTRAS(self);
-        uint_fast16_t num_threads = vector_length(&extra->carriers);
+        uint_fast16_t num_threads = VEC_LENGTH(&extra->carriers);
         size_t approx_num_strings_per_thread = JAK_MAX(1, num_strings / num_threads);
         vec ofType(archive_field_sid_t) *string_map = MALLOC(num_threads * sizeof(vec));
 
         vec ofType(struct parallel_remove_arg) carrier_args;
-        vector_create(&carrier_args, sizeof(struct parallel_remove_arg), num_threads);
+        vec_create(&carrier_args, sizeof(struct parallel_remove_arg), num_threads);
 
         /** prepare thread-local subset of string ids */
-        vector_repeated_push(&carrier_args, &empty, num_threads);
+        vec_repeated_push(&carrier_args, &empty, num_threads);
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                vector_create(string_map + thread_id, sizeof(archive_field_sid_t), approx_num_strings_per_thread);
+                vec_create(string_map + thread_id, sizeof(archive_field_sid_t), approx_num_strings_per_thread);
         }
 
         /** compute subset of string ids per thread  */
@@ -538,13 +538,13 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
                 archive_field_sid_t localstring_id_t = GET_string_id_t(global_string_id);
                 assert(owning_thread_id < num_threads);
 
-                vector_push(string_map + owning_thread_id, &localstring_id_t, 1);
+                vec_push(string_map + owning_thread_id, &localstring_id_t, 1);
         }
 
         /** schedule remove operation per carrier */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
-                struct parallel_remove_arg *carrier_arg = VECTOR_GET(&carrier_args, thread_id, struct parallel_remove_arg);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
+                struct parallel_remove_arg *carrier_arg = VEC_GET(&carrier_args, thread_id, struct parallel_remove_arg);
                 carrier_arg->carrier = carrier;
                 carrier_arg->local_ids = string_map + thread_id;
 
@@ -556,11 +556,11 @@ static bool _encode_async_remove(string_dict *self, archive_field_sid_t *strings
 
         /** cleanup */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                vector_drop(string_map + thread_id);
+                vec_drop(string_map + thread_id);
         }
 
         free(string_map);
-        vector_data(&carrier_args);
+        vec_data(&carrier_args);
 
         this_unlock(self);
 
@@ -582,7 +582,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
-        uint_fast16_t num_threads = vector_length(&extra->carriers);
+        uint_fast16_t num_threads = VEC_LENGTH(&extra->carriers);
 
         /** global result output */
         archive_field_sid_t *global_out = MALLOC(num_keys * sizeof(archive_field_sid_t));
@@ -608,7 +608,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
         /** prepare to move string subsets to carriers */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
-                vector_create(&arg->keys_in, sizeof(char *), carrier_num_strings[thread_id]);
+                vec_create(&arg->keys_in, sizeof(char *), carrier_num_strings[thread_id]);
                 assert (&arg->keys_in.base != NULL);
         }
 
@@ -622,16 +622,16 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
 
                 /** store local index of string i inside the thread */
-                str_carrier_idx_mapping[i] = vector_length(&arg->keys_in);
+                str_carrier_idx_mapping[i] = VEC_LENGTH(&arg->keys_in);
 
                 /** push that string into the thread-local vec */
-                vector_push(&arg->keys_in, &keys[i], 1);
+                vec_push(&arg->keys_in, &keys[i], 1);
         }
 
         TRACE(STRING_DIC_ASYNC_TAG, "schedule operation to threads to %zu threads...", num_threads)
         /** schedule operation to threads */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
                 carrier_args[thread_id].carrier = carrier;
                 pthread_create(&carrier->thread, NULL, parallel_locate_safe_function, arg);
@@ -679,7 +679,7 @@ _encode_async_locate_safe(string_dict *self, archive_field_sid_t **out, bool **f
 
         for (size_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_locate_arg *arg = carrier_args + thread_id;
-                vector_drop(&arg->keys_in);
+                vec_drop(&arg->keys_in);
         }
 
         /** return results */
@@ -731,7 +731,7 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
         char **globalResult = MALLOC(num_ids * sizeof(char *));
 
         struct async_extra *extra = (struct async_extra *) self->extra;
-        uint_fast16_t num_threads = vector_length(&extra->carriers);
+        uint_fast16_t num_threads = VEC_LENGTH(&extra->carriers);
         size_t approx_num_strings_per_thread = JAK_MAX(1, num_ids / num_threads);
 
         size_t *local_thread_idx = MALLOC(num_ids * sizeof(size_t));
@@ -740,7 +740,7 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
 
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_extract_arg *arg = thread_args + thread_id;
-                vector_create(&arg->local_ids_in, sizeof(archive_field_sid_t), approx_num_strings_per_thread);
+                vec_create(&arg->local_ids_in, sizeof(archive_field_sid_t), approx_num_strings_per_thread);
         }
 
         /** compute subset of string ids per thread  */
@@ -751,13 +751,13 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
                 assert(owning_thread_ids[i] < num_threads);
 
                 struct parallel_extract_arg *arg = thread_args + owning_thread_ids[i];
-                local_thread_idx[i] = vector_length(&arg->local_ids_in);
-                vector_push(&arg->local_ids_in, &localstring_id_t, 1);
+                local_thread_idx[i] = VEC_LENGTH(&arg->local_ids_in);
+                vec_push(&arg->local_ids_in, &localstring_id_t, 1);
         }
 
         /** schedule remove operation per carrier */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
                 struct parallel_extract_arg *carrier_arg = thread_args + thread_id;
                 carrier_arg->carrier = carrier;
                 pthread_create(&carrier->thread, NULL, parallel_extract_function, carrier_arg);
@@ -777,7 +777,7 @@ static char **_encode_async_locate_extract(string_dict *self, const archive_fiel
         /** cleanup */
         for (uint_fast16_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 struct parallel_extract_arg *carrier_arg = thread_args + thread_id;
-                vector_drop(&carrier_arg->local_ids_in);
+                vec_drop(&carrier_arg->local_ids_in);
                 if (LIKELY(carrier_arg->did_work)) {
                         string_dict_free(&carrier_arg->carrier->local_dictionary, carrier_arg->strings_out);
                 }
@@ -809,8 +809,8 @@ static bool _encode_async_num_distinct(string_dict *self, size_t *num)
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
-        size_t num_carriers = vector_length(&extra->carriers);
-        struct carrier *carriers = VECTOR_ALL(&extra->carriers, struct carrier);
+        size_t num_carriers = VEC_LENGTH(&extra->carriers);
+        struct carrier *carriers = VEC_ALL(&extra->carriers, struct carrier);
         size_t num_distinct = 0;
         while (num_carriers--) {
                 size_t local_distinct;
@@ -828,7 +828,7 @@ static bool _encode_async_get_contents(string_dict *self, vec ofType (char *) *s
 {
         this_lock(self);
         struct async_extra *extra = THIS_EXTRAS(self);
-        size_t num_carriers = vector_length(&extra->carriers);
+        size_t num_carriers = VEC_LENGTH(&extra->carriers);
         vec ofType (char *) local_string_results;
         vec ofType (archive_field_sid_t) local_string_id_results;
         size_t approx_num_distinct_local_values;
@@ -836,30 +836,30 @@ static bool _encode_async_get_contents(string_dict *self, vec ofType (char *) *s
         approx_num_distinct_local_values = JAK_MAX(1, approx_num_distinct_local_values / extra->carriers.num_elems);
         approx_num_distinct_local_values *= 1.2f;
 
-        vector_create(&local_string_results, sizeof(char *), approx_num_distinct_local_values);
-        vector_create(&local_string_id_results, sizeof(archive_field_sid_t), approx_num_distinct_local_values);
+        vec_create(&local_string_results, sizeof(char *), approx_num_distinct_local_values);
+        vec_create(&local_string_id_results, sizeof(archive_field_sid_t), approx_num_distinct_local_values);
 
         for (size_t thread_id = 0; thread_id < num_carriers; thread_id++) {
-                vector_clear(&local_string_results);
-                vector_clear(&local_string_id_results);
+                vec_clear(&local_string_results);
+                vec_clear(&local_string_id_results);
 
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
 
                 string_dict_get_contents(&local_string_results, &local_string_id_results, &carrier->local_dictionary);
 
                 assert(local_string_id_results.num_elems == local_string_results.num_elems);
                 for (size_t k = 0; k < local_string_results.num_elems; k++) {
-                        char *string = *VECTOR_GET(&local_string_results, k, char *);
-                        archive_field_sid_t localstring_id_t = *VECTOR_GET(&local_string_id_results, k,
+                        char *string = *VEC_GET(&local_string_results, k, char *);
+                        archive_field_sid_t localstring_id_t = *VEC_GET(&local_string_id_results, k,
                                                                             archive_field_sid_t);
                         archive_field_sid_t global_string_id = MAKE_GLOBAL(thread_id, localstring_id_t);
-                        vector_push(strings, &string, 1);
-                        vector_push(string_ids, &global_string_id, 1);
+                        vec_push(strings, &string, 1);
+                        vec_push(string_ids, &global_string_id, 1);
                 }
         }
 
-        vector_drop(&local_string_results);
-        vector_drop(&local_string_id_results);
+        vec_drop(&local_string_results);
+        vec_drop(&local_string_id_results);
         this_unlock(self);
         return true;
 }
@@ -869,10 +869,10 @@ static bool _encode_async_reset_counters(string_dict *self)
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
-        size_t num_threads = vector_length(&extra->carriers);
+        size_t num_threads = VEC_LENGTH(&extra->carriers);
 
         for (size_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
                 string_dict_reset_counters(&carrier->local_dictionary);
         }
 
@@ -886,12 +886,12 @@ static bool _encode_async_counters(string_dict *self, str_hash_counters *counter
         this_lock(self);
 
         struct async_extra *extra = THIS_EXTRAS(self);
-        size_t num_threads = vector_length(&extra->carriers);
+        size_t num_threads = VEC_LENGTH(&extra->carriers);
 
         CHECK_SUCCESS(str_hash_counters_init(counters));
 
         for (size_t thread_id = 0; thread_id < num_threads; thread_id++) {
-                struct carrier *carrier = VECTOR_GET(&extra->carriers, thread_id, struct carrier);
+                struct carrier *carrier = VEC_GET(&extra->carriers, thread_id, struct carrier);
                 str_hash_counters local_counters;
                 string_dict_get_counters(&local_counters, &carrier->local_dictionary);
                 str_hash_counters_add(counters, &local_counters);
@@ -944,10 +944,10 @@ static bool this_setup_carriers(string_dict *self, size_t capacity, size_t num_i
 
         for (size_t thread_id = 0; thread_id < num_threads; thread_id++) {
                 new_carrier.id = thread_id;
-                vector_push(&extra->carriers, &new_carrier, 1);
+                vec_push(&extra->carriers, &new_carrier, 1);
         }
 
-        foreach(VECTOR_ALL(&extra->carriers, struct carrier),
+        foreach(VEC_ALL(&extra->carriers, struct carrier),
                 sizeof(struct carrier),
                 num_threads,
                 parallel_create_carrier,

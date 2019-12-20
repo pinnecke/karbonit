@@ -97,17 +97,17 @@ static void intent(str_buf *str, unsigned intent)
 static void pindex_node_init(struct pindex_node *node)
 {
         ZERO_MEMORY(node, sizeof(struct pindex_node));
-        vector_create(&node->sub_entries, sizeof(struct pindex_node), 10);
+        vec_create(&node->sub_entries, sizeof(struct pindex_node), 10);
         node->type = PINDEX_ROOT;
 }
 
 static void pindex_node_drop(struct pindex_node *node)
 {
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
+                struct pindex_node *sub = VEC_GET(&node->sub_entries, i, struct pindex_node);
                 pindex_node_drop(sub);
         }
-        vector_drop(&node->sub_entries);
+        vec_drop(&node->sub_entries);
 }
 
 static void pindex_node_new_array_element(struct pindex_node *node, u64 pos, offset_t value_off)
@@ -147,7 +147,7 @@ pindex_node_add_array_elem(struct pindex_node *parent, u64 pos, offset_t value_o
 {
         /** For elements in array, the type marker (e.g., [c]) is contained. That is needed since the element might
          * be a container */
-        struct pindex_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
+        struct pindex_node *sub = VEC_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
         pindex_node_new_array_element(sub, pos, value_off);
         return sub;
 }
@@ -156,7 +156,7 @@ static struct pindex_node *
 pindex_node_add_column_elem(struct pindex_node *parent, u64 pos, offset_t value_off)
 {
         /** For elements in column, there is no type marker since no value is allowed to be a container */
-        struct pindex_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
+        struct pindex_node *sub = VEC_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
         pindex_node_new_column_element(sub, pos, value_off);
         return sub;
 }
@@ -164,7 +164,7 @@ pindex_node_add_column_elem(struct pindex_node *parent, u64 pos, offset_t value_
 static struct pindex_node *pindex_node_add_key_elem(struct pindex_node *parent, offset_t key_off,
                                                             const char *name, u64 name_len, offset_t value_off)
 {
-        struct pindex_node *sub = VECTOR_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
+        struct pindex_node *sub = VEC_NEW_AND_GET(&parent->sub_entries, struct pindex_node);
         pindex_node_new_object_prop(sub, key_off, name, name_len, value_off);
         return sub;
 }
@@ -192,7 +192,7 @@ static struct pindex_node *pindex_node_add_key_elem(struct pindex_node *parent, 
 //        }
 //
 //        for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
-//                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
+//                struct pindex_node *sub = VEC_GET(&node->sub_entries, i, struct pindex_node);
 //                pindex_node_print_level(file, sub, level + 1);
 //        }
 //}
@@ -503,7 +503,7 @@ static void container_contents_flat(memfile *file, struct pindex_node *node)
 
         for (u32 i = 0; i < node->sub_entries.num_elems; i++) {
                 offset_t node_off = MEMFILE_TELL(file);
-                struct pindex_node *sub = VECTOR_GET(&node->sub_entries, i, struct pindex_node);
+                struct pindex_node *sub = VEC_GET(&node->sub_entries, i, struct pindex_node);
                 node_flat(file, sub);
                 MEMFILE_SAVE_POSITION(file);
                 MEMFILE_SEEK(file, position_off_latest);

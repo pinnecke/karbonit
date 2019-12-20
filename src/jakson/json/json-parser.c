@@ -279,22 +279,22 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         int status;
 
         json_tokenizer_init(&parser->tokenizer, input);
-        vector_create(&brackets, sizeof(json_token_e), 15);
-        vector_create(&token_stream, sizeof(json_token), 200);
+        vec_create(&brackets, sizeof(json_token_e), 15);
+        vec_create(&token_stream, sizeof(json_token), 200);
 
         struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
 
         while ((token = json_tokenizer_next(&parser->tokenizer))) {
                 if (LIKELY(
                         (status = process_token(error_desc, token, &brackets, &token_mem)) == true)) {
-                        json_token *newToken = VECTOR_NEW_AND_GET(&token_stream, json_token);
+                        json_token *newToken = VEC_NEW_AND_GET(&token_stream, json_token);
                         json_token_dup(newToken, token);
                 } else {
                         goto cleanup;
                 }
         }
-        if (!vector_is_empty(&brackets)) {
-                json_token_e type = *VECTOR_PEEK(&brackets, json_token_e);
+        if (!vec_is_empty(&brackets)) {
+                json_token_e type = *VEC_PEEK(&brackets, json_token_e);
                 char buffer[1024];
                 sprintf(&buffer[0],
                         "Unexpected end of file: missing '%s' to match unclosed '%s' (if any)",
@@ -313,8 +313,8 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         status = true;
 
         cleanup:
-        vector_drop(&brackets);
-        vector_drop(&token_stream);
+        vec_drop(&brackets);
+        vec_drop(&token_stream);
         return status;
 }
 
@@ -323,7 +323,7 @@ bool test_condition_value(json_node_value *value)
         switch (value->value_type) {
                 case JSON_VALUE_OBJECT:
                         for (size_t i = 0; i < value->value.object->value->members.num_elems; i++) {
-                                json_prop *member = VECTOR_GET(&value->value.object->value->members, i,
+                                json_prop *member = VEC_GET(&value->value.object->value->members, i,
                                                                        json_prop);
                                 if (!test_condition_value(&member->value.value)) {
                                         return false;
@@ -335,7 +335,7 @@ bool test_condition_value(json_node_value *value)
                         json_value_type_e value_type = JSON_VALUE_NULL;
 
                         for (size_t i = 0; i < elements->elements.num_elems; i++) {
-                                json_element *element = VECTOR_GET(&elements->elements, i,
+                                json_element *element = VEC_GET(&elements->elements, i,
                                                                            json_element);
                                 value_type =
                                         ((i == 0 || value_type == JSON_VALUE_NULL) ? element->value.value_type
@@ -366,7 +366,7 @@ bool test_condition_value(json_node_value *value)
                                                 json_object *object = element->value.value.object;
                                                 for (size_t i = 0; i < object->value->members.num_elems; i++) {
                                                         json_prop
-                                                                *member = VECTOR_GET(&object->value->members, i,
+                                                                *member = VEC_GET(&object->value->members, i,
                                                                                   json_prop);
                                                         if (!test_condition_value(&member->value.value)) {
                                                                 return false;
@@ -401,7 +401,7 @@ bool json_test(json *json)
 
 static json_token get_token(vec ofType(json_token) *token_stream, size_t token_idx)
 {
-        return *(json_token *) vector_at(token_stream, token_idx);
+        return *(json_token *) vec_at(token_stream, token_idx);
 }
 
 static bool has_next_token(size_t token_idx, vec ofType(json_token) *token_stream)
@@ -413,11 +413,11 @@ bool parse_members(json_members *members,
                    vec ofType(json_token) *token_stream,
                    size_t *token_idx)
 {
-        vector_create(&members->members, sizeof(json_prop), 20);
+        vec_create(&members->members, sizeof(json_prop), 20);
         json_token delimiter_token;
 
         do {
-                json_prop *member = VECTOR_NEW_AND_GET(&members->members, json_prop);
+                json_prop *member = VEC_NEW_AND_GET(&members->members, json_prop);
                 json_token keyNameToken = get_token(token_stream, *token_idx);
 
                 member->key.value = MALLOC(keyNameToken.length + 1);
@@ -505,7 +505,7 @@ static bool parse_object(json_object *object, vec ofType(json_token) *token_stre
                         return false;
                 }
         } else {
-                vector_create(&object->value->members, sizeof(json_prop), 20);
+                vec_create(&object->value->members, sizeof(json_prop), 20);
         }
 
         NEXT_TOKEN(token_idx);  /** Skip '}' */
@@ -519,7 +519,7 @@ static bool parse_array(json_array *array, vec ofType(json_token) *token_stream,
         assert(token.type == ARRAY_OPEN);
         NEXT_TOKEN(token_idx); /** Skip '[' */
 
-        vector_create(&array->elements.elements, sizeof(json_element), 250);
+        vec_create(&array->elements.elements, sizeof(json_element), 250);
         if (!parse_elements(&array->elements, token_stream, token_idx)) {
                 return false;
         }
@@ -625,7 +625,7 @@ static bool parse_elements(json_elements *elements, vec ofType(json_token) *toke
         do {
                 json_token current = get_token(token_stream, *token_idx);
                 if (current.type != ARRAY_CLOSE && current.type != OBJECT_CLOSE) {
-                        if (!parse_element(VECTOR_NEW_AND_GET(&elements->elements, json_element),
+                        if (!parse_element(VEC_NEW_AND_GET(&elements->elements, json_element),
                                            token_stream,
                                            token_idx)) {
                                 return false;
@@ -657,7 +657,7 @@ static void connect_child_and_parents_object(json_object *object)
 {
         object->value->parent = object;
         for (size_t i = 0; i < object->value->members.num_elems; i++) {
-                json_prop *member = VECTOR_GET(&object->value->members, i, json_prop);
+                json_prop *member = VEC_GET(&object->value->members, i, json_prop);
                 member->parent = object->value;
 
                 member->key.parent = member;
@@ -673,7 +673,7 @@ static void connect_child_and_parents_array(json_array *array)
 {
         array->elements.parent = array;
         for (size_t i = 0; i < array->elements.elements.num_elems; i++) {
-                json_element *element = VECTOR_GET(&array->elements.elements, i, json_element);
+                json_element *element = VEC_GET(&array->elements.elements, i, json_element);
                 element->parent_type = JSON_PARENT_ELEMENTS;
                 element->parent.elements = &array->elements;
                 connect_child_and_parents_element(element);
@@ -719,21 +719,21 @@ static int process_token(json_err *error_desc, const json_token *token,
         switch (token->type) {
                 case OBJECT_OPEN:
                 case ARRAY_OPEN:
-                        vector_push(brackets, &token->type, 1);
+                        vec_push(brackets, &token->type, 1);
                         break;
                 case OBJECT_CLOSE:
                 case ARRAY_CLOSE: {
-                        if (!vector_is_empty(brackets)) {
-                                json_token_e bracket = *VECTOR_PEEK(brackets, json_token_e);
+                        if (!vec_is_empty(brackets)) {
+                                json_token_e bracket = *VEC_PEEK(brackets, json_token_e);
                                 if ((token->type == ARRAY_CLOSE && bracket == ARRAY_OPEN)
                                     || (token->type == OBJECT_CLOSE && bracket == OBJECT_OPEN)) {
-                                        vector_pop(brackets);
+                                        vec_pop(brackets);
                                 } else {
                                         goto pushEntry;
                                 }
                         } else {
                                 pushEntry:
-                                vector_push(brackets, &token->type, 1);
+                                vec_push(brackets, &token->type, 1);
                         }
                 }
                         break;
@@ -869,7 +869,7 @@ static bool json_ast_node_object_print(FILE *file, json_object *object)
 {
         fprintf(file, "{");
         for (size_t i = 0; i < object->value->members.num_elems; i++) {
-                json_prop *member = VECTOR_GET(&object->value->members, i, json_prop);
+                json_prop *member = VEC_GET(&object->value->members, i, json_prop);
                 if (!json_ast_node_member_print(file, member)) {
                         return false;
                 }
@@ -883,7 +883,7 @@ static bool json_ast_node_array_print(FILE *file, json_array *array)
 {
         fprintf(file, "[");
         for (size_t i = 0; i < array->elements.elements.num_elems; i++) {
-                json_element *element = VECTOR_GET(&array->elements.elements, i, json_element);
+                json_element *element = VEC_GET(&array->elements.elements, i, json_element);
                 if (!json_ast_node_element_print(file, element)) {
                         return false;
                 }
@@ -973,24 +973,24 @@ static bool json_ast_node_member_drop(json_prop *member)
 static bool json_ast_node_members_drop(json_members *members)
 {
         for (size_t i = 0; i < members->members.num_elems; i++) {
-                json_prop *member = VECTOR_GET(&members->members, i, json_prop);
+                json_prop *member = VEC_GET(&members->members, i, json_prop);
                 if (!json_ast_node_member_drop(member)) {
                         return false;
                 }
         }
-        vector_drop(&members->members);
+        vec_drop(&members->members);
         return true;
 }
 
 static bool json_ast_node_elements_drop(json_elements *elements)
 {
         for (size_t i = 0; i < elements->elements.num_elems; i++) {
-                json_element *element = VECTOR_GET(&elements->elements, i, json_element);
+                json_element *element = VEC_GET(&elements->elements, i, json_element);
                 if (!json_ast_node_element_drop(element)) {
                         return false;
                 }
         }
-        vector_drop(&elements->elements);
+        vec_drop(&elements->elements);
         return true;
 }
 
@@ -1337,7 +1337,7 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
 {
         json_list_type_e list_type = JSON_LIST_EMPTY;
         for (u32 i = 0; i < array->elements.elements.num_elems; i++) {
-                const json_element *elem = VECTOR_GET(&array->elements.elements, i, json_element);
+                const json_element *elem = VEC_GET(&array->elements.elements, i, json_element);
                 switch (elem->value.value_type) {
                         case JSON_VALUE_OBJECT:
                         case JSON_VALUE_ARRAY:

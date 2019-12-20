@@ -27,21 +27,21 @@ bool hashset_create(hashset *map, size_t key_size, size_t capacity)
 
         map->size = 0;
 
-        SUCCESS_OR_JUMP(vector_create(&map->key_data, key_size, capacity), error_handling);
-        SUCCESS_OR_JUMP(vector_create(&map->table, sizeof(hashset_bucket), capacity),
+        SUCCESS_OR_JUMP(vec_create(&map->key_data, key_size, capacity), error_handling);
+        SUCCESS_OR_JUMP(vec_create(&map->table, sizeof(hashset_bucket), capacity),
                             cleanup_key_data_and_error);
-        SUCCESS_OR_JUMP(vector_enlarge_size_to_capacity(&map->table), cleanup_key_value_table_and_error);
-        SUCCESS_OR_JUMP(vector_zero_memory(&map->table), cleanup_key_value_table_and_error);
+        SUCCESS_OR_JUMP(vec_enlarge_size_to_capacity(&map->table), cleanup_key_value_table_and_error);
+        SUCCESS_OR_JUMP(vec_zero_memory(&map->table), cleanup_key_value_table_and_error);
         SUCCESS_OR_JUMP(spinlock_init(&map->lock), cleanup_key_value_table_and_error);
 
         return true;
 
         cleanup_key_value_table_and_error:
-        if (!vector_drop(&map->table)) {
+        if (!vec_drop(&map->table)) {
                 err_code = ERR_DROPFAILED;
         }
         cleanup_key_data_and_error:
-        if (!vector_drop(&map->key_data)) {
+        if (!vec_drop(&map->key_data)) {
                 err_code = ERR_DROPFAILED;
         }
         error_handling:
@@ -53,8 +53,8 @@ bool hashset_drop(hashset *map)
 {
         bool status = true;
 
-        status &= vector_drop(&map->table);
-        status &= vector_drop(&map->key_data);
+        status &= vec_drop(&map->table);
+        status &= vec_drop(&map->key_data);
 
         if (!status) {
                 ERROR(ERR_DROPFAILED, NULL);
@@ -67,12 +67,12 @@ vec *hashset_keys(hashset *map)
 {
         if (map) {
                 vec *result = MALLOC(sizeof(vec));
-                vector_create(result, map->key_data.elem_size, map->key_data.num_elems);
+                vec_create(result, map->key_data.elem_size, map->key_data.num_elems);
                 for (u32 i = 0; i < map->table.num_elems; i++) {
-                        hashset_bucket *bucket = VECTOR_GET(&map->table, i, hashset_bucket);
+                        hashset_bucket *bucket = VEC_GET(&map->table, i, hashset_bucket);
                         if (bucket->in_use_flag) {
-                                const void *data = vector_at(&map->key_data, bucket->key_idx);
-                                vector_push(result, data, 1);
+                                const void *data = vec_at(&map->key_data, bucket->key_idx);
+                                vec_push(result, data, 1);
                         }
                 }
                 return result;
@@ -93,8 +93,8 @@ hashset *hashset_cpy(hashset *src)
                 assert(src->key_data.cap_elems == src->table.cap_elems);
                 assert(src->key_data.num_elems <= src->table.num_elems);
 
-                vector_cpy_to(&cpy->key_data, &src->key_data);
-                vector_cpy_to(&cpy->table, &src->table);
+                vec_cpy_to(&cpy->key_data, &src->key_data);
+                vec_cpy_to(&cpy->table, &src->table);
                 cpy->size = src->size;
 
                 assert(cpy->key_data.cap_elems == cpy->table.cap_elems);
@@ -115,7 +115,7 @@ bool hashset_clear(hashset *map)
 
         hashset_lock(map);
 
-        bool status = vector_clear(&map->key_data) && vector_zero_memory(&map->table);
+        bool status = vec_clear(&map->key_data) && vec_zero_memory(&map->table);
 
         map->size = 0;
 
@@ -135,7 +135,7 @@ bool hashset_avg_displace(float *displace, const hashset *map)
 {
         size_t sum_dis = 0;
         for (size_t i = 0; i < map->table.num_elems; i++) {
-                hashset_bucket *bucket = VECTOR_GET(&map->table, i, hashset_bucket);
+                hashset_bucket *bucket = VEC_GET(&map->table, i, hashset_bucket);
                 sum_dis += abs(bucket->displacement);
         }
         *displace = (sum_dis / (float) map->table.num_elems);
@@ -163,7 +163,7 @@ static inline const void *_hash_set_get_bucket_key(const hashset_bucket *bucket,
 static void _hash_set_insert(hashset_bucket *bucket, hashset *map, const void *key, i32 displacement)
 {
         u64 idx = map->key_data.num_elems;
-        void *key_datum = VECTOR_NEW_AND_GET(&map->key_data, void *);
+        void *key_datum = VEC_NEW_AND_GET(&map->key_data, void *);
         memcpy(key_datum, key, map->key_data.elem_size);
         bucket->key_idx = idx;
         bucket->in_use_flag = true;
@@ -180,13 +180,13 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
 
                 u32 bucket_idx = intended_bucket_idx;
 
-                hashset_bucket *bucket = VECTOR_GET(&map->table, bucket_idx, hashset_bucket);
+                hashset_bucket *bucket = VEC_GET(&map->table, bucket_idx, hashset_bucket);
                 if (bucket->in_use_flag && memcmp(_hash_set_get_bucket_key(bucket, map), key, map->key_data.elem_size) != 0) {
                         bool fitting_bucket_found = false;
                         u32 displace_idx;
                         for (displace_idx = bucket_idx + 1; displace_idx < map->table.num_elems; displace_idx++) {
                                 hashset_bucket
-                                        *bucket = VECTOR_GET(&map->table, displace_idx, hashset_bucket);
+                                        *bucket = VEC_GET(&map->table, displace_idx, hashset_bucket);
                                 fitting_bucket_found = !bucket->in_use_flag || (bucket->in_use_flag
                                                                                 &&
                                                                                 memcmp(_hash_set_get_bucket_key(bucket, map), key,
@@ -207,7 +207,7 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
                         if (!fitting_bucket_found) {
                                 for (displace_idx = 0; displace_idx < bucket_idx - 1; displace_idx++) {
                                         const hashset_bucket
-                                                *bucket = VECTOR_GET(&map->table, displace_idx, hashset_bucket);
+                                                *bucket = VEC_GET(&map->table, displace_idx, hashset_bucket);
                                         fitting_bucket_found = !bucket->in_use_flag || (bucket->in_use_flag
                                                                                         && memcmp(_hash_set_get_bucket_key(bucket,
                                                                                                                  map),
@@ -222,7 +222,7 @@ static inline uint_fast32_t _hash_set_insert_or_update(hashset *map, const u32 *
 
                         assert(fitting_bucket_found == true);
                         bucket_idx = displace_idx;
-                        bucket = VECTOR_GET(&map->table, bucket_idx, hashset_bucket);
+                        bucket = VEC_GET(&map->table, bucket_idx, hashset_bucket);
                 }
 
                 bool is_update =
@@ -304,20 +304,20 @@ bool hashset_remove_if_contained(hashset *map, const void *keys, size_t num_pair
                 bool bucket_found = false;
 
                 for (u32 k = bucket_idx; !bucket_found && k < map->table.num_elems; k++) {
-                        const hashset_bucket *bucket = VECTOR_GET(&map->table, k, hashset_bucket);
+                        const hashset_bucket *bucket = VEC_GET(&map->table, k, hashset_bucket);
                         bucket_found = bucket->in_use_flag
                                        && memcmp(_hash_set_get_bucket_key(bucket, map), key, map->key_data.elem_size) == 0;
                         actual_idx = k;
                 }
                 for (u32 k = 0; !bucket_found && k < bucket_idx; k++) {
-                        const hashset_bucket *bucket = VECTOR_GET(&map->table, k, hashset_bucket);
+                        const hashset_bucket *bucket = VEC_GET(&map->table, k, hashset_bucket);
                         bucket_found = bucket->in_use_flag
                                        && memcmp(_hash_set_get_bucket_key(bucket, map), key, map->key_data.elem_size) == 0;
                         actual_idx = k;
                 }
 
                 if (bucket_found) {
-                        hashset_bucket *bucket = VECTOR_GET(&map->table, actual_idx, hashset_bucket);
+                        hashset_bucket *bucket = VEC_GET(&map->table, actual_idx, hashset_bucket);
                         bucket->in_use_flag = false;
                         bucket->key_idx = 0;
                 }
@@ -340,12 +340,12 @@ bool hashset_contains_key(hashset *map, const void *key)
         bool bucket_found = false;
 
         for (u32 k = bucket_idx; !bucket_found && k < map->table.num_elems; k++) {
-                const hashset_bucket *bucket = VECTOR_GET(&map->table, k, hashset_bucket);
+                const hashset_bucket *bucket = VEC_GET(&map->table, k, hashset_bucket);
                 bucket_found =
                         bucket->in_use_flag && memcmp(_hash_set_get_bucket_key(bucket, map), key, map->key_data.elem_size) == 0;
         }
         for (u32 k = 0; !bucket_found && k < bucket_idx; k++) {
-                const hashset_bucket *bucket = VECTOR_GET(&map->table, k, hashset_bucket);
+                const hashset_bucket *bucket = VEC_GET(&map->table, k, hashset_bucket);
                 bucket_found =
                         bucket->in_use_flag && memcmp(_hash_set_get_bucket_key(bucket, map), key, map->key_data.elem_size) == 0;
         }
@@ -376,16 +376,16 @@ bool hashset_rehash(hashset *map)
 
         size_t new_cap = (cpy->key_data.cap_elems + 1) * 1.7f;
 
-        vector_grow_to(&map->key_data, new_cap);
-        vector_grow_to(&map->table, new_cap);
-        vector_enlarge_size_to_capacity(&map->table);
-        vector_zero_memory(&map->table);
+        vec_grow_to(&map->key_data, new_cap);
+        vec_grow_to(&map->table, new_cap);
+        vec_enlarge_size_to_capacity(&map->table);
+        vec_zero_memory(&map->table);
 
         assert(map->key_data.cap_elems == map->table.cap_elems);
         assert(map->key_data.num_elems <= map->table.num_elems);
 
         for (size_t i = 0; i < cpy->table.num_elems; i++) {
-                hashset_bucket *bucket = VECTOR_GET(&cpy->table, i, hashset_bucket);
+                hashset_bucket *bucket = VEC_GET(&cpy->table, i, hashset_bucket);
                 if (bucket->in_use_flag) {
                         const void *old_key = _hash_set_get_bucket_key(bucket, cpy);
                         if (!hashset_insert_or_update(map, old_key, 1)) {

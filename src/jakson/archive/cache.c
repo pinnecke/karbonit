@@ -71,9 +71,9 @@ bool string_id_cache_create_lru_ex(struct string_cache **cache, archive *archive
         result->capacity = capacity;
 
         size_t num_buckets = JAK_MAX(1, capacity);
-        vector_create(&result->list_entries, sizeof(struct lru_list), num_buckets);
+        vec_create(&result->list_entries, sizeof(struct lru_list), num_buckets);
         for (size_t i = 0; i < num_buckets; i++) {
-                struct lru_list *list = VECTOR_NEW_AND_GET(&result->list_entries, struct lru_list);
+                struct lru_list *list = VEC_NEW_AND_GET(&result->list_entries, struct lru_list);
                 ZERO_MEMORY(list, sizeof(struct lru_list));
                 init_list(list);
         }
@@ -113,7 +113,7 @@ char *string_id_cache_get(struct string_cache *cache, archive_field_sid_t id)
 {
         hash32_t id_hash = HASH_BERNSTEIN(sizeof(archive_field_sid_t), &id);
         size_t bucket_pos = id_hash % cache->list_entries.num_elems;
-        struct lru_list *list = VECTOR_GET(&cache->list_entries, bucket_pos, struct lru_list);
+        struct lru_list *list = VEC_GET(&cache->list_entries, bucket_pos, struct lru_list);
         struct cache_entry *cursor = list->most_recent;
         while (cursor != NULL) {
                 if (id == cursor->id) {
@@ -150,7 +150,7 @@ bool string_id_cache_reset_statistics(struct string_cache *cache)
 bool string_id_cache_drop(struct string_cache *cache)
 {
         for (size_t i = 0; i < cache->list_entries.num_elems; i++) {
-                struct lru_list *entry = VECTOR_GET(&cache->list_entries, i, struct lru_list);
+                struct lru_list *entry = VEC_GET(&cache->list_entries, i, struct lru_list);
                 for (size_t k = 0; k < sizeof(entry->entries) / sizeof(entry->entries[0]); k++) {
                         struct cache_entry *it = &entry->entries[k];
                         if (it->string) {
@@ -158,7 +158,7 @@ bool string_id_cache_drop(struct string_cache *cache)
                         }
                 }
         }
-        vector_drop(&cache->list_entries);
+        vec_drop(&cache->list_entries);
         return true;
 }
 

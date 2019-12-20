@@ -115,7 +115,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
         u64 test_max = 10000;
 
         vec ofType(carbon) files;
-        vector_create(&files, sizeof(rec), test_max);
+        vec_create(&files, sizeof(rec), test_max);
         rec* old_f = &doc;
 
 
@@ -123,7 +123,7 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
 
                 rec_commit_hash(&rev_old, old_f);
 
-                rec* new_f = VECTOR_NEW_AND_GET(&files, rec);
+                rec* new_f = VEC_NEW_AND_GET(&files, rec);
 
                 revise_begin(&revise, new_f, old_f);
                 revise_end(&revise);

@@ -63,7 +63,7 @@ TEST(CarbonArchiveOpsTest, CreateArchiveStringHandling)
     archive     archive;
     strid_iter  strid_iter;
     strid_info *info;
-    size_t               vector_len;
+    size_t               vec_len;
     bool                 status;
     bool                 success;
     query       query;
@@ -79,8 +79,8 @@ TEST(CarbonArchiveOpsTest, CreateArchiveStringHandling)
     status = query_scan_strids(&strid_iter, &query);
     ASSERT_TRUE(status);
 
-    while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
-        for (size_t i = 0; i < vector_len; i++) {
+    while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+        for (size_t i = 0; i < vec_len; i++) {
             /* Note, that 'info[i].id' cannot be tested based on its value because it is not deterministic generated;
              * all ids must be unique. In case we read something wrong, we may find some duplicate
              * (which is UNLIKELY, however) */
@@ -109,7 +109,7 @@ TEST(CarbonArchiveOpsTest, DecodeStringByIdFullScan)
     archive     archive;
     strid_iter  strid_iter;
     strid_info *info;
-    size_t               vector_len;
+    size_t               vec_len;
     bool                 status;
     bool                 success;
     query       query;
@@ -125,8 +125,8 @@ TEST(CarbonArchiveOpsTest, DecodeStringByIdFullScan)
     status = query_scan_strids(&strid_iter, &query);
     ASSERT_TRUE(status);
 
-    while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
-        for (size_t i = 0; i < vector_len; i++) {
+    while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+        for (size_t i = 0; i < vec_len; i++) {
             all_str_ids.insert(info[i].id);
         }
     }
@@ -154,7 +154,7 @@ TEST(CarbonArchiveOpsTest, DecodeStringByFastUnsafeAccess)
     archive                 archive;
     strid_iter              strid_iter;
     strid_info             *info;
-    size_t                           vector_len;
+    size_t                           vec_len;
     bool                             status;
     bool                             success;
     query                   query;
@@ -170,8 +170,8 @@ TEST(CarbonArchiveOpsTest, DecodeStringByFastUnsafeAccess)
     status = query_scan_strids(&strid_iter, &query);
     ASSERT_TRUE(status);
 
-    while (strid_iter_next(&success, &info, &vector_len, &strid_iter)) {
-        for (size_t i = 0; i < vector_len; i++) {
+    while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+        for (size_t i = 0; i < vec_len; i++) {
             char **strings = query_fetch_strings_by_offset(&query, &(info[i].offset), &(info[i].strlen), 1);
             ASSERT_TRUE(strings != NULL);
             ASSERT_TRUE(strings[0] != NULL);

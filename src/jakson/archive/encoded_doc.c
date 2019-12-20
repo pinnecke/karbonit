@@ -24,7 +24,7 @@ bool encoded_doc_collection_create(encoded_doc_list *collection, archive *archiv
         UNUSED(collection);
         UNUSED(archive);
 
-        vector_create(&collection->flat_object_collection, sizeof(encoded_doc), 5000000);
+        vec_create(&collection->flat_object_collection, sizeof(encoded_doc), 5000000);
         hashtable_create(&collection->index, sizeof(unique_id_t), sizeof(u32), 5000000);
         collection->archive = archive;
 
@@ -37,10 +37,10 @@ bool encoded_doc_collection_drop(encoded_doc_list *collection)
 
         hashtable_drop(&collection->index);
         for (u32 i = 0; i < collection->flat_object_collection.num_elems; i++) {
-                encoded_doc *doc = VECTOR_GET(&collection->flat_object_collection, i, encoded_doc);
+                encoded_doc *doc = VEC_GET(&collection->flat_object_collection, i, encoded_doc);
                 encoded_doc_drop(doc);
         }
-        vector_drop(&collection->flat_object_collection);
+        vec_drop(&collection->flat_object_collection);
         return true;
 }
 
@@ -50,11 +50,11 @@ doc_create(unique_id_t object_id, encoded_doc_list *collection)
         if (collection) {
                 u32 doc_position = collection->flat_object_collection.num_elems;
                 encoded_doc
-                        *new_doc = VECTOR_NEW_AND_GET(&collection->flat_object_collection, encoded_doc);
+                        *new_doc = VEC_NEW_AND_GET(&collection->flat_object_collection, encoded_doc);
                 new_doc->context = collection;
                 new_doc->object_id = object_id;
-                vector_create(&new_doc->props, sizeof(encoded_doc_prop), 20);
-                vector_create(&new_doc->props_arrays, sizeof(encoded_doc_prop_array), 20);
+                vec_create(&new_doc->props, sizeof(encoded_doc_prop), 20);
+                vec_create(&new_doc->props_arrays, sizeof(encoded_doc_prop_array), 20);
                 hashtable_create(&new_doc->prop_array_index, sizeof(archive_field_sid_t), sizeof(u32), 20);
                 hashtable_insert_or_update(&collection->index, &object_id, &doc_position, 1);
                 return new_doc;
@@ -69,7 +69,7 @@ encoded_doc *encoded_doc_collection_get_or_append(encoded_doc_list *collection,
 {
         const u32 *doc_pos = hashtable_get_value(&collection->index, &id);
         if (doc_pos) {
-                encoded_doc *result = VECTOR_GET(&collection->flat_object_collection, *doc_pos,
+                encoded_doc *result = VEC_GET(&collection->flat_object_collection, *doc_pos,
                                                          encoded_doc);
                 ERROR_IF_AND_RETURN(result == NULL, ERR_INTERNALERR, NULL);
                 return result;
@@ -88,7 +88,7 @@ bool encoded_doc_collection_print(FILE *file, encoded_doc_list *collection)
         UNUSED(collection);
 
         if (collection->flat_object_collection.num_elems > 0) {
-                encoded_doc *root = VECTOR_GET(&collection->flat_object_collection, 0, encoded_doc);
+                encoded_doc *root = VEC_GET(&collection->flat_object_collection, 0, encoded_doc);
                 encoded_doc_print(file, root);
         }
 
@@ -99,18 +99,18 @@ bool encoded_doc_drop(encoded_doc *doc)
 {
         UNUSED(doc);
         for (u32 i = 0; i < doc->props_arrays.num_elems; i++) {
-                encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, i,
+                encoded_doc_prop_array *array = VEC_GET(&doc->props_arrays, i,
                                                                    encoded_doc_prop_array);
-                vector_drop(&array->values);
+                vec_drop(&array->values);
         }
         for (u32 i = 0; i < doc->props.num_elems; i++) {
-                encoded_doc_prop *single = VECTOR_GET(&doc->props, i, encoded_doc_prop);
+                encoded_doc_prop *single = VEC_GET(&doc->props, i, encoded_doc_prop);
                 if (single->header.value_type == VALUE_DECODED_STRING) {
                         free(single->value.string);
                 }
         }
-        vector_drop(&doc->props);
-        vector_drop(&doc->props_arrays);
+        vec_drop(&doc->props);
+        vec_drop(&doc->props_arrays);
         hashtable_drop(&doc->prop_array_index);
         return false;
 }
@@ -119,7 +119,7 @@ bool encoded_doc_drop(encoded_doc *doc)
 bool                                                                                                    \
 encoded_doc_add_prop_##value_name(encoded_doc *doc, archive_field_sid_t key, built_in_type value)       \
 {                                                                                                                      \
-    encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);                      \
+    encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);                      \
     prop->header.context = doc;                                                                                        \
     prop->header.rec_key_type = STRING_ENCODED;                                        \
     prop->header.key.key_id = key;                                                                                     \
@@ -133,7 +133,7 @@ encoded_doc_add_prop_##value_name(encoded_doc *doc, archive_field_sid_t key, bui
 bool                                                                                                    \
 encoded_doc_add_prop_##value_name##_decoded(encoded_doc *doc, const char *key, built_in_type value)    \
 {                                                                                                                      \
-    encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);                      \
+    encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);                      \
     prop->header.context = doc;                                                                                        \
     prop->header.rec_key_type = STRING_DECODED;                                        \
     prop->header.key.key_str = strdup(key);                                                                            \
@@ -190,7 +190,7 @@ DECLARE_ENCODED_DOC_ADD_PROP_BASIC_DECODED(archive_field_sid_t, ARCHIVE_FIELD_ST
 bool encoded_doc_add_prop_string_decoded_string_value_decoded(encoded_doc *doc, const char *key,
                                                               const char *value)
 {
-        encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
+        encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
         prop->header.rec_key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
@@ -201,7 +201,7 @@ bool encoded_doc_add_prop_string_decoded_string_value_decoded(encoded_doc *doc, 
 
 bool encoded_doc_add_prop_null(encoded_doc *doc, archive_field_sid_t key)
 {
-        encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
+        encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
         prop->header.rec_key_type = STRING_ENCODED;
         prop->header.key.key_id = key;
@@ -212,7 +212,7 @@ bool encoded_doc_add_prop_null(encoded_doc *doc, archive_field_sid_t key)
 
 bool encoded_doc_add_prop_null_decoded(encoded_doc *doc, const char *key)
 {
-        encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
+        encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
         prop->header.rec_key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
@@ -224,7 +224,7 @@ bool encoded_doc_add_prop_null_decoded(encoded_doc *doc, const char *key)
 bool
 encoded_doc_add_prop_object(encoded_doc *doc, archive_field_sid_t key, encoded_doc *value)
 {
-        encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
+        encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
         prop->header.rec_key_type = STRING_ENCODED;
         prop->header.key.key_id = key;
@@ -236,7 +236,7 @@ encoded_doc_add_prop_object(encoded_doc *doc, archive_field_sid_t key, encoded_d
 bool encoded_doc_add_prop_object_decoded(encoded_doc *doc, const char *key,
                                          encoded_doc *value)
 {
-        encoded_doc_prop *prop = VECTOR_NEW_AND_GET(&doc->props, encoded_doc_prop);
+        encoded_doc_prop *prop = VEC_NEW_AND_GET(&doc->props, encoded_doc_prop);
         prop->header.context = doc;
         prop->header.rec_key_type = STRING_DECODED;
         prop->header.key.key_str = strdup(key);
@@ -251,12 +251,12 @@ encoded_doc_add_prop_array_##name(encoded_doc *doc,                             
                                        archive_field_sid_t key)                                                         \
 {                                                                                                                      \
     u32 new_array_pos = doc->props_arrays.num_elems;                                                              \
-    encoded_doc_prop_array *array = VECTOR_NEW_AND_GET(&doc->props_arrays, encoded_doc_prop_array);  \
+    encoded_doc_prop_array *array = VEC_NEW_AND_GET(&doc->props_arrays, encoded_doc_prop_array);  \
     array->header.rec_key_type = STRING_ENCODED;                                          \
     array->header.key.key_id = key;                                                                                    \
     array->header.type = basic_type;                                                                                   \
     array->header.context = doc;                                                                                       \
-    vector_create(&array->values, sizeof(encoded_doc_value_u), 10);                                   \
+    vec_create(&array->values, sizeof(encoded_doc_value_u), 10);                                   \
     hashtable_insert_or_update(&doc->prop_array_index, &key, &new_array_pos, 1);                                \
     return true;                                                                                                       \
 }
@@ -266,12 +266,12 @@ bool                                                                            
 encoded_doc_add_prop_array_##name##_decoded(encoded_doc *doc,                                          \
                                        const char *key)                                                                \
 {                                                                                                                      \
-    encoded_doc_prop_array *array = VECTOR_NEW_AND_GET(&doc->props_arrays, encoded_doc_prop_array);  \
+    encoded_doc_prop_array *array = VEC_NEW_AND_GET(&doc->props_arrays, encoded_doc_prop_array);  \
     array->header.rec_key_type = STRING_DECODED;                                          \
     array->header.key.key_str = strdup(key);                                                                           \
     array->header.type = basic_type;                                                                                   \
     array->header.context = doc;                                                                                       \
-    vector_create(&array->values, sizeof(encoded_doc_value_u), 10);                                   \
+    vec_create(&array->values, sizeof(encoded_doc_value_u), 10);                                   \
     return true;                                                                                                       \
 }
 
@@ -334,12 +334,12 @@ encoded_doc_array_push_##name(encoded_doc *doc, archive_field_sid_t key,        
 {                                                                                                                      \
     const u32 *prop_pos = hashtable_get_value(&doc->prop_array_index, &key);                               \
     ERROR_IF_AND_RETURN(prop_pos == NULL, ERR_NOTFOUND, NULL);                                                 \
-    encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, *prop_pos,                          \
+    encoded_doc_prop_array *array = VEC_GET(&doc->props_arrays, *prop_pos,                          \
                                                                encoded_doc_prop_array);                       \
     ERROR_IF_AND_RETURN(array == NULL, ERR_INTERNALERR, NULL);                                                 \
     ERROR_IF_AND_RETURN(array->header.type != basic_type, ERR_TYPEMISMATCH, NULL);                             \
     for (u32 i = 0; i < values_length; i++) {                                                                     \
-        encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);            \
+        encoded_doc_value_u *value = VEC_NEW_AND_GET(&array->values, encoded_doc_value_u);            \
         value->name = values[i];                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -356,7 +356,7 @@ encoded_doc_array_push_##name##_decoded(encoded_doc *doc, const char *key,      
     u32 prop_pos = (u32) -1;                                                                                 \
     for (u32 i = 0; i < doc->props_arrays.num_elems; i++)                                                         \
     {                                                                                                                  \
-        encoded_doc_prop_array *prop = VECTOR_GET(&doc->props_arrays, i, encoded_doc_prop_array); \
+        encoded_doc_prop_array *prop = VEC_GET(&doc->props_arrays, i, encoded_doc_prop_array); \
         if (prop->header.rec_key_type == STRING_DECODED) {                                \
             if (strcmp(prop->header.key.key_str, key) == 0) {                                                          \
                 prop_pos = i;                                                                                          \
@@ -365,12 +365,12 @@ encoded_doc_array_push_##name##_decoded(encoded_doc *doc, const char *key,      
         }                                                                                                              \
     }                                                                                                                  \
     ERROR_IF_AND_RETURN(prop_pos == (u32) -1, ERR_NOTFOUND, NULL);                                        \
-    encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, prop_pos,                           \
+    encoded_doc_prop_array *array = VEC_GET(&doc->props_arrays, prop_pos,                           \
                                                                    encoded_doc_prop_array);                   \
     ERROR_IF_AND_RETURN(array == NULL, ERR_INTERNALERR, NULL);                                                 \
     ERROR_IF_AND_RETURN(array->header.type != basic_type, ERR_TYPEMISMATCH, NULL);                             \
     for (u32 i = 0; i < values_length; i++) {                                                                     \
-        encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);            \
+        encoded_doc_value_u *value = VEC_NEW_AND_GET(&array->values, encoded_doc_value_u);            \
         value->name = values[i];                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -431,11 +431,11 @@ DECLARE_ENCODED_DOC_ARRAY_PUSH_TYPE_DECODED(null, archive_field_u32_t, ARCHIVE_F
 //    DEBUG_ERROR_IF_NULL(doc)
 //    const u32 *prop_pos = hashtable_get_value(&doc->prop_array_index, &key);
 //    ERROR_IF_AND_RETURN(prop_pos == NULL, &doc->err, ERR_NOTFOUND);
-//    encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, *prop_pos,
+//    encoded_doc_prop_array *array = VEC_GET(&doc->props_arrays, *prop_pos,
 //                                                               encoded_doc_prop_array);
 //    ERROR_IF_AND_RETURN(array == NULL, &doc->err, ERR_INTERNALERR);
 //    ERROR_IF_AND_RETURN(array->header.type != ARCHIVE_FIELD_NULL, &doc->err, ERR_TYPEMISMATCH);
-//    encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);
+//    encoded_doc_value_u *value = VEC_NEW_AND_GET(&array->values, encoded_doc_value_u);
 //    value->num_nulls = how_many;
 //    return true;
 //}
@@ -451,11 +451,11 @@ bool encoded_doc_array_push_object(encoded_doc *doc, archive_field_sid_t key, un
         UNUSED(id);
         const u32 *prop_pos = hashtable_get_value(&doc->prop_array_index, &key);
         ERROR_IF_AND_RETURN(prop_pos == NULL, ERR_NOTFOUND, NULL);
-        encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, *prop_pos,
+        encoded_doc_prop_array *array = VEC_GET(&doc->props_arrays, *prop_pos,
                                                            encoded_doc_prop_array);
         ERROR_IF_AND_RETURN(array == NULL, ERR_INTERNALERR, NULL);
         ERROR_IF_AND_RETURN(array->header.type != ARCHIVE_FIELD_OBJECT, ERR_TYPEMISMATCH, NULL);
-        encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);
+        encoded_doc_value_u *value = VEC_NEW_AND_GET(&array->values, encoded_doc_value_u);
         value->object = id;
         return true;
 }
@@ -468,7 +468,7 @@ bool encoded_doc_array_push_object_decoded(encoded_doc *doc, const char *key, un
 
         u32 prop_pos = (u32) -1;
         for (u32 i = 0; i < doc->props_arrays.num_elems; i++) {
-                encoded_doc_prop_array *prop = VECTOR_GET(&doc->props_arrays, i,
+                encoded_doc_prop_array *prop = VEC_GET(&doc->props_arrays, i,
                                                                   encoded_doc_prop_array);
                 if (prop->header.rec_key_type == STRING_DECODED) {
                         if (strcmp(prop->header.key.key_str, key) == 0) {
@@ -478,11 +478,11 @@ bool encoded_doc_array_push_object_decoded(encoded_doc *doc, const char *key, un
                 }
         }
         ERROR_IF_AND_RETURN(prop_pos == (u32) -1, ERR_NOTFOUND, NULL);
-        encoded_doc_prop_array *array = VECTOR_GET(&doc->props_arrays, prop_pos,
+        encoded_doc_prop_array *array = VEC_GET(&doc->props_arrays, prop_pos,
                                                            encoded_doc_prop_array);
         ERROR_IF_AND_RETURN(array == NULL, ERR_INTERNALERR, NULL);
         ERROR_IF_AND_RETURN(array->header.type != ARCHIVE_FIELD_OBJECT, ERR_TYPEMISMATCH, NULL);
-        encoded_doc_value_u *value = VECTOR_NEW_AND_GET(&array->values, encoded_doc_value_u);
+        encoded_doc_value_u *value = VEC_NEW_AND_GET(&array->values, encoded_doc_value_u);
         value->object = id;
         return true;
 }
@@ -495,7 +495,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
         fprintf(file, "{\n");
 
         for (u32 i = 0; i < doc->props.num_elems; i++) {
-                encoded_doc_prop *prop = VECTOR_GET(&doc->props, i, encoded_doc_prop);
+                encoded_doc_prop *prop = VEC_GET(&doc->props, i, encoded_doc_prop);
                 char *key_str = NULL;
                 if (prop->header.rec_key_type == STRING_ENCODED) {
                         key_str = query_fetch_string_by_id(&query, prop->header.key.key_id);
@@ -567,7 +567,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
         }
 
         for (u32 i = 0; i < doc->props_arrays.num_elems; i++) {
-                encoded_doc_prop_array *prop = VECTOR_GET(&doc->props_arrays, i,
+                encoded_doc_prop_array *prop = VEC_GET(&doc->props_arrays, i,
                                                                   encoded_doc_prop_array);
                 char *key_str = NULL;
                 if (prop->header.rec_key_type == STRING_ENCODED) {
@@ -594,7 +594,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                 switch (prop->header.type) {
                         case ARCHIVE_FIELD_INT8:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_i8_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_i8_t value = (VEC_GET(&prop->values, k,
                                                                                 encoded_doc_value_u))->int8;
                                         if (IS_NULL_INT8(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -608,7 +608,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_INT16:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_i16_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_i16_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->int16;
                                         if (IS_NULL_INT16(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -622,7 +622,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_INT32:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_i32_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_i32_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->int32;
                                         if (IS_NULL_INT32(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -636,7 +636,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_INT64:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_i64_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_i64_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->int64;
                                         if (IS_NULL_INT64(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -650,7 +650,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_UINT8:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_u8_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_u8_t value = (VEC_GET(&prop->values, k,
                                                                                 encoded_doc_value_u))->uint8;
                                         if (IS_NULL_UINT8(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -664,7 +664,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_UINT16:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_u16_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_u16_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->uint16;
                                         if (IS_NULL_UINT16(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -678,7 +678,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_UINT32:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_u32_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_u32_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->uint32;
                                         if (IS_NULL_UINT32(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -692,7 +692,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_UINT64:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_u64_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_u64_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->uint64;
                                         if (IS_NULL_UINT64(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -706,7 +706,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_FLOAT:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_number_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_number_t value = (VEC_GET(&prop->values, k,
                                                                                     encoded_doc_value_u))->number;
                                         if (IS_NULL_NUMBER(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -720,7 +720,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_STRING: {
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        archive_field_sid_t value = (VECTOR_GET(&prop->values, k,
+                                        archive_field_sid_t value = (VEC_GET(&prop->values, k,
                                                                                  encoded_doc_value_u))->string;
                                         if (IS_NULL_STRING(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
@@ -738,7 +738,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                         case ARCHIVE_FIELD_BOOLEAN:
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
                                         archive_field_boolean_t
-                                                value = (VECTOR_GET(&prop->values, k, encoded_doc_value_u))->boolean;
+                                                value = (VEC_GET(&prop->values, k, encoded_doc_value_u))->boolean;
                                         if (IS_NULL_BOOL(value)) {
                                                 fprintf(file, "null%s", k + 1 < prop->values.num_elems ? ", " : "");
                                         } else {
@@ -756,7 +756,7 @@ static bool doc_print_pretty(FILE *file, encoded_doc *doc, unsigned level)
                                 break;
                         case ARCHIVE_FIELD_OBJECT: {
                                 for (u32 k = 0; k < prop->values.num_elems; k++) {
-                                        unique_id_t nested_oid = (VECTOR_GET(&prop->values, k,
+                                        unique_id_t nested_oid = (VEC_GET(&prop->values, k,
                                                                               encoded_doc_value_u))->object;
                                         encoded_doc
                                                 *nested_doc = encoded_doc_collection_get_or_append(doc->context,

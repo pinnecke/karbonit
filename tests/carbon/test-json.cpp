@@ -803,9 +803,9 @@ TEST(JsonTest, ParseNullArray)
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_ARRAY);
         ASSERT_EQ(json.element->value.value.array->elements.elements.num_elems, 3L);
-        json_element *e1 = VECTOR_GET(&json.element->value.value.array->elements.elements, 0, json_element);
-        json_element *e2 = VECTOR_GET(&json.element->value.value.array->elements.elements, 1, json_element);
-        json_element *e3 = VECTOR_GET(&json.element->value.value.array->elements.elements, 2, json_element);
+        json_element *e1 = VEC_GET(&json.element->value.value.array->elements.elements, 0, json_element);
+        json_element *e2 = VEC_GET(&json.element->value.value.array->elements.elements, 1, json_element);
+        json_element *e3 = VEC_GET(&json.element->value.value.array->elements.elements, 2, json_element);
         ASSERT_EQ(e1->value.value_type, JSON_VALUE_NULL);
         ASSERT_EQ(e2->value.value_type, JSON_VALUE_NULL);
         ASSERT_EQ(e3->value.value_type, JSON_VALUE_NULL);
@@ -822,8 +822,8 @@ TEST(JsonTest, ParseBooleanArray)
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_ARRAY);
         ASSERT_EQ(json.element->value.value.array->elements.elements.num_elems, 2L);
-        json_element *e1 = VECTOR_GET(&json.element->value.value.array->elements.elements, 0, json_element);
-        json_element *e2 = VECTOR_GET(&json.element->value.value.array->elements.elements, 1, json_element);
+        json_element *e1 = VEC_GET(&json.element->value.value.array->elements.elements, 0, json_element);
+        json_element *e2 = VEC_GET(&json.element->value.value.array->elements.elements, 1, json_element);
         ASSERT_EQ(e1->value.value_type, JSON_VALUE_TRUE);
         ASSERT_EQ(e2->value.value_type, JSON_VALUE_FALSE);
 
@@ -839,9 +839,9 @@ TEST(JsonTest, ParseJsonFromString)
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_OBJECT);
         ASSERT_EQ(json.element->value.value.object->value->members.num_elems, 1u);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 0,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 0,
                 json_prop))->key.value, "Hello World") == 0);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 0,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 0,
                             json_prop))->value.value.value.string->value, "Value") == 0);
 
         json_drop(&json);
@@ -856,9 +856,9 @@ TEST(JsonTest, ParseJsonFromStringLaxQuotes)
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_OBJECT);
         ASSERT_EQ(json.element->value.value.object->value->members.num_elems, 1u);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 0,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 0,
                             json_prop))->key.value, "Hello_World") == 0);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 0,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 0,
                             json_prop))->value.value.value.string->value, "Value") == 0);
 
         json_drop(&json);
@@ -873,13 +873,13 @@ TEST(JsonTest, ParseJsonFromStringLaxQuotesList)
         ASSERT_TRUE(status);
         ASSERT_EQ(json.element->value.value_type, JSON_VALUE_OBJECT);
         ASSERT_EQ(json.element->value.value.object->value->members.num_elems, 2u);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 0,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 0,
                             json_prop))->key.value, "Hello") == 0);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 0,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 0,
                             json_prop))->value.value.value.string->value, "Value1") == 0);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 1,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 1,
                             json_prop))->key.value, "World") == 0);
-        ASSERT_TRUE(strcmp((VECTOR_GET(&json.element->value.value.object->value->members, 1,
+        ASSERT_TRUE(strcmp((VEC_GET(&json.element->value.value.object->value->members, 1,
                             json_prop))->value.value.value.string->value, "Value2") == 0);
 
         json_drop(&json);

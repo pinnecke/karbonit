@@ -39,27 +39,27 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
 {
         UNUSED(num_pairs);
 
-        DECLARE_AND_INIT(u32, vector_length)
+        DECLARE_AND_INIT(u32, VEC_LENGTH)
         DECLARE_AND_INIT(archive_object, object)
         DECLARE_AND_INIT(unique_id_t, parent_object_id)
         DECLARE_AND_INIT(unique_id_t, object_id)
         DECLARE_AND_INIT(prop_iter, prop_iter)
 
-        archive_value_vector_get_object_id(&parent_object_id, value_iter);
-        archive_value_vector_get_length(&vector_length, value_iter);
-        assert(num_pairs == vector_length);
+        archive_value_vec_get_object_id(&parent_object_id, value_iter);
+        archive_value_vec_get_length(&VEC_LENGTH, value_iter);
+        assert(num_pairs == VEC_LENGTH);
 
-        for (u32 i = 0; i < vector_length; i++) {
+        for (u32 i = 0; i < VEC_LENGTH; i++) {
                 archive_field_sid_t parent_key = keys[i];
                 u32 parent_key_array_idx = i;
 
 //        path_entry  e = { .key = parent_key, .idx = 0 };
-//        vector_push(path_stack, &e, 1);
+//        vec_push(path_stack, &e, 1);
 
                 //  fprintf(stderr, "XXXX object: ");
                 //  archive_visitor_print_path(stderr, archive, path_stack);
 
-                archive_value_vector_get_object_at(&object, i, value_iter);
+                archive_value_vec_get_object_at(&object, i, value_iter);
                 archive_object_get_object_id(&object_id, &object);
 
                 archive_prop_iter_from_object(&prop_iter, mask, &object);
@@ -72,7 +72,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
                                                                      parent_object_id,
                                                                      object_id,
                                                                      i,
-                                                                     vector_length,
+                                                                     VEC_LENGTH,
                                                                      keys[i],
                                                                      capture);
                         }
@@ -92,7 +92,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
                                                   path_stack,
                                                   object_id,
                                                   i,
-                                                  vector_length,
+                                                  VEC_LENGTH,
                                                   capture);
                         }
                 } else {
@@ -108,7 +108,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
                                       parent_key_array_idx);
                 }
 
-                //  vector_pop(path_stack);
+                //  vec_pop(path_stack);
         }
 }
 
@@ -123,7 +123,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
             for (u32 prop_idx = 0; prop_idx < num_pairs; prop_idx++)                                              \
             {                                                                                                          \
                 u32 array_length;                                                                                 \
-                const built_in_type *values = archive_value_vector_get_##name##_arrays_at(&array_length,        \
+                const built_in_type *values = archive_value_vec_get_##name##_arrays_at(&array_length,        \
                                                                                              prop_idx,                 \
                                                                                              &value_iter);             \
                 OPTIONAL_CALL(visitor, visit_enter_##name##_array_pair, archive, path_stack, this_object_oid, keys[prop_idx],      \
@@ -138,7 +138,7 @@ static void iterate_objects(archive *archive, const archive_field_sid_t *keys, u
     } else                                                                                                             \
     {                                                                                                                  \
         if (visitor->visit_##name##_pairs) {                                                                           \
-            const built_in_type *values = archive_value_vector_get_##name##s(NULL, &value_iter);                \
+            const built_in_type *values = archive_value_vec_get_##name##s(NULL, &value_iter);                \
             visitor->visit_##name##_pairs(archive, path_stack, this_object_oid, keys, values, num_pairs, capture);                 \
         }                                                                                                              \
     }                                                                                                                  \
@@ -172,18 +172,18 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
         UNUSED(parent_key_array_idx);
 
         path_entry e = {.key = parent_key, .idx = parent_key_array_idx};
-        vector_push(path_stack, &e, 1);
+        vec_push(path_stack, &e, 1);
 
-        archive_value_vector_get_object_id(&this_object_oid, &value_iter);
+        archive_value_vec_get_object_id(&this_object_oid, &value_iter);
 
         while (archive_prop_iter_next(&iter_type, &value_iter, &collection_iter, prop_iter)) {
 
                 if (iter_type == PROP_ITER_MODE_OBJECT) {
 
-                        keys = archive_value_vector_get_keys(&num_pairs, &value_iter);
-                        archive_value_vector_is_array_type(&is_array, &value_iter);
-                        archive_value_vector_get_basic_type(&type, &value_iter);
-                        archive_value_vector_get_object_id(&this_object_oid, &value_iter);
+                        keys = archive_value_vec_get_keys(&num_pairs, &value_iter);
+                        archive_value_vec_is_array_type(&is_array, &value_iter);
+                        archive_value_vec_get_basic_type(&type, &value_iter);
+                        archive_value_vec_get_object_id(&this_object_oid, &value_iter);
 
                         for (u32 i = 0; i < num_pairs; i++) {
                                 OPTIONAL_CALL(visitor,
@@ -197,7 +197,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                   capture);
 
                                 path_entry e = {.key = keys[i], .idx = 666};
-                                vector_push(path_stack, &e, 1);
+                                vec_push(path_stack, &e, 1);
                                 //archive_visitor_print_path(stderr, archive, path_stack);
                                 OPTIONAL_CALL(visitor,
                                                   visit_object_array_prop,
@@ -207,7 +207,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                   keys[i],
                                                   type,
                                                   capture);
-                                vector_pop(path_stack);
+                                vec_pop(path_stack);
                         }
 
                         if (UNLIKELY(first_type_group)) {
@@ -263,7 +263,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                 }
                                                 if (visit == VISIT_INCLUDE) {
                                                         const archive_field_u32_t *num_values =
-                                                                archive_value_vector_get_null_arrays(NULL,
+                                                                archive_value_vec_get_null_arrays(NULL,
                                                                                                          &value_iter);
                                                         for (u32 prop_idx = 0; prop_idx < num_pairs; prop_idx++) {
                                                                 OPTIONAL_CALL(visitor,
@@ -351,7 +351,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                 for (u32 i = 0; i < num_column_groups; i++) {
 
                                         //     path_entry  e = { .key = parent_key, .idx = i };
-                                        //vector_push(path_stack, &e, 1);
+                                        //vec_push(path_stack, &e, 1);
 
 
                                         visit_policy_e policy = visitor->before_visit_object_array(archive,
@@ -360,7 +360,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                                                           keys[i],
                                                                                                           capture);
 
-                                        //     vector_pop(path_stack);
+                                        //     vec_pop(path_stack);
 
                                         skip_groups_by_key[i] = policy == VISIT_EXCLUDE;
                                 }
@@ -404,7 +404,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                                     &column_iter);
 
                                                         path_entry e = {.key = current_column_name, .idx = 0};
-                                                        vector_push(path_stack, &e, 1);
+                                                        vec_push(path_stack, &e, 1);
 
                                                         /**
                                                             0/page_end/0/
@@ -594,9 +594,9 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                                                                                         //keys[i]
 
                                                                                                         //path_entry  e = { .key = current_column_name, .idx = 0 };
-                                                                                                        //vector_push(path_stack, &e, 1);
+                                                                                                        //vec_push(path_stack, &e, 1);
 
-                                                                                                        vector_pop(path_stack);
+                                                                                                        vec_pop(path_stack);
 
                                                                                                         struct prop_iter
                                                                                                                 nested_obj_prop_iter;
@@ -617,7 +617,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
 
                                                                                                         path_entry e =
                                                                                                                 {.key = current_column_name, .idx = 0};
-                                                                                                        vector_push(
+                                                                                                        vec_push(
                                                                                                                 path_stack,
                                                                                                                 &e,
                                                                                                                 1);
@@ -636,7 +636,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
 
                                                                 free(entry_object_containments);
                                                         }
-                                                        vector_pop(path_stack);
+                                                        vec_pop(path_stack);
                                                 }
                                                 current_column_group_obj_idx++;
 
@@ -649,7 +649,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                         free(skip_groups_by_key);
                 }
         }
-        vector_pop(path_stack);
+        vec_pop(path_stack);
 }
 
 bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
@@ -661,11 +661,11 @@ bool archive_visit_archive(archive *archive, const archive_visitor_desc *desc,
         int mask = desc ? desc->visit_mask : ARCHIVE_ITER_MASK_ANY;
 
         if (archive_prop_iter_from_archive(&prop_iter, mask, archive)) {
-                vector_create(&path_stack, sizeof(path_entry), 100);
+                vec_create(&path_stack, sizeof(path_entry), 100);
                 OPTIONAL_CALL(visitor, before_visit_starts, archive, capture);
                 iterate_props(archive, &prop_iter, &path_stack, visitor, mask, capture, true, 0, 0);
                 OPTIONAL_CALL(visitor, after_visit_ends, archive, capture);
-                vector_drop(&path_stack);
+                vec_drop(&path_stack);
                 return true;
         } else {
                 return false;
@@ -681,7 +681,7 @@ void archive_visitor_path_to_string(char path_buffer[2048], archive *archive,
         query *query = archive_query_default(archive);
 
         for (u32 i = 0; i < path_stack->num_elems; i++) {
-                const path_entry *entry = VECTOR_GET(path_stack, i, path_entry);
+                const path_entry *entry = VEC_GET(path_stack, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
                         size_t len = strlen(path_buffer);
@@ -699,7 +699,7 @@ bool archive_visitor_print_path(FILE *file, archive *archive,
         query *query = archive_query_default(archive);
 
         for (u32 i = 0; i < path_stack->num_elems; i++) {
-                const path_entry *entry = VECTOR_GET(path_stack, i, path_entry);
+                const path_entry *entry = VEC_GET(path_stack, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
                         fprintf(file, "%s/", key);
@@ -729,7 +729,7 @@ bool archive_visitor_path_compare(const vec ofType(path_entry) *path,
         query *query = archive_query_default(archive);
 
         for (u32 i = 1; i < path->num_elems; i++) {
-                const path_entry *entry = VECTOR_GET(path, i, path_entry);
+                const path_entry *entry = VEC_GET(path, i, path_entry);
                 if (entry->key != 0) {
                         char *key = query_fetch_string_by_id(query, entry->key);
                         size_t len = strlen(path_buffer);

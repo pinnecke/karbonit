@@ -354,17 +354,17 @@ static bool internal_pack_object(obj_it *it)
         {
                 prop *prop;
                 while ((prop = obj_it_next(it))) {
-                        if (prop_is_column(prop)) {
+                        if (PROP_IS_COLUMN(prop)) {
                                 col_it column;
-                                prop_get_column(&column, prop);
+                                PROP_GET_COLUMN(&column, prop);
                                 optimize_column(&column, &it->file);
-                        } else if (prop_is_object(prop)) {
+                        } else if (PROP_IS_OBJECT(prop)) {
                                 obj_it object;
-                                prop_get_object(&object, prop);
+                                PROP_GET_OBJECT(&object, prop);
                                 optimize_object(&object, &it->file);
-                        } else if (prop_is_array(prop)) {
+                        } else if (PROP_IS_ARRAY(prop)) {
                                 arr_it array;
-                                prop_get_array(&array, prop);
+                                PROP_GET_ARRAY(&array, prop);
                                 optimize_array(&array, &it->file);
                         }
                 }

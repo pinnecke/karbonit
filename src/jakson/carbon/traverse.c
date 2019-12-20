@@ -188,13 +188,13 @@ void traverser_run_from_prop(traverser *traverse, prop *p, void *arg)
                                PATH_EXPAND;
 
         if (expand == PATH_EXPAND) {
-                if (prop_is_array(p)) {
+                if (PROP_IS_ARRAY(p)) {
                         arr_it nested_it;
-                        prop_get_array(&nested_it, p);
+                        PROP_GET_ARRAY(&nested_it, p);
                         traverser_run_from_array(traverse, &nested_it, arg);
-                } else if (prop_is_object(p)) {
+                } else if (PROP_IS_OBJECT(p)) {
                         obj_it nested_it;
-                        prop_get_object(&nested_it, p);
+                        PROP_GET_OBJECT(&nested_it, p);
                         traverser_run_from_object(traverse, &nested_it, arg);
                 }
         }

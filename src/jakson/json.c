@@ -135,7 +135,7 @@ static path_policy_e json_from_fn_prop(const prop *prop, const traverse_info *co
 {
         str_buf *str = (str_buf *) extra->arg;
         if (context->type == ON_ENTER) {
-                str_buf_add(str, prop_get_index(prop) > 0 && context->type == ON_ENTER ? ", " : "");
+                str_buf_add(str, PROP_GET_INDEX(prop) > 0 && context->type == ON_ENTER ? ", " : "");
                 str_buf_add_nquote(str, prop->key.str, prop->key.len);
                 str_buf_add_char(str, ':');
         }

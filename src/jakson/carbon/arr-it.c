@@ -35,7 +35,7 @@
 bool internal_arr_it_update_##type_name(arr_it *it, type_name value)                \
 {                                                                                                                      \
         offset_t datum = 0;                                                                                                \
-        if (likely(it->field.type == field_type)) {                                                    \
+        if (LIKELY(it->field.type == field_type)) {                                                    \
                 MEMFILE_SAVE_POSITION(&it->file);                                                                   \
                 internal_arr_it_offset(&datum, it);                                                                 \
                 MEMFILE_SEEK(&it->file, datum + sizeof(u8));                                                        \
@@ -43,7 +43,7 @@ bool internal_arr_it_update_##type_name(arr_it *it, type_name value)            
                 MEMFILE_RESTORE_POSITION(&it->file);                                                                \
                 return true;                                                                                           \
         } else {                                                                                                       \
-                error(ERR_TYPEMISMATCH, NULL);                                                                 \
+                ERROR(ERR_TYPEMISMATCH, NULL);                                                                 \
                 return false;                                                                                          \
         }                                                                                                              \
 }
@@ -82,7 +82,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
                         case CONST_NULL:
                                 value = FIELD_NULL;
                                 break;
-                        default: error(ERR_INTERNALERR, NULL);
+                        default: ERROR(ERR_INTERNALERR, NULL);
                                 break;
                 }
                 offset_t datum = 0;
@@ -104,7 +104,7 @@ static bool update_in_place_constant(arr_it *it, constant_e constant)
                         case CONST_NULL:
                                 insert_null(&ins);
                                 break;
-                        default: error(ERR_INTERNALERR, NULL);
+                        default: ERROR(ERR_INTERNALERR, NULL);
                                 break;
                 }
 
@@ -135,7 +135,7 @@ bool internal_arr_it_update_string(arr_it *it, const char *str)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(str)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_arr_it_update_binary(arr_it *it, const void *base, size_t nbytes, const char *file_ext, const char *type)
@@ -146,7 +146,7 @@ bool internal_arr_it_update_binary(arr_it *it, const void *base, size_t nbytes, 
         UNUSED(nbytes)
         UNUSED(file_ext)
         UNUSED(type)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *internal_arr_it_update_array_begin(arr_state *state, arr_it *it)
@@ -154,7 +154,7 @@ insert *internal_arr_it_update_array_begin(arr_state *state, arr_it *it)
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -162,7 +162,7 @@ bool internal_arr_it_update_array_end(arr_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *internal_arr_it_update_column_begin(col_state *state, arr_it *it)
@@ -170,7 +170,7 @@ insert *internal_arr_it_update_column_begin(col_state *state, arr_it *it)
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -178,7 +178,7 @@ bool internal_arr_it_update_column_end(col_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *internal_arr_it_update_object_begin(obj_state *state, arr_it *it)
@@ -186,7 +186,7 @@ insert *internal_arr_it_update_object_begin(obj_state *state, arr_it *it)
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -194,7 +194,7 @@ bool internal_arr_it_update_object_end(obj_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_arr_it_update_from_carbon(arr_it *it, const rec *src)
@@ -202,7 +202,7 @@ bool internal_arr_it_update_from_carbon(arr_it *it, const rec *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_arr_it_update_from_array(arr_it *it, const arr_it *src)
@@ -210,7 +210,7 @@ bool internal_arr_it_update_from_array(arr_it *it, const arr_it *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_arr_it_update_from_object(arr_it *it, const obj_it *src)
@@ -218,7 +218,7 @@ bool internal_arr_it_update_from_object(arr_it *it, const obj_it *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_arr_it_update_from_column(arr_it *it, const col_it *src)
@@ -226,7 +226,7 @@ bool internal_arr_it_update_from_column(arr_it *it, const col_it *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 
@@ -252,7 +252,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
 
 #ifndef NDEBUG
         if (MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8)) {
-                return error(ERR_CORRUPTED, NULL);
+                return ERROR(ERR_CORRUPTED, NULL);
         }
 #endif
 
@@ -260,7 +260,7 @@ bool internal_arr_it_create(arr_it *it, memfile *memfile, offset_t payload_start
 
 #ifndef NDEBUG
         if (!abstract_is_instanceof_array(marker)) {
-            return error(ERR_MARKERMAPPING, "expected array or sub type marker");
+            return ERROR(ERR_MARKERMAPPING, "expected array or sub type marker");
         }
 #endif
 
@@ -517,7 +517,7 @@ item *arr_it_next(arr_it *it)
                                         obj_it_drop(&forward_it);
                                 } break;
                                 default:
-                                        error(ERR_CORRUPTED, NULL);
+                                        ERROR(ERR_CORRUPTED, NULL);
                                         break;
                         }
                 }
@@ -544,10 +544,10 @@ void *internal_arr_it_memfile(arr_it *it)
 
 offset_t internal_arr_it_memfilepos(arr_it *it)
 {
-        if (likely(it != NULL)) {
+        if (LIKELY(it != NULL)) {
                 return MEMFILE_TELL(&it->file);
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return 0;
         }
 }
@@ -600,13 +600,13 @@ bool internal_arr_it_remove(arr_it *it)
                         return false;
                 }
         } else {
-                error(ERR_ILLEGALSTATE, NULL);
+                ERROR(ERR_ILLEGALSTATE, NULL);
                 return false;
         }
 }
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
- * it is a set. In case of any error, a failure is returned. */
+ * it is a set. In case of any ERROR, a failure is returned. */
 bool arr_it_is_multiset(arr_it *it)
 {
         abstract_type_class_e type_class = abstract_list_derivable_to_class(it->list_type);
@@ -614,7 +614,7 @@ bool arr_it_is_multiset(arr_it *it)
 }
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
- * otherwise false. In case of any error, a failure is returned. */
+ * otherwise false. In case of any ERROR, a failure is returned. */
 bool arr_it_is_sorted(arr_it *it)
 {
         abstract_type_class_e type_class = abstract_list_derivable_to_class(it->list_type);

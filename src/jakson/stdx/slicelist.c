@@ -145,7 +145,7 @@ bool slice_list_insert(slice_list_t *list, char **strings, archive_field_sid_t *
                         appenderBounds->max_hash = appenderBounds->max_hash > keyHash ? appenderBounds->max_hash : keyHash;
                         BLOOM_SET(appenderFilter, &keyHash, sizeof(hash32_t));
                         appender->num_elems++;
-                        if (unlikely(appender->num_elems == SLICE_KEY_COLUMN_MAX_ELEMS)) {
+                        if (UNLIKELY(appender->num_elems == SLICE_KEY_COLUMN_MAX_ELEMS)) {
                                 appenderSeal(appender);
                                 appenderNew(list);
                         }
@@ -197,7 +197,7 @@ bool slice_list_lookup(slice_handle *handle, slice_list_t *list, const char *nee
                                                         pairPosition = SLICE_BESEARCH(slice, keyHash, needle);
                                                         break;
                                                 default:
-                                                        return error(ERR_UNSUPFINDSTRAT, NULL);
+                                                        return ERROR(ERR_UNSUPFINDSTRAT, NULL);
                                         }
 
                                         DEBUG(SLICE_LIST_TAG,
@@ -236,7 +236,7 @@ bool slice_list_remove(slice_list_t *list, slice_handle *handle)
 {
         UNUSED(list);
         UNUSED(handle);
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 static void appenderNew(slice_list_t *list)

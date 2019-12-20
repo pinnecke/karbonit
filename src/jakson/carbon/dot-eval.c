@@ -41,7 +41,7 @@ bool dot_eval_begin_mutable(dot_eval *eval, const dot *path,
 {
         eval->doc = context->revised;
         if (!revise_iterator_open(&eval->root_it, context)) {
-            return error(ERR_OPPFAILED, "revise iterator cannot be opened");
+            return ERROR(ERR_OPPFAILED, "revise iterator cannot be opened");
         }
         eval->status = _dot_eval_traverse_array(eval, path, 0, &eval->root_it, true);
         return true;
@@ -326,7 +326,7 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                                                                                  next_path_pos,
                                                                                                  &sub_it);
                                                         }
-                                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                                                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                                 return PATH_INTERNAL;
                                                 }
                                         }
@@ -442,7 +442,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                                 obj_it_drop(&sub_it);
                                                                                 return status;
                                                                         }
-                                                                default: error(ERR_INTERNALERR, NULL);
+                                                                default: ERROR(ERR_INTERNALERR, NULL);
                                                                         return PATH_INTERNAL;
                                                         }
                                                 }
@@ -482,7 +482,7 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                 }
                         }
                                 break;
-                        default: error(ERR_INTERNALERR, NULL);
+                        default: ERROR(ERR_INTERNALERR, NULL);
                                 return PATH_INTERNAL;
                 }
         }

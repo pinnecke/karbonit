@@ -191,7 +191,7 @@ typedef const char *field_string_t;
             value_size = sizeof(column_doc_obj);                                                                   \
             break;                                                                                                     \
         default:  {                                                                                                     \
-            error(ERR_NOTYPE, NULL);                                                                                \
+            ERROR(ERR_NOTYPE, NULL);                                                                                \
             value_size = 0;                                                                                         \
             }                                                                                                       \
     }                                                                                                                  \

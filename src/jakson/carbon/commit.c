@@ -99,7 +99,7 @@ u64 commit_from_str(const char *commit_str)
                         return ret;
                 }
         } else {
-                error(ERR_ILLEGALARG, NULL);
+                ERROR(ERR_ILLEGALARG, NULL);
                 return 0;
         }
 }

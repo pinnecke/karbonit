@@ -23,7 +23,7 @@
 static inline void traverse_impl_##fn_name(traverser *t)                                                               \
 {                                                                                                                      \
         assert(t);                                                                                                     \
-        if (likely(t->impl.fn.fn_name != NULL)) {                                                                      \
+        if (LIKELY(t->impl.fn.fn_name != NULL)) {                                                                      \
                 t->impl.fn.fn_name(&t->impl.extra);                                                                    \
         }                                                                                                              \
 }
@@ -35,7 +35,7 @@ TRAVERSE_IMPL_SETUP(drop)
 static inline path_policy_e traverse_impl_##fn_name(traverser *t)                                                      \
 {                                                                                                                      \
         assert(t);                                                                                                     \
-        if (likely(t->impl.fn.fn_name != NULL)) {                                                                      \
+        if (LIKELY(t->impl.fn.fn_name != NULL)) {                                                                      \
                 return t->impl.fn.fn_name((VECTOR_PEEK(&t->context, container_cntx))->container.arg_name,              \
                                           &t->info, &t->impl.extra);                                                   \
         } else {                                                                                                       \

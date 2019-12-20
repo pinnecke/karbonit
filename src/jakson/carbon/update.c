@@ -22,7 +22,7 @@
 #include <jakson/carbon/revise.h>
 #include <jakson/utils/numbers.h>
 
-#define try_array_update(type_match, in_place_update_fn, insert_fn)                                                    \
+#define TRY_ARRAY_UPDATE(type_match, in_place_update_fn, insert_fn)                                                    \
 ({                                                                                                                     \
         field_e type_is = 0;                                                                            \
         arr_it_field_type(&type_is, it);                                                                      \
@@ -47,7 +47,7 @@
 #define DEFINE_ARRAY_UPDATE_FUNCTION(type_name, type_match, in_place_update_fn, insert_fn)                             \
 static bool array_update_##type_name(arr_it *it, type_name value)                                       \
 {                                                                                                                      \
-        return try_array_update(type_match, in_place_update_fn, insert_fn);                                            \
+        return TRY_ARRAY_UPDATE(type_match, in_place_update_fn, insert_fn);                                            \
 }
 
 DEFINE_ARRAY_UPDATE_FUNCTION(u8, FIELD_NUMBER_U8, internal_arr_it_update_u8, insert_u8)
@@ -75,7 +75,7 @@ DEFINE_ARRAY_UPDATE_FUNCTION(i64, FIELD_NUMBER_I64, internal_arr_it_update_i64,
 DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_float,
                              insert_float)
 
-#define try_update_generic(context, path, array_exec, column_exec)                                                     \
+#define TRY_UPDATE_GENERIC(context, path, array_exec, column_exec)                                                     \
 ({                                                                                                                     \
         update updater;                                                                                   \
         if (create(&updater, context, path)) {                                                                         \
@@ -91,19 +91,19 @@ DEFINE_ARRAY_UPDATE_FUNCTION(float, FIELD_NUMBER_FLOAT, internal_arr_it_update_f
                                 column_exec;                                                                           \
                         } break;                                                                                       \
                         default:                                                                                       \
-                                return error(ERR_INTERNALERR, "unknown container type for update operation");                                            \
+                                return ERROR(ERR_INTERNALERR, "unknown container type for update operation");                                            \
                         }                                                                                              \
                 }                                                                                                      \
         }                                                                                                              \
         true;                                                                                                        \
 })
 
-#define try_update_value(context, path, value, array_update_fn, column_update_fn)                                      \
-        try_update_generic(context, path, (array_update_fn(arrayerator(&updater), value)),                          \
+#define TRY_UPDATE_VALUE(context, path, value, array_update_fn, column_update_fn)                                      \
+        TRY_UPDATE_GENERIC(context, path, (array_update_fn(arrayerator(&updater), value)),                          \
                            (column_update_fn(it, elem_pos, value)) )
 
-#define try_update(context, path, array_update_fn, column_update_fn)                                                   \
-        try_update_generic(context, path, (array_update_fn(arrayerator(&updater))), (column_update_fn(it, elem_pos)))
+#define TRY_UPDATE(context, path, array_update_fn, column_update_fn)                                                   \
+        TRY_UPDATE_GENERIC(context, path, (array_update_fn(arrayerator(&updater))), (column_update_fn(it, elem_pos)))
 
 
 static bool
@@ -127,7 +127,7 @@ static bool resolve_path(update *updater)
 
 static bool path_resolved(update *updater)
 {
-        return dot_eval_has_result(&updater->eval);
+        return DOT_EVAL_HAS_RESULT(&updater->eval);
 }
 
 static bool column_update_u8(col_it *it, u32 pos, u8 value)
@@ -135,7 +135,7 @@ static bool column_update_u8(col_it *it, u32 pos, u8 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -144,7 +144,7 @@ static bool column_update_u16(col_it *it, u32 pos, u16 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -153,7 +153,7 @@ static bool column_update_u32(col_it *it, u32 pos, u32 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -162,7 +162,7 @@ static bool column_update_u64(col_it *it, u32 pos, u64 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -171,7 +171,7 @@ static bool column_update_i8(col_it *it, u32 pos, i8 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -180,7 +180,7 @@ static bool column_update_i16(col_it *it, u32 pos, i16 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -189,7 +189,7 @@ static bool column_update_i32(col_it *it, u32 pos, i32 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -198,7 +198,7 @@ static bool column_update_i64(col_it *it, u32 pos, i64 value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -207,7 +207,7 @@ static bool column_update_float(col_it *it, u32 pos, float value)
         UNUSED(it);
         UNUSED(pos);
         UNUSED(value);
-        error(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL);    // TODO: Implement
         return false;
 }
 
@@ -231,7 +231,7 @@ static inline col_it *column_iterator(u32 *elem_pos, update *updater)
                 status = func(context, &compiled_path);                                                                \
                 dot_drop(&compiled_path);                                                                   \
         } else {                                                                                                       \
-                return error(ERR_DOT_PATH_PARSERR, "path string parsing failed");                             \
+                return ERROR(ERR_DOT_PATH_PARSERR, "path string parsing failed");                             \
         }                                                                                                              \
         status;                                                                                                        \
 })
@@ -244,7 +244,7 @@ static inline col_it *column_iterator(u32 *elem_pos, update *updater)
                 status = func(context, &compiled_path, __VA_ARGS__);                                                   \
                 dot_drop(&compiled_path);                                                                   \
         } else {                                                                                                       \
-                return error(ERR_DOT_PATH_PARSERR, "path string parsing failed");                             \
+                return ERROR(ERR_DOT_PATH_PARSERR, "path string parsing failed");                             \
         }                                                                                                              \
         status;                                                                                                        \
 })
@@ -322,7 +322,7 @@ bool update_set_unsigned(rev *context, const char *path, u64 value)
                 case NUMBER_U64:
                         return update_set_u64(context, path, (u64) value);
                 default:
-                        return error(ERR_INTERNALERR, "update unsigned value failed: limit exeeded");
+                        return ERROR(ERR_INTERNALERR, "update unsigned value failed: limit exeeded");
         }
 }
 
@@ -338,7 +338,7 @@ bool update_set_signed(rev *context, const char *path, i64 value)
                 case NUMBER_I64:
                         return update_set_i64(context, path, (i64) value);
                 default:
-                        return error(ERR_INTERNALERR, "update signed value failed: limit exeeded");
+                        return ERROR(ERR_INTERNALERR, "update signed value failed: limit exeeded");
         }
 }
 
@@ -349,7 +349,7 @@ bool update_set_string(rev *context, const char *path, const char *value)
         UNUSED(path);
         UNUSED(value);
 
-        return error(ERR_NOTIMPLEMENTED, "update_set_string");
+        return ERROR(ERR_NOTIMPLEMENTED, "update_set_string");
 }
 
 bool update_set_binary(rev *context, const char *path, const void *value, size_t nbytes,
@@ -362,7 +362,7 @@ bool update_set_binary(rev *context, const char *path, const void *value, size_t
         UNUSED(file_ext);
         UNUSED(user_type);
         UNUSED(path);
-        return error(ERR_NOTIMPLEMENTED, "update_set_binary");
+        return ERROR(ERR_NOTIMPLEMENTED, "update_set_binary");
 }
 
 insert *update_set_array_begin(rev *context, const char *path,
@@ -374,7 +374,7 @@ insert *update_set_array_begin(rev *context, const char *path,
         UNUSED(state_out);
         UNUSED(array_capacity);
         UNUSED(path);
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -382,7 +382,7 @@ bool update_set_array_end(arr_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *update_set_column_begin(rev *context, const char *path,
@@ -395,7 +395,7 @@ insert *update_set_column_begin(rev *context, const char *path,
         UNUSED(type);
         UNUSED(cap);
         UNUSED(path);
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -403,78 +403,78 @@ bool update_set_column_end(col_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 bool update_set_null_compiled(rev *context, const dot *path)
 {
-        return try_update(context, path, internal_arr_it_update_null, col_it_update_set_null);
+        return TRY_UPDATE(context, path, internal_arr_it_update_null, col_it_update_set_null);
 }
 
 bool update_set_true_compiled(rev *context, const dot *path)
 {
-        return try_update(context, path, internal_arr_it_update_true, col_it_update_set_true);
+        return TRY_UPDATE(context, path, internal_arr_it_update_true, col_it_update_set_true);
 }
 
 bool update_set_false_compiled(rev *context, const dot *path)
 {
-        return try_update(context, path, internal_arr_it_update_false, col_it_update_set_false);
+        return TRY_UPDATE(context, path, internal_arr_it_update_false, col_it_update_set_false);
 }
 
 bool update_set_u8_compiled(rev *context, const dot *path,
                                    u8 value)
 {
-        return try_update_value(context, path, value, array_update_u8, column_update_u8);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_u8, column_update_u8);
 }
 
 bool update_set_u16_compiled(rev *context, const dot *path,
                                     u16 value)
 {
-        return try_update_value(context, path, value, array_update_u16, column_update_u16);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_u16, column_update_u16);
 }
 
 bool update_set_u32_compiled(rev *context, const dot *path,
                                     u32 value)
 {
-        return try_update_value(context, path, value, array_update_u32, column_update_u32);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_u32, column_update_u32);
 }
 
 bool update_set_u64_compiled(rev *context, const dot *path,
                                     u64 value)
 {
-        return try_update_value(context, path, value, array_update_u64, column_update_u64);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_u64, column_update_u64);
 }
 
 bool update_set_i8_compiled(rev *context, const dot *path,
                                    i8 value)
 {
-        return try_update_value(context, path, value, array_update_i8, column_update_i8);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_i8, column_update_i8);
 }
 
 bool update_set_i16_compiled(rev *context, const dot *path,
                                     i16 value)
 {
-        return try_update_value(context, path, value, array_update_i16, column_update_i16);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_i16, column_update_i16);
 }
 
 bool update_set_i32_compiled(rev *context, const dot *path,
                                     i32 value)
 {
-        return try_update_value(context, path, value, array_update_i32, column_update_i32);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_i32, column_update_i32);
 }
 
 bool update_set_i64_compiled(rev *context, const dot *path,
                                     i64 value)
 {
-        return try_update_value(context, path, value, array_update_i64, column_update_i64);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_i64, column_update_i64);
 }
 
 bool update_set_float_compiled(rev *context, const dot *path,
                                       float value)
 {
-        return try_update_value(context, path, value, array_update_float, column_update_float);
+        return TRY_UPDATE_VALUE(context, path, value, array_update_float, column_update_float);
 }
 
 bool update_set_unsigned_compiled(rev *context, const dot *path,
@@ -490,7 +490,7 @@ bool update_set_unsigned_compiled(rev *context, const dot *path,
                 case NUMBER_U64:
                         return update_set_u64_compiled(context, path, (u64) value);
                 default:
-                        return error(ERR_INTERNALERR, "unknown type for container update operation");
+                        return ERROR(ERR_INTERNALERR, "unknown type for container update operation");
         }
 }
 
@@ -507,7 +507,7 @@ bool update_set_signed_compiled(rev *context, const dot *path,
                 case NUMBER_I64:
                         return update_set_i64_compiled(context, path, (i64) value);
                 default:
-                        return error(ERR_INTERNALERR, "unknown type for container update operation");
+                        return ERROR(ERR_INTERNALERR, "unknown type for container update operation");
         }
 }
 
@@ -519,7 +519,7 @@ bool update_set_string_compiled(rev *context, const dot *path,
         UNUSED(path);
         UNUSED(value);
 
-        return error(ERR_NOTIMPLEMENTED, "update_set_binary_compiled");
+        return ERROR(ERR_NOTIMPLEMENTED, "update_set_binary_compiled");
 }
 
 bool update_set_binary_compiled(rev *context, const dot *path,
@@ -533,7 +533,7 @@ bool update_set_binary_compiled(rev *context, const dot *path,
         UNUSED(user_type);
         UNUSED(path);
 
-        return error(ERR_NOTIMPLEMENTED, "update_set_binary_compiled");
+        return ERROR(ERR_NOTIMPLEMENTED, "update_set_binary_compiled");
 }
 
 insert *update_set_array_begin_compiled(rev *context,
@@ -546,7 +546,7 @@ insert *update_set_array_begin_compiled(rev *context,
         UNUSED(state_out);
         UNUSED(array_capacity);
         UNUSED(path);
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -554,7 +554,7 @@ bool update_set_array_end_compiled(arr_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *update_set_column_begin_compiled(rev *context,
@@ -569,7 +569,7 @@ insert *update_set_column_begin_compiled(rev *context,
         UNUSED(type);
         UNUSED(cap);
         UNUSED(path);
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -577,7 +577,7 @@ bool update_set_column_end_compiled(col_state *state_in)
 {
         // TODO: Implement
         UNUSED(state_in);
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

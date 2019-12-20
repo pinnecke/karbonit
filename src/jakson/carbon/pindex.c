@@ -246,7 +246,7 @@ static void record_ref_create(memfile *memfile, rec *doc)
                         key_update_string_wnchar(memfile, key, len);
                 }
                         break;
-                default: error(ERR_TYPEMISMATCH, NULL);
+                default: ERROR(ERR_TYPEMISMATCH, NULL);
         }
 
         /** write record version */
@@ -385,7 +385,7 @@ static void object_build_index(struct pindex_node *parent, obj_it *elem_it)
                         object_traverse(parent, &it);
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -476,7 +476,7 @@ static void array_build_index(struct pindex_node *parent, arr_it *elem_it)
                         object_traverse(parent, &it);
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -587,7 +587,7 @@ static void container_field_flat(memfile *file, struct pindex_node *node)
                          * subsequent path element must exist */
                         container_contents_flat(file, node);
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -603,7 +603,7 @@ static void array_flat(memfile *file, struct pindex_node *node)
 {
         MEMFILE_WRITE_BYTE(file, PATH_MARKER_ARRAY_NODE);
         field_ref_write(file, node);
-        if (unlikely(node->type == PINDEX_ROOT)) {
+        if (UNLIKELY(node->type == PINDEX_ROOT)) {
                 container_contents_flat(file, node);
         } else {
                 container_field_flat(file, node);
@@ -624,7 +624,7 @@ static void node_into_record(insert *ins, pindex *index)
                 case PATH_MARKER_COLUMN_NODE:
                         column_into_record(ins, index);
                         break;
-                default: error(ERR_CORRUPTED, NULL);
+                default: ERROR(ERR_CORRUPTED, NULL);
         }
 }
 
@@ -643,7 +643,7 @@ static void node_to_str(str_buf *str, pindex *index, unsigned intent_level)
                 case PATH_MARKER_COLUMN_NODE:
                         column_to_str(str, index, intent_level);
                         break;
-                default: error(ERR_CORRUPTED, NULL);
+                default: ERROR(ERR_CORRUPTED, NULL);
         }
 }
 
@@ -852,7 +852,7 @@ container_to_str(str_buf *str, pindex *index, u8 field_type, unsigned intent_lev
                         container_contents_to_str(str, index, ++intent_level);
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -928,7 +928,7 @@ static void container_into_record(insert *ins, pindex *index, u8 field_type)
                         container_contents_into_record(ins, index);
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -980,7 +980,7 @@ static void array_into_record(insert *ins, pindex *index, bool is_root)
 
         obj_state object;
         insert *oins = insert_prop_object_begin(&object, ins, "nodes", 1024);
-        if (unlikely(is_root)) {
+        if (UNLIKELY(is_root)) {
                 container_contents_into_record(oins, index);
         } else {
                 container_into_record(oins, index, field_type);
@@ -1000,7 +1000,7 @@ array_to_str(str_buf *str, pindex *index, bool is_root, unsigned intent_level)
 
         u8 field_type = field_ref_to_str(str, index);
 
-        if (unlikely(is_root)) {
+        if (UNLIKELY(is_root)) {
                 container_contents_to_str(str, index, intent_level);
         } else {
                 container_to_str(str, index, field_type, intent_level);
@@ -1026,7 +1026,7 @@ static void node_flat(memfile *file, struct pindex_node *node)
                 case PINDEX_COLUMN_INDEX:
                         column_flat(file, node);
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         return;
         }
 }
@@ -1096,7 +1096,7 @@ static void record_ref_to_str(str_buf *str, pindex *index)
                         str_buf_add_char(str, ')');
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
         u64 commit_hash = MEMFILE_READ_U64(&index->memfile);
         str_buf_add_char(str, '[');
@@ -1130,7 +1130,7 @@ static void record_ref_to_record(insert *roins, pindex *index)
                         insert_prop_nchar(roins, "key-value", key, key_len);
                 }
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
         }
         u64 commit_hash = MEMFILE_READ_U64(&index->memfile);
         str_buf str;
@@ -1190,7 +1190,7 @@ bool pindex_key_unsigned_value(u64 *key, pindex *index)
 {
         key_e rec_key_type;
         u64 ret = *(u64 *) record_ref_read(&rec_key_type, NULL, NULL, &index->memfile);
-        error_if_and_return(rec_key_type != KEY_AUTOKEY && rec_key_type != KEY_UKEY, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(rec_key_type != KEY_AUTOKEY && rec_key_type != KEY_UKEY, ERR_TYPEMISMATCH, NULL);
         *key = ret;
         return true;
 }
@@ -1199,7 +1199,7 @@ bool pindex_key_signed_value(i64 *key, pindex *index)
 {
         key_e rec_key_type;
         i64 ret = *(i64 *) record_ref_read(&rec_key_type, NULL, NULL, &index->memfile);
-        error_if_and_return(rec_key_type != KEY_IKEY, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(rec_key_type != KEY_IKEY, ERR_TYPEMISMATCH, NULL);
         *key = ret;
         return true;
 }
@@ -1209,10 +1209,10 @@ const char *pindex_key_string_value(u64 *str_len, pindex *index)
         if (str_len && index) {
                 key_e rec_key_type;
                 const char *ret = (const char *) record_ref_read(&rec_key_type, str_len, NULL, &index->memfile);
-                error_if_and_return(rec_key_type != KEY_SKEY, ERR_TYPEMISMATCH, NULL);
+                ERROR_IF_AND_RETURN(rec_key_type != KEY_SKEY, ERR_TYPEMISMATCH, NULL);
                 return ret;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -1222,11 +1222,11 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
         u64 index_hash = 0, doc_hash = 0;
         pindex_commit_hash(&index_hash, index);
         rec_commit_hash(&doc_hash, doc);
-        if (likely(index_hash == doc_hash)) {
+        if (LIKELY(index_hash == doc_hash)) {
                 key_e index_key_type, doc_key_type;
                 pindex_key_type(&index_key_type, index);
                 rec_key_type(&doc_key_type, doc);
-                if (likely(index_key_type == doc_key_type)) {
+                if (LIKELY(index_key_type == doc_key_type)) {
                         switch (index_key_type) {
                                 case KEY_NOKEY:
                                         return true;
@@ -1251,7 +1251,7 @@ bool pindex_indexes_doc(pindex *index, rec *doc)
                                         return (index_key_len == doc_key_len) && (strcmp(index_key, doc_key) == 0);
                                 }
                                 default:
-                                        return error(ERR_TYPEMISMATCH, NULL);
+                                        return ERROR(ERR_TYPEMISMATCH, NULL);
                         }
                 } else {
                         return false;
@@ -1275,7 +1275,7 @@ bool pindex_it_open(pindex_it *it, pindex *index,
                 it->container = ARRAY;
                 return true;
         } else {
-                return error(ERR_NOTINDEXED, NULL);
+                return ERROR(ERR_NOTINDEXED, NULL);
         }
 }
 

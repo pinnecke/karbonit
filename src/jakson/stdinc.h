@@ -246,7 +246,7 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 #define ZERO_MEMORY(dst, len)                                                                                      \
     memset((char *) (dst), 0, (len));
 
-#define cast(type, name, src)                                                                                      \
+#define CAST(type, name, src)                                                                                      \
       type name = (type) src
 
 #define UNUSED(x)   (void)(x);
@@ -266,21 +266,21 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 
 #define CHECK_SUCCESS(x)                                                                                           \
 {                                                                                                                      \
-    if (unlikely(!x)) {                                                                                                \
+    if (UNLIKELY(!x)) {                                                                                                \
         return x;                                                                                                      \
     }                                                                                                                  \
 }
 
 #define SUCCESS_OR_JUMP(expr, label)                                                                               \
 {                                                                                                                      \
-    if (unlikely(!expr)) {                                                                                             \
+    if (UNLIKELY(!expr)) {                                                                                             \
         goto label;                                                                                                    \
     }                                                                                                                  \
 }
 
-#define likely(x)                                                                                                      \
+#define LIKELY(x)                                                                                                      \
     __builtin_expect((x), 1)
-#define unlikely(x)                                                                                                    \
+#define UNLIKELY(x)                                                                                                    \
     __builtin_expect((x), 0)
 
 #define PREFETCH_READ(adr)                                                                                             \
@@ -298,7 +298,7 @@ MAYBE_UNUSED static const char *basic_type_to_system_type_str(enum archive_field
 #define ARE_BITS_SET(mask, bit)   (((bit) & mask ) == (bit))
 
 #define ERROR_IF_NOT_IMPLEMENTED(err, x, func)                                                                         \
-    OPTIONAL(x->func == NULL, error(ERR_NOTIMPLEMENTED, NULL))
+    OPTIONAL(x->func == NULL, ERROR(ERR_NOTIMPLEMENTED, NULL))
 
 #define OPTIONAL(expr, stmt)                                                                                       \
     if (expr) { stmt; }

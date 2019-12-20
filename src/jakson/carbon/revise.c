@@ -88,7 +88,7 @@ bool revise_key_generate(unique_id_t *out, rev *context)
                 OPTIONAL_SET(out, oid);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -100,7 +100,7 @@ bool revise_key_set_unsigned(rev *context, u64 key_value)
                 key_unsigned_set(context->revised, key_value);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -112,7 +112,7 @@ bool revise_key_set_signed(rev *context, i64 key_value)
                 key_signed_set(context->revised, key_value);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -124,7 +124,7 @@ bool revise_key_set_string(rev *context, const char *key_value)
                 key_string_set(context->revised, key_value);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -142,8 +142,8 @@ void revise_set_list_type(rev *context, list_type_e derivation)
 bool revise_iterator_open(arr_it *it, rev *context)
 {
         offset_t payload_start = INTERNAL_PAYLOAD_AFTER_HEADER(context->revised);
-        if (unlikely(context->revised->file.mode != READ_WRITE)) {
-                return error(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
+        if (UNLIKELY(context->revised->file.mode != READ_WRITE)) {
+                return ERROR(ERR_PERMISSIONS, "revise iterator on read-only record invoked");
         }
         return internal_arr_it_create(it, &context->revised->file, payload_start);
 }
@@ -190,13 +190,13 @@ bool revise_remove(const char *path, rev *context)
                                         result = col_it_remove(it, elem_pos);
                                 }
                                         break;
-                                default: error(ERR_INTERNALERR, NULL);
+                                default: ERROR(ERR_INTERNALERR, NULL);
                                         result = false;
                         }
                 }
                 return result;
         } else {
-                error(ERR_DOT_PATH_PARSERR, NULL);
+                ERROR(ERR_DOT_PATH_PARSERR, NULL);
                 return false;
         }
 }
@@ -275,7 +275,7 @@ static bool internal_pack_array(arr_it *it)
 
                 if (!is_array_end) {
 
-                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
+                        ERROR_IF_AND_RETURN(!is_empty_slot, ERR_CORRUPTED, NULL);
                         offset_t first_empty_slot_offset = MEMFILE_TELL(&this_array.file);
                         char final;
                         while ((final = *MEMFILE_READ(&this_array.file, sizeof(char))) == 0) {}
@@ -331,7 +331,7 @@ static bool internal_pack_object(obj_it *it)
 
                 if (!is_object_end) {
 
-                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
+                        ERROR_IF_AND_RETURN(!is_empty_slot, ERR_CORRUPTED, NULL);
                         offset_t first_empty_slot_offset = MEMFILE_TELL(&this_object_it.file);
                         char final;
                         while ((final = *MEMFILE_READ(&this_object_it.file, sizeof(char))) == 0) {}

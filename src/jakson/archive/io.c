@@ -34,7 +34,7 @@ bool io_context_create(archive_io_context **context, const char *file_path)
         archive_io_context *result = MALLOC(sizeof(archive_io_context));
 
         if (!result) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -43,7 +43,7 @@ bool io_context_create(archive_io_context **context, const char *file_path)
         result->file = fopen(file_path, "r");
 
         if (!result->file) {
-                error(ERR_FOPEN_FAILED, NULL);
+                ERROR(ERR_FOPEN_FAILED, NULL);
                 result->file = NULL;
                 return false;
         } else {
@@ -59,7 +59,7 @@ FILE *io_context_lock_and_access(archive_io_context *context)
                 context->last_pos = ftell(context->file);
                 return context->file;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -71,7 +71,7 @@ bool io_context_unlock(archive_io_context *context)
                 spinlock_release(&context->lock);
                 return true;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return false;
         }
 }

@@ -52,7 +52,7 @@ bool hashtable_create(hashtable *map, size_t key_size, size_t value_size,
                 err_code = ERR_DROPFAILED;
         }
         error_handling:
-        error(err_code, NULL);
+        ERROR(err_code, NULL);
         return false;
 }
 
@@ -65,7 +65,7 @@ bool hashtable_drop(hashtable *map)
         status &= vector_drop(&map->key_data);
 
         if (!status) {
-                error(ERR_DROPFAILED, NULL);
+                ERROR(ERR_DROPFAILED, NULL);
         }
 
         return status;
@@ -98,7 +98,7 @@ hashtable *hashtable_cpy(hashtable *src)
 
                 return cpy;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -120,7 +120,7 @@ bool hashtable_clear(hashtable *map)
                    && map->value_data.num_elems <= map->table.num_elems);
 
         if (!status) {
-                error(ERR_OPPFAILED, NULL);
+                ERROR(ERR_OPPFAILED, NULL);
         }
 
         return status;
@@ -248,7 +248,7 @@ bool hashtable_insert_or_update(hashtable *map, const void *keys, const void *va
 
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -312,7 +312,7 @@ bool hashtable_serialize(FILE *file, hashtable *table)
         hashtable_header header = {.marker = MARKER_SYMBOL_HASHTABLE_HEADER, .size = table
                 ->size, .key_data_off = key_data_off, .value_data_off = value_data_off, .table_off = table_off};
         int nwrite = fwrite(&header, sizeof(hashtable_header), 1, file);
-        error_if_and_return(nwrite != 1, ERR_FWRITE_FAILED, NULL);
+        ERROR_IF_AND_RETURN(nwrite != 1, ERR_FWRITE_FAILED, NULL);
         fseek(file, end, SEEK_SET);
         return true;
 
@@ -360,7 +360,7 @@ bool hashtable_deserialize(hashtable *table, FILE *file)
 
         error_handling:
         fseek(file, start, SEEK_SET);
-        error(err_code, NULL);
+        ERROR(err_code, NULL);
         return false;
 }
 
@@ -368,7 +368,7 @@ bool hashtable_remove_if_contained(hashtable *map, const void *keys, size_t num_
 {
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -468,7 +468,7 @@ bool hashtable_rehash(hashtable *map)
                         const void *old_key = _hash_table_get_bucket_key(bucket, cpy);
                         const void *old_value = get_bucket_value(bucket, cpy);
                         if (!hashtable_insert_or_update(map, old_key, old_value, 1)) {
-                                return error(ERR_REHASH_NOROLLBACK, NULL);
+                                return ERROR(ERR_REHASH_NOROLLBACK, NULL);
                         }
                 }
         }

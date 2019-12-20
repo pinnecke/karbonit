@@ -129,7 +129,7 @@ typedef struct item
         INTERNAL_ITEM_GET_VALUE(item, binary, default_value)
 
 #define INTERNAL_ITEM_GET_ITERATOR(it, item, create_fn)                                                                 \
-        if (likely((item)->parent_type == UNTYPED_ARRAY)) {                                                                                   \
+        if (LIKELY((item)->parent_type == UNTYPED_ARRAY)) {                                                                                   \
                 create_fn((it), &((item)->parent.object->file), (item)->parent.array->field_offset);                                                                                        \
         } else {                                                                                   \
                 create_fn((it), &((item)->parent.array->file), (item)->parent.object->field.value.start);                                                                                      \
@@ -189,7 +189,7 @@ typedef struct item
                                         internal_obj_it_update_i64(subj->parent.ojbect, i64_value) :            \
                 break;                                                                                                 \
                 default:                                                                                               \
-                        error(ERR_INTERNALERR, NULL)                                                                   \
+                        ERROR(ERR_INTERNALERR, NULL)                                                                   \
                 break;                                                                                                 \
         }                                                                                                              \
         ret;                                                                                                           \
@@ -220,7 +220,7 @@ typedef struct item
                                         internal_obj_it_update_u64(subj->parent.object, u64_value) :            \
                 break;                                                                                                 \
                 default:                                                                                               \
-                        error(ERR_INTERNALERR, NULL)                                                                   \
+                        ERROR(ERR_INTERNALERR, NULL)                                                                   \
                 break;                                                                                                 \
         }                                                                                                              \
         ret;                                                                                                           \

@@ -71,7 +71,7 @@ insert * rec_create_begin(rec_new *context, rec *doc,
                 rec_create_empty(&context->original, derivation, type);
                 revise_begin(&context->context, doc, &context->original);
                 if (!revise_iterator_open(context->array, &context->context)) {
-                    error(ERR_OPPFAILED, "cannot open revision iterator");
+                    ERROR(ERR_OPPFAILED, "cannot open revision iterator");
                     return NULL;
                 }
                 arr_it_insert_begin(context->in, context->array);
@@ -123,7 +123,7 @@ bool rec_from_json(rec *doc, const char *json, key_e type,
         json_parser parser;
 
         if (!(json_parse(&data, &status, &parser, json))) {
-                error(ERR_JSONPARSEERR, "parsing JSON file failed");
+                ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
                 return false;
         } else {
                 internal_from_json(doc, &data, type, key, OPTIMIZE);
@@ -179,11 +179,11 @@ bool rec_key_signed_value(i64 *key, rec *doc)
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         MEMFILE_RESTORE_POSITION(&doc->file);
-        if (likely(rec_key_is_signed(type))) {
+        if (LIKELY(rec_key_is_signed(type))) {
                 *key = *((const i64 *) result);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL);
+                ERROR(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
@@ -195,11 +195,11 @@ bool rec_key_unsigned_value(u64 *key, rec *doc)
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(NULL, &type, &doc->file);
         MEMFILE_RESTORE_POSITION(&doc->file);
-        if (likely(rec_key_is_unsigned(type))) {
+        if (LIKELY(rec_key_is_unsigned(type))) {
                 *key = *((const u64 *) result);
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL);
+                ERROR(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
@@ -211,10 +211,10 @@ const char *key_string_value(u64 *len, rec *doc)
         MEMFILE_SEEK(&doc->file, 0);
         const void *result = key_read(len, &type, &doc->file);
         MEMFILE_RESTORE_POSITION(&doc->file);
-        if (likely(rec_key_is_string(type))) {
+        if (LIKELY(rec_key_is_string(type))) {
                 return result;
         } else {
-                error(ERR_TYPEMISMATCH, NULL);
+                ERROR(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }

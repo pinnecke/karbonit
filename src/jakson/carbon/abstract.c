@@ -112,14 +112,14 @@ bool abstract_get_container_subtype(sub_type_e *type, u8 marker)
                         *type = CONTAINER_COLUMN_BOOLEAN;
                         return true;
                 default:
-                        return error(ERR_MARKERMAPPING, "unknown marker encoding an abstract type");
+                        return ERROR(ERR_MARKERMAPPING, "unknown marker encoding an abstract type");
         }
 }
 
 static bool __abstract_is_instanceof(u8 marker, sub_type_e T)
 {
         sub_type_e type;
-        if (likely(abstract_get_container_subtype(&type, marker))) {
+        if (LIKELY(abstract_get_container_subtype(&type, marker))) {
                 return type == T;
         } else {
                 return false;
@@ -409,7 +409,7 @@ bool abstract_derive_list_to(derived_e *concrete, list_container_e is,
                         goto error_case;
         }
 error_case:
-        return error(ERR_INTERNALERR, "unknown list container type");
+        return ERROR(ERR_INTERNALERR, "unknown list container type");
 }
 
 bool abstract_derive_map_to(derived_e *concrete, map_type_e should)
@@ -428,7 +428,7 @@ bool abstract_derive_map_to(derived_e *concrete, map_type_e should)
                         *concrete = SORTED_MAP;
                         return true;
                 default:
-                        return error(ERR_INTERNALERR, "unknown list container type");
+                        return ERROR(ERR_INTERNALERR, "unknown list container type");
         }
 }
 
@@ -458,7 +458,7 @@ bool abstract_get_derived_type(derived_e *type, u8 marker)
                        marker == MSORTED_SET_FLOAT || marker == MUNSORTED_MULTISET_BOOLEAN ||
                        marker == MSORTED_MULTISET_BOOLEAN || marker == MUNSORTED_SET_BOOLEAN ||
                        marker == MSORTED_SET_BOOLEAN)) {
-                return error(ERR_MARKERMAPPING, "unknown marker for abstract derived type");
+                return ERROR(ERR_MARKERMAPPING, "unknown marker for abstract derived type");
         }
         *type = marker;
         return true;

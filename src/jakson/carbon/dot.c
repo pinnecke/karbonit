@@ -163,7 +163,7 @@ bool dot_from_string(dot *path, const char *path_string)
                         case TOKEN_UNKNOWN:
                                 status = ERR_PARSE_UNKNOWN_TOKEN;
                                 goto cleanup_and_error;
-                        default: error(ERR_INTERNALERR, NULL);
+                        default: ERROR(ERR_INTERNALERR, NULL);
                                 break;
                 }
                 path_string = next_token(&token, path_string);
@@ -173,7 +173,7 @@ bool dot_from_string(dot *path, const char *path_string)
 
         cleanup_and_error:
         dot_drop(path);
-        error(status, NULL);
+        ERROR(status, NULL);
         return false;
 }
 
@@ -216,18 +216,18 @@ bool dot_is_empty(const dot *path)
 
 bool dot_type_at(dot_node_type_e *type_out, u32 pos, const dot *path)
 {
-        if (likely(pos < vector_length(&path->nodes))) {
+        if (LIKELY(pos < vector_length(&path->nodes))) {
                 *type_out = VECTOR_GET(&path->nodes, pos, dot_node)->type;
         } else {
-                return error(ERR_OUTOFBOUNDS, NULL);
+                return ERROR(ERR_OUTOFBOUNDS, NULL);
         }
         return true;
 }
 
 bool dot_idx_at(u32 *idx, u32 pos, const dot *path)
 {
-        error_if_and_return(pos >= vector_length(&path->nodes), ERR_OUTOFBOUNDS, NULL);
-        error_if_and_return(VECTOR_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_IDX, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(pos >= vector_length(&path->nodes), ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(VECTOR_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_IDX, ERR_TYPEMISMATCH, NULL);
 
         *idx = VECTOR_GET(&path->nodes, pos, dot_node)->name.idx;
         return true;
@@ -235,8 +235,8 @@ bool dot_idx_at(u32 *idx, u32 pos, const dot *path)
 
 const char *dot_key_at(u32 pos, const dot *path)
 {
-        error_if_and_return(pos >= vector_length(&path->nodes), ERR_OUTOFBOUNDS, NULL);
-        error_if_and_return(VECTOR_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_KEY, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(pos >= vector_length(&path->nodes), ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(VECTOR_GET(&path->nodes, pos, dot_node)->type != DOT_NODE_KEY, ERR_TYPEMISMATCH, NULL);
 
         return VECTOR_GET(&path->nodes, pos, dot_node)->name.string;
 }

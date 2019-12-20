@@ -97,7 +97,7 @@ bool key_write_unsigned(memfile *file, u64 key)
                 MEMFILE_WRITE(file, &key, sizeof(u64));
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -110,7 +110,7 @@ bool key_write_signed(memfile *file, i64 key)
                 MEMFILE_WRITE(file, &key, sizeof(i64));
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -127,7 +127,7 @@ bool key_update_string_wnchar(memfile *file, const char *key, size_t length)
                 string_field_update_wnchar(file, key, length);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -140,7 +140,7 @@ bool key_write_string(memfile *file, const char *key)
                 string_field_write(file, key);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, NULL);
+                return ERROR(ERR_TYPEMISMATCH, NULL);
         }
 }
 
@@ -169,7 +169,7 @@ bool key_read_type(key_e *out, memfile *file)
                         OPTIONAL_SET(out, KEY_SKEY)
                         break;
                 default:
-                        return error(ERR_INTERNALERR, NULL);
+                        return ERROR(ERR_INTERNALERR, NULL);
         }
         return true;
 }
@@ -196,7 +196,7 @@ const void *key_read(u64 *len, key_e *out, memfile *file)
                         return MEMFILE_READ_TYPE(file, i64);
                 case KEY_SKEY:
                         return string_field_read(len, file);
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         return NULL;
         }
 }
@@ -214,7 +214,7 @@ const char *key_type_str(key_e type)
                         return "ikey";
                 case KEY_SKEY:
                         return "skey";
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         return NULL;
         }
 }

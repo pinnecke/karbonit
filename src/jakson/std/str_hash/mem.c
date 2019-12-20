@@ -202,7 +202,7 @@ this_fetch_bulk(vec ofType(bucket) *buckets, archive_field_sid_t *values_out, bo
         for (size_t i = 0; i < num_keys; i++) {
                 struct bucket *bucket = data + bucket_idxs[i];
                 const char *key = keys[i];
-                if (likely(key != NULL)) {
+                if (LIKELY(key != NULL)) {
                         slice_list_lookup(&result_handle, &bucket->slice_list, key);
                 } else {
                         result_handle.is_contained = true;
@@ -323,7 +323,7 @@ static int this_update_key_fast(str_hash *self, const archive_field_sid_t *value
         UNUSED(values);
         UNUSED(keys);
         UNUSED(num_keys);
-        error(ERR_NOTIMPL, NULL);
+        ERROR(ERR_NOTIMPL, NULL);
         return false;
 }
 
@@ -341,7 +341,7 @@ static int simple_map_remove(struct mem_extra *extra, size_t *bucket_idxs, char 
 
                 /** Optimization 1/5: EMPTY GUARD (but before "find" call); if this bucket has no occupied slots, do not perform any lookup and comparison */
                 slice_list_lookup(&handle, &bucket->slice_list, key);
-                if (likely(handle.is_contained)) {
+                if (LIKELY(handle.is_contained)) {
                         slice_list_remove(&bucket->slice_list, &handle);
                 }
         }
@@ -386,7 +386,7 @@ static int _str_hash_mem_create_extra(str_hash *self, size_t num_buckets, size_t
                 CHECK_SUCCESS(bucket_create(data, num_buckets, cap_buckets));
                 return true;
         } else {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return false;
         }
 }

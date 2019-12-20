@@ -81,7 +81,7 @@ bool list_by_column_type(list_container_e *out, int field_type)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                         *out = LIST_COLUMN_BOOLEAN;
                         break;
-                default: error(ERR_TYPEMISMATCH, NULL);
+                default: ERROR(ERR_TYPEMISMATCH, NULL);
                         return false;
         }
         return true;

@@ -31,7 +31,7 @@ static bool init_object_from_memfile(archive_object *obj, memfile *memfile)
 
         object_off = MEMFILE_TELL(memfile);
         header = MEMFILE_READ_TYPE(memfile, object_header);
-        if (unlikely(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
+        if (UNLIKELY(header->marker != MARKER_SYMBOL_OBJECT_BEGIN)) {
                 return false;
         }
 
@@ -105,7 +105,7 @@ inline static offset_t offset_by_state(prop_iter *iter)
                 case PROP_ITER_OBJECT_ARRAYS:
                         return iter->object.prop_offsets.object_arrays;
                 default: {
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return 0;
                 }
         }
@@ -373,7 +373,7 @@ static prop_iter_state_e prop_iter_state_next(prop_iter *iter)
                 case PROP_ITER_DONE:
                         break;
                 default: {
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return PROP_ITER_ERR;
                 }
         }
@@ -401,10 +401,10 @@ static bool archive_prop_iter_from_memblock(prop_iter *iter, u16 mask,
         iter->mask = mask;
         MEMFILE_OPEN(&iter->record_table_memfile, memblock, READ_ONLY);
         if (!MEMFILE_SEEK(&iter->record_table_memfile, object_offset)) {
-                return error(ERR_MEMFILESEEK_FAILED, NULL);
+                return ERROR(ERR_MEMFILESEEK_FAILED, NULL);
         }
         if (!init_object_from_memfile(&iter->object, &iter->record_table_memfile)) {
-                return error(ERR_INTERNALERR, NULL);
+                return ERROR(ERR_INTERNALERR, NULL);
         }
 
         prop_iter_state_init(iter);
@@ -467,7 +467,7 @@ static enum archive_field_type get_basic_type(prop_iter_state_e state)
                 case PROP_ITER_OBJECT_ARRAYS:
                         return ARCHIVE_FIELD_OBJECT;
                 default: {
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return ARCHIVE_FIELD_ERR;
                 }
         }
@@ -505,7 +505,7 @@ static bool is_array_type(prop_iter_state_e state)
                 case PROP_ITER_OBJECT_ARRAYS:
                         return true;
                 default:
-                        return error(ERR_INTERNALERR, NULL);
+                        return ERROR(ERR_INTERNALERR, NULL);
         }
 }
 
@@ -526,7 +526,7 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
 
                                 if (value_vector
                                     && !archive_value_vector_from_prop_iter(value_vector, prop_iter)) {
-                                        error(ERR_VITEROPEN_FAILED, NULL);
+                                        ERROR(ERR_VITEROPEN_FAILED, NULL);
                                         return false;
                                 }
                         }
@@ -537,7 +537,7 @@ bool archive_prop_iter_next(prop_iter_mode_e *type, archive_value_vector *value_
                                              prop_iter->record_table_memfile.memblock,
                                              READ_ONLY);
                         } break;
-                        default: error(ERR_INTERNALERR, NULL);
+                        default: ERROR(ERR_INTERNALERR, NULL);
                                 return false;
                 }
                 *type = prop_iter->mode;
@@ -555,7 +555,7 @@ archive_collection_iter_get_keys(u32 *num_keys, independent_iter_state *iter)
                 *num_keys = iter->state.num_column_groups;
                 return iter->state.column_group_keys;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -580,7 +580,7 @@ archive_column_group_get_object_ids(u32 *num_objects, independent_iter_state *it
                 *num_objects = iter->state.current_column_group.num_objects;
                 return iter->state.current_column_group.object_ids;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -613,7 +613,7 @@ archive_column_get_entry_positions(u32 *num_entry, independent_iter_state *colum
                 *num_entry = column_iter->state.current_column_group.current_column.num_elem;
                 return column_iter->state.current_column_group.current_column.elem_positions;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -648,11 +648,11 @@ archive_column_entry_get_##name(u32 *array_length, independent_iter_state *entry
             *array_length =  entry->state.current_column_group.current_column.current_entry.array_length;              \
             return (const built_in_type *) entry->state.current_column_group.current_column.current_entry.array_base;  \
         } else {                                                                                                       \
-            error(ERR_TYPEMISMATCH, NULL);                                                        \
+            ERROR(ERR_TYPEMISMATCH, NULL);                                                        \
             return NULL;                                                                                               \
         }                                                                                                              \
     } else {                                                                                                           \
-        error(ERR_NULLPTR, NULL);                                                                 \
+        ERROR(ERR_NULLPTR, NULL);                                                                 \
         return NULL;                                                                                                   \
     }                                                                                                                  \
 }
@@ -701,14 +701,14 @@ const archive_object *archive_column_entry_object_iter_next_object(column_object
                                 iter->next_obj_off = iter->obj.next_obj_off;
                                 return &iter->obj;
                         } else {
-                                error(ERR_INTERNALERR, NULL);
+                                ERROR(ERR_INTERNALERR, NULL);
                                 return NULL;
                         }
                 } else {
                         return NULL;
                 }
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -739,7 +739,7 @@ archive_value_vector_get_keys(u32 *num_keys, archive_value_vector *iter)
                 *num_keys = iter->value_max_idx;
                 return iter->keys;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -800,7 +800,7 @@ static bool value_vector_init_fixed_length_types_basic(archive_value_vector *val
                                                                              archive_field_boolean_t);
                         break;
                 default: {
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return false;
                 }
         }
@@ -868,7 +868,7 @@ static bool value_vector_init_fixed_length_types_non_null_arrays(archive_value_v
                                 MEMFILE_PEEK_TYPE(&value->record_table_memfile, archive_field_boolean_t);
                         break;
                 default: {
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return false;
                 }
         }
@@ -896,7 +896,7 @@ static void value_vector_init_object(archive_value_vector *value)
 bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter *prop_iter)
 {
         if (prop_iter->mode != PROP_ITER_MODE_OBJECT) {
-                return error(ERR_ITER_OBJECT_NEEDED, NULL);
+                return ERROR(ERR_ITER_OBJECT_NEEDED, NULL);
         }
         value->prop_iter = prop_iter;
         value->data_off = prop_iter->mode_object.prop_data_off;
@@ -904,7 +904,7 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
 
         MEMFILE_OPEN(&value->record_table_memfile, prop_iter->record_table_memfile.memblock, READ_ONLY);
         if (!MEMFILE_SKIP(&value->record_table_memfile, value->data_off)) {
-                return error(ERR_MEMFILESKIP_FAILED, NULL);
+                return ERROR(ERR_MEMFILESKIP_FAILED, NULL);
         }
 
         value->prop_type = prop_iter->mode_object.type;
@@ -934,7 +934,7 @@ bool archive_value_vector_from_prop_iter(archive_value_vector *value, prop_iter 
                         value_vector_init_fixed_length_types(value);
                         break;
                 default: {
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return false;
                 }
         }
@@ -971,7 +971,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                                                 archive_value_vector *value)
 {
         if (idx >= value->value_max_idx) {
-                return error(ERR_OUTOFBOUNDS, NULL);
+                return ERROR(ERR_OUTOFBOUNDS, NULL);
         }
 
         bool is_object;
@@ -984,7 +984,7 @@ bool archive_value_vector_get_object_at(archive_object *object, u32 idx,
                 *object = value->data.object.object;
                 return true;
         } else {
-                return error(ERR_ITER_NOOBJ, NULL);
+                return ERROR(ERR_ITER_NOOBJ, NULL);
         }
 }
 
@@ -1034,7 +1034,7 @@ archive_value_vector_get_##names(u32 *num_values, archive_value_vector *value)  
         return value->data.basic.values.names;                                                                         \
     } else                                                                                                             \
     {                                                                                                                  \
-        error(err_code, NULL);                                                                           \
+        ERROR(err_code, NULL);                                                                           \
         return NULL;                                                                                                   \
     }                                                                                                                  \
 }

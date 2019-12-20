@@ -23,9 +23,9 @@ typedef struct memblock {
 #define MEMBLOCK_CREATE(block, size)						                                                           \
 ({												                                                                       \
         bool memblock_create_status = true;                                                                                            \
-        if (unlikely(size == 0)) {							                                                           \
+        if (UNLIKELY(size == 0)) {							                                                           \
             *(block) = NULL;                                                                                           \
-            memblock_create_status = error(ERR_ILLEGALARG, NULL);		                                                               \
+            memblock_create_status = ERROR(ERR_ILLEGALARG, NULL);		                                                               \
         } else {									                                                                   \
             struct memblock *result = (struct memblock *) MALLOC(sizeof(struct memblock));	                           \
             ZERO_MEMORY(result, sizeof(memblock));			                                                           \
@@ -68,7 +68,7 @@ typedef struct memblock {
 #define MEMBLOCK_WRITE(block, position, data, nbytes)										                           \
 ({										                                                                               \
         bool memblock_write_status;										                                                           \
-        if (likely(position + nbytes < block->blockLength)) {										                   \
+        if (LIKELY(position + nbytes < block->blockLength)) {										                   \
                 memcpy(((char *)block->base) + position, data, nbytes);										           \
                 block->last_byte = JAK_MAX(block->last_byte, position + nbytes);									   \
                 memblock_write_status = true;										                                                   \
@@ -100,8 +100,8 @@ typedef struct memblock {
 #define MEMBLOCK_MOVE_LEFT(block, where, nbytes)															           \
 ({															                                                           \
         bool status = true;															                                   \
-        if (unlikely((where) + (nbytes) >= (block)->blockLength)) {													   \
-            status = error(ERR_OUTOFBOUNDS, NULL);															           \
+        if (UNLIKELY((where) + (nbytes) >= (block)->blockLength)) {													   \
+            status = ERROR(ERR_OUTOFBOUNDS, NULL);															           \
         } else {															                                           \
             size_t remainder = (block)->blockLength - (where) - (nbytes);											   \
             if (remainder > 0) {															                           \
@@ -119,12 +119,12 @@ typedef struct memblock {
 #define MEMBLOCK_MOVE_EX(block, where, nbytes, zero_out)															   \
 ({																                                                       \
         bool status = true;																                               \
-        if (unlikely(where >= (block)->blockLength)) {																   \
-            error(ERR_OUTOFBOUNDS, NULL);																               \
+        if (UNLIKELY(where >= (block)->blockLength)) {																   \
+            ERROR(ERR_OUTOFBOUNDS, NULL);																               \
             status = false;																                               \
         } else {																                                       \
-            if (unlikely(nbytes == 0)) {																               \
-                error(ERR_ILLEGALARG, NULL);																           \
+            if (UNLIKELY(nbytes == 0)) {																               \
+                ERROR(ERR_ILLEGALARG, NULL);																           \
                 status = false;																                           \
             } else {																                                   \
                 if ((block)->last_byte + nbytes > (block)->blockLength) {											   \
@@ -165,8 +165,8 @@ typedef struct memblock {
 #define MEMBLOCK_RESIZE(block, size)							                                                       \
 ({							                                                                                           \
         bool memblock_resize_status = true;							                                                                   \
-        if (unlikely((size) == 0)) {							                                                       \
-                memblock_resize_status = error(ERR_ILLEGALARG, NULL);							                                       \
+        if (UNLIKELY((size) == 0)) {							                                                       \
+                memblock_resize_status = ERROR(ERR_ILLEGALARG, NULL);							                                       \
         } else {							                                                                           \
             (block)->base = realloc((block)->base, (size));							                                   \
             if ((size) > (block)->blockLength) {							                                           \
@@ -188,8 +188,8 @@ typedef struct memblock {
 #define MEMFILE_UPDATE_LAST_BYTE(block, where)							                                               \
 {							                                                                                           \
         bool memfile_update_last_byte_status = true; UNUSED(memfile_update_last_byte_status);							                                                                   \
-        if (unlikely((where) >= (block)->blockLength)) {							                                   \
-            memfile_update_last_byte_status = error(ERR_ILLEGALSTATE, NULL);							                                           \
+        if (UNLIKELY((where) >= (block)->blockLength)) {							                                   \
+            memfile_update_last_byte_status = ERROR(ERR_ILLEGALSTATE, NULL);							                                           \
         } else {							                                                                           \
             (block)->last_byte = JAK_MAX((block)->last_byte, (where));							                       \
         }							                                                                                   \

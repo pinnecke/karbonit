@@ -39,7 +39,7 @@ struct sid_to_offset {
 #define OBJECT_GET_KEYS_TO_FIX_TYPE_GENERIC(num_pairs, obj, bit_flag_name, offset_name)                                \
 {                                                                                                                      \
     if (!obj) {                                                                                                        \
-        panic(ERR_NULLPTR)                                                                 \
+        PANIC(ERR_NULLPTR)                                                                 \
     }                                                                                                                  \
                                                                                                                        \
     if (obj->flags.bits.bit_flag_name) {                                                                               \
@@ -78,7 +78,7 @@ index_string_id_to_offset_open_file(struct sid_to_offset *index, const char *fil
 {
         index->disk_file = fopen(file, "r");
         if (!index->disk_file) {
-                return error(ERR_FOPEN_FAILED, NULL);
+                return ERROR(ERR_FOPEN_FAILED, NULL);
         } else {
                 fseek(index->disk_file, 0, SEEK_END);
                 index->disk_file_size = ftell(index->disk_file);
@@ -122,7 +122,7 @@ bool query_create_index_string_id_to_offset(struct sid_to_offset **index, query 
                 strid_iter_close(&strid_iter);
                 return true;
         } else {
-                error(ERR_SCAN_FAILED, NULL);
+                ERROR(ERR_SCAN_FAILED, NULL);
                 return false;
         }
 
@@ -148,7 +148,7 @@ bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, const ch
 {
         struct sid_to_offset *result = MALLOC(sizeof(struct sid_to_offset));
         if (!result) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -158,19 +158,19 @@ bool query_index_id_to_offset_deserialize(struct sid_to_offset **index, const ch
 
         FILE *index_reader_file = fopen(file_path, "r");
         if (!index_reader_file) {
-                return error(ERR_FOPEN_FAILED, NULL);
+                return ERROR(ERR_FOPEN_FAILED, NULL);
         } else {
                 fseek(index_reader_file, 0, SEEK_END);
                 offset_t file_size = ftell(index_reader_file);
 
                 if (offset >= file_size) {
-                        return error(ERR_INTERNALERR, NULL);
+                        return ERROR(ERR_INTERNALERR, NULL);
                 }
 
                 fseek(index_reader_file, offset, SEEK_SET);
 
                 if (!hashtable_deserialize(&result->mapping, index_reader_file)) {
-                        error(ERR_HASTABLE_DESERIALERR, NULL);
+                        ERROR(ERR_HASTABLE_DESERIALERR, NULL);
                         fclose(index_reader_file);
                         *index = NULL;
                         return false;
@@ -225,7 +225,7 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
                                                 if (result) {
                                                         free(result);
                                                 }
-                                                error(!decode_result ? ERR_DECOMPRESSFAILED
+                                                ERROR(!decode_result ? ERR_DECOMPRESSFAILED
                                                                      : ERR_ITERATORNOTCLOSED, NULL);
                                                 return NULL;
                                         } else {
@@ -235,10 +235,10 @@ static char *fetch_string_by_id_via_scan(query *query, archive_field_sid_t id)
                         }
                 }
                 strid_iter_close(&strid_iter);
-                error(ERR_NOTFOUND, NULL);
+                ERROR(ERR_NOTFOUND, NULL);
                 return NULL;
         } else {
-                error(ERR_SCAN_FAILED, NULL);
+                ERROR(ERR_SCAN_FAILED, NULL);
                 return NULL;
         }
 }
@@ -258,16 +258,16 @@ static char *fetch_string_by_id_via_index(query *query, struct sid_to_offset *in
                         if (decode_result) {
                                 return result;
                         } else {
-                                error(ERR_DECOMPRESSFAILED, NULL);
+                                ERROR(ERR_DECOMPRESSFAILED, NULL);
                                 return NULL;
                         }
 
                 } else {
-                        error(ERR_INDEXCORRUPTED_OFFSET, NULL);
+                        ERROR(ERR_INDEXCORRUPTED_OFFSET, NULL);
                         return NULL;
                 }
         } else {
-                error(ERR_NOTFOUND, NULL);
+                ERROR(ERR_NOTFOUND, NULL);
                 return NULL;
         }
 }
@@ -311,7 +311,7 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
 
         char **result = MALLOC(num_offs * sizeof(char *));
         if (!result) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return NULL;
         }
         for (size_t i = 0; i < num_offs; i++) {
@@ -326,7 +326,7 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
         }
 
         if (!result) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return NULL;
         } else {
                 if (!(file = io_context_lock_and_access(query->context))) {
@@ -358,7 +358,7 @@ char **query_fetch_strings_by_offset(query *query, offset_t *offs, u32 *strlens,
 archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                                             const string_pred *pred, void *capture, i64 limit)
 {
-        if (unlikely(string_pred_validate(pred) == false)) {
+        if (UNLIKELY(string_pred_validate(pred) == false)) {
                 return NULL;
         }
         i64 pred_limit;
@@ -381,51 +381,51 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         size_t result_cap = pred_limit < 0 ? str_cap : (size_t) pred_limit;
         bool success = false;
 
-        if (unlikely(pred_limit == 0)) {
+        if (UNLIKELY(pred_limit == 0)) {
                 *num_found = 0;
                 return NULL;
         }
 
-        if (unlikely(!num_found || !query || !pred)) {
-                error(ERR_NULLPTR, NULL);
+        if (UNLIKELY(!num_found || !query || !pred)) {
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 
-        if (unlikely((step_ids = MALLOC(str_cap * sizeof(archive_field_sid_t))) == NULL)) {
-                error(ERR_MALLOCERR, NULL);
+        if (UNLIKELY((step_ids = MALLOC(str_cap * sizeof(archive_field_sid_t))) == NULL)) {
+                ERROR(ERR_MALLOCERR, NULL);
                 return NULL;
         }
 
-        if (unlikely((str_offs = MALLOC(str_cap * sizeof(offset_t))) == NULL)) {
-                error(ERR_MALLOCERR, NULL);
+        if (UNLIKELY((str_offs = MALLOC(str_cap * sizeof(offset_t))) == NULL)) {
+                ERROR(ERR_MALLOCERR, NULL);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
-        if (unlikely((str_lens = MALLOC(str_cap * sizeof(u32))) == NULL)) {
-                error(ERR_MALLOCERR, NULL);
+        if (UNLIKELY((str_lens = MALLOC(str_cap * sizeof(u32))) == NULL)) {
+                ERROR(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
-        if (unlikely((idxs_matching = MALLOC(str_cap * sizeof(size_t))) == NULL)) {
-                error(ERR_MALLOCERR, NULL);
+        if (UNLIKELY((idxs_matching = MALLOC(str_cap * sizeof(size_t))) == NULL)) {
+                ERROR(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 free(str_lens);
                 goto cleanup_result_and_error;
                 return NULL;
         }
 
-        if (unlikely(query_scan_strids(&it, query) == false)) {
+        if (UNLIKELY(query_scan_strids(&it, query) == false)) {
                 free(str_offs);
                 free(str_lens);
                 free(idxs_matching);
                 goto cleanup_result_and_error;
         }
 
-        if (unlikely((result_ids = MALLOC(result_cap * sizeof(archive_field_sid_t))) == NULL)) {
-                error(ERR_MALLOCERR, NULL);
+        if (UNLIKELY((result_ids = MALLOC(result_cap * sizeof(archive_field_sid_t))) == NULL)) {
+                ERROR(ERR_MALLOCERR, NULL);
                 free(str_offs);
                 free(str_lens);
                 free(idxs_matching);
@@ -435,19 +435,19 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         }
 
         while (strid_iter_next(&success, &info, &info_len, &it)) {
-                if (unlikely(info_len > str_cap)) {
+                if (UNLIKELY(info_len > str_cap)) {
                         str_cap = (info_len + 1) * 1.7f;
-                        if (unlikely((tmp = realloc(str_offs, str_cap * sizeof(offset_t))) == NULL)) {
+                        if (UNLIKELY((tmp = realloc(str_offs, str_cap * sizeof(offset_t))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 str_offs = tmp;
                         }
-                        if (unlikely((tmp = realloc(str_lens, str_cap * sizeof(u32))) == NULL)) {
+                        if (UNLIKELY((tmp = realloc(str_lens, str_cap * sizeof(u32))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 str_lens = tmp;
                         }
-                        if (unlikely((tmp = realloc(idxs_matching, str_cap * sizeof(size_t))) == NULL)) {
+                        if (UNLIKELY((tmp = realloc(idxs_matching, str_cap * sizeof(size_t))) == NULL)) {
                                 goto realloc_error;
                         } else {
                                 idxs_matching = tmp;
@@ -465,10 +465,10 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                                                                    str_lens,
                                                                    step_len); // TODO: buffer + cleanup buffer
 
-                if (unlikely(
+                if (UNLIKELY(
                         string_pred_eval(pred, idxs_matching, &num_matching, strings, step_len, capture) ==
                         false)) {
-                        error(ERR_PREDEVAL_FAILED, NULL);
+                        ERROR(ERR_PREDEVAL_FAILED, NULL);
                         strid_iter_close(&it);
                         goto cleanup_intermediate;
                 }
@@ -484,9 +484,9 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
                         if (pred_limit > 0 && result_len == (size_t) pred_limit) {
                                 goto stop_search_and_return;
                         }
-                        if (unlikely(result_len > result_cap)) {
+                        if (UNLIKELY(result_len > result_cap)) {
                                 result_cap = (result_len + 1) * 1.7f;
-                                if (unlikely(
+                                if (UNLIKELY(
                                         (tmp = realloc(result_ids, result_cap * sizeof(archive_field_sid_t))) ==
                                         NULL)) {
                                         strid_iter_close(&it);
@@ -499,7 +499,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         }
 
         stop_search_and_return:
-        if (unlikely(success == false)) {
+        if (UNLIKELY(success == false)) {
                 strid_iter_close(&it);
                 goto cleanup_intermediate;
         }
@@ -508,7 +508,7 @@ archive_field_sid_t *query_find_ids(size_t *num_found, query *query,
         return result_ids;
 
         realloc_error:
-        error(ERR_REALLOCERR, NULL);
+        ERROR(ERR_REALLOCERR, NULL);
 
         cleanup_intermediate:
         free(str_offs);

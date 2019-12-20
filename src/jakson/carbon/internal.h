@@ -93,7 +93,7 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
                 case FIELD_NUMBER_FLOAT:                                                                               \
                         type_size += sizeof(float);                                                                    \
                         break;                                                                                         \
-                default: error(ERR_INTERNALERR, NULL);                                                                 \
+                default: ERROR(ERR_INTERNALERR, NULL);                                                                 \
                         type_size = 0;                                                                                 \
                         break;                                                                                         \
         }                                                                                                              \
@@ -173,7 +173,7 @@ bool internal_insert_column(memfile *file, list_type_e derivation, col_it_type_e
                         internal_get_type_value_size_result = sizeof(float);                                                                         \
                         break;                                                                         \
                 default:                                                                         \
-                        error(ERR_INTERNALERR, NULL);                                                                         \
+                        ERROR(ERR_INTERNALERR, NULL);                                                                         \
                         break;                                                                         \
         }                                                                         \
         internal_get_type_value_size_result;                                                                         \
@@ -269,7 +269,7 @@ bool internal_field_is_null(bool *is_null, field *field);
                         break;                                                                            \
                 case FIELD_NUMBER_I64:  ret = internal_field_i64_value(field);                                                                            \
                         break;                                                                            \
-                default: error(ERR_TYPEMISMATCH, NULL);                                                                            \
+                default: ERROR(ERR_TYPEMISMATCH, NULL);                                                                            \
                         ret = 0;                                                                            \
                         break;                                                                            \
         }                                                                                                        \
@@ -288,7 +288,7 @@ bool internal_field_is_null(bool *is_null, field *field);
                         break;                                                                            \
                 case FIELD_NUMBER_U64: ret = internal_field_u64_value(field);                                                                            \
                         break;                                                                            \
-                default: error(ERR_TYPEMISMATCH, NULL);                                                                            \
+                default: ERROR(ERR_TYPEMISMATCH, NULL);                                                                            \
                         ret = 0;                                                                            \
                         break;                                                                            \
         }                                                                            \

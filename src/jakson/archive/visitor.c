@@ -210,7 +210,7 @@ static void iterate_props(archive *archive, prop_iter *prop_iter,
                                 vector_pop(path_stack);
                         }
 
-                        if (unlikely(first_type_group)) {
+                        if (UNLIKELY(first_type_group)) {
                                 OPTIONAL_CALL(visitor,
                                                   first_prop_type_group,
                                                   archive,

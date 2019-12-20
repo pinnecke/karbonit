@@ -135,11 +135,11 @@ void rec_clone(rec *clone, rec *doc);
 bool rec_commit_hash(u64 *hash, rec *doc);
 
 /** Checks if the records most-outer array is annotated as a multi set abstract type. Returns true if the record
- * is a multi set, and false if the record is a set. In case of any error, a failure is returned. */
+ * is a multi set, and false if the record is a set. In case of any ERROR, a failure is returned. */
 bool rec_is_multiset(rec *doc);
 
 /** Checks if the records most-outer array is annotated as a sorted abstract type. Returns true if this is the case,
- * otherwise false. In case of any error, a failure is returned. */
+ * otherwise false. In case of any ERROR, a failure is returned. */
 bool rec_is_sorted(rec *doc);
 
 /** Changes the abstract type of the most-outer record array to the given abstract type */

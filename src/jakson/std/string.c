@@ -29,7 +29,7 @@ bool str_buf_create_ex(str_buf *buffer, size_t capacity)
         buffer->cap = capacity;
         buffer->end = 0;
         buffer->data = MALLOC(capacity);
-        error_if_and_return(!buffer->data, ERR_MALLOCERR, false);
+        ERROR_IF_AND_RETURN(!buffer->data, ERR_MALLOCERR, false);
         ZERO_MEMORY(buffer->data, buffer->cap);
         return true;
 }
@@ -43,10 +43,10 @@ bool str_buf_add(str_buf *buffer, const char *str)
 bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen)
 {
         /** resize if needed */
-        if (unlikely(buffer->end + strlen >= buffer->cap)) {
+        if (UNLIKELY(buffer->end + strlen >= buffer->cap)) {
                 size_t new_cap = (buffer->end + strlen) * 1.7f;
                 buffer->data = realloc(buffer->data, new_cap);
-                error_if_and_return(!buffer->data, ERR_REALLOCERR, false);
+                ERROR_IF_AND_RETURN(!buffer->data, ERR_REALLOCERR, false);
                 ZERO_MEMORY(buffer->data + buffer->cap, (new_cap - buffer->cap));
                 buffer->cap = new_cap;
         }
@@ -180,10 +180,10 @@ bool str_buf_clear(str_buf *buffer)
 bool str_buf_ensure_capacity(str_buf *buffer, u64 cap)
 {
         /** resize if needed */
-        if (unlikely(cap > buffer->cap)) {
+        if (UNLIKELY(cap > buffer->cap)) {
                 size_t new_cap = cap * 1.7f;
                 buffer->data = realloc(buffer->data, new_cap);
-                error_if_and_return(!buffer->data, ERR_REALLOCERR, false);
+                ERROR_IF_AND_RETURN(!buffer->data, ERR_REALLOCERR, false);
                 ZERO_MEMORY(buffer->data + buffer->cap, (new_cap - buffer->cap));
                 buffer->cap = new_cap;
         }

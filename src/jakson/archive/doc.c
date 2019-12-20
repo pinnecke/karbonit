@@ -274,7 +274,7 @@ value_type_for_json_number(bool *success, const json_number *number)
                                 return ARCHIVE_FIELD_INT64;
                         }
                 }
-                default: error(ERR_NOJSONNUMBERT, NULL);
+                default: ERROR(ERR_NOJSONNUMBERT, NULL);
                         *success = false;
                         return ARCHIVE_FIELD_INT8;
         }
@@ -357,7 +357,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                         const json_element
                                                 *element = VECTOR_GET(&array->elements.elements, i,
                                                                    json_element);
-                                        if (unlikely(element->value.value_type == JSON_VALUE_NULL)) {
+                                        if (UNLIKELY(element->value.value_type == JSON_VALUE_NULL)) {
                                                 continue;
                                         } else {
                                                 bool success;
@@ -376,7 +376,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                            || element_number_type == ARCHIVE_FIELD_UINT32
                                                            || element_number_type == ARCHIVE_FIELD_UINT64
                                                            || element_number_type == ARCHIVE_FIELD_FLOAT);
-                                                if (unlikely(array_number_type == ARCHIVE_FIELD_NULL)) {
+                                                if (UNLIKELY(array_number_type == ARCHIVE_FIELD_NULL)) {
                                                         array_number_type = element_number_type;
                                                 } else {
                                                         if (array_number_type == ARCHIVE_FIELD_INT8) {
@@ -431,9 +431,9 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                 field_type = ARCHIVE_FIELD_NULL;
                                 break;
                         case JSON_VALUE_ARRAY:
-                                return error(ERR_ERRINTERNAL, NULL) /** array type is illegal here */;
+                                return ERROR(ERR_ERRINTERNAL, NULL) /** array type is illegal here */;
                         default:
-                                return error(ERR_NOTYPE, NULL);
+                                return ERROR(ERR_NOTYPE, NULL);
                 }
 
                 doc_obj_add_key(&entry, target, key, field_type);
@@ -553,19 +553,19 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                                                 } else if (element_number_type == JSON_NUMBER_SIGNED) {
                                                                         value = element->value.value.number->value.signed_integer;
                                                                 } else {
-                                                                        return error(ERR_INTERNALERR, NULL) /** type mismatch */;
+                                                                        return ERROR(ERR_INTERNALERR, NULL) /** type mismatch */;
                                                                 }
                                                         }
                                                         doc_obj_push_primtive(entry, &value);
                                                 }
                                                         break;
                                                 default:
-                                                        return error(ERR_INTERNALERR, NULL) /** not a number type  */;
+                                                        return ERROR(ERR_INTERNALERR, NULL) /** not a number type  */;
                                         }
                                 }
                                         break;
                                 case ARCHIVE_FIELD_BOOLEAN:
-                                        if (likely(ast_node_data_type == JSON_VALUE_TRUE
+                                        if (LIKELY(ast_node_data_type == JSON_VALUE_TRUE
                                                        || ast_node_data_type == JSON_VALUE_FALSE)) {
                                                 archive_field_boolean_t value =
                                                         ast_node_data_type == JSON_VALUE_TRUE ? BOOLEAN_TRUE
@@ -582,7 +582,7 @@ static bool import_json_object_array_prop(doc_obj *target, const char *key, cons
                                         doc_obj_push_primtive(entry, NULL);
                                         break;
                                 default:
-                                        return error(ERR_NOTYPE, NULL);
+                                        return ERROR(ERR_NOTYPE, NULL);
                         }
                 }
         } else {
@@ -633,7 +633,7 @@ import_json_object(doc_obj *target, const json_object *json_obj)
                                         return false;
                                 }
                                 break;
-                        default: error(ERR_NOTYPE, NULL);
+                        default: ERROR(ERR_NOTYPE, NULL);
                                 return false;
                 }
         }
@@ -679,7 +679,7 @@ import_json(doc_obj *target, const json *json,
                                         case JSON_VALUE_TRUE:
                                         case JSON_VALUE_FALSE:
                                         case JSON_VALUE_NULL:
-                                        default: return error(ERR_INTERNALERR, NULL); /** Unsupported operation in arrays */
+                                        default: return ERROR(ERR_INTERNALERR, NULL); /** Unsupported operation in arrays */
                                 }
                         }
                 }
@@ -689,7 +689,7 @@ import_json(doc_obj *target, const json *json,
                 case JSON_VALUE_TRUE:
                 case JSON_VALUE_FALSE:
                 case JSON_VALUE_NULL:
-                default: return error(ERR_JSONTYPE, NULL);
+                default: return ERROR(ERR_JSONTYPE, NULL);
         }
         return true;
 }
@@ -1095,7 +1095,7 @@ static bool compare_column_less_eq_func(const void *lhs, const void *rhs, void *
                         return true;
                         break;
                 default:
-                        return error(ERR_NOTYPE, NULL);
+                        return ERROR(ERR_NOTYPE, NULL);
         }
 }
 
@@ -1368,7 +1368,7 @@ static void create_typed_vector(doc_entries *entry)
                 case ARCHIVE_FIELD_OBJECT:
                         size = sizeof(doc_obj);
                         break;
-                default: error(ERR_INTERNALERR, "unknown type"); /** unknown type */
+                default: ERROR(ERR_INTERNALERR, "unknown type"); /** unknown type */
                         return;
         }
         vector_create(&entry->values, size, 50);
@@ -1536,7 +1536,7 @@ static bool print_value(FILE *file, archive_field_e type, const vec ofType(<T>) 
                         }
                 }
                         break;
-                default: error(ERR_NOTIMPLEMENTED, NULL);
+                default: ERROR(ERR_NOTIMPLEMENTED, NULL);
         }
         if (num_values > 1) {
                 fprintf(file, "]");

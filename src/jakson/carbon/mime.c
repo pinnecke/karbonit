@@ -48,8 +48,8 @@ bool mime_write(memfile *dst, field_e type)
 u32 mime_by_ext(const char *ext)
 {
         u32 id;
-        if (likely(ext != NULL)) {
-                if (likely((id = find_mime_by_ext(ext)) < (u32) _global_mime_register)) {
+        if (LIKELY(ext != NULL)) {
+                if (LIKELY((id = find_mime_by_ext(ext)) < (u32) _global_mime_register)) {
                         return id;
                 }
         }
@@ -60,7 +60,7 @@ u32 mime_by_ext(const char *ext)
 
 const char *mime_by_id(u32 id)
 {
-        if (unlikely(id >= _global_mime_register)) {
+        if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
                 assert(id < _global_mime_register);
         }
@@ -69,7 +69,7 @@ const char *mime_by_id(u32 id)
 
 const char *mime_ext_by_id(u32 id)
 {
-        if (unlikely(id >= _global_mime_register)) {
+        if (UNLIKELY(id >= _global_mime_register)) {
                 id = find_mime_by_ext("bin");
                 assert(id < _global_mime_register);
         }

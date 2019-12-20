@@ -79,7 +79,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                 last_2_c = last_1_c;
                 last_1_c = c;
                 c = *(++tokenizer->cursor);
-                if (unlikely(c == '\\' && last_1_c == '\\')) {
+                if (UNLIKELY(c == '\\' && last_1_c == '\\')) {
                         goto next_char;
                 }
                 escapeQuote = c == '"' && last_1_c == '\\'
@@ -99,7 +99,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
 
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
 {
-        if (likely(*tokenizer->cursor != '\0')) {
+        if (LIKELY(*tokenizer->cursor != '\0')) {
                 char c = *tokenizer->cursor;
                 tokenizer->token.string = tokenizer->cursor;
                 tokenizer->token.column += tokenizer->token.length;
@@ -285,7 +285,7 @@ json_parse(json *json, json_err *error_desc, json_parser *parser, const char *in
         struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
 
         while ((token = json_tokenizer_next(&parser->tokenizer))) {
-                if (likely(
+                if (LIKELY(
                         (status = process_token(error_desc, token, &brackets, &token_mem)) == true)) {
                         json_token *newToken = VECTOR_NEW_AND_GET(&token_stream, json_token);
                         json_token_dup(newToken, token);
@@ -356,7 +356,7 @@ bool test_condition_value(json_node_value *value)
                                         char message[] = "JSON file constraint broken: arrays of mixed types detected";
                                         char *result = MALLOC(strlen(message) + 1);
                                         strcpy(result, &message[0]);
-                                        error(ERR_ARRAYOFMIXEDTYPES, result);
+                                        ERROR(ERR_ARRAYOFMIXEDTYPES, result);
                                         free(result);
                                         return false;
                                 }
@@ -378,7 +378,7 @@ bool test_condition_value(json_node_value *value)
                                                 char message[] = "JSON file constraint broken: arrays of arrays detected";
                                                 char *result = MALLOC(strlen(message) + 1);
                                                 strcpy(result, &message[0]);
-                                                error(ERR_ARRAYOFARRAYS, result);
+                                                ERROR(ERR_ARRAYOFARRAYS, result);
                                                 free(result);
                                                 return false;
                                         }
@@ -481,7 +481,7 @@ bool parse_members(json_members *members,
                                 NEXT_TOKEN(token_idx);
                                 break;
                         default:
-                                return error(ERR_PARSETYPE, NULL);
+                                return ERROR(ERR_PARSETYPE, NULL);
                 }
 
                 delimiter_token = get_token(token_stream, *token_idx);
@@ -535,7 +535,7 @@ static void parse_string(json_string *string, vec ofType(json_token) *token_stre
         assert(token.type == LITERAL_STRING);
 
         string->value = MALLOC(token.length + 1);
-        if (likely(token.length > 0)) {
+        if (LIKELY(token.length > 0)) {
                 strncpy(string->value, token.string, token.length);
         }
         string->value[token.length] = '\0';
@@ -842,7 +842,7 @@ static int process_token(json_err *error_desc, const json_token *token,
                         }
                         break;
                 default:
-                        return error(ERR_NOJSONTOKEN, NULL);
+                        return ERROR(ERR_NOJSONTOKEN, NULL);
         }
 
         token_mem->type = token->type;
@@ -910,7 +910,7 @@ static bool json_ast_node_number_print(FILE *file, json_number *number)
                 case JSON_NUMBER_SIGNED:
                         fprintf(file, "%" PRIi64, number->value.signed_integer);
                         break;
-                default: error(ERR_NOJSONNUMBERT, NULL);
+                default: ERROR(ERR_NOJSONNUMBERT, NULL);
                         return false;
         }
         return true;
@@ -946,7 +946,7 @@ static bool json_ast_node_value_print(FILE *file, json_node_value *value)
                 case JSON_VALUE_NULL:
                         fprintf(file, "null");
                         break;
-                default: error(ERR_NOTYPE, NULL);
+                default: ERROR(ERR_NOTYPE, NULL);
                         return false;
         }
         return true;
@@ -1049,7 +1049,7 @@ static bool json_ast_node_value_drop(json_node_value *value)
                 case JSON_VALUE_NULL:
                         break;
                 default:
-                        return error(ERR_NOTYPE, NULL);
+                        return ERROR(ERR_NOTYPE, NULL);
 
         }
         return true;
@@ -1327,7 +1327,7 @@ static json_list_type_e number_type_to_list_type(number_min_type_e type)
                         return JSON_LIST_FIXED_I32;
                 case NUMBER_I64:
                         return JSON_LIST_FIXED_I64;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                         return JSON_LIST_EMPTY;
 
         }
@@ -1358,7 +1358,7 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
                                                 elem_type = number_type_to_list_type(number_min_type_signed(
                                                         elem->value.value.number->value.signed_integer));
                                                 break;
-                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                 continue;
                                 }
 
@@ -1381,7 +1381,7 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
                                         goto return_result;
                                 }
                                 break;
-                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                 break;
                 }
         }

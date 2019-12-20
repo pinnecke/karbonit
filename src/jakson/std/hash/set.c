@@ -45,7 +45,7 @@ bool hashset_create(hashset *map, size_t key_size, size_t capacity)
                 err_code = ERR_DROPFAILED;
         }
         error_handling:
-        error(err_code, NULL);
+        ERROR(err_code, NULL);
         return false;
 }
 
@@ -57,7 +57,7 @@ bool hashset_drop(hashset *map)
         status &= vector_drop(&map->key_data);
 
         if (!status) {
-                error(ERR_DROPFAILED, NULL);
+                ERROR(ERR_DROPFAILED, NULL);
         }
 
         return status;
@@ -103,7 +103,7 @@ hashset *hashset_cpy(hashset *src)
                 hashset_unlock(src);
                 return cpy;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return NULL;
         }
 }
@@ -123,7 +123,7 @@ bool hashset_clear(hashset *map)
         assert(map->key_data.num_elems <= map->table.num_elems);
 
         if (!status) {
-                error(ERR_OPPFAILED, NULL);
+                ERROR(ERR_OPPFAILED, NULL);
         }
 
         hashset_unlock(map);
@@ -250,7 +250,7 @@ bool hashset_insert_or_update(hashset *map, const void *keys, uint_fast32_t num_
 
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 return false;
         }
 
@@ -287,7 +287,7 @@ bool hashset_remove_if_contained(hashset *map, const void *keys, size_t num_pair
 
         u32 *bucket_idxs = MALLOC(num_pairs * sizeof(u32));
         if (!bucket_idxs) {
-                error(ERR_MALLOCERR, NULL);
+                ERROR(ERR_MALLOCERR, NULL);
                 hashset_unlock(map);
                 return false;
         }
@@ -390,7 +390,7 @@ bool hashset_rehash(hashset *map)
                         const void *old_key = _hash_set_get_bucket_key(bucket, cpy);
                         if (!hashset_insert_or_update(map, old_key, 1)) {
                                 hashset_unlock(map);
-                                return error(ERR_REHASH_NOROLLBACK, NULL);
+                                return ERROR(ERR_REHASH_NOROLLBACK, NULL);
                         }
                 }
         }

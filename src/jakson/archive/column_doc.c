@@ -495,7 +495,7 @@ static void print_array_strings(FILE *file, const char *type_name,
                         for (size_t j = 0; j < values->num_elems; j++) {
                                 archive_field_sid_t value = *VECTOR_GET(values, j, archive_field_sid_t);
 
-                                if (likely(value != NULL_ENCODED_STRING)) {
+                                if (LIKELY(value != NULL_ENCODED_STRING)) {
                                         char **decoded = string_dict_extract(dic, &value, 1);
                                         fprintf(file, "\"%s\"%s", *decoded, j + 1 < values->num_elems ? ", " : "");
                                         string_dict_free(dic, decoded);
@@ -683,7 +683,7 @@ static bool print_array_objects(FILE *file, const char *type_name,
                                                 fprintf(file, "%s", column->num_elems > 1 ? "]" : "");
                                         }
                                                 break;
-                                        default: return error(ERR_NOTYPE, NULL);
+                                        default: return ERROR(ERR_NOTYPE, NULL);
                                 }
                                 fprintf(file, array_idx + 1 < columnTable->values.num_elems ? ", " : "");
                         }
@@ -878,7 +878,7 @@ bool columndoc_print(FILE *file, column_doc *doc)
 bool columndoc_drop(column_doc *doc)
 {
         UNUSED(doc);
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return false;
 }
 
@@ -951,7 +951,7 @@ static const char *get_type_name(archive_field_e type)
                 case ARCHIVE_FIELD_OBJECT:
                         return "Object";
                 default: {
-                        error(ERR_NOTYPE, NULL);
+                        ERROR(ERR_NOTYPE, NULL);
                         return NULL;
                 }
         }
@@ -1063,7 +1063,7 @@ static bool object_array_key_column_push(column_doc_column *col, const doc_entri
                         }
                         string_dict_free(dic, array_key);
                         break;
-                default: error(ERR_NOTYPE, NULL);
+                default: ERROR(ERR_NOTYPE, NULL);
                         return false;
         }
         return true;
@@ -1225,7 +1225,7 @@ object_put_primitive(column_doc_obj *columndoc, const doc_entries *entry,
                         }
                 } break;
                 default:
-                        return error(ERR_NOTYPE, NULL);
+                        return ERROR(ERR_NOTYPE, NULL);
         }
         return true;
 }
@@ -1375,7 +1375,7 @@ object_put_array(column_doc_obj *model, const doc_entries *entry,
                 }
                         break;
                 default: {
-                        return error(ERR_NOTYPE, NULL);
+                        return ERROR(ERR_NOTYPE, NULL);
                 }
                         break;
         }
@@ -1411,7 +1411,7 @@ static bool object_put(column_doc_obj *model, const doc_entries *entry,
                         }
                         break;
                 default:
-                        return error(ERR_NOTYPE, NULL);
+                        return ERROR(ERR_NOTYPE, NULL);
         }
 
         string_dict_free(dic, key_id);

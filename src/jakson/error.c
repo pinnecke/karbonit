@@ -78,7 +78,7 @@ const char *error_get_details()
 
 void error_print(FILE *file)
 {
-        fprintf(file, "** error **  %s (%d)\n", error_get_str(), g_err.code);
+        fprintf(file, "** ERROR **  %s (%d)\n", error_get_str(), g_err.code);
         fprintf(file, "             in %s:%d\n", g_err.file, g_err.line);
         fprintf(file, "             %s\n", g_err.details ? g_err.details : "no details");
 }

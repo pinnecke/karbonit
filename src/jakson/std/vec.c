@@ -89,9 +89,9 @@ bool vector_serialize(FILE *file, vec *vec)
                 {.marker = MARKER_SYMBOL_VECTOR_HEADER, .elem_size = vec->elem_size, .num_elems = vec
                         ->num_elems, .cap_elems = vec->cap_elems, .grow_factor = vec->grow_factor};
         int nwrite = fwrite(&header, sizeof(vector_serialize_header), 1, file);
-        error_if_and_return(nwrite != 1, ERR_FWRITE_FAILED, NULL);
+        ERROR_IF_AND_RETURN(nwrite != 1, ERR_FWRITE_FAILED, NULL);
         nwrite = fwrite(vec->base, vec->elem_size, vec->num_elems, file);
-        error_if_and_return(nwrite != (int) vec->num_elems, ERR_FWRITE_FAILED, NULL);
+        ERROR_IF_AND_RETURN(nwrite != (int) vec->num_elems, ERR_FWRITE_FAILED, NULL);
 
         return true;
 }
@@ -127,7 +127,7 @@ bool vector_deserialize(vec *vec, FILE *file)
 
         error_handling:
         fseek(file, start, SEEK_SET);
-        error(err_code, NULL);
+        ERROR(err_code, NULL);
         return false;
 }
 
@@ -141,8 +141,8 @@ bool vector_memadvice(vec *vec, int madviseAdvice)
 
 bool vector_set_grow_factor(vec *vec, float factor)
 {
-        if (unlikely(factor <= 1.01f)) {
-                return error(ERR_ILLEGALARG, NULL);
+        if (UNLIKELY(factor <= 1.01f)) {
+                return ERROR(ERR_ILLEGALARG, NULL);
         }
 
         vec->grow_factor = factor;
@@ -202,7 +202,7 @@ bool vector_repeated_push(vec *vec, const void *data, size_t how_often)
 const void *vector_pop(vec *vec)
 {
         void *result;
-        if (likely((result = (vec ? (vec->num_elems > 0 ? vec->base + (vec->num_elems - 1) * vec->elem_size : NULL)
+        if (LIKELY((result = (vec ? (vec->num_elems > 0 ? vec->base + (vec->num_elems - 1) * vec->elem_size : NULL)
                                       : NULL)) != NULL)) {
                 vec->num_elems--;
         }
@@ -231,7 +231,7 @@ bool vector_grow(size_t *numNewSlots, vec *vec)
         vec->cap_elems = (vec->cap_elems * vec->grow_factor) + 1;
         vec->base = realloc(vec->base, vec->cap_elems * vec->elem_size);
         size_t freeSlotsAfter = vec->cap_elems - vec->num_elems;
-        if (likely(numNewSlots != NULL)) {
+        if (LIKELY(numNewSlots != NULL)) {
                 *numNewSlots = freeSlotsAfter - freeSlotsBefore;
         }
         return true;
@@ -303,7 +303,7 @@ bool vector_cpy_to(vec *dst, vec *src)
                 memcpy(dst->base, src->base, src->cap_elems * src->elem_size);
                 return true;
         } else {
-                return error(ERR_HARDCOPYFAILED, NULL);
+                return ERROR(ERR_HARDCOPYFAILED, NULL);
         }
 }
 

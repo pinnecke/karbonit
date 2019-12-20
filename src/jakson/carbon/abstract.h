@@ -38,7 +38,7 @@ typedef enum abstract {
 ({                                                                                          \
         derived_e abstract_type_derived;                                                                                          \
         abstract_e abstract_type_ret;                                                                                          \
-        if (likely(abstract_get_derived_type(&abstract_type_derived, marker))) {                                                                                          \
+        if (LIKELY(abstract_get_derived_type(&abstract_type_derived, marker))) {                                                                                          \
                 switch (abstract_type_derived) {                                                                                          \
                         case UNSORTED_MULTIMAP:                                                                                          \
                         case UNSORTED_MULTISET_ARRAY:                                                                                          \
@@ -92,11 +92,11 @@ typedef enum abstract {
                         case SORTED_SET_COL_BOOLEAN:                                                                                          \
                                 abstract_type_ret = ABSTRACT_DERIVED;                                                                                          \
                                 break;                                                                                          \
-                        default: panic(ERR_MARKERMAPPING);                                                                                          \
+                        default: PANIC(ERR_MARKERMAPPING);                                                                                          \
                                 abstract_type_ret = ABSTRACT_ERR;                                                                                          \
                 }                                                                                          \
         } else {                                                                                          \
-                panic(ERR_MARKERMAPPING);                                                                                          \
+                PANIC(ERR_MARKERMAPPING);                                                                                          \
                 abstract_type_ret = ABSTRACT_ERR;                                                                                          \
         }                                                                                          \
         abstract_type_ret;                                                                                          \
@@ -142,7 +142,7 @@ typedef enum abstract_type_class {
 ({                                                                              \
         derived_e derived;                                                                              \
         abstract_type_class_e abstract_get_class_ret;                                                                              \
-        if (likely(abstract_get_derived_type(&derived, marker))) {                                                                              \
+        if (LIKELY(abstract_get_derived_type(&derived, marker))) {                                                                              \
                 switch (derived) {                                                                              \
                         case SORTED_MAP:                                                                              \
                                 abstract_get_class_ret = TYPE_SORTED_MAP;                                                                              \
@@ -208,10 +208,10 @@ typedef enum abstract_type_class {
                         case UNSORTED_SET_COL_U8:                                                                              \
                                 abstract_get_class_ret = TYPE_UNSORTED_SET;                                                                              \
                                 break;                                                                              \
-                        default: panic(ERR_MARKERMAPPING);                                                                              \
+                        default: PANIC(ERR_MARKERMAPPING);                                                                              \
                 }                                                                              \
         } else {                                                                              \
-                error(ERR_MARKERMAPPING, "");                                                                              \
+                ERROR(ERR_MARKERMAPPING, "");                                                                              \
                 abstract_get_class_ret = TYPE_ERR;                                                                              \
         }                                                                              \
         abstract_get_class_ret;                                 \
@@ -358,7 +358,7 @@ typedef enum map_type
                         abstract_class_to_list_derivable_ret = LIST_SORTED_SET;                                                            \
                         break;                                                            \
                 default:                                                            \
-                        error(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");                                                            \
+                        ERROR(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");                                                            \
                         abstract_class_to_list_derivable_ret = LIST_ERR;                                                            \
                         break;                                                            \
         }                                                            \
@@ -382,7 +382,7 @@ typedef enum map_type
                         abstract_list_derivable_to_class_ret = TYPE_SORTED_SET;                                                            \
                         break;                                                            \
                 default:                                                            \
-                        error(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");                                                            \
+                        ERROR(ERR_TYPEMISMATCH, "abstract class type does not encode a list type");                                                            \
                         abstract_list_derivable_to_class_ret = TYPE_ERR;                                                            \
                         break;                                                            \
         }                                                            \
@@ -406,7 +406,7 @@ typedef enum map_type
                         abstract_map_derivable_to_class_ret = TYPE_SORTED_MAP;                                                            \
                         break;                                                            \
                 default:                                                            \
-                        error(ERR_TYPEMISMATCH, "abstract class type does not encode a map type");                                                            \
+                        ERROR(ERR_TYPEMISMATCH, "abstract class type does not encode a map type");                                                            \
                         abstract_map_derivable_to_class_ret = TYPE_ERR;                                                            \
                         break;                                                            \
         }                                                            \

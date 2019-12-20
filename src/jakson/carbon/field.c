@@ -156,7 +156,7 @@ const char *field_str(field_e type)
                 case FIELD_BINARY:
                         return BINARY_STR;
                 default:
-                        error(ERR_NOTFOUND, NULL);
+                        ERROR(ERR_NOTFOUND, NULL);
                         return NULL;
         }
 }
@@ -255,7 +255,7 @@ bool carbon_field_skip(memfile *file)
                 case FIELD_DERIVED_OBJECT_SORTED_MAP:
                         carbon_field_skip_object(file, type_marker);
                         break;
-                default: error(ERR_CORRUPTED, NULL);
+                default: ERROR(ERR_CORRUPTED, NULL);
                         return false;
         }
         return true;
@@ -271,7 +271,7 @@ bool carbon_field_skip_object(memfile *file, u8 marker)
                 obj_it_drop(&skip_it);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, "marker does not encode an object container or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "marker does not encode an object container or sub type");
         }
 }
 
@@ -284,7 +284,7 @@ bool carbon_field_skip_array(memfile *file, u8 marker)
                 MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, "marker does not encode an array container or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "marker does not encode an array container or sub type");
         }
 }
 
@@ -292,7 +292,7 @@ bool carbon_field_skip_column(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(!field_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(!field_is_column_or_subtype(type_marker), ERR_TYPEMISMATCH, NULL);
 
         col_it skip_it;
         col_it_create(&skip_it, file, MEMFILE_TELL(file) - sizeof(u8));
@@ -305,7 +305,7 @@ bool carbon_field_skip_binary(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_BINARY, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(type_marker != FIELD_BINARY, ERR_TYPEMISMATCH, NULL);
         /** read and skip mime type with variable-length integer type */
         u64 mime = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         UNUSED(mime);
@@ -322,7 +322,7 @@ bool carbon_field_skip_custom_binary(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(type_marker != FIELD_BINARY_CUSTOM, ERR_TYPEMISMATCH, NULL);
         /** read custom type str_buf length, and skip the type str_buf */
         u64 custom_type_str_len = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         MEMFILE_SKIP(file, custom_type_str_len);
@@ -337,7 +337,7 @@ bool carbon_field_skip_string(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(type_marker != FIELD_STRING, ERR_TYPEMISMATCH, NULL);
         u64 strlen = MEMFILE_READ_UINTVAR_STREAM(NULL, file);
         MEMFILE_SKIP(file, strlen);
         return true;
@@ -347,7 +347,7 @@ bool carbon_field_skip_float(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(type_marker != FIELD_NUMBER_FLOAT, ERR_TYPEMISMATCH, NULL);
         MEMFILE_SKIP(file, sizeof(float));
         return true;
 }
@@ -356,7 +356,7 @@ bool carbon_field_skip_boolean(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_TRUE && type_marker != FIELD_FALSE, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(type_marker != FIELD_TRUE && type_marker != FIELD_FALSE, ERR_TYPEMISMATCH, NULL);
         return true;
 }
 
@@ -364,7 +364,7 @@ bool carbon_field_skip_null(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_NULL, ERR_TYPEMISMATCH, NULL);
+        ERROR_IF_AND_RETURN(type_marker != FIELD_NULL, ERR_TYPEMISMATCH, NULL);
         return true;
 }
 
@@ -372,7 +372,7 @@ bool carbon_field_skip_8(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_NUMBER_I8 && type_marker != FIELD_NUMBER_U8,
+        ERROR_IF_AND_RETURN(type_marker != FIELD_NUMBER_I8 && type_marker != FIELD_NUMBER_U8,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u8) == sizeof(i8));
         MEMFILE_SKIP(file, sizeof(u8));
@@ -383,7 +383,7 @@ bool carbon_field_skip_16(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_NUMBER_I16 && type_marker != FIELD_NUMBER_U16,
+        ERROR_IF_AND_RETURN(type_marker != FIELD_NUMBER_I16 && type_marker != FIELD_NUMBER_U16,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u16) == sizeof(i16));
         MEMFILE_SKIP(file, sizeof(u16));
@@ -394,7 +394,7 @@ bool carbon_field_skip_32(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_NUMBER_I32 && type_marker != FIELD_NUMBER_U32,
+        ERROR_IF_AND_RETURN(type_marker != FIELD_NUMBER_I32 && type_marker != FIELD_NUMBER_U32,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u32) == sizeof(i32));
         MEMFILE_SKIP(file, sizeof(u32));
@@ -405,7 +405,7 @@ bool carbon_field_skip_64(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
-        error_if_and_return(type_marker != FIELD_NUMBER_I64 && type_marker != FIELD_NUMBER_U64,
+        ERROR_IF_AND_RETURN(type_marker != FIELD_NUMBER_I64 && type_marker != FIELD_NUMBER_U64,
                  ERR_TYPEMISMATCH, NULL);
         assert(sizeof(u64) == sizeof(i64));
         MEMFILE_SKIP(file, sizeof(u64));
@@ -437,7 +437,7 @@ field_e field_for_column(list_type_e derivation, col_it_type_e type)
                                         return FIELD_COLUMN_FLOAT_UNSORTED_MULTISET;
                                 case COLUMN_BOOLEAN:
                                         return FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET;
-                                default: error(ERR_INTERNALERR, NULL);
+                                default: ERROR(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_SORTED_MULTISET:
@@ -462,7 +462,7 @@ field_e field_for_column(list_type_e derivation, col_it_type_e type)
                                         return FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET;
                                 case COLUMN_BOOLEAN:
                                         return FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET;
-                                default: error(ERR_INTERNALERR, NULL);
+                                default: ERROR(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_UNSORTED_SET:
@@ -487,7 +487,7 @@ field_e field_for_column(list_type_e derivation, col_it_type_e type)
                                         return FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET;
                                 case COLUMN_BOOLEAN:
                                         return FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET;
-                                default: error(ERR_INTERNALERR, NULL);
+                                default: ERROR(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
                 case LIST_SORTED_SET:
@@ -512,10 +512,10 @@ field_e field_for_column(list_type_e derivation, col_it_type_e type)
                                         return FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET;
                                 case COLUMN_BOOLEAN:
                                         return FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET;
-                                default: error(ERR_INTERNALERR, NULL);
+                                default: ERROR(ERR_INTERNALERR, NULL);
                                         return 0;
                         }
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         return 0;
         }
 }
@@ -577,7 +577,7 @@ field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true)
                         case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                         case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET:
                                 return is_true ? FIELD_TRUE : FIELD_FALSE;
-                        default: error(ERR_INTERNALERR, NULL);
+                        default: ERROR(ERR_INTERNALERR, NULL);
                                 return 0;
                 }
         }
@@ -654,7 +654,7 @@ field_class_e field_get_class(field_e type)
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
                         return CLASS_BINARY_STRING;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         return 0;
         }
 }

@@ -922,7 +922,7 @@ typedef struct {
 #define DUK_TVAL_UNUSED_INITIALIZER() \
 	{ DUK_TAG_UNUSED, DUK_TAG_UNUSED, DUK_TAG_UNUSED, DUK_TAG_UNUSED }
 
-/* two casts to avoid gcc warning: "warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]" */
+/* two casts to avoid gcc warning: "warning: CAST from pointer to integer of different size [-Wpointer-to-int-CAST]" */
 #if defined(DUK_USE_64BIT_OPS)
 #if defined(DUK_USE_DOUBLE_ME)
 #define DUK__TVAL_SET_TAGGEDPOINTER(tv,h,tag)  do { \
@@ -943,7 +943,7 @@ typedef struct {
 #endif  /* DUK_USE_64BIT_OPS */
 
 #if defined(DUK_USE_64BIT_OPS)
-/* Double casting for pointer to avoid gcc warning (cast from pointer to integer of different size) */
+/* Double casting for pointer to avoid gcc warning (CAST from pointer to integer of different size) */
 #if defined(DUK_USE_DOUBLE_ME)
 #define DUK__TVAL_SET_LIGHTFUNC(tv,fp,flags)  do { \
 		(tv)->ull[DUK_DBL_IDX_ULL0] = (((duk_uint64_t) DUK_TAG_LIGHTFUNC) << 16) | \
@@ -990,7 +990,7 @@ typedef struct {
 	} while (0)
 #endif
 
-/* This needs to go through a cast because sign extension is needed. */
+/* This needs to go through a CAST because sign extension is needed. */
 #define DUK__TVAL_SET_I32(tv,i)  do { \
 		duk_int64_t duk__tmp = (duk_int64_t) (i); \
 		DUK_TVAL_SET_I48((tv), duk__tmp); \
@@ -4117,7 +4117,7 @@ DUK_INTERNAL_DECL void duk_lexer_parse_re_ranges(duk_lexer_ctx *lex_ctx, duk_re_
 #define DUK_ISPEC_REGCONST     2   /* value resides in a register or constant */
 
 /* Bit mask which indicates that a regconst is a constant instead of a register.
- * Chosen so that when a regconst is cast to duk_int32_t, all consts are
+ * Chosen so that when a regconst is CAST to duk_int32_t, all consts are
  * negative values.
  */
 #define DUK_REGCONST_CONST_MARKER    DUK_INT32_MIN  /* = -0x80000000 */
@@ -4417,7 +4417,7 @@ DUK_INTERNAL_DECL void duk_regexp_match_force_global(duk_hthread *thr);  /* hack
  *  wrap; otherwise objects might be freed incorrectly after wrapping.  The
  *  default refcount field is 32 bits even on 64-bit systems: while that's in
  *  theory incorrect, the Duktape heap needs to be larger than 64GB for the
- *  count to actually wrap (assuming 16-byte duk_tvals).  This is very unlikely
+ *  count to actually wrap (assuming 16-byte duk_tvals).  This is very UNLIKELY
  *  to ever be an issue, but if it is, disabling DUK_USE_REFCOUNT32 causes
  *  Duktape to use size_t for refcounts which should always be safe.
  *
@@ -6118,7 +6118,7 @@ DUK_INTERNAL_DECL void duk_hstring_init_charlen(duk_hstring *h);
 	(1UL << DUK_HEAPHDR_GET_FLAG_RANGE(&(h)->hdr, DUK_HOBJECT_FLAG_CLASS_BASE, DUK_HOBJECT_FLAG_CLASS_BITS))
 
 /* Macro for creating flag initializer from a class number.
- * Unsigned type cast is needed to avoid warnings about coercing
+ * Unsigned type CAST is needed to avoid warnings about coercing
  * a signed integer to an unsigned one; the largest class values
  * have the highest bit (bit 31) set which causes this.
  */
@@ -11819,7 +11819,7 @@ DUK_INTERNAL DUK_COLD void duk_default_fatal_handler(void *udata, const char *ms
 	 * explicit fatal err handler.
 	 *
 	 * ====================================================================
-	 * NOTE: If you are seeing this, you are most likely dealing with an
+	 * NOTE: If you are seeing this, you are most LIKELY dealing with an
 	 * uncaught err.  You should provide a fatal err handler in Duktape
 	 * heap creation, and should consider using a protected call as your
 	 * first call into an empty Duktape context to properly handle errors.
@@ -14843,7 +14843,7 @@ DUK_LOCAL DUK_ALWAYS_INLINE void duk__base64_encode_fast_3(const duk_uint8_t *sr
 	dst[3] = duk__base64_enctab_fast[t & 0x3fU];
 
 #if 0
-	/* Tested: not faster on x64, most likely due to aliasing between
+	/* Tested: not faster on x64, most LIKELY due to aliasing between
 	 * output and input index computation.
 	 */
 	/* aaaaaabb bbbbcccc ccdddddd */
@@ -15548,8 +15548,8 @@ DUK_EXTERNAL void duk_hex_decode(duk_hthread *thr, duk_idx_t idx) {
 		}
 	}
 	for (; i < len; i += 2) {
-		/* First cast to duk_int_t to sign extend, second cast to
-		 * duk_uint_t to avoid signed left shift, and final cast to
+		/* First CAST to duk_int_t to sign extend, second CAST to
+		 * duk_uint_t to avoid signed left shift, and final CAST to
 		 * duk_int_t result type.
 		 */
 		t = (duk_int_t) ((((duk_uint_t) (duk_int_t) duk_hex_dectab[inp[i]]) << 4U) |
@@ -19242,7 +19242,7 @@ DUK_LOCAL DUK_ALWAYS_INLINE duk_double_t duk__get_number_raw(duk_hthread *thr, d
 	DUK_ASSERT(tv != NULL);
 #if defined(DUK_USE_FASTINT)
 	if (DUK_TVAL_IS_FASTINT(tv)) {
-		ret.d = (duk_double_t) DUK_TVAL_GET_FASTINT(tv);  /* XXX: cast trick */
+		ret.d = (duk_double_t) DUK_TVAL_GET_FASTINT(tv);  /* XXX: CAST trick */
 	}
 	else
 #endif
@@ -20209,7 +20209,7 @@ DUK_EXTERNAL duk_size_t duk_get_length(duk_hthread *thr, duk_idx_t idx) {
 	 * type checks.  Lightfuncs inherit from %NativeFunctionPrototype%
 	 * which provides an inherited .length accessor; it could be overwritten
 	 * to produce unexpected types or values, but just number convert and
-	 * duk_size_t cast for now.
+	 * duk_size_t CAST for now.
 	 */
 	case DUK_TAG_STRING:
 	case DUK_TAG_BUFFER:
@@ -21362,7 +21362,7 @@ DUK_EXTERNAL void *duk_to_pointer(duk_hthread *thr, duk_idx_t idx) {
 		res = (void *) DUK_TVAL_GET_HEAPHDR(tv);
 		break;
 	case DUK_TAG_LIGHTFUNC:
-		/* Function pointers do not always cast correctly to void *
+		/* Function pointers do not always CAST correctly to void *
 		 * (depends on memory and segmentation model for instance),
 		 * so they coerce to NULL.
 		 */
@@ -21869,7 +21869,7 @@ DUK_EXTERNAL duk_bool_t duk_is_symbol(duk_hthread *thr, duk_idx_t idx) {
 
 	DUK_ASSERT_API_ENTRY(thr);
 	h = duk_get_hstring(thr, idx);
-	/* Use DUK_LIKELY() here because caller may be more likely to type
+	/* Use DUK_LIKELY() here because caller may be more LIKELY to type
 	 * check an expected symbol than not.
 	 */
 	if (DUK_LIKELY(h != NULL && DUK_HSTRING_HAS_SYMBOL(h))) {
@@ -22708,7 +22708,7 @@ DUK_EXTERNAL duk_idx_t duk_push_bare_array(duk_hthread *thr) {
 }
 
 DUK_INTERNAL duk_harray *duk_push_harray(duk_hthread *thr) {
-	/* XXX: API call could do this directly, cast to void in API macro. */
+	/* XXX: API call could do this directly, CAST to void in API macro. */
 	duk_harray *a;
 
 	DUK_ASSERT_API_ENTRY(thr);
@@ -24039,7 +24039,7 @@ DUK_INTERNAL duk_idx_t duk_unpack_array_like(duk_hthread *thr, duk_idx_t idx) {
 			while (len-- > 0) {
 				DUK_ASSERT(tv_dst < thr->valstack_end);
 				if (DUK_UNLIKELY(DUK_TVAL_IS_UNUSED(tv_src))) {
-					/* Gaps are very unlikely.  Skip over them,
+					/* Gaps are very UNLIKELY.  Skip over them,
 					 * without an ancestor lookup (technically
 					 * not compliant).
 					 */
@@ -27376,8 +27376,8 @@ DUK_INTERNAL void duk_hbufobj_validated_write(duk_hthread *thr, duk_hbufobj *h_b
 		du.ui[0] = (duk_uint32_t) duk_to_int32(thr, -1);
 		break;
 	case DUK_HBUFOBJ_ELEM_FLOAT32:
-		/* A double-to-float cast is undefined behavior in C99 if
-		 * the cast is out-of-range, so use a helper.  Example:
+		/* A double-to-float CAST is undefined behavior in C99 if
+		 * the CAST is out-of-range, so use a helper.  Example:
 		 * runtime err: value -1e+100 is outside the range of representable values of type 'float'
 		 */
 		du.f[0] = duk_double_to_float_t(duk_to_number_m1(thr));
@@ -29592,7 +29592,7 @@ DUK_INTERNAL duk_ret_t duk_bi_buffer_writefield(duk_hthread *thr) {
 			i_end = field_bytelen - 1;
 		}
 
-		/* XXX: The duk_to_number() cast followed by integer coercion
+		/* XXX: The duk_to_number() CAST followed by integer coercion
 		 * is platform specific so NaN, +/- Infinity, and out-of-bounds
 		 * values result in platform specific output now.
 		 * See: test-bi-nodejs-buffer-proto-varint-special.js
@@ -31791,7 +31791,7 @@ DUK_INTERNAL duk_int_t duk_bi_date_get_local_tzoffset_gmtime(duk_double_t d) {
 	if (t1 == (time_t) -1 || t2 == (time_t) -1) {
 		/* This check used to be for (t < 0) but on some platforms
 		 * time_t is unsigned and apparently the proper way to detect
-		 * an mktime() err return is the cast above.  See e.g.:
+		 * an mktime() err return is the CAST above.  See e.g.:
 		 * http://pubs.opengroup.org/onlinepubs/009695299/functions/mktime.html
 		 */
 		goto mktime_error;
@@ -32564,7 +32564,7 @@ DUK_LOCAL duk_ret_t duk__decode_helper(duk_hthread *thr, duk__decode_context *de
 	input = (const duk_uint8_t *) duk_get_buffer_data(thr, 0, &len_tmp);
 	DUK_ASSERT(input != NULL || len == 0);
 	if (DUK_UNLIKELY(len != len_tmp)) {
-		/* Very unlikely but possible: source buffer was resized by
+		/* Very UNLIKELY but possible: source buffer was resized by
 		 * a side effect when fixed buffer was pushed.  Output buffer
 		 * may not be large enough to hold output, so just fail if
 		 * length has changed.
@@ -34759,8 +34759,8 @@ DUK_LOCAL void duk__dec_req_stridx(duk_json_dec_ctx *js_ctx, duk_small_uint_t st
 DUK_LOCAL duk_small_int_t duk__dec_string_escape(duk_json_dec_ctx *js_ctx, duk_uint8_t **ext_p) {
 	duk_uint_fast32_t cp;
 
-	/* EOF (-1) will be cast to an unsigned value first
-	 * and then re-cast for the switch.  In any case, it
+	/* EOF (-1) will be CAST to an unsigned value first
+	 * and then re-CAST for the switch.  In any case, it
 	 * will match the default case (syntax err).
 	 */
 	cp = (duk_uint_fast32_t) duk__dec_get(js_ctx);
@@ -48290,7 +48290,7 @@ duk_heap *duk_heap_alloc(duk_alloc_function alloc_func,
 
 	/* The casts through duk_uintptr_t is to avoid the following GCC warning:
 	 *
-	 *   warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	 *   warning: CAST from pointer to integer of different size [-Wpointer-to-int-CAST]
 	 *
 	 * This still generates a /Wp64 warning on VS2010 when compiling for x86.
 	 */
@@ -51251,7 +51251,7 @@ DUK_INTERNAL void duk_hobject_refcount_finalize_norz(duk_heap *heap, duk_hobject
 	}
 	DUK_ASSERT(DUK_HOBJECT_PROHIBITS_FASTREFS(h));
 
-	/* Slow path: special object, start bit checks from most likely. */
+	/* Slow path: special object, start bit checks from most LIKELY. */
 
 	/* XXX: reorg, more common first */
 	if (DUK_HOBJECT_IS_COMPFUNC(h)) {
@@ -53109,7 +53109,7 @@ DUK_LOCAL duk_uint_t duk__strtable_litcache_key(const duk_uint8_t *str, duk_uint
 
 	key = (duk_uintptr_t) blen ^ (duk_uintptr_t) str;
 	key &= (duk_uintptr_t) (DUK_USE_LITCACHE_SIZE - 1);  /* Assumes size is power of 2. */
-	/* Due to masking, cast is in 32-bit range. */
+	/* Due to masking, CAST is in 32-bit range. */
 	DUK_ASSERT(key <= DUK_UINT_MAX);
 	return (duk_uint_t) key;
 }
@@ -56067,7 +56067,7 @@ DUK_LOCAL void duk__abandon_array_part(duk_hthread *thr, duk_hobject *obj) {
 
 /*
  *  Compact an object.  Minimizes allocation size for objects which are
- *  not likely to be extended.  This is useful for internal and non-
+ *  not LIKELY to be extended.  This is useful for internal and non-
  *  extensible objects, but can also be called for non-extensible objects.
  *  May abandon the array part if it is computed to be too sparse.
  *
@@ -56149,7 +56149,7 @@ DUK_INTERNAL duk_bool_t duk_hobject_find_entry(duk_heap *heap, duk_hobject *obj,
 
 	if (DUK_LIKELY(DUK_HOBJECT_GET_HSIZE(obj) == 0))
 	{
-		/* Linear scan: more likely because most objects are small.
+		/* Linear scan: more LIKELY because most objects are small.
 		 * This is an important fast path.
 		 *
 		 * XXX: this might be worth inlining for property lookups.
@@ -60934,7 +60934,7 @@ DUK_INTERNAL void duk_hobject_object_seal_freeze_helper(duk_hthread *thr, duk_ho
 	 *  Abandon array part because all properties must become non-configurable.
 	 *  Note that this is now done regardless of whether this is always the case
 	 *  (skips check, but performance problem if caller would do this many times
-	 *  for the same object; not likely).
+	 *  for the same object; not LIKELY).
 	 */
 
 	duk__abandon_array_part(thr, obj);
@@ -62217,7 +62217,7 @@ DUK_INTERNAL void duk_hthread_terminate(duk_hthread *thr) {
 	thr->state = DUK_HTHREAD_STATE_TERMINATED;
 
 	/* Here we could remove references to built-ins, but it may not be
-	 * worth the effort because built-ins are quite likely to be shared
+	 * worth the effort because built-ins are quite LIKELY to be shared
 	 * with another (unterminated) thread, and terminated threads are also
 	 * usually garbage collected quite quickly.
 	 *
@@ -74242,7 +74242,7 @@ DUK_LOCAL DUK__INLINE_PERF void duk__vm_bitwise_binary_op(duk_hthread *thr, duk_
 	/*
 	 *  Binary bitwise operations use different coercions (ToInt32, ToUint32)
 	 *  depending on the operation.  We coerce the arguments first using
-	 *  ToInt32(), and then cast to an 32-bit value if necessary.  Note that
+	 *  ToInt32(), and then CAST to an 32-bit value if necessary.  Note that
 	 *  such casts must be correct even if there is no native 32-bit type
 	 *  (e.g., duk_int32_t and duk_uint32_t are 64-bit).
 	 *
@@ -78378,7 +78378,7 @@ DUK_LOCAL DUK_NOINLINE DUK_HOT void duk__js_execute_bytecode_inner(duk_hthread *
 		}
 
 		case DUK_OP_JUMP: {
-			/* Note: without explicit cast to signed, MSVC will
+			/* Note: without explicit CAST to signed, MSVC will
 			 * apparently generate a large positive jump when the
 			 * bias-corrected value would normally be negative.
 			 */
@@ -82563,7 +82563,7 @@ duk_bool_t duk_js_declvar_activation(duk_hthread *thr,
  *  An alternative approach to dealing with invalid or partial sequences
  *  would be to skip them and replace them with e.g. the Unicode replacement
  *  character U+FFFD.  This has limited utility because a replacement character
- *  will most likely cause a parse err, unless it occurs inside a string.
+ *  will most LIKELY cause a parse err, unless it occurs inside a string.
  *  Further, ECMAScript source is typically pure ASCII.
  *
  *  See:
@@ -82614,7 +82614,7 @@ DUK_LOCAL void duk__fill_lexer_buffer(duk_lexer_ctx *lex_ctx, duk_small_uint_t s
 		/* XXX: potential issue with signed pointers, p_end < p. */
 		if (DUK_UNLIKELY(p >= p_end)) {
 			/* If input_offset were assigned a negative value, it would
-			 * result in a large positive value.  Most likely it would be
+			 * result in a large positive value.  Most LIKELY it would be
 			 * larger than input_length and be caught here.  In any case
 			 * no memory unsafe behavior would happen.
 			 */
@@ -82776,7 +82776,7 @@ DUK_LOCAL duk_codepoint_t duk__read_char(duk_lexer_ctx *lex_ctx) {
 	input_offset = lex_ctx->input_offset;
 	if (DUK_UNLIKELY(input_offset >= lex_ctx->input_length)) {
 		/* If input_offset were assigned a negative value, it would
-		 * result in a large positive value.  Most likely it would be
+		 * result in a large positive value.  Most LIKELY it would be
 		 * larger than input_length and be caught here.  In any case
 		 * no memory unsafe behavior would happen.
 		 */
@@ -86460,7 +86460,7 @@ DUK_LOCAL DUK_NOINLINE void duk__numconv_stringify_raw(duk_hthread *thr, duk_sma
 
 	/*
 	 *  Handle integers in 32-bit range (that is, [-(2**32-1),2**32-1])
-	 *  specially, as they're very likely for embedded programs.  This
+	 *  specially, as they're very LIKELY for embedded programs.  This
 	 *  is now done for all radix values.  We must be careful not to use
 	 *  the fast path when special formatting (e.g. forced exponential)
 	 *  is in force.
@@ -90004,7 +90004,7 @@ DUK_LOCAL duk_uint_t duk__selftest_64bit_arithmetic(void) {
 	volatile duk_int64_t i;
 	volatile duk_double_t d;
 
-	/* Catch a double-to-int64 cast issue encountered in practice. */
+	/* Catch a double-to-int64 CAST issue encountered in practice. */
 	d = 2147483648.0;
 	i = (duk_int64_t) d;
 	if (i != DUK_I64_CONSTANT(0x80000000)) {
@@ -90040,7 +90040,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_small_uint(void) {
 	d2 = (duk_double_t) u;
 
 	if (!(d1 == 1.0 && u == 1 && d2 == 1.0 && d1 == d2)) {
-		DUK__FAILED("double to duk_small_uint_t cast failed");
+		DUK__FAILED("double to duk_small_uint_t CAST failed");
 	}
 
 	/* Same test with volatiles */
@@ -90050,7 +90050,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_small_uint(void) {
 	d2v = (duk_double_t) uv;
 
 	if (!(d1v == 1.0 && uv == 1 && d2v == 1.0 && d1v == d2v)) {
-		DUK__FAILED("double to duk_small_uint_t cast failed");
+		DUK__FAILED("double to duk_small_uint_t CAST failed");
 	}
 
 	return error_count;
@@ -90059,7 +90059,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_small_uint(void) {
 DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_uint32(void) {
 	/*
 	 *  This test fails on an exotic ARM target; double-to-uint
-	 *  cast is incorrectly clamped to -signed- int highest value.
+	 *  CAST is incorrectly clamped to -signed- int highest value.
 	 *
 	 *  https://github.com/svaarala/duktape/issues/336
 	 */
@@ -90072,7 +90072,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_uint32(void) {
 	uv = (duk_uint32_t) dv;
 
 	if (uv != 0xdeadbeefUL) {
-		DUK__FAILED("double to duk_uint32_t cast failed");
+		DUK__FAILED("double to duk_uint32_t CAST failed");
 	}
 
 	return error_count;
@@ -97101,7 +97101,7 @@ DUK_INTERNAL void duk_bw_assert_valid(duk_hthread *thr, duk_bufwriter_ctx *bw_ct
  *  may invoke implementation defined or even undefined behavior.  See e.g.
  *  http://blog.frama-c.com/index.php?post/2013/10/09/Overflow-float-integer.
  *
- *  Provide explicit cast helpers which try to avoid implementation defined
+ *  Provide explicit CAST helpers which try to avoid implementation defined
  *  or undefined behavior.  These helpers can then be simplified in the vast
  *  majority of cases where the implementation defined or undefined behavior
  *  is not problematic.
@@ -97109,7 +97109,7 @@ DUK_INTERNAL void duk_bw_assert_valid(duk_hthread *thr, duk_bufwriter_ctx *bw_ct
 
 /* #include duk_internal.h -> already included */
 
-/* Portable double-to-integer cast which avoids undefined behavior and avoids
+/* Portable double-to-integer CAST which avoids undefined behavior and avoids
  * relying on fmin(), fmax(), or other intrinsics.  Out-of-range results are
  * not assumed by caller, but here value is clamped, NaN converts to minval.
  */
@@ -97132,7 +97132,7 @@ DUK_INTERNAL void duk_bw_assert_valid(duk_hthread *thr, duk_bufwriter_ctx *bw_ct
 
 /* Rely on specific NaN behavior for duk_double_{fmin,fmax}(): if either
  * argument is a NaN, return the second argument.  This avoids a
- * NaN-to-integer cast which is undefined behavior.
+ * NaN-to-integer CAST which is undefined behavior.
  */
 #define DUK__DOUBLE_INT_CAST2(tname,minval,maxval)  do { \
 		return (tname) duk_double_fmin(duk_double_fmax(x, (duk_double_t) (minval)), (duk_double_t) (maxval)); \
@@ -97207,7 +97207,7 @@ DUK_INTERNAL duk_uint32_t duk_double_to_uint32_t(duk_double_t x) {
 #define DUK__FLOAT_MAX              340282346638528859811704183484516925440.0
 
 DUK_INTERNAL duk_float_t duk_double_to_float_t(duk_double_t x) {
-	/* Even a double-to-float cast is technically undefined behavior if
+	/* Even a double-to-float CAST is technically undefined behavior if
 	 * the double is out-of-range.  C99 Section 6.3.1.5:
 	 *
 	 *   If the value being converted is in the range of values that can

@@ -37,14 +37,14 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         MEMFILE_SEEK(&it->file, payload_start);
 
 #ifndef NDEBUG
-        error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
+        ERROR_IF_AND_RETURN(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8), ERR_CORRUPTED, NULL);
 #endif
 
         char marker = MEMFILE_READ_BYTE(&it->file);
 
         sub_type_e sub_type;
         abstract_get_container_subtype(&sub_type, marker);
-        error_if_and_return(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
+        ERROR_IF_AND_RETURN(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
 
         it->type = (map_type_e) marker;
@@ -89,7 +89,7 @@ bool obj_it_drop(obj_it *it)
 
 bool obj_it_rewind(obj_it *it)
 {
-        error_if_and_return(it->content_begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(it->content_begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
         internal_history_clear(&it->history);
         it->pos = 0;
         return MEMFILE_SEEK(&it->file, it->content_begin);
@@ -107,7 +107,7 @@ prop *obj_it_next(obj_it *it)
         } else {
                 /** skip remaining zeros until end of array is reached */
                 if (!it->eof) {
-                        error_if_and_return(!is_empty_slot, ERR_CORRUPTED, NULL);
+                        ERROR_IF_AND_RETURN(!is_empty_slot, ERR_CORRUPTED, NULL);
 
                         while (*MEMFILE_PEEK(&it->file, 1) == 0) {
                                 MEMFILE_SKIP(&it->file, 1);
@@ -158,7 +158,7 @@ bool internal_obj_it_tell(offset_t *key_off, offset_t *value_off, obj_it *it)
 string_field internal_obj_it_prop_name(obj_it *it)
 {
         string_field ret = NULL_STRING;
-        if (likely(it != NULL)) {
+        if (LIKELY(it != NULL)) {
                 ret.len = it->field.key.name_len;
                 ret.str = it->field.key.name;
         }
@@ -186,7 +186,7 @@ bool internal_obj_it_remove(obj_it *it)
                 it->mod_size -= _prop_remove(it, type);
                 return true;
         } else {
-                error(ERR_ILLEGALSTATE, NULL);
+                ERROR(ERR_ILLEGALSTATE, NULL);
                 return false;
         }
 }
@@ -232,7 +232,7 @@ void internal_obj_it_insert_end(insert *in)
                 case ARRAY:  internal_arr_it_adjust(in->context.array); break;
                 case COLUMN: /* nothing to do */ break;
                 default:
-                        panic(ERR_NOTIMPLEMENTED);
+                        PANIC(ERR_NOTIMPLEMENTED);
         }
 }
 
@@ -256,7 +256,7 @@ bool internal_obj_it_update_name(obj_it *it, const char *key)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(key)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_u8(obj_it *it, u8 value)
@@ -264,7 +264,7 @@ bool internal_obj_it_update_u8(obj_it *it, u8 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_u16(obj_it *it, u16 value)
@@ -272,7 +272,7 @@ bool internal_obj_it_update_u16(obj_it *it, u16 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_u32(obj_it *it, u32 value)
@@ -280,7 +280,7 @@ bool internal_obj_it_update_u32(obj_it *it, u32 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_u64(obj_it *it, u64 value)
@@ -288,7 +288,7 @@ bool internal_obj_it_update_u64(obj_it *it, u64 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_i8(obj_it *it, i8 value)
@@ -296,7 +296,7 @@ bool internal_obj_it_update_i8(obj_it *it, i8 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_i16(obj_it *it, i16 value)
@@ -304,7 +304,7 @@ bool internal_obj_it_update_i16(obj_it *it, i16 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_i32(obj_it *it, i32 value)
@@ -312,7 +312,7 @@ bool internal_obj_it_update_i32(obj_it *it, i32 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_i64(obj_it *it, i64 value)
@@ -320,7 +320,7 @@ bool internal_obj_it_update_i64(obj_it *it, i64 value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_float(obj_it *it, float value)
@@ -328,28 +328,28 @@ bool internal_obj_it_update_float(obj_it *it, float value)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(value)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_true(obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(it)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_false(obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(it)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_null(obj_it *it)
 {
         // TODO: Implement P1
         UNUSED(it)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_string(obj_it *it, const char *str)
@@ -357,7 +357,7 @@ bool internal_obj_it_update_string(obj_it *it, const char *str)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(str)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_binary(obj_it *it, const void *value, size_t nbytes, const char *file_ext, const char *user_type)
@@ -368,7 +368,7 @@ bool internal_obj_it_update_binary(obj_it *it, const void *value, size_t nbytes,
         UNUSED(nbytes)
         UNUSED(file_ext)
         UNUSED(user_type)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *internal_obj_it_update_array_begin(arr_state *state, obj_it *it)
@@ -376,7 +376,7 @@ insert *internal_obj_it_update_array_begin(arr_state *state, obj_it *it)
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -384,7 +384,7 @@ bool internal_obj_it_update_array_end(arr_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *internal_obj_it_update_column_begin(col_state *state, obj_it *it)
@@ -392,7 +392,7 @@ insert *internal_obj_it_update_column_begin(col_state *state, obj_it *it)
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -400,7 +400,7 @@ bool internal_obj_it_update_column_end(col_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 insert *internal_obj_it_update_object_begin(obj_state *state, obj_it *it)
@@ -408,7 +408,7 @@ insert *internal_obj_it_update_object_begin(obj_state *state, obj_it *it)
         // TODO: Implement P1
         UNUSED(state)
         UNUSED(it)
-        error(ERR_NOTIMPLEMENTED, NULL);
+        ERROR(ERR_NOTIMPLEMENTED, NULL);
         return NULL;
 }
 
@@ -416,7 +416,7 @@ bool internal_obj_it_update_object_end(obj_state *state)
 {
         // TODO: Implement P1
         UNUSED(state)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_from_carbon(obj_it *it, const rec *src)
@@ -424,7 +424,7 @@ bool internal_obj_it_update_from_carbon(obj_it *it, const rec *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_from_array(obj_it *it, const obj_it *src)
@@ -432,7 +432,7 @@ bool internal_obj_it_update_from_array(obj_it *it, const obj_it *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_from_object(obj_it *it, const obj_it *src)
@@ -440,7 +440,7 @@ bool internal_obj_it_update_from_object(obj_it *it, const obj_it *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool internal_obj_it_update_from_column(obj_it *it, const col_it *src)
@@ -448,5 +448,5 @@ bool internal_obj_it_update_from_column(obj_it *it, const col_it *src)
         // TODO: Implement P1
         UNUSED(it)
         UNUSED(src)
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }

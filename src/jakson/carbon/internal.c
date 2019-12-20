@@ -185,12 +185,12 @@ bool internal_array_refresh(bool *is_empty_slot, bool *is_array_end, arr_it *it)
 
 bool internal_array_field_read(arr_it *it)
 {
-        error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < 1, ERR_ILLEGALOP, NULL);
+        ERROR_IF_AND_RETURN(MEMFILE_REMAIN_SIZE(&it->file) < 1, ERR_ILLEGALOP, NULL);
         MEMFILE_SAVE_POSITION(&it->file);
         it->field_offset = MEMFILE_TELL(&it->file);
         u8 media_type = *MEMFILE_READ(&it->file, 1);
-        error_if_and_return(media_type == 0, ERR_NOTFOUND, NULL)
-        error_if_and_return(media_type == MARRAY_END, ERR_OUTOFBOUNDS, NULL)
+        ERROR_IF_AND_RETURN(media_type == 0, ERR_NOTFOUND, NULL)
+        ERROR_IF_AND_RETURN(media_type == MARRAY_END, ERR_OUTOFBOUNDS, NULL)
         it->field.type = media_type;
         MEMFILE_RESTORE_POSITION(&it->file);
         return true;
@@ -300,7 +300,7 @@ bool internal_field_data_access(memfile *file, field *field)
                         field->data = MEMFILE_PEEK__FAST(file) - sizeof(u8);
                         break;
                 default:
-                        return error(ERR_CORRUPTED, NULL);
+                        return ERROR(ERR_CORRUPTED, NULL);
         }
 
         field->data = MEMFILE_PEEK(file, 1);
@@ -389,11 +389,11 @@ bool internal_field_bool_value(bool *value, field *field)
 {
         bool is_true = field->type == FIELD_TRUE;
         bool is_false = field->type == FIELD_FALSE;
-        if (likely(is_true || is_false)) {
+        if (LIKELY(is_true || is_false)) {
                 *value = is_true;
                 return true;
         } else {
-                error(ERR_TYPEMISMATCH, NULL);
+                ERROR(ERR_TYPEMISMATCH, NULL);
                 return false;
         }
 }
@@ -413,7 +413,7 @@ const char *internal_field_string_value(u64 *strlen, field *field)
 bool
 internal_field_binary_value(binary_field *out, field *field)
 {
-        error_if_and_return(field->type != FIELD_BINARY &&
+        ERROR_IF_AND_RETURN(field->type != FIELD_BINARY &&
                  field->type != FIELD_BINARY_CUSTOM,
                  ERR_TYPEMISMATCH, NULL);
         out->blob = field->data;
@@ -576,7 +576,7 @@ bool internal_field_remove(memfile *memfile, field_e type)
         }
                 break;
         default:
-                return error(ERR_INTERNALERR, NULL);
+                return ERROR(ERR_INTERNALERR, NULL);
         }
         MEMFILE_SEEK(memfile, start_off);
         MEMFILE_INPLACE_REMOVE(memfile, rm_nbytes);
@@ -613,7 +613,7 @@ static void int_insert_array_number(insert *array_ins, json_number *number)
                 case JSON_NUMBER_SIGNED:
                         insert_signed(array_ins, number->value.signed_integer);
                         break;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
         }
 }
 
@@ -664,7 +664,7 @@ static void int_insert_array_elements(insert *array_ins, json_array *array)
                         case JSON_VALUE_NULL:
                                 int_insert_array_null(array_ins);
                                 break;
-                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                 break;
                 }
         }
@@ -844,13 +844,13 @@ static void int_insert_prop_object(insert *oins, json_object *obj)
                                                         } else if (array_elem->value.value_type == JSON_VALUE_NULL) {
                                                                 insert_null(array_ins);
                                                         } else {
-                                                                error(ERR_UNSUPPORTEDTYPE, NULL);
+                                                                ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                         }
                                                 }
                                                 insert_prop_column_end(&state);
                                         }
                                                 break;
-                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                 break;
                                 }
                         }
@@ -872,7 +872,7 @@ static void int_insert_prop_object(insert *oins, json_object *obj)
                                                 insert_prop_signed(oins, prop->key.value,
                                                                           prop->value.value.value.number->value.signed_integer);
                                                 break;
-                                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                 break;
                                 }
                                 break;
@@ -885,7 +885,7 @@ static void int_insert_prop_object(insert *oins, json_object *obj)
                         case JSON_VALUE_NULL:
                                 insert_prop_null(oins, prop->key.value);
                                 break;
-                        default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                        default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                 break;
                 }
         }
@@ -1047,7 +1047,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
                                                         } else if (array_elem->value.value_type == JSON_VALUE_NULL) {
                                                                 insert_null(ins);
                                                         } else {
-                                                                error(ERR_UNSUPPORTEDTYPE, NULL);
+                                                                ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                         }
                                                 }
                                         } else {
@@ -1069,14 +1069,14 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
                                                         } else if (array_elem->value.value_type == JSON_VALUE_NULL) {
                                                                 insert_null(array_ins);
                                                         } else {
-                                                                error(ERR_UNSUPPORTEDTYPE, NULL);
+                                                                ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                                         }
                                                 }
                                                 insert_column_end(&state);
                                         }
                                 }
                                         break;
-                                default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                                default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                         break;
                         }
                 }
@@ -1095,7 +1095,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
                                 case JSON_NUMBER_SIGNED:
                                         insert_signed(ins, elem->value.value.number->value.signed_integer);
                                         break;
-                                default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                                default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                                         break;
                         }
                         break;
@@ -1108,7 +1108,7 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
                 case JSON_VALUE_NULL:
                         insert_null(ins);
                         break;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                         break;
         }
 }

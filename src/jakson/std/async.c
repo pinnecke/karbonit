@@ -23,7 +23,7 @@
 
 void *async_for_proxy_function(void *args)
 {
-        cast(async_func_proxy *, proxy_arg, args);
+        CAST(async_func_proxy *, proxy_arg, args);
         proxy_arg->function(proxy_arg->start, proxy_arg->width, proxy_arg->len, proxy_arg->args, proxy_arg->tid);
         return NULL;
 }
@@ -36,7 +36,7 @@ void *async_for_proxy_function(void *args)
 
 #define ASYNC_MATCH(forSingle, forMulti)                                                                            \
 {                                                                                                                      \
-    if (likely(hint == THREADING_HINT_MULTI)) {                                             \
+    if (LIKELY(hint == THREADING_HINT_MULTI)) {                                             \
         return (forMulti);                                                                                             \
     } else if (hint == THREADING_HINT_SINGLE) {                                                           \
         return (forSingle);                                                                                            \
@@ -217,7 +217,7 @@ bool async_for(const void *base, size_t width, size_t len, for_body_func_t f,
 void map_proxy(const void *src, size_t src_width, size_t len, void *args, thread_id_t tid)
 {
         UNUSED(tid);
-        cast(map_args *, mapArgs, args);
+        CAST(map_args *, mapArgs, args);
         size_t globalStart = (src - mapArgs->src) / src_width;
 
         PREFETCH_READ(mapArgs->src);
@@ -245,7 +245,7 @@ bool async_map_exec(void *dst, const void *src, size_t src_width, size_t len, si
 void int_async_gather(const void *start, size_t width, size_t len, void *args, thread_id_t tid)
 {
         UNUSED(tid);
-        cast(gather_scatter_args *, gather_args, args);
+        CAST(gather_scatter_args *, gather_args, args);
         size_t global_index_start = (start - gather_args->dst) / width;
 
         PREFETCH_WRITE(gather_args->dst);
@@ -327,7 +327,7 @@ bool sync_gather_adr(void *dst, const void *src, size_t src_width, const size_t 
 void async_gather_adr_func(const void *start, size_t width, size_t len, void *args, thread_id_t tid)
 {
         UNUSED(tid);
-        cast(gather_scatter_args *, gather_args, args);
+        CAST(gather_scatter_args *, gather_args, args);
 
         PREFETCH_READ(gather_args->idx);
         PREFETCH_WRITE(gather_args->dst);
@@ -362,7 +362,7 @@ bool int_async_gather_adr_func(void *dst, const void *src, size_t src_width, con
 void async_scatter(const void *start, size_t width, size_t len, void *args, thread_id_t tid)
 {
         UNUSED(tid);
-        cast(gather_scatter_args *, scatter_args, args);
+        CAST(gather_scatter_args *, scatter_args, args);
 
         PREFETCH_READ(scatter_args->idx);
         PREFETCH_READ(scatter_args->src);
@@ -444,7 +444,7 @@ bool async_shuffle(void *dst, const void *src, size_t width, const size_t *dst_i
         UNUSED(dst_idx);
         UNUSED(src_idx);
         UNUSED(idx_len);
-        return error(ERR_NOTIMPLEMENTED, NULL);
+        return ERROR(ERR_NOTIMPLEMENTED, NULL);
 }
 
 bool int_sync_filter_late(size_t *positions, size_t *num_positions, const void *source,
@@ -458,7 +458,7 @@ bool int_sync_filter_late(size_t *positions, size_t *num_positions, const void *
 
 void *int_sync_filter_procy_func(void *args)
 {
-        cast(filter_arg  *, proxy_arg, args);
+        CAST(filter_arg  *, proxy_arg, args);
         proxy_arg->pred(proxy_arg->src_positions,
                         &proxy_arg->num_positions,
                         proxy_arg->start,
@@ -472,7 +472,7 @@ void *int_sync_filter_procy_func(void *args)
 bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t width, size_t len,
                            pred_func_t pred, void *args, size_t num_threads)
 {
-        if (unlikely(len == 0)) {
+        if (UNLIKELY(len == 0)) {
                 *num_pos = 0;
                 return true;
         }
@@ -491,7 +491,7 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
         PREFETCH_READ(args);
 
         /** run f on NTHREADS_FOR additional threads */
-        if (likely(chunk_len > 0)) {
+        if (LIKELY(chunk_len > 0)) {
                 for (register uint_fast16_t tid = 0; tid < num_threads; tid++) {
                         filter_arg *arg = thread_args + tid;
                         arg->num_positions = 0;
@@ -523,7 +523,7 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
 
         size_t total_num_matching_positions = 0;
 
-        if (likely(chunk_len > 0)) {
+        if (LIKELY(chunk_len > 0)) {
                 for (register uint_fast16_t tid = 0; tid < num_threads; tid++) {
                         pthread_join(threads[tid], NULL);
                         const filter_arg *thread_arg = (thread_args + tid);
@@ -537,7 +537,7 @@ bool async_filter_late(size_t *pos, size_t *num_pos, const void *src, size_t wid
                 }
         }
 
-        if (likely(main_num_positions > 0)) {
+        if (LIKELY(main_num_positions > 0)) {
                 memcpy(pos + total_num_matching_positions, main_src_positions, main_num_positions * sizeof(size_t));
                 total_num_matching_positions += main_num_positions;
         }
@@ -622,7 +622,7 @@ bool int_async_filter_early(void *result, size_t *result_size, const void *src, 
         for (register uint_fast16_t tid = 0; tid < num_threads; tid++) {
                 const filter_arg *thread_arg = (thread_args + tid);
 
-                if (likely(thread_arg->num_positions > 0)) {
+                if (LIKELY(thread_arg->num_positions > 0)) {
                         gather(result + partial_num_matching_positions * width,
                                    src,
                                    width,
@@ -636,7 +636,7 @@ bool int_async_filter_early(void *result, size_t *result_size, const void *src, 
                 free(thread_arg->src_positions);
         }
 
-        if (likely(main_num_positions > 0)) {
+        if (LIKELY(main_num_positions > 0)) {
                 gather(result + partial_num_matching_positions * width,
                            src,
                            width,

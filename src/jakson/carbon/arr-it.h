@@ -76,11 +76,11 @@ void arr_it_insert_begin(insert *in, arr_it *it);
 void arr_it_insert_end(insert *in);
 
 /** Checks if this array is annotated as a multi set abstract type. Returns true if it is is a multi set, and false if
- * it is a set. In case of any error, a failure is returned. */
+ * it is a set. In case of any ERROR, a failure is returned. */
 bool arr_it_is_multiset(arr_it *it);
 
 /** Checks if this array is annotated as a sorted abstract type. Returns true if this is the case,
- * otherwise false. In case of any error, a failure is returned. */
+ * otherwise false. In case of any ERROR, a failure is returned. */
 bool arr_it_is_sorted(arr_it *it);
 
 /** Updates this arrays abstract type to the given abstract type */

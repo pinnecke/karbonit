@@ -45,7 +45,7 @@ bool strid_iter_next(bool *success, strid_info **info, size_t *info_length,
                         fseek(it->disk_file, it->disk_offset, SEEK_SET);
                         int num_read = fread(&header, sizeof(string_entry_header), 1, it->disk_file);
                         if (header.marker != '-') {
-                                error(ERR_INTERNALERR, NULL);
+                                ERROR(ERR_INTERNALERR, NULL);
                                 return false;
                         }
                         if (num_read != 1) {

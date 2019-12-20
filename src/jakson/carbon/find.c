@@ -67,7 +67,7 @@ bool internal_find_exec(find *find, const dot *path, rec *doc)
                                 result_from_object(find, &find->eval.result.containers.object);
                                 break;
                         default:
-                                return error(ERR_INTERNALERR, "unknown container type");
+                                return ERROR(ERR_INTERNALERR, "unknown container type");
                 }
         }
         return find_has_result(find);
@@ -75,7 +75,7 @@ bool internal_find_exec(find *find, const dot *path, rec *doc)
 
 bool find_has_result(find *find)
 {
-        return dot_eval_has_result(&find->eval);
+        return DOT_EVAL_HAS_RESULT(&find->eval);
 }
 
 const char *find_result_to_str(str_buf *dst_str, find *find)
@@ -124,7 +124,7 @@ const char *find_result_to_str(str_buf *dst_str, find *find)
 
 bool find_result_type(field_e *type, find *find)
 {
-        if(!dot_eval_has_result(&find->eval)) {
+        if(!DOT_EVAL_HAS_RESULT(&find->eval)) {
             return false;
         } else {
             *type = find->type;
@@ -147,7 +147,7 @@ bool find_update_array_type(find *find, list_type_e derivation)
                 return true;
 
         } else {
-                return error(ERR_TYPEMISMATCH, "find: array type update must be invoked on array or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: array type update must be invoked on array or sub type");
         }
 }
 
@@ -159,7 +159,7 @@ bool find_array_is_multiset(find *find)
                 arr_it *it = find_result_array(find);
                 return arr_it_is_multiset(it);
         } else {
-                return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
 }
 
@@ -171,7 +171,7 @@ bool find_array_is_sorted(find *find)
                 arr_it *it = find_result_array(find);
                 return arr_it_is_sorted(it);
         } else {
-                return error(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: array type query must be invoked on array or sub type");
         }
 }
 
@@ -193,7 +193,7 @@ bool find_update_column_type(find *find, list_type_e derivation)
                 MEMFILE_RESTORE_POSITION(&it->file);
                 return true;
         } else {
-                return error(ERR_TYPEMISMATCH, "find: column type update must be invoked on column or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: column type update must be invoked on column or sub type");
         }
 }
 
@@ -205,7 +205,7 @@ bool find_column_is_multiset(find *find)
                 col_it *it = find_result_column(find);
                 return col_it_is_multiset(it);
         } else {
-                return error(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
         }
 }
 
@@ -217,7 +217,7 @@ bool find_column_is_sorted(find *find)
                 col_it *it = find_result_column(find);
                 return col_it_is_sorted(it);
         } else {
-                return error(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: column query must be invoked on column or sub type");
         }
 }
 
@@ -238,7 +238,7 @@ bool find_update_object_type(find *find, map_type_e derivation)
                 return true;
 
         } else {
-                return error(ERR_TYPEMISMATCH, "find: object type update must be invoked on object or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: object type update must be invoked on object or sub type");
         }
 }
 
@@ -250,7 +250,7 @@ bool find_object_is_multimap(find *find)
                 obj_it *it = find_result_object(find);
                 return obj_it_is_multimap(it);
         } else {
-                return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
         }
 }
 
@@ -262,7 +262,7 @@ bool find_object_is_sorted(find *find)
                 obj_it *it = find_result_object(find);
                 return obj_it_is_sorted(it);
         } else {
-                return error(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
+                return ERROR(ERR_TYPEMISMATCH, "find: object query must be invoked on object or sub type");
         }
 }
 
@@ -361,8 +361,8 @@ bool find_result_is_binary(find *find)
 bool __check_path_evaluator_has_result(find *find)
 {
         assert(find);
-        if (unlikely(!(dot_eval_has_result(&find->eval)))) {
-                return error(ERR_ILLEGALSTATE, "no path evaluation result available");
+        if (UNLIKELY(!(DOT_EVAL_HAS_RESULT(&find->eval)))) {
+                return ERROR(ERR_ILLEGALSTATE, "no path evaluation result available");
         } else {
                 return true;
         }
@@ -374,8 +374,8 @@ arr_it *find_result_array(find *find)
             return NULL;
         }
 
-        if (unlikely(!field_is_array_or_subtype(find->type))) {
-                error(ERR_TYPEMISMATCH, "container must be array or sub type");
+        if (UNLIKELY(!field_is_array_or_subtype(find->type))) {
+                ERROR(ERR_TYPEMISMATCH, "container must be array or sub type");
                 return NULL;
         }
 
@@ -388,8 +388,8 @@ obj_it *find_result_object(find *find)
             return NULL;
         }
 
-        if (unlikely(!field_is_object_or_subtype(find->type))) {
-                error(ERR_TYPEMISMATCH, "container must be object or sub type");
+        if (UNLIKELY(!field_is_object_or_subtype(find->type))) {
+                ERROR(ERR_TYPEMISMATCH, "container must be object or sub type");
                 return NULL;
         }
 
@@ -402,8 +402,8 @@ col_it *find_result_column(find *find)
             return NULL;
         }
 
-        if (unlikely(!field_is_column_or_subtype(find->type))) {
-                error(ERR_TYPEMISMATCH, "container must be column or sub type");
+        if (UNLIKELY(!field_is_column_or_subtype(find->type))) {
+                ERROR(ERR_TYPEMISMATCH, "container must be column or sub type");
                 return NULL;
         }
 
@@ -416,8 +416,8 @@ bool find_result_boolean(bool *result, find *find)
             return false;
         }
 
-        if (unlikely(!field_is_boolean(find->type))) {
-                return error(ERR_TYPEMISMATCH, "result value must be of boolean type");
+        if (UNLIKELY(!field_is_boolean(find->type))) {
+                return ERROR(ERR_TYPEMISMATCH, "result value must be of boolean type");
         }
 
         *result = find->value.boolean;
@@ -430,8 +430,8 @@ bool find_result_unsigned(u64 *out, find *find)
             return false;
         }
 
-        if (unlikely(!field_is_unsigned(find->type))) {
-                return error(ERR_TYPEMISMATCH, "result value must be of unsigned type");
+        if (UNLIKELY(!field_is_unsigned(find->type))) {
+                return ERROR(ERR_TYPEMISMATCH, "result value must be of unsigned type");
         }
 
         *out = find->value.unsigned_number;
@@ -444,8 +444,8 @@ bool find_result_signed(i64 *out, find *find)
             return false;
         }
 
-        if (unlikely(!field_is_signed(find->type))) {
-                return error(ERR_TYPEMISMATCH, "result value must be of signed type");
+        if (UNLIKELY(!field_is_signed(find->type))) {
+                return ERROR(ERR_TYPEMISMATCH, "result value must be of signed type");
         }
 
         *out = find->value.signed_number;
@@ -458,8 +458,8 @@ bool find_result_float(float *out, find *find)
             return false;
         }
 
-        if (unlikely(!field_is_floating(find->type))) {
-                return error(ERR_TYPEMISMATCH, "result value must be of float type");
+        if (UNLIKELY(!field_is_floating(find->type))) {
+                return ERROR(ERR_TYPEMISMATCH, "result value must be of float type");
         }
 
         *out = find->value.float_number;
@@ -472,8 +472,8 @@ const char *find_result_string(u64 *str_len, find *find)
             return NULL;
         }
 
-        if (unlikely(!field_is_string(find->type))) {
-                error(ERR_TYPEMISMATCH, "result value must be of string type");
+        if (UNLIKELY(!field_is_string(find->type))) {
+                ERROR(ERR_TYPEMISMATCH, "result value must be of string type");
                 return NULL;
         }
         *str_len = find->value.string.len;
@@ -486,8 +486,8 @@ binary_field *find_result_binary(find *find)
             return NULL;
         }
 
-        if (unlikely(!field_is_binary(find->type))) {
-                error(ERR_TYPEMISMATCH, "result value must be of binary type");
+        if (UNLIKELY(!field_is_binary(find->type))) {
+                ERROR(ERR_TYPEMISMATCH, "result value must be of binary type");
                 return NULL;
         }
 
@@ -584,7 +584,7 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_BINARY_CUSTOM:
                         find->value.binary = item_get_binary(&(it->item), NULL_BINARY);
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         break;
         }
 }
@@ -679,7 +679,7 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_BINARY_CUSTOM:
                         find->value.binary = item_get_binary(&(it->prop.value), NULL_BINARY);
                         break;
-                default: error(ERR_INTERNALERR, NULL);
+                default: ERROR(ERR_INTERNALERR, NULL);
                         break;
         }
 }
@@ -705,7 +705,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                         } else if (field_value == CARBON_BOOLEAN_COLUMN_FALSE) {
                                 find->type = FIELD_FALSE;
                         } else {
-                                error(ERR_INTERNALERR, NULL);
+                                ERROR(ERR_INTERNALERR, NULL);
                         }
                 }
                         break;
@@ -827,7 +827,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
                 }
                         break;
                 default:
-                        return error(ERR_UNSUPPORTEDTYPE, NULL);
+                        return ERROR(ERR_UNSUPPORTEDTYPE, NULL);
         }
         return true;
 }

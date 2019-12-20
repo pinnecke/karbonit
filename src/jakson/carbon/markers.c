@@ -32,7 +32,7 @@ static path_policy_e markers_print_fn_record(const rec *record, const traverse_i
                                 str_buf_add(str, "nokey");
                                 break;
                         default:
-                                error(ERR_MARKERMAPPING, "unknown key marker detected");
+                                ERROR(ERR_MARKERMAPPING, "unknown key marker detected");
                                 return PATH_PRUNE;
                 };
 
@@ -73,7 +73,7 @@ static path_policy_e markers_print_fn_record(const rec *record, const traverse_i
                         case KEY_NOKEY:
                                 break;
                         default:
-                                error(ERR_MARKERMAPPING, "unknown key marker detected");
+                                ERROR(ERR_MARKERMAPPING, "unknown key marker detected");
                                 return PATH_PRUNE;
                 }
 
@@ -97,7 +97,7 @@ static path_policy_e markers_print_fn_record(const rec *record, const traverse_i
                         case KEY_NOKEY:
                                 break;
                         default:
-                                error(ERR_CORRUPTED, "commit hash for unsupported key type");
+                                ERROR(ERR_CORRUPTED, "commit hash for unsupported key type");
                                 return PATH_PRUNE;
                 }
         }

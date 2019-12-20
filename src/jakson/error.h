@@ -1,5 +1,5 @@
 /*
- * error - error system
+ * ERROR - ERROR system
  *
  * Copyright 2018 Marcus Pinnecke
  */
@@ -124,10 +124,10 @@ extern "C" {
 #define ERR_NOERR_RESULT_INT 98         /** No ERROR, and result is 63bit int */
 #define ERR_NOERR_RESULT_UINT 99        /** No ERROR, and result is 63bit unsigned int */
 #define ERR_NOERR_RESULT_PTR 100        /** No ERROR, and result is 63bit pointer */
-#define ERR_PERMISSIONS 101             /** Permissions error */
+#define ERR_PERMISSIONS 101             /** Permissions ERROR */
 
 static const char *const global_err_str[] =
-        {"No error", "Null pointer detected", "Function not implemented", "Index is out of bounds",
+        {"No ERROR", "Null pointer detected", "Function not implemented", "Index is out of bounds",
          "Memory allocation failed", "Illegal arguments", "Internal ERROR", "Illegal implementation", "Not found",
          "Element not in list", "Array index out of bounds", "Illegal JSON array: mixed types",
          "Reading from file failed", "I/O ERROR", "Unsupported archive format version", "Format is corrupted",
@@ -174,7 +174,7 @@ static const char *const global_err_str[] =
          "Cleanup operation failed; potentially a memory leak occurred", "dot-notated path could not be compiled",
          "not a number", "buffer capacity exceeded", "tailing junk was detected in a stream", "not indexed",
          "result is boolean", "result is 63bit int", "result is 63bit unsigned int", "result is 63bit pointer",
-         "Permissions error"
+         "Permissions ERROR"
         };
 
 #define ERRSTR_ILLEGAL_CODE "illegal ERROR code"
@@ -190,7 +190,7 @@ extern _Thread_local struct err_info {
 } g_err;
 
 #ifndef NDEBUG
-#define error(code, msg)                        \
+#define ERROR(code, msg)                        \
 ({                                              \
     error_set(code, __FILE__, __LINE__, msg);   \
     error_print(stderr);                        \
@@ -198,7 +198,7 @@ extern _Thread_local struct err_info {
     false;                                      \
 })
 #else
-#define error(code, msg)                        \
+#define ERROR(code, msg)                        \
 ({                                              \
     error_set(code, __FILE__, __LINE__, msg);   \
     error_print(stderr);                        \
@@ -207,8 +207,8 @@ extern _Thread_local struct err_info {
 #endif
 
 
-#define error_if_and_return(expr, code, msg) { if ((expr)) { error(code, msg); return false; }}
-#define panic(code) { error(code, "panic condition"); abort(); }
+#define ERROR_IF_AND_RETURN(expr, code, msg) { if ((expr)) { ERROR(code, msg); return false; }}
+#define PANIC(code) { ERROR(code, "PANIC condition"); abort(); }
 
 void error_abort_enable();
 void error_abort_disable();

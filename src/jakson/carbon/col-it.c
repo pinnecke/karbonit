@@ -35,13 +35,13 @@ bool col_it_create(col_it *it, memfile *memfile, offset_t begin)
         MEMFILE_SEEK(&it->file, begin);
 
 #ifndef NDEBUG
-        error_if_and_return(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
+        ERROR_IF_AND_RETURN(MEMFILE_REMAIN_SIZE(&it->file) < sizeof(u8) + sizeof(media_type), ERR_CORRUPTED, NULL);
 #endif
 
         u8 marker = *MEMFILE_READ(&it->file, sizeof(u8));
 
         if (!abstract_is_instanceof_column(marker)) {
-            return error(ERR_ILLEGALOP, "column begin marker or sub type expected");
+            return ERROR(ERR_ILLEGALOP, "column begin marker or sub type expected");
         }
 
         abstract_type_class_e type_class = abstract_get_class(marker);
@@ -94,10 +94,10 @@ bool col_it_fast_forward(col_it *it)
 
 offset_t col_it_memfilepos(col_it *it)
 {
-        if (likely(it != NULL)) {
+        if (LIKELY(it != NULL)) {
                 return MEMFILE_TELL(&it->file);
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return 0;
         }
 }
@@ -115,12 +115,12 @@ offset_t col_it_tell(col_it *it, u32 elem_idx)
                 u32 num_elements = (u32) MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
                 MEMFILE_READ_UINTVAR_STREAM(NULL, &it->file);
                 offset_t payload_start = MEMFILE_TELL(&it->file);
-                error_if_and_return(elem_idx >= num_elements, ERR_OUTOFBOUNDS, NULL);
+                ERROR_IF_AND_RETURN(elem_idx >= num_elements, ERR_OUTOFBOUNDS, NULL);
                 offset_t ret = payload_start + elem_idx * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type);
                 MEMFILE_RESTORE_POSITION(&it->file);
                 return ret;
         } else {
-                error(ERR_NULLPTR, NULL);
+                ERROR(ERR_NULLPTR, NULL);
                 return 0;
         }
 }
@@ -129,7 +129,7 @@ bool col_it_is_null(col_it *it, u32 pos)
 {
         field_e type;
         u32 nvalues = COL_IT_VALUES_INFO(&type, it);
-        error_if_and_return(pos >= nvalues, ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(pos >= nvalues, ERR_OUTOFBOUNDS, NULL);
         switch (type) {
                 case FIELD_COLUMN_U8_UNSORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
@@ -202,7 +202,7 @@ bool col_it_is_null(col_it *it, u32 pos)
                         return IS_NULL_BOOLEAN(values[pos]);
                 }
                 default:
-                        return error(ERR_UNSUPPCONTAINER, NULL);
+                        return ERROR(ERR_UNSUPPCONTAINER, NULL);
         }
 }
 
@@ -390,7 +390,7 @@ const float *internal_col_it_float_values(u32 *nvalues, col_it *it)
 
 bool col_it_remove(col_it *it, u32 pos)
 {
-        error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(pos >= it->num, ERR_OUTOFBOUNDS, NULL);
         MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
@@ -452,7 +452,7 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
 
 bool col_it_update_set_null(col_it *it, u32 pos)
 {
-        error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
+        ERROR_IF_AND_RETURN(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
 
         MEMFILE_SAVE_POSITION(&it->file);
 
@@ -564,10 +564,10 @@ bool col_it_update_set_null(col_it *it, u32 pos)
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
                         MEMFILE_RESTORE_POSITION(&it->file);
-                        return error(ERR_UNSUPPCONTAINER, NULL);
+                        return ERROR(ERR_UNSUPPCONTAINER, NULL);
                 default:
                         MEMFILE_RESTORE_POSITION(&it->file);
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return false;
         }
 
@@ -579,7 +579,7 @@ bool col_it_update_set_null(col_it *it, u32 pos)
 #define push_array_element(num_values, data, data_cast_type, null_check, insert_func)                                  \
 for (u32 i = 0; i < num_values; i++) {                                                                                 \
         data_cast_type datum = ((data_cast_type *)data)[i];                                                            \
-        if (likely(null_check(datum) == false)) {                                                                      \
+        if (LIKELY(null_check(datum) == false)) {                                                                      \
                 insert_func(&array_ins);                                                                               \
         } else {                                                                                                       \
                 insert_null(&array_ins);                                                                         \
@@ -589,7 +589,7 @@ for (u32 i = 0; i < num_values; i++) {                                          
 #define push_array_element_wvalue(num_values, data, data_cast_type, null_check, insert_func)                           \
 for (u32 i = 0; i < num_values; i++) {                                                                                 \
         data_cast_type datum = ((data_cast_type *)data)[i];                                                            \
-        if (likely(null_check(datum) == false)) {                                                                      \
+        if (LIKELY(null_check(datum) == false)) {                                                                      \
                 insert_func(&array_ins, datum);                                                                        \
         } else {                                                                                                       \
                 insert_null(&array_ins);                                                                         \
@@ -661,7 +661,7 @@ static bool rewrite_column_to_array(col_it *it)
                 case FIELD_NUMBER_FLOAT:
                         push_array_element_wvalue(num_values, data, float, IS_NULL_FLOAT, insert_float);
                         break;
-                default: error(ERR_UNSUPPORTEDTYPE, NULL);
+                default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                         return false;
         }
 
@@ -674,7 +674,7 @@ static bool rewrite_column_to_array(col_it *it)
 
 bool col_it_update_set_true(col_it *it, u32 pos)
 {
-        error_if_and_return(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
+        ERROR_IF_AND_RETURN(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
 
         MEMFILE_SAVE_POSITION(&it->file);
 
@@ -789,10 +789,10 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
                         MEMFILE_RESTORE_POSITION(&it->file);
-                        return error(ERR_UNSUPPCONTAINER, NULL);
+                        return ERROR(ERR_UNSUPPCONTAINER, NULL);
                 default:
                         MEMFILE_RESTORE_POSITION(&it->file);
-                        error(ERR_INTERNALERR, NULL);
+                        ERROR(ERR_INTERNALERR, NULL);
                         return false;
         }
 
@@ -805,7 +805,7 @@ bool col_it_update_set_false(col_it *it, u32 pos)
 {
         UNUSED(it)
         UNUSED(pos)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -814,7 +814,7 @@ bool col_it_update_set_u8(col_it *it, u32 pos, u8 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -823,7 +823,7 @@ bool col_it_update_set_u16(col_it *it, u32 pos, u16 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -832,7 +832,7 @@ bool col_it_update_set_u32(col_it *it, u32 pos, u32 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -841,7 +841,7 @@ bool col_it_update_set_u64(col_it *it, u32 pos, u64 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -850,7 +850,7 @@ bool col_it_update_set_i8(col_it *it, u32 pos, i8 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -859,7 +859,7 @@ bool col_it_update_set_i16(col_it *it, u32 pos, i16 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -868,7 +868,7 @@ bool col_it_update_set_i32(col_it *it, u32 pos, i32 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -877,7 +877,7 @@ bool col_it_update_set_i64(col_it *it, u32 pos, i64 value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
@@ -886,14 +886,14 @@ bool col_it_update_set_float(col_it *it, u32 pos, float value)
         UNUSED(it)
         UNUSED(pos)
         UNUSED(value)
-        error(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
+        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
         return false;
 }
 
 bool col_it_rewind(col_it *it)
 {
         offset_t playload_start = internal_column_get_payload_off(it);
-        error_if_and_return(playload_start >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
+        ERROR_IF_AND_RETURN(playload_start >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
         return MEMFILE_SEEK(&it->file, playload_start);
 }
 
@@ -941,7 +941,7 @@ bool col_it_print(str_buf *dst, col_it *it)
                 COL_IT_PRINT(it, nvalues, float, IS_NULL_FLOAT)
         } else {
                 str_buf_add_char(dst, ']');
-                return error(ERR_UNSUPPORTEDTYPE, "column has unsupported type");
+                return ERROR(ERR_UNSUPPORTEDTYPE, "column has unsupported type");
         }
 
         str_buf_add_char(dst, ']');

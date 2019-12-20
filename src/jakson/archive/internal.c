@@ -202,7 +202,7 @@ int_marker_to_field_type(char symbol)
                 case MARKER_SYMBOL_PROP_OBJECT_ARRAY:
                         return ARCHIVE_FIELD_OBJECT;
                 default: {
-                        error(ERR_MARKERMAPPING, NULL);
+                        ERROR(ERR_MARKERMAPPING, NULL);
                         return ARCHIVE_FIELD_NULL;
                 }
         }

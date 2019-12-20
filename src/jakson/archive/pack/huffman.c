@@ -39,7 +39,7 @@ bool coding_huffman_create(huffman *dic)
 bool coding_huffman_cpy(huffman *dst, huffman *src)
 {
         if (!vector_cpy(&dst->table, &src->table)) {
-                error(ERR_HARDCOPYFAILED, NULL);
+                ERROR(ERR_HARDCOPYFAILED, NULL);
                 return false;
         } else {
                 return true;
@@ -130,7 +130,7 @@ static pack_huffman_entry *find_dic_entry(huffman *dic, unsigned char c)
                         return entry;
                 }
         }
-        error(ERR_HUFFERR, NULL);
+        ERROR(ERR_HUFFERR, NULL);
         return NULL;
 }
 
@@ -415,7 +415,7 @@ static void huff_tree_create(vec ofType(pack_huffman_entry) *table,
                 } else if (smallest->next) {
                         handle = seek_to_begin(smallest->next);
                 } else {
-                        panic(ERR_INTERNALERR);
+                        PANIC(ERR_INTERNALERR);
                 }
 
                 assert (!handle->prev);

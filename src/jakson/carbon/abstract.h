@@ -34,70 +34,71 @@ typedef enum abstract {
         ABSTRACT_ERR
 } abstract_e;
 
+
+
+#define __abstract_is_instanceof(marker, T)                             \
+        (abstract_get_container_subtype((marker)) == (T))
+
 #define abstract_type(marker)                                                                                           \
 ({                                                                                          \
-        derived_e abstract_type_derived;                                                                                          \
+        derived_e abstract_type_derived = abstract_get_derived_type(marker);                                                                                          \
         abstract_e abstract_type_ret;                                                                                          \
-        if (LIKELY(abstract_get_derived_type(&abstract_type_derived, marker))) {                                                                                          \
-                switch (abstract_type_derived) {                                                                                          \
-                        case UNSORTED_MULTIMAP:                                                                                          \
-                        case UNSORTED_MULTISET_ARRAY:                                                                                          \
-                        case UNSORTED_MULTISET_COL_U8:                                                                                          \
-                        case UNSORTED_MULTISET_COL_U16:                                                                                          \
-                        case UNSORTED_MULTISET_COL_U32:                                                                                          \
-                        case UNSORTED_MULTISET_COL_U64:                                                                                          \
-                        case UNSORTED_MULTISET_COL_I8:                                                                                          \
-                        case UNSORTED_MULTISET_COL_I16:                                                                                          \
-                        case UNSORTED_MULTISET_COL_I32:                                                                                          \
-                        case UNSORTED_MULTISET_COL_I64:                                                                                          \
-                        case UNSORTED_MULTISET_COL_FLOAT:                                                                                          \
-                        case UNSORTED_MULTISET_COL_BOOLEAN:                                                                                          \
-                                abstract_type_ret = ABSTRACT_BASE;                                                                                          \
-                                break;                                                                                          \
-                        case SORTED_MULTIMAP:                                                                                          \
-                        case UNSORTED_MAP:                                                                                          \
-                        case SORTED_MAP:                                                                                          \
-                        case SORTED_MULTISET_ARRAY:                                                                                          \
-                        case UNSORTED_SET_ARRAY:                                                                                          \
-                        case SORTED_SET_ARRAY:                                                                                          \
-                        case SORTED_MULTISET_COL_U8:                                                                                          \
-                        case UNSORTED_SET_COL_U8:                                                                                          \
-                        case SORTED_SET_COL_U8:                                                                                          \
-                        case SORTED_MULTISET_COL_U16:                                                                                          \
-                        case UNSORTED_SET_COL_U16:                                                                                          \
-                        case SORTED_SET_COL_U16:                                                                                          \
-                        case SORTED_MULTISET_COL_U32:                                                                                          \
-                        case UNSORTED_SET_COL_U32:                                                                                          \
-                        case SORTED_SET_COL_U32:                                                                                          \
-                        case SORTED_MULTISET_COL_U64:                                                                                          \
-                        case UNSORTED_SET_COL_U64:                                                                                          \
-                        case SORTED_SET_COL_U64:                                                                                          \
-                        case SORTED_MULTISET_COL_I8:                                                                                          \
-                        case UNSORTED_SET_COL_I8:                                                                                          \
-                        case SORTED_SET_COL_I8:                                                                                          \
-                        case SORTED_MULTISET_COL_I16:                                                                                          \
-                        case UNSORTED_SET_COL_I16:                                                                                          \
-                        case SORTED_SET_COL_I16:                                                                                          \
-                        case SORTED_MULTISET_COL_I32:                                                                                          \
-                        case UNSORTED_SET_COL_I32:                                                                                          \
-                        case SORTED_SET_COL_I32:                                                                                          \
-                        case SORTED_MULTISET_COL_I64:                                                                                          \
-                        case UNSORTED_SET_COL_I64:                                                                                          \
-                        case SORTED_SET_COL_I64:                                                                                          \
-                        case SORTED_MULTISET_COL_FLOAT:                                                                                          \
-                        case UNSORTED_SET_COL_FLOAT:                                                                                          \
-                        case SORTED_SET_COL_FLOAT:                                                                                          \
-                        case SORTED_MULTISET_COL_BOOLEAN:                                                                                          \
-                        case UNSORTED_SET_COL_BOOLEAN:                                                                                          \
-                        case SORTED_SET_COL_BOOLEAN:                                                                                          \
-                                abstract_type_ret = ABSTRACT_DERIVED;                                                                                          \
-                                break;                                                                                          \
-                        default: PANIC(ERR_MARKERMAPPING);                                                                                          \
-                                abstract_type_ret = ABSTRACT_ERR;                                                                                          \
-                }                                                                                          \
-        } else {                                                                                          \
-                PANIC(ERR_MARKERMAPPING);                                                                                          \
-                abstract_type_ret = ABSTRACT_ERR;                                                                                          \
+        switch (abstract_type_derived) {                                                                                          \
+                case UNSORTED_MULTIMAP:                                                                                          \
+                case UNSORTED_MULTISET_ARRAY:                                                                                          \
+                case UNSORTED_MULTISET_COL_U8:                                                                                          \
+                case UNSORTED_MULTISET_COL_U16:                                                                                          \
+                case UNSORTED_MULTISET_COL_U32:                                                                                          \
+                case UNSORTED_MULTISET_COL_U64:                                                                                          \
+                case UNSORTED_MULTISET_COL_I8:                                                                                          \
+                case UNSORTED_MULTISET_COL_I16:                                                                                          \
+                case UNSORTED_MULTISET_COL_I32:                                                                                          \
+                case UNSORTED_MULTISET_COL_I64:                                                                                          \
+                case UNSORTED_MULTISET_COL_FLOAT:                                                                                          \
+                case UNSORTED_MULTISET_COL_BOOLEAN:                                                                                          \
+                        abstract_type_ret = ABSTRACT_BASE;                                                                                          \
+                        break;                                                                                          \
+                case SORTED_MULTIMAP:                                                                                          \
+                case UNSORTED_MAP:                                                                                          \
+                case SORTED_MAP:                                                                                          \
+                case SORTED_MULTISET_ARRAY:                                                                                          \
+                case UNSORTED_SET_ARRAY:                                                                                          \
+                case SORTED_SET_ARRAY:                                                                                          \
+                case SORTED_MULTISET_COL_U8:                                                                                          \
+                case UNSORTED_SET_COL_U8:                                                                                          \
+                case SORTED_SET_COL_U8:                                                                                          \
+                case SORTED_MULTISET_COL_U16:                                                                                          \
+                case UNSORTED_SET_COL_U16:                                                                                          \
+                case SORTED_SET_COL_U16:                                                                                          \
+                case SORTED_MULTISET_COL_U32:                                                                                          \
+                case UNSORTED_SET_COL_U32:                                                                                          \
+                case SORTED_SET_COL_U32:                                                                                          \
+                case SORTED_MULTISET_COL_U64:                                                                                          \
+                case UNSORTED_SET_COL_U64:                                                                                          \
+                case SORTED_SET_COL_U64:                                                                                          \
+                case SORTED_MULTISET_COL_I8:                                                                                          \
+                case UNSORTED_SET_COL_I8:                                                                                          \
+                case SORTED_SET_COL_I8:                                                                                          \
+                case SORTED_MULTISET_COL_I16:                                                                                          \
+                case UNSORTED_SET_COL_I16:                                                                                          \
+                case SORTED_SET_COL_I16:                                                                                          \
+                case SORTED_MULTISET_COL_I32:                                                                                          \
+                case UNSORTED_SET_COL_I32:                                                                                          \
+                case SORTED_SET_COL_I32:                                                                                          \
+                case SORTED_MULTISET_COL_I64:                                                                                          \
+                case UNSORTED_SET_COL_I64:                                                                                          \
+                case SORTED_SET_COL_I64:                                                                                          \
+                case SORTED_MULTISET_COL_FLOAT:                                                                                          \
+                case UNSORTED_SET_COL_FLOAT:                                                                                          \
+                case SORTED_SET_COL_FLOAT:                                                                                          \
+                case SORTED_MULTISET_COL_BOOLEAN:                                                                                          \
+                case UNSORTED_SET_COL_BOOLEAN:                                                                                          \
+                case SORTED_SET_COL_BOOLEAN:                                                                                          \
+                        abstract_type_ret = ABSTRACT_DERIVED;                                                                                          \
+                        break;                                                                                          \
+                default: PANIC(ERR_MARKERMAPPING);                                                                                          \
+                        abstract_type_ret = ABSTRACT_ERR;                                                                                          \
+                        break;                                                                  \
         }                                                                                          \
         abstract_type_ret;                                                                                          \
 })
@@ -140,79 +141,74 @@ typedef enum abstract_type_class {
 
 #define abstract_get_class(marker)                                                                              \
 ({                                                                              \
-        derived_e derived;                                                                              \
         abstract_type_class_e abstract_get_class_ret;                                                                              \
-        if (LIKELY(abstract_get_derived_type(&derived, marker))) {                                                                              \
-                switch (derived) {                                                                              \
-                        case SORTED_MAP:                                                                              \
-                                abstract_get_class_ret = TYPE_SORTED_MAP;                                                                              \
-                                break;                                                                              \
-                        case SORTED_MULTIMAP:                                                                              \
-                                abstract_get_class_ret = TYPE_SORTED_MULTIMAP;                                                                              \
-                                break;                                                                              \
-                        case SORTED_MULTISET_ARRAY:                                                                              \
-                        case SORTED_MULTISET_COL_BOOLEAN:                                                                              \
-                        case SORTED_MULTISET_COL_FLOAT:                                                                              \
-                        case SORTED_MULTISET_COL_I16:                                                                              \
-                        case SORTED_MULTISET_COL_I32:                                                                              \
-                        case SORTED_MULTISET_COL_I64:                                                                              \
-                        case SORTED_MULTISET_COL_I8:                                                                              \
-                        case SORTED_MULTISET_COL_U16:                                                                              \
-                        case SORTED_MULTISET_COL_U32:                                                                              \
-                        case SORTED_MULTISET_COL_U64:                                                                              \
-                        case SORTED_MULTISET_COL_U8:                                                                              \
-                                abstract_get_class_ret = TYPE_SORTED_MULTISET;                                                                              \
-                                break;                                                                              \
-                        case SORTED_SET_ARRAY:                                                                              \
-                        case SORTED_SET_COL_BOOLEAN:                                                                              \
-                        case SORTED_SET_COL_FLOAT:                                                                              \
-                        case SORTED_SET_COL_I16:                                                                              \
-                        case SORTED_SET_COL_I32:                                                                              \
-                        case SORTED_SET_COL_I64:                                                                              \
-                        case SORTED_SET_COL_I8:                                                                              \
-                        case SORTED_SET_COL_U16:                                                                              \
-                        case SORTED_SET_COL_U32:                                                                              \
-                        case SORTED_SET_COL_U64:                                                                              \
-                        case SORTED_SET_COL_U8:                                                                              \
-                                abstract_get_class_ret = TYPE_SORTED_SET;                                                                              \
-                                break;                                                                              \
-                        case UNSORTED_MAP:                                                                              \
-                                abstract_get_class_ret = TYPE_UNSORTED_MAP;                                                                              \
-                                break;                                                                              \
-                        case UNSORTED_MULTIMAP:                                                                              \
-                                abstract_get_class_ret = TYPE_UNSORTED_MULTIMAP;                                                                              \
-                                break;                                                                              \
-                        case UNSORTED_MULTISET_ARRAY:                                                                              \
-                        case UNSORTED_MULTISET_COL_BOOLEAN:                                                                              \
-                        case UNSORTED_MULTISET_COL_FLOAT:                                                                              \
-                        case UNSORTED_MULTISET_COL_I16:                                                                              \
-                        case UNSORTED_MULTISET_COL_I32:                                                                              \
-                        case UNSORTED_MULTISET_COL_I64:                                                                              \
-                        case UNSORTED_MULTISET_COL_I8:                                                                              \
-                        case UNSORTED_MULTISET_COL_U16:                                                                              \
-                        case UNSORTED_MULTISET_COL_U32:                                                                              \
-                        case UNSORTED_MULTISET_COL_U64:                                                                              \
-                        case UNSORTED_MULTISET_COL_U8:                                                                              \
-                                abstract_get_class_ret = TYPE_UNSORTED_MULTISET;                                                                              \
-                                break;                                                                              \
-                        case UNSORTED_SET_ARRAY:                                                                              \
-                        case UNSORTED_SET_COL_BOOLEAN:                                                                              \
-                        case UNSORTED_SET_COL_FLOAT:                                                                              \
-                        case UNSORTED_SET_COL_I16:                                                                              \
-                        case UNSORTED_SET_COL_I32:                                                                              \
-                        case UNSORTED_SET_COL_I64:                                                                              \
-                        case UNSORTED_SET_COL_I8:                                                                              \
-                        case UNSORTED_SET_COL_U16:                                                                              \
-                        case UNSORTED_SET_COL_U32:                                                                              \
-                        case UNSORTED_SET_COL_U64:                                                                              \
-                        case UNSORTED_SET_COL_U8:                                                                              \
-                                abstract_get_class_ret = TYPE_UNSORTED_SET;                                                                              \
-                                break;                                                                              \
-                        default: PANIC(ERR_MARKERMAPPING);                                                                              \
-                }                                                                              \
-        } else {                                                                              \
-                ERROR(ERR_MARKERMAPPING, "");                                                                              \
-                abstract_get_class_ret = TYPE_ERR;                                                                              \
+        derived_e derived = abstract_get_derived_type(marker);                                                                              \
+        switch (derived) {                                                                              \
+                case SORTED_MAP:                                                                              \
+                        abstract_get_class_ret = TYPE_SORTED_MAP;                                                                              \
+                        break;                                                                              \
+                case SORTED_MULTIMAP:                                                                              \
+                        abstract_get_class_ret = TYPE_SORTED_MULTIMAP;                                                                              \
+                        break;                                                                              \
+                case SORTED_MULTISET_ARRAY:                                                                              \
+                case SORTED_MULTISET_COL_BOOLEAN:                                                                              \
+                case SORTED_MULTISET_COL_FLOAT:                                                                              \
+                case SORTED_MULTISET_COL_I16:                                                                              \
+                case SORTED_MULTISET_COL_I32:                                                                              \
+                case SORTED_MULTISET_COL_I64:                                                                              \
+                case SORTED_MULTISET_COL_I8:                                                                              \
+                case SORTED_MULTISET_COL_U16:                                                                              \
+                case SORTED_MULTISET_COL_U32:                                                                              \
+                case SORTED_MULTISET_COL_U64:                                                                              \
+                case SORTED_MULTISET_COL_U8:                                                                              \
+                        abstract_get_class_ret = TYPE_SORTED_MULTISET;                                                                              \
+                        break;                                                                              \
+                case SORTED_SET_ARRAY:                                                                              \
+                case SORTED_SET_COL_BOOLEAN:                                                                              \
+                case SORTED_SET_COL_FLOAT:                                                                              \
+                case SORTED_SET_COL_I16:                                                                              \
+                case SORTED_SET_COL_I32:                                                                              \
+                case SORTED_SET_COL_I64:                                                                              \
+                case SORTED_SET_COL_I8:                                                                              \
+                case SORTED_SET_COL_U16:                                                                              \
+                case SORTED_SET_COL_U32:                                                                              \
+                case SORTED_SET_COL_U64:                                                                              \
+                case SORTED_SET_COL_U8:                                                                              \
+                        abstract_get_class_ret = TYPE_SORTED_SET;                                                                              \
+                        break;                                                                              \
+                case UNSORTED_MAP:                                                                              \
+                        abstract_get_class_ret = TYPE_UNSORTED_MAP;                                                                              \
+                        break;                                                                              \
+                case UNSORTED_MULTIMAP:                                                                              \
+                        abstract_get_class_ret = TYPE_UNSORTED_MULTIMAP;                                                                              \
+                        break;                                                                              \
+                case UNSORTED_MULTISET_ARRAY:                                                                              \
+                case UNSORTED_MULTISET_COL_BOOLEAN:                                                                              \
+                case UNSORTED_MULTISET_COL_FLOAT:                                                                              \
+                case UNSORTED_MULTISET_COL_I16:                                                                              \
+                case UNSORTED_MULTISET_COL_I32:                                                                              \
+                case UNSORTED_MULTISET_COL_I64:                                                                              \
+                case UNSORTED_MULTISET_COL_I8:                                                                              \
+                case UNSORTED_MULTISET_COL_U16:                                                                              \
+                case UNSORTED_MULTISET_COL_U32:                                                                              \
+                case UNSORTED_MULTISET_COL_U64:                                                                              \
+                case UNSORTED_MULTISET_COL_U8:                                                                              \
+                        abstract_get_class_ret = TYPE_UNSORTED_MULTISET;                                                                              \
+                        break;                                                                              \
+                case UNSORTED_SET_ARRAY:                                                                              \
+                case UNSORTED_SET_COL_BOOLEAN:                                                                              \
+                case UNSORTED_SET_COL_FLOAT:                                                                              \
+                case UNSORTED_SET_COL_I16:                                                                              \
+                case UNSORTED_SET_COL_I32:                                                                              \
+                case UNSORTED_SET_COL_I64:                                                                              \
+                case UNSORTED_SET_COL_I8:                                                                              \
+                case UNSORTED_SET_COL_U16:                                                                              \
+                case UNSORTED_SET_COL_U32:                                                                              \
+                case UNSORTED_SET_COL_U64:                                                                              \
+                case UNSORTED_SET_COL_U8:                                                                              \
+                        abstract_get_class_ret = TYPE_UNSORTED_SET;                                                                              \
+                        break;                                                                              \
+                default: PANIC(ERR_MARKERMAPPING);                                                                              \
         }                                                                              \
         abstract_get_class_ret;                                 \
 })
@@ -311,7 +307,9 @@ typedef enum {
         UNSORTED_MULTISET_COL_BOOLEAN = MUNSORTED_MULTISET_BOOLEAN,
         SORTED_MULTISET_COL_BOOLEAN = MSORTED_MULTISET_BOOLEAN,
         UNSORTED_SET_COL_BOOLEAN = MUNSORTED_SET_BOOLEAN,
-        SORTED_SET_COL_BOOLEAN = MSORTED_SET_BOOLEAN
+        SORTED_SET_COL_BOOLEAN = MSORTED_SET_BOOLEAN,
+
+        DERIVED_ERR
 } derived_e;
 
 /** derivable types for a list container (column or array) */
@@ -419,91 +417,441 @@ typedef enum map_type
         MEMFILE_WRITE((memfile), &abstract_write_base_type_type, sizeof(u8));                                                                        \
 }
 
+#define abstract_write_derived_type(memfile, type)                      \
+{                                                               \
+        derived_e abstract_write_derived_type_type = (type);                                                            \
+        MEMFILE_WRITE((memfile), &abstract_write_derived_type_type, sizeof(u8));                  \
+}
+
+#define abstract_get_container_subtype(marker)                                                              \
+({                                                              \
+        sub_type_e abstract_get_container_subtype_ret;                                                              \
+        switch (marker) {                                                              \
+                /** abstract types for object containers */                                                              \
+                case UNSORTED_MULTIMAP:                                                              \
+                case SORTED_MULTIMAP:                                                              \
+                case UNSORTED_MAP:                                                              \
+                case SORTED_MAP:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_OBJECT;                                                              \
+                        break;                                                              \
+                        /** abstract types for array containers */                                                              \
+                case UNSORTED_MULTISET_ARRAY:                                                              \
+                case SORTED_MULTISET_ARRAY:                                                              \
+                case UNSORTED_SET_ARRAY:                                                              \
+                case SORTED_SET_ARRAY:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_ARRAY;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-u8 containers */                                                              \
+                case UNSORTED_MULTISET_COL_U8:                                                              \
+                case SORTED_MULTISET_COL_U8:                                                              \
+                case UNSORTED_SET_COL_U8:                                                              \
+                case SORTED_SET_COL_U8:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_U8;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-u16 containers */                                                              \
+                case UNSORTED_MULTISET_COL_U16:                                                              \
+                case SORTED_MULTISET_COL_U16:                                                              \
+                case UNSORTED_SET_COL_U16:                                                              \
+                case SORTED_SET_COL_U16:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_U16;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-u32 containers */                                                              \
+                case UNSORTED_MULTISET_COL_U32:                                                              \
+                case SORTED_MULTISET_COL_U32:                                                              \
+                case UNSORTED_SET_COL_U32:                                                              \
+                case SORTED_SET_COL_U32:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_U32;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-u64 containers */                                                              \
+                case UNSORTED_MULTISET_COL_U64:                                                              \
+                case SORTED_MULTISET_COL_U64:                                                              \
+                case UNSORTED_SET_COL_U64:                                                              \
+                case SORTED_SET_COL_U64:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_U64;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-i8 containers */                                                              \
+                case UNSORTED_MULTISET_COL_I8:                                                              \
+                case SORTED_MULTISET_COL_I8:                                                              \
+                case UNSORTED_SET_COL_I8:                                                              \
+                case SORTED_SET_COL_I8:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_I8;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-i16 containers */                                                              \
+                case UNSORTED_MULTISET_COL_I16:                                                              \
+                case SORTED_MULTISET_COL_I16:                                                              \
+                case UNSORTED_SET_COL_I16:                                                              \
+                case SORTED_SET_COL_I16:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_I16;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-i32 containers */                                                              \
+                case UNSORTED_MULTISET_COL_I32:                                                              \
+                case SORTED_MULTISET_COL_I32:                                                              \
+                case UNSORTED_SET_COL_I32:                                                              \
+                case SORTED_SET_COL_I32:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_I32;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-i64 containers */                                                              \
+                case UNSORTED_MULTISET_COL_I64:                                                              \
+                case SORTED_MULTISET_COL_I64:                                                              \
+                case UNSORTED_SET_COL_I64:                                                              \
+                case SORTED_SET_COL_I64:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_I64;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-float containers */                                                              \
+                case UNSORTED_MULTISET_COL_FLOAT:                                                              \
+                case SORTED_MULTISET_COL_FLOAT:                                                              \
+                case UNSORTED_SET_COL_FLOAT:                                                              \
+                case SORTED_SET_COL_FLOAT:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_FLOAT;                                                              \
+                        break;                                                              \
+                        /** abstract types for column-boolean containers */                                                              \
+                case UNSORTED_MULTISET_COL_BOOLEAN:                                                              \
+                case SORTED_MULTISET_COL_BOOLEAN:                                                              \
+                case UNSORTED_SET_COL_BOOLEAN:                                                              \
+                case SORTED_SET_COL_BOOLEAN:                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_COLUMN_BOOLEAN;                                                              \
+                        break;                                                              \
+                default:                                                              \
+                        ERROR(ERR_MARKERMAPPING, "unknown marker encoding an abstract type");                                                              \
+                        abstract_get_container_subtype_ret = CONTAINER_ERR;                                                              \
+                        break;                                                              \
+        }                                                              \
+        abstract_get_container_subtype_ret;                                                              \
+})
 
 
 
-/** Writes the marker for the particular derived abstract type to the actual position in the memory file, and
- * steps the memory file cursor one byte towards the end. */
-void abstract_write_derived_type(memfile *memfile, derived_e type);
+#define abstract_is_instanceof_object(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_OBJECT)
 
-/** Peeks a byte from the memory file and returns the encoded container sub type. This is either an object
- * container, an array container, or and particular column container. In case a derived type is found, the
- * actual container type that implements that derived type is returned. For instance, if '[1]' is read,
- * a column-u8 container type is returned, and if [SOH] is read (which is MSORTED_MULTISET_U8),
- * a column-u8 container type is returned, too. */
-bool abstract_get_container_subtype(sub_type_e *type, u8 marker);
+#define abstract_is_instanceof_array(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_ARRAY)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an object container or a derived type of that container type. */
-bool abstract_is_instanceof_object(u8 marker);
+#define abstract_is_instanceof_column_u8(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_U8)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an array container or a derived type of that container type. */
-bool abstract_is_instanceof_array(u8 marker);
+#define abstract_is_instanceof_column_u16(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_U16)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-u8 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_u8(u8 marker);
+#define abstract_is_instanceof_column_u32(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_U32)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-u16 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_u16(u8 marker);
+#define abstract_is_instanceof_column_u64(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_U64)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-u32 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_u32(u8 marker);
+#define abstract_is_instanceof_column_i8(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_I8)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-u64 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_u64(u8 marker);
+#define abstract_is_instanceof_column_i16(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_I16)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-i8 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_i8(u8 marker);
+#define abstract_is_instanceof_column_i32(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_I32)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-i16 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_i16(u8 marker);
+#define abstract_is_instanceof_column_i64(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_I64)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-i32 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_i32(u8 marker);
+#define abstract_is_instanceof_column_float(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_FLOAT)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-i64 container or a derived type of that container type. */
-bool abstract_is_instanceof_column_i64(u8 marker);
+#define abstract_is_instanceof_column_boolean(marker)                                           \
+        __abstract_is_instanceof(marker, CONTAINER_COLUMN_BOOLEAN)
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-float container or a derived type of that container type. */
-bool abstract_is_instanceof_column_float(u8 marker);
+#define abstract_is_instanceof_column(marker)                                           \
+        (abstract_is_instanceof_column_u8(marker) ||                                           \
+         abstract_is_instanceof_column_u16(marker) ||                                           \
+         abstract_is_instanceof_column_u32(marker) ||                                           \
+         abstract_is_instanceof_column_u64(marker) ||                                           \
+         abstract_is_instanceof_column_i8(marker) ||                                           \
+         abstract_is_instanceof_column_i16(marker) ||                                           \
+         abstract_is_instanceof_column_i32(marker) ||                                           \
+         abstract_is_instanceof_column_i64(marker) ||                                           \
+         abstract_is_instanceof_column_float(marker) ||                                           \
+         abstract_is_instanceof_column_boolean(marker))
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets an column-boolean container or a derived type of that container type. */
-bool abstract_is_instanceof_column_boolean(u8 marker);
+#define abstract_is_instanceof_list(marker)                                                             \
+        (abstract_is_instanceof_array(marker) ||                                                                \
+         abstract_is_instanceof_column(marker))
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets a type of column container (u8, u16,...) or a derived type of that container type. */
-bool abstract_is_instanceof_column(u8 marker);
 
-/** Peeks a byte as marker from the memory file without moving the memory file cursor and returns true if this
- * marker sets a type of column container or array container or a derived type of that container type. */
-bool abstract_is_instanceof_list(u8 marker);
+#define abstract_derive_list_to(is, should)                                                                \
+({                                                                \
+        derived_e abstract_derive_list_to_ret;                                                                \
+        switch (is) {                                                                \
+                case LIST_ARRAY:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_ARRAY;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_ARRAY;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_ARRAY;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_ARRAY;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_U8:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_U8;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_U8;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_U8;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_U8;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_U16:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_U16;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_U16;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_U16;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_U16;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_U32:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_U32;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_U32;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_U32;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_U32;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_U64:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_U64;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_U64;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_U64;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_U64;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_I8:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_I8;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_I8;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_I8;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_I8;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_I16:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_I16;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_I16;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_I16;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_I16;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_I32:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_I32;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_I32;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_I32;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_I32;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_I64:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_I64;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_I64;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_I64;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_I64;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_BOOLEAN:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_BOOLEAN;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_BOOLEAN;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_BOOLEAN;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_BOOLEAN;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                case LIST_COLUMN_FLOAT:                                                                \
+                        switch (should) {                                                                \
+                                case LIST_UNSORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_MULTISET_COL_FLOAT;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_MULTISET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_MULTISET_COL_FLOAT;                                                                \
+                                        break;                                                                \
+                                case LIST_UNSORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = UNSORTED_SET_COL_FLOAT;                                                                \
+                                        break;                                                                \
+                                case LIST_SORTED_SET:                                                                \
+                                        abstract_derive_list_to_ret = SORTED_SET_COL_FLOAT;                                                                \
+                                        break;                                                                \
+                                default:                                                                \
+                                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                                        break;                                                                \
+                        } break;                                                                \
+                default:                                                                \
+                        abstract_derive_list_to_ret = DERIVED_ERR;                                                                \
+                        ERROR(ERR_INTERNALERR, "unhandled switch case");                                                                \
+                        break;                                                                \
+        }                                                                \
+        abstract_derive_list_to_ret;                                                                \
+})                                                                \
 
-/** Returns the concrete derived type <code>concrete</code> (e.g., SORTED_SET_COL_BOOLEAN) for a
- * given list type <code>is</code> (e.g., LIST_COLUMN_BOOLEAN) when deriving that
- * list type to a particular abstract type <code>should</code> (e.g., SORTED_SET) */
-bool abstract_derive_list_to(derived_e *concrete, list_container_e is,
-                                         list_type_e should);
+#define abstract_derive_map_to(should)                                                                \
+({                                                                \
+        derived_e abstract_derive_map_to_ret;                                                                \
+        switch (should) {                                                                \
+                case MAP_UNSORTED_MULTIMAP:                                                                \
+                        abstract_derive_map_to_ret = UNSORTED_MULTIMAP;                                                                \
+                        break;                                                                \
+                case MAP_SORTED_MULTIMAP:                                                                \
+                        abstract_derive_map_to_ret = SORTED_MULTIMAP;                                                                \
+                        break;                                                                \
+                case MAP_UNSORTED_MAP:                                                                \
+                        abstract_derive_map_to_ret = UNSORTED_MAP;                                                                \
+                        break;                                                                \
+                case MAP_SORTED_MAP:                                                                \
+                        abstract_derive_map_to_ret = SORTED_MAP;                                                                \
+                        break;                                                                \
+                default:                                                                \
+                        ERROR(ERR_INTERNALERR, "unknown list container type");                                                                \
+                        abstract_derive_map_to_ret = DERIVED_ERR;                                                                \
+                        break;                                                                \
+        }                                                                \
+        abstract_derive_map_to_ret;                                                                \
+})
 
-/** Returns the concrete derived type <code>concrete</code> (e.g., MAP_SORTED_MULTIMAP) for a
- * given map when deriving that map type to a particular abstract type <code>should</code>
- * (e.g., SORTED_MULTIMAP) */
-bool abstract_derive_map_to(derived_e *concrete, map_type_e should);
 
-/** Reads a marker from the memory file, and returns the particular abstract derived container (including
- * the marker) without moving the memory files cursor. In case of an failure (e.g., the read marker is not known),
- * the function returns an err. */
-bool abstract_get_derived_type(derived_e *type, u8 marker);
+
+#define abstract_get_derived_type(marker)                                                                \
+({                                                                \
+        if (!(marker == MUNSORTED_MULTIMAP || marker == MSORTED_MULTIMAP || marker == MUNSORTED_MAP ||                                                                \
+              marker == MSORTED_MAP || marker == MUNSORTED_MULTISET_ARR ||                                                                \
+              marker == MSORTED_MULTISET_ARR || marker == MUNSORTED_SET_ARR ||                                                                \
+              marker == MSORTED_SET_ARR || marker == MUNSORTED_MULTISET_U8 ||                                                                \
+              marker == MSORTED_MULTISET_U8 || marker == MUNSORTED_SET_U8 ||                                                                \
+              marker == MSORTED_SET_U8 || marker == MUNSORTED_MULTISET_U16 ||                                                                \
+              marker == MSORTED_MULTISET_U16 || marker == MUNSORTED_SET_U16 ||                                                                \
+              marker == MSORTED_SET_U16 || marker == MUNSORTED_MULTISET_U32 ||                                                                \
+              marker == MSORTED_MULTISET_U32 || marker == MUNSORTED_SET_U32 ||                                                                \
+              marker == MSORTED_SET_U32 || marker == MUNSORTED_MULTISET_U64 ||                                                                \
+              marker == MSORTED_MULTISET_U64 || marker == MUNSORTED_SET_U64 ||                                                                \
+              marker == MSORTED_SET_U64 || marker == MUNSORTED_MULTISET_I8 ||                                                                \
+              marker == MSORTED_MULTISET_I8 || marker == MUNSORTED_SET_I8 ||                                                                \
+              marker == MSORTED_SET_I8 || marker == MUNSORTED_MULTISET_I16 ||                                                                \
+              marker == MSORTED_MULTISET_I16 || marker == MUNSORTED_SET_I16 ||                                                                \
+              marker == MSORTED_SET_I16 || marker == MUNSORTED_MULTISET_I32 ||                                                                \
+              marker == MSORTED_MULTISET_I32 || marker == MUNSORTED_SET_I32 ||                                                                \
+              marker == MSORTED_SET_I32 || marker == MUNSORTED_MULTISET_I64 ||                                                                \
+              marker == MSORTED_MULTISET_I64 || marker == MUNSORTED_SET_I64 ||                                                                \
+              marker == MSORTED_SET_I64 || marker == MUNSORTED_MULTISET_FLOAT ||                                                                \
+              marker == MSORTED_MULTISET_FLOAT || marker == MUNSORTED_SET_FLOAT ||                                                                \
+              marker == MSORTED_SET_FLOAT || marker == MUNSORTED_MULTISET_BOOLEAN ||                                                                \
+              marker == MSORTED_MULTISET_BOOLEAN || marker == MUNSORTED_SET_BOOLEAN ||                                                                \
+              marker == MSORTED_SET_BOOLEAN)) {                                                                \
+                ERROR(ERR_MARKERMAPPING, "unknown marker for abstract derived type");                                                                \
+                marker = MERR;                                                                \
+        }                                                                \
+        (derived_e) marker;                                                                \
+})
 
 #ifdef __cplusplus
 }

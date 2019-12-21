@@ -388,11 +388,10 @@ TEST(TestAbstractTypeMarker, GetClassOfConcreteDerivedType) {
 static void test_get_container_for_derived_type(memfile *memfile, derived_e derived,
                                                 sub_type_e expected)
 {
-        sub_type_e sub_type;
         abstract_write_derived_type(memfile, derived);
         MEMFILE_SEEK_FROM_HERE(memfile, -1);
         u8 marker = MEMFILE_READ_BYTE(memfile);
-        ASSERT_TRUE(abstract_get_container_subtype(&sub_type, marker));
+        sub_type_e sub_type = abstract_get_container_subtype(marker);
         ASSERT_EQ(sub_type, expected);
 }
 
@@ -479,8 +478,7 @@ TEST(TestAbstractTypeMarker, GetContainerForDerivedType)
 static void test_get_derive_from_list(list_container_e is, list_type_e should,
                                       derived_e expected)
 {
-        derived_e concrete;
-        ASSERT_TRUE(abstract_derive_list_to(&concrete, is, should));
+        derived_e concrete = abstract_derive_list_to(is, should);
         ASSERT_EQ(concrete, expected);
 }
 
@@ -588,8 +586,7 @@ TEST(TestAbstractTypeMarker, GetDeriveFromList)
 
 static void test_get_derive_from_list(map_type_e should, derived_e expected)
 {
-        derived_e concrete;
-        ASSERT_TRUE(abstract_derive_map_to(&concrete, should));
+        derived_e concrete = abstract_derive_map_to(should);
         ASSERT_EQ(concrete, expected);
 }
 

@@ -134,8 +134,7 @@ void revise_set_list_type(rev *context, list_type_e derivation)
         revise_iterator_open(&it, context);
 
         MEMFILE_SEEK_FROM_HERE(&it.file, -sizeof(u8));
-        derived_e derive_marker;
-        abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
+        derived_e derive_marker = abstract_derive_list_to(LIST_ARRAY, derivation);
         abstract_write_derived_type(&it.file, derive_marker);
 }
 

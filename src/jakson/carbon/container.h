@@ -46,7 +46,8 @@ typedef enum sub_type {
     CONTAINER_COLUMN_I32 = MCOLUMN_I32,
     CONTAINER_COLUMN_I64 = MCOLUMN_I64,
     CONTAINER_COLUMN_BOOLEAN = MCOLUMN_BOOLEAN,
-    CONTAINER_COLUMN_FLOAT = MCOLUMN_FLOAT
+    CONTAINER_COLUMN_FLOAT = MCOLUMN_FLOAT,
+    CONTAINER_ERR
 } sub_type_e;
 
 // ---------------------------------------------------------------------------------------------------------------------

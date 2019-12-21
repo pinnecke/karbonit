@@ -126,6 +126,8 @@ extern "C" {
 #define MUNSORTED_SET_BOOLEAN       '\''
 #define MSORTED_SET_BOOLEAN         0x7F /** DEL */
 
+#define MERR -1
+
 void markers_print(str_buf *dst, rec *src);
 
 #ifdef __cplusplus

@@ -68,8 +68,7 @@ bool internal_insert_object(memfile *file, map_type_e derivation, size_t nbytes)
 {
         assert(derivation == MAP_UNSORTED_MULTIMAP || derivation == MAP_SORTED_MULTIMAP ||
                derivation == MAP_UNSORTED_MAP || derivation == MAP_SORTED_MAP);
-        derived_e begin_marker;
-        abstract_derive_map_to(&begin_marker, derivation);
+        derived_e begin_marker = abstract_derive_map_to(derivation);
         insert_embedded_container(file, begin_marker, MOBJECT_END, nbytes);
         return true;
 }
@@ -78,8 +77,7 @@ bool internal_insert_array(memfile *file, list_type_e derivation, size_t nbytes)
 {
         assert(derivation == LIST_UNSORTED_MULTISET || derivation == LIST_SORTED_MULTISET ||
                derivation == LIST_UNSORTED_SET || derivation == LIST_SORTED_SET);
-        derived_e begin_marker;
-        abstract_derive_list_to(&begin_marker, LIST_ARRAY, derivation);
+        derived_e begin_marker = abstract_derive_list_to(LIST_ARRAY, derivation);
         insert_embedded_container(file, begin_marker, MARRAY_END, nbytes);
         return true;
 }

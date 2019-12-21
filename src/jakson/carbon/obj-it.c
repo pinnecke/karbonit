@@ -42,8 +42,7 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
 
         char marker = MEMFILE_READ_BYTE(&it->file);
 
-        sub_type_e sub_type;
-        abstract_get_container_subtype(&sub_type, marker);
+        sub_type_e sub_type = abstract_get_container_subtype(marker);
         ERROR_IF_AND_RETURN(sub_type != CONTAINER_OBJECT, ERR_ILLEGALOP,
                               "object begin marker ('{') or abstract derived type marker for 'map' not found");
 
@@ -213,8 +212,7 @@ void obj_it_update_type(obj_it *it, map_type_e derivation)
         MEMFILE_SAVE_POSITION(&it->file);
         MEMFILE_SEEK(&it->file, it->begin);
 
-        derived_e derive_marker;
-        abstract_derive_map_to(&derive_marker, derivation);
+        derived_e derive_marker = abstract_derive_map_to(derivation);
         abstract_write_derived_type(&it->file, derive_marker);
 
         MEMFILE_RESTORE_POSITION(&it->file);

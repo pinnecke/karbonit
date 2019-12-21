@@ -141,8 +141,7 @@ bool find_update_array_type(find *find, list_type_e derivation)
                 arr_it *it = find_result_array(find);
                 MEMFILE_CLONE(&mod, &it->file);
                 MEMFILE_SEEK_FROM_HERE(&mod, -sizeof(u8));
-                derived_e derive_marker;
-                abstract_derive_list_to(&derive_marker, LIST_ARRAY, derivation);
+                derived_e derive_marker = abstract_derive_list_to(LIST_ARRAY, derivation);
                 abstract_write_derived_type(&mod, derive_marker);
                 return true;
 
@@ -184,10 +183,9 @@ bool find_update_column_type(find *find, list_type_e derivation)
                 MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->begin);
 
-                derived_e derive_marker;
                 list_container_e list_container;
                 list_by_column_type(&list_container, it->field_type);
-                abstract_derive_list_to(&derive_marker, list_container, derivation);
+                derived_e derive_marker = abstract_derive_list_to(list_container, derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 
                 MEMFILE_RESTORE_POSITION(&it->file);
@@ -230,8 +228,7 @@ bool find_update_object_type(find *find, map_type_e derivation)
                 MEMFILE_SAVE_POSITION(&it->file);
                 MEMFILE_SEEK(&it->file, it->begin);
 
-                derived_e derive_marker;
-                abstract_derive_map_to(&derive_marker, derivation);
+                derived_e derive_marker = abstract_derive_map_to(derivation);
                 abstract_write_derived_type(&it->file, derive_marker);
 
                 MEMFILE_RESTORE_POSITION(&it->file);

@@ -57,7 +57,12 @@ typedef struct arr_it {
 /**
  * Positions the iterator at the beginning of this array.
  */
-void arr_it_rewind(arr_it *it);
+#define ARR_IT_REWIND(it)                                                                       \
+{                                                                       \
+        it->pos = 0;                                                                       \
+        MEMFILE_SEEK__UNSAFE(&it->file, it->begin + sizeof(u8));                                                                       \
+}
+
 bool arr_it_length(u64 *len, arr_it *it);
 bool arr_it_is_empty(arr_it *it);
 

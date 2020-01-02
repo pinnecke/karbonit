@@ -39,14 +39,14 @@ static void insert_prepare(struct read_bench_fn *self, void *arg)
         extra->ins = rec_create_begin(&extra->record_new, &extra->record, KEY_NOKEY, OPTIMIZE);
 }
 
-static void insert_execute(struct read_bench_fn *self, i64 value, void *arg)
+static void insert_execute(struct read_bench_fn *self, i16 value, void *arg)
 {
         UNUSED(self)
         UNUSED(arg)
         UNUSED(value)
 
         struct extra *extra = (struct extra *) self->extra;
-        insert_i64(extra->ins, value);
+        insert_i16(extra->ins, value);
 }
 
 static void insert_finalize(struct read_bench_fn *self, void *arg)

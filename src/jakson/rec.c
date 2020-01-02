@@ -281,7 +281,7 @@ const char *rec_to_json(str_buf *dst, rec *doc)
         return json_from_record(dst, doc);
 }
 
-void rec_read(arr_it *it, rec *doc)
+inline void rec_read(arr_it *it, rec *doc)
 {
         patch(it, doc);
         INTERNAL_ARR_IT_SET_MODE(it, READ_ONLY);

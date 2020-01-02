@@ -7,8 +7,8 @@
 #define READ_BENCH_SINGLE_DURATION_MS 3000
 #define READ_BENCH_NUM_SAMPLES 1
 #define READ_BENCH_N_START 1
-#define READ_BENCH_N_MAX 12
-#define READ_BENCH_N_STEP ((READ_BENCH_N_MAX - READ_BENCH_N_START) / 11)
+#define READ_BENCH_N_MAX 10000
+#define READ_BENCH_N_STEP ((READ_BENCH_N_MAX - READ_BENCH_N_START) / 250)
 
 void read_bench_run(read_bench_fn *fn, void *args)
 {
@@ -26,7 +26,7 @@ void read_bench_run(read_bench_fn *fn, void *args)
                         OPTIONAL_CALL(fn, startup, fn, args);
                         OPTIONAL_CALL(fn, insert_prepare, fn, args);
                         for (u64 i = 0; i < n; i++) {
-                                i64 field_value = (rand() % 2 == 0 ? 1 : -1) * (rand() % INT32_MAX);
+                                i16 field_value = (rand() % 2 == 0 ? 1 : -1) * (rand() % INT16_MAX);
                                 fn->insert_execute(fn, field_value, args);
                         }
                         OPTIONAL_CALL(fn, insert_finalize, fn, args);

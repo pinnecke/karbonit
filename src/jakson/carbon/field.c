@@ -27,7 +27,7 @@
 #include <jakson/carbon/obj-it.h>
 #include <jakson/carbon/abstract.h>
 
-const char *field_str(field_e type)
+inline const char *field_str(field_e type)
 {
         switch (type) {
                 case FIELD_NULL:
@@ -161,7 +161,7 @@ const char *field_str(field_e type)
         }
 }
 
-bool carbon_field_skip(memfile *file)
+inline bool carbon_field_skip(memfile *file)
 {
         u8 type_marker = *MEMFILE_PEEK_TYPE(file, u8);
 
@@ -261,7 +261,7 @@ bool carbon_field_skip(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_object(memfile *file, u8 marker)
+inline bool carbon_field_skip_object(memfile *file, u8 marker)
 {
         if (abstract_is_instanceof_object(marker)) {
                 obj_it skip_it;
@@ -275,7 +275,7 @@ bool carbon_field_skip_object(memfile *file, u8 marker)
         }
 }
 
-bool carbon_field_skip_array(memfile *file, u8 marker)
+inline bool carbon_field_skip_array(memfile *file, u8 marker)
 {
         if (abstract_is_instanceof_array(marker)) {
                 arr_it skip_it;
@@ -288,7 +288,7 @@ bool carbon_field_skip_array(memfile *file, u8 marker)
         }
 }
 
-bool carbon_field_skip_column(memfile *file)
+inline bool carbon_field_skip_column(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -301,7 +301,7 @@ bool carbon_field_skip_column(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_binary(memfile *file)
+inline bool carbon_field_skip_binary(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -318,7 +318,7 @@ bool carbon_field_skip_binary(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_custom_binary(memfile *file)
+inline bool carbon_field_skip_custom_binary(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -333,7 +333,7 @@ bool carbon_field_skip_custom_binary(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_string(memfile *file)
+inline bool carbon_field_skip_string(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -343,7 +343,7 @@ bool carbon_field_skip_string(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_float(memfile *file)
+inline bool carbon_field_skip_float(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -352,7 +352,7 @@ bool carbon_field_skip_float(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_boolean(memfile *file)
+inline bool carbon_field_skip_boolean(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -360,7 +360,7 @@ bool carbon_field_skip_boolean(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_null(memfile *file)
+inline bool carbon_field_skip_null(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -368,7 +368,7 @@ bool carbon_field_skip_null(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_8(memfile *file)
+inline bool carbon_field_skip_8(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -379,7 +379,7 @@ bool carbon_field_skip_8(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_16(memfile *file)
+inline bool carbon_field_skip_16(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -390,7 +390,7 @@ bool carbon_field_skip_16(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_32(memfile *file)
+inline bool carbon_field_skip_32(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -401,7 +401,7 @@ bool carbon_field_skip_32(memfile *file)
         return true;
 }
 
-bool carbon_field_skip_64(memfile *file)
+inline bool carbon_field_skip_64(memfile *file)
 {
         u8 type_marker = *MEMFILE_READ_TYPE(file, u8);
 
@@ -412,7 +412,7 @@ bool carbon_field_skip_64(memfile *file)
         return true;
 }
 
-field_e field_for_column(list_type_e derivation, col_it_type_e type)
+inline field_e field_for_column(list_type_e derivation, col_it_type_e type)
 {
         switch (derivation) {
                 case LIST_UNSORTED_MULTISET:
@@ -520,7 +520,7 @@ field_e field_for_column(list_type_e derivation, col_it_type_e type)
         }
 }
 
-field_e
+inline field_e
 field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true)
 {
         if (is_null) {
@@ -583,7 +583,7 @@ field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true)
         }
 }
 
-field_class_e field_get_class(field_e type)
+inline field_class_e field_get_class(field_e type)
 {
         switch (type) {
                 case FIELD_NULL:

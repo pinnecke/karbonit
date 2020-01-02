@@ -17,7 +17,7 @@ typedef struct read_bench_fn
         void (*teardown)(struct read_bench_fn *self, void *arg);
 
         void (*insert_prepare)(struct read_bench_fn *self, void *arg);
-        void (*insert_execute)(struct read_bench_fn *self, i64 value, void *arg);
+        void (*insert_execute)(struct read_bench_fn *self, i16 value, void *arg);
         void (*insert_finalize)(struct read_bench_fn *self, void *arg);
 
         void (*bench_prepare)(struct read_bench_fn *self, void *arg);

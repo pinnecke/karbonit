@@ -44,7 +44,7 @@ static void insert_prepare(struct read_bench_fn *self, void *arg)
         UNUSED(arg)
 }
 
-static void insert_execute(struct read_bench_fn *self, i64 value, void *arg)
+static void insert_execute(struct read_bench_fn *self, i16 value, void *arg)
 {
         UNUSED(self)
         UNUSED(arg)
@@ -52,8 +52,8 @@ static void insert_execute(struct read_bench_fn *self, i64 value, void *arg)
 
         struct extra *extra = (struct extra *) self->extra;
         str_buf_clear(&extra->str);
-        str_buf_add_i64(&extra->str, extra->array_idx++);
-        bson_append_int64(&extra->doc, str_buf_cstr(&extra->str), -1, value);
+        str_buf_add_i32(&extra->str, extra->array_idx++);
+        bson_append_int32(&extra->doc, str_buf_cstr(&extra->str), -1, value);
 }
 
 static void insert_finalize(struct read_bench_fn *self, void *arg)

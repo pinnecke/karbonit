@@ -193,6 +193,8 @@ bool revise_remove(const char *path, rev *context)
                                         result = false;
                         }
                 }
+                
+                dot_drop(&dot);
                 return result;
         } else {
                 ERROR(ERR_DOT_PATH_PARSERR, NULL);

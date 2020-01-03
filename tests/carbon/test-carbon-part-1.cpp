@@ -78,6 +78,9 @@ TEST(CarbonTest, CreateCarbonRevisionNumberingWithKey) {
         commit_compute(&commit_mod_cmpr, raw_data, raw_data_len);
 
         ASSERT_EQ(commit_mod, commit_mod_cmpr);
+
+        rec_drop(&doc);
+        rec_drop(&rev_doc);
 }
 
 TEST(CarbonTest, CreateCarbonRevisionNumbering) {

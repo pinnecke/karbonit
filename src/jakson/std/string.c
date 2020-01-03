@@ -43,18 +43,19 @@ bool str_buf_add(str_buf *buffer, const char *str)
 bool str_buf_add_nchar(str_buf *buffer, const char *str, u64 strlen)
 {
         /** resize if needed */
-        if (UNLIKELY(buffer->end + strlen >= buffer->cap)) {
-                size_t new_cap = (buffer->end + strlen) * 1.7f;
-                buffer->data = realloc(buffer->data, new_cap);
-                ERROR_IF_AND_RETURN(!buffer->data, ERR_REALLOCERR, false);
-                ZERO_MEMORY(buffer->data + buffer->cap, (new_cap - buffer->cap));
-                buffer->cap = new_cap;
+        if (strlen > 0) {
+                if (UNLIKELY(buffer->end + strlen >= buffer->cap)) {
+                        size_t new_cap = (buffer->end + strlen) * 1.7f;
+                        buffer->data = realloc(buffer->data, new_cap);
+                        ERROR_IF_AND_RETURN(!buffer->data, ERR_REALLOCERR, false);
+                        ZERO_MEMORY(buffer->data + buffer->cap, (new_cap - buffer->cap));
+                        buffer->cap = new_cap;
+                }
+
+                /** append str_buf */
+                memcpy(buffer->data + buffer->end, str, strlen);
+                buffer->end += strlen;
         }
-
-        /** append str_buf */
-        memcpy(buffer->data + buffer->end, str, strlen);
-        buffer->end += strlen;
-
         return true;
 }
 

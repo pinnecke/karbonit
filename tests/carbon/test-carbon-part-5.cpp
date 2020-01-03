@@ -131,11 +131,13 @@ TEST(CarbonTest, CarbonKeyTypeSignedKeyRevInc)
                 rec_commit_hash(&rev_new, new_f);
 
                 ASSERT_NE(rev_old, rev_new);
+                rec_drop(old_f);
 
                 old_f = new_f;
         }
 
-
+        rec_drop(old_f);
+        vec_drop(&files);
 }
 
 TEST(CarbonTest, CarbonKeyTypeUnsignedKeyRevInc)

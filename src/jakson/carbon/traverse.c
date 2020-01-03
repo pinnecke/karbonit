@@ -167,6 +167,7 @@ void traverser_run_from_item(traverser *traverse, item *i, void *arg)
                         obj_it nested_it;
                         ITEM_GET_OBJECT(&nested_it, i);
                         traverser_run_from_object(traverse, &nested_it, arg);
+                        obj_it_drop(&nested_it);
                 }
         }
 

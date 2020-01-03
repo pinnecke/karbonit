@@ -91,24 +91,24 @@ TEST(CarbonTest, CarbonObjectInsertMultipleBinariesMixedTypes)
 
         insert *obj_ins = insert_object_begin(&state, ins, 1);
 
-//        insert_prop_float(obj_ins, "k12", 42.23);
-//        insert_prop_true(obj_ins, "k1");
-//        insert_prop_binary(obj_ins, "b1", "Hello", strlen("Hello"), "txt", NULL);
+        insert_prop_float(obj_ins, "k12", 42.23);
+        insert_prop_true(obj_ins, "k1");
+        insert_prop_binary(obj_ins, "b1", "Hello", strlen("Hello"), "txt", NULL);
         insert_prop_binary(obj_ins, "my binary", ",", strlen(","), "txt", NULL);
-//        insert_prop_false(obj_ins, "k2");
-//        insert_prop_null(obj_ins, "k3");
-//        insert_prop_u8(obj_ins, "k4", 1);
-//        insert_prop_string(obj_ins, "s1", "v1");
-//        insert_prop_u16(obj_ins, "k5", 2);
-//        insert_prop_binary(obj_ins, "b2", "World", strlen("World"), "txt", NULL);
-//        insert_prop_string(obj_ins, "s2-longer", "world");
-//        insert_prop_u32(obj_ins, "k6", 3);
-//        insert_prop_u64(obj_ins, "k7", 4);
-//        insert_prop_i8(obj_ins, "k8", -1);
-//        insert_prop_string(obj_ins, "s3", "there");
-//        insert_prop_i16(obj_ins, "k9", -2);
-//        insert_prop_i32(obj_ins, "k10", -3);
-//        insert_prop_i64(obj_ins, "k11", -4);
+        insert_prop_false(obj_ins, "k2");
+        insert_prop_null(obj_ins, "k3");
+        insert_prop_u8(obj_ins, "k4", 1);
+        insert_prop_string(obj_ins, "s1", "v1");
+        insert_prop_u16(obj_ins, "k5", 2);
+        insert_prop_binary(obj_ins, "b2", "World", strlen("World"), "txt", NULL);
+        insert_prop_string(obj_ins, "s2-longer", "world");
+        insert_prop_u32(obj_ins, "k6", 3);
+        insert_prop_u64(obj_ins, "k7", 4);
+        insert_prop_i8(obj_ins, "k8", -1);
+        insert_prop_string(obj_ins, "s3", "there");
+        insert_prop_i16(obj_ins, "k9", -2);
+        insert_prop_i32(obj_ins, "k10", -3);
+        insert_prop_i64(obj_ins, "k11", -4);
 
         insert_object_end(&state);
 

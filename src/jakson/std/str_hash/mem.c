@@ -367,6 +367,7 @@ static int _str_hash_mem_remove(str_hash *self, char *const *keys, size_t num_ke
 
 static int _str_hash_mem_free(str_hash *self, void *ptr)
 {
+        UNUSED(self)
         assert(self->tag == MEMORY_RESIDENT);
         free(ptr);
         return true;

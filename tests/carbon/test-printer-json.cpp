@@ -18,7 +18,7 @@ rec_from_json(&doc, "[2, 1]", KEY_NOKEY, NULL);
 
         // cmake -DBUILD_TYPE=RELEASE -DUSE_AMALGAMATION=ON .
         // alt: 1005ms, MIT TRAVERS (v1): 1108ms
-        printf("%s\n\n\nconversion time: %llums \n", str_buf_cstr(&buf), (end_3 - start_3));
+        printf("%s\n\n\nconversion time: %" PRIu64 "ms \n", str_buf_cstr(&buf), (end_3 - start_3));
 
         str_buf_drop(&buf);
 

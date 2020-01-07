@@ -31,6 +31,9 @@ extern "C" {
  * <code>path</code>. If the element does not exist, or in case the value of that element is <code>undef</code> or
  * <code>null</code>, <code>FALSE</code> is returned.
  *
+ * \note If <code>path</code> is empty, the entire record must be considered. Since <code>doc</code> must be valid,
+ *       the function returns <code>TRUE</code> in this case.
+ *
  * \param doc non-null pointer to the Carbon record for which <code>path</code> should be evaluated
  * \param path non-null pointer to a dot-notated path that should be evaluated for <code>doc</code>
  * \returns <code>TRUE</code> if <code>path</code> points to an existing element. In all other cases (including errors),
@@ -50,11 +53,13 @@ bool func_exists(const rec *doc, const dot *path);
  * \note In case the path evaluation fails (e.g., the path points to an not existing element), <code>undef</code> (rather
  * than <code>null</code>) is returned.
  *
+ * \note In case <code>path</code> is empty, the entire record, formatted as json, is returned.
+ *
  * \param doc non-null pointer to the Carbon record for which <code>path</code> should be evaluated
  * \param path non-null pointer to a dot-notated path that should be evaluated for <code>doc</code>
  * \param buf non-null pointer to an already created string buffer
  * \return the string buffers c-string which is the json formatted result of the path evaluation. In case of an error,
- *         <code>NULL</code> is returned.
+ *         <code>undef</code> is returned.
  */
 const char *func_get(const rec *doc, const dot *path, str_buf *buf);
 

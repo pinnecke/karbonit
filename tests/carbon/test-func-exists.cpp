@@ -16,6 +16,13 @@ static void test_exists(const char *json_in, const char *path_str, bool expected
         rec_drop(&doc);
 }
 
+TEST(FunExistsTest, EntireDocumentExists)
+{
+        const char *json_in = "[1, 2, 3]";
+
+        test_exists(json_in, "", true);
+}
+
 TEST(FunExistsTest, FindElementInArrayOkay)
 {
         const char *json_in = "[1, 2, 3, \"X\", {\"a\": 1, \"b\": 2}]";

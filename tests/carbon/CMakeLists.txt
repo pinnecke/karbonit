@@ -25,6 +25,7 @@ CreateTest(test-carbon-arr-it)
 CreateTest(test-carbon-obj-it)
 CreateTest(test-carbon-from-json)
 CreateTest(test-func-exists)
+CreateTest(test-func-get)
 
 CreateTest(test-carbon-part-1)
 CreateTest(test-carbon-part-2)

@@ -21,6 +21,7 @@ CreateTest(test-printer-marker)
 CreateTest(test-printer-json)
 CreateTest(test-carbon-patch)
 CreateTest(test-carbon-item)
+CreateTest(test-carbon-arr-it)
 
 CreateTest(test-carbon-part-1)
 CreateTest(test-carbon-part-2)

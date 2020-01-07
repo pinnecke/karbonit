@@ -282,9 +282,11 @@ inline bool internal_arr_it_clone(arr_it *dst, arr_it *src)
 
 inline bool arr_it_length(u64 *len, arr_it *it)
 {
+        arr_it dup;
+        internal_arr_it_clone(&dup, it);
+
         u64 num_elem = 0;
-        ARR_IT_REWIND(it);
-        while (arr_it_next(it)) {
+        while (arr_it_next(&dup)) {
                 num_elem++;
         }
         *len = num_elem;

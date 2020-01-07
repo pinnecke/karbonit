@@ -263,7 +263,6 @@ static inline pstatus_e _dot_eval_traverse_object(dot_eval *state,
                                                                                                           path,
                                                                                                           next_path_pos,
                                                                                                           &sub_it);
-                                                                obj_it_drop(&sub_it);
                                                                 return ret;
                                                         }
                                                         case FIELD_ARRAY_UNSORTED_MULTISET:
@@ -439,7 +438,6 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                                         path,
                                                                                         next_path_pos,
                                                                                         &sub_it);
-                                                                                obj_it_drop(&sub_it);
                                                                                 return status;
                                                                         }
                                                                 default: ERROR(ERR_INTERNALERR, NULL);
@@ -474,7 +472,6 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                                                    path,
                                                                                    current_path_pos,
                                                                                    &sub_it);
-                                                obj_it_drop(&sub_it);
                                                 return status;
                                         } else {
                                                 return PATH_NOSUCHKEY;

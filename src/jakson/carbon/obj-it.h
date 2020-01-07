@@ -23,7 +23,7 @@ typedef struct obj_it {
         offset_t content_begin, begin;
         bool eof;
         u64 pos;
-        vec ofType(offset_t) history;
+        offset_t last_off;
         struct {
                 struct {
                         offset_t start;
@@ -43,8 +43,6 @@ typedef struct obj_it {
 // ---------------------------------------------------------------------------------------------------------------------
 //  public interface
 // ---------------------------------------------------------------------------------------------------------------------
-
-bool obj_it_drop(obj_it *it);
 
 bool obj_it_rewind(obj_it *it);
 prop *obj_it_next(obj_it *it);

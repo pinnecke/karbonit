@@ -82,7 +82,7 @@ bool internal_insert_create_for_object(insert *in, obj_it *context)
         if (context->eof) {
                 pos = MEMFILE_TELL(&context->file);
         } else {
-                pos = internal_history_has(&context->history) ? internal_history_peek(&context->history) : 0;
+                pos = context->last_off;
         }
 
         internal_create(in, &context->file, pos);
@@ -494,8 +494,6 @@ bool insert_object_end(obj_state *state)
         MEMFILE_SKIP(&scan.file, 1);
 
         MEMFILE_SEEK(&state->parent->file, MEMFILE_TELL(&scan.file) - 1);
-        obj_it_drop(&scan);
-        obj_it_drop(state->it);
         free(state->it);
         return true;
 }

@@ -567,7 +567,6 @@ bool internal_field_remove(memfile *memfile, field_e type)
                 internal_obj_it_create(&it, memfile, begin_off - sizeof(u8));
                 internal_obj_it_fast_forward(&it);
                 offset_t end_off = internal_obj_it_memfile_pos(&it);
-                obj_it_drop(&it);
 
                 assert(begin_off < end_off);
                 rm_nbytes += (end_off - begin_off);

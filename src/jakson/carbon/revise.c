@@ -193,7 +193,7 @@ bool revise_remove(const char *path, rev *context)
                                         result = false;
                         }
                 }
-                
+
                 dot_drop(&dot);
                 return result;
         } else {
@@ -259,7 +259,6 @@ static void optimize_object(obj_it *object, memfile *file)
         assert(*MEMFILE_PEEK(&object->file, sizeof(char)) == MOBJECT_END);
         MEMFILE_SKIP(&object->file, sizeof(char));
         MEMFILE_SEEK__UNSAFE(file, MEMFILE_TELL(&object->file));
-        obj_it_drop(object);
 }
 
 static bool internal_pack_array(arr_it *it)
@@ -347,8 +346,6 @@ static bool internal_pack_object(obj_it *it)
                         final = *MEMFILE_READ(&this_object_it.file, sizeof(char));
                         assert(final == MOBJECT_END);
                 }
-
-                obj_it_drop(&this_object_it);
         }
 
         /** shrink contained containers */

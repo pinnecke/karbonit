@@ -30,8 +30,7 @@ bool internal_obj_it_create(obj_it *it, memfile *memfile, offset_t payload_start
         it->mod_size = 0;
         it->pos = 0;
         it->eof = false;
-
-        vec_create(&it->history, sizeof(offset_t), 40);
+        it->last_off = payload_start + sizeof(u8);
 
         MEMFILE_OPEN(&it->file, memfile->memblock, memfile->mode);
         MEMFILE_SEEK(&it->file, payload_start);
@@ -70,7 +69,7 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
         dst->pos = src->pos;
         dst->eof = src->eof;
         dst->type = src->type;
-        vec_cpy(&dst->history, &src->history);
+        dst->last_off = src->last_off;
         dst->field.key.name_len = src->field.key.name_len;
         dst->field.key.name = src->field.key.name;
         dst->field.key.start = src->field.key.start;
@@ -80,16 +79,10 @@ bool internal_obj_it_clone(obj_it *dst, obj_it *src)
         return true;
 }
 
-bool obj_it_drop(obj_it *it)
-{
-        vec_drop(&it->history);
-        return true;
-}
-
 bool obj_it_rewind(obj_it *it)
 {
         ERROR_IF_AND_RETURN(it->content_begin >= MEMFILE_SIZE(&it->file), ERR_OUTOFBOUNDS, NULL);
-        internal_history_clear(&it->history);
+        it->last_off = it->content_begin;
         it->pos = 0;
         return MEMFILE_SEEK(&it->file, it->content_begin);
 }
@@ -99,7 +92,7 @@ prop *obj_it_next(obj_it *it)
         bool is_empty_slot;
         offset_t last_off = MEMFILE_TELL(&it->file);
         if (internal_object_it_next(&is_empty_slot, &it->eof, it)) {
-                internal_history_push(&it->history, last_off);
+                it->last_off = last_off;
                 internal_prop_create(&it->prop, it);
                 it->pos++;
                 return &it->prop;
@@ -139,8 +132,8 @@ u64 obj_it_length(obj_it *it)
 
 bool obj_it_prev(obj_it *it)
 {
-        if (internal_history_has(&it->history)) {
-                offset_t prev_off = internal_history_pop(&it->history);
+        if (it->last_off) {
+                offset_t prev_off = it->last_off;
                 it->pos--;
                 MEMFILE_SEEK(&it->file, prev_off);
                 return internal_object_it_refresh(NULL, NULL, it);
@@ -192,7 +185,7 @@ bool internal_obj_it_remove(obj_it *it)
 {
         field_e type;
         if (internal_obj_it_prop_type(&type, it)) {
-                offset_t prop_off = internal_history_pop(&it->history);
+                offset_t prop_off = it->last_off;
                 MEMFILE_SEEK(&it->file, prop_off);
                 it->mod_size -= _prop_remove(it, type);
                 return true;

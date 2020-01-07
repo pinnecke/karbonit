@@ -498,7 +498,6 @@ inline item *arr_it_next(arr_it *it)
                                         internal_obj_it_create(&forward_it, &it->file, begin_off);
                                         internal_obj_it_fast_forward(&forward_it);
                                         raw_it = internal_obj_it_memfile(&forward_it);
-                                        obj_it_drop(&forward_it);
                                 } break;
                                 default:
                                         ERROR(ERR_CORRUPTED, NULL);

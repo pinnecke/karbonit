@@ -268,7 +268,6 @@ inline bool carbon_field_skip_object(memfile *file, u8 marker)
                 internal_obj_it_create(&skip_it, file, MEMFILE_TELL(file));
                 internal_obj_it_fast_forward(&skip_it);
                 MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
-                obj_it_drop(&skip_it);
                 return true;
         } else {
                 return ERROR(ERR_TYPEMISMATCH, "marker does not encode an object container or sub type");

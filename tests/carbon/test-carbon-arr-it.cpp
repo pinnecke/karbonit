@@ -17,6 +17,7 @@ TEST(ArrayIteratorTests, ConstArrayLengthFunction)
         arr_it_length(&arr_len, &it);
         pos_new = it.file.pos;
         ASSERT_EQ(pos_old, pos_new);
+        ASSERT_TRUE(arr_len == 6);
 
         rec_drop(&document);
 }

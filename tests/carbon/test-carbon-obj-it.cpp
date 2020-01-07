@@ -23,6 +23,7 @@ TEST(ArrayIteratorTests, ConstArrayLengthFunction)
         obj_len = obj_it_length(&obj);
         pos_new = obj.file.pos;
         ASSERT_EQ(pos_old, pos_new);
+        ASSERT_TRUE(obj_len == 6);
 
         rec_drop(&document);
 }

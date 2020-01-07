@@ -51,6 +51,8 @@ prop *obj_it_next(obj_it *it);
 bool obj_it_has_next(obj_it *it);
 bool obj_it_prev(obj_it *it);
 
+u64 obj_it_length(obj_it *it);
+
 bool obj_it_is_multimap(obj_it *it);
 bool obj_it_is_sorted(obj_it *it);
 void obj_it_update_type(obj_it *it, map_type_e derivation);

@@ -125,6 +125,18 @@ bool obj_it_has_next(obj_it *it)
         return has_next;
 }
 
+u64 obj_it_length(obj_it *it)
+{
+        obj_it dup;
+        internal_obj_it_clone(&dup, it);
+
+        u64 num_elem = 0;
+        while (obj_it_next(&dup)) {
+                num_elem++;
+        }
+        return num_elem;
+}
+
 bool obj_it_prev(obj_it *it)
 {
         if (internal_history_has(&it->history)) {

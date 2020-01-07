@@ -1,5 +1,7 @@
 ## 0.7.00.0 [2020-XX-XX]
 - Traverse framework
+- improved json printer
+- fix issue 2, memory debugging, performance and micro optimization
 
 ## 0.6.00.0 [2019-11-25]
 - Add carbon revision patching as alternative to carbon revisions

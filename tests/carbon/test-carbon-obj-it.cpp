@@ -3,7 +3,7 @@
 
 #include <jakson/jakson.h>
 
-TEST(ArrayIteratorTests, ConstArrayLengthFunction)
+TEST(ObjectIteratorTests, ConstObjectLengthFunction)
 {
         rec document;
         arr_it it;

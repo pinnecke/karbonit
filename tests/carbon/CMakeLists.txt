@@ -23,6 +23,7 @@ CreateTest(test-carbon-patch)
 CreateTest(test-carbon-item)
 CreateTest(test-carbon-arr-it)
 CreateTest(test-carbon-obj-it)
+CreateTest(test-carbon-from-json)
 
 CreateTest(test-carbon-part-1)
 CreateTest(test-carbon-part-2)

@@ -5,16 +5,18 @@
 
 static void test_get(const char *json_in, const char *path_str, const char *expected)
 {
+        error_abort_disable();
+
         rec doc;
         dot path;
         const char *result;
         str_buf buf;
 
-        rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json_in, KEY_NOKEY, NULL, OPTIMIZE);
         dot_from_string(&path, path_str);
         str_buf_create(&buf);
 
-        result = func_get(&doc, &path, &buf);
+        result = func_rec_get(&doc, &path, &buf);
         printf("\n"
                "json in.: '%s'\n"
                "path in.: '%s'\n"
@@ -26,6 +28,8 @@ static void test_get(const char *json_in, const char *path_str, const char *expe
         str_buf_drop(&buf);
         dot_drop(&path);
         rec_drop(&doc);
+
+        error_abort_enable();
 }
 
 TEST(FunGetTest, GetFirstElementDocument)
@@ -43,7 +47,7 @@ TEST(FunGetTest, GetSecondElementDocument)
 TEST(FunGetTest, GetThirdElementDocument)
 {
         const char *json_in = "[1, 2]";
-        test_get(json_in, NULL, "undef");
+        test_get(json_in, "3", "undef");
 }
 
 TEST(FunGetTest, GetEntireDocument)
@@ -70,7 +74,6 @@ TEST(FunGetTest, GetNestedElements)
         test_get(json_in, "1.z.b", "undef");
         test_get(json_in, "2", "2");
         test_get(json_in, "3", "undef");
-
 }
 
 int main(int argc, char **argv) {

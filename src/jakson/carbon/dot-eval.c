@@ -27,8 +27,8 @@ static inline pstatus_e _dot_eval_traverse_array(dot_eval *state,
                                                  const dot *path, u32 current_path_pos,
                                                  arr_it *it, bool is_record);
 
-void dot_eval_begin(dot_eval *eval, const dot *path,
-                                 rec *doc)
+void dot_eval_exec(dot_eval *eval, const dot *path,
+                   rec *doc)
 {
         ZERO_MEMORY(eval, sizeof(dot_eval));
         eval->doc = doc;
@@ -117,7 +117,7 @@ bool carbon_path_is_null(rec *doc, const char *path)
 
         if (find_from_string(&find, path, doc)) {
                 find_result_type(&field_type, &find);
-                result = FIELD_IS_NULL(field_type);
+                result = FIELD_IS_BASE_NULL(field_type);
         }
 
         return result;

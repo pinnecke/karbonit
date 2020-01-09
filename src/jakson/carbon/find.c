@@ -25,6 +25,7 @@
 #include <jakson/types.h>
 #include <stdint.h>
 #include <jakson/json.h>
+#include "find.h"
 
 static void result_from_array(find *find, arr_it *it);
 
@@ -53,7 +54,7 @@ bool internal_find_exec(find *find, const dot *path, rec *doc)
         ZERO_MEMORY(find, sizeof(find));
         find->doc = doc;
 
-        dot_eval_begin(&find->eval, path, doc);
+        dot_eval_exec(&find->eval, path, doc);
         if (find_has_result(find)) {
                 switch (find->eval.result.container) {
                         case ARRAY:
@@ -330,6 +331,16 @@ bool find_result_is_unsigned(find *find)
         return FIELD_IS_UNSIGNED(find->type);
 }
 
+bool find_result_is_number(find *find)
+{
+        return find_result_is_integer(find) || find_result_is_float(find);
+}
+
+bool find_result_is_integer(find *find)
+{
+        return find_result_is_signed(find) || find_result_is_unsigned(find);
+}
+
 bool find_result_is_signed(find *find)
 {
         return FIELD_IS_SIGNED(find->type);
@@ -342,7 +353,7 @@ bool find_result_is_float(find *find)
 
 bool find_result_is_null(find *find)
 {
-        return FIELD_IS_NULL(find->type);
+        return FIELD_IS_BASE_NULL(find->type);
 }
 
 bool find_result_is_string(find *find)
@@ -353,6 +364,11 @@ bool find_result_is_string(find *find)
 bool find_result_is_binary(find *find)
 {
         return FIELD_IS_BINARY(find->type);
+}
+
+bool find_result_is_contained_in_column(find *find)
+{
+        return find->column.is_parent;
 }
 
 bool __check_path_evaluator_has_result(find *find)
@@ -494,6 +510,8 @@ binary_field *find_result_binary(find *find)
 static void result_from_array(find *find, arr_it *it)
 {
         find->type = it->field.type;
+        find->offset = it->field_offset;
+        find->column.is_parent = false;
         switch (find->type) {
                 case FIELD_NULL:
                         /** no value to be stored */
@@ -589,6 +607,8 @@ static void result_from_array(find *find, arr_it *it)
 static void result_from_object(find *find, obj_it *it)
 {
         internal_obj_it_prop_type(&find->type, it);
+        find->offset = it->last_off;
+        find->column.is_parent = false;
         switch (find->type) {
                 case FIELD_NULL:
                         /** no value to be stored */
@@ -688,6 +708,8 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
         u32 max_idx = COL_IT_VALUES_INFO(&find->type, it);
         assert(requested_idx < max_idx);
 #endif
+        find->offset = it->begin;
+        find->column.is_parent = true;
 
         switch (find->type) {
                 case FIELD_COLUMN_BOOLEAN_UNSORTED_MULTISET:

@@ -120,11 +120,12 @@ typedef enum key {
  *  functionality must be effectively implemented at caller site.
  */
 insert *rec_create_begin(rec_new *context, rec *doc, key_e type, int options);
+insert *rec_create_begin_ex(rec_new *context, rec *doc, key_e type, int options, u64 doc_capacity_nbyte);
 void rec_create_end(rec_new *context);
-void rec_create_empty(rec *doc, list_type_e derivation, key_e type);
+void rec_create_empty(rec *doc, list_type_e derivation, key_e type, u64 doc_capacity_nbyte);
 void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type, u64 doc_cap, u64 array_cap);
 
-bool rec_from_json(rec *doc, const char *json, key_e type, const void *key);
+bool rec_from_json(rec *doc, const char *json, key_e type, const void *key, int mode);
 bool rec_from_raw_data(rec *doc, const void *data, u64 len);
 
 bool rec_drop(rec *doc);
@@ -172,6 +173,8 @@ bool rec_has_key(key_e type);
 bool rec_key_is_unsigned(key_e type);
 bool rec_key_is_signed(key_e type);
 bool rec_key_is_string(key_e type);
+
+void internal_rec_get_first(memfile *file, rec *doc);
 
 #ifdef __cplusplus
 }

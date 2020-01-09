@@ -8,7 +8,7 @@ TEST(TestConverterFormatter, TestFastPrinter) {
         rec doc;
         str_buf buf;
 
-        rec_from_json(&doc, "[2, 1, { \"message\": \"hello\", \"data\":[1,2,3,4,5,6]}]", KEY_AUTOKEY, NULL);
+        rec_from_json(&doc, "[2, 1, { \"message\": \"hello\", \"data\":[1,2,3,4,5,6]}]", KEY_AUTOKEY, NULL, OPTIMIZE);
 
         str_buf_create(&buf);
 

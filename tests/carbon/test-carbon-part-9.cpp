@@ -11,7 +11,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         field_e result_type;
 
         const char *json_in = "{\"x\":\"y\"}";
-        rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json_in, KEY_NOKEY, NULL, OPTIMIZE);
 
         /* without shortened dot path rule, the json object as given is embedded in an record container (aka array)
          * such that the object must be referenced by its index in the record container (i.e., 0) */
@@ -29,7 +29,7 @@ TEST(CarbonTest, CarbonFromJsonShortenedDotPath)
         rec_drop(&doc);
 
         json_in = "[{\"x\":\"y\"},{\"x\":[{\"z\":42}]}]";
-        rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json_in, KEY_NOKEY, NULL, OPTIMIZE);
 
         /* The shortened dot path rule does not apply here since the user input is an array  */
         find_from_string(&find, "0.x", &doc);
@@ -64,116 +64,116 @@ TEST(CarbonTest, CarbonFindPrint)
         str_buf sb1;
         str_buf_create(&sb1);
 
-        rec_from_json(&doc, "8", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "8", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "8") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "-8", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "-8", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "-8") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "\"A\"", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "\"A\"", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "32.4", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "32.4", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "32.40") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "null", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "null", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "true", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "true", KEY_NOKEY, NULL, OPTIMIZE);
         rec_hexdump_print(stderr, &doc);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "true") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "false", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "false", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "false") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "1") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "1", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "2") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "2", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "3") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "3", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[1, 2, 3, null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_FALSE(find_from_string(&find, "4", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "undef") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"A\"") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "1", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"B\"") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "2", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"C\"") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[\"A\", \"B\", \"C\", null]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "3", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "null") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "\"Hello, World!\"", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "\"Hello, World!\"", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "\"Hello, World!\"") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "{}", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "{}", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_TRUE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "{}") == 0);
         rec_drop(&doc);
 
-        rec_from_json(&doc, "[]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[]", KEY_NOKEY, NULL, OPTIMIZE);
         ASSERT_FALSE(find_from_string(&find, "0", &doc));
         result = find_result_to_str(&sb1, &find);
         ASSERT_TRUE(strcmp(result, "undef") == 0);
@@ -212,7 +212,7 @@ TEST(CarbonTest, CarbonFindPrint)
                               "      }\n"
                               "}";
 
-        rec_from_json(&doc, complex, KEY_NOKEY, NULL);
+        rec_from_json(&doc, complex, KEY_NOKEY, NULL, OPTIMIZE);
 
         ASSERT_TRUE(find_from_string(&find, "m", &doc));
         result = find_result_to_str(&sb1, &find);
@@ -307,7 +307,7 @@ TEST(CarbonTest, CarbonFindPrintExamples)
 
         const char *json = "{\"x\":{\"y\":[{\"z\":23}, {\"z\":null}]} }";
 
-        rec_from_json(&doc, json, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json, KEY_NOKEY, NULL, OPTIMIZE);
         str_buf_create(&result);
 
         printf("input: '%s'\n", json);
@@ -340,7 +340,7 @@ TEST(CarbonTest, ParseBooleanArray) {
         field_e type;
         const char *json = "[{\"col\":[true, null, false]}]";
 
-        rec_from_json(&doc, json, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json, KEY_NOKEY, NULL, OPTIMIZE);
 
         ASSERT_TRUE(find_from_string(&find, "0.col", &doc));
         ASSERT_TRUE(find_has_result(&find));
@@ -390,7 +390,7 @@ TEST(CarbonTest, PathIndex) {
 //        int json_in_len = lseek(fd, 0, SEEK_END);
 //        const char *json = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
 
-        rec_from_json(&doc, json, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json, KEY_NOKEY, NULL, OPTIMIZE);
         pindex_create(&index, &doc);
         pindex_print(stdout, &index);
         rec_hexdump_print(stdout, &doc);

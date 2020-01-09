@@ -755,7 +755,7 @@ TEST(CarbonTest, CarbonUpdateMixedFixedTypesTypeChangeSimple)
         const char *json;
 
         str_buf_create(&sb);
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         // -------------------------------------------------------------------------------------------------------------
 

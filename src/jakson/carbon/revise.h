@@ -34,6 +34,8 @@ extern "C" {
 void revise_begin(rev *context, rec *revised, rec *original);
 const rec *revise_end(rev *context);
 
+bool revise_commit_update(rec *doc);
+
 bool revise_key_generate(unique_id_t *out, rev *context);
 
 bool revise_key_set_unsigned(rev *context, u64 key_value);

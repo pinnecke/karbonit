@@ -9,7 +9,7 @@ TEST(CarbonTest, InvalidObject) {
         rec carbon;
         const char *json_in = "{\"foo\"}";
         error_abort_disable();
-        bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL, OPTIMIZE);
         error_abort_enable();
         ASSERT_FALSE(status);
 }
@@ -18,7 +18,7 @@ TEST(CarbonTest, EmptyInput) {
         rec carbon;
         const char *json_in = "";
         error_abort_disable();
-        bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        bool status = rec_from_json(&carbon, json_in, KEY_NOKEY, NULL, OPTIMIZE);
         error_abort_enable();
         ASSERT_FALSE(status);
 }
@@ -26,7 +26,7 @@ TEST(CarbonTest, EmptyInput) {
 TEST(CarbonTest, SingleString) {
         rec carbon;
         const char *json_in = "  foo  ";
-        rec_from_json(&carbon, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&carbon, json_in, KEY_NOKEY, NULL, OPTIMIZE);
         UNUSED(carbon);
 }
 

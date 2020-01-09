@@ -9,7 +9,7 @@ static void assert_json_out_eq_json_in(const char *json_in, const char *expected
         str_buf str;
         const char *json_out;
 
-        rec_from_json(&document, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&document, json_in, KEY_NOKEY, NULL, OPTIMIZE);
         str_buf_create(&str);
 
         json_out = json_from_record(&str, &document);

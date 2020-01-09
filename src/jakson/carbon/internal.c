@@ -1111,13 +1111,13 @@ static void int_carbon_from_json_elem(insert *ins, const json_element *elem, boo
 }
 
 void internal_from_json(rec *doc, const json *data,
-                          key_e rec_key_type, const void *primary_key, int mode)
+                          key_e rec_key_type, const void *primary_key, int mode, u64 approx_doc_capacity_nbyte)
 {
         UNUSED(data)
         UNUSED(primary_key)
 
         rec_new context;
-        insert *ins = rec_create_begin(&context, doc, rec_key_type, mode);
+        insert *ins = rec_create_begin_ex(&context, doc, rec_key_type, mode, approx_doc_capacity_nbyte);
         int_carbon_from_json_elem(ins, data->element, true);
 
         rec_create_end(&context);

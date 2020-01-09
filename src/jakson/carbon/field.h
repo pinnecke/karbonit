@@ -259,15 +259,42 @@ bool carbon_field_skip_64(memfile *file);
 field_e field_for_column(list_type_e derivation, col_it_type_e type);
 field_e field_column_entry_to_regular_type(field_e type, bool is_null, bool is_true);
 
-
-
-#define FIELD_IS_TRAVERSABLE(_field_e_type_)                                                                             \
-        (FIELD_IS_OBJECT_OR_SUBTYPE(_field_e_type_) ||                                                                   \
+#define FIELD_IS_TRAVERSABLE(_field_e_type_)                                                                           \
+        (FIELD_IS_OBJECT_OR_SUBTYPE(_field_e_type_) ||                                                                 \
          FIELD_IS_LIST_OR_SUBTYPE(_field_e_type_))
 
-#define FIELD_IS_SIGNED(_field_e_type_)                                                                                  \
-        ((_field_e_type_ == FIELD_NUMBER_I8 || _field_e_type_ == FIELD_NUMBER_I16 ||                                       \
-          _field_e_type_ == FIELD_NUMBER_I32 || _field_e_type_ == FIELD_NUMBER_I64 ||                                      \
+#define FIELD_IS_BASE_NULL(_field_e_type_)                                                                             \
+        (_field_e_type_ == FIELD_NULL)
+#define FIELD_IS_BASE_TRUE(_field_e_type_)                                                                             \
+        (_field_e_type_ == FIELD_TRUE)
+#define FIELD_IS_BASE_FALSE(_field_e_type_)                                                                            \
+        (_field_e_type_ == FIELD_FALSE)
+#define FIELD_IS_BASE_STRING(_field_e_type_)                                                                           \
+        (_field_e_type_ == FIELD_STRING)
+#define FIELD_IS_BASE_NUMBER_I8(_field_e_type_)                                                                        \
+        (_field_e_type_ == FIELD_NUMBER_I8)
+#define FIELD_IS_BASE_NUMBER_I16(_field_e_type_)                                                                       \
+        (_field_e_type_ == FIELD_NUMBER_I16)
+#define FIELD_IS_BASE_NUMBER_I32(_field_e_type_)                                                                       \
+        (_field_e_type_ == FIELD_NUMBER_I32)
+#define FIELD_IS_BASE_NUMBER_I64(_field_e_type_)                                                                       \
+        (_field_e_type_ == FIELD_NUMBER_I64)
+#define FIELD_IS_BASE_NUMBER_U8(_field_e_type_)                                                                        \
+        (_field_e_type_ == FIELD_NUMBER_U8)
+#define FIELD_IS_BASE_NUMBER_U16(_field_e_type_)                                                                       \
+        (_field_e_type_ == FIELD_NUMBER_U16)
+#define FIELD_IS_BASE_NUMBER_U32(_field_e_type_)                                                                       \
+        (_field_e_type_ == FIELD_NUMBER_U32)
+#define FIELD_IS_BASE_NUMBER_U64(_field_e_type_)                                                                       \
+        (_field_e_type_ == FIELD_NUMBER_U64)
+#define FIELD_IS_BASE_FLOAT(_field_e_type_)                                                                            \
+        (_field_e_type_ == FIELD_NUMBER_FLOAT)
+#define FIELD_IS_BASE_BINARY(_field_e_type_)                                                                           \
+        (_field_e_type_ == FIELD_NULL || _field_e_type_ == FIELD_BINARY_CUSTOM)
+
+#define FIELD_IS_SIGNED(_field_e_type_)                                                                                \
+        ((_field_e_type_ == FIELD_NUMBER_I8 || _field_e_type_ == FIELD_NUMBER_I16 ||                                   \
+          _field_e_type_ == FIELD_NUMBER_I32 || _field_e_type_ == FIELD_NUMBER_I64 ||                                  \
           _field_e_type_ == FIELD_COLUMN_I8_UNSORTED_MULTISET ||                                                         \
           _field_e_type_ == FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET ||                                                   \
           _field_e_type_ == FIELD_DERIVED_COLUMN_I8_UNSORTED_SET ||                                                      \
@@ -331,7 +358,7 @@ field_e field_column_entry_to_regular_type(field_e type, bool is_null, bool is_t
         (_field_e_type_ == FIELD_STRING)
 
 #define FIELD_IS_CONSTANT(_field_e_type_)                                                                                \
-        ((FIELD_IS_NULL(_field_e_type_) || FIELD_IS_BOOLEAN(_field_e_type_)))
+        ((FIELD_IS_BASE_NULL(_field_e_type_) || FIELD_IS_BOOLEAN(_field_e_type_)))
 
 #define FIELD_IS_ARRAY_OR_SUBTYPE(_field_e_type_)                                                                        \
         ((_field_e_type_ == FIELD_ARRAY_UNSORTED_MULTISET || _field_e_type_ == FIELD_DERIVED_ARRAY_SORTED_MULTISET ||      \
@@ -417,8 +444,7 @@ field_e field_column_entry_to_regular_type(field_e type, bool is_null, bool is_t
           _field_e_type_ == FIELD_DERIVED_OBJECT_UNSORTED_MAP ||                                                         \
           _field_e_type_ == FIELD_DERIVED_OBJECT_SORTED_MAP))
 
-#define FIELD_IS_NULL(_field_e_type_)                                                                                    \
-        (_field_e_type_ == FIELD_NULL)
+
 
 #ifdef __cplusplus
 }

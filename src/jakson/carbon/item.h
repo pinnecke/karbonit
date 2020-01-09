@@ -325,7 +325,7 @@ typedef struct item
                 (item)->value_type = ITEM_COLUMN;                                                               \
         } else if (FIELD_IS_OBJECT_OR_SUBTYPE(field_type)) {                                                               \
                 (item)->value_type = ITEM_OBJECT;                                                               \
-        } else if (FIELD_IS_NULL(field_type)) {                                                               \
+        } else if (FIELD_IS_BASE_NULL(field_type)) {                                                               \
                 (item)->value_type = ITEM_NULL;                                                               \
         } else if (FIELD_IS_STRING(field_type)) {                                                               \
                 (item)->value.string.str = internal_field_string_value(&(item)->value.string.len, (field));                                                               \

@@ -11,7 +11,7 @@ TEST(TestCarbonPatch, CreatePatch) {
         field_e type;
         str_buf buffer1, buffer2, buffer3;
 
-        rec_from_json(&doc, "{ \"x\":[1, \"y\", 3] }", KEY_AUTOKEY, NULL);
+        rec_from_json(&doc, "{ \"x\":[1, \"y\", 3] }", KEY_AUTOKEY, NULL, OPTIMIZE);
         rec_commit_hash(&hash_original, &doc);
 
         str_buf_create(&buffer1);

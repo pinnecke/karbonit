@@ -631,7 +631,7 @@ TEST(CarbonTest, CarbonFind) {
         find finder;
         u64 result_unsigned;
         field_e type;
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         revise_begin(&revise, &rev_doc, &doc);
 
@@ -701,7 +701,7 @@ TEST(CarbonTest, CarbonFindTypes) {
         find finder;
         u64 result_unsigned;
         field_e type;
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);

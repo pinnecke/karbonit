@@ -8,7 +8,7 @@ int main (void)
     rec record;
     const char *as_json;
 
-    rec_from_json(&record, "{\"msg\": \"Hello from JSON\"}", KEY_NOKEY, NULL);
+    rec_from_json(&record, "{\"msg\": \"Hello from JSON\"}", KEY_NOKEY, NULL, OPTIMIZE);
 
     str_buf buffer;
     str_buf_create(&buffer);

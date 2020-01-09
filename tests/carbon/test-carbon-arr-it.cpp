@@ -10,7 +10,7 @@ TEST(ArrayIteratorTests, ConstArrayLengthFunction)
         u64 arr_len;
         offset_t pos_old, pos_new;
 
-        rec_from_json(&document, "[1,2,3,4,5,6]", KEY_NOKEY, NULL);
+        rec_from_json(&document, "[1,2,3,4,5,6]", KEY_NOKEY, NULL, OPTIMIZE);
         rec_read(&it, &document);
 
         pos_old = it.file.pos;

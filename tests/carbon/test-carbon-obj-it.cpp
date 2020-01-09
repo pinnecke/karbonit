@@ -12,7 +12,7 @@ TEST(ObjectIteratorTests, ConstObjectLengthFunction)
         offset_t pos_old, pos_new;
         item *item;
 
-        rec_from_json(&document, "{\"a\":1,\"b\":2,\"c\":3,\"d\":4,\"e\":5,\"f\":6}", KEY_NOKEY, NULL);
+        rec_from_json(&document, "{\"a\":1,\"b\":2,\"c\":3,\"d\":4,\"e\":5,\"f\":6}", KEY_NOKEY, NULL, OPTIMIZE);
         rec_read(&it, &document);
         ASSERT_TRUE(arr_it_has_next(&it));
         item = arr_it_next(&it);

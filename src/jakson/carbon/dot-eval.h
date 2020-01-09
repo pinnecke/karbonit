@@ -32,7 +32,7 @@ typedef struct dot_eval {
         } result;
 } dot_eval;
 
-void dot_eval_begin(dot_eval *eval, const dot *path, rec *doc);
+void dot_eval_exec(dot_eval *eval, const dot *path, rec *doc);
 bool dot_eval_begin_mutable(dot_eval *eval, const dot *path, rev *context);
 
 bool dot_eval_status(pstatus_e *status, dot_eval *state);

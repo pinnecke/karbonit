@@ -303,7 +303,7 @@ bool internal_field_remove(memfile *memfile, field_e type);
 /**
  * For <code>mode</code>, see <code>rec_create_begin</code>
  */
-void internal_from_json(rec *doc, const json *data, key_e rec_key_type, const void *primary_key, int mode);
+void internal_from_json(rec *doc, const json *data, key_e rec_key_type, const void *primary_key, int mode, u64 approx_doc_capacity_nbyte);
 
 #ifdef __cplusplus
 }

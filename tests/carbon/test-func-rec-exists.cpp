@@ -6,11 +6,11 @@
 static void test_exists(const char *json_in, const char *path_str, bool expected)
 {
         rec doc;
-        rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
+        rec_from_json(&doc, json_in, KEY_NOKEY, NULL, OPTIMIZE);
 
         dot path;
         dot_from_string(&path, path_str);
-        ASSERT_EQ(func_exists(&doc, &path), expected);
+        ASSERT_EQ(func_rec_exists(&doc, &path), expected);
         dot_drop(&path);
 
         rec_drop(&doc);

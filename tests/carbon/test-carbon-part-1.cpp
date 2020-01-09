@@ -13,7 +13,7 @@ TEST(CarbonTest, CreateCarbon) {
 
         str_buf_create(&buffer);
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY, 1024);
 
         //rec_hexdump_print(stderr, &doc);
 
@@ -91,7 +91,7 @@ TEST(CarbonTest, CreateCarbonRevisionNumbering) {
 
         str_buf_create(&buffer);
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         status = rec_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -125,7 +125,7 @@ TEST(CarbonTest, CreateCarbonRevisionAbort) {
 
         str_buf_create(&buffer);
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         status = rec_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -154,7 +154,7 @@ TEST(CarbonTest, CreateCarbonRevisionAsyncReading) {
 
         str_buf_create(&buffer);
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         status = rec_commit_hash(&hash, &doc);
         EXPECT_TRUE(status);
@@ -188,7 +188,7 @@ TEST(CarbonTest, ModifyCarbonObjectId) {
         rev revise;
         u64 commit_hash_old, commit_hash_new;
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY, 1024);
 
         rec_key_unsigned_value(&oid, &doc);
         EXPECT_NE(oid, 0U);
@@ -217,7 +217,7 @@ TEST(CarbonTest, CarbonArrayIteratorOpenAfterNew) {
         rev revise;
         arr_it it;
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY, 1024);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_key_generate(NULL, &revise);
@@ -239,7 +239,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertNullAfterNew) {
         arr_it it;
         insert in;
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_AUTOKEY, 1024);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -261,7 +261,7 @@ TEST(CarbonTest, CarbonArrayIteratorInsertMultipleLiteralsAfterNewNoOverflow) {
         arr_it it;
         insert in;
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);
@@ -297,7 +297,7 @@ TEST(CarbonTest, CarbonArrayIteratorOverwriteLiterals) {
         arr_it it;
         insert in;
 
-        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY);
+        rec_create_empty(&doc, LIST_UNSORTED_MULTISET, KEY_NOKEY, 1024);
 
         revise_begin(&revise, &rev_doc, &doc);
         revise_iterator_open(&it, &revise);

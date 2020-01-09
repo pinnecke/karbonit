@@ -7,7 +7,7 @@ TEST(TestCarbonItem, CreateId) {
         arr_it array;
         item *item;
 
-        rec_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "[true, false, null, \"Hello World\", 42, -42, 23.53, [\"a\", 1, 2], {\"x\": \"y\"}]", KEY_NOKEY, NULL, OPTIMIZE);
         rec_read(&array, &doc);
         while ((item = arr_it_next(&array))) {
                 u64 index = ITEM_GET_INDEX(item);

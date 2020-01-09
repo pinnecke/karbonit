@@ -50,6 +50,11 @@ static void carbon_header_init(rec *doc, key_e rec_key_type);
 insert * rec_create_begin(rec_new *context, rec *doc,
                                            key_e type, int options)
 {
+        return rec_create_begin_ex(context, doc, type, options, 1024);
+}
+
+insert *rec_create_begin_ex(rec_new *context, rec *doc, key_e type, int options, u64 doc_capacity_nbyte)
+{
         if (context && doc) {
                 context->array = MALLOC(sizeof(arr_it));
                 context->in = MALLOC(sizeof(insert));
@@ -68,11 +73,11 @@ insert * rec_create_begin(rec_new *context, rec *doc,
                         derivation = LIST_UNSORTED_MULTISET;
                 }
 
-                rec_create_empty(&context->original, derivation, type);
+                rec_create_empty(&context->original, derivation, type, doc_capacity_nbyte);
                 revise_begin(&context->context, doc, &context->original);
                 if (!revise_iterator_open(context->array, &context->context)) {
-                    ERROR(ERR_OPPFAILED, "cannot open revision iterator");
-                    return NULL;
+                        ERROR(ERR_OPPFAILED, "cannot open revision iterator");
+                        return NULL;
                 }
                 arr_it_insert_begin(context->in, context->array);
                 return context->in;
@@ -96,9 +101,9 @@ void rec_create_end(rec_new *context)
         rec_drop(&context->original);
 }
 
-void rec_create_empty(rec *doc, list_type_e derivation, key_e type)
+void rec_create_empty(rec *doc, list_type_e derivation, key_e type, u64 doc_capacity_nbyte)
 {
-        rec_create_empty_ex(doc, derivation, type, 1024, 1);
+        rec_create_empty_ex(doc, derivation, type, doc_capacity_nbyte, 1);
 }
 
 void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
@@ -116,7 +121,7 @@ void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type,
 }
 
 bool rec_from_json(rec *doc, const char *json, key_e type,
-                      const void *key)
+                      const void *key, int mode)
 {
         struct json data;
         json_err status;
@@ -126,7 +131,9 @@ bool rec_from_json(rec *doc, const char *json, key_e type,
                 ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
                 return false;
         } else {
-                internal_from_json(doc, &data, type, key, OPTIMIZE);
+                /* Note that the plain-text JSON size is upper bound for document size.
+                 * Approx the maximum doc size leads to less reallocations. */
+                internal_from_json(doc, &data, type, key, mode, strlen(json));
                 json_drop(&data);
                 return true;
         }
@@ -250,6 +257,12 @@ bool rec_commit_hash(u64 *hash, rec *doc)
 {
         *hash = internal_header_get_commit_hash(doc);
         return true;
+}
+
+void internal_rec_get_first(memfile *file, rec *doc)
+{
+        MEMFILE_OPEN(file, doc->file.memblock, READ_WRITE);
+        MEMFILE_SEEK__UNSAFE(file, INTERNAL_PAYLOAD_AFTER_HEADER(doc));
 }
 
 bool rec_is_multiset(rec *doc)

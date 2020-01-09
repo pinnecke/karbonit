@@ -30,6 +30,11 @@ typedef struct find {
         rec *doc;
         field_e type;
         dot_eval eval;
+        offset_t offset; /* offset in doc at which the field is stored */
+        struct {
+                bool is_parent;
+                u64 idx;
+        } column;
         union {
                 arr_it array;
                 col_it column;
@@ -73,12 +78,16 @@ bool find_result_is_object(find *find);
 bool find_result_is_column(find *find);
 bool find_result_is_boolean(find *find);
 bool find_result_is_undefined(find *find);
+bool find_result_is_number(find *find);
+bool find_result_is_integer(find *find);
 bool find_result_is_unsigned(find *find);
 bool find_result_is_signed(find *find);
 bool find_result_is_float(find *find);
 bool find_result_is_null(find *find);
 bool find_result_is_string(find *find);
 bool find_result_is_binary(find *find);
+
+bool find_result_is_contained_in_column(find *find);
 
 arr_it *find_result_array(find *find);
 obj_it *find_result_object(find *find);

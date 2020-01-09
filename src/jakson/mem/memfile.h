@@ -252,6 +252,9 @@ typedef struct memfile {
 
 #define MEMFILE_CUT(file, how_many_bytes)							                                                   \
 ({							                                                                                           \
+        if (!how_many_bytes) {                                                                                                          \
+                return true;                                                                                                            \
+        }                                                                                                                               \
         offset_t block_size = 0;							                                                           \
         MEMBLOCK_SIZE(&block_size, (file)->memblock);							                                       \
         bool memfile_cut_status;							                                                                       \

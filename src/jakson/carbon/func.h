@@ -39,7 +39,7 @@ extern "C" {
  * \returns <code>TRUE</code> if <code>path</code> points to an existing element. In all other cases (including errors),
  *          <code>FALSE</code> is returned.
  */
-bool func_exists(const rec *doc, const dot *path);
+bool func_rec_exists(const rec *doc, const dot *path);
 
 /*!
  * \brief Gets the value of the element which is pointed to by a given dot-notated path.
@@ -61,17 +61,18 @@ bool func_exists(const rec *doc, const dot *path);
  * \return the string buffers c-string which is the json formatted result of the path evaluation. In case of an error,
  *         <code>undef</code> is returned.
  */
-const char *func_get(const rec *doc, const dot *path, str_buf *buf);
+const char *func_rec_get(const rec *doc, const dot *path, str_buf *buf);
 
 /*!
- * \brief Sets the value of the element in <code>doc</code> pointed by a dot-notated path <code>path</code> to <code>json</code>.
+ * \brief Sets the value of the element in <code>doc</code> pointed by a dot-notated path <code>path</code> to
+ * the contens of <code>import</code>.
  *
  * This function performs an update or create operation in the record <code>doc</code> potentially modifying
- * <code>doc</code>.
+ * <code>doc</code>, or writing directly to <code>rev</code>.
  *
  * An <b>update</b> is executed if <code>path</code> evaluates to an existing element in <code>doc</code>. In case
- * the path does not point to an existing element, the elements for this path is <b>created</b> and its value is set
- * accordingly.
+ * the path does not point to an existing element, the elements for this path is <b>created</b> as needed to and its
+ * value is set accordingly.
  *
  * The parameter <b>patch</b> controls whether the input record <code>doc</code> is modified or whether a new
  * revision of <code>doc</code> is created leading <code>doc</code> untouched. If <b>patch</b> is turned on,
@@ -92,21 +93,24 @@ const char *func_get(const rec *doc, const dot *path, str_buf *buf);
  *            <code>patch</code> is turned on), or template for the revision <code>rev</code> (if <code>patch</code>
  *            is turned off).
  * \param path A non-null dot-notated path that points to an (potentially not existing) element in <code>doc</code>
- * \param json A valid json text that defines the new-to-set value for the element pointed by <code>path</code>
+ * \param import A record that contains the new-to-set value for the element pointed by <code>path</code>
  * \param patch A flag controlling whether a patch (<code>patch</code> is turned on), or a revision (<code>patch</code>
  *              is turned off) is executed on <code>doc</code>.
  * \return The pointer to the record which has been modified, or <code>NULL</code> in case of an error. This pointer
  *         points to <code>doc</code> if <code>patch</code> is set to <code>TRUE</code>, and to <code>rev</code>
  *         if <code>patch</code> is set to <code>FALSE</code>.
  */
-rec *func_set(rec *rev, rec *doc, const dot *path, const char *json, bool patch);
+rec *func_rec_set(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
 
+rec *func_rec_rm(rec *rev, rec *doc, const dot *path, bool patch);
 
-rec *func_rm(rec *rev, rec *doc, const dot *path, bool patch);
+// ---------------------------------------------------------------------------------------------------------------------
+//  functions on a list container
+// ---------------------------------------------------------------------------------------------------------------------
 
-const char *func_slice(rec *doc, const dot *path, i64 begin, i64 end, str_buf *buf);
+const char *func_list_slice(rec *doc, const dot *path, i64 begin, i64 end, str_buf *buf);
 
-rec *func_pushback(rec *rev, rec *doc, const dot *path, const char *json, bool patch);
+rec *func_list_pushback(rec *rev, rec *doc, const dot *path, const char *json, bool patch);
 
 // func_revof
 // func_keyof

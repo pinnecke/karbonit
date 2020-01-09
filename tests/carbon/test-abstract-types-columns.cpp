@@ -141,7 +141,7 @@ TEST(TestAbstractTypes, ColumnSetNestedAbstractType) {
         field_e ft;
         rev revise;
 
-        rec_from_json(&doc, "{ x: [ { y: [1, 2, 3] } ] }", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "{ x: [ { y: [1, 2, 3] } ] }", KEY_NOKEY, NULL, OPTIMIZE);
 
         {
                 revise_begin(&revise, &doc2, &doc);

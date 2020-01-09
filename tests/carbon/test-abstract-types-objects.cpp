@@ -139,7 +139,7 @@ TEST(TestAbstractTypes, ObjectSetNestedAbstractType) {
         field_e ft;
         rev revise;
 
-        rec_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", KEY_NOKEY, NULL);
+        rec_from_json(&doc, "{ x: [ { y: {\"a\": 1, \"b\": 2, \"c\": 3 } } ] }", KEY_NOKEY, NULL, OPTIMIZE);
 
         {
                 revise_begin(&revise, &doc2, &doc);

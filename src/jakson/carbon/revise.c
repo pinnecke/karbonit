@@ -31,8 +31,6 @@ static bool internal_pack_object(obj_it *it);
 
 static bool internal_pack_column(col_it *it);
 
-static bool internal_commit_update(rec *doc);
-
 static bool carbon_header_rev_inc(rec *doc);
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -43,6 +41,11 @@ void revise_begin(rev *context, rec *revised, rec *original)
         rec_clone(context->revised, context->original);
 }
 
+bool revise_commit_update(rec *doc)
+{
+        assert(doc);
+        return carbon_header_rev_inc(doc);
+}
 
 static void key_unsigned_set(rec *doc, u64 key)
 {
@@ -229,7 +232,7 @@ bool revise_shrink(rev *context)
 
 const rec *revise_end(rev *context)
 {
-        internal_commit_update(context->revised);
+        revise_commit_update(context->revised);
         return context->revised;
 }
 
@@ -397,12 +400,6 @@ static bool internal_pack_column(col_it *it)
         } else {
                 return false;
         }
-}
-
-static bool internal_commit_update(rec *doc)
-{
-        assert(doc);
-        return carbon_header_rev_inc(doc);
 }
 
 static bool carbon_header_rev_inc(rec *doc)

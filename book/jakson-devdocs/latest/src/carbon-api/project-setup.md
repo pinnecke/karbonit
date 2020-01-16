@@ -1,13 +1,13 @@
 # Project Setup
 
-The Carbon API is part of Jakson source code, but can be accessed in a library fashion. 
+The Carbon API is part of Karbonit source code, but can be accessed in a library fashion. 
 
 ## Get the Sources
 
-The starting point is to get the Jakson sources. Typically, this is done by cloning a stable version of Jaksons public git repository hosted at GitHub:
+The starting point is to get the Karbonit sources. Typically, this is done by cloning a stable version of Karbonits public git repository hosted at GitHub:
 
 ```bash
-$ git clone https://github.com/jaksonlabs/jakson.git
+$ git clone https://github.com/karbonitlabs/karbonit.git
 ```
 
 
@@ -15,43 +15,43 @@ $ git clone https://github.com/jaksonlabs/jakson.git
 
 Depending on the configuration, the Carbon API can be fine-grained accessed via its modules (see *Structure* below), or accessed as single translation unit if *source amalgamation* is used (see *Source Amalgamation* below). 
 
-### Jakson Project versus Third-Party
+### Karbonit Project versus Third-Party
 
-Since the Jakson core is build in a library fashon and modularized, Jakson (including Carbon) can be used by third-party projects. 
+Since the Karbonit core is build in a library fashon and modularized, Karbonit (including Carbon) can be used by third-party projects. 
 
-#### Inside Jakson
-Inside the Jakson project, the Carbon API is accessible from any point where the following header is included:
+#### Inside Karbonit
+Inside the Karbonit project, the Carbon API is accessible from any point where the following header is included:
 ```c
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 ```
 
 > For development, it is recommended to turn source amalgamation off because some IDEs will not recognize files in `src/` as part of the project otherwise. 
 
-To turn off amalgamation, type `$ cmake  -DUSE_AMALGAMATION=OFF .`, and `$ cmake  -DUSE_AMALGAMATION=ON .` to enable amalgamation. In any case, the header `jakson/jakson.h` is sufficient to access all modules of Jakson.
+To turn off amalgamation, type `$ cmake  -DUSE_AMALGAMATION=OFF .`, and `$ cmake  -DUSE_AMALGAMATION=ON .` to enable amalgamation. In any case, the header `karbonit/karbonit.h` is sufficient to access all modules of Karbonit.
 
 #### Third-Party
 
-For third-party projects, Carbon is used by one of two ways, adding the entire Jakson project as single-unit library, or by cherry-picking modules.
+For third-party projects, Carbon is used by one of two ways, adding the entire Karbonit project as single-unit library, or by cherry-picking modules.
 
-##### Jakson as Single-Unit Library
+##### Karbonit as Single-Unit Library
 
-For third-party projects, it is recommended to configure Jakson as a single translation unit using source amalgamation, and to add the resulting two files, `jakson.h` and `jakson.c`, to the third-party project inclusion list. In this way, Jakson is used as a single-component library, and can be treated like this by third-party. To access the Carbon API, just include the header `jakson.h`.
+For third-party projects, it is recommended to configure Karbonit as a single translation unit using source amalgamation, and to add the resulting two files, `karbonit.h` and `karbonit.c`, to the third-party project inclusion list. In this way, Karbonit is used as a single-component library, and can be treated like this by third-party. To access the Carbon API, just include the header `karbonit.h`.
 
 
 ##### Cherry-Picking Modules
 
 > **Not Recommended**. Although it is possible for third-party projects to use particular Carbon modules by directly cherry-picking required modules, it is not recommended due to a non-trivial dependency graph between Carbon API modules and other modules outside the Carbon sub-system (e.g., err handling facilities). 
 
-In a scenario where cherry-picking of modules is intended, including `jakson.h` is not sufficient if the desired effect is to exclude particular modules. Rather than just including `jakson.h` as a single translation unit, required module header files (including their transitive dependencies) must be included manually. For these cases it must be considered, that source amalgamation is explicitly not used and therefore runtime performance potential (due to exhaustive compiler optimization inside one huge tanslation unit) is left unexploited. 
+In a scenario where cherry-picking of modules is intended, including `karbonit.h` is not sufficient if the desired effect is to exclude particular modules. Rather than just including `karbonit.h` as a single translation unit, required module header files (including their transitive dependencies) must be included manually. For these cases it must be considered, that source amalgamation is explicitly not used and therefore runtime performance potential (due to exhaustive compiler optimization inside one huge tanslation unit) is left unexploited. 
 
 Hence, cherry-picking modules must be done with the intention of decreasing the resulting binary size rather than (runtime) performance optimization.
 
 
 ## Structure
 
-Public functionality that belongs to Carbon in Jakson is prefixed with `carbon`, such as `carbon.h` or `carbon_find.h`, and located in Jaksons source directoy `src/`. 
+Public functionality that belongs to Carbon in Karbonit is prefixed with `carbon`, such as `carbon.h` or `carbon_find.h`, and located in Karbonits source directoy `src/`. 
 
-Like other components of Jakson, the Carbon implementation is modularized. 
+Like other components of Karbonit, the Carbon implementation is modularized. 
 
 These modules are
 
@@ -81,31 +81,31 @@ Source amalgamation is a technique that combines all source file of into one tra
 
 The downside of source amalgamation is more cumbersome debugging because a typical debugger is not optimized for such large source files. 
 
-#### Inside Jakson
+#### Inside Karbonit
 
-Whether amalgamation is turned on or off is not relevant for development purposes inside the Jakson project, since the projekt has an abstraction for its sources with or without enabled amalgamation. This abstraction works over inclusion of the header `jakson/jakson.h` which either includes all other module headers in case amalgamation is turned off, or is the amalgamation header itself.
+Whether amalgamation is turned on or off is not relevant for development purposes inside the Karbonit project, since the projekt has an abstraction for its sources with or without enabled amalgamation. This abstraction works over inclusion of the header `karbonit/karbonit.h` which either includes all other module headers in case amalgamation is turned off, or is the amalgamation header itself.
 
-With the exception of debugging and diagnostics, the effect of amalgamation in the Jakson project is mainly visible during performance tests, where amalgamation leads to a runtime performance increase of up to 40% compared to the same code where amalgamation is disabled.
+With the exception of debugging and diagnostics, the effect of amalgamation in the Karbonit project is mainly visible during performance tests, where amalgamation leads to a runtime performance increase of up to 40% compared to the same code where amalgamation is disabled.
 
 #### Third-Party
 
-For third-party projects, amalgamation is optional but the recommended process to include Carbon functionality. To create the source amalgamation of Jakson, run the following code after cloning the git respository and checking out a particular branch:
+For third-party projects, amalgamation is optional but the recommended process to include Carbon functionality. To create the source amalgamation of Karbonit, run the following code after cloning the git respository and checking out a particular branch:
 
 ```bash
 $ cmake  -DUSE_AMALGAMATION=ON .
 ```
 
-With this command, source amalgamation is executed without running any compilation to it. The resulting single-translation module `jakson` is created, and stored in `include/jakson`. In the third-party project, `jakson.h` must be added to the (library) inclusion list, and `jakson.c` to the source list.
+With this command, source amalgamation is executed without running any compilation to it. The resulting single-translation module `karbonit` is created, and stored in `include/karbonit`. In the third-party project, `karbonit.h` must be added to the (library) inclusion list, and `karbonit.c` to the source list.
 
 ## Accessing Carbon Functionality
 
-Independent of whether the Carbon API is accessed inside the Jakson project, or externally by third-party, inclusion of the single header `jakson/jakson.h` provides access to the entire functionality.
+Independent of whether the Carbon API is accessed inside the Karbonit project, or externally by third-party, inclusion of the single header `karbonit/karbonit.h` provides access to the entire functionality.
 
 ```c
 // bin/examples-hello-carbon
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
@@ -136,7 +136,7 @@ The example from above prints `["Hello", "Carbon!"]` to standard out.
 
 ## Code Listings
 
-The following pages drive into particular use-cases and tutorials for the Carbon API. Each non-trivial example is supported by a source code example, which are additionally located in `examples/carbon-api/` in the Jakson repository.
+The following pages drive into particular use-cases and tutorials for the Carbon API. Each non-trivial example is supported by a source code example, which are additionally located in `examples/carbon-api/` in the Karbonit repository.
 
 To build these examples, type the following in the project root
 

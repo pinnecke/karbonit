@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stdio.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 TEST(FixMapTest, CreationAndDrop)
 {

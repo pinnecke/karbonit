@@ -1,6 +1,6 @@
 # Columnar Binary JSON Books
 
-This directory (`book`) contains the Carbon Specification document, and a developer manual for [Jakson](https://github.com/jaksonlabs/jakson) (including the Carbon API).
+This directory (`book`) contains the Carbon Specification document, and a developer manual for [Karbonit](https://github.com/karbonitlabs/karbonit) (including the Carbon API).
 
 ## Specification 
 
@@ -15,15 +15,15 @@ $ mdbook build
 
 > You find the latest stable snapshot on [carbonspec.org](http://www.carbonspec.org)
 
-## Jakson Developer Documentation 
+## Karbonit Developer Documentation 
 
-The sources of current Jakson Developer Documentation are located in the `jakson-devdoc/latest` directory. 
+The sources of current Karbonit Developer Documentation are located in the `karbonit-devdoc/latest` directory. 
 The Developer Documentation is formatted with  markdown, and built with [MdBook](https://github.com/rust-lang-nursery/mdBook).
 
 To build the specification book, type in your bash
 ```
-$ cd jakson-devdoc/latest
+$ cd karbonit-devdoc/latest
 $ mdbook build
 ```
 
-> You find the latest stable snapshot on [jakson-devdocs.org](http://www.jakson-devdocs.org)
+> You find the latest stable snapshot on [karbonit-devdocs.org](http://www.karbonit-devdocs.org)

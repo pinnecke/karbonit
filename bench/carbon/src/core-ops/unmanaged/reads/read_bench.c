@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 #include "read_bench.h"
 
 #define READ_BENCH_NAME "core-reads"

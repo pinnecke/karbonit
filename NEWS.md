@@ -8,9 +8,9 @@
 
 ## 0.5.00.03 [2019-09-27]
 - Add source amalgamation as optional build option to increase runtime performance by generating a single translation 
-  unit for Jaksons sources. Set `-DUSE_AMALGAMATION=ON` to use amalgamation, and see [INSTALL.md](INSTALL.md) for more
+  unit for Karbonits sources. Set `-DUSE_AMALGAMATION=ON` to use amalgamation, and see [INSTALL.md](INSTALL.md) for more
   information. Implementation details are given in [CMakeLists.txt](CMakeLists.txt).
-- Jakson Developer Documentation, see [book/](book/README.md) and examples in [examples/](examples).
+- Karbonit Developer Documentation, see [book/](book/README.md) and examples in [examples/](examples).
 - Add *abstract types* (abstract base types, and derived abstract types) to the specification and documentation
 - Add *abstract types* to implementation (`carbon_abstract`)
 - Add `fn_result` type that simplifies function err handling and function results. In a nutshell, `fn_result`
@@ -34,11 +34,11 @@
 - Add thread pool implementation (`struct thread_pool`)
 
 ## 0.3.00.00 [2019-04-11]
-- In `jakson-tool`, enable the user to set whether a single-threaded (`sync`) or multi-threaded (`async`) str_buf 
+- In `karbonit-tool`, enable the user to set whether a single-threaded (`sync`) or multi-threaded (`async`) str_buf 
   dictionary should be used when conversion from JSON to CARBON archives is issued (via `convert` module). By
-  default a multi-threaded implementation with 8 threads is used. To change that, `jakson-tool convert` has
-  now to new parameters, `--dic-type` and `--dic-nthreads`. See `jakson-tool` usage instructions for details.
-- Modified command line in module `convert` of `jakson-tool` to select compressor to be used for conversion 
+  default a multi-threaded implementation with 8 threads is used. To change that, `karbonit-tool convert` has
+  now to new parameters, `--dic-type` and `--dic-nthreads`. See `karbonit-tool` usage instructions for details.
+- Modified command line in module `convert` of `karbonit-tool` to select compressor to be used for conversion 
   from JSON to CARBON archives. Until now, `--compressor=<compressor>` was used. Now, it is just 
   `--compressor <compressor>`.
 - In Compressor Framework, add function to read implementation-specific extra data (e.g., in order to reconstruct
@@ -50,7 +50,7 @@
 - To avoid re-creation of the index used for *Indexed String Fetch* when a archive is loaded into memory, 
   this index can now be pre-computed an embedded into the archive file itself (which is now the default behavior). 
   For this, the index is built after archive creation and appended at the end of the archive (if not turned-off). 
-  To turn it off in `jakson-tool`, use flag `--no-str_buf-id-index` for the module `convert`. If turned-off, the 
+  To turn it off in `karbonit-tool`, use flag `--no-str_buf-id-index` for the module `convert`. If turned-off, the 
   index may be created during runtime depending on whether such an index should be used or not (see below).
   - Archive specification must be changed for this, see updated [SPECIFICATION.md](SPECIFICATION.md) and 
     [SPECIFICATION-COMPACT.md](SPECIFICATION_COMPACT.md).
@@ -83,7 +83,7 @@
        Internally, the cache is organized as a (robin hood) hash table using the bernstein hash function that
        uses the str_buf id as key to find a fitting bucket. Inside the bucket, an LRU list for entries
        with str_buf ids that have a collision under the hash function is maintained.
-- Add `$ jakson-tool to_json <input>` to convert a CARBON archive file `<input>` into its JSON representation.  
+- Add `$ karbonit-tool to_json <input>` to convert a CARBON archive file `<input>` into its JSON representation.  
 
 ## 0.1.00.06 [2019-02-23]
 - Completed compressor framework including embedding into carbin archive operations 
@@ -123,8 +123,8 @@
 - **Compressor Framework** refactored compressor framework. 
     - Extension with new compressors in [carbon-compressor.c](src/carbon/compressor/compressor.c)
     - Current compressors are located in [include/carbon/compressor](include/carbon/compressor)
-    - Available compressors now listed via `jakson-tool list compressors`,
-      and selection is done via `jakson-tool convert --use-compressor=$NAME` where 
+    - Available compressors now listed via `karbonit-tool list compressors`,
+      and selection is done via `karbonit-tool convert --use-compressor=$NAME` where 
       `$NAME` is from the list above 
 
 ## 0.1.00.04 [2019-02-13]
@@ -132,7 +132,7 @@
 - Fine-grained switched to turn on and turn of logging, see [INSTALL.md](INSTALL.md)
 - Default build type is now release
 - Contains the following bug fixes 
-    - [size-optimized (Huffman) fails in edge cases](https://github.com/jaksonlabs/jakson/issues/1)
+    - [size-optimized (Huffman) fails in edge cases](https://github.com/karbonitlabs/karbonit/issues/1)
 
 ## 0.1.00.00 [2019-02-07]
 

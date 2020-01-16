@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 static void
 iterate_properties(prop_iter *prop_iter);

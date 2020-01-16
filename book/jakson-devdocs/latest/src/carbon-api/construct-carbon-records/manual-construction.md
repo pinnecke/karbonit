@@ -8,7 +8,7 @@ New Carbon records are created manually by calling `carbon_create_begin` and `ca
 // bin/examples-manual-construction
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
@@ -43,7 +43,7 @@ Let's create a non-empty record. For this purpose, the return result of `carbon_
 // bin/examples-manual-construction-non-empty
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {

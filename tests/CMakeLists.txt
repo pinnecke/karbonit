@@ -7,7 +7,7 @@ ADD_CUSTOM_TARGET(tests)
 
 macro(CreateTest arg)
     add_executable(${arg} ${arg}.cpp)
-    target_link_libraries(${arg} PUBLIC gtest ${TEST_LIBS} PRIVATE jakson-sources)
+    target_link_libraries(${arg} PUBLIC gtest ${TEST_LIBS} PRIVATE karbonit-sources)
     ADD_DEPENDENCIES(tests ${arg})
     add_test(${arg}  ${MAKE_DIRECTORY}/${arg})
 endmacro()

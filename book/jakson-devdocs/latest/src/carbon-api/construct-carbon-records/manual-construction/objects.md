@@ -21,7 +21,7 @@ In the following example, a new record is created that returns an insertion cont
 // bin/examples-manual-construction-objects
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {

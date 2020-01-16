@@ -7,7 +7,7 @@ New Carbon records are created from a valid [JSON](https://tools.ietf.org/html/r
 // bin/examples-from-json
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {

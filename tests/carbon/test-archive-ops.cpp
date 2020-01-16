@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 TEST(CarbonArchiveOpsTest, CreateStreamFromJsonString)
 {

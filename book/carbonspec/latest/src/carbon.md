@@ -6,4 +6,4 @@
 
 ## License
 
-The Columnar Binary JSON specification and Libcarbon, all the source code, is released under the [MIT Licsense](https://github.com/jaksonlabs/jakson/blob/master/LICENSE).
+The Columnar Binary JSON specification and Libcarbon, all the source code, is released under the [MIT Licsense](https://github.com/karbonitlabs/karbonit/blob/master/LICENSE).

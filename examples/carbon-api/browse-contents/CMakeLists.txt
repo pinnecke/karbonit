@@ -4,6 +4,6 @@ project(carbon-api-examples-project-setup CXX)
 set (CMAKE_CXX_STANDARD 11)
 
 add_executable(examples-read-record-contents read-record-contents.c)
-target_link_libraries(examples-read-record-contents PRIVATE jakson-sources)
+target_link_libraries(examples-read-record-contents PRIVATE karbonit-sources)
 
 ADD_DEPENDENCIES(carbon-api-examples examples-read-record-contents)

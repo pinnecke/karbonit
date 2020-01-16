@@ -30,7 +30,8 @@ typedef struct find {
         rec *doc;
         field_e type;
         dot_eval eval;
-        offset_t offset; /* offset in doc at which the field is stored */
+        offset_t field_offset; /* offset in doc at which the field value is stored; for props this is value */
+        offset_t value_offset; /* offset in a prop at which the key actually starts */
         struct {
                 bool is_parent;
                 u64 idx;

@@ -37,7 +37,9 @@ static void test_set_ex(const char *json_before, const char *path, field_e type_
                 json_immut_test = json_from_record(&buf, &doc);
                 bool eq = strcmp(json_immut_test, json_before) == 0;
                 if (!eq) {
-                        printf("ERROR: '%s'\n", json_immut_test);
+                        printf("ERROR: ** original record has been changed **\n"
+                               "expected original contents: '%s'\n"
+                               "but found new contents....: '%s'\n", json_before, json_immut_test);
                 }
                 ASSERT_TRUE(eq);
         }
@@ -91,11 +93,10 @@ static void test_set(const char *json_before, const char *path, field_e type_exp
         test_set_ex(json_before, path, type_expected_before, new_val, type_expected_after, json_after_expected, false);
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch1B) {
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEq1B) {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 
         // --- EQ ------------------------------------------------------------------------------------------------------
 
@@ -152,11 +153,10 @@ TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch1B) {
                  "null");
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch2B) {
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEq2B) {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 
         // --- EQ ------------------------------------------------------------------------------------------------------
 
@@ -198,11 +198,10 @@ TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch2B) {
 
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch4B) {
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEq4B) {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 
         // --- EQ ------------------------------------------------------------------------------------------------------
 
@@ -285,11 +284,10 @@ TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch4B) {
                  "null");
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch8B) {
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEq8B) {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 
         // --- EQ ------------------------------------------------------------------------------------------------------
 
@@ -358,11 +356,10 @@ TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatch8B) {
                  "null");
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatchNB) {
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqNB) {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 
         // --- EQ ------------------------------------------------------------------------------------------------------
 
@@ -567,71 +564,74 @@ TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatchNB) {
                  "null");
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatchNMB) {
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqNMB) {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 
         test_set("[{\"x\":\"Hello World\"}, 1, 2, 3]", "0", FIELD_OBJECT_UNSORTED_MULTIMAP,
                  "[[1, 2, 3, 4], \"_\"]", FIELD_ARRAY_UNSORTED_MULTISET,
                  "[[[1, 2, 3, 4], \"_\"], 1, 2, 3]");
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqNoPatch)
-{
-        /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
-         * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should NOT be UPDATED and therefore REVISION is used */
-}
-
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldLargerEqPatch)
+TEST(FunSetTest, SetAnyNonColumnFieldToFieldLargerEq)
 {
         /* - This test deals with field update that are in-place updates WITH enlarging the document.
          * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
+
+        test_set("true", "0", FIELD_TRUE,
+                 "\"Hello\"", FIELD_STRING,
+                 "\"Hello\"");
+
+        test_set("true", "0", FIELD_TRUE,
+                 "\"Hello\"", FIELD_STRING,
+                 "\"Hello\"");
+
+        test_set("true", "0", FIELD_TRUE,
+                 "[\"Hello\", \"World\"]", FIELD_ARRAY_UNSORTED_MULTISET,
+                 "[\"Hello\", \"World\"]");
+
+        test_set("[true, false, {\"replace\":\"me\"}, null]", "1", FIELD_FALSE,
+                 "[\"Hello\", \"World\"]", FIELD_ARRAY_UNSORTED_MULTISET,
+                 "[true, [\"Hello\", \"World\"], {\"replace\":\"me\"}, null]");
+
+        test_set("{\"x\":[1, 2, 3]}", "0.x", FIELD_COLUMN_U8_UNSORTED_MULTISET,
+                 "\"Hello\"", FIELD_STRING,
+                 "{\"x\":\"Hello\"}");
 }
 
-TEST(FunSetTest, SetAnyNonColumnFieldToFieldLargerOrEqNoPatch)
-{
-        /* - This test deals with field update that are in-place updates WITH enlarging the document.
-         * - Any field can be updated as long as this field is NOT CONTAINED in an column (no column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should NOT be UPDATED and therefore REVISION is used */
-}
-
-TEST(FunSetTest, SetColumnFieldToFieldSmallerOrEqPatch)
+TEST(FunSetTest, SetColumnFieldToFieldSmallerOrEq)
 {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 }
 
-TEST(FunSetTest, SetColumnFieldToFieldSmallerOrEqNoPatch)
+TEST(FunSetTest, SetColumnFieldToFieldSmallerOrEqNo)
 {
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should NOT be UPDATED and therefore REVISION is used */
+         * - The path to the element to be updated MUST exist */
 }
 
-TEST(FunSetTest, SetColumnFieldToFieldLargerEqPatch)
+TEST(FunSetTest, SetColumnFieldToFieldLargerEq)
 {
         /* - This test deals with field update that are in-place updates WITH enlarging the document.
          * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should be UPDATED and therefore PATCHING is used */
+         * - The path to the element to be updated MUST exist */
 }
 
-TEST(FunSetTest, SetColumnFieldToFieldLargerOrEqNoPatch)
+TEST(FunSetTest, SetColumnFieldToFieldLargerOrEqNo)
 {
         /* - This test deals with field update that are in-place updates WITH enlarging the document.
          * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
-         * - The path to the element to be updated MUST exist
-         * - The document itself should NOT be UPDATED and therefore REVISION is used */
+         * - The path to the element to be updated MUST exist */
+}
+
+TEST(FunSetTest, SetFieldWhichPathNotExists)
+{
+
 }
 
 

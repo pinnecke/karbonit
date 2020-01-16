@@ -296,6 +296,7 @@ inline bool carbon_field_skip_column(memfile *file)
         col_it skip_it;
         col_it_create(&skip_it, file, MEMFILE_TELL(file) - sizeof(u8));
         col_it_fast_forward(&skip_it);
+
         MEMFILE_SEEK(file, MEMFILE_TELL(&skip_it.file));
         return true;
 }

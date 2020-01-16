@@ -19,12 +19,13 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 
+#include <stdint.h>
+#include <karbonit/types.h>
+#include <karbonit/stdinc.h>
+#include <karbonit/json.h>
 #include <karbonit/carbon/dot.h>
 #include <karbonit/carbon/find.h>
-#include <karbonit/stdinc.h>
-#include <karbonit/types.h>
-#include <stdint.h>
-#include <karbonit/json.h>
+#include <karbonit/carbon/obj-it.h>
 
 static void result_from_array(find *find, arr_it *it);
 
@@ -509,7 +510,7 @@ binary_field *find_result_binary(find *find)
 static void result_from_array(find *find, arr_it *it)
 {
         find->type = it->field.type;
-        find->offset = it->field_offset;
+        find->field_offset = it->field_offset;
         find->column.is_parent = false;
         switch (find->type) {
                 case FIELD_NULL:
@@ -606,7 +607,8 @@ static void result_from_array(find *find, arr_it *it)
 static void result_from_object(find *find, obj_it *it)
 {
         internal_obj_it_prop_type(&find->type, it);
-        find->offset = it->last_off;
+        find->field_offset = it->field.value.start;
+        find->value_offset = it->field.key.start;
         find->column.is_parent = false;
         switch (find->type) {
                 case FIELD_NULL:
@@ -707,7 +709,7 @@ result_from_column(find *find, u32 requested_idx, col_it *it)
         u32 max_idx = COL_IT_VALUES_INFO(&find->type, it);
         assert(requested_idx < max_idx);
 #endif
-        find->offset = it->begin;
+        find->field_offset = it->begin;
         find->column.is_parent = true;
 
         switch (find->type) {

@@ -297,9 +297,9 @@ static bool run_string_id_baking(memblock **stream)
         char tmp_file_name[512];
         unique_id_t rand_part;
         unique_id_create(&rand_part);
-        sprintf(tmp_file_name, "/tmp/karbonit-tool-temp-%"
+        sprintf(tmp_file_name, "/tmp/carbon-tool-temp-%"
                                PRIu64
-                               ".karbonit-tool", rand_part);
+                               ".carbon-tool", rand_part);
         FILE *tmp_file;
 
         if ((tmp_file = fopen(tmp_file_name, "w")) == NULL) {

@@ -1,6 +1,6 @@
 # Lines starting with a '#' symbol are comments.
 #
-# This file shows ownership on maintenance of particular components of libcarbon.
+# This file shows ownership on maintenance of particular components of karbonit.
 # The directory root '/' is the repository directory.
 # If not otherwise stated, the alias 'sources' refers to both # 'include' and 'src'; '*.c' and '*.h' are omitted.
 #

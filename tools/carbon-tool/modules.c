@@ -591,7 +591,7 @@ bool moduleCab2JsInvoke(int argc, char **argv, FILE *file, command_opt_mgr *mana
     if (argc != 1) {
         CONSOLE_WRITE(file, "Require exactly one <input> parameter for <args>.%s", "");
         CONSOLE_WRITE_CONT(file, "[%s]\n", "ERROR");
-        CONSOLE_WRITELN(file, "Run '%s' to see an example on the usage.", "$ karbonit-tool to_json");
+        CONSOLE_WRITELN(file, "Run '%s' to see an example on the usage.", "$ carbon-tool to_json");
         return false;
     } else {
         const int filePathArgIdx = 0;

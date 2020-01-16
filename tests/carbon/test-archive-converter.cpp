@@ -10,7 +10,7 @@ TEST(ConverterTest, PerformConversion)
 
     /* in order to access this file, the working directory must 'test/carbon' */
     status = archive_open(&archive, "./assets/test-archive.carbon");
-    //status = archive_open(&archive, "../mag_papers_excerpt.karbonit-tool");
+    //status = archive_open(&archive, "../mag_papers_excerpt.carbon-tool");
     ASSERT_TRUE(status);
 
     archive_converter(&collection, &archive);

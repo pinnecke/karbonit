@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <printf.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 static void test_set_ex(const char *json_before, const char *path, field_e type_expected_before,
         const char *new_val, field_e type_expected_after, const char *json_after_expected, bool use_patching)

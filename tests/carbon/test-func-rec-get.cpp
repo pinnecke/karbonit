@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <printf.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 static void test_get(const char *json_in, const char *path_str, const char *expected)
 {

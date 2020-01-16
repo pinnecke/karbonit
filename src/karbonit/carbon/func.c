@@ -4,11 +4,11 @@
  * Copyright 2020 Marcus Pinnecke
  */
 
-#include <jakson/carbon/func.h>
-#include <jakson/carbon/find.h>
-#include <jakson/carbon/rewrite.h>
-#include <jakson/carbon/revise.h>
-#include <jakson/json.h>
+#include <karbonit/carbon/func.h>
+#include <karbonit/carbon/find.h>
+#include <karbonit/carbon/rewrite.h>
+#include <karbonit/carbon/revise.h>
+#include <karbonit/json.h>
 
 // ---------------------------------------------------------------------------------------------------------------------
 

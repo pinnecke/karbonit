@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
-#include <printf.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 static void test_exists(const char *json_in, const char *path_str, bool expected)
 {

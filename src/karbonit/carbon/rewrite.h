@@ -7,8 +7,8 @@
 #ifndef HAD_REWRITE_H
 #define HAD_REWRITE_H
 
-#include <jakson/stdinc.h>
-#include <jakson/mem/memfile.h>
+#include <karbonit/stdinc.h>
+#include <karbonit/mem/memfile.h>
 
 #ifdef __cplusplus
 extern "C" {

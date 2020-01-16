@@ -4,8 +4,8 @@
  * Copyright 2020 Marcus Pinnecke
  */
 
-#include <jakson/carbon/rewrite.h>
-#include <jakson/carbon/field.h>
+#include <karbonit/carbon/rewrite.h>
+#include <karbonit/carbon/field.h>
 
 /*!
  * \brief Replaces the field in <code>dst</code> by the field in <code>src</code>

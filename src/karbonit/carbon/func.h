@@ -11,9 +11,9 @@
 //  includes
 // ---------------------------------------------------------------------------------------------------------------------
 
-#include <jakson/stdinc.h>
-#include <jakson/rec.h>
-#include <jakson/carbon/dot.h>
+#include <karbonit/stdinc.h>
+#include <karbonit/rec.h>
+#include <karbonit/carbon/dot.h>
 
 #ifdef __cplusplus
 extern "C" {

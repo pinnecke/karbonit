@@ -671,10 +671,9 @@ static bool rewrite_column_to_array(col_it *it)
         return true;
 }
 
-bool col_it_update_set_true(col_it *it, u32 pos)
+static inline bool set_column_boolean_at(col_it *it, u32 pos, bool state)
 {
         ERROR_IF_AND_RETURN(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
-
         MEMFILE_SAVE_POSITION(&it->file);
 
         offset_t payload_start = internal_column_get_payload_off(it);
@@ -685,114 +684,13 @@ bool col_it_update_set_true(col_it *it, u32 pos)
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_MULTISET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_UNSORTED_SET:
                 case FIELD_DERIVED_COLUMN_BOOLEAN_SORTED_SET: {
-                        u8 value = CARBON_BOOLEAN_COLUMN_TRUE;
+                        u8 value = state ? CARBON_BOOLEAN_COLUMN_TRUE : CARBON_BOOLEAN_COLUMN_FALSE;
                         MEMFILE_WRITE(&it->file, &value, sizeof(u8));
                 }
                         break;
-                case FIELD_COLUMN_U8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U8_SORTED_SET: {
-                        u8 null_value = U8_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u8));
-                }
-                        break;
-                case FIELD_COLUMN_U16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U16_SORTED_SET: {
-                        u16 null_value = U16_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u16));
-                }
-                        break;
-                case FIELD_COLUMN_U32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U32_SORTED_SET: {
-                        //u32 null_value = U32_NULL;
-                        //MEMFILE_WRITE(&it->mem, &null_value, sizeof(u32));
-                        rewrite_column_to_array(it);
-
-
-                }
-                        break;
-                case FIELD_COLUMN_U64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_U64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_U64_SORTED_SET: {
-                        u64 null_value = U64_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(u64));
-                }
-                        break;
-                case FIELD_COLUMN_I8_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I8_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I8_SORTED_SET: {
-                        i8 null_value = I8_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i8));
-                }
-                        break;
-                case FIELD_COLUMN_I16_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I16_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I16_SORTED_SET: {
-                        i16 null_value = I16_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i16));
-                }
-                        break;
-                case FIELD_COLUMN_I32_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I32_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I32_SORTED_SET: {
-                        i32 null_value = I32_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i32));
-                }
-                        break;
-                case FIELD_COLUMN_I64_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_I64_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_I64_SORTED_SET: {
-                        i64 null_value = I64_NULL;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(i64));
-                }
-                        break;
-                case FIELD_COLUMN_FLOAT_UNSORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_MULTISET:
-                case FIELD_DERIVED_COLUMN_FLOAT_UNSORTED_SET:
-                case FIELD_DERIVED_COLUMN_FLOAT_SORTED_SET: {
-                        float null_value = CARBON_NULL_FLOAT;
-                        MEMFILE_WRITE(&it->file, &null_value, sizeof(float));
-                }
-                        break;
-                case FIELD_NULL:
-                case FIELD_TRUE:
-                case FIELD_FALSE:
-                case FIELD_OBJECT_UNSORTED_MULTIMAP:
-                case FIELD_DERIVED_OBJECT_SORTED_MULTIMAP:
-                case FIELD_DERIVED_OBJECT_UNSORTED_MAP:
-                case FIELD_DERIVED_OBJECT_SORTED_MAP:
-                case FIELD_ARRAY_UNSORTED_MULTISET:
-                case FIELD_DERIVED_ARRAY_SORTED_MULTISET:
-                case FIELD_DERIVED_ARRAY_UNSORTED_SET:
-                case FIELD_DERIVED_ARRAY_SORTED_SET:
-                case FIELD_STRING:
-                case FIELD_NUMBER_U8:
-                case FIELD_NUMBER_U16:
-                case FIELD_NUMBER_U32:
-                case FIELD_NUMBER_U64:
-                case FIELD_NUMBER_I8:
-                case FIELD_NUMBER_I16:
-                case FIELD_NUMBER_I32:
-                case FIELD_NUMBER_I64:
-                case FIELD_NUMBER_FLOAT:
-                case FIELD_BINARY:
-                case FIELD_BINARY_CUSTOM:
-                        MEMFILE_RESTORE_POSITION(&it->file);
-                        return ERROR(ERR_UNSUPPCONTAINER, NULL);
                 default:
                         MEMFILE_RESTORE_POSITION(&it->file);
-                        ERROR(ERR_INTERNALERR, NULL);
-                        return false;
+                        return ERROR(ERR_INTERNALERR, NULL);
         }
 
         MEMFILE_RESTORE_POSITION(&it->file);
@@ -800,12 +698,14 @@ bool col_it_update_set_true(col_it *it, u32 pos)
         return true;
 }
 
+bool col_it_update_set_true(col_it *it, u32 pos)
+{
+        return set_column_boolean_at(it, pos, true);
+}
+
 bool col_it_update_set_false(col_it *it, u32 pos)
 {
-        UNUSED(it)
-        UNUSED(pos)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
+        return set_column_boolean_at(it, pos, false);
 }
 
 bool col_it_update_set_u8(col_it *it, u32 pos, u8 value)

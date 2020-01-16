@@ -606,13 +606,22 @@ TEST(FunSetTest, SetColumnFieldToFieldSmallerOrEq)
         /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
          * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
          * - The path to the element to be updated MUST exist */
-}
 
-TEST(FunSetTest, SetColumnFieldToFieldSmallerOrEqNo)
-{
-        /* - This test deals with field update that are in-place updates WITHOUT enlarging the document.
-         * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
-         * - The path to the element to be updated MUST exist */
+        test_set("{\"x\":[1, 2, 3]}", "0.x.1", FIELD_NUMBER_U8,
+                 "42", FIELD_NUMBER_U8,
+                 "{\"x\":[1, 42, 3]}");
+
+        test_set("{\"x\":[1, 2, 3]}", "0.x.1", FIELD_NUMBER_U8,
+                 "true", FIELD_TRUE,
+                 "{\"x\":[1, true, 3]}");
+
+        test_set("{\"x\":[1, 2, 3]}", "0.x.1", FIELD_NUMBER_U8,
+                 "null", FIELD_NULL,
+                 "{\"x\":[1, null, 3]}");
+
+        test_set("{\"x\":[50000, 50001, 50002]}", "0.x.1", FIELD_NUMBER_U16,
+                 "42", FIELD_NUMBER_U16,
+                 "{\"x\":[50000, 0, 50002]}");
 }
 
 TEST(FunSetTest, SetColumnFieldToFieldLargerEq)
@@ -622,12 +631,13 @@ TEST(FunSetTest, SetColumnFieldToFieldLargerEq)
          * - The path to the element to be updated MUST exist */
 }
 
-TEST(FunSetTest, SetColumnFieldToFieldLargerOrEqNo)
+TEST(FunSetTest, ForceColumnArrayReWrite)
 {
-        /* - This test deals with field update that are in-place updates WITH enlarging the document.
-         * - Any field can be updated as long as this field IS CONTAINED in an column (aka column-rewrite)
-         * - The path to the element to be updated MUST exist */
+        /* This test deals with updating a value inside a column to a value that cannot be stored inside a column.
+         * The effect is that the column must be rewritten to an array */
+
 }
+
 
 TEST(FunSetTest, SetFieldWhichPathNotExists)
 {

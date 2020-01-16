@@ -57,7 +57,7 @@ typedef struct item
         (ITEM_GET_TYPE(item) == type)
 
 #define INTERNAL_ITEM_GET_VALUE(item, member, default_value)                                                    \
-        ((item) ? (item)->value.member : default_value)
+        ((item) ? ((item)->value.member) : default_value)
 
 #define ITEM_IS_FIELD(item)                                                                                     \
         ((item) ? (item)->parent_type == UNTYPED_ARRAY : false)

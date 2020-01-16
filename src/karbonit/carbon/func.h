@@ -88,6 +88,44 @@ const char *func_rec_mget(const rec *doc, const dot *path, str_buf *buf);
  * <b>patch</b> is turned on, <code>doc</code> is modified on-the-fly without changes to the revision number.
  * In this case, the function is not thread-safe.
  *
+ * Update and potential rewrite actions are listed below. Note, that a path that points to a non-existing element
+ * resolves to 'undef':
+ *
+ * Resolved
+ * --------
+ * (undef)
+ * null
+ * true
+ * false
+ * number (u8)
+ * number (u16)
+ * number (u32)
+ * number (u64)
+ * number (i8)
+ * number (i16)
+ * number (i32)
+ * number (i64)
+ * float
+ * string
+ * binary
+ * object
+ * array
+ * column
+ * null (in column)
+ * true (in column)
+ * false (in column)
+ * number (u8) (in column)
+ * number (u16) (in column)
+ * number (u32) (in column)
+ * number (u64) (in column)
+ * number (i8) (in column)
+ * number (i16) (in column)
+ * number (i32) (in column)
+ * number (i64) (in column)
+ * float (in column)
+ *
+ *
+ *
  * \param rev A pointer to an uninitialized Carbon record that will contain the revision of <code>doc</code>
  *            having the change applied. The pointer must be non-null if <code>patch</code> is set to <code>FALSE</code>,
  *            and can be null if <code>patch</code> is set to <code>TRUE</code>.
@@ -112,7 +150,7 @@ rec *func_rec_unset(rec *rev, rec *doc, const dot *path, bool patch);
 
 // func_keysof
 
-// func_rekey
+// func_rename
 
 // func_typeof
 

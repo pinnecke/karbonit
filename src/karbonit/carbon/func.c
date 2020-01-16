@@ -131,10 +131,11 @@ rec *func_rec_set(rec *rev, rec *doc, const dot *path, const rec *import, bool p
                         internal_rec_get_first(&src_file, (rec *) import);
                         import_is_array = rec_is_array((rec *) import);
                         MEMFILE_SEEK__UNSAFE(&subj->file, eval.field_offset);
+                        eval.eval.doc = eval.doc = subj;
                         if (find_result_is_contained_in_column(&eval)) {
-                                rewrite_column(&subj->file, &src_file, import_is_array);
+                                rewrite_column(&eval, &src_file, import_is_array);
                         } else {
-                                rewrite_field(&subj->file, &src_file, import_is_array);
+                                rewrite_field(&eval, &src_file, import_is_array);
                         }
                         return subj;
                 } else {

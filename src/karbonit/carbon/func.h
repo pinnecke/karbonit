@@ -63,6 +63,8 @@ bool func_rec_exists(const rec *doc, const dot *path);
  */
 const char *func_rec_get(const rec *doc, const dot *path, str_buf *buf);
 
+const char *func_rec_mget(const rec *doc, const dot *path, str_buf *buf);
+
 /*!
  * \brief Sets the value of the element in <code>doc</code> pointed by a dot-notated path <code>path</code> to
  * the contens of <code>import</code>.
@@ -102,7 +104,53 @@ const char *func_rec_get(const rec *doc, const dot *path, str_buf *buf);
  */
 rec *func_rec_set(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
 
-rec *func_rec_rm(rec *rev, rec *doc, const dot *path, bool patch);
+rec *func_rec_mset(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_unset(rec *rev, rec *doc, const dot *path, bool patch);
+
+// func_revof
+
+// func_keysof
+
+// func_rekey
+
+// func_typeof
+
+// func_isnull
+
+// func_isundef
+
+// func_randkey
+
+// func_randvalue
+
+// func_mv
+
+// func_sort
+
+// func_add
+
+// func_mul
+
+// func_sub
+
+// func_div
+
+// func_push
+
+// func_pop
+
+// func_keysof
+
+// func_insert
+
+// func_lenof
+
+// func_xor
+
+// func_and
+
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  functions on a list container
@@ -112,9 +160,8 @@ const char *func_list_slice(rec *doc, const dot *path, i64 begin, i64 end, str_b
 
 rec *func_list_pushback(rec *rev, rec *doc, const dot *path, const char *json, bool patch);
 
-// func_revof
-// func_keyof
-// func_rekey
+
+
 // func_unset
 // func_lenof
 // func_reverse
@@ -137,10 +184,8 @@ rec *func_list_pushback(rec *rev, rec *doc, const dot *path, const char *json, b
 // func_wrap
 // func_unwrap
 // func_rename
-// func_typeof
 // func_mappingof
-// func_isnull
-// func_isundef
+
 
 #ifdef __cplusplus
 }

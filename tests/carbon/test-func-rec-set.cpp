@@ -25,6 +25,8 @@ static void test_set_ex(const char *json_before, const char *path, field_e type_
         printf("\n** %s ***********************************************************************************\n\n"
               "*** doc dump before ***\n", use_patching ? "PATCHING" : "REVISION");
         rec_hexdump_print(stdout, &doc);
+        printf("\n*** value to insert ***\n");
+        rec_hexdump_print(stdout, &import);
 
         ptr = func_rec_set(&rev, &doc, &dot_path, &import, use_patching);
 
@@ -573,7 +575,7 @@ TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqPatchNMB) {
 
         test_set("[{\"x\":\"Hello World\"}, 1, 2, 3]", "0", FIELD_OBJECT_UNSORTED_MULTIMAP,
                  "[[1, 2, 3, 4], \"_\"]", FIELD_ARRAY_UNSORTED_MULTISET,
-                 "[[1, 2, 3, 4], \"_\"]], 1, 2, 3]");
+                 "[[[1, 2, 3, 4], \"_\"], 1, 2, 3]");
 }
 
 TEST(FunSetTest, SetAnyNonColumnFieldToFieldSmallerOrEqNoPatch)

@@ -126,15 +126,17 @@ rec *func_rec_set(rec *rev, rec *doc, const dot *path, const rec *import, bool p
                 bool elem_exists = find_from_dot(&eval, path, doc);
                 if (elem_exists) {
                         memfile src_file;
+                        bool import_is_array;
                         rec *subj = patch ? doc : rev;
                         internal_rec_get_first(&src_file, (rec *) import);
+                        import_is_array = rec_is_array((rec *) import);
                         MEMFILE_SEEK__UNSAFE(&subj->file, eval.offset);
                         if (find_result_is_contained_in_column(&eval)) {
                                 // TODO: implement column rewrite
                                 ERROR(ERR_NOTIMPLEMENTED, "column rewrite not implemented");
                                 return NULL;
                         } else {
-                                rewrite_field(&subj->file, &src_file);
+                                rewrite_field(&subj->file, &src_file, import_is_array);
                         }
                         return subj;
                 } else {

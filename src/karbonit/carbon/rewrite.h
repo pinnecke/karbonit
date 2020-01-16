@@ -17,11 +17,12 @@ extern "C" {
 /*!
  * \brief Replaces the field in <code>dst</code> by the field in <code>src</code>
  *
- * @param dst memory file that is positioned to a field marker
- * @param src memory file that is positioned to a field marker
- * @return <code>TRUE</code> is case of success, and <code>FALSE</code> otherwise
+ * \param dst memory file that is positioned to a field marker
+ * \param src memory file that is positioned to a field marker
+ * \param cpy_arr_bounds flag to indicate whether to copy outer-most '[' and ']'
+ * \return <code>TRUE</code> is case of success, and <code>FALSE</code> otherwise
  */
-bool rewrite_field(memfile *dst, memfile *src);
+bool rewrite_field(memfile *dst, memfile *src, bool cpy_arr_bounds);
 
 #ifdef __cplusplus
 }

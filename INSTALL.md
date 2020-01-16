@@ -7,7 +7,7 @@ To install this compiler on Linux, use `$ sudo apt install clang` if not yet pre
 
 The basic usage is 
 ```
-$ cmake . && make -j4 && make test && sudo make install
+$ cmake . && make -j4 && make test 
 ```
 
 By default, all targets are built in *debug* configuration and without *source amalgamation*. Source amalgamation is

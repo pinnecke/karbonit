@@ -34,7 +34,7 @@ with all logs, use `cmake -DBUILD_TYPE=Debug -DLOG_TRACE=on -DLOG_INFO=on -DLOG_
 
 
 A tool to work with Carbon files (called `carbon-tool`) is shipped with this library.
-This tool is automatically built when `make` is called, and installed via `make install`. However, to build the tool 
+This tool is automatically built when `make` is called. However, to build the tool 
 via its target, type 
 
 ```

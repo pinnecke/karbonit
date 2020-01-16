@@ -25,7 +25,6 @@
 #include <jakson/types.h>
 #include <stdint.h>
 #include <jakson/json.h>
-#include "find.h"
 
 static void result_from_array(find *find, arr_it *it);
 

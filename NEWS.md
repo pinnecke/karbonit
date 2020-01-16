@@ -1,7 +1,9 @@
-## 0.7.00.0 [2020-XX-XX]
+## 0.7.00.0 [2020-01-16]
 - Traverse framework
 - improved json printer
 - fix issue 2, memory debugging, performance and micro optimization
+- closed sources
+- first part for SET function on Carbon records
 
 ## 0.6.00.0 [2019-11-25]
 - Add carbon revision patching as alternative to carbon revisions
@@ -34,11 +36,11 @@
 - Add thread pool implementation (`struct thread_pool`)
 
 ## 0.3.00.00 [2019-04-11]
-- In `karbonit-tool`, enable the user to set whether a single-threaded (`sync`) or multi-threaded (`async`) str_buf 
+- In `carbon-tool`, enable the user to set whether a single-threaded (`sync`) or multi-threaded (`async`) str_buf 
   dictionary should be used when conversion from JSON to CARBON archives is issued (via `convert` module). By
-  default a multi-threaded implementation with 8 threads is used. To change that, `karbonit-tool convert` has
-  now to new parameters, `--dic-type` and `--dic-nthreads`. See `karbonit-tool` usage instructions for details.
-- Modified command line in module `convert` of `karbonit-tool` to select compressor to be used for conversion 
+  default a multi-threaded implementation with 8 threads is used. To change that, `carbon-tool convert` has
+  now to new parameters, `--dic-type` and `--dic-nthreads`. See `carbon-tool` usage instructions for details.
+- Modified command line in module `convert` of `carbon-tool` to select compressor to be used for conversion 
   from JSON to CARBON archives. Until now, `--compressor=<compressor>` was used. Now, it is just 
   `--compressor <compressor>`.
 - In Compressor Framework, add function to read implementation-specific extra data (e.g., in order to reconstruct
@@ -50,7 +52,7 @@
 - To avoid re-creation of the index used for *Indexed String Fetch* when a archive is loaded into memory, 
   this index can now be pre-computed an embedded into the archive file itself (which is now the default behavior). 
   For this, the index is built after archive creation and appended at the end of the archive (if not turned-off). 
-  To turn it off in `karbonit-tool`, use flag `--no-str_buf-id-index` for the module `convert`. If turned-off, the 
+  To turn it off in `carbon-tool`, use flag `--no-str_buf-id-index` for the module `convert`. If turned-off, the 
   index may be created during runtime depending on whether such an index should be used or not (see below).
   - Archive specification must be changed for this, see updated [SPECIFICATION.md](SPECIFICATION.md) and 
     [SPECIFICATION-COMPACT.md](SPECIFICATION_COMPACT.md).
@@ -83,7 +85,7 @@
        Internally, the cache is organized as a (robin hood) hash table using the bernstein hash function that
        uses the str_buf id as key to find a fitting bucket. Inside the bucket, an LRU list for entries
        with str_buf ids that have a collision under the hash function is maintained.
-- Add `$ karbonit-tool to_json <input>` to convert a CARBON archive file `<input>` into its JSON representation.  
+- Add `$ carbon-tool to_json <input>` to convert a CARBON archive file `<input>` into its JSON representation.  
 
 ## 0.1.00.06 [2019-02-23]
 - Completed compressor framework including embedding into carbin archive operations 
@@ -123,8 +125,8 @@
 - **Compressor Framework** refactored compressor framework. 
     - Extension with new compressors in [carbon-compressor.c](src/carbon/compressor/compressor.c)
     - Current compressors are located in [include/carbon/compressor](include/carbon/compressor)
-    - Available compressors now listed via `karbonit-tool list compressors`,
-      and selection is done via `karbonit-tool convert --use-compressor=$NAME` where 
+    - Available compressors now listed via `carbon-tool list compressors`,
+      and selection is done via `carbon-tool convert --use-compressor=$NAME` where 
       `$NAME` is from the list above 
 
 ## 0.1.00.04 [2019-02-13]

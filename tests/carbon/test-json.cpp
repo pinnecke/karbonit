@@ -899,7 +899,7 @@ TEST(JsonTest, ParseJsonFromStringLaxQuotesTestNull)
 
 TEST(JsonTest, ParseRandomJson)
 {
-        /* the working directory must be 'tests/karbonit-tool' to find this file */
+        /* the working directory must be 'tests/carbon-tool' to find this file */
         int fd = open("./assets/random.json", O_RDONLY);
         ASSERT_NE(fd, -1);
         int json_in_len = lseek(fd, 0, SEEK_END);

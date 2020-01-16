@@ -11,7 +11,7 @@ Testing/Temporary
 carbon-temp-statistics--cache-monitor.csv
 *.csv
 examples/json
-book/libcarbon/latest/book
+book/karbonit/latest/book
 book/spec/latest/book
 
 CMakeFiles

@@ -1,6 +1,6 @@
 # Donors to Karbonit
 
-[libcarbon](https://github.com/karbonitlabs/karbonit) is a not-for-profit, community-driven open source project. It is 
+[karbonit](https://github.com/karbonitlabs/karbonit) is a not-for-profit, community-driven open source project. It is 
 legally represented by [Marcus Pinnecke](http://www.pinnecke.info). The project lives of the energetic efforts of its 
 contributors and by the donations from the community.
 
@@ -27,7 +27,7 @@ Currently, we are looking for sponors: [Become a sponsor!](mailto:pinnecke@ovgu.
 
 ## Donors (Monthly)
 
-Donors who support [libcarbon](https://github.com/karbonitlabs/karbonit) with a monthly donation find themselves with 
+Donors who support [karbonit](https://github.com/karbonitlabs/karbonit) with a monthly donation find themselves with 
 great thanks in the following list.
 
 ### Gold
@@ -44,7 +44,7 @@ great thanks in the following list.
 
 ## Donors (One-Shot)
 
-Donors who support [libcarbon](https://github.com/karbonitlabs/karbonit) with a single donation find themselves with 
+Donors who support [karbonit](https://github.com/karbonitlabs/karbonit) with a single donation find themselves with 
 great thanks in the following list.
 
 ### Gold

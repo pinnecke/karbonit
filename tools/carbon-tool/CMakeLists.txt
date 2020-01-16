@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(karbonit-tool C)
+project(carbon-tool C)
 
 set(TOOL_SOURCES
         modules.h

@@ -13,7 +13,7 @@
                           "                              particular compressor\n" \
                           "   --compressor <compressor>  Use <compressor> as compression technique for\n" \
                           "                              size optimization. Run `list compressors` in\n" \
-                          "                              karbonit-tool to see available compressors\n" \
+                          "                              carbon-tool to see available compressors\n" \
                           "   --no-string-id-index       Turn-off pre-computation of string id to offset\n" \
                           "                              index\n" \
                           "   --read-optimized           Sort keys and values during pre-processing for\n" \
@@ -30,8 +30,8 @@
                           "                              parameter `--dic-type` is set to `async`.\n" \
                           "                              By default, 8 threads are spawned\n" \
                           "\nEXAMPLE\n" \
-                          "   $ karbonit-tool convert out.carbon in.json\n" \
-                          "   $ karbonit-tool convert --size-optimized --read-optimized out.carbon in.json" \
+                          "   $ carbon-tool convert out.carbon in.json\n" \
+                          "   $ carbon-tool convert --size-optimized --read-optimized out.carbon in.json" \
 
 #define DESC_CAB2JS_INFO  "Convert single CARBON file into JSON and print it to stdout"
 #define DESC_CAB2JS_USAGE "The parameter <args> is a path to a CARBON file that is converted JSON and printed on stdout.\n" \
@@ -46,7 +46,7 @@
                       "\nEXAMPLE\n" \
                       "   $ carbon cli myfile.carbon\n" \
 
-#define DESC_LIST       "List properties and configurations for karbonit-tool to stdout"
+#define DESC_LIST       "List properties and configurations for carbon-tool to stdout"
 #define DESC_LIST_USAGE "The parameter <args> is one of the following constants:\n\n"                                  \
                         "   compressors               Shows available compressors used by `convert` module"
 
@@ -79,7 +79,7 @@ int main (int argc, char **argv)
     command_opt_mgr manager;
     command_opt_group *group;
 
-    opt_manager_create(&manager, "karbonit-tool", "A tool to work with CARBON files.\n"
+    opt_manager_create(&manager, "carbon-tool", "A tool to work with CARBON files.\n"
                                  "Copyright (c) 2018-2019 Marcus Pinnecke (pinnecke@ovgu.de)", MOD_ARG_MAYBE_REQUIRED,
                              showHelp);
 

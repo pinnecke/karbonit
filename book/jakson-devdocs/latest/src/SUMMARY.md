@@ -1,6 +1,6 @@
 # Summary
 
-[Jakson Developer Documentation](documentation.md)
+[Karbonit Developer Documentation](documentation.md)
 
 [Project Structure](structure.md) 
 
@@ -174,6 +174,6 @@
 			- [Early Filters](multi-threading/data-parallelism-framework/parallel-filter/early-filters.md)
 			- [Late Filters](multi-threading/data-parallelism-framework/parallel-filter/late-filters.md)
 
-[Cross-Platform Notices](jakson-cross-platform.md)
+[Cross-Platform Notices](karbonit-cross-platform.md)
 [Feedback and Contributions](feedback.md)
 [Thanks To](thanks.md)

@@ -2,9 +2,9 @@
 #include <atomic>
 #include <fstream>
 
-#include <jakson/utils/priority_queue.h>
-#include <jakson/std/thread_pool.h>
-#include <jakson/std/thread_pool/monitor.h>
+#include <karbonit/utils/priority_queue.h>
+#include <karbonit/std/thread_pool.h>
+#include <karbonit/std/thread_pool/monitor.h>
 
 // Test if push and isEmpty works correkt
 TEST(PriorityQueue, IsEmpty)

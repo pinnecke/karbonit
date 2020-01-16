@@ -16,7 +16,7 @@ set(BENCH_SOURCES
 message("Bench sources: ${BENCH_SOURCES}")
 
 add_executable(bench-reads-libbson main.c ${BENCH_SOURCES} ${TOOL_SOURCES})
-target_link_libraries(bench-reads-libbson PUBLIC ${LIBS} PRIVATE jakson-sources)
+target_link_libraries(bench-reads-libbson PUBLIC ${LIBS} PRIVATE karbonit-sources)
 
 target_include_directories (bench-reads-libbson PRIVATE ${BSON_INCLUDE_DIRS})
 target_link_libraries (bench-reads-libbson PRIVATE ${BSON_LIBRARIES})

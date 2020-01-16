@@ -1,7 +1,7 @@
 // bin/examples-manual-construction-arrays
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {

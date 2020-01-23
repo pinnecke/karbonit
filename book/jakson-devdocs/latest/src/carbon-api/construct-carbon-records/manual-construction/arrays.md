@@ -21,7 +21,7 @@ In the following example, a new record (which is a wrapper for an array containe
 // bin/examples-manual-construction-arrays
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {

@@ -1,22 +1,23 @@
 // bin/examples-from-json
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
-    carbon record;
-    err err;
-    char *as_json;
+    rec record;
+    const char *as_json;
 
-    carbon_from_json(&record, "{\"msg\": \"Hello from JSON\"}", CARBON_KEY_NOKEY, NULL, &err);
+    rec_from_json(&record, "{\"msg\": \"Hello from JSON\"}", KEY_NOKEY, NULL);
 
-    as_json = carbon_to_json_compact_dup(&record);
+    str_buf buffer;
+    str_buf_create(&buffer);
+    as_json = rec_to_json(&buffer, &record);
 
     printf ("%s\n", as_json);
 
-    carbon_drop(&record);
-    free(as_json);
+    rec_drop(&record);
+    str_buf_drop(&buffer);
 
     return 0;
 }

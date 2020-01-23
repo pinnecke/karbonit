@@ -1,15 +1,14 @@
 #include <gtest/gtest.h>
 #include <stdio.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 TEST(FixMapTest, CreationAndDrop)
 {
     hashtable map;
-    err     err;
     bool             status;
 
-    status = hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 100);
+    status = hashtable_create(&map, sizeof(u32), sizeof(u64), 100);
     ASSERT_TRUE(status);
     status = hashtable_drop(&map);
     ASSERT_TRUE(status);
@@ -18,10 +17,9 @@ TEST(FixMapTest, CreationAndDrop)
 TEST(FixMapTest, MapAndGetWithoutRehash)
 {
     hashtable map;
-    err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 100);
+    hashtable_create(&map, sizeof(u32), sizeof(u64), 100);
 
     for (u32 key = 0; key < 10; key++) {
         u64 value = key << 2;
@@ -42,10 +40,9 @@ TEST(FixMapTest, MapAndGetWithoutRehash)
 TEST(FixMapTest, MapAndGetWitRehash)
 {
     hashtable map;
-    err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 10);
+    hashtable_create(&map, sizeof(u32), sizeof(u64), 10);
 
     for (u32 key = 0; key < 10000; key++) {
         u64 value = key << 2;
@@ -65,10 +62,9 @@ TEST(FixMapTest, MapAndGetWitRehash)
 TEST(FixMapTest, DisplaceTest)
 {
     hashtable map;
-    err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 10700);
+    hashtable_create(&map, sizeof(u32), sizeof(u64), 10700);
 
     for (u32 key = 0; key < 10000; key++) {
         u64 value = key << 2;
@@ -95,10 +91,9 @@ TEST(FixMapTest, DisplaceTest)
 TEST(FixMapTest, MapAndGetNotContainedWithoutRehash)
 {
     hashtable map;
-    err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 100);
+    hashtable_create(&map, sizeof(u32), sizeof(u64), 100);
 
     for (u32 key = 0; key < 10; key++) {
         u64 value = key << 2;
@@ -118,10 +113,9 @@ TEST(FixMapTest, MapAndGetNotContainedWithoutRehash)
 TEST(FixMapTest, MapAndGetNotContainedWitRehash)
 {
     hashtable map;
-    err     err;
     bool             status;
 
-    hashtable_create(&map, &err, sizeof(u32), sizeof(u64), 10);
+    hashtable_create(&map, sizeof(u32), sizeof(u64), 10);
 
     for (u32 key = 0; key < 10000; key++) {
         u64 value = key << 2;

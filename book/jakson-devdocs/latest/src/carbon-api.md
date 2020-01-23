@@ -4,14 +4,14 @@
 
 > You see the latest version in the `master` branch, as of 16th September 2019.
 
-A core feature in Jakson is its way to organize, store, and access self-describing ("semi-structured") data. For that purpose, Jakson contains an implementation of the [Columnar Binary JSON (Carbon) specification](http://www.carbonspec.org) in its core. 
+A core feature in Karbonit is its way to organize, store, and access self-describing ("semi-structured") data. For that purpose, Karbonit contains an implementation of the [Columnar Binary JSON (Carbon) specification](http://www.carbonspec.org) in its core. 
 
-The Jakson Carbon API builds, parses, and queries Carbon files with full compatibility to [Columnar Binary JSON (Carbon) specification](http://www.carbonspec.org), and the expressiveness of [JSON (RFC 8259)](https://tools.ietf.org/html/rfc8259). 
+The Karbonit Carbon API builds, parses, and queries Carbon files with full compatibility to [Columnar Binary JSON (Carbon) specification](http://www.carbonspec.org), and the expressiveness of [JSON (RFC 8259)](https://tools.ietf.org/html/rfc8259). 
 
-This chapter is about the Carbon implementation inside Jakson, and how its API is used for Jakson or any third party project. In particular, this chapter contains the following content:
+This chapter is about the Carbon implementation inside Karbonit, and how its API is used for Karbonit or any third party project. In particular, this chapter contains the following content:
 
 - [Section 1](carbon-api/carbon-overview.md), *Carbon Overview*, summarizes the properties of the record format Carbon
-- [Section 2](carbon-api/project-setup.md), *Project Setup*, provides a step-by-step tutorial on how to get the Carbon API running for both Jakson and third-party project
+- [Section 2](carbon-api/project-setup.md), *Project Setup*, provides a step-by-step tutorial on how to get the Carbon API running for both Karbonit and third-party project
 - [Section 4](carbon-api/construct-carbon-records.md), *Carbon Records*, is about Carbon records, container types, and construction of these by several ways, including parsing from Json and manual construction
 - [Section 5](carbon-api/browse-contents.md), *Browse Contents*, explains value types and classes, and shows the usage of array, object and column iterators and how they are used to navigate through a record
 - [Section 6](carbon-api/find-contents.md), *Find Contents*, centers around fetching values and containers if the particular path (expressed as dot-notated path) is known
@@ -25,5 +25,5 @@ Please note that the Carbon implementation is improved from version to version. 
 
 ## License
 
-This developer documentation, all the example source code, is released under the [MIT Licsense](https://github.com/jaksonlabs/jakson/blob/master/LICENSE).
+This developer documentation, all the example source code, is released under the [MIT Licsense](https://github.com/karbonitlabs/karbonit/blob/master/LICENSE).
 

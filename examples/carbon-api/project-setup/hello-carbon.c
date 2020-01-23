@@ -1,26 +1,28 @@
 // bin/examples-hello-carbon
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
-    carbon_new context;
-    carbon record;
-    carbon_insert *ins;
-    char *as_json;
+    rec_new context;
+    rec record;
+    insert *ins;
+    str_buf buffer;
+    const char *as_json;
 
-    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
-    carbon_insert_string(ins, "Hello");
-    carbon_insert_string(ins, "Carbon!");
-    carbon_create_end(&context);
+    ins = rec_create_begin(&context, &record, KEY_NOKEY, KEEP);
+    insert_string(ins, "Hello");
+    insert_string(ins, "Carbon!");
+    rec_create_end(&context);
 
-    as_json = carbon_to_json_compact_dup(&record);
+    str_buf_create(&buffer);
+    as_json = rec_to_json(&buffer, &record);
 
     printf ("%s\n", as_json);
 
-    carbon_drop(&record);
-    free(as_json);
+    rec_drop(&record);
+    str_buf_clear(&buffer);
 
     return 0;
 }

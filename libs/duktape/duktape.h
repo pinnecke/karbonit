@@ -463,7 +463,7 @@ struct duk_time_components {
  *  conflicting with the Duktape internal representation by e.g. prepending
  *  a '!' character: DUK_LOCAL_SYMBOL("myLocal", "!123").
  *
- *  Note that these can only be used for string_buffer constants, not dynamically
+ *  Note that these can only be used for str_buf constants, not dynamically
  *  created strings.
  *
  *  You shouldn't normally use DUK_INTERNAL_SYMBOL() at all.  It is reserved
@@ -695,7 +695,7 @@ DUK_EXTERNAL_DECL void duk_push_pointer(duk_context *ctx, void *p);
 DUK_EXTERNAL_DECL const char *duk_push_sprintf(duk_context *ctx, const char *fmt, ...);
 DUK_EXTERNAL_DECL const char *duk_push_vsprintf(duk_context *ctx, const char *fmt, va_list ap);
 
-/* duk_push_literal() may evaluate its argument (a C string_buffer literal) more than
+/* duk_push_literal() may evaluate its argument (a C str_buf literal) more than
  * once on purpose.  When speed is preferred, sizeof() avoids an unnecessary
  * strlen() at runtime.  Sizeof("foo") == 4, so subtract 1.  The argument
  * must be non-NULL and should not contain internal NUL characters as the
@@ -1046,8 +1046,8 @@ DUK_EXTERNAL_DECL void duk_config_buffer(duk_context *ctx, duk_idx_t idx, void *
 /*
  *  Property access
  *
- *  The basic function assumes key is on stack.  The _(l)string_buffer variant takes
- *  a C string_buffer as a property name; the _literal variant takes a C literal.
+ *  The basic function assumes key is on stack.  The _(l)str_buf variant takes
+ *  a C str_buf as a property name; the _literal variant takes a C literal.
  *  The _index variant takes an array index as a property name (e.g. 123 is
  *  equivalent to the key "123").  The _heapptr variant takes a raw, borrowed
  *  heap pointer.
@@ -1247,7 +1247,7 @@ DUK_EXTERNAL_DECL duk_int_t duk_compile_raw(duk_context *ctx, const char *src_bu
 #define duk_pcompile(ctx,flags)  \
 	(duk_compile_raw((ctx), NULL, 0, 2 /*args*/ | (flags) | DUK_COMPILE_SAFE))
 
-/* string_buffer */
+/* str_buf */
 #define duk_eval_string(ctx,src)  \
 	((void) duk_eval_raw((ctx), (src), 0, 0 /*args*/ | DUK_COMPILE_EVAL | DUK_COMPILE_NOSOURCE | DUK_COMPILE_STRLEN | DUK_COMPILE_NOFILENAME))
 

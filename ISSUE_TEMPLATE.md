@@ -6,7 +6,7 @@
 
 ### Version and Enviroment
 
-Jakson version: `add version here`
+Karbonit version: `add version here`
 
 GitHub Branch (if needed): `add branch name here`
 

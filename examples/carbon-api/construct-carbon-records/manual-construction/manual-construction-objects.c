@@ -1,34 +1,36 @@
 // bin/examples-manual-construction-objects
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
-    carbon_new context;
-    carbon record;
-    carbon_insert *ins, *nested_ins, *prop_ins;
-    carbon_insert_object_state state, as_prop_state;
-    char *as_json;
+    rec_new context;
+    rec record;
+    insert *ins, *nested_ins, *prop_ins;
+    obj_state state, as_prop_state;
+    str_buf buffer;
+    const char *as_json;
 
-    ins = carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
+    ins = rec_create_begin(&context, &record, KEY_NOKEY, KEEP);
 
-    nested_ins = carbon_insert_object_begin(&state, ins, 1024);
-        carbon_insert_prop_string(nested_ins, "key", "value");
-        prop_ins = carbon_insert_prop_object_begin(&as_prop_state, nested_ins, "as prop", 1024);
-        carbon_insert_prop_string(prop_ins, "hello", "object!");
-        carbon_insert_object_end(&as_prop_state);
+    nested_ins = insert_object_begin(&state, ins, 1024);
+        insert_prop_string(nested_ins, "key", "value");
+        prop_ins = insert_prop_object_begin(&as_prop_state, nested_ins, "as prop", 1024);
+        insert_prop_string(prop_ins, "hello", "object!");
+        insert_object_end(&as_prop_state);
 
-    carbon_insert_object_end(&state);
+    insert_object_end(&state);
 
-    carbon_create_end(&context);
+    rec_create_end(&context);
 
-    as_json = carbon_to_json_compact_dup(&record);
+    str_buf_create(&buffer);
+    as_json = rec_to_json(&buffer, &record);
 
     printf ("%s\n", as_json);
 
-    carbon_drop(&record);
-    free(as_json);
+    rec_drop(&record);
+    str_buf_clear(&buffer);
 
     return 0;
 }

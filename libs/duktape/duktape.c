@@ -922,7 +922,7 @@ typedef struct {
 #define DUK_TVAL_UNUSED_INITIALIZER() \
 	{ DUK_TAG_UNUSED, DUK_TAG_UNUSED, DUK_TAG_UNUSED, DUK_TAG_UNUSED }
 
-/* two casts to avoid gcc warning: "warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]" */
+/* two casts to avoid gcc warning: "warning: CAST from pointer to integer of different size [-Wpointer-to-int-CAST]" */
 #if defined(DUK_USE_64BIT_OPS)
 #if defined(DUK_USE_DOUBLE_ME)
 #define DUK__TVAL_SET_TAGGEDPOINTER(tv,h,tag)  do { \
@@ -943,7 +943,7 @@ typedef struct {
 #endif  /* DUK_USE_64BIT_OPS */
 
 #if defined(DUK_USE_64BIT_OPS)
-/* Double casting for pointer to avoid gcc warning (cast from pointer to integer of different size) */
+/* Double casting for pointer to avoid gcc warning (CAST from pointer to integer of different size) */
 #if defined(DUK_USE_DOUBLE_ME)
 #define DUK__TVAL_SET_LIGHTFUNC(tv,fp,flags)  do { \
 		(tv)->ull[DUK_DBL_IDX_ULL0] = (((duk_uint64_t) DUK_TAG_LIGHTFUNC) << 16) | \
@@ -990,7 +990,7 @@ typedef struct {
 	} while (0)
 #endif
 
-/* This needs to go through a cast because sign extension is needed. */
+/* This needs to go through a CAST because sign extension is needed. */
 #define DUK__TVAL_SET_I32(tv,i)  do { \
 		duk_int64_t duk__tmp = (duk_int64_t) (i); \
 		DUK_TVAL_SET_I48((tv), duk__tmp); \
@@ -4117,7 +4117,7 @@ DUK_INTERNAL_DECL void duk_lexer_parse_re_ranges(duk_lexer_ctx *lex_ctx, duk_re_
 #define DUK_ISPEC_REGCONST     2   /* value resides in a register or constant */
 
 /* Bit mask which indicates that a regconst is a constant instead of a register.
- * Chosen so that when a regconst is cast to duk_int32_t, all consts are
+ * Chosen so that when a regconst is CAST to duk_int32_t, all consts are
  * negative values.
  */
 #define DUK_REGCONST_CONST_MARKER    DUK_INT32_MIN  /* = -0x80000000 */
@@ -4284,12 +4284,12 @@ struct duk_compiler_ctx {
 	duk_lexer_ctx lex;
 
 	/* current and previous token for parsing */
-	duk_token prev_token;
+	duk_token prevoken;
 	duk_token curr_token;
 	duk_idx_t tok11_idx;                /* curr_token slot1 (matches 'lex' slot1_idx) */
 	duk_idx_t tok12_idx;                /* curr_token slot2 (matches 'lex' slot2_idx) */
-	duk_idx_t tok21_idx;                /* prev_token slot1 */
-	duk_idx_t tok22_idx;                /* prev_token slot2 */
+	duk_idx_t tok21_idx;                /* prevoken slot1 */
+	duk_idx_t tok22_idx;                /* prevoken slot2 */
 
 	/* recursion limit */
 	duk_int_t recursion_depth;
@@ -6118,7 +6118,7 @@ DUK_INTERNAL_DECL void duk_hstring_init_charlen(duk_hstring *h);
 	(1UL << DUK_HEAPHDR_GET_FLAG_RANGE(&(h)->hdr, DUK_HOBJECT_FLAG_CLASS_BASE, DUK_HOBJECT_FLAG_CLASS_BITS))
 
 /* Macro for creating flag initializer from a class number.
- * Unsigned type cast is needed to avoid warnings about coercing
+ * Unsigned type CAST is needed to avoid warnings about coercing
  * a signed integer to an unsigned one; the largest class values
  * have the highest bit (bit 31) set which causes this.
  */
@@ -7157,7 +7157,7 @@ DUK_INTERNAL_DECL duk_ret_t duk_bi_function_prototype(duk_hthread *thr);
 	((duk_size_t) (DUK_HCOMPFUNC_GET_CODE_SIZE((heap), (h)) / sizeof(duk_instr_t)))
 
 /*
- *  Validity JAK_ASSERT
+ *  Validity assert
  */
 
 #if defined(DUK_USE_ASSERTIONS)
@@ -8182,7 +8182,7 @@ struct duk_hobjenv {
 	)
 #endif
 
-/* Validity JAK_ASSERT. */
+/* Validity assert. */
 #if defined(DUK_USE_ASSERTIONS)
 DUK_INTERNAL_DECL void duk_hbuffer_assert_valid(duk_hbuffer *h);
 #define DUK_HBUFFER_ASSERT_VALID(h)  do { duk_hbuffer_assert_valid((h)); } while (0)
@@ -9681,21 +9681,21 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 		DUK_ERROR((thr), DUK_ERR_SYNTAX_ERROR, (msg)); \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_ARGS(thr) do { \
-		duk_err_type_invalid_args((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
+		duk_errype_invalid_args((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_ARGS(thr) do { \
 		DUK_ERROR_TYPE_INVALID_ARGS((thr)); \
 		return 0; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_STATE(thr) do { \
-		duk_err_type_invalid_state((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
+		duk_errype_invalid_state((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_STATE(thr) do { \
 		DUK_ERROR_TYPE_INVALID_STATE((thr)); \
 		return 0; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
-		duk_err_type_invalid_trap_result((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
+		duk_errype_invalid_trap_result((thr), DUK_FILE_MACRO, (duk_int_t) DUK_LINE_MACRO); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
 		DUK_ERROR_TYPE((thr), DUK_STR_INVALID_TRAP_RESULT); \
@@ -9710,7 +9710,7 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 /* Non-verbose errors for low memory targets: no file, line, or message. */
 
 #define DUK_ERROR_REQUIRE_TYPE_INDEX(thr,idx,expectname,lowmemstr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 
 #define DUK_ERROR_INTERNAL(thr) do { \
@@ -9773,30 +9773,30 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 		duk_err_syntax((thr)); \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_ARGS(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_ARGS(thr) do { \
 		DUK_UNREF((thr)); \
 		return DUK_RET_TYPE_ERROR; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_STATE(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_STATE(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_DCERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
 		DUK_UNREF((thr)); \
 		return DUK_RET_TYPE_ERROR; \
 	} while (0)
 #define DUK_ERROR_TYPE_INVALID_TRAP_RESULT(thr) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_ERROR_TYPE(thr,msg) do { \
-		duk_err_type((thr)); \
+		duk_errype((thr)); \
 	} while (0)
 #define DUK_ERROR_URI(thr,msg) do { \
 		duk_err_uri((thr)); \
@@ -9806,7 +9806,7 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 /*
  *  Assert macro: failure causes a fatal err.
  *
- *  NOTE: since the JAK_ASSERT macro doesn't take a heap/context argument, there's
+ *  NOTE: since the assert macro doesn't take a heap/context argument, there's
  *  no way to look up a heap/context specific fatal err handler which may have
  *  been given by the application.  Instead, assertion failures always use the
  *  internal default fatal err handler; it can be replaced via duk_config.h
@@ -9839,7 +9839,7 @@ DUK_INTERNAL_DECL duk_bool_t duk_fb_is_full(duk_fixedbuffer *fb);
 
 #endif  /* DUK_USE_ASSERTIONS */
 
-/* this variant is used when an JAK_ASSERT would generate a compile warning by
+/* this variant is used when an assert would generate a compile warning by
  * being always true (e.g. >= 0 comparison for an unsigned value
  */
 #define DUK_ASSERT_DISABLE(x)  do { /* assertion disabled */ } while (0)
@@ -9951,16 +9951,16 @@ DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_error(duk_hthread *thr, const char *
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range_index(duk_hthread *thr, const char *filename, duk_int_t linenumber, duk_idx_t idx));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range_push_beyond(duk_hthread *thr, const char *filename, duk_int_t linenumber));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range(duk_hthread *thr, const char *filename, duk_int_t linenumber, const char *message));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber));
 #else  /* DUK_VERBOSE_ERRORS */
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_error(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_range(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_eval(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_reference(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_syntax(duk_hthread *thr));
-DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_type(duk_hthread *thr));
+DUK_NORETURN(DUK_INTERNAL_DECL void duk_errype(duk_hthread *thr));
 DUK_NORETURN(DUK_INTERNAL_DECL void duk_err_uri(duk_hthread *thr));
 #endif /* DUK_VERBOSE_ERRORS */
 
@@ -11752,13 +11752,13 @@ DUK_INTERNAL DUK_COLD void duk_err_range_index(duk_hthread *thr, const char *fil
 DUK_INTERNAL DUK_COLD void duk_err_range_push_beyond(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_RANGE_ERROR, DUK_STR_PUSH_BEYOND_ALLOC_STACK);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
+DUK_INTERNAL DUK_COLD void duk_errype_invalid_args(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_TYPE_ERROR, DUK_STR_INVALID_ARGS);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
+DUK_INTERNAL DUK_COLD void duk_errype_invalid_state(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_TYPE_ERROR, DUK_STR_INVALID_STATE);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
+DUK_INTERNAL DUK_COLD void duk_errype_invalid_trap_result(duk_hthread *thr, const char *filename, duk_int_t linenumber) {
 	DUK_ERROR_RAW(thr, filename, linenumber, DUK_ERR_TYPE_ERROR, DUK_STR_INVALID_TRAP_RESULT);
 }
 #else
@@ -11785,7 +11785,7 @@ DUK_INTERNAL DUK_COLD void duk_err_reference(duk_hthread *thr) {
 DUK_INTERNAL DUK_COLD void duk_err_syntax(duk_hthread *thr) {
 	duk__err_shared(thr, DUK_ERR_SYNTAX_ERROR);
 }
-DUK_INTERNAL DUK_COLD void duk_err_type(duk_hthread *thr) {
+DUK_INTERNAL DUK_COLD void duk_errype(duk_hthread *thr) {
 	duk__err_shared(thr, DUK_ERR_TYPE_ERROR);
 }
 DUK_INTERNAL DUK_COLD void duk_err_uri(duk_hthread *thr) {
@@ -13591,7 +13591,7 @@ DUK_LOCAL duk_uint8_t *duk__dump_varmap(duk_hthread *thr, duk_uint8_t *p, duk_bu
 
 		/* We know _Varmap only has own properties so walk property
 		 * table directly.  We also know _Varmap is dense and all
-		 * values are numbers; JAK_ASSERT for these.  GC and finalizers
+		 * values are numbers; assert for these.  GC and finalizers
 		 * shouldn't affect _Varmap so side effects should be fine.
 		 */
 		for (i = 0; i < (duk_uint_fast32_t) DUK_HOBJECT_GET_ENEXT(h); i++) {
@@ -13896,7 +13896,7 @@ static duk_uint8_t *duk__load_func(duk_hthread *thr, duk_uint8_t *p, duk_uint8_t
 	DUK_HOBJECT_SET_PROTOTYPE_UPDREF(thr, &h_fun->obj, thr->builtins[DUK_BIDX_FUNCTION_PROTOTYPE]);
 #endif
 
-	/* JAK_ASSERT just a few critical flags */
+	/* assert just a few critical flags */
 	DUK_ASSERT(DUK_HEAPHDR_GET_TYPE((duk_heaphdr *) h_fun) == DUK_HTYPE_OBJECT);
 	DUK_ASSERT(!DUK_HOBJECT_HAS_BOUNDFUNC(&h_fun->obj));
 	DUK_ASSERT(DUK_HOBJECT_HAS_COMPFUNC(&h_fun->obj));
@@ -15548,8 +15548,8 @@ DUK_EXTERNAL void duk_hex_decode(duk_hthread *thr, duk_idx_t idx) {
 		}
 	}
 	for (; i < len; i += 2) {
-		/* First cast to duk_int_t to sign extend, second cast to
-		 * duk_uint_t to avoid signed left shift, and final cast to
+		/* First CAST to duk_int_t to sign extend, second CAST to
+		 * duk_uint_t to avoid signed left shift, and final CAST to
 		 * duk_int_t result type.
 		 */
 		t = (duk_int_t) ((((duk_uint_t) (duk_int_t) duk_hex_dectab[inp[i]]) << 4U) |
@@ -16122,7 +16122,7 @@ DUK_EXTERNAL duk_hthread *duk_create_heap(duk_alloc_function alloc_func,
 	 * cases will now be unsafe.
 	 */
 
-	/* XXX: just JAK_ASSERT non-NULL values here and make caller arguments
+	/* XXX: just assert non-NULL values here and make caller arguments
 	 * do the defaulting to the default implementations (smaller code)?
 	 */
 
@@ -16185,7 +16185,7 @@ DUK_EXTERNAL void duk_suspend(duk_hthread *thr, duk_thread_state *state) {
 
 	/* Currently not supported when called from within a finalizer.
 	 * If that is done, the finalizer will remain running indefinitely,
-	 * preventing other finalizers from executing.  The JAK_ASSERT is a bit
+	 * preventing other finalizers from executing.  The assert is a bit
 	 * wider, checking that it would be OK to run pending finalizers.
 	 */
 	DUK_ASSERT(thr->heap->pf_prevent_count == 0);
@@ -16225,7 +16225,7 @@ DUK_EXTERNAL void duk_resume(duk_hthread *thr, const duk_thread_state *state) {
 	DUK_ASSERT(state != NULL);  /* unvalidated */
 
 	/* Shouldn't be necessary if duk_suspend() is called before
-	 * duk_resume(), but JAK_ASSERT in case API sequence is incorrect.
+	 * duk_resume(), but assert in case API sequence is incorrect.
 	 */
 	DUK_ASSERT(thr->heap->pf_prevent_count == 0);
 	DUK_ASSERT(thr->heap->creating_error == 0);
@@ -18384,7 +18384,7 @@ DUK_LOCAL DUK_COLD DUK_NOINLINE duk_bool_t duk__resize_valstack(duk_hthread *thr
 	DUK_ASSERT(thr->valstack_alloc_end >= thr->valstack_end);
 	DUK_ASSERT((duk_size_t) (thr->valstack_top - thr->valstack) <= new_size);  /* can't resize below 'top' */
 	DUK_ASSERT(new_size <= DUK_USE_VALSTACK_LIMIT);  /* valstack limit caller has check, prevents wrapping */
-	DUK_ASSERT(new_size <= DUK_SIZE_MAX / sizeof(duk_tval));  /* specific JAK_ASSERT for wrapping */
+	DUK_ASSERT(new_size <= DUK_SIZE_MAX / sizeof(duk_tval));  /* specific assert for wrapping */
 
 	/* Pre-realloc pointer copies for asserts and debug logs. */
 	pre_valstack = thr->valstack;
@@ -19242,7 +19242,7 @@ DUK_LOCAL DUK_ALWAYS_INLINE duk_double_t duk__get_number_raw(duk_hthread *thr, d
 	DUK_ASSERT(tv != NULL);
 #if defined(DUK_USE_FASTINT)
 	if (DUK_TVAL_IS_FASTINT(tv)) {
-		ret.d = (duk_double_t) DUK_TVAL_GET_FASTINT(tv);  /* XXX: cast trick */
+		ret.d = (duk_double_t) DUK_TVAL_GET_FASTINT(tv);  /* XXX: CAST trick */
 	}
 	else
 #endif
@@ -20209,7 +20209,7 @@ DUK_EXTERNAL duk_size_t duk_get_length(duk_hthread *thr, duk_idx_t idx) {
 	 * type checks.  Lightfuncs inherit from %NativeFunctionPrototype%
 	 * which provides an inherited .length accessor; it could be overwritten
 	 * to produce unexpected types or values, but just number convert and
-	 * duk_size_t cast for now.
+	 * duk_size_t CAST for now.
 	 */
 	case DUK_TAG_STRING:
 	case DUK_TAG_BUFFER:
@@ -20269,7 +20269,7 @@ DUK_EXTERNAL duk_size_t duk_get_length(duk_hthread *thr, duk_idx_t idx) {
  *
  *  Used internally when we're 100% sure that a certain index is valid and
  *  contains an object of a certain type.  For example, if we duk_push_object()
- *  we can then safely duk_known_hobject(thr, -1).  These helpers just JAK_ASSERT
+ *  we can then safely duk_known_hobject(thr, -1).  These helpers just assert
  *  for the index and type, and if the assumptions are not valid, memory unsafe
  *  behavior happens.
  */
@@ -21362,7 +21362,7 @@ DUK_EXTERNAL void *duk_to_pointer(duk_hthread *thr, duk_idx_t idx) {
 		res = (void *) DUK_TVAL_GET_HEAPHDR(tv);
 		break;
 	case DUK_TAG_LIGHTFUNC:
-		/* Function pointers do not always cast correctly to void *
+		/* Function pointers do not always CAST correctly to void *
 		 * (depends on memory and segmentation model for instance),
 		 * so they coerce to NULL.
 		 */
@@ -22087,7 +22087,7 @@ DUK_EXTERNAL void duk_push_undefined(duk_hthread *thr) {
 	DUK__CHECK_SPACE();
 
 	/* Because value stack init policy is 'undefined above top',
-	 * we don't need to write, just JAK_ASSERT.
+	 * we don't need to write, just assert.
 	 */
 	thr->valstack_top++;
 	DUK_ASSERT(DUK_TVAL_IS_UNDEFINED(thr->valstack_top - 1));
@@ -22708,7 +22708,7 @@ DUK_EXTERNAL duk_idx_t duk_push_bare_array(duk_hthread *thr) {
 }
 
 DUK_INTERNAL duk_harray *duk_push_harray(duk_hthread *thr) {
-	/* XXX: API call could do this directly, cast to void in API macro. */
+	/* XXX: API call could do this directly, CAST to void in API macro. */
 	duk_harray *a;
 
 	DUK_ASSERT_API_ENTRY(thr);
@@ -23445,7 +23445,7 @@ DUK_LOCAL void duk__validate_push_heapptr(duk_hthread *thr, void *ptr) {
 	     curr = DUK_HEAPHDR_GET_NEXT(thr->heap, curr)) {
 		/* FINALIZABLE is set for all objects on finalize_list
 		 * except for an object being finalized right now.  So
-		 * can't JAK_ASSERT here.
+		 * can't assert here.
 		 */
 #if 0
 		DUK_ASSERT(DUK_HEAPHDR_HAS_FINALIZABLE(curr));
@@ -27376,8 +27376,8 @@ DUK_INTERNAL void duk_hbufobj_validated_write(duk_hthread *thr, duk_hbufobj *h_b
 		du.ui[0] = (duk_uint32_t) duk_to_int32(thr, -1);
 		break;
 	case DUK_HBUFOBJ_ELEM_FLOAT32:
-		/* A double-to-float cast is undefined behavior in C99 if
-		 * the cast is out-of-range, so use a helper.  Example:
+		/* A double-to-float CAST is undefined behavior in C99 if
+		 * the CAST is out-of-range, so use a helper.  Example:
 		 * runtime err: value -1e+100 is outside the range of representable values of type 'float'
 		 */
 		du.f[0] = duk_double_to_float_t(duk_to_number_m1(thr));
@@ -29592,7 +29592,7 @@ DUK_INTERNAL duk_ret_t duk_bi_buffer_writefield(duk_hthread *thr) {
 			i_end = field_bytelen - 1;
 		}
 
-		/* XXX: The duk_to_number() cast followed by integer coercion
+		/* XXX: The duk_to_number() CAST followed by integer coercion
 		 * is platform specific so NaN, +/- Infinity, and out-of-bounds
 		 * values result in platform specific output now.
 		 * See: test-bi-nodejs-buffer-proto-varint-special.js
@@ -30470,7 +30470,7 @@ DUK_INTERNAL void duk_bi_date_timeval_to_parts(duk_double_t d, duk_int_t *parts,
 	                     (long) parts[DUK_DATE_IDX_SECOND],
 	                     (long) parts[DUK_DATE_IDX_MILLISECOND]));
 
-	/* This JAK_ASSERT depends on the input parts representing time inside
+	/* This assert depends on the input parts representing time inside
 	 * the ECMAScript range.
 	 */
 	DUK_ASSERT(t2 + DUK__WEEKDAY_MOD_ADDER >= 0);
@@ -31791,7 +31791,7 @@ DUK_INTERNAL duk_int_t duk_bi_date_get_local_tzoffset_gmtime(duk_double_t d) {
 	if (t1 == (time_t) -1 || t2 == (time_t) -1) {
 		/* This check used to be for (t < 0) but on some platforms
 		 * time_t is unsigned and apparently the proper way to detect
-		 * an mktime() err return is the cast above.  See e.g.:
+		 * an mktime() err return is the CAST above.  See e.g.:
 		 * http://pubs.opengroup.org/onlinepubs/009695299/functions/mktime.html
 		 */
 		goto mktime_error;
@@ -34759,8 +34759,8 @@ DUK_LOCAL void duk__dec_req_stridx(duk_json_dec_ctx *js_ctx, duk_small_uint_t st
 DUK_LOCAL duk_small_int_t duk__dec_string_escape(duk_json_dec_ctx *js_ctx, duk_uint8_t **ext_p) {
 	duk_uint_fast32_t cp;
 
-	/* EOF (-1) will be cast to an unsigned value first
-	 * and then re-cast for the switch.  In any case, it
+	/* EOF (-1) will be CAST to an unsigned value first
+	 * and then re-CAST for the switch.  In any case, it
 	 * will match the default case (syntax err).
 	 */
 	cp = (duk_uint_fast32_t) duk__dec_get(js_ctx);
@@ -36780,7 +36780,7 @@ DUK_LOCAL duk_bool_t duk__json_stringify_fast_value(duk_json_enc_ctx *js_ctx, du
 		 */
 
 		/* We rely on a few object flag / class number relationships here,
-		 * JAK_ASSERT for them.
+		 * assert for them.
 		 */
 
 		obj = DUK_TVAL_GET_OBJECT(tv);
@@ -41733,7 +41733,7 @@ DUK_INTERNAL duk_ret_t duk_bi_thread_resume(duk_hthread *ctx) {
 
 	if (thr_resume->state == DUK_HTHREAD_STATE_YIELDED) {
 		/* no pre-checks now, assume a previous yield() has left things in
-		 * tip-top shape (longjmp handler will JAK_ASSERT for these).
+		 * tip-top shape (longjmp handler will assert for these).
 		 */
 	} else {
 		duk_hobject *h_fun;
@@ -45801,7 +45801,7 @@ DUK_INTERNAL duk_bool_t duk_debug_process_messages(duk_hthread *thr, duk_bool_t 
 		if (!DUK_HEAP_HAS_DEBUGGER_PAUSED(thr->heap) || no_block) {
 			if (!duk_debug_read_peek(thr)) {
 				/* Note: peek cannot currently trigger a detach
-				 * so the dbg_detaching == 0 JAK_ASSERT outside the
+				 * so the dbg_detaching == 0 assert outside the
 				 * loop is correct.
 				 */
 				DUK_D(DUK_DPRINT("processing debug message, peek indicated no data, stop processing messages"));
@@ -45832,7 +45832,7 @@ DUK_INTERNAL duk_bool_t duk_debug_process_messages(duk_hthread *thr, duk_bool_t 
 	DUK_DD(DUK_DDPRINT("top at exit: %ld", (long) duk_get_top(thr)));
 
 #if defined(DUK_USE_ASSERTIONS)
-	/* Easy to get wrong, so JAK_ASSERT for it. */
+	/* Easy to get wrong, so assert for it. */
 	DUK_ASSERT(entry_top == duk_get_top(thr));
 #endif
 
@@ -48137,7 +48137,7 @@ duk_heap *duk_heap_alloc(duk_alloc_function alloc_func,
 #endif
 
 	/*
-	 *  Important JAK_ASSERT-like checks that should be enabled even
+	 *  Important assert-like checks that should be enabled even
 	 *  when assertions are otherwise not enabled.
 	 */
 
@@ -48290,7 +48290,7 @@ duk_heap *duk_heap_alloc(duk_alloc_function alloc_func,
 
 	/* The casts through duk_uintptr_t is to avoid the following GCC warning:
 	 *
-	 *   warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	 *   warning: CAST from pointer to integer of different size [-Wpointer-to-int-CAST]
 	 *
 	 * This still generates a /Wp64 warning on VS2010 when compiling for x86.
 	 */
@@ -48744,7 +48744,7 @@ DUK_INTERNAL void duk_heap_process_finalize_list(duk_heap *heap) {
 			DUK_ASSERT(!DUK_HEAPHDR_HAS_FINALIZED(curr));
 			duk_heap_run_finalizer(heap, (duk_hobject *) curr);  /* must never longjmp */
 			DUK_ASSERT(DUK_HEAPHDR_HAS_FINALIZED(curr));
-			/* XXX: JAK_ASSERT that object is still in finalize_list
+			/* XXX: assert that object is still in finalize_list
 			 * when duk_push_heapptr() allows automatic rescue.
 			 */
 
@@ -50115,7 +50115,7 @@ DUK_LOCAL void duk__assert_validity(duk_heap *heap) {
 
 #if defined(DUK_USE_REFERENCE_COUNTING)
 DUK_LOCAL void duk__assert_valid_refcounts_cb(duk_heap *heap, duk_heaphdr *h) {
-	/* Cannot really JAK_ASSERT much w.r.t. refcounts now. */
+	/* Cannot really assert much w.r.t. refcounts now. */
 
 	DUK_UNREF(heap);
 	if (DUK_HEAPHDR_GET_REFCOUNT(h) == 0 &&
@@ -50980,7 +50980,7 @@ DUK_INTERNAL void duk_heap_remove_from_heap_allocated(duk_heap *heap, duk_heaphd
 	DUK_ASSERT(DUK_HEAPHDR_GET_TYPE(hdr) != DUK_HTYPE_STRING);
 
 	/* Target 'hdr' must be in heap_allocated (not e.g. finalize_list).
-	 * If not, heap lists will become corrupted so JAK_ASSERT early for it.
+	 * If not, heap lists will become corrupted so assert early for it.
 	 */
 #if defined(DUK_USE_ASSERTIONS)
 	{
@@ -53109,7 +53109,7 @@ DUK_LOCAL duk_uint_t duk__strtable_litcache_key(const duk_uint8_t *str, duk_uint
 
 	key = (duk_uintptr_t) blen ^ (duk_uintptr_t) str;
 	key &= (duk_uintptr_t) (DUK_USE_LITCACHE_SIZE - 1);  /* Assumes size is power of 2. */
-	/* Due to masking, cast is in 32-bit range. */
+	/* Due to masking, CAST is in 32-bit range. */
 	DUK_ASSERT(key <= DUK_UINT_MAX);
 	return (duk_uint_t) key;
 }
@@ -54838,7 +54838,7 @@ DUK_INTERNAL duk_uint_fast32_t duk_hobject_pc2line_query(duk_hthread *thr, duk_i
  *
  *  Notes:
  *
- *    - It might be tempting to JAK_ASSERT "refcount nonzero" for objects
+ *    - It might be tempting to assert "refcount nonzero" for objects
  *      being operated on, but that's not always correct: objects with
  *      a zero refcount may be operated on by the refcount implementation
  *      (finalization) for instance.  Hence, no refcount assertions are made.
@@ -54907,7 +54907,7 @@ DUK_LOCAL_DECL duk_bool_t duk__get_propdesc(duk_hthread *thr, duk_hobject *obj, 
 DUK_LOCAL_DECL duk_bool_t duk__get_own_propdesc_raw(duk_hthread *thr, duk_hobject *obj, duk_hstring *key, duk_uint32_t arr_idx, duk_propdesc *out_desc, duk_small_uint_t flags);
 
 DUK_LOCAL_DECL void duk__abandon_array_part(duk_hthread *thr, duk_hobject *obj);
-DUK_LOCAL_DECL void duk__grow_props_for_array_item(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx);
+DUK_LOCAL_DECL void duk__grow_props_for_arrayem(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx);
 
 /*
  *  Misc helpers
@@ -55264,7 +55264,7 @@ DUK_LOCAL duk_tval *duk__obtain_arridx_slot_slowpath(duk_hthread *thr, duk_uint3
 	 * because abandoned arrays have a higher per-entry footprint.
 	 */
 
-	duk__grow_props_for_array_item(thr, obj, arr_idx);
+	duk__grow_props_for_arrayem(thr, obj, arr_idx);
 
 	DUK_ASSERT(DUK_HOBJECT_HAS_ARRAY_PART(obj));
 	DUK_ASSERT(arr_idx < DUK_HOBJECT_GET_ASIZE(obj));
@@ -55553,7 +55553,7 @@ DUK_INTERNAL void duk_hobject_realloc_props(duk_hthread *thr,
 
 #if defined(DUK_USE_ASSERTIONS)
 	/* Whole path must be err throw free, but we may be called from
-	 * within err handling so can't JAK_ASSERT for error_not_allowed == 0.
+	 * within err handling so can't assert for error_not_allowed == 0.
 	 */
 	prev_error_not_allowed = thr->heap->error_not_allowed;
 	thr->heap->error_not_allowed = 1;
@@ -55968,7 +55968,7 @@ DUK_LOCAL void duk__grow_props_for_new_entry_item(duk_hthread *thr, duk_hobject 
 }
 
 /* Grow array part for a new highest array index. */
-DUK_LOCAL void duk__grow_props_for_array_item(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx) {
+DUK_LOCAL void duk__grow_props_for_arrayem(duk_hthread *thr, duk_hobject *obj, duk_uint32_t highest_arr_idx) {
 	duk_uint32_t new_e_size;
 	duk_uint32_t new_a_size;
 	duk_uint32_t new_a_size_minimum;
@@ -56947,7 +56947,7 @@ DUK_LOCAL duk_bool_t duk__get_own_propdesc_raw(duk_hthread *thr, duk_hobject *ob
 		 * there may be an accessor property (or a plain property) in
 		 * place with magic behavior removed.  This happens e.g. when
 		 * a magic property is redefined with defineProperty().
-		 * Cannot JAK_ASSERT for "not accessor" here.
+		 * Cannot assert for "not accessor" here.
 		 */
 
 		/* replaces top of stack with new value if necessary */
@@ -57792,7 +57792,7 @@ DUK_INTERNAL duk_bool_t duk_hobject_getprop(duk_hthread *thr, duk_tval *tv_obj, 
 			if (h &&
 			    DUK_HOBJECT_IS_FUNCTION(h) &&
 			    DUK_HOBJECT_HAS_STRICT(h)) {
-				/* XXX: sufficient to check 'strict', JAK_ASSERT for 'is function' */
+				/* XXX: sufficient to check 'strict', assert for 'is function' */
 				DUK_ERROR_TYPE(thr, DUK_STR_STRICT_CALLER_READ);
 				DUK_WO_NORETURN(return 0;);
 			}
@@ -59579,7 +59579,7 @@ DUK_INTERNAL void duk_hobject_define_property_internal(duk_hthread *thr, duk_hob
 				DUK_DDD(DUK_DDDPRINT("property already exists in the array part -> skip as requested"));
 				goto pop_exit;
 			}
-			DUK_DDD(DUK_DDDPRINT("property already exists in the array part -> update value (JAK_ASSERT attributes)"));
+			DUK_DDD(DUK_DDDPRINT("property already exists in the array part -> update value (assert attributes)"));
 			if (propflags != DUK_PROPDESC_FLAGS_WEC) {
 				DUK_D(DUK_DPRINT("existing property in array part, but propflags not WEC (0x%02lx)",
 				                 (unsigned long) propflags));
@@ -59613,7 +59613,7 @@ DUK_INTERNAL void duk_hobject_define_property_internal(duk_hthread *thr, duk_hob
 
 	if (DUK_HOBJECT_HAS_ARRAY_PART(obj)) {
 		if (arr_idx != DUK__NO_ARRAY_INDEX) {
-			DUK_DDD(DUK_DDDPRINT("property does not exist, object has array part -> possibly extend array part and write value (JAK_ASSERT attributes)"));
+			DUK_DDD(DUK_DDDPRINT("property does not exist, object has array part -> possibly extend array part and write value (assert attributes)"));
 			DUK_ASSERT(propflags == DUK_PROPDESC_FLAGS_WEC);
 
 			tv1 = duk__obtain_arridx_slot(thr, arr_idx, obj);
@@ -61570,7 +61570,7 @@ DUK_INTERNAL void duk_hthread_create_builtin_objects(duk_hthread *thr) {
 
 			/* Currently all built-in native functions are strict.
 			 * duk_push_c_function() now sets strict flag, so
-			 * JAK_ASSERT for it.
+			 * assert for it.
 			 */
 			DUK_ASSERT(DUK_HOBJECT_HAS_STRICT(h));
 
@@ -63382,7 +63382,7 @@ DUK_INTERNAL void duk_call_construct_postprocess(duk_hthread *thr, duk_small_uin
 	 * stack reflects the caller which is correct.  Skip topmost, unwound
 	 * activation when creating a traceback.  If thr->ptr_curr_pc was !=
 	 * NULL we'd need to sync the current PC so that the traceback comes
-	 * out right; however it is always synced here so just JAK_ASSERT for it.
+	 * out right; however it is always synced here so just assert for it.
 	 */
 	DUK_ASSERT(thr->ptr_curr_pc == NULL);
 	duk_err_augment_error_create(thr, thr, NULL, 0, DUK_AUGMENT_FLAG_NOBLAME_FILELINE |
@@ -64363,7 +64363,7 @@ DUK_LOCAL duk_small_uint_t duk__call_setup_act_attempt_tailcall(duk_hthread *thr
 	DUK_ASSERT(((act->flags & DUK_ACT_FLAG_CONSTRUCT_PROXY) && (call_flags & DUK_CALL_FLAG_CONSTRUCT_PROXY)) ||
 	           (!(act->flags & DUK_ACT_FLAG_CONSTRUCT_PROXY) && !(call_flags & DUK_CALL_FLAG_CONSTRUCT_PROXY)));
 	if (DUK_HOBJECT_HAS_NOTAIL(func)) {
-		/* See: test-bug-tailcall-preventyield-JAK_ASSERT.c. */
+		/* See: test-bug-tailcall-preventyield-assert.c. */
 		DUK_DDD(DUK_DDDPRINT("tail call prevented by function having a notail flag"));
 		return 0;
 	}
@@ -65207,7 +65207,7 @@ DUK_LOCAL duk_int_t duk__handle_call_raw(duk_hthread *thr,
 	DUK_HEAP_SWITCH_THREAD(thr->heap, entry_curr_thread);  /* may be NULL */
 	thr->state = (duk_uint8_t) entry_thread_state;
 
-	/* Disabled JAK_ASSERT: triggered with some torture tests. */
+	/* Disabled assert: triggered with some torture tests. */
 #if 0
 	DUK_ASSERT((thr->state == DUK_HTHREAD_STATE_INACTIVE && thr->heap->curr_thread == NULL) ||  /* first call */
 	           (thr->state == DUK_HTHREAD_STATE_INACTIVE && thr->heap->curr_thread != NULL) ||  /* other call */
@@ -65373,7 +65373,7 @@ DUK_LOCAL void duk__handle_safe_call_error(duk_hthread *thr,
 	DUK_ASSERT(thr->heap->lj.type == DUK_LJ_TYPE_THROW);
 	DUK_ASSERT_LJSTATE_SET(thr->heap);
 
-	/* Either pointer may be NULL (at entry), so don't JAK_ASSERT. */
+	/* Either pointer may be NULL (at entry), so don't assert. */
 	thr->heap->lj.jmpbuf_ptr = old_jmpbuf_ptr;
 
 	/* XXX: callstack unwind may now throw an err when closing
@@ -65575,7 +65575,7 @@ DUK_INTERNAL duk_int_t duk_handle_safe_call(duk_hthread *thr,
 
 		DUK_STATS_INC(thr->heap, stats_safecall_nothrow);
 
-		/* Either pointer may be NULL (at entry), so don't JAK_ASSERT */
+		/* Either pointer may be NULL (at entry), so don't assert */
 		thr->heap->lj.jmpbuf_ptr = old_jmpbuf_ptr;
 
 		/* If calls happen inside the safe call, these are restored by
@@ -66027,7 +66027,7 @@ DUK_LOCAL_DECL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, d
 #define DUK__FUNC_FLAG_GETSET          (1 << 1)   /* Parsing an object literal getter/setter. */
 #define DUK__FUNC_FLAG_METDEF          (1 << 2)   /* Parsing an object literal method definition shorthand. */
 #define DUK__FUNC_FLAG_PUSHNAME_PASS1  (1 << 3)   /* Push function name when creating template (first pass only). */
-#define DUK__FUNC_FLAG_USE_PREVTOKEN   (1 << 4)   /* Use prev_token to start function parsing (workaround for object literal). */
+#define DUK__FUNC_FLAG_USE_PREVTOKEN   (1 << 4)   /* Use prevoken to start function parsing (workaround for object literal). */
 
 /*
  *  Parser control values for tokens.  The token table is ordered by the
@@ -66258,7 +66258,7 @@ DUK_LOCAL void duk__advance_helper(duk_compiler_ctx *comp_ctx, duk_small_int_t e
 	}
 
 	/* make current token the previous; need to fiddle with valstack "backing store" */
-	duk_memcpy(&comp_ctx->prev_token, &comp_ctx->curr_token, sizeof(duk_token));
+	duk_memcpy(&comp_ctx->prevoken, &comp_ctx->curr_token, sizeof(duk_token));
 	duk_copy(thr, comp_ctx->tok11_idx, comp_ctx->tok21_idx);
 	duk_copy(thr, comp_ctx->tok12_idx, comp_ctx->tok22_idx);
 
@@ -66276,10 +66276,10 @@ DUK_LOCAL void duk__advance_helper(duk_compiler_ctx *comp_ctx, duk_small_int_t e
 	                     (long) comp_ctx->curr_token.lineterm,
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok11_idx),
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok12_idx),
-	                     (long) comp_ctx->prev_token.t,
-	                     (long) comp_ctx->prev_token.t_nores,
-	                     (long) comp_ctx->prev_token.start_line,
-	                     (long) comp_ctx->prev_token.lineterm,
+	                     (long) comp_ctx->prevoken.t,
+	                     (long) comp_ctx->prevoken.t_nores,
+	                     (long) comp_ctx->prevoken.start_line,
+	                     (long) comp_ctx->prevoken.lineterm,
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok21_idx),
 	                     (duk_tval *) duk_get_tval(thr, comp_ctx->tok22_idx)));
 }
@@ -66897,10 +66897,10 @@ DUK_LOCAL void duk__emit(duk_compiler_ctx *comp_ctx, duk_instr_t ins) {
 #endif
 	duk_compiler_instr *instr;
 
-	DUK_DDD(DUK_DDDPRINT("duk__emit: 0x%08lx curr_token.start_line=%ld prev_token.start_line=%ld pc=%ld --> %!I",
+	DUK_DDD(DUK_DDDPRINT("duk__emit: 0x%08lx curr_token.start_line=%ld prevoken.start_line=%ld pc=%ld --> %!I",
 	                     (unsigned long) ins,
 	                     (long) comp_ctx->curr_token.start_line,
-	                     (long) comp_ctx->prev_token.start_line,
+	                     (long) comp_ctx->prevoken.start_line,
 	                     (long) duk__get_current_pc(comp_ctx),
 	                     (duk_instr_t) ins));
 
@@ -66913,11 +66913,11 @@ DUK_LOCAL void duk__emit(duk_compiler_ctx *comp_ctx, duk_instr_t ins) {
 	 * they have parsed a token (say a terminating semicolon) and called
 	 * duk__advance().  In this case the line number of the previous
 	 * token is the most accurate one (except in prologue where
-	 * prev_token.start_line is 0).  This is probably not 100% correct
+	 * prevoken.start_line is 0).  This is probably not 100% correct
 	 * right now.
 	 */
 	/* approximation, close enough */
-	line = comp_ctx->prev_token.start_line;
+	line = comp_ctx->prevoken.start_line;
 	if (line == 0) {
 		line = comp_ctx->curr_token.start_line;
 	}
@@ -67492,11 +67492,11 @@ DUK_LOCAL void duk__patch_jump(duk_compiler_ctx *comp_ctx, duk_int_t jump_pc, du
 	}
 	DUK_ASSERT(jump_pc >= 0);
 
-	/* XXX: range JAK_ASSERT */
+	/* XXX: range assert */
 	instr = duk__get_instr_ptr(comp_ctx, jump_pc);
 	DUK_ASSERT(instr != NULL);
 
-	/* XXX: range JAK_ASSERT */
+	/* XXX: range assert */
 	offset = target_pc - jump_pc - 1;
 
 	instr->ins = DUK_ENC_OP_ABC(DUK_OP_JUMP, offset + DUK_BC_JUMP_BIAS);
@@ -67522,7 +67522,7 @@ DUK_LOCAL void duk__patch_trycatch(duk_compiler_ctx *comp_ctx, duk_int_t ldconst
 		if (reg_catch > DUK_BC_BC_MAX || const_varname > DUK_BC_BC_MAX) {
 			/* Catch attempts to use out-of-range reg/const.  Without this
 			 * check Duktape 0.12.0 could generate invalid code which caused
-			 * an JAK_ASSERT failure on execution.  This err is triggered e.g.
+			 * an assert failure on execution.  This err is triggered e.g.
 			 * for functions with a lot of constants and a try-catch statement.
 			 * Shuffling or opcode semantics change is needed to fix the issue.
 			 * See: test-bug-trycatch-many-constants.js.
@@ -67580,7 +67580,7 @@ DUK_LOCAL void duk__peephole_optimize_bytecode(duk_compiler_ctx *comp_ctx) {
 
 	bc = (duk_compiler_instr *) (void *) DUK_BW_GET_BASEPTR(comp_ctx->thr, &comp_ctx->curr_func.bw_code);
 #if defined(DUK_USE_BUFLEN16)
-	/* No need to JAK_ASSERT, buffer size maximum is 0xffff. */
+	/* No need to assert, buffer size maximum is 0xffff. */
 #else
 	DUK_ASSERT((duk_size_t) DUK_BW_GET_SIZE(comp_ctx->thr, &comp_ctx->curr_func.bw_code) / sizeof(duk_compiler_instr) <= (duk_size_t) DUK_INT_MAX);  /* bytecode limits */
 #endif
@@ -68591,8 +68591,8 @@ DUK_LOCAL void duk__reset_labels_to_length(duk_compiler_ctx *comp_ctx, duk_size_
 /*
  *  Expression parsing: duk__expr_nud(), duk__expr_led(), duk__expr_lbp(), and helpers.
  *
- *  - duk__expr_nud(): ("null denotation"): process prev_token as a "start" of an expression (e.g. literal)
- *  - duk__expr_led(): ("left denotation"): process prev_token in the "middle" of an expression (e.g. operator)
+ *  - duk__expr_nud(): ("null denotation"): process prevoken as a "start" of an expression (e.g. literal)
+ *  - duk__expr_led(): ("left denotation"): process prevoken in the "middle" of an expression (e.g. operator)
  *  - duk__expr_lbp(): ("left-binding power"): return left-binding power of curr_token
  */
 
@@ -68618,7 +68618,7 @@ DUK_LOCAL void duk__nud_array_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *re
 #endif
 
 	/* DUK_TOK_LBRACKET already eaten, current token is right after that */
-	DUK_ASSERT(comp_ctx->prev_token.t == DUK_TOK_LBRACKET);
+	DUK_ASSERT(comp_ctx->prevoken.t == DUK_TOK_LBRACKET);
 
 	max_init_values = DUK__MAX_ARRAY_INIT_VALUES;  /* XXX: depend on available temps? */
 
@@ -68823,7 +68823,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 	duk_compiler_instr *instr;
 #endif
 
-	DUK_ASSERT(comp_ctx->prev_token.t == DUK_TOK_LCURLY);
+	DUK_ASSERT(comp_ctx->prevoken.t == DUK_TOK_LCURLY);
 
 	max_init_pairs = DUK__MAX_OBJECT_INIT_PAIRS;  /* XXX: depend on available temps? */
 
@@ -68910,10 +68910,10 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 		 * identifier string content.
 		 */
 
-		is_get = (comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
-		          comp_ctx->prev_token.str1 == DUK_HTHREAD_STRING_GET(thr));
-		is_set = (comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
-		          comp_ctx->prev_token.str1 == DUK_HTHREAD_STRING_SET(thr));
+		is_get = (comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
+		          comp_ctx->prevoken.str1 == DUK_HTHREAD_STRING_GET(thr));
+		is_set = (comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
+		          comp_ctx->prevoken.str1 == DUK_HTHREAD_STRING_SET(thr));
 		if ((is_get || is_set) && comp_ctx->curr_token.t != DUK_TOK_COLON) {
 			/* getter/setter */
 			duk_int_t fnum;
@@ -68945,22 +68945,22 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 
 			DUK_ASSERT(st.num_pairs == 0);  /* temp state is reset on next loop */
 #if defined(DUK_USE_ES6)
-		} else if (comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
+		} else if (comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
 		           (comp_ctx->curr_token.t == DUK_TOK_COMMA || comp_ctx->curr_token.t == DUK_TOK_RCURLY)) {
 			duk_bool_t load_rc;
 
-			load_rc = duk__objlit_load_key(comp_ctx, res, &comp_ctx->prev_token, reg_temp);
+			load_rc = duk__objlit_load_key(comp_ctx, res, &comp_ctx->prevoken, reg_temp);
 			DUK_UNREF(load_rc);
 			DUK_ASSERT(load_rc == 0);  /* always succeeds because token is identifier */
 
-			duk__ivalue_var_hstring(comp_ctx, res, comp_ctx->prev_token.str1);
+			duk__ivalue_var_hstring(comp_ctx, res, comp_ctx->prevoken.str1);
 			DUK_ASSERT(DUK__GETTEMP(comp_ctx) == reg_temp + 1);
 			duk__ivalue_toforcedreg(comp_ctx, res, reg_temp + 1);
 
 			st.num_pairs++;
-		} else if ((comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER ||
-		            comp_ctx->prev_token.t == DUK_TOK_STRING ||
-		            comp_ctx->prev_token.t == DUK_TOK_NUMBER) &&
+		} else if ((comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER ||
+		            comp_ctx->prevoken.t == DUK_TOK_STRING ||
+		            comp_ctx->prevoken.t == DUK_TOK_NUMBER) &&
 		           comp_ctx->curr_token.t == DUK_TOK_LPAREN) {
 			duk_int_t fnum;
 
@@ -68971,7 +68971,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 			 * current or the previous token to starting parsing from.
 			 */
 
-			if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prev_token, reg_temp) != 0) {
+			if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prevoken, reg_temp) != 0) {
 				goto syntax_error;
 			}
 
@@ -68986,7 +68986,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 #endif  /* DUK_USE_ES6 */
 		} else {
 #if defined(DUK_USE_ES6)
-			if (comp_ctx->prev_token.t == DUK_TOK_LBRACKET) {
+			if (comp_ctx->prevoken.t == DUK_TOK_LBRACKET) {
 				/* ES2015 computed property name.  Executor ToPropertyKey()
 				 * coerces the key at runtime.
 				 */
@@ -69004,7 +69004,7 @@ DUK_LOCAL void duk__nud_object_literal(duk_compiler_ctx *comp_ctx, duk_ivalue *r
 			else
 #endif  /* DUK_USE_ES6 */
 			{
-				if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prev_token, reg_temp) != 0) {
+				if (duk__objlit_load_key(comp_ctx, res, &comp_ctx->prevoken, reg_temp) != 0) {
 					goto syntax_error;
 				}
 			}
@@ -69055,8 +69055,8 @@ DUK_LOCAL duk_int_t duk__parse_arguments(duk_compiler_ctx *comp_ctx, duk_ivalue 
 
 	/* Note: expect that caller has already eaten the left paren */
 
-	DUK_DDD(DUK_DDDPRINT("start parsing arguments, prev_token.t=%ld, curr_token.t=%ld",
-	                     (long) comp_ctx->prev_token.t, (long) comp_ctx->curr_token.t));
+	DUK_DDD(DUK_DDDPRINT("start parsing arguments, prevoken.t=%ld, curr_token.t=%ld",
+	                     (long) comp_ctx->prevoken.t, (long) comp_ctx->curr_token.t));
 
 	for (;;) {
 		if (comp_ctx->curr_token.t == DUK_TOK_RPAREN) {
@@ -69107,7 +69107,7 @@ DUK_LOCAL void duk__expr_nud(duk_compiler_ctx *comp_ctx, duk_ivalue *res) {
 	duk_uint32_t args;  /* temp variable to pass constants and flags to shared code */
 
 	/*
-	 *  ctx->prev_token     token to process with duk__expr_nud()
+	 *  ctx->prevoken     token to process with duk__expr_nud()
 	 *  ctx->curr_token     updated by caller
 	 *
 	 *  Note: the token in the switch below has already been eaten.
@@ -69117,11 +69117,11 @@ DUK_LOCAL void duk__expr_nud(duk_compiler_ctx *comp_ctx, duk_ivalue *res) {
 
 	comp_ctx->curr_func.nud_count++;
 
-	tk = &comp_ctx->prev_token;
+	tk = &comp_ctx->prevoken;
 	tok = tk->t;
 	res->t = DUK_IVAL_NONE;
 
-	DUK_DDD(DUK_DDDPRINT("duk__expr_nud(), prev_token.t=%ld, allow_in=%ld, paren_level=%ld",
+	DUK_DDD(DUK_DDDPRINT("duk__expr_nud(), prevoken.t=%ld, allow_in=%ld, paren_level=%ld",
 	                     (long) tk->t, (long) comp_ctx->curr_func.allow_in, (long) comp_ctx->curr_func.paren_level));
 
 	switch (tok) {
@@ -69642,17 +69642,17 @@ DUK_LOCAL void duk__expr_led(duk_compiler_ctx *comp_ctx, duk_ivalue *left, duk_i
 	duk_uint32_t args;  /* temp variable to pass constants and flags to shared code */
 
 	/*
-	 *  ctx->prev_token     token to process with duk__expr_led()
+	 *  ctx->prevoken     token to process with duk__expr_led()
 	 *  ctx->curr_token     updated by caller
 	 */
 
 	comp_ctx->curr_func.led_count++;
 
 	/* The token in the switch has already been eaten here */
-	tk = &comp_ctx->prev_token;
+	tk = &comp_ctx->prevoken;
 	tok = tk->t;
 
-	DUK_DDD(DUK_DDDPRINT("duk__expr_led(), prev_token.t=%ld, allow_in=%ld, paren_level=%ld",
+	DUK_DDD(DUK_DDDPRINT("duk__expr_led(), prevoken.t=%ld, allow_in=%ld, paren_level=%ld",
 	                     (long) tk->t, (long) comp_ctx->curr_func.allow_in, (long) comp_ctx->curr_func.paren_level));
 
 	/* XXX: default priority for infix operators is duk__expr_lbp(tok) -> get it here? */
@@ -72415,7 +72415,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 		                comp_ctx->curr_func.led_count == 0);   /* no operators */
 
 		if (single_token &&
-		    comp_ctx->prev_token.t == DUK_TOK_IDENTIFIER &&
+		    comp_ctx->prevoken.t == DUK_TOK_IDENTIFIER &&
 		    comp_ctx->curr_token.t == DUK_TOK_COLON) {
 			/*
 			 *  Detected label
@@ -72427,7 +72427,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 			DUK_ASSERT(res->t == DUK_IVAL_VAR);
 			DUK_ASSERT(res->x1.t == DUK_ISPEC_VALUE);
 			DUK_ASSERT(DUK_TVAL_IS_STRING(duk_get_tval(thr, res->x1.valstack_idx)));
-			h_lab = comp_ctx->prev_token.str1;
+			h_lab = comp_ctx->prevoken.str1;
 			DUK_ASSERT(h_lab != NULL);
 
 			DUK_DDD(DUK_DDDPRINT("explicit label site for label '%!O'",
@@ -72455,7 +72455,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 
 		if (dir_prol_at_entry &&                           /* still in prologue */
 		    single_token &&                                /* single string token */
-		    comp_ctx->prev_token.t == DUK_TOK_STRING) {
+		    comp_ctx->prevoken.t == DUK_TOK_STRING) {
 			/*
 			 *  Detected a directive
 			 */
@@ -72465,7 +72465,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 			DUK_ASSERT(res->t == DUK_IVAL_PLAIN);
 			DUK_ASSERT(res->x1.t == DUK_ISPEC_VALUE);
 			DUK_ASSERT(DUK_TVAL_IS_STRING(duk_get_tval(thr, res->x1.valstack_idx)));
-			h_dir = comp_ctx->prev_token.str1;
+			h_dir = comp_ctx->prevoken.str1;
 			DUK_ASSERT(h_dir != NULL);
 
 			DUK_DDD(DUK_DDDPRINT("potential directive: %!O", h_dir));
@@ -72474,7 +72474,7 @@ DUK_LOCAL void duk__parse_stmt(duk_compiler_ctx *comp_ctx, duk_ivalue *res, duk_
 
 			/* Note: escaped characters differentiate directives */
 
-			if (comp_ctx->prev_token.num_escapes > 0) {
+			if (comp_ctx->prevoken.num_escapes > 0) {
 				DUK_DDD(DUK_DDDPRINT("directive contains escapes: valid directive "
 				                     "but we ignore such directives"));
 			} else {
@@ -73154,7 +73154,7 @@ DUK_LOCAL void duk__parse_func_body(duk_compiler_ctx *comp_ctx, duk_bool_t expec
 		DUK_DDD(DUK_DDDPRINT("rewind lexer"));
 		DUK_LEXER_SETPOINT(&comp_ctx->lex, &lex_pt);
 		comp_ctx->curr_token.t = 0;  /* this is needed for regexp mode */
-		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prev_token.start_line) */
+		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prevoken.start_line) */
 		duk__advance(comp_ctx);
 
 		/*
@@ -73186,7 +73186,7 @@ DUK_LOCAL void duk__parse_func_body(duk_compiler_ctx *comp_ctx, duk_bool_t expec
 		func->stmt_next = 0;
 		func->label_next = 0;
 
-		/* XXX: init or JAK_ASSERT catch depth etc -- all values */
+		/* XXX: init or assert catch depth etc -- all values */
 		func->id_access_arguments = 0;
 		func->id_access_slow = 0;
 		func->id_access_slow_own = 0;
@@ -73384,14 +73384,14 @@ DUK_LOCAL void duk__parse_func_like_raw(duk_compiler_ctx *comp_ctx, duk_small_ui
 	 *  it is a PropertyName which allows reserved words and also
 	 *  strings and numbers (e.g. "{ get 1() { ... } }").
 	 *
-	 *  Function parsing may start either from prev_token or curr_token
-	 *  (object literal method definition uses prev_token for example).
+	 *  Function parsing may start either from prevoken or curr_token
+	 *  (object literal method definition uses prevoken for example).
 	 *  This is dealt with for the initial token.
 	 */
 
 	no_advance = (flags & DUK__FUNC_FLAG_USE_PREVTOKEN);
 	if (no_advance) {
-		tok = &comp_ctx->prev_token;
+		tok = &comp_ctx->prevoken;
 	} else {
 		tok = &comp_ctx->curr_token;
 	}
@@ -73508,7 +73508,7 @@ DUK_LOCAL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, duk_sm
 
 		DUK_LEXER_SETPOINT(&comp_ctx->lex, &lex_pt);
 		comp_ctx->curr_token.t = 0;  /* this is needed for regexp mode */
-		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prev_token.start_line) */
+		comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prevoken.start_line) */
 		duk__advance(comp_ctx);
 
 		/* RegExp is not allowed after a function expression, e.g. in
@@ -73562,13 +73562,13 @@ DUK_LOCAL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, duk_sm
 
 	duk__parse_func_like_raw(comp_ctx, flags);  /* pushes function template */
 
-	/* prev_token.start_offset points to the closing brace here; when skipping
+	/* prevoken.start_offset points to the closing brace here; when skipping
 	 * we're going to reparse the closing brace to ensure semicolon insertion
 	 * etc work as expected.
 	 */
-	DUK_DDD(DUK_DDDPRINT("after func: prev_tok.start_offset=%ld, curr_tok.start_offset=%ld",
-	                     (long) comp_ctx->prev_token.start_offset, (long) comp_ctx->curr_token.start_offset));
-	DUK_ASSERT(comp_ctx->lex.input[comp_ctx->prev_token.start_offset] == (duk_uint8_t) DUK_ASC_RCURLY);
+	DUK_DDD(DUK_DDDPRINT("after func: prevok.start_offset=%ld, curr_tok.start_offset=%ld",
+	                     (long) comp_ctx->prevoken.start_offset, (long) comp_ctx->curr_token.start_offset));
+	DUK_ASSERT(comp_ctx->lex.input[comp_ctx->prevoken.start_offset] == (duk_uint8_t) DUK_ASC_RCURLY);
 
 	/* XXX: append primitive */
 	DUK_ASSERT(duk_get_length(thr, old_func.funcs_idx) == (duk_size_t) (old_func.fnum_next * 3));
@@ -73581,9 +73581,9 @@ DUK_LOCAL duk_int_t duk__parse_func_like_fnum(duk_compiler_ctx *comp_ctx, duk_sm
 
 	/* array writes autoincrement length */
 	(void) duk_put_prop_index(thr, old_func.funcs_idx, (duk_uarridx_t) (fnum * 3));
-	duk_push_size_t(thr, comp_ctx->prev_token.start_offset);
+	duk_push_size_t(thr, comp_ctx->prevoken.start_offset);
 	(void) duk_put_prop_index(thr, old_func.funcs_idx, (duk_uarridx_t) (fnum * 3 + 1));
-	duk_push_int(thr, comp_ctx->prev_token.start_line);
+	duk_push_int(thr, comp_ctx->prevoken.start_line);
 	(void) duk_put_prop_index(thr, old_func.funcs_idx, (duk_uarridx_t) (fnum * 3 + 2));
 
 	/*
@@ -73663,8 +73663,8 @@ DUK_LOCAL duk_ret_t duk__js_compile_raw(duk_hthread *thr, void *udata) {
 #if defined(DUK_USE_EXPLICIT_NULL_INIT)
 	comp_ctx->thr = NULL;
 	comp_ctx->h_filename = NULL;
-	comp_ctx->prev_token.str1 = NULL;
-	comp_ctx->prev_token.str2 = NULL;
+	comp_ctx->prevoken.str1 = NULL;
+	comp_ctx->prevoken.str2 = NULL;
 	comp_ctx->curr_token.str1 = NULL;
 	comp_ctx->curr_token.str2 = NULL;
 #endif
@@ -73700,7 +73700,7 @@ DUK_LOCAL duk_ret_t duk__js_compile_raw(duk_hthread *thr, void *udata) {
 	lex_pt->offset = 0;
 	lex_pt->line = 1;
 	DUK_LEXER_SETPOINT(&comp_ctx->lex, lex_pt);    /* fills window */
-	comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prev_token.start_line) */
+	comp_ctx->curr_token.start_line = 0;  /* needed for line number tracking (becomes prevoken.start_line) */
 
 	/*
 	 *  Initialize function state for a zero-argument function
@@ -74242,7 +74242,7 @@ DUK_LOCAL DUK__INLINE_PERF void duk__vm_bitwise_binary_op(duk_hthread *thr, duk_
 	/*
 	 *  Binary bitwise operations use different coercions (ToInt32, ToUint32)
 	 *  depending on the operation.  We coerce the arguments first using
-	 *  ToInt32(), and then cast to an 32-bit value if necessary.  Note that
+	 *  ToInt32(), and then CAST to an 32-bit value if necessary.  Note that
 	 *  such casts must be correct even if there is no native 32-bit type
 	 *  (e.g., duk_int32_t and duk_uint32_t are 64-bit).
 	 *
@@ -75166,7 +75166,7 @@ DUK_LOCAL duk_small_uint_t duk__handle_longjmp(duk_hthread *thr, duk_activation 
 
 		/* duk_bi_duk_object_yield() and duk_bi_duk_object_resume() ensure all of these are met */
 
-#if 0  /* entry_thread not available for JAK_ASSERT */
+#if 0  /* entry_thread not available for assert */
 		DUK_ASSERT(thr != entry_thread);                                                                             /* Duktape.Thread.yield() should prevent */
 #endif
 		DUK_ASSERT(thr->state == DUK_HTHREAD_STATE_RUNNING);                                                         /* unchanged from Duktape.Thread.yield() */
@@ -76540,7 +76540,7 @@ DUK_LOCAL DUK__NOINLINE_PERF duk_small_uint_t duk__handle_op_nextenum(duk_hthrea
 	                     (duk_tval *) duk_get_tval(thr, (duk_idx_t) c)));
 
 	if (duk_is_object(thr, (duk_idx_t) c)) {
-		/* XXX: JAK_ASSERT 'c' is an enumerator */
+		/* XXX: assert 'c' is an enumerator */
 		duk_dup(thr, (duk_idx_t) c);
 		if (duk_hobject_enumerator_next(thr, 0 /*get_value*/)) {
 			/* [ ... enum ] -> [ ... next_key ] */
@@ -77149,7 +77149,7 @@ DUK_LOCAL DUK_NOINLINE DUK_HOT void duk__js_execute_bytecode_inner(duk_hthread *
 #endif
 
 #if defined(DUK_USE_ASSERTIONS)
-		/* Quite heavy JAK_ASSERT: check valstack policy.  Improper
+		/* Quite heavy assert: check valstack policy.  Improper
 		 * shuffle instructions can write beyond valstack_top/end
 		 * so this check catches them in the act.
 		 */
@@ -78378,7 +78378,7 @@ DUK_LOCAL DUK_NOINLINE DUK_HOT void duk__js_execute_bytecode_inner(duk_hthread *
 		}
 
 		case DUK_OP_JUMP: {
-			/* Note: without explicit cast to signed, MSVC will
+			/* Note: without explicit CAST to signed, MSVC will
 			 * apparently generate a large positive jump when the
 			 * bias-corrected value would normally be negative.
 			 */
@@ -83040,7 +83040,7 @@ DUK_LOCAL duk_codepoint_t duk__hexval_validate(duk_codepoint_t x) {
 }
 
 /* Just a wrapper for call sites where 'x' is known to be valid so
- * we JAK_ASSERT for it before decoding.
+ * we assert for it before decoding.
  */
 DUK_LOCAL duk_codepoint_t duk__hexval(duk_codepoint_t x) {
 	duk_codepoint_t ret;
@@ -86276,8 +86276,8 @@ DUK_LOCAL void duk__dragon4_ctx_to_double(duk__numconv_stringify_ctx *nc_ctx, du
 
 	DUK_ASSERT(nc_ctx->count == 53 + 1);
 
-	/* Sometimes this JAK_ASSERT is not true right now; it will be true after
-	 * rounding.  See: test-bug-numconv-mantissa-JAK_ASSERT.js.
+	/* Sometimes this assert is not true right now; it will be true after
+	 * rounding.  See: test-bug-numconv-mantissa-assert.js.
 	 */
 	DUK_ASSERT_DISABLE(nc_ctx->digits[0] == 1);  /* zero handled by caller */
 
@@ -87235,7 +87235,7 @@ typedef struct {
  */
 
 /* XXX: the insert helpers should ensure that the bytecode result is not
- * larger than expected (or at least JAK_ASSERT for it).  Many things in the
+ * larger than expected (or at least assert for it).  Many things in the
  * bytecode, like skip offsets, won't work correctly if the bytecode is
  * larger than say 2G.
  */
@@ -90004,7 +90004,7 @@ DUK_LOCAL duk_uint_t duk__selftest_64bit_arithmetic(void) {
 	volatile duk_int64_t i;
 	volatile duk_double_t d;
 
-	/* Catch a double-to-int64 cast issue encountered in practice. */
+	/* Catch a double-to-int64 CAST issue encountered in practice. */
 	d = 2147483648.0;
 	i = (duk_int64_t) d;
 	if (i != DUK_I64_CONSTANT(0x80000000)) {
@@ -90040,7 +90040,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_small_uint(void) {
 	d2 = (duk_double_t) u;
 
 	if (!(d1 == 1.0 && u == 1 && d2 == 1.0 && d1 == d2)) {
-		DUK__FAILED("double to duk_small_uint_t cast failed");
+		DUK__FAILED("double to duk_small_uint_t CAST failed");
 	}
 
 	/* Same test with volatiles */
@@ -90050,7 +90050,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_small_uint(void) {
 	d2v = (duk_double_t) uv;
 
 	if (!(d1v == 1.0 && uv == 1 && d2v == 1.0 && d1v == d2v)) {
-		DUK__FAILED("double to duk_small_uint_t cast failed");
+		DUK__FAILED("double to duk_small_uint_t CAST failed");
 	}
 
 	return error_count;
@@ -90059,7 +90059,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_small_uint(void) {
 DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_uint32(void) {
 	/*
 	 *  This test fails on an exotic ARM target; double-to-uint
-	 *  cast is incorrectly clamped to -signed- int highest value.
+	 *  CAST is incorrectly clamped to -signed- int highest value.
 	 *
 	 *  https://github.com/svaarala/duktape/issues/336
 	 */
@@ -90072,7 +90072,7 @@ DUK_LOCAL duk_uint_t duk__selftest_cast_double_to_uint32(void) {
 	uv = (duk_uint32_t) dv;
 
 	if (uv != 0xdeadbeefUL) {
-		DUK__FAILED("double to duk_uint32_t cast failed");
+		DUK__FAILED("double to duk_uint32_t CAST failed");
 	}
 
 	return error_count;
@@ -97101,7 +97101,7 @@ DUK_INTERNAL void duk_bw_assert_valid(duk_hthread *thr, duk_bufwriter_ctx *bw_ct
  *  may invoke implementation defined or even undefined behavior.  See e.g.
  *  http://blog.frama-c.com/index.php?post/2013/10/09/Overflow-float-integer.
  *
- *  Provide explicit cast helpers which try to avoid implementation defined
+ *  Provide explicit CAST helpers which try to avoid implementation defined
  *  or undefined behavior.  These helpers can then be simplified in the vast
  *  majority of cases where the implementation defined or undefined behavior
  *  is not problematic.
@@ -97109,7 +97109,7 @@ DUK_INTERNAL void duk_bw_assert_valid(duk_hthread *thr, duk_bufwriter_ctx *bw_ct
 
 /* #include duk_internal.h -> already included */
 
-/* Portable double-to-integer cast which avoids undefined behavior and avoids
+/* Portable double-to-integer CAST which avoids undefined behavior and avoids
  * relying on fmin(), fmax(), or other intrinsics.  Out-of-range results are
  * not assumed by caller, but here value is clamped, NaN converts to minval.
  */
@@ -97132,7 +97132,7 @@ DUK_INTERNAL void duk_bw_assert_valid(duk_hthread *thr, duk_bufwriter_ctx *bw_ct
 
 /* Rely on specific NaN behavior for duk_double_{fmin,fmax}(): if either
  * argument is a NaN, return the second argument.  This avoids a
- * NaN-to-integer cast which is undefined behavior.
+ * NaN-to-integer CAST which is undefined behavior.
  */
 #define DUK__DOUBLE_INT_CAST2(tname,minval,maxval)  do { \
 		return (tname) duk_double_fmin(duk_double_fmax(x, (duk_double_t) (minval)), (duk_double_t) (maxval)); \
@@ -97207,7 +97207,7 @@ DUK_INTERNAL duk_uint32_t duk_double_to_uint32_t(duk_double_t x) {
 #define DUK__FLOAT_MAX              340282346638528859811704183484516925440.0
 
 DUK_INTERNAL duk_float_t duk_double_to_float_t(duk_double_t x) {
-	/* Even a double-to-float cast is technically undefined behavior if
+	/* Even a double-to-float CAST is technically undefined behavior if
 	 * the double is out-of-range.  C99 Section 6.3.1.5:
 	 *
 	 *   If the value being converted is in the range of values that can

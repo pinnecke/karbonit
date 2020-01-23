@@ -15,10 +15,6 @@ to reproduce the bug or the feature.
 
 Please take sometime and search to check to see if the issue has been opened before.
 
-## Code style
-
-* Please follow guide line for the [Linux Kernel](https://www.kernel.org/doc/html/v4.10/process/coding-style.html).
-
 ## Communicating with developers
 
 Please send a mail to Marcus Pinnecke (pinnecke@ovgu.de).

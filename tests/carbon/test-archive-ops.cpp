@@ -2,33 +2,31 @@
 
 #include <inttypes.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 TEST(CarbonArchiveOpsTest, CreateStreamFromJsonString)
 {
     memblock *stream;
-    err       err;
 
     const char        *json_string = "{ \"test\": 123 }";
     bool               read_optimized = false;
 
-    bool status = archive_stream_from_json(&stream, &err, json_string,
+    bool status = archive_stream_from_json(&stream, json_string,
                                                   PACK_NONE, SYNC, 0, read_optimized, false, NULL);
 
-    memblock_drop(stream);
+    MEMBLOCK_DROP(stream);
     ASSERT_TRUE(status);
 }
 
 TEST(CarbonArchiveOpsTest, CreateArchiveFromJsonString)
 {
     archive   archive;
-    err       err;
 
     const char        *json_string = "{ \"test\": 123 }";
     const char        *archive_file = "tmp-test-archive.carbon";
     bool               read_optimized = false;
 
-    bool status = archive_from_json(&archive, archive_file, &err, json_string,
+    bool status = archive_from_json(&archive, archive_file, json_string,
                                            PACK_NONE, SYNC, 0, read_optimized, false, NULL);
     ASSERT_TRUE(status);
     bool has_index;
@@ -42,13 +40,12 @@ TEST(CarbonArchiveOpsTest, CreateArchiveFromJsonString)
 TEST(CarbonArchiveOpsTest, CreateArchiveFromJsonStringWithBakedStringIdIndex)
 {
     archive   archive;
-    err       err;
 
     const char        *json_string = "{ \"test\": 123 }";
     const char        *archive_file = "tmp-test-archive.carbon";
     bool               read_optimized = false;
 
-    bool status = archive_from_json(&archive, archive_file, &err, json_string,
+    bool status = archive_from_json(&archive, archive_file, json_string,
                                            PACK_NONE, SYNC, 0, read_optimized, true, NULL);
     ASSERT_TRUE(status);
     bool has_index;
@@ -66,10 +63,9 @@ TEST(CarbonArchiveOpsTest, CreateArchiveStringHandling)
     archive     archive;
     strid_iter  strid_iter;
     strid_info *info;
-    size_t               vector_len;
+    size_t               vec_len;
     bool                 status;
     bool                 success;
-    err         err;
     query       query;
 
     /* in order to access this file, the working directory of this test executable must be set to a sub directory
@@ -83,8 +79,8 @@ TEST(CarbonArchiveOpsTest, CreateArchiveStringHandling)
     status = query_scan_strids(&strid_iter, &query);
     ASSERT_TRUE(status);
 
-    while (strid_iter_next(&success, &info, &err, &vector_len, &strid_iter)) {
-        for (size_t i = 0; i < vector_len; i++) {
+    while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+        for (size_t i = 0; i < vec_len; i++) {
             /* Note, that 'info[i].id' cannot be tested based on its value because it is not deterministic generated;
              * all ids must be unique. In case we read something wrong, we may find some duplicate
              * (which is UNLIKELY, however) */
@@ -113,10 +109,9 @@ TEST(CarbonArchiveOpsTest, DecodeStringByIdFullScan)
     archive     archive;
     strid_iter  strid_iter;
     strid_info *info;
-    size_t               vector_len;
+    size_t               vec_len;
     bool                 status;
     bool                 success;
-    err         err;
     query       query;
 
     /* in order to access this file, the working directory of this test executable must be set to a sub directory
@@ -130,8 +125,8 @@ TEST(CarbonArchiveOpsTest, DecodeStringByIdFullScan)
     status = query_scan_strids(&strid_iter, &query);
     ASSERT_TRUE(status);
 
-    while (strid_iter_next(&success, &info, &err, &vector_len, &strid_iter)) {
-        for (size_t i = 0; i < vector_len; i++) {
+    while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+        for (size_t i = 0; i < vec_len; i++) {
             all_str_ids.insert(info[i].id);
         }
     }
@@ -159,10 +154,9 @@ TEST(CarbonArchiveOpsTest, DecodeStringByFastUnsafeAccess)
     archive                 archive;
     strid_iter              strid_iter;
     strid_info             *info;
-    size_t                           vector_len;
+    size_t                           vec_len;
     bool                             status;
     bool                             success;
-    err                     err;
     query                   query;
 
     /* in order to access this file, the working directory of this test executable must be set to a sub directory
@@ -176,8 +170,8 @@ TEST(CarbonArchiveOpsTest, DecodeStringByFastUnsafeAccess)
     status = query_scan_strids(&strid_iter, &query);
     ASSERT_TRUE(status);
 
-    while (strid_iter_next(&success, &info, &err, &vector_len, &strid_iter)) {
-        for (size_t i = 0; i < vector_len; i++) {
+    while (strid_iter_next(&success, &info, &vec_len, &strid_iter)) {
+        for (size_t i = 0; i < vec_len; i++) {
             char **strings = query_fetch_strings_by_offset(&query, &(info[i].offset), &(info[i].strlen), 1);
             ASSERT_TRUE(strings != NULL);
             ASSERT_TRUE(strings[0] != NULL);

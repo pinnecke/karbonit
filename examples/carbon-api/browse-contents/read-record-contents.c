@@ -1,23 +1,22 @@
 // bin/examples-read-record-contents
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
-        carbon record;
-        err err;
-        carbon_array_it it;
-        //string_buffer str;
+        rec record;
+        arr_it it;
+        //str_buf str;
 
-        carbon_from_json(&record, "[\"Hello\", \"Number\", 23]", CARBON_KEY_NOKEY, NULL, &err);
+        rec_from_json(&record, "[\"Hello\", \"Number\", 23]", KEY_NOKEY, NULL);
 
-        carbon_read_begin(&it, &record);
-        while (carbon_array_it_next(&it)) {
-                //carbon_array_it_
+        rec_read(&it, &record);
+        while (arr_it_next(&it)) {
+                //arr_it_
         }
 
-        carbon_drop(&record);
+        rec_drop(&record);
 
         return 0;
 }

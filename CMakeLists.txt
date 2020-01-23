@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.9.6)
 
-project(jakson VERSION 1.0.0.0 DESCRIPTION "A library to operate with CARBON files"
+project(karbonit VERSION 1.0.0.0 DESCRIPTION "A library to operate with CARBON files"
         LANGUAGES C) # VERSION major.minor.patch.tweak
 
 set (CMAKE_C_STANDARD 11)
@@ -25,27 +25,27 @@ file(GLOB_RECURSE LIB_LIBS_SOURCE_FILES libs/*.c )
 # Source Amalgamation
 #
 # In order to allow the C compiler to optimize across translation unit boundaries, the optimized release version of
-# Jakson combines all source files (in 'src/') by a pre-building process into one translation unit, `jakson.h` and
-# `jakson.c` located in `include`. This technique, called amalgamation, is inspired by SQLite and others Duktape, which
+# Karbonit combines all source files (in 'src/') by a pre-building process into one translation unit, `karbonit.h` and
+# `karbonit.c` located in `include`. This technique, called amalgamation, is inspired by SQLite and others Duktape, which
 # do similar. Amalgamation in its simplest form is realy just that: source concatenation. In order to let this
 # concatenation runs smoothly, implemenations files must make use of static functions and must avoid naming conflicts
 # (typically by the use of `__` prefix in implementation files).
 #
-# The implementation of amalgamation for Jakson is done as follows. Independent of the build type, amalgamation can
-# turned off or on. If it is turned off, a header file 'jakson.h' is generated in `include/jakson` that includes all
+# The implementation of amalgamation for Karbonit is done as follows. Independent of the build type, amalgamation can
+# turned off or on. If it is turned off, a header file 'karbonit.h' is generated in `include/karbonit` that includes all
 # header files in 'src/', and each source file in 'src/' is compiled as a single translation unit when compiled.
-# If amalgamation is turned on, all header files in 'src/' are concatenated as a single file 'jakson.h' in
-# `include/jakson`, and all implementation files in 'src/' are concatenated as a single file 'jakson.c'. The original
+# If amalgamation is turned on, all header files in 'src/' are concatenated as a single file 'karbonit.h' in
+# `include/karbonit`, and all implementation files in 'src/' are concatenated as a single file 'karbonit.c'. The original
 # `src/` directory is ignored when compilation is done, leading to one large compilation unit stored in
-# `include/jakson`.
+# `include/karbonit`.
 #
-# By including `include/jakson` instead of indivudal header files, the transition between builds with and without
+# By including `include/karbonit` instead of indivudal header files, the transition between builds with and without
 # amalgamation is smoothly.
 #
 
 set(SRC_IN "${CMAKE_SOURCE_DIR}/src")
 set(SRC_TEMP "${CMAKE_SOURCE_DIR}/src-tmp")
-set(SRC_AMALGAMATION "${CMAKE_SOURCE_DIR}/include/jakson")
+set(SRC_AMALGAMATION "${CMAKE_SOURCE_DIR}/include/karbonit")
 
 file(GLOB_RECURSE LIB_HEADER_FILES ${SRC_IN}/*.h )
 file(GLOB_RECURSE LIB_SOURCE_FILES ${SRC_IN}/*.c )
@@ -67,29 +67,38 @@ endif()
 
 OPTION(USE_AMALGAMATION "Turns source amalgamation (source code concatenation) on or off" ON)
 
+# cleanup old amalgamation files
+file(GLOB_RECURSE SRC_AMALGAMATION_FILES ${SRC_AMALGAMATION}/*)
+message("-- *** cleanup amalgamation output ***")
+foreach(FILE ${SRC_AMALGAMATION_FILES})
+    file(REMOVE FILE)
+    message("     - removed ${FILE}")
+endforeach()
+
+
 if (USE_AMALGAMATION)
     message("-- *** source amalgamation is turned on ***")
-    message("     - concat '${SRC_IN}/*.h' to '${SRC_AMALGAMATION}/jakson.h'")
-    message("     - concat '${SRC_IN}/*.c' to '${SRC_AMALGAMATION}/jakson.c'")
+    message("     - concat '${SRC_IN}/*.h' to '${SRC_AMALGAMATION}/karbonit.h'")
+    message("     - concat '${SRC_IN}/*.c' to '${SRC_AMALGAMATION}/karbonit.c'")
 
-    message("-- Building header file 'jakson.h'")
-    file(WRITE ${SRC_AMALGAMATION}/jakson.h "")
+    message("-- Building header file 'karbonit.h'")
+    file(WRITE ${SRC_AMALGAMATION}/karbonit.h "")
     foreach(LIB_HEADER_FILE ${LIB_HEADER_FILES})
-        cat(${LIB_HEADER_FILE} ${SRC_AMALGAMATION}/jakson.h)
+        cat(${LIB_HEADER_FILE} ${SRC_AMALGAMATION}/karbonit.h)
         message("     - append ${LIB_HEADER_FILE}")
     endforeach()
 
-    message("-- Building implementation file 'jakson.c'")
-    file(WRITE ${SRC_AMALGAMATION}/jakson.c "")
+    message("-- Building implementation file 'karbonit.c'")
+    file(WRITE ${SRC_AMALGAMATION}/karbonit.c "")
     foreach(LIB_SOURCE_FILE ${LIB_SOURCE_FILES})
-        cat(${LIB_SOURCE_FILE} ${SRC_AMALGAMATION}/jakson.c)
+        cat(${LIB_SOURCE_FILE} ${SRC_AMALGAMATION}/karbonit.c)
         message("     - append ${LIB_SOURCE_FILE}")
     endforeach()
 
-    message("-- Inclusion header 'jakson.h' has been successfully built")
-    message("-- Implementation file 'jakson.c' has been successfully built")
+    message("-- Inclusion header 'karbonit.h' has been successfully built")
+    message("-- Implementation file 'karbonit.c' has been successfully built")
 
-    set(LIB_SOURCES ${SRC_AMALGAMATION}/jakson.h ${SRC_AMALGAMATION}/jakson.c ${LIB_SOURCES})
+    set(LIB_SOURCES ${SRC_AMALGAMATION}/karbonit.h ${SRC_AMALGAMATION}/karbonit.c ${LIB_SOURCES})
     message("-- Source files are: ")
     foreach(LIB_SOURCE_FILE ${LIB_SOURCES})
         message("     - '${LIB_SOURCE_FILE}'")
@@ -97,20 +106,20 @@ if (USE_AMALGAMATION)
 else()
     message("-- *** source amalgamation is turned off ***")
 
-    message("-- Generating inclusion header 'jakson.h' in ${SRC_AMALGAMATION}/")
+    message("-- Generating inclusion header 'karbonit.h' in ${SRC_AMALGAMATION}/")
 
-    file(WRITE ${SRC_AMALGAMATION}/jakson.h "/* This is the generated inclusion file of Jakson. Do not modify the contents. */\n#ifndef JAKSON\n#define JAKSON\n")
+    file(WRITE ${SRC_AMALGAMATION}/karbonit.h "/* This is the generated inclusion file of Karbonit. Do not modify the contents. */\n#ifndef JAKSON\n#define JAKSON\n")
 
     foreach(LIB_HEADER_FILE ${LIB_HEADER_FILES})
-        file(APPEND ${SRC_AMALGAMATION}/jakson.h "#include \"${LIB_HEADER_FILE}\"\n")
+        file(APPEND ${SRC_AMALGAMATION}/karbonit.h "#include \"${LIB_HEADER_FILE}\"\n")
         message("     - include ${LIB_HEADER_FILE}")
     endforeach()
 
-    file(APPEND ${SRC_AMALGAMATION}/jakson.h "#endif")
+    file(APPEND ${SRC_AMALGAMATION}/karbonit.h "#endif")
 
-    message("-- Inclusion header 'jakson.h' has been successfully built")
+    message("-- Inclusion header 'karbonit.h' has been successfully built")
 
-    set(LIB_SOURCES ${SRC_AMALGAMATION}/jakson.h ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${LIB_SOURCES})
+    set(LIB_SOURCES ${SRC_AMALGAMATION}/karbonit.h ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${LIB_SOURCES})
 
     message("-- Source files are: ")
     foreach(LIB_SOURCE_FILE ${LIB_SOURCES})
@@ -158,20 +167,20 @@ if (${LOG_WARN} MATCHES "on")
     endif()
 endif()
 
-set (CMAKE_C_FLAGS                "-std=c11 -Wall -Wextra -Werror")
+set (CMAKE_C_FLAGS                "-std=c11 -Wall -Wextra -Werror -Wno-nullability-completeness -Wno-expansion-to-defined")
 set (CMAKE_C_FLAGS_DEBUG          "-g")
 set (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 set (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
 set (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
 
-set (CMAKE_CXX_FLAGS                "-std=c++11 -Wall -Wextra -Werror")
+set (CMAKE_CXX_FLAGS                "-std=c++11 -Wall -Wextra -Werror -Wno-nullability-completeness -Wno-expansion-to-defined")
 set (CMAKE_CXX_FLAGS_DEBUG          "-g")
 set (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 set (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
-add_library(jakson-sources STATIC ${LIB_SOURCES}) # used to share object files across different dependent targets
-link_libraries(jakson-sources ${LIBS})
+add_library(karbonit-sources STATIC ${LIB_SOURCES}) # used to share object files across different dependent targets
+link_libraries(karbonit-sources ${LIBS})
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/tools")
 add_subdirectory("${CMAKE_SOURCE_DIR}/examples")

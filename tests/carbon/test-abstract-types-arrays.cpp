@@ -1,332 +1,318 @@
 #include <gtest/gtest.h>
 #include <printf.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 TEST(TestAbstractTypes, CreateRecordDefaultJsonArray) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, 0);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, 0);
+        rec_create_end(&context);
 
-        ASSERT_TRUE(FN_STATUS(carbon_is_multiset(&doc)));
-        ASSERT_FALSE(FN_STATUS(carbon_is_sorted(&doc)));
+        ASSERT_TRUE(rec_is_multiset(&doc));
+        ASSERT_FALSE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordUnsortedMultiset) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_MULTISET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, UNSORTED_MULTISET);
+        rec_create_end(&context);
 
-        ASSERT_TRUE(FN_STATUS(carbon_is_multiset(&doc)));
-        ASSERT_FALSE(FN_STATUS(carbon_is_sorted(&doc)));
+        ASSERT_TRUE(rec_is_multiset(&doc));
+        ASSERT_FALSE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordUnsortedSet) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_SET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, UNSORTED_SET);
+        rec_create_end(&context);
 
-        ASSERT_FALSE(FN_STATUS(carbon_is_multiset(&doc)));
-        ASSERT_FALSE(FN_STATUS(carbon_is_sorted(&doc)));
+        ASSERT_FALSE(rec_is_multiset(&doc));
+        ASSERT_FALSE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordSortedSet) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_SORTED_SET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, SORTED_SET);
+        rec_create_end(&context);
 
-        ASSERT_FALSE(FN_STATUS(carbon_is_multiset(&doc)));
-        ASSERT_TRUE(FN_STATUS(carbon_is_sorted(&doc)));
+        ASSERT_FALSE(rec_is_multiset(&doc));
+        ASSERT_TRUE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordSortedMultiset) {
 
-        carbon_new context;
-        carbon doc;
+        rec_new context;
+        rec doc;
 
-        carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_SORTED_MULTISET);
-        carbon_create_end(&context);
+        rec_create_begin(&context, &doc, KEY_NOKEY, SORTED_MULTISET);
+        rec_create_end(&context);
 
-        ASSERT_TRUE(FN_STATUS(carbon_is_multiset(&doc)));
-        ASSERT_TRUE(FN_STATUS(carbon_is_sorted(&doc)));
+        ASSERT_TRUE(rec_is_multiset(&doc));
+        ASSERT_TRUE(rec_is_sorted(&doc));
 
-        carbon_drop(&doc);
+        rec_drop(&doc);
 }
 
 TEST(TestAbstractTypes, CreateRecordDeriveToDifferentTypes) {
 
-        carbon_new new_context;
-        carbon doc, doc2, doc3, doc4, doc5;
+        rec_new new_context;
+        rec doc, doc2, doc3, doc4, doc5;
 
-        carbon_create_begin(&new_context, &doc, CARBON_KEY_NOKEY, CARBON_UNSORTED_MULTISET);
-        carbon_create_end(&new_context);
+        rec_create_begin(&new_context, &doc, KEY_NOKEY, UNSORTED_MULTISET);
+        rec_create_end(&new_context);
 
         {
-                carbon_update_list_type(&doc2, &doc, CARBON_LIST_UNSORTED_MULTISET);
-                ASSERT_TRUE(FN_STATUS(carbon_is_multiset(&doc2)));
-                ASSERT_FALSE(FN_STATUS(carbon_is_sorted(&doc2)));
+                rec_update_list_type(&doc2, &doc, LIST_UNSORTED_MULTISET);
+                ASSERT_TRUE(rec_is_multiset(&doc2));
+                ASSERT_FALSE(rec_is_sorted(&doc2));
         }
 
         {
-                carbon_update_list_type(&doc3, &doc2, CARBON_LIST_UNSORTED_SET);
-                ASSERT_FALSE(FN_STATUS(carbon_is_multiset(&doc3)));
-                ASSERT_FALSE(FN_STATUS(carbon_is_sorted(&doc3)));
+                rec_update_list_type(&doc3, &doc2, LIST_UNSORTED_SET);
+                ASSERT_FALSE(rec_is_multiset(&doc3));
+                ASSERT_FALSE(rec_is_sorted(&doc3));
         }
 
         {
-                carbon_update_list_type(&doc4, &doc3, CARBON_LIST_SORTED_MULTISET);
-                ASSERT_TRUE(FN_STATUS(carbon_is_multiset(&doc4)));
-                ASSERT_TRUE(FN_STATUS(carbon_is_sorted(&doc4)));
+                rec_update_list_type(&doc4, &doc3, LIST_SORTED_MULTISET);
+                ASSERT_TRUE(rec_is_multiset(&doc4));
+                ASSERT_TRUE(rec_is_sorted(&doc4));
         }
 
         {
-                carbon_update_list_type(&doc5, &doc4, CARBON_LIST_SORTED_SET);
-                ASSERT_FALSE(FN_STATUS(carbon_is_multiset(&doc5)));
-                ASSERT_TRUE(FN_STATUS(carbon_is_sorted(&doc5)));
+                rec_update_list_type(&doc5, &doc4, LIST_SORTED_SET);
+                ASSERT_FALSE(rec_is_multiset(&doc5));
+                ASSERT_TRUE(rec_is_sorted(&doc5));
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
-        carbon_drop(&doc3);
-        carbon_drop(&doc4);
-        carbon_drop(&doc5);
+        rec_drop(&doc);
+        rec_drop(&doc2);
+        rec_drop(&doc3);
+        rec_drop(&doc4);
+        rec_drop(&doc5);
 }
 
 TEST(TestAbstractTypes, ArraySetAbstractType) {
 
-        carbon_new context;
-        carbon_insert *ins;
-        carbon doc, doc2;
-        carbon_insert_array_state s1;
-        carbon_array_it it, *sub_it;
-        carbon_field_type_e ft;
-        carbon_revise rev_context;
+        rec_new context;
+        insert *ins;
+        rec doc, doc2;
+        arr_state s1;
+        arr_it it, sub_it;
+        field_e ft;
+        rev rev_context;
 
-        ins = carbon_create_begin(&context, &doc, CARBON_KEY_NOKEY, CARBON_OPTIMIZE);
+        ins = rec_create_begin(&context, &doc, KEY_NOKEY, OPTIMIZE);
 
-        carbon_insert_array_begin(&s1, ins, 100);
-        carbon_insert_array_end(&s1);
+        insert_array_begin(&s1, ins, 100);
+        insert_array_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, CARBON_LIST_UNSORTED_MULTISET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_UNSORTED_MULTISET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, CARBON_LIST_SORTED_MULTISET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_SORTED_MULTISET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, CARBON_LIST_UNSORTED_SET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_UNSORTED_SET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_insert_array_list_begin(&s1, ins, CARBON_LIST_SORTED_SET, 100);
-        carbon_insert_array_list_end(&s1);
+        insert_array_list_begin(&s1, ins, LIST_SORTED_SET, 100);
+        insert_array_list_end(&s1);
 
-        carbon_create_end(&context);
+        rec_create_end(&context);
 
         {
-                carbon_read_begin(&it, &doc);
+                rec_read(&it, &doc);
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
-
-                carbon_read_end(&it);
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
         }
 
         {
-                carbon_revise_begin(&rev_context, &doc2, &doc);
-                carbon_revise_iterator_open(&it, &rev_context);
+                revise_begin(&rev_context, &doc2, &doc);
+                revise_iterator_open(&it, &rev_context);
 
-                carbon_array_it_next(&it);
-                sub_it = carbon_array_it_array_value(&it);
-                carbon_array_it_update_type(sub_it, CARBON_LIST_SORTED_MULTISET);
+                arr_it_next(&it);
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_SORTED_MULTISET);
 
-                carbon_array_it_next(&it);
-                sub_it = carbon_array_it_array_value(&it);
-                carbon_array_it_update_type(sub_it, CARBON_LIST_UNSORTED_SET);
+                arr_it_next(&it);
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_UNSORTED_SET);
 
-                carbon_array_it_next(&it);
-                sub_it = carbon_array_it_array_value(&it);
-                carbon_array_it_update_type(sub_it, CARBON_LIST_SORTED_SET);
+                arr_it_next(&it);
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_SORTED_SET);
 
-                carbon_array_it_next(&it);
-                sub_it = carbon_array_it_array_value(&it);
-                carbon_array_it_update_type(sub_it, CARBON_LIST_UNSORTED_MULTISET);
+                arr_it_next(&it);
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                arr_it_update_type(&sub_it, LIST_UNSORTED_MULTISET);
 
-                carbon_revise_iterator_close(&it);
-                carbon_revise_end(&rev_context);
+                revise_end(&rev_context);
         }
 
         {
-                carbon_read_begin(&it, &doc2);
+                rec_read(&it, &doc2);
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_FALSE(arr_it_is_multiset(&sub_it));
+                ASSERT_TRUE(arr_it_is_sorted(&sub_it));
 
-                carbon_array_it_next(&it);
-                carbon_array_it_field_type(&ft, &it);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                sub_it = carbon_array_it_array_value(&it);
-                ASSERT_TRUE(FN_STATUS(carbon_array_it_is_multiset(sub_it)));
-                ASSERT_FALSE(FN_STATUS(carbon_array_it_is_sorted(sub_it)));
-
-                carbon_read_end(&it);
+                arr_it_next(&it);
+                arr_it_field_type(&ft, &it);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                ITEM_GET_ARRAY(&sub_it, &(it.item));
+                ASSERT_TRUE(arr_it_is_multiset(&sub_it));
+                ASSERT_FALSE(arr_it_is_sorted(&sub_it));
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
+        rec_drop(&doc);
+        rec_drop(&doc2);
 }
 
 TEST(TestAbstractTypes, ArraySetNestedAbstractType) {
 
-        carbon doc, doc2, doc3, doc4, doc5;
-        err err;
-        carbon_find find;
-        carbon_field_type_e ft;
-        carbon_revise revise;
+        rec doc, doc2, doc3, doc4, doc5;
+        find find;
+        field_e ft;
+        rev revise;
 
-        carbon_from_json(&doc, "{ x: [ { y: [1,\"b\",3] } ] }", CARBON_KEY_NOKEY, NULL, &err);
+        rec_from_json(&doc, "{ x: [ { y: [1,\"b\",3] } ] }", KEY_NOKEY, NULL);
 
         {
-                carbon_revise_begin(&revise, &doc2, &doc);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(carbon_array_it *) find_result = carbon_find_result_array(&find);
-                ASSERT_TRUE(FN_STATUS(find_result));
-                carbon_find_update_array_type(&find, CARBON_LIST_SORTED_SET);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_begin(&revise, &doc2, &doc);
+                revise_find_begin(&find, "x.0.y", &revise);
+                find_result_type(&ft, &find);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                arr_it * find_result = find_result_array(&find);
+                ASSERT_TRUE(find_result != NULL);
+                find_update_array_type(&find, LIST_SORTED_SET);
+                revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc2);
-                ASSERT_FALSE(FN_GET_BOOL(carbon_find_array_is_multiset(&find)));
-                ASSERT_TRUE(FN_GET_BOOL(carbon_find_array_is_sorted(&find)));
-                carbon_find_end(&find);
+                find_from_string(&find, "x.0.y", &doc2);
+                ASSERT_FALSE(find_array_is_multiset(&find));
+                ASSERT_TRUE(find_array_is_sorted(&find));
         }
 
         {
-                carbon_revise_begin(&revise, &doc3, &doc2);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(carbon_array_it *) find_result = carbon_find_result_array(&find);
-                ASSERT_TRUE(FN_STATUS(find_result));
-                carbon_find_update_array_type(&find, CARBON_LIST_SORTED_MULTISET);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_begin(&revise, &doc3, &doc2);
+                revise_find_begin(&find, "x.0.y", &revise);
+                find_result_type(&ft, &find);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                arr_it * find_result = find_result_array(&find);
+                ASSERT_TRUE(find_result != NULL);
+                find_update_array_type(&find, LIST_SORTED_MULTISET);
+                revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc3);
-                ASSERT_TRUE(FN_GET_BOOL(carbon_find_array_is_multiset(&find)));
-                ASSERT_TRUE(FN_GET_BOOL(carbon_find_array_is_sorted(&find)));
-                carbon_find_end(&find);
+                find_from_string(&find, "x.0.y", &doc3);
+                ASSERT_TRUE(find_array_is_multiset(&find));
+                ASSERT_TRUE(find_array_is_sorted(&find));
         }
 
         {
-                carbon_revise_begin(&revise, &doc4, &doc3);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(carbon_array_it *) find_result = carbon_find_result_array(&find);
-                ASSERT_TRUE(FN_STATUS(find_result));
-                carbon_find_update_array_type(&find, CARBON_LIST_UNSORTED_MULTISET);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_begin(&revise, &doc4, &doc3);
+                revise_find_begin(&find, "x.0.y", &revise);
+                find_result_type(&ft, &find);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                arr_it * find_result = find_result_array(&find);
+                ASSERT_TRUE(find_result != NULL);
+                find_update_array_type(&find, LIST_UNSORTED_MULTISET);
+                revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc4);
-                ASSERT_TRUE(FN_GET_BOOL(carbon_find_array_is_multiset(&find)));
-                ASSERT_FALSE(FN_GET_BOOL(carbon_find_array_is_sorted(&find)));
-                carbon_find_end(&find);
+                find_from_string(&find, "x.0.y", &doc4);
+                ASSERT_TRUE(find_array_is_multiset(&find));
+                ASSERT_FALSE(find_array_is_sorted(&find));
         }
 
         {
-                carbon_revise_begin(&revise, &doc5, &doc4);
-                carbon_revise_find_begin(&find, "x.0.y", &revise);
-                carbon_find_result_type(&ft, &find);
-                ASSERT_TRUE(carbon_field_type_is_array_or_subtype(ft));
-                fn_result ofType(carbon_array_it *) find_result = carbon_find_result_array(&find);
-                ASSERT_TRUE(FN_STATUS(find_result));
-                carbon_find_update_array_type(&find, CARBON_LIST_UNSORTED_SET);
-                carbon_revise_find_end(&find);
-                carbon_revise_end(&revise);
+                revise_begin(&revise, &doc5, &doc4);
+                revise_find_begin(&find, "x.0.y", &revise);
+                find_result_type(&ft, &find);
+                ASSERT_TRUE(FIELD_IS_ARRAY_OR_SUBTYPE(ft));
+                arr_it * find_result = find_result_array(&find);
+                ASSERT_TRUE(find_result != NULL);
+                find_update_array_type(&find, LIST_UNSORTED_SET);
+                revise_end(&revise);
 
-                carbon_find_begin(&find, "x.0.y", &doc5);
-                ASSERT_FALSE(FN_GET_BOOL(carbon_find_array_is_multiset(&find)));
-                ASSERT_FALSE(FN_GET_BOOL(carbon_find_array_is_sorted(&find)));
-                carbon_find_end(&find);
+                find_from_string(&find, "x.0.y", &doc5);
+                ASSERT_FALSE(find_array_is_multiset(&find));
+                ASSERT_FALSE(find_array_is_sorted(&find));
         }
 
-        carbon_drop(&doc);
-        carbon_drop(&doc2);
-        carbon_drop(&doc3);
-        carbon_drop(&doc4);
-        carbon_drop(&doc5);
+        rec_drop(&doc);
+        rec_drop(&doc2);
+        rec_drop(&doc3);
+        rec_drop(&doc4);
+        rec_drop(&doc5);
 }
 
 int main(int argc, char **argv) {

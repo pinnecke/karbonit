@@ -852,7 +852,7 @@
 /* Shared includes: C89 */
 #include <stdio.h>
 #include <stdlib.h>
-#include <jakson/std/string.h>
+#include <karbonit/std/string.h>
 #include <stdarg.h>  /* varargs */
 #include <setjmp.h>
 #include <stddef.h>  /* e.g. ptrdiff_t */
@@ -2607,7 +2607,7 @@ typedef struct duk_hthread duk_context;
 #endif
 
 #if !defined(DUK_MACRO_STRINGIFY)
-/* Macro hackery to convert e.g. __LINE__ to a string_buffer without formatting,
+/* Macro hackery to convert e.g. __LINE__ to a str_buf without formatting,
  * see: http://stackoverflow.com/questions/240353/convert-a-preprocessor-token-to-a-string
  */
 #define DUK_MACRO_STRINGIFY_HELPER(x)  #x

@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 static void
 iterate_properties(prop_iter *prop_iter);
@@ -20,26 +20,25 @@ iterate_object_vals(archive_value_vector *value_iter)
 {
     bool status;
     bool is_object;
-    u32 vector_length;
+    u32 VEC_LENGTH;
     archive_object object;
     prop_iter  prop_iter;
-    err err;
 
-    status = archive_value_vector_is_of_objects(&is_object, value_iter);
+    status = archive_value_vec_is_of_objects(&is_object, value_iter);
     ASSERT_TRUE(status);
     ASSERT_TRUE(is_object);
 
-    status = archive_value_vector_get_length(&vector_length, value_iter);
+    status = archive_value_vec_get_length(&VEC_LENGTH, value_iter);
     ASSERT_TRUE(status);
 
-    for (u32 i = 0; i < vector_length; i++)
+    for (u32 i = 0; i < VEC_LENGTH; i++)
     {
-        status = archive_value_vector_get_object_at(&object, i, value_iter);
+        status = archive_value_vec_get_object_at(&object, i, value_iter);
         ASSERT_TRUE(status);
         printf("\t\t{type: object, id: %" PRIu64 "}\n", object.object_id);
 
 
-        status = archive_prop_iter_from_object(&prop_iter, ARCHIVE_ITER_MASK_ANY, &err, &object);
+        status = archive_prop_iter_from_object(&prop_iter, ARCHIVE_ITER_MASK_ANY, &object);
         ASSERT_TRUE(status);
 
         iterate_properties(&prop_iter);
@@ -58,68 +57,68 @@ print_basic_fixed_types_basic(archive_value_vector *value_iter, u32 idx)
 {
     u32 num_values;
     switch (value_iter->prop_type) {
-    case FIELD_INT8: {
-        const archive_field_i8_t *values = archive_value_vector_get_int8s(&num_values, value_iter);
+    case ARCHIVE_FIELD_INT8: {
+        const archive_field_i8_t *values = archive_value_vec_get_int8s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: int8, value: %" PRIi8 " }\n", values[idx]);
     } break;
-    case FIELD_INT16: {
-        const archive_field_i16_t *values = archive_value_vector_get_int16s(&num_values, value_iter);
+    case ARCHIVE_FIELD_INT16: {
+        const archive_field_i16_t *values = archive_value_vec_get_int16s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: int16, value: %" PRIi16 " }\n", values[idx]);
     } break;
-    case FIELD_INT32: {
-        const archive_field_i32_t *values = archive_value_vector_get_int32s(&num_values, value_iter);
+    case ARCHIVE_FIELD_INT32: {
+        const archive_field_i32_t *values = archive_value_vec_get_int32s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: int32, value: %" PRIi32 " }\n", values[idx]);
     } break;
-    case FIELD_INT64: {
-        const archive_field_i64_t *values = archive_value_vector_get_int64s(&num_values, value_iter);
+    case ARCHIVE_FIELD_INT64: {
+        const archive_field_i64_t *values = archive_value_vec_get_int64s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: int64, value: %" PRIi64 " }\n", values[idx]);
     } break;
-    case FIELD_UINT8: {
-        const archive_field_u8_t *values = archive_value_vector_get_uint8s(&num_values, value_iter);
+    case ARCHIVE_FIELD_UINT8: {
+        const archive_field_u8_t *values = archive_value_vec_get_uint8s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: uint8, value: %" PRIu8 " }\n", values[idx]);
     } break;
-    case FIELD_UINT16: {
-        const archive_field_u16_t *values = archive_value_vector_get_uint16s(&num_values, value_iter);
+    case ARCHIVE_FIELD_UINT16: {
+        const archive_field_u16_t *values = archive_value_vec_get_uint16s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: uint16, value: %" PRIu16 " }\n", values[idx]);
     } break;
-    case FIELD_UINT32: {
-        const archive_field_u32_t *values = archive_value_vector_get_uint32s(&num_values, value_iter);
+    case ARCHIVE_FIELD_UINT32: {
+        const archive_field_u32_t *values = archive_value_vec_get_uint32s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: uint32, value: %" PRIu32 " }\n", values[idx]);
     } break;
-    case FIELD_UINT64: {
-        const archive_field_u64_t *values = archive_value_vector_get_uint64s(&num_values, value_iter);
+    case ARCHIVE_FIELD_UINT64: {
+        const archive_field_u64_t *values = archive_value_vec_get_uint64s(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: uint64, value: %" PRIu64 " }\n", values[idx]);
     } break;
-    case FIELD_FLOAT: {
-        const archive_field_number_t *values = archive_value_vector_get_numbers(&num_values, value_iter);
+    case ARCHIVE_FIELD_FLOAT: {
+        const archive_field_number_t *values = archive_value_vec_get_numbers(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: number, value: %f }\n", values[idx]);
     } break;
-    case FIELD_STRING: {
-            const archive_field_sid_t *values = archive_value_vector_get_strings(&num_values, value_iter);
+    case ARCHIVE_FIELD_STRING: {
+            const archive_field_sid_t *values = archive_value_vec_get_strings(&num_values, value_iter);
             ASSERT_TRUE(values != NULL);
             ASSERT_TRUE(idx < num_values);
-            printf("\t\t{ type: string_buffer, value: %" PRIu64 " }\n", values[idx]);
+            printf("\t\t{ type: str_buf, value: %" PRIu64 " }\n", values[idx]);
         } break;
-    case FIELD_BOOLEAN: {
-        const archive_field_boolean_t *values = archive_value_vector_get_booleans(&num_values, value_iter);
+    case ARCHIVE_FIELD_BOOLEAN: {
+        const archive_field_boolean_t *values = archive_value_vec_get_booleans(&num_values, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(idx < num_values);
         printf("\t\t{ type: boolean, value: %d }\n", values[idx]);
@@ -134,8 +133,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
 {
     u32 array_length;
     switch (value_iter->prop_type) {
-    case FIELD_NULL: {
-        const archive_field_u32_t *number_contained = archive_value_vector_get_null_arrays(&array_length, value_iter);
+    case ARCHIVE_FIELD_NULL: {
+        const archive_field_u32_t *number_contained = archive_value_vec_get_null_arrays(&array_length, value_iter);
         ASSERT_TRUE(number_contained != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: null_array, values: [");
@@ -145,8 +144,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_INT8: {
-        const archive_field_i8_t *values = archive_value_vector_get_int8_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_INT8: {
+        const archive_field_i8_t *values = archive_value_vec_get_int8_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: int8_array, values: [");
@@ -156,8 +155,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_INT16: {
-        const archive_field_i16_t *values = archive_value_vector_get_int16_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_INT16: {
+        const archive_field_i16_t *values = archive_value_vec_get_int16_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: int16_array, values: [");
@@ -167,8 +166,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_INT32: {
-        const archive_field_i32_t *values = archive_value_vector_get_int32_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_INT32: {
+        const archive_field_i32_t *values = archive_value_vec_get_int32_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: int32_array, values: [");
@@ -178,8 +177,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_INT64: {
-        const archive_field_i64_t *values = archive_value_vector_get_int64_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_INT64: {
+        const archive_field_i64_t *values = archive_value_vec_get_int64_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: int64_array, values: [");
@@ -189,8 +188,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_UINT8: {
-        const archive_field_u8_t *values = archive_value_vector_get_uint8_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_UINT8: {
+        const archive_field_u8_t *values = archive_value_vec_get_uint8_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: uint8_array, values: [");
@@ -200,8 +199,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_UINT16: {
-        const archive_field_u16_t *values = archive_value_vector_get_uint16_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_UINT16: {
+        const archive_field_u16_t *values = archive_value_vec_get_uint16_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: uint16_array, values: [");
@@ -211,8 +210,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_UINT32: {
-        const archive_field_u32_t *values = archive_value_vector_get_uint32_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_UINT32: {
+        const archive_field_u32_t *values = archive_value_vec_get_uint32_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: uint32_array, values: [");
@@ -222,8 +221,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_UINT64: {
-        const archive_field_u64_t *values = archive_value_vector_get_uint64_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_UINT64: {
+        const archive_field_u64_t *values = archive_value_vec_get_uint64_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: uint64_array, values: [");
@@ -233,8 +232,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_FLOAT: {
-        const archive_field_number_t *values = archive_value_vector_get_number_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_FLOAT: {
+        const archive_field_number_t *values = archive_value_vec_get_number_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: numbers_array, values: [");
@@ -244,8 +243,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_STRING: {
-        const archive_field_sid_t *values = archive_value_vector_get_string_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_STRING: {
+        const archive_field_sid_t *values = archive_value_vec_get_string_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: string_array, values: [");
@@ -255,8 +254,8 @@ print_basic_fixed_types_array(archive_value_vector *value_iter, u32 idx)
         }
         printf("]\n");
     } break;
-    case FIELD_BOOLEAN: {
-        const archive_field_boolean_t *values = archive_value_vector_get_boolean_arrays_at(&array_length, idx, value_iter);
+    case ARCHIVE_FIELD_BOOLEAN: {
+        const archive_field_boolean_t *values = archive_value_vec_get_boolean_arrays_at(&array_length, idx, value_iter);
         ASSERT_TRUE(values != NULL);
         ASSERT_TRUE(array_length != 0);
         printf("\t\t{ type: boolean_array, values: [");
@@ -300,37 +299,36 @@ iterate_properties(struct prop_iter *prop_iter)
     independent_iter_state group_iter;
     independent_iter_state       column_iter;
     independent_iter_state entry_iter;
-    err                       err;
 
     while (archive_prop_iter_next(&iter_type, &value_iter, &collection_iter, prop_iter))
     {
         if (iter_type == PROP_ITER_MODE_OBJECT)
         {
-            keys = archive_value_vector_get_keys(&num_pairs, &value_iter);
-            archive_value_vector_is_array_type(&is_array, &value_iter);
-            archive_value_vector_get_basic_type(&type, &value_iter);
-            archive_value_vector_get_object_id(&oid, &value_iter);
+            keys = archive_value_vec_get_keys(&num_pairs, &value_iter);
+            archive_value_vec_is_array_type(&is_array, &value_iter);
+            archive_value_vec_get_basic_type(&type, &value_iter);
+            archive_value_vec_get_object_id(&oid, &value_iter);
             for (u32 i = 0; i < num_pairs; i++) {
                 printf("Key %" PRIu64 ", type: %d, is-array: %d\n", keys[i], type, is_array);
 
                 switch (type) {
-                case FIELD_OBJECT:
+                case ARCHIVE_FIELD_OBJECT:
                     iterate_object(&value_iter);
                     break;
-                case FIELD_NULL:
+                case ARCHIVE_FIELD_NULL:
                     printf("\t\t{ type: null }\n");
                     break;
-                case FIELD_INT8:
-                case FIELD_INT16:
-                case FIELD_INT32:
-                case FIELD_INT64:
-                case FIELD_UINT8:
-                case FIELD_UINT16:
-                case FIELD_UINT32:
-                case FIELD_UINT64:
-                case FIELD_FLOAT:
-                case FIELD_STRING:
-                case FIELD_BOOLEAN:
+                case ARCHIVE_FIELD_INT8:
+                case ARCHIVE_FIELD_INT16:
+                case ARCHIVE_FIELD_INT32:
+                case ARCHIVE_FIELD_INT64:
+                case ARCHIVE_FIELD_UINT8:
+                case ARCHIVE_FIELD_UINT16:
+                case ARCHIVE_FIELD_UINT32:
+                case ARCHIVE_FIELD_UINT64:
+                case ARCHIVE_FIELD_FLOAT:
+                case ARCHIVE_FIELD_STRING:
+                case ARCHIVE_FIELD_BOOLEAN:
                     print_basic_fixed_types(&value_iter, i);
                     break;
                 default:
@@ -376,7 +374,7 @@ iterate_properties(struct prop_iter *prop_iter)
                         archive_column_entry_get_type(&entry_type, &entry_iter);
 
                         switch (entry_type) {
-                        case FIELD_STRING: {
+                        case ARCHIVE_FIELD_STRING: {
                             const archive_field_sid_t *values = archive_column_entry_get_strings(&entry_length, &entry_iter);
                             printf("\t\t{ strings: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -384,7 +382,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_INT8: {
+                        case ARCHIVE_FIELD_INT8: {
                             const archive_field_i8_t *values = archive_column_entry_get_int8s(&entry_length, &entry_iter);
                             printf("\t\t{ int8s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -392,7 +390,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_INT16: {
+                        case ARCHIVE_FIELD_INT16: {
                             const archive_field_i16_t *values = archive_column_entry_get_int16s(&entry_length, &entry_iter);
                             printf("\t\t{ int16s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -400,7 +398,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_INT32: {
+                        case ARCHIVE_FIELD_INT32: {
                             const archive_field_i32_t *values = archive_column_entry_get_int32s(&entry_length, &entry_iter);
                             printf("\t\t{ int32s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -408,7 +406,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_INT64: {
+                        case ARCHIVE_FIELD_INT64: {
                             const archive_field_i64_t *values = archive_column_entry_get_int64s(&entry_length, &entry_iter);
                             printf("\t\t{ int64s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -416,7 +414,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_UINT8: {
+                        case ARCHIVE_FIELD_UINT8: {
                             const archive_field_u8_t *values = archive_column_entry_get_uint8s(&entry_length, &entry_iter);
                             printf("\t\t{ uint8s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -424,7 +422,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_UINT16: {
+                        case ARCHIVE_FIELD_UINT16: {
                             const archive_field_u16_t *values = archive_column_entry_get_uint16s(&entry_length, &entry_iter);
                             printf("\t\t{ uint16s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -432,7 +430,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_UINT32: {
+                        case ARCHIVE_FIELD_UINT32: {
                             const archive_field_u32_t *values = archive_column_entry_get_uint32s(&entry_length, &entry_iter);
                             printf("\t\t{ uint32s: [");
                             for (u32 i = 0; i < entry_length; i++) {
@@ -440,7 +438,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_UINT64: {
+                        case ARCHIVE_FIELD_UINT64: {
                             const archive_field_u64_t *values = archive_column_entry_get_uint64s(&entry_length, &entry_iter);
                             printf("\t\t{ uint64s: [");
                             for (u64 i = 0; i < entry_length; i++) {
@@ -448,7 +446,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_FLOAT: {
+                        case ARCHIVE_FIELD_FLOAT: {
                             const archive_field_number_t *values = archive_column_entry_get_numbers(&entry_length, &entry_iter);
                             printf("\t\t{ numbers: [");
                             for (u64 i = 0; i < entry_length; i++) {
@@ -456,7 +454,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_BOOLEAN: {
+                        case ARCHIVE_FIELD_BOOLEAN: {
                             const archive_field_boolean_t *values = archive_column_entry_get_booleans(&entry_length, &entry_iter);
                             printf("\t\t{ booleans: [");
                             for (u64 i = 0; i < entry_length; i++) {
@@ -464,7 +462,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_NULL: {
+                        case ARCHIVE_FIELD_NULL: {
                             const archive_field_u32_t *values = archive_column_entry_get_nulls(&entry_length, &entry_iter);
                             printf("\t\t{ nulls: [");
                             for (u64 i = 0; i < entry_length; i++) {
@@ -472,7 +470,7 @@ iterate_properties(struct prop_iter *prop_iter)
                             }
                             printf("]\n");
                         } break;
-                        case FIELD_OBJECT: {
+                        case ARCHIVE_FIELD_OBJECT: {
                             column_object_iter iter;
                             const archive_object *archive_object;
                             archive_column_entry_get_objects(&iter, &entry_iter);
@@ -484,7 +482,7 @@ iterate_properties(struct prop_iter *prop_iter)
 
                                 struct prop_iter nested_obj_prop_iter;
                                 archive_prop_iter_from_object(&nested_obj_prop_iter, ARCHIVE_ITER_MASK_ANY,
-                                                                     &err, archive_object);
+                                                                     archive_object);
                                 iterate_properties(&nested_obj_prop_iter);
                             }
                             printf("]\n");
@@ -504,7 +502,6 @@ iterate_properties(struct prop_iter *prop_iter)
 TEST(ArchiveIterTest, CreateIterator)
 {
     archive            archive;
-    err                err;
     prop_iter  prop_iter;
     bool                        status;
 
@@ -513,7 +510,7 @@ TEST(ArchiveIterTest, CreateIterator)
     status = archive_open(&archive, "./assets/test-archive.carbon");
     ASSERT_TRUE(status);
 
-    status = archive_prop_iter_from_archive(&prop_iter, &err, ARCHIVE_ITER_MASK_ANY, &archive);
+    status = archive_prop_iter_from_archive(&prop_iter, ARCHIVE_ITER_MASK_ANY, &archive);
     ASSERT_TRUE(status);
 
     iterate_properties(&prop_iter);

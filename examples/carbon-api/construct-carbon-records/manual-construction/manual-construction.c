@@ -1,23 +1,25 @@
 // bin/examples-manual-construction
 
 #include <stdio.h>
-#include <jakson/jakson.h>
+#include <karbonit/karbonit.h>
 
 int main (void)
 {
-    carbon_new context;
-    carbon record;
-    char *as_json;
+    rec_new context;
+    rec record;
+    str_buf buffer;
+    const char *as_json;
 
-    carbon_create_begin(&context, &record, CARBON_KEY_NOKEY, CARBON_KEEP);
-    carbon_create_end(&context);
+    rec_create_begin(&context, &record, KEY_NOKEY, KEEP);
+    rec_create_end(&context);
 
-    as_json = carbon_to_json_compact_dup(&record);
+    str_buf_create(&buffer);
+    as_json = rec_to_json(&buffer, &record);
 
     printf ("%s\n", as_json);
 
-    carbon_drop(&record);
-    free(as_json);
+    rec_drop(&record);
+    str_buf_drop(&buffer);
 
     return 0;
 }

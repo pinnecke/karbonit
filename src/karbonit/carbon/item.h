@@ -113,13 +113,13 @@ typedef struct item
 #define ITEM_GET_INDEX(item)                                                                                    \
         ((item) ? (item)->idx : 0)
 
-#define ITEM_GET_NUMBER_SIGNED(item, default_value)                                                             \
+#define ITEM_GET_SIGNED(item, default_value)                                                             \
         INTERNAL_ITEM_GET_VALUE(item, number_signed, default_value)
 
-#define ITEM_GET_NUMBER_UNSIGNED(item, default_value)                                                           \
+#define ITEM_GET_UNSIGNED(item, default_value)                                                           \
         INTERNAL_ITEM_GET_VALUE(item, number_unsigned, default_value)
 
-#define ITEM_GET_NUMBER_FLOAT(item, default_value)                                                              \
+#define ITEM_GET_FLOAT(item, default_value)                                                              \
         INTERNAL_ITEM_GET_VALUE(item, number_float, default_value)
 
 #define ITEM_GET_STRING(item, default_value)                                                                    \
@@ -167,23 +167,23 @@ typedef struct item
 #define ITEM_SET_NUMBER_SIGNED(item, i64_value)                                                                 \
 ({                                                                                                                     \
         bool ret = false;                                                                                              \
-        switch (number_min_type_signed(value)) {                                                                       \
-                case NUMBER_I8:                                                                                        \
+        switch (num_min_type_signed(value)) {                                                                       \
+                case NUM_I8:                                                                                        \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_i8(subj->parent.array, (i8) i64_value) :          \
                                         internal_obj_it_update_i8(subj->parent.object, (i8) i64_value));        \
                 break;                                                                                                 \
-                case NUMBER_I16:                                                                                       \
+                case NUM_I16:                                                                                       \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_i16(subj->parent.array, (i16) i64_value) :        \
                                         internal_obj_it_update_i16(subj->parent.object, (i16) i64_value));      \
                 break;                                                                                                 \
-                case NUMBER_I32:                                                                                       \
+                case NUM_I32:                                                                                       \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_i32(subj->parent.array, (i32) i64_value) :        \
                                         internal_obj_it_update_i32(subj->parent.object, (i32) i64_value));      \
                 break;                                                                                                 \
-                case NUMBER_I64:                                                                                       \
+                case NUM_I64:                                                                                       \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_i64(subj->parent.array, i64_value) :              \
                                         internal_obj_it_update_i64(subj->parent.ojbect, i64_value) :            \
@@ -198,23 +198,23 @@ typedef struct item
 #define ITEM_SET_NUMBER_UNSIGNED(item, u64_value)                                                               \
 ({                                                                                                                     \
         bool ret = false;                                                                                              \
-        switch (number_min_type_unsigned(value)) {                                                                     \
-                case NUMBER_U8:                                                                                        \
+        switch (num_min_type_unsigned(value)) {                                                                     \
+                case NUM_U8:                                                                                        \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_u8(subj->parent.array, (u8) u64_value) :          \
                                         internal_obj_it_update_u8(subj->parent.object, (u8) u64_value));        \
                 break;                                                                                                 \
-                case NUMBER_U16:                                                                                       \
+                case NUM_U16:                                                                                       \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_u16(subj->parent.array, (u16) u64_value) :        \
                                         internal_obj_it_update_u16(subj->parent.object, (u16) u64_value));      \
                 break;                                                                                                 \
-                case NUMBER_U32:                                                                                       \
+                case NUM_U32:                                                                                       \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_u32(subj->parent.array, (u32) u64_value) :        \
                                         internal_obj_it_update_u32(subj->parent.object, (u32) u64_value));      \
                 break;                                                                                                 \
-                case NUMBER_U64:                                                                                       \
+                case NUM_U64:                                                                                       \
                         ret = ((item)->parent == UNTYPED_ARRAY ?                                                 \
                                         internal_arr_it_update_u64(subj->parent.array, u64_value) :              \
                                         internal_obj_it_update_u64(subj->parent.object, u64_value) :            \

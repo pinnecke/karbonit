@@ -142,7 +142,29 @@ const char *func_rec_mget(const rec *doc, const dot *path, str_buf *buf);
  */
 rec *func_rec_set(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
 
-rec *func_rec_mset(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+rec *func_rec_insert(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_pushback(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_pushfront(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_head(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_tail(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_peekback(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_peekfront(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_popback(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_popfront(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_isempty(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_length(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
+
+rec *func_rec_clear(rec *rev, rec *doc, const dot *path, const rec *import, bool patch);
 
 rec *func_rec_unset(rec *rev, rec *doc, const dot *path, bool patch);
 

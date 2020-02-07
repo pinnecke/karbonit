@@ -132,8 +132,17 @@ rec *func_rec_set(rec *rev, rec *doc, const dot *path, const rec *import, bool p
                         import_is_array = rec_is_array((rec *) import);
                         MEMFILE_SEEK__UNSAFE(&subj->file, eval.field_offset);
                         eval.eval.doc = eval.doc = subj;
-                        if (find_result_is_contained_in_column(&eval)) {
-                                rewrite_column(&eval, &src_file, import_is_array);
+                        bool is_column_contained = find_result_is_contained_in_column(&eval);
+                        if (is_column_contained && import_is_array) {
+                                /* This is a special case since column containers cannot contain any array containers.
+                                 * As a consequence, a request to set any [a_1,...,a_n] to a column container returns
+                                 * first in a rewrite of that column to an array container, and then continue
+                                 * with a regular set command on array containers */
+                                rewrite_column_to_array(&eval);
+                                is_column_contained = false;
+                        }
+                        if (is_column_contained) {
+                                rewrite_column(&eval, &src_file);
                         } else {
                                 rewrite_field(&eval, &src_file, import_is_array);
                         }

@@ -20,7 +20,7 @@
 #include <karbonit/carbon/update.h>
 #include <karbonit/carbon/insert.h>
 #include <karbonit/carbon/revise.h>
-#include <karbonit/utils/numbers.h>
+#include <karbonit/utils/num.h>
 
 #define TRY_ARRAY_UPDATE(type_match, in_place_update_fn, insert_fn)                                                    \
 ({                                                                                                                     \
@@ -312,14 +312,14 @@ bool update_set_float(rev *context, const char *path, float value)
 
 bool update_set_unsigned(rev *context, const char *path, u64 value)
 {
-        switch (number_min_type_unsigned(value)) {
-                case NUMBER_U8:
+        switch (num_min_type_unsigned(value)) {
+                case NUM_U8:
                         return update_set_u8(context, path, (u8) value);
-                case NUMBER_U16:
+                case NUM_U16:
                         return update_set_u16(context, path, (u16) value);
-                case NUMBER_U32:
+                case NUM_U32:
                         return update_set_u32(context, path, (u32) value);
-                case NUMBER_U64:
+                case NUM_U64:
                         return update_set_u64(context, path, (u64) value);
                 default:
                         return ERROR(ERR_INTERNALERR, "update unsigned value failed: limit exeeded");
@@ -328,14 +328,14 @@ bool update_set_unsigned(rev *context, const char *path, u64 value)
 
 bool update_set_signed(rev *context, const char *path, i64 value)
 {
-        switch (number_min_type_signed(value)) {
-                case NUMBER_I8:
+        switch (num_min_type_signed(value)) {
+                case NUM_I8:
                         return update_set_i8(context, path, (i8) value);
-                case NUMBER_I16:
+                case NUM_I16:
                         return update_set_i16(context, path, (i16) value);
-                case NUMBER_I32:
+                case NUM_I32:
                         return update_set_i32(context, path, (i32) value);
-                case NUMBER_I64:
+                case NUM_I64:
                         return update_set_i64(context, path, (i64) value);
                 default:
                         return ERROR(ERR_INTERNALERR, "update signed value failed: limit exeeded");
@@ -410,17 +410,17 @@ bool update_set_column_end(col_state *state_in)
 
 bool update_set_null_compiled(rev *context, const dot *path)
 {
-        return TRY_UPDATE(context, path, internal_arr_it_update_null, col_it_update_set_null);
+        return TRY_UPDATE(context, path, internal_arr_it_update_null, col_it_set_null);
 }
 
 bool update_set_true_compiled(rev *context, const dot *path)
 {
-        return TRY_UPDATE(context, path, internal_arr_it_update_true, col_it_update_set_true);
+        return TRY_UPDATE(context, path, internal_arr_it_update_true, col_it_set_true);
 }
 
 bool update_set_false_compiled(rev *context, const dot *path)
 {
-        return TRY_UPDATE(context, path, internal_arr_it_update_false, col_it_update_set_false);
+        return TRY_UPDATE(context, path, internal_arr_it_update_false, col_it_set_false);
 }
 
 bool update_set_u8_compiled(rev *context, const dot *path,
@@ -480,14 +480,14 @@ bool update_set_float_compiled(rev *context, const dot *path,
 bool update_set_unsigned_compiled(rev *context, const dot *path,
                                          u64 value)
 {
-        switch (number_min_type_unsigned(value)) {
-                case NUMBER_U8:
+        switch (num_min_type_unsigned(value)) {
+                case NUM_U8:
                         return update_set_u8_compiled(context, path, (u8) value);
-                case NUMBER_U16:
+                case NUM_U16:
                         return update_set_u16_compiled(context, path, (u16) value);
-                case NUMBER_U32:
+                case NUM_U32:
                         return update_set_u32_compiled(context, path, (u32) value);
-                case NUMBER_U64:
+                case NUM_U64:
                         return update_set_u64_compiled(context, path, (u64) value);
                 default:
                         return ERROR(ERR_INTERNALERR, "unknown type for container update operation");
@@ -497,14 +497,14 @@ bool update_set_unsigned_compiled(rev *context, const dot *path,
 bool update_set_signed_compiled(rev *context, const dot *path,
                                        i64 value)
 {
-        switch (number_min_type_signed(value)) {
-                case NUMBER_I8:
+        switch (num_min_type_signed(value)) {
+                case NUM_I8:
                         return update_set_i8_compiled(context, path, (i8) value);
-                case NUMBER_I16:
+                case NUM_I16:
                         return update_set_i16_compiled(context, path, (i16) value);
-                case NUMBER_I32:
+                case NUM_I32:
                         return update_set_i32_compiled(context, path, (i32) value);
-                case NUMBER_I64:
+                case NUM_I64:
                         return update_set_i64_compiled(context, path, (i64) value);
                 default:
                         return ERROR(ERR_INTERNALERR, "unknown type for container update operation");

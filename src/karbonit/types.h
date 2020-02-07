@@ -48,8 +48,8 @@ typedef u8 boolean;
 #define I64_NULL        INT64_MIN
 
 #define CARBON_NULL_FLOAT        NAN
-#define CARBON_NULL_UNSIGNED     U64_NULL
-#define CARBON_NULL_SIGNED       I64_NULL
+#define NULL_UNSIGNED     U64_NULL
+#define NULL_SIGNED       I64_NULL
 
 #define CARBON_U8_MIN    UINT8_MIN
 #define CARBON_U16_MIN   UINT16_MIN
@@ -82,8 +82,8 @@ typedef u8 boolean;
 #define IS_NULL_I32(x)          ((x) == I32_NULL)
 #define IS_NULL_I64(x)          ((x) == I64_NULL)
 #define IS_NULL_FLOAT(x)        (isnan((x)))
-#define IS_NULL_UNSIGNED(x)     ((x) == CARBON_NULL_UNSIGNED)
-#define IS_NULL_SIGNED(x)       ((x) == CARBON_NULL_SIGNED)
+#define IS_NULL_UNSIGNED(x)     ((x) == NULL_UNSIGNED)
+#define IS_NULL_SIGNED(x)       ((x) == NULL_SIGNED)
 
 typedef u64 archive_field_sid_t;  /** str_buf identifier, resolvable by a str_buf dictionary */
 typedef char field_null_t;

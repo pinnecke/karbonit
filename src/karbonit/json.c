@@ -104,13 +104,13 @@ static void json_print_field(str_buf *str, const item *field, const traverse_inf
                         string_field sf = ITEM_GET_STRING(field, NULL_STRING);
                         _json_from_string(str, &sf);
                 } else if (ITEM_IS_SIGNED(field)) {
-                        i64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_INT64);
+                        i64 value = ITEM_GET_SIGNED(field, NULL_INT64);
                         _json_from_signed(str, value);
                 } else if (ITEM_IS_UNSIGNED(field)) {
-                        u64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_UINT64);
+                        u64 value = ITEM_GET_SIGNED(field, NULL_UINT64);
                         _json_from_unsigned(str, value);
                 } else if (ITEM_IS_FLOAT(field)) {
-                        float value = ITEM_GET_NUMBER_FLOAT(field, NULL_FLOAT);
+                        float value = ITEM_GET_FLOAT(field, NULL_FLOAT);
                         _json_from_float(str, value);
                 } else if (ITEM_IS_BINARY(field)) {
                         binary_field value = ITEM_GET_BINARY(field, NULL_BINARY);

@@ -76,22 +76,22 @@ typedef struct memfile {
 
 #define MEMFILE_SAVE_POSITION(file)										                                               \
 ({										                                                                               \
-        offset_t pos = MEMFILE_TELL((file));										                                   \
+        offset_t memfile_save_position_pos = MEMFILE_TELL((file));										                                   \
         if (LIKELY((file)->saved_pos_ptr < (i8) (ARRAY_LENGTH((file)->saved_pos)))) {								   \
-                (file)->saved_pos[(file)->saved_pos_ptr++] = pos;										               \
+                (file)->saved_pos[(file)->saved_pos_ptr++] = memfile_save_position_pos;										               \
         } else {										                                                               \
                 ERROR(ERR_STACK_OVERFLOW, NULL);										                               \
-                pos = 0;										                                                       \
+                memfile_save_position_pos = 0;										                                                       \
         }										                                                                       \
-        pos;										                                                                   \
+        memfile_save_position_pos;										                                                                   \
 })
 
 #define MEMFILE_RESTORE_POSITION(file)												                                   \
 ({												                                                                       \
 	bool memfile_restore_position_status;												                                                   \
         if (LIKELY((file)->saved_pos_ptr >= 0)) {												                       \
-                offset_t pos = (file)->saved_pos[--(file)->saved_pos_ptr];											   \
-                MEMFILE_SEEK((file), pos);												                               \
+                offset_t memfile_restore_position_pos = (file)->saved_pos[--(file)->saved_pos_ptr];											   \
+                MEMFILE_SEEK((file), memfile_restore_position_pos);												                               \
                 memfile_restore_position_status = true;												                                           \
         } else {												                                                       \
                 memfile_restore_position_status = ERROR(ERR_STACK_UNDERFLOW, NULL);												               \
@@ -170,8 +170,8 @@ typedef struct memfile {
                 u8 dec = bytes_used_now - bytes_used_then;															   \
                 MEMFILE_INPLACE_REMOVE((file), dec);															       \
         }															                                                   \
-        uintvar_stream_t dst = (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char));								   \
-        u8 required_blocks = uintvar_stream_write(dst, (value));													   \
+        uintvar_stream_t __dst = (uintvar_stream_t) MEMFILE_PEEK((file), sizeof(char));								   \
+        u8 required_blocks = uintvar_stream_write(__dst, (value));													   \
         MEMFILE_SKIP((file), required_blocks);															               \
         (bytes_used_then - bytes_used_now);															                   \
 })
@@ -252,21 +252,20 @@ typedef struct memfile {
 
 #define MEMFILE_CUT(file, how_many_bytes)							                                                   \
 ({							                                                                                           \
-        if (!how_many_bytes) {                                                                                                          \
-                return true;                                                                                                            \
+        if (how_many_bytes) {                                                                                                          \
+                offset_t block_size = 0;							                                                           \
+                MEMBLOCK_SIZE(&block_size, (file)->memblock);							                                       \
+                bool memfile_cut_status;							                                                                       \
+                if ((how_many_bytes) > 0 && block_size > (how_many_bytes)) {							                       \
+                        size_t new_block_size = block_size - (how_many_bytes);							                       \
+                        MEMBLOCK_RESIZE((file)->memblock, new_block_size);							                           \
+                        (file)->pos = JAK_MIN((file)->pos, new_block_size);							                           \
+                        memfile_cut_status = true;							                                                               \
+                } else {							                                                                           \
+                        memfile_cut_status = ERROR(ERR_ILLEGALARG, NULL);							                                       \
+                }							                                                                                   \
+                memfile_cut_status;							                                                                               \
         }                                                                                                                               \
-        offset_t block_size = 0;							                                                           \
-        MEMBLOCK_SIZE(&block_size, (file)->memblock);							                                       \
-        bool memfile_cut_status;							                                                                       \
-        if ((how_many_bytes) > 0 && block_size > (how_many_bytes)) {							                       \
-                size_t new_block_size = block_size - (how_many_bytes);							                       \
-                MEMBLOCK_RESIZE((file)->memblock, new_block_size);							                           \
-                (file)->pos = JAK_MIN((file)->pos, new_block_size);							                           \
-                memfile_cut_status = true;							                                                               \
-        } else {							                                                                           \
-                memfile_cut_status = ERROR(ERR_ILLEGALARG, NULL);							                                       \
-        }							                                                                                   \
-        memfile_cut_status;							                                                                               \
 })
 
 #define MEMFILE_REMAIN_SIZE(file)														                               \

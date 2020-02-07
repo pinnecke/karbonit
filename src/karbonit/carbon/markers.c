@@ -142,17 +142,17 @@ static void markers_print_field(str_buf *str, const item *field, const traverse_
                         str_buf_add_nchar(str, sf.str, sf.len);
                         str_buf_add(str, "]");
                 } else if (ITEM_IS_SIGNED(field)) {
-                        i64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_INT64);
+                        i64 value = ITEM_GET_SIGNED(field, NULL_INT64);
                         str_buf_add(str, "[signed:");
                         str_buf_add_i64(str, value);
                         str_buf_add_char(str, ']');
                 } else if (ITEM_IS_UNSIGNED(field)) {
-                        u64 value = ITEM_GET_NUMBER_SIGNED(field, NULL_UINT64);
+                        u64 value = ITEM_GET_SIGNED(field, NULL_UINT64);
                         str_buf_add(str, "[unsigned:");
                         str_buf_add_u64(str, value);
                         str_buf_add_char(str, ']');
                 } else if (ITEM_IS_FLOAT(field)) {
-                        float value = ITEM_GET_NUMBER_FLOAT(field, NULL_FLOAT);
+                        float value = ITEM_GET_FLOAT(field, NULL_FLOAT);
                         str_buf_add(str, "[float:");
                         str_buf_add_float(str, value);
                         str_buf_add_char(str, ']');

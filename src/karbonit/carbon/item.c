@@ -19,7 +19,7 @@
 #include <karbonit/carbon/arr-it.h>
 #include <karbonit/carbon/obj-it.h>
 #include <karbonit/carbon/internal.h>
-#include <karbonit/utils/numbers.h>
+#include <karbonit/utils/num.h>
 
 
 bool internal_item_create_from_object(item *item, obj_it *parent)

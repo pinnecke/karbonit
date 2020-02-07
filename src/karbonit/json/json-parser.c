@@ -21,7 +21,7 @@
 #include <karbonit/json/json-parser.h>
 #include <karbonit/archive/doc.h>
 #include <karbonit/utils/convert.h>
-#include <karbonit/utils/numbers.h>
+#include <karbonit/utils/num.h>
 #include <karbonit/json/json-parser.h>
 
 static struct {
@@ -1308,24 +1308,24 @@ json_list_type_e json_fitting_type(json_list_type_e current, json_list_type_e to
         }
 }
 
-static json_list_type_e number_type_to_list_type(number_min_type_e type)
+static json_list_type_e number_type_to_list_type(num_type_e type)
 {
         switch (type) {
-                case NUMBER_U8:
+                case NUM_U8:
                         return JSON_LIST_FIXED_U8;
-                case NUMBER_U16:
+                case NUM_U16:
                         return JSON_LIST_FIXED_U16;
-                case NUMBER_U32:
+                case NUM_U32:
                         return JSON_LIST_FIXED_U32;
-                case NUMBER_U64:
+                case NUM_U64:
                         return JSON_LIST_FIXED_U64;
-                case NUMBER_I8:
+                case NUM_I8:
                         return JSON_LIST_FIXED_I8;
-                case NUMBER_I16:
+                case NUM_I16:
                         return JSON_LIST_FIXED_I16;
-                case NUMBER_I32:
+                case NUM_I32:
                         return JSON_LIST_FIXED_I32;
-                case NUMBER_I64:
+                case NUM_I64:
                         return JSON_LIST_FIXED_I64;
                 default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);
                         return JSON_LIST_EMPTY;
@@ -1351,11 +1351,11 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
                                                 elem_type = JSON_LIST_FIXED_FLOAT;
                                                 break;
                                         case JSON_NUMBER_UNSIGNED:
-                                                elem_type = number_type_to_list_type(number_min_type_unsigned(
+                                                elem_type = number_type_to_list_type(num_min_type_unsigned(
                                                         elem->value.value.number->value.unsigned_integer));
                                                 break;
                                         case JSON_NUMBER_SIGNED:
-                                                elem_type = number_type_to_list_type(number_min_type_signed(
+                                                elem_type = number_type_to_list_type(num_min_type_signed(
                                                         elem->value.value.number->value.signed_integer));
                                                 break;
                                         default: ERROR(ERR_UNSUPPORTEDTYPE, NULL);

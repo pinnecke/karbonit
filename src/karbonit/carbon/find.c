@@ -584,16 +584,16 @@ static void result_from_array(find *find, arr_it *it)
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_U64:
-                        find->value.unsigned_number = ITEM_GET_NUMBER_UNSIGNED(&(it->item), CARBON_NULL_UNSIGNED);
+                        find->value.unsigned_number = ITEM_GET_UNSIGNED(&(it->item), NULL_UNSIGNED);
                         break;
                 case FIELD_NUMBER_I8:
                 case FIELD_NUMBER_I16:
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
-                        find->value.signed_number = ITEM_GET_NUMBER_SIGNED(&(it->item), CARBON_NULL_SIGNED);
+                        find->value.signed_number = ITEM_GET_SIGNED(&(it->item), NULL_SIGNED);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        find->value.float_number = ITEM_GET_NUMBER_FLOAT(&(it->item), CARBON_NULL_FLOAT);
+                        find->value.float_number = ITEM_GET_FLOAT(&(it->item), CARBON_NULL_FLOAT);
                         break;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:
@@ -682,16 +682,16 @@ static void result_from_object(find *find, obj_it *it)
                 case FIELD_NUMBER_U16:
                 case FIELD_NUMBER_U32:
                 case FIELD_NUMBER_U64:
-                        find->value.unsigned_number = ITEM_GET_NUMBER_UNSIGNED(&(it->prop.value), CARBON_NULL_UNSIGNED);
+                        find->value.unsigned_number = ITEM_GET_UNSIGNED(&(it->prop.value), NULL_UNSIGNED);
                         break;
                 case FIELD_NUMBER_I8:
                 case FIELD_NUMBER_I16:
                 case FIELD_NUMBER_I32:
                 case FIELD_NUMBER_I64:
-                        find->value.signed_number = ITEM_GET_NUMBER_SIGNED(&(it->prop.value), CARBON_NULL_SIGNED);
+                        find->value.signed_number = ITEM_GET_SIGNED(&(it->prop.value), NULL_SIGNED);
                         break;
                 case FIELD_NUMBER_FLOAT:
-                        find->value.float_number = ITEM_GET_NUMBER_FLOAT(&(it->prop.value), CARBON_NULL_FLOAT);
+                        find->value.float_number = ITEM_GET_FLOAT(&(it->prop.value), CARBON_NULL_FLOAT);
                         break;
                 case FIELD_BINARY:
                 case FIELD_BINARY_CUSTOM:

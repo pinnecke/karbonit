@@ -35,7 +35,7 @@ TEST(TestCarbonItem, CreateId) {
                         EXPECT_TRUE(ITEM_IS_NUMBER(item));
                         EXPECT_TRUE(ITEM_IS_UNSIGNED(item));
                         {
-                                i64 value = ITEM_GET_NUMBER_UNSIGNED(item, CARBON_NULL_UNSIGNED);
+                                i64 value = ITEM_GET_UNSIGNED(item, NULL_UNSIGNED);
                                 EXPECT_TRUE(value == 42);
                         }
                 break;
@@ -43,7 +43,7 @@ TEST(TestCarbonItem, CreateId) {
                         EXPECT_TRUE(ITEM_IS_NUMBER(item));
                         EXPECT_TRUE(ITEM_IS_SIGNED(item));
                         {
-                                u64 value = ITEM_GET_NUMBER_SIGNED(item, CARBON_NULL_SIGNED);
+                                u64 value = ITEM_GET_SIGNED(item, NULL_SIGNED);
                                 EXPECT_TRUE(value == (u64) -42);
                         }
                 break;
@@ -51,7 +51,7 @@ TEST(TestCarbonItem, CreateId) {
                         EXPECT_TRUE(ITEM_IS_NUMBER(item));
                         EXPECT_TRUE(ITEM_IS_FLOAT(item));
                         {
-                                float value = ITEM_GET_NUMBER_FLOAT(item, CARBON_NULL_FLOAT);
+                                float value = ITEM_GET_FLOAT(item, CARBON_NULL_FLOAT);
                                 EXPECT_TRUE(value > 23.52 && value < 23.54);
                         }
                 break;

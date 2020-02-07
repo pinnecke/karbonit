@@ -75,13 +75,13 @@ typedef struct prop
         ((prop) ? (prop)->idx : 0)
 
 #define PROP_GET_NUMBER_SIGNED(prop, default_value)                                                             \
-        ((prop) ? ITEM_GET_NUMBER_SIGNED(&(prop)->value) : default_value)
+        ((prop) ? ITEM_GET_SIGNED(&(prop)->value) : default_value)
 
 #define PROP_GET_NUMBER_UNSIGNED(prop, default_value)                                                           \
-        ((prop) ? ITEM_GET_NUMBER_UNSIGNED(&(prop)->value) : default_value)
+        ((prop) ? ITEM_GET_UNSIGNED(&(prop)->value) : default_value)
 
 #define PROP_GET_NUMBER_FLOAT(prop, default_value)                                                              \
-        ((prop) ? ITEM_GET_NUMBER_FLOAT(&(prop)->value) : default_value)
+        ((prop) ? ITEM_GET_FLOAT(&(prop)->value) : default_value)
 
 #define PROP_GET_STRING(prop, default_value)                                                                    \
         ((prop) ? ITEM_GET_STRING(&(prop)->value) : default_value)

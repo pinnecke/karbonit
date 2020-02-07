@@ -47,6 +47,14 @@ void rewrite_field(find *find, memfile *src, bool cpy_arr_bounds);
  */
 void rewrite_column(find *find, memfile *src);
 
+/*!
+ * Rewrites a column container in the memfile <code>subj</code> to an array container and updates references in
+ * <code>find</code> to that new container.
+ *
+ * \param find find a path evaluation that points to a column container that should be rewritten to an array container
+ */
+void rewrite_column_to_array(find *find);
+
 #ifdef __cplusplus
 }
 #endif

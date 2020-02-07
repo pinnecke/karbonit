@@ -25,7 +25,7 @@
 #include <karbonit/carbon/string-field.h>
 #include <karbonit/carbon/obj-it.h>
 #include <karbonit/carbon/internal.h>
-#include <karbonit/utils/numbers.h>
+#include <karbonit/utils/num.h>
 
 #define check_type_if_container_is_column(in, expr)                                                              \
 if (UNLIKELY(in->context_type == COLUMN && !(expr))) {                                            \
@@ -342,14 +342,14 @@ bool insert_unsigned(insert *in, u64 value)
 {
         ERROR_IF_AND_RETURN(in->context_type == COLUMN, ERR_INSERT_TOO_DANGEROUS, NULL)
 
-        switch (number_min_type_signed(value)) {
-                case NUMBER_I8:
+        switch (num_min_type_signed(value)) {
+                case NUM_I8:
                         return insert_u8(in, (u8) value);
-                case NUMBER_I16:
+                case NUM_I16:
                         return insert_u16(in, (u16) value);
-                case NUMBER_I32:
+                case NUM_I32:
                         return insert_u32(in, (u32) value);
-                case NUMBER_I64:
+                case NUM_I64:
                         return insert_u64(in, (u64) value);
                 default: ERROR(ERR_INTERNALERR, NULL);
                         return false;
@@ -360,14 +360,14 @@ bool insert_signed(insert *in, i64 value)
 {
         ERROR_IF_AND_RETURN(in->context_type == COLUMN, ERR_INSERT_TOO_DANGEROUS, NULL)
 
-        switch (number_min_type_signed(value)) {
-                case NUMBER_I8:
+        switch (num_min_type_signed(value)) {
+                case NUM_I8:
                         return insert_i8(in, (i8) value);
-                case NUMBER_I16:
+                case NUM_I16:
                         return insert_i16(in, (i16) value);
-                case NUMBER_I32:
+                case NUM_I32:
                         return insert_i32(in, (i32) value);
-                case NUMBER_I64:
+                case NUM_I64:
                         return insert_i64(in, (i64) value);
                 default: ERROR(ERR_INTERNALERR, NULL);
                         return false;
@@ -537,8 +537,7 @@ insert *__insert_array_list_begin(arr_state *state_out,
         return &state_out->nested;
 }
 
-insert *insert_array_begin(arr_state *state_out,
-                                                    insert *inserter_in, u64 array_capacity)
+insert *insert_array_begin(arr_state *state_out, insert *inserter_in, u64 array_capacity)
 {
         return __insert_array_list_begin(state_out, inserter_in, LIST_UNSORTED_MULTISET, array_capacity);
 }
@@ -570,11 +569,8 @@ bool insert_array_list_end(arr_state *state_in)
 }
 
 
-insert *__insert_column_list_begin(col_state *state_out,
-                                                     insert *inserter_in,
-                                                     list_type_e derivation,
-                                                     col_it_type_e type,
-                                                     u64 cap)
+insert *__insert_column_list_begin(col_state *state_out, insert *inserter_in, list_type_e derivation, col_it_type_e type,
+                                   u64 cap)
 {
         ERROR_IF_AND_RETURN(!state_out, ERR_NULLPTR, NULL);
         ERROR_IF_AND_RETURN(!inserter_in, ERR_NULLPTR, NULL);
@@ -601,10 +597,7 @@ insert *__insert_column_list_begin(col_state *state_out,
         return &state_out->nested;
 }
 
-insert *insert_column_begin(col_state *state_out,
-                                                     insert *inserter_in,
-                                                     col_it_type_e type,
-                                                     u64 cap)
+insert *insert_column_begin(col_state *state_out, insert *inserter_in, col_it_type_e type, u64 cap)
 {
         return __insert_column_list_begin(state_out, inserter_in, LIST_UNSORTED_MULTISET, type, cap);
 }
@@ -780,14 +773,14 @@ bool insert_prop_unsigned(insert *in, const char *key, u64 value)
 {
         ERROR_IF_AND_RETURN(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL)
 
-        switch (number_min_type_unsigned(value)) {
-                case NUMBER_U8:
+        switch (num_min_type_unsigned(value)) {
+                case NUM_U8:
                         return insert_prop_u8(in, key, (u8) value);
-                case NUMBER_U16:
+                case NUM_U16:
                         return insert_prop_u16(in, key, (u16) value);
-                case NUMBER_U32:
+                case NUM_U32:
                         return insert_prop_u32(in, key, (u32) value);
-                case NUMBER_U64:
+                case NUM_U64:
                         return insert_prop_u64(in, key, (u64) value);
                 default: ERROR(ERR_INTERNALERR, NULL);
                         return false;
@@ -798,14 +791,14 @@ bool insert_prop_signed(insert *in, const char *key, i64 value)
 {
         ERROR_IF_AND_RETURN(in->context_type != OBJECT, ERR_UNSUPPCONTAINER, NULL)
 
-        switch (number_min_type_signed(value)) {
-                case NUMBER_I8:
+        switch (num_min_type_signed(value)) {
+                case NUM_I8:
                         return insert_prop_i8(in, key, (i8) value);
-                case NUMBER_I16:
+                case NUM_I16:
                         return insert_prop_i16(in, key, (i16) value);
-                case NUMBER_I32:
+                case NUM_I32:
                         return insert_prop_i32(in, key, (i32) value);
-                case NUMBER_I64:
+                case NUM_I64:
                         return insert_prop_i64(in, key, (i64) value);
                 default: ERROR(ERR_INTERNALERR, NULL);
                         return false;

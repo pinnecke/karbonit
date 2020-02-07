@@ -15,28 +15,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef AKR_NUMBERS_H
-#define AKR_NUMBERS_H
+#include <karbonit/utils/num.h>
 
-// ---------------------------------------------------------------------------------------------------------------------
-//  includes
-// ---------------------------------------------------------------------------------------------------------------------
+num_type_e num_min_type_unsigned(u64 value)
+{
+        if (value <= CARBON_U8_MAX) {
+                return NUM_U8;
+        } else if (value <= CARBON_U16_MAX) {
+                return NUM_U16;
+        } else if (value <= CARBON_U32_MAX) {
+                return NUM_U32;
+        } else if (value <= CARBON_U64_MAX) {
+                return NUM_U64;
+        } else {
+                return NUM_UNKNOWN;
+        }
+}
 
-#include <karbonit/types.h>
+num_type_e num_min_type_signed(i64 value)
+{
+        if (value >= CARBON_I8_MIN && value <= CARBON_I8_MAX) {
+                return NUM_I8;
+        } else if (value >= CARBON_I16_MIN && value <= CARBON_I16_MAX) {
+                return NUM_I16;
+        } else if (value >= CARBON_I32_MIN && value <= CARBON_I32_MAX) {
+                return NUM_I32;
+        } else if (value >= CARBON_I64_MIN && value <= CARBON_I64_MAX) {
+                return NUM_I64;
+        } else {
+                return NUM_UNKNOWN;
+        }
+}
 
-typedef enum number_min_type_e {
-        NUMBER_U8,
-        NUMBER_U16,
-        NUMBER_U32,
-        NUMBER_U64,
-        NUMBER_I8,
-        NUMBER_I16,
-        NUMBER_I32,
-        NUMBER_I64,
-        NUMBER_UNKNOWN
-} number_min_type_e;
-
-number_min_type_e number_min_type_unsigned(u64 value);
-number_min_type_e number_min_type_signed(i64 value);
-
-#endif

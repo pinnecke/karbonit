@@ -449,7 +449,7 @@ bool col_it_update_type(col_it *it, list_type_e derivation)
         return true;
 }
 
-bool col_it_update_set_null(col_it *it, u32 pos)
+bool col_it_set_null(col_it *it, u32 pos)
 {
         ERROR_IF_AND_RETURN(pos >= it->num, ERR_OUTOFBOUNDS, NULL)
 
@@ -698,96 +698,54 @@ static inline bool set_column_boolean_at(col_it *it, u32 pos, bool state)
         return true;
 }
 
-bool col_it_update_set_true(col_it *it, u32 pos)
+bool col_it_set_true(col_it *it, u32 pos)
 {
         return set_column_boolean_at(it, pos, true);
 }
 
-bool col_it_update_set_false(col_it *it, u32 pos)
+bool col_it_set_false(col_it *it, u32 pos)
 {
         return set_column_boolean_at(it, pos, false);
 }
 
-bool col_it_update_set_u8(col_it *it, u32 pos, u8 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
+#define COL_IT_SET_GENERIC(it, pos, value, type_enum_part, ctype)                                                      \
+{                                                                                                                      \
+        ERROR_IF_AND_RETURN(pos >= it->num, ERR_OUTOFBOUNDS, NULL)                                                     \
+        MEMFILE_SAVE_POSITION(&it->file);                                                                              \
+                                                                                                                       \
+        offset_t payload_start = internal_column_get_payload_off(it);                                                  \
+        MEMFILE_SEEK(&it->file, payload_start + pos * INTERNAL_GET_TYPE_VALUE_SIZE(it->field_type));                   \
+                                                                                                                       \
+        switch (it->field_type) {                                                                                      \
+        case FIELD_COLUMN_##type_enum_part##_UNSORTED_MULTISET:                                                        \
+        case FIELD_DERIVED_COLUMN_##type_enum_part##_SORTED_MULTISET:                                                  \
+        case FIELD_DERIVED_COLUMN_##type_enum_part##_UNSORTED_SET:                                                     \
+        case FIELD_DERIVED_COLUMN_##type_enum_part##_SORTED_SET:                                                       \
+                MEMFILE_WRITE(&it->file, &value, sizeof(ctype));                                                       \
+        break;                                                                                                         \
+        default:                                                                                                       \
+                MEMFILE_RESTORE_POSITION(&it->file);                                                                   \
+        return ERROR(ERR_INTERNALERR, NULL);                                                                           \
+        }                                                                                                              \
+        MEMFILE_RESTORE_POSITION(&it->file);                                                                           \
+        return true;                                                                                                   \
 }
 
-bool col_it_update_set_u16(col_it *it, u32 pos, u16 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
+#define DEFINE_SET_FN(type_enum_part, ctype)                                                                           \
+bool col_it_set_##ctype(col_it *it, u32 pos, ctype value)                                                              \
+{                                                                                                                      \
+        COL_IT_SET_GENERIC(it, pos, value, type_enum_part, ctype)                                                      \
 }
 
-bool col_it_update_set_u32(col_it *it, u32 pos, u32 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool col_it_update_set_u64(col_it *it, u32 pos, u64 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool col_it_update_set_i8(col_it *it, u32 pos, i8 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool col_it_update_set_i16(col_it *it, u32 pos, i16 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool col_it_update_set_i32(col_it *it, u32 pos, i32 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool col_it_update_set_i64(col_it *it, u32 pos, i64 value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
-
-bool col_it_update_set_float(col_it *it, u32 pos, float value)
-{
-        UNUSED(it)
-        UNUSED(pos)
-        UNUSED(value)
-        ERROR(ERR_NOTIMPLEMENTED, NULL); // TODO: implement
-        return false;
-}
+DEFINE_SET_FN(U8, u8)
+DEFINE_SET_FN(U16, u16)
+DEFINE_SET_FN(U32, u32)
+DEFINE_SET_FN(U64, u64)
+DEFINE_SET_FN(I8, i8)
+DEFINE_SET_FN(I16, i16)
+DEFINE_SET_FN(I32, i32)
+DEFINE_SET_FN(I64, i64)
+DEFINE_SET_FN(FLOAT, float)
 
 bool col_it_rewind(col_it *it)
 {

@@ -18,11 +18,14 @@
 #include <inttypes.h>
 #include <ctype.h>
 #include <locale.h>
+#include <fcntl.h>
 #include <karbonit/json/json-parser.h>
 #include <karbonit/archive/doc.h>
 #include <karbonit/utils/convert.h>
 #include <karbonit/utils/numbers.h>
 #include <karbonit/json/json-parser.h>
+#include <karbonit/rec.h>
+#include <karbonit/carbon/internal.h>
 
 static struct {
         json_token_e token;
@@ -56,6 +59,7 @@ bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input)
         tokenizer->cursor = input;
         tokenizer->token =
                 (json_token) {.type = JSON_UNKNOWN, .length = 0, .column = 0, .line = 1, .string = NULL};
+        tokenizer->charcount = strlen(tokenizer->cursor);
         return true;
 }
 
@@ -71,6 +75,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
         tokenizer->token.column++;
         char last_1_c = '\0', last_2_c = '\0', last_3_c = '\0', last_4_c = '\0';
         c = *(++tokenizer->cursor);
+        tokenizer->charcount--;
         while ((escapeQuote || (c != delimiter && c != delimiter2 && c != delimiter3)) && c != '\r' && c != '\n') {
                 next_char:
                 tokenizer->token.length++;
@@ -79,6 +84,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                 last_2_c = last_1_c;
                 last_1_c = c;
                 c = *(++tokenizer->cursor);
+                tokenizer->charcount--;
                 if (UNLIKELY(c == '\\' && last_1_c == '\\')) {
                         goto next_char;
                 }
@@ -92,9 +98,11 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                 tokenizer->token.length++;
         } else {
                 tokenizer->cursor++;
+                tokenizer->charcount--;
         }
 
         tokenizer->cursor += (c == '\r' || c == '\n') ? 1 : 0;
+        tokenizer->charcount -= (c == '\r' || c == '\n') ? 1 : 0;
 }
 
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
@@ -108,10 +116,12 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                         tokenizer->token.line += c == '\n' ? 1 : 0;
                         tokenizer->token.column = c == '\n' ? 0 : tokenizer->token.column;
                         tokenizer->cursor++;
+                        tokenizer->charcount--;
                         return json_tokenizer_next(tokenizer);
                 } else if (isspace(c)) {
                         do {
                                 tokenizer->cursor++;
+                                tokenizer->charcount--;
                                 tokenizer->token.column++;
                         } while (isspace(c = *tokenizer->cursor) && c != '\n');
                         return json_tokenizer_next(tokenizer);
@@ -125,17 +135,18 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                         tokenizer->token.column++;
                         tokenizer->token.length = 1;
                         tokenizer->cursor++;
+                        tokenizer->charcount--;
                 } else if (c != '"' && (isalpha(c) || c == '_') &&
-                           (strlen(tokenizer->cursor) >= 4 && (strncmp(tokenizer->cursor, "null", 4) != 0 &&
+                           (tokenizer->charcount >= 4 && (strncmp(tokenizer->cursor, "null", 4) != 0 &&
                                                                strncmp(tokenizer->cursor, "true", 4) != 0)) &&
-                           (strlen(tokenizer->cursor) >= 5 && strncmp(tokenizer->cursor, "false", 5) != 0)) {
+                           (tokenizer->charcount >= 5 && strncmp(tokenizer->cursor, "false", 5) != 0)) {
                         parse_string_token(tokenizer, c, ' ', ':', ',', true, true);
                 } else if (c == '"') {
                         parse_string_token(tokenizer, c, '"', '"', '"', false, false);
                 } else if (c == 't' || c == 'f' || c == 'n') {
                         const unsigned lenTrueNull = 4;
                         const unsigned lenFalse = 5;
-                        const unsigned cursorLen = strlen(tokenizer->cursor);
+                        const unsigned cursorLen = tokenizer->charcount;
                         if (cursorLen >= lenTrueNull && strncmp(tokenizer->cursor, "true", lenTrueNull) == 0) {
                                 tokenizer->token.type = LITERAL_TRUE;
                                 tokenizer->token.length = lenTrueNull;
@@ -150,6 +161,7 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                         }
                         tokenizer->token.column++;
                         tokenizer->cursor += tokenizer->token.length;
+                        tokenizer->charcount -= tokenizer->token.length;
                 } else if (c == '-' || isdigit(c)) {
                         unsigned fracFound = 0, expFound = 0, plusMinusFound = 0;
                         bool plusMinusAllowed = false;
@@ -158,6 +170,7 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                                 onlyDigitsAllowed |= plusMinusAllowed;
                                 plusMinusAllowed = (expFound == 1);
                                 c = *(++tokenizer->cursor);
+                                tokenizer->charcount--;
                                 fracFound += c == '.';
                                 expFound += (c == 'e') || (c == 'E');
                                 plusMinusFound += plusMinusAllowed && ((c == '+') || (c == '-')) ? 1 : 0;
@@ -171,13 +184,15 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                                 goto caseTokenUnknown;
                         }
                         tokenizer->cursor += (c == '\r' || c == '\n') ? 1 : 0;
+                        tokenizer->charcount -= (c == '\r' || c == '\n') ? 1 : 0;
                         tokenizer->token.type = fracFound ? LITERAL_FLOAT : LITERAL_INT;
                 } else {
                         caseTokenUnknown:
                         tokenizer->token.type = JSON_UNKNOWN;
                         tokenizer->token.column++;
-                        tokenizer->token.length = strlen(tokenizer->cursor);
+                        tokenizer->token.length = tokenizer->charcount;
                         tokenizer->cursor += tokenizer->token.length;
+                        tokenizer->charcount -= tokenizer->token.length;
                 }
                 return &tokenizer->token;
         } else {
@@ -253,6 +268,96 @@ static bool json_ast_node_element_print(FILE *file, json_element *element);
 
 #define NEXT_TOKEN(x) { *x = *x + 1; }
 #define PREV_TOKEN(x) { *x = *x - 1; }
+
+bool
+json_parse_split(json_err *error_desc, json_parser *parser, const char *input, const char* destdir, const char* filename)
+{
+
+    time_t now;
+
+    now = time(0);
+    printf("Start des Parsens: %s",  ctime(&now));
+
+    size_t i = 0;
+    str_buf buffer;
+    str_buf_create(&buffer);
+    int l = 0;
+
+    size_t statpathsize = strlen(destdir) + 15;
+    char statpath[statpathsize];
+    snprintf(statpath, statpathsize, "%s%s", destdir, "parse_stat.txt");
+    int errorcount = 0;
+    FILE* stats = fopen(statpath, "w");
+
+    bool end_parse = false;
+
+    while (!end_parse)
+    {
+        str_buf_add_char(&buffer, input[i]);
+
+        if((input[i] == '\n') || (input[i] == '\0'))
+        {
+            if(input[i] == '\0')
+            {
+                end_parse = true;
+            }
+
+            json json;
+
+            l++;
+
+            if(destdir == NULL)
+            {
+                json_parse(&json, error_desc, parser, buffer.data);
+                json_drop(&json);
+            }
+            else
+            {
+                rec doc;
+                if(rec_from_json(&doc, buffer.data, KEY_AUTOKEY, NULL))
+                {
+                    size_t filepathsize = strlen(destdir) + strlen(filename) + 28;
+
+                    char filepath[filepathsize];
+                    snprintf(filepath, filepathsize, "%s%s%u%s", destdir, filename, l, ".carbon");
+
+                    FILE *file;
+                    file = fopen(filepath, "w");
+
+                    MEMFILE_SAVE_POSITION(&doc.file);
+                    MEMFILE_SEEK(&doc.file, 0);
+                    fwrite(MEMFILE_PEEK(&doc.file, 1), MEMFILE_SIZE(&doc.file), 1, file);
+                    MEMFILE_RESTORE_POSITION(&doc.file);
+                    fclose(file);
+                    rec_drop(&doc);
+                }
+                else
+                {
+                    errorcount++;
+                    fprintf(stats,"Fehler beim Parsen der Datei %s in Zeile %u\n", filename, l);
+                }
+            }
+            str_buf_clear(&buffer);
+
+            if(l % 10000 == 0)
+            {
+                now = time(0);
+                printf("\n%s: Es wurden %u Zeilen geparst, dabei sind %u Fehler aufgetreten!\n", ctime(&now), l, errorcount);
+                fprintf(stats, "\n%s\n", ctime(&now));
+                fflush(stats);
+            }
+        }
+        i++;
+    }
+    str_buf_drop(&buffer);
+
+    fclose(stats);
+
+    now = time(0);
+    printf("\nEnde des Parsens: %s",  ctime(&now));
+
+    return true;
+}
 
 bool
 json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input)

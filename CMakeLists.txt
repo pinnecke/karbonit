@@ -65,7 +65,7 @@ elseif(CMAKE_BUILD_TYPE MATCHES Release OR BUILD_TYPE MATCHES Release)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-OPTION(USE_AMALGAMATION "Turns source amalgamation (source code concatenation) on or off" ON)
+OPTION(USE_AMALGAMATION "Turns source amalgamation (source code concatenation) on or off" OFF)
 
 # cleanup old amalgamation files
 file(GLOB_RECURSE SRC_AMALGAMATION_FILES ${SRC_AMALGAMATION}/*)
@@ -75,6 +75,7 @@ foreach(FILE ${SRC_AMALGAMATION_FILES})
     message("     - removed ${FILE}")
 endforeach()
 
+SET(USE_AMALGAMATION OFF)
 
 if (USE_AMALGAMATION)
     message("-- *** source amalgamation is turned on ***")

@@ -6,93 +6,6 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-double average = 0;
-
-void run(const char *path, int sample)
-{
-    int fd = open(path, O_RDONLY);
-    int json_in_len = lseek(fd, 0, SEEK_END);
-    const char *json_in = (const char *) mmap(0, json_in_len, PROT_READ, MAP_PRIVATE, fd, 0);
-
-    json_parser parser;
-    json_err error_desc;
-
-
-
-
-    bool test = false;json json1;
-
-    timestamp start = wallclock();
-    test = json_parse(&json1, &error_desc, &parser, json_in);
-
-    timestamp end = wallclock();
-
-    rec doc;
-    internal_from_json(&doc, &json1, KEY_NOKEY, NULL, KEEP);
-
-    FILE * pFile;
-    pFile = fopen("/home/steven/Schreibtisch/test_mem.carbon", "wb");
-    u64 len;
-    const void* raw_data = rec_raw_data(&len, &doc);
-    fwrite(&raw_data, len, 1, pFile);
-    fclose(pFile);
-
-    rec_drop(&doc);
-    json_drop(&json1);
-
-    /*rec doc1;
-
-    pFile = fopen("/home/steven/Schreibtisch/test_mem.carbon", "r");
-    void* raw_data_new = malloc(len);
-    fread(raw_data_new, len, 1, pFile);
-    rec_from_raw_data(&doc1, raw_data_new, len);
-
-    rec_drop(&doc1);
-
-    fclose(pFile);*/
-
-
-    if(!test)
-    {
-        std::cout << path << ";" << sample << ";" << (end - start) << ";false" << std::endl;
-    }
-    else
-    {
-        std::cout << path << ";" << sample << ";" << (end - start) << ";true" << std::endl;
-    }
-
-    average = average + (end - start);
-
-   /* bool test_split = false;
-    timestamp start_split = wallclock();
-    test_split = json_parse_split(&error_desc, &parser, json_in, 1);
-    timestamp end_split = wallclock();
-
-    if(!test_split)
-    {
-        std::cout << path << ";" << sample << ";" << (end_split - start_split) << ";false" << std::endl;
-    }
-    else
-    {
-        std::cout << path << ";" << sample << ";" << (end_split - start_split) << ";true" << std::endl;
-    }*/
-    /*std::cout << "Eingabe" << std::endl;
-    getchar();
-    std::cout << "Eingabe erfolgt" << std::endl;*/
-
-    close(fd);
-}
-
-void f(const char *g) {
-    average = 0;
-    unsigned int n = 1;
-    for (unsigned i = 0; i < n; i++) {
-        run(g, i);
-    }
-    average = average/n;
-    std::cout << "Durchschnitt: " << average << std::endl;
-}
-
 bool json_parse_file(const char* src, bool parse_line_by_line, const char* destdir, const char* filename)
 {
     bool status = false;
@@ -104,42 +17,23 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
     int fd = open(src, O_RDONLY);
     const char *json_in = (const char *) mmap(0, size, PROT_READ, MAP_PRIVATE, fd, 0);
 
-    json_parser parser;
-    json_err error_desc;
-
     if(parse_line_by_line)
     {
-        status = json_parse_split(&error_desc, &parser, json_in, destdir, filename);
+        status = json_parse_split(json_in, destdir, filename);
     }
     else
     {
+        rec doc;
         if (destdir == NULL)
         {
-            json json;
-
-            status = json_parse(&json, &error_desc, &parser, json_in);
-            json_drop(&json);
+            if (rec_from_json(&doc, json_in, KEY_NOKEY, NULL))
+            {
+                rec_drop(&doc);
+            }
         }
         else
         {
-            rec doc;
-
-            rec_from_json(&doc, json_in, KEY_AUTOKEY, NULL);
-
-
-            /*arr_it it;
-            rec_read(&it, &doc);
-
-            while (arr_it_next(&it)) {
-                //arr_it
-            }*/
-
-            /*str_buf buf;
-            str_buf_create(&buf);
-            rec_to_json(&buf, &doc);
-            std::cout << buf.data << std::endl;
-            str_buf_drop(&buf);*/
-
+            rec_from_json(&doc, json_in, KEY_NOKEY, NULL);
 
             size_t filepathsize = strlen(destdir) + strlen(filename) + 8;
 
@@ -156,6 +50,7 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
 
             fclose(file);
             rec_drop(&doc);
+            remove(filepath);
         }
     }
 

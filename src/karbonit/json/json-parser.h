@@ -159,7 +159,7 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer);
 void json_token_dup(json_token *dst, const json_token *src);
 void json_token_print(FILE *file, const json_token *token);
 bool json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input);
-bool json_parse_split(json_err *error_desc, json_parser *parser, const char *input, const char* destdir, const char* filename);
+bool json_parse_split(const char *input, const char* destdir, const char* filename);
 bool json_test(json *json);
 bool json_drop(json *json);
 bool json_print(FILE *file, json *json);

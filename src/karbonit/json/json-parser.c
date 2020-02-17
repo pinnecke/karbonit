@@ -270,24 +270,12 @@ static bool json_ast_node_element_print(FILE *file, json_element *element);
 #define PREV_TOKEN(x) { *x = *x - 1; }
 
 bool
-json_parse_split(json_err *error_desc, json_parser *parser, const char *input, const char* destdir, const char* filename)
+json_parse_split(const char *input, const char* destdir, const char* filename)
 {
-
-    time_t now;
-
-    now = time(0);
-    printf("Start des Parsens: %s",  ctime(&now));
-
     size_t i = 0;
     str_buf buffer;
     str_buf_create(&buffer);
     int l = 0;
-
-    size_t statpathsize = strlen(destdir) + 15;
-    char statpath[statpathsize];
-    snprintf(statpath, statpathsize, "%s%s", destdir, "parse_stat.txt");
-    int errorcount = 0;
-    FILE* stats = fopen(statpath, "w");
 
     bool end_parse = false;
 
@@ -302,19 +290,20 @@ json_parse_split(json_err *error_desc, json_parser *parser, const char *input, c
                 end_parse = true;
             }
 
-            json json;
 
+            rec doc;
             l++;
 
             if(destdir == NULL)
             {
-                json_parse(&json, error_desc, parser, buffer.data);
-                json_drop(&json);
+                if(rec_from_json(&doc, buffer.data, KEY_NOKEY, NULL))
+                {
+                    rec_drop(&doc);
+                }
             }
             else
             {
-                rec doc;
-                if(rec_from_json(&doc, buffer.data, KEY_AUTOKEY, NULL))
+                if(rec_from_json(&doc, buffer.data, KEY_NOKEY, NULL))
                 {
                     size_t filepathsize = strlen(destdir) + strlen(filename) + 28;
 
@@ -330,31 +319,14 @@ json_parse_split(json_err *error_desc, json_parser *parser, const char *input, c
                     MEMFILE_RESTORE_POSITION(&doc.file);
                     fclose(file);
                     rec_drop(&doc);
-                }
-                else
-                {
-                    errorcount++;
-                    fprintf(stats,"Fehler beim Parsen der Datei %s in Zeile %u\n", filename, l);
+                    remove(filepath);
                 }
             }
             str_buf_clear(&buffer);
-
-            if(l % 10000 == 0)
-            {
-                now = time(0);
-                printf("\n%s: Es wurden %u Zeilen geparst, dabei sind %u Fehler aufgetreten!\n", ctime(&now), l, errorcount);
-                fprintf(stats, "\n%s\n", ctime(&now));
-                fflush(stats);
-            }
         }
         i++;
     }
     str_buf_drop(&buffer);
-
-    fclose(stats);
-
-    now = time(0);
-    printf("\nEnde des Parsens: %s",  ctime(&now));
 
     return true;
 }

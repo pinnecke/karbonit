@@ -123,8 +123,7 @@ bool rec_from_json(rec *doc, const char *json, key_e type,
         json_parser parser;
 
         if (!(json_parse(&data, &status, &parser, json))) {
-                //TODO raise Error again, shouldnt be a comment!
-                //ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
+                ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
                 return false;
         } else {
                 internal_from_json(doc, &data, type, key, OPTIMIZE);

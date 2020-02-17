@@ -132,6 +132,23 @@ bool rec_from_json(rec *doc, const char *json, key_e type,
         }
 }
 
+bool rec_from_json_limited(rec *doc, const char *json, key_e type,
+                   const void *key, size_t charcount)
+{
+    struct json data;
+    json_err status;
+    json_parser parser;
+
+    if (!(json_parse_limited(&data, &status, &parser, json, charcount))) {
+        //ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
+        return false;
+    } else {
+        internal_from_json(doc, &data, type, key, OPTIMIZE);
+        json_drop(&data);
+        return true;
+    }
+}
+
 bool rec_from_raw_data(rec *doc, const void *data, u64 len)
 {
         MEMBLOCK_FROM_RAW_DATA(&doc->block, data, len);

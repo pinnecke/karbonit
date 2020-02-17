@@ -125,6 +125,7 @@ void rec_create_empty(rec *doc, list_type_e derivation, key_e type);
 void rec_create_empty_ex(rec *doc, list_type_e derivation, key_e type, u64 doc_cap, u64 array_cap);
 
 bool rec_from_json(rec *doc, const char *json, key_e type, const void *key);
+bool rec_from_json_limited(rec *doc, const char *json, key_e type, const void *key, size_t charcount);
 bool rec_from_raw_data(rec *doc, const void *data, u64 len);
 
 bool rec_drop(rec *doc);

@@ -26,6 +26,7 @@
 #include <karbonit/json/json-parser.h>
 #include <karbonit/rec.h>
 #include <karbonit/carbon/internal.h>
+#include <karbonit/karbonit.h>
 
 static struct {
         json_token_e token;
@@ -61,6 +62,15 @@ bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input)
                 (json_token) {.type = JSON_UNKNOWN, .length = 0, .column = 0, .line = 1, .string = NULL};
         tokenizer->charcount = strlen(tokenizer->cursor);
         return true;
+}
+
+bool json_tokenizer_init_limited(json_tokenizer *tokenizer, const char *input, size_t charcount)
+{
+    tokenizer->cursor = input;
+    tokenizer->token =
+            (json_token) {.type = JSON_UNKNOWN, .length = 0, .column = 0, .line = 1, .string = NULL};
+    tokenizer->charcount = charcount;
+    return true;
 }
 
 static void
@@ -107,7 +117,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
 
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
 {
-        if (LIKELY(*tokenizer->cursor != '\0')) {
+        if (LIKELY(tokenizer->charcount != 0)) {
                 char c = *tokenizer->cursor;
                 tokenizer->token.string = tokenizer->cursor;
                 tokenizer->token.column += tokenizer->token.length;
@@ -273,16 +283,14 @@ bool
 json_parse_split(const char *input, const char* destdir, const char* filename)
 {
     size_t i = 0;
-    str_buf buffer;
-    str_buf_create(&buffer);
+    size_t lastPart = 0;
     int l = 0;
+    const char* currentPart;
 
     bool end_parse = false;
 
     while (!end_parse)
     {
-        str_buf_add_char(&buffer, input[i]);
-
         if((input[i] == '\n') || (input[i] == '\0'))
         {
             if(input[i] == '\0')
@@ -290,20 +298,22 @@ json_parse_split(const char *input, const char* destdir, const char* filename)
                 end_parse = true;
             }
 
+            //set pointer to the beginning of current part
+            currentPart = input + lastPart;
 
             rec doc;
             l++;
 
             if(destdir == NULL)
             {
-                if(rec_from_json(&doc, buffer.data, KEY_NOKEY, NULL))
+                if(rec_from_json_limited(&doc, currentPart, KEY_NOKEY, NULL, i-lastPart))
                 {
                     rec_drop(&doc);
                 }
             }
             else
             {
-                if(rec_from_json(&doc, buffer.data, KEY_NOKEY, NULL))
+                if(rec_from_json_limited(&doc, currentPart, KEY_NOKEY, NULL, i-lastPart))
                 {
                     size_t filepathsize = strlen(destdir) + strlen(filename) + 28;
 
@@ -318,81 +328,115 @@ json_parse_split(const char *input, const char* destdir, const char* filename)
                     fwrite(MEMFILE_PEEK(&doc.file, 1), MEMFILE_SIZE(&doc.file), 1, file);
                     MEMFILE_RESTORE_POSITION(&doc.file);
                     fclose(file);
-                    rec_drop(&doc);
                     remove(filepath);
+                    rec_drop(&doc);
                 }
             }
-            str_buf_clear(&buffer);
+            lastPart = i+1;
         }
         i++;
     }
-    str_buf_drop(&buffer);
 
     return true;
+}
+
+static bool json_parse_check_input(json_err *error_desc, const char *input, size_t charcount)
+{
+    str_buf str;
+    str_buf_create(&str);
+    if(charcount != 0)
+    {
+        str_buf_add_nchar(&str, input, charcount);
+    }
+    else
+    {
+        str_buf_add(&str, input);
+    }
+
+    str_buf_trim(&str);
+    if (str_buf_is_empty(&str)) {
+        set_error(error_desc, NULL, "input str_buf is empty");
+        str_buf_drop(&str);
+        return false;
+    }
+    str_buf_drop(&str);
+    return true;
+}
+
+static bool json_parse_input(json *json, json_err *error_desc, json_parser *parser)
+{
+    vec ofType(json_token_e) brackets;
+    vec ofType(json_token) token_stream;
+
+    struct json retval;
+    ZERO_MEMORY(&retval, sizeof(json))
+    retval.element = MALLOC(sizeof(json_element));
+    const json_token *token;
+    int status;
+
+    vec_create(&brackets, sizeof(json_token_e), 15);
+    vec_create(&token_stream, sizeof(json_token), 200);
+
+    struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
+
+    while ((token = json_tokenizer_next(&parser->tokenizer))) {
+        if (LIKELY(
+                (status = process_token(error_desc, token, &brackets, &token_mem)) == true)) {
+            json_token *newToken = VEC_NEW_AND_GET(&token_stream, json_token);
+            json_token_dup(newToken, token);
+        } else {
+            goto cleanup;
+        }
+    }
+    if (!vec_is_empty(&brackets)) {
+        json_token_e type = *VEC_PEEK(&brackets, json_token_e);
+        char buffer[1024];
+        sprintf(&buffer[0],
+                "Unexpected end of file: missing '%s' to match unclosed '%s' (if any)",
+                type == OBJECT_OPEN ? "}" : "]",
+                type == OBJECT_OPEN ? "{" : "[");
+        status = set_error(error_desc, token, &buffer[0]);
+        goto cleanup;
+    }
+
+    if (!parse_token_stream(&retval, &token_stream)) {
+        status = false;
+        goto cleanup;
+    }
+
+    OPTIONAL_SET_OR_ELSE(json, retval, json_drop(json));
+    status = true;
+
+    cleanup:
+    vec_drop(&brackets);
+    vec_drop(&token_stream);
+    return status;
 }
 
 bool
 json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input)
 {
-        str_buf str;
-        str_buf_create(&str);
-        str_buf_add(&str, input);
-        str_buf_trim(&str);
-        if (str_buf_is_empty(&str)) {
-                set_error(error_desc, NULL, "input str_buf is empty");
-                str_buf_drop(&str);
-                return false;
+        if(!json_parse_check_input(error_desc, input, 0))
+        {
+            return false;
         }
-        str_buf_drop(&str);
-
-
-        vec ofType(json_token_e) brackets;
-        vec ofType(json_token) token_stream;
-
-        struct json retval;
-        ZERO_MEMORY(&retval, sizeof(json))
-        retval.element = MALLOC(sizeof(json_element));
-        const json_token *token;
-        int status;
 
         json_tokenizer_init(&parser->tokenizer, input);
-        vec_create(&brackets, sizeof(json_token_e), 15);
-        vec_create(&token_stream, sizeof(json_token), 200);
 
-        struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
+        return json_parse_input(json, error_desc, parser);
+}
 
-        while ((token = json_tokenizer_next(&parser->tokenizer))) {
-                if (LIKELY(
-                        (status = process_token(error_desc, token, &brackets, &token_mem)) == true)) {
-                        json_token *newToken = VEC_NEW_AND_GET(&token_stream, json_token);
-                        json_token_dup(newToken, token);
-                } else {
-                        goto cleanup;
-                }
-        }
-        if (!vec_is_empty(&brackets)) {
-                json_token_e type = *VEC_PEEK(&brackets, json_token_e);
-                char buffer[1024];
-                sprintf(&buffer[0],
-                        "Unexpected end of file: missing '%s' to match unclosed '%s' (if any)",
-                        type == OBJECT_OPEN ? "}" : "]",
-                        type == OBJECT_OPEN ? "{" : "[");
-                status = set_error(error_desc, token, &buffer[0]);
-                goto cleanup;
-        }
+bool
+json_parse_limited(json *json, json_err *error_desc, json_parser *parser, const char *input, size_t charcount)
+{
+    if(!json_parse_check_input(error_desc, input, charcount))
+    {
+        return false;
+    }
 
-        if (!parse_token_stream(&retval, &token_stream)) {
-                status = false;
-                goto cleanup;
-        }
+    json_tokenizer_init_limited(&parser->tokenizer, input, charcount);
 
-        OPTIONAL_SET_OR_ELSE(json, retval, json_drop(json));
-        status = true;
-
-        cleanup:
-        vec_drop(&brackets);
-        vec_drop(&token_stream);
-        return status;
+    return json_parse_input(json, error_desc, parser);
 }
 
 bool test_condition_value(json_node_value *value)

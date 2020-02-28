@@ -6,7 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-bool json_parse_file(const char* src, bool parse_line_by_line, const char* destdir, const char* filename)
+bool json_parse_file(const char* src, bool parse_line_by_line, const char* destdir, const char* filename, size_t num_threads, size_t num_parts)
 {
     bool status = false;
 
@@ -19,7 +19,15 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
 
     if(parse_line_by_line)
     {
-        status = json_parse_split(json_in, destdir, filename);
+        //if multiple threads are allowed and input should be split in multiple parts
+        if((num_threads >= 1) && (num_parts > 1))
+        {
+            status = json_parse_split_parallel(json_in, size, num_threads, num_parts);
+        }
+        else
+        {
+            status = json_parse_split(json_in, size, destdir, filename);
+        }
     }
     else
     {
@@ -60,7 +68,7 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
 }
 
 
-bool json_parse_directory(const char* src, DIR* srcdir, bool parse_line_by_line, const char* destdir)
+bool json_parse_directory(const char* src, DIR* srcdir, bool parse_line_by_line, const char* destdir, size_t num_threads, size_t num_parts)
 {
     bool status = false;
 
@@ -104,7 +112,7 @@ bool json_parse_directory(const char* src, DIR* srcdir, bool parse_line_by_line,
                 char filepath[filepathsize];
                 snprintf(filepath, filepathsize, "%s%s", src, buf.data);
 
-                json_parse_file(filepath, parse_line_by_line, destdir, buf.data);
+                json_parse_file(filepath, parse_line_by_line, destdir, buf.data, num_threads, num_parts);
             }
         }
         entry = readdir(srcdir);
@@ -121,20 +129,23 @@ int main(int argc, char **argv) {
     //commands:
     //-d                    -> directory-path expected, parse every file in given directory
     //-l                    -> parse file line by line, one line = one record
+    //-t <num_threads>      -> requires -l; number of possible threads
+    //-p <num_parts>        -> requires -l; number of parts the file should be split into
     //-s <directory-path>   -> save parse results as carbon files
 
     //args:
     //- file-path of file to be parsed (or directory-path if -d)
-
 
     int opt;
 
     bool parse_directory = false;
     bool parse_line_by_line = false;
     bool save_results = false;
+    size_t num_parts = 1;
+    size_t num_threads = 1;
 
-    const char *src;
-    const char *dest;
+    const char *src = NULL;
+    const char *dest = NULL;
 
     DIR* srcdir = NULL;
     DIR* destdir = NULL;
@@ -144,7 +155,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    while ((opt = getopt(argc, argv, "dls:")) != -1) {
+    while ((opt = getopt(argc, argv, "dls:p:t:")) != -1) {
         switch (opt) {
             case 'd':
                 parse_directory = true;
@@ -153,6 +164,12 @@ int main(int argc, char **argv) {
             case 'l':
                 std::cout << "Parse LBL" << std::endl;
                 parse_line_by_line = true;
+                break;
+            case 'p':
+                num_parts = atoi(optarg);
+                break;
+            case 't':
+                num_threads = atoi(optarg);
                 break;
             case 's':
                 save_results = true;
@@ -211,20 +228,76 @@ int main(int argc, char **argv) {
     }
 
 
-    timestamp start = wallclock();
 
     if(parse_directory)
     {
-        json_parse_directory(src, srcdir, parse_line_by_line, dest);
+        json_parse_directory(src, srcdir, parse_line_by_line, dest, num_threads, num_parts);
         closedir(srcdir);
     }
     else
     {
-        json_parse_file(src, parse_line_by_line, dest, "parsed_file");
-    }
-    timestamp end = wallclock();
+        int t = 36;
+        int n = 1;
+        int w = 0;
 
-    std::cout << "Parsen benoetigte "<< (end-start) << std::endl;
+        //8 CPUs
+        //1-8 Threads echt parallel
+        //9-16 Threads Hyperthreading
+        //17-24 Threads ausserhalb
+        //#Parts = #Threads
+
+        std::cout << "Phase 1" << std::endl;
+        while (t < 25)
+        {
+            std::cout << t << " Threads" << std::endl;
+            w = 0;
+
+            //je 5 wiederholungen
+            while (w < 5)
+            {
+                timestamp start = wallclock();
+                json_parse_file(src, parse_line_by_line, dest, "parsed_file", t, t);
+                timestamp end = wallclock();
+
+                std::cout << (end - start) << std::endl;
+                w++;
+            }
+            t++;
+        }
+
+        t = 3;
+        n = 1;
+        w = 0;
+
+        std::cout << "Phase 2" << std::endl;
+        while (t < 21)
+        {
+            std::cout << t << " Threads" << std::endl;
+            n = t;
+            while (n < t+4)
+            {
+                std::cout << n << " Parts" << std::endl;
+                w = 0;
+                //je 5 wiederholungen
+                while (w < 2) {
+                    timestamp start = wallclock();
+                    json_parse_file(src, parse_line_by_line, dest, "a", t, n);
+                    timestamp end = wallclock();
+
+                    std::cout << (end - start) << std::endl;
+                    w++;
+                }
+                n++;
+            }
+            t++;
+        }
+
+        /*timestamp start = wallclock();
+        json_parse_file(src, parse_line_by_line, dest, "parsed_file", num_threads, num_parts);
+        timestamp end = wallclock();
+
+        std::cout << (end - start) << std::endl;*/
+    }
 
     return 0;
 }

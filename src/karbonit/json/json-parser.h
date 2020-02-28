@@ -154,13 +154,19 @@ typedef struct json_number {
         } value;
 } json_number;
 
+typedef struct parser_task_args{
+        const char* start;
+        size_t size;
+} parser_task_args;
+
 bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input);
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer);
 void json_token_dup(json_token *dst, const json_token *src);
 void json_token_print(FILE *file, const json_token *token);
 bool json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input);
 bool json_parse_limited(json *json, json_err *error_desc, json_parser *parser, const char *input, size_t charcount);
-bool json_parse_split(const char *input, const char* destdir, const char* filename);
+bool json_parse_split_parallel(const char *input, size_t size_input, size_t num_threads, size_t num_parts);
+bool json_parse_split(const char *input, size_t size_input, const char* destdir, const char* filename);
 bool json_test(json *json);
 bool json_drop(json *json);
 bool json_print(FILE *file, json *json);

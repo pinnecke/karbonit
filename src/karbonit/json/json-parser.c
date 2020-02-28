@@ -111,6 +111,7 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                 tokenizer->charcount--;
         }
 
+        //TODO only check once for condition and save result add/subtract
         tokenizer->cursor += (c == '\r' || c == '\n') ? 1 : 0;
         tokenizer->charcount -= (c == '\r' || c == '\n') ? 1 : 0;
 }
@@ -193,6 +194,7 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                                 tokenizer->token.column -= tokenizer->token.length;
                                 goto caseTokenUnknown;
                         }
+                        //TODO only check once for condition and save result add/subtract
                         tokenizer->cursor += (c == '\r' || c == '\n') ? 1 : 0;
                         tokenizer->charcount -= (c == '\r' || c == '\n') ? 1 : 0;
                         tokenizer->token.type = fracFound ? LITERAL_FLOAT : LITERAL_INT;
@@ -279,8 +281,71 @@ static bool json_ast_node_element_print(FILE *file, json_element *element);
 #define NEXT_TOKEN(x) { *x = *x + 1; }
 #define PREV_TOKEN(x) { *x = *x - 1; }
 
+static void task_routine_lbl(void *args)
+{
+    parser_task_args* task_args = (parser_task_args*) args;
+    json_parse_split(task_args->start, task_args->size, NULL, NULL);
+}
+
 bool
-json_parse_split(const char *input, const char* destdir, const char* filename)
+json_parse_split_parallel(const char *input, size_t size_input, size_t num_threads, size_t num_parts)
+{
+    size_t size_part = 0;
+    size_t current_char_pos = 0;
+    size_t current_size = 0;
+    size_t i = 0;
+    const char* start_of_part = input;
+
+
+    thread_pool *pool = thread_pool_create(num_threads, 0);
+
+    //create Array of num_parts tasks
+    thread_task tasks[num_parts];
+    parser_task_args task_args[num_parts];
+
+    //divide size by num_parts
+    size_part = size_input / num_parts;
+    size_part++;
+
+    while (i < num_parts)
+    {
+        //if out of bounds
+        if((current_size + size_part) > size_input)
+        {
+            current_char_pos = size_input - current_size;
+        }
+        //else skip size_part chars
+        else
+        {
+            current_char_pos = size_part;
+
+            //search for next EOL or End of String
+            //TODO try if using LIKELY results in better performance
+            for (; start_of_part[current_char_pos] != '\n' && LIKELY(start_of_part[current_char_pos] != '\0'); current_char_pos++) {}
+        }
+
+        //start_of_part - pointer to start of part
+        //end_of_part - position of end of part
+        task_args[i].start = start_of_part;
+        task_args[i].size = current_char_pos;
+        current_size += current_char_pos;
+
+        tasks[i].args = (void *) &task_args[i];
+        tasks[i].routine = task_routine_lbl;
+
+        start_of_part = start_of_part + (current_char_pos + 1);
+
+        i++;
+    }
+
+    thread_pool_enqueue_tasks_wait(tasks, pool, num_parts);
+
+    thread_pool_free(pool);
+    return true;
+}
+
+bool
+json_parse_split(const char *input, size_t size_input, const char* destdir, const char* filename)
 {
     size_t i = 0;
     size_t lastPart = 0;
@@ -293,7 +358,7 @@ json_parse_split(const char *input, const char* destdir, const char* filename)
     {
         if((input[i] == '\n') || (input[i] == '\0'))
         {
-            if(input[i] == '\0')
+            if((input[i] == '\0') || (i == size_input))
             {
                 end_parse = true;
             }
@@ -336,12 +401,14 @@ json_parse_split(const char *input, const char* destdir, const char* filename)
         }
         i++;
     }
-
+    
     return true;
 }
 
 static bool json_parse_check_input(json_err *error_desc, const char *input, size_t charcount)
 {
+    //TODO replace str_buf, just check if input contains any chars except spaces an \0
+
     str_buf str;
     str_buf_create(&str);
     if(charcount != 0)

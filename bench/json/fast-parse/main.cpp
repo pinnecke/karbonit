@@ -6,6 +6,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+//TODO handle empty files
+
+
 bool json_parse_file(const char* src, bool parse_line_by_line, const char* destdir, const char* filename, size_t num_threads, size_t num_parts)
 {
     bool status = false;
@@ -236,7 +239,7 @@ int main(int argc, char **argv) {
     }
     else
     {
-        int t = 36;
+        /*int t = 1000;
         int n = 1;
         int w = 0;
 
@@ -247,13 +250,13 @@ int main(int argc, char **argv) {
         //#Parts = #Threads
 
         std::cout << "Phase 1" << std::endl;
-        while (t < 25)
+        while (t < 101)
         {
             std::cout << t << " Threads" << std::endl;
             w = 0;
 
             //je 5 wiederholungen
-            while (w < 5)
+            while (w < 10)
             {
                 timestamp start = wallclock();
                 json_parse_file(src, parse_line_by_line, dest, "parsed_file", t, t);
@@ -265,21 +268,21 @@ int main(int argc, char **argv) {
             t++;
         }
 
-        t = 3;
+        t = 1;
         n = 1;
         w = 0;
 
         std::cout << "Phase 2" << std::endl;
-        while (t < 21)
+        while (t < 101)
         {
             std::cout << t << " Threads" << std::endl;
             n = t;
-            while (n < t+4)
+            while (n < t+3)
             {
                 std::cout << n << " Parts" << std::endl;
                 w = 0;
                 //je 5 wiederholungen
-                while (w < 2) {
+                while (w < 10) {
                     timestamp start = wallclock();
                     json_parse_file(src, parse_line_by_line, dest, "a", t, n);
                     timestamp end = wallclock();
@@ -290,13 +293,19 @@ int main(int argc, char **argv) {
                 n++;
             }
             t++;
+        }*/
+
+        int w = 0;
+
+        while (w < 1)
+        {
+            w++;
+            timestamp start = wallclock();
+            json_parse_file(src, parse_line_by_line, dest, "parsed_file", num_threads, num_parts);
+            timestamp end = wallclock();
+
+            std::cout << (end - start) << std::endl;
         }
-
-        /*timestamp start = wallclock();
-        json_parse_file(src, parse_line_by_line, dest, "parsed_file", num_threads, num_parts);
-        timestamp end = wallclock();
-
-        std::cout << (end - start) << std::endl;*/
     }
 
     return 0;

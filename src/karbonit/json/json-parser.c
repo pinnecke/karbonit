@@ -78,6 +78,8 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                    bool include_start, bool include_end)
 {
         bool escapeQuote = false;
+        size_t step = 0;
+
         tokenizer->token.type = LITERAL_STRING;
         if (!include_start) {
                 tokenizer->token.string++;
@@ -111,13 +113,15 @@ parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delim
                 tokenizer->charcount--;
         }
 
-        //TODO only check once for condition and save result add/subtract
-        tokenizer->cursor += (c == '\r' || c == '\n') ? 1 : 0;
-        tokenizer->charcount -= (c == '\r' || c == '\n') ? 1 : 0;
+        step = (c == '\r' || c == '\n') ? 1 : 0;
+        tokenizer->cursor += step;
+        tokenizer->charcount -= step;
 }
 
 const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
 {
+        size_t step = 0;
+
         if (LIKELY(tokenizer->charcount != 0)) {
                 char c = *tokenizer->cursor;
                 tokenizer->token.string = tokenizer->cursor;
@@ -194,9 +198,10 @@ const json_token *json_tokenizer_next(json_tokenizer *tokenizer)
                                 tokenizer->token.column -= tokenizer->token.length;
                                 goto caseTokenUnknown;
                         }
-                        //TODO only check once for condition and save result add/subtract
-                        tokenizer->cursor += (c == '\r' || c == '\n') ? 1 : 0;
-                        tokenizer->charcount -= (c == '\r' || c == '\n') ? 1 : 0;
+
+                        step = (c == '\r' || c == '\n') ? 1 : 0;
+                        tokenizer->cursor += step;
+                        tokenizer->charcount -= step;
                         tokenizer->token.type = fracFound ? LITERAL_FLOAT : LITERAL_INT;
                 } else {
                         caseTokenUnknown:
@@ -407,27 +412,36 @@ json_parse_split(const char *input, size_t size_input, const char* destdir, cons
 
 static bool json_parse_check_input(json_err *error_desc, const char *input, size_t charcount)
 {
-    //TODO replace str_buf, just check if input contains any chars except spaces an \0
+    //TODO test this new implementation
+    size_t pos = 0;
+    size_t endpos = 0;
 
-    str_buf str;
-    str_buf_create(&str);
-    if(charcount != 0)
+    if (charcount == 0)
     {
-        str_buf_add_nchar(&str, input, charcount);
-    }
-    else
-    {
-        str_buf_add(&str, input);
+        charcount = strlen(input);
     }
 
-    str_buf_trim(&str);
-    if (str_buf_is_empty(&str)) {
+    if(charcount == 0)
+    {
         set_error(error_desc, NULL, "input str_buf is empty");
-        str_buf_drop(&str);
         return false;
     }
-    str_buf_drop(&str);
-    return true;
+
+    endpos = (charcount / 2) +1;
+
+    while (pos < endpos)
+    {
+        if (((!isspace(input[pos])) && (input[pos] != '\n'))
+            || (!isspace(input[charcount - pos]) && (input[charcount - pos] != '\n') && (input[charcount - pos] != '\0')))
+        {
+            return true;
+        }
+
+        pos++;
+    }
+
+    set_error(error_desc, NULL, "input str_buf is empty");
+    return false;
 }
 
 static bool json_parse_input(json *json, json_err *error_desc, json_parser *parser)

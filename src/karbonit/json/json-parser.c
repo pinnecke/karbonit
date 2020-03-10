@@ -27,6 +27,7 @@
 #include <karbonit/rec.h>
 #include <karbonit/carbon/internal.h>
 #include <karbonit/karbonit.h>
+#include "json-parser.h"
 
 static struct {
         json_token_e token;
@@ -248,6 +249,14 @@ static void parse_string(json_string *string, vec ofType(json_token) *token_stre
 
 static void parse_number(json_number *number, vec ofType(json_token) *token_stream,
                          size_t *token_idx);
+
+static bool parse_object_exp(json_parser * parser, json_object *object, json_err *error_desc, struct token_memory *token_mem);
+
+static bool parse_array_exp(json_parser * parser, json_array *array, json_err *error_desc, struct token_memory *token_mem);
+
+static void parse_string_exp(json_string *string, json_token token);
+
+static void parse_number_exp(json_number *number, json_token token);
 
 static bool parse_element(json_element *element, vec ofType(json_token) *token_stream, size_t *token_idx);
 
@@ -1591,4 +1600,446 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
         *type = list_type;
         return true;
 
+}
+
+/*------------------------------------------------------------------------------*/
+
+
+static void parse_number_exp(json_number *number, json_token token)
+{
+    assert(token.type == LITERAL_FLOAT || token.type == LITERAL_INT);
+
+    char *value = MALLOC(token.length + 1);
+    strncpy(value, token.string, token.length);
+    value[token.length] = '\0';
+
+    if (token.type == LITERAL_INT) {
+        i64 assumeSigned = convert_atoi64(value);
+        if (value[0] == '-') {
+            number->value_type = JSON_NUMBER_SIGNED;
+            number->value.signed_integer = assumeSigned;
+        } else {
+            u64 assumeUnsigned = convert_atoiu64(value);
+            if (assumeUnsigned >= (u64) assumeSigned) {
+                number->value_type = JSON_NUMBER_UNSIGNED;
+                number->value.unsigned_integer = assumeUnsigned;
+            } else {
+                number->value_type = JSON_NUMBER_SIGNED;
+                number->value.signed_integer = assumeSigned;
+            }
+        }
+    } else {
+        number->value_type = JSON_NUMBER_FLOAT;
+        setlocale(LC_ALL | ~LC_NUMERIC, "");
+        number->value.float_number = strtof(value, NULL);
+    }
+
+    free(value);
+}
+
+static void parse_string_exp(json_string *string, json_token token)
+{
+    assert(token.type == LITERAL_STRING);
+
+    string->value = MALLOC(token.length + 1);
+    if (LIKELY(token.length > 0)) {
+        strncpy(string->value, token.string, token.length);
+    }
+    string->value[token.length] = '\0';
+}
+
+static int process_token_exp(json_err *error_desc, const json_token *token, struct token_memory *token_mem)
+{
+    switch (token_mem->type) {
+        case OBJECT_OPEN:
+            switch (token->type) {
+                case LITERAL_STRING:
+                case OBJECT_CLOSE:
+                    break;
+                default:
+                    return set_error(error_desc, token, "Expected key name or '}'");
+            }
+            break;
+        case LITERAL_STRING:
+            switch (token->type) {
+                case ASSIGN:
+                case COMMA:
+                case ARRAY_CLOSE:
+                case OBJECT_CLOSE:
+                    break;
+                default:
+                    return set_error(error_desc, token,
+                                     "Expected key name (missing ':'), enumeration (','), "
+                                     "end of enumeration (']'), or end of object ('}')");
+            }
+            break;
+        case OBJECT_CLOSE:
+        case LITERAL_INT:
+        case LITERAL_FLOAT:
+        case LITERAL_TRUE:
+        case LITERAL_FALSE:
+        case LITERAL_NULL:
+            switch (token->type) {
+                case COMMA:
+                case ARRAY_CLOSE:
+                case OBJECT_CLOSE:
+                    break;
+                default:
+                    return set_error(error_desc, token,
+                                     "Expected enumeration (','), end of enumeration (']'), "
+                                     "or end of object ('})");
+            }
+            break;
+        case ASSIGN:
+        case COMMA:
+            switch (token->type) {
+                case LITERAL_STRING:
+                case LITERAL_FLOAT:
+                case LITERAL_INT:
+                case OBJECT_OPEN:
+                case ARRAY_OPEN:
+                case LITERAL_TRUE:
+                case LITERAL_FALSE:
+                case LITERAL_NULL:
+                    break;
+                default:
+                    return set_error(error_desc,
+                                     token,
+                                     "Expected key name, or value (str_buf, number, object, enumeration, true, "
+                                     "false, or null).");
+            }
+            break;
+        case ARRAY_OPEN:
+            switch (token->type) {
+                case ARRAY_CLOSE:
+                case LITERAL_STRING:
+                case LITERAL_FLOAT:
+                case LITERAL_INT:
+                case OBJECT_OPEN:
+                case ARRAY_OPEN:
+                case LITERAL_TRUE:
+                case LITERAL_FALSE:
+                case LITERAL_NULL:
+                    break;
+                default:
+                    return set_error(error_desc, token,
+                                     "End of enumeration (']'), enumeration (','), or "
+                                     "end of enumeration (']')");
+            }
+            break;
+        case ARRAY_CLOSE:
+            switch (token->type) {
+                case COMMA:
+                case ARRAY_CLOSE:
+                case OBJECT_CLOSE:
+                    break;
+                default:
+                    return set_error(error_desc, token,
+                                     "End of enumeration (']'), enumeration (','), or "
+                                     "end of object ('}')");
+            }
+            break;
+        case JSON_UNKNOWN:
+            if (token_mem->init) {
+                if (token->type != OBJECT_OPEN && token->type != ARRAY_OPEN && !isValue(token->type)) {
+                    return set_error(error_desc, token,
+                                     "Expected JSON document: missing '{' or '['");
+                }
+                token_mem->init = false;
+            } else {
+                return set_error(error_desc, token, "Unexpected token");
+            }
+            break;
+        default:
+            return ERROR(ERR_NOJSONTOKEN, NULL);
+    }
+
+    token_mem->type = token->type;
+    return true;
+}
+
+const json_token *json_tokenizer_next_exp(json_tokenizer *tokenizer)
+{
+    size_t step = 0;
+
+    if (LIKELY(tokenizer->charcount != 0)) {
+        char c = *tokenizer->cursor;
+        tokenizer->token.string = tokenizer->cursor;
+        tokenizer->token.column += tokenizer->token.length;
+        tokenizer->token.length = 0;
+        if (c == '\n' || c == '\r') {
+            tokenizer->token.line += c == '\n' ? 1 : 0;
+            tokenizer->token.column = c == '\n' ? 0 : tokenizer->token.column;
+            tokenizer->cursor++;
+            tokenizer->charcount--;
+            return json_tokenizer_next(tokenizer);
+        } else if (isspace(c)) {
+            do {
+                tokenizer->cursor++;
+                tokenizer->charcount--;
+                tokenizer->token.column++;
+            } while (isspace(c = *tokenizer->cursor) && c != '\n');
+            return json_tokenizer_next(tokenizer);
+        } else if (c == '{' || c == '}' || c == '[' || c == ']' || c == ':' || c == ',') {
+            tokenizer->token.type =
+                    c == '{' ? OBJECT_OPEN : c == '}' ? OBJECT_CLOSE : c == '[' ? ARRAY_OPEN : c == ']'
+                                                                                               ? ARRAY_CLOSE
+                                                                                               : c == ':'
+                                                                                                 ? ASSIGN
+                                                                                                 : COMMA;
+            tokenizer->token.column++;
+            tokenizer->token.length = 1;
+            tokenizer->cursor++;
+            tokenizer->charcount--;
+        } else if (c != '"' && (isalpha(c) || c == '_') &&
+                   (tokenizer->charcount >= 4 && (strncmp(tokenizer->cursor, "null", 4) != 0 &&
+                                                  strncmp(tokenizer->cursor, "true", 4) != 0)) &&
+                   (tokenizer->charcount >= 5 && strncmp(tokenizer->cursor, "false", 5) != 0)) {
+            parse_string_token(tokenizer, c, ' ', ':', ',', true, true);
+        } else if (c == '"') {
+            parse_string_token(tokenizer, c, '"', '"', '"', false, false);
+        } else if (c == 't' || c == 'f' || c == 'n') {
+            const unsigned lenTrueNull = 4;
+            const unsigned lenFalse = 5;
+            const unsigned cursorLen = tokenizer->charcount;
+            if (cursorLen >= lenTrueNull && strncmp(tokenizer->cursor, "true", lenTrueNull) == 0) {
+                tokenizer->token.type = LITERAL_TRUE;
+                tokenizer->token.length = lenTrueNull;
+            } else if (cursorLen >= lenFalse && strncmp(tokenizer->cursor, "false", lenFalse) == 0) {
+                tokenizer->token.type = LITERAL_FALSE;
+                tokenizer->token.length = lenFalse;
+            } else if (cursorLen >= lenTrueNull && strncmp(tokenizer->cursor, "null", lenTrueNull) == 0) {
+                tokenizer->token.type = LITERAL_NULL;
+                tokenizer->token.length = lenTrueNull;
+            } else {
+                goto caseTokenUnknown;
+            }
+            tokenizer->token.column++;
+            tokenizer->cursor += tokenizer->token.length;
+            tokenizer->charcount -= tokenizer->token.length;
+        } else if (c == '-' || isdigit(c)) {
+            unsigned fracFound = 0, expFound = 0, plusMinusFound = 0;
+            bool plusMinusAllowed = false;
+            bool onlyDigitsAllowed = false;
+            do {
+                onlyDigitsAllowed |= plusMinusAllowed;
+                plusMinusAllowed = (expFound == 1);
+                c = *(++tokenizer->cursor);
+                tokenizer->charcount--;
+                fracFound += c == '.';
+                expFound += (c == 'e') || (c == 'E');
+                plusMinusFound += plusMinusAllowed && ((c == '+') || (c == '-')) ? 1 : 0;
+                tokenizer->token.length++;
+            } while ((((isdigit(c)) || (c == '.' && fracFound <= 1)
+                       || (plusMinusAllowed && (plusMinusFound <= 1) && ((c == '+') || (c == '-')))
+                       || ((c == 'e' || c == 'E') && expFound <= 1))) && c != '\n' && c != '\r');
+
+            if (!isdigit(*(tokenizer->cursor - 1))) {
+                tokenizer->token.column -= tokenizer->token.length;
+                goto caseTokenUnknown;
+            }
+
+            step = (c == '\r' || c == '\n') ? 1 : 0;
+            tokenizer->cursor += step;
+            tokenizer->charcount -= step;
+            tokenizer->token.type = fracFound ? LITERAL_FLOAT : LITERAL_INT;
+        } else {
+            caseTokenUnknown:
+            tokenizer->token.type = JSON_UNKNOWN;
+            tokenizer->token.column++;
+            tokenizer->token.length = tokenizer->charcount;
+            tokenizer->cursor += tokenizer->token.length;
+            tokenizer->charcount -= tokenizer->token.length;
+        }
+        return &tokenizer->token;
+    } else {
+        return NULL;
+    }
+}
+
+static bool parse_element_exp(json_parser *parser, json_element *element, json_token token, json_err *error_desc, struct token_memory *token_mem)
+{
+    switch(token.type) {
+        case OBJECT_OPEN: /** Parse object */
+            element->value.value_type = JSON_VALUE_OBJECT;
+            element->value.value.object = MALLOC(sizeof(json_object));
+            parse_object_exp(parser, element->value.value.object, error_desc, token_mem);
+            break;
+        case ARRAY_OPEN: /** Parse array */
+            element->value.value_type = JSON_VALUE_ARRAY;
+            element->value.value.array = MALLOC(sizeof(json_array));
+            parse_array_exp(parser, element->value.value.array, error_desc, token_mem);
+            break;
+        case LITERAL_STRING: /** Parse string */
+            element->value.value_type = JSON_VALUE_STRING;
+            element->value.value.string = MALLOC(sizeof(json_string));
+            parse_string_exp(element->value.value.string, token);
+            break;
+        case LITERAL_FLOAT:
+        case LITERAL_INT: /** Parse number */
+            element->value.value_type = JSON_VALUE_NUMBER;
+            element->value.value.number = MALLOC(sizeof(json_number));
+            parse_number_exp(element->value.value.number, token);
+            break;
+        case LITERAL_TRUE:
+            element->value.value_type = JSON_VALUE_TRUE;
+            break;
+        case LITERAL_FALSE:
+            element->value.value_type = JSON_VALUE_FALSE;
+            break;
+        default:
+            element->value.value_type = JSON_VALUE_NULL;
+            break;
+    }
+    return true;
+}
+
+static bool parse_elements_exp(json_elements *elements, json_parser *parser, json_err *error_desc, struct token_memory *token_mem)
+{
+    json_token delimiter;
+    do {
+        json_token current = *json_tokenizer_next_exp(&parser->tokenizer);
+        if (current.type != ARRAY_CLOSE && current.type != OBJECT_CLOSE) {
+            if (!parse_element_exp(parser, VEC_NEW_AND_GET(&elements->elements, json_element), current, error_desc, token_mem)) {
+                return false;
+            }
+        }
+        delimiter = *json_tokenizer_next_exp(&parser->tokenizer);
+    } while (delimiter.type == COMMA);
+
+    //TODO get Prev Token
+
+    return true;
+}
+
+bool parse_members_exp(json_members *members, json_parser *parser, json_err *error_desc, struct token_memory *token_mem)
+{
+    vec_create(&members->members, sizeof(json_prop), 20);
+    json_token delimiter_token;
+
+    do {
+        json_prop *member = VEC_NEW_AND_GET(&members->members, json_prop);
+        json_token keyNameToken = *json_tokenizer_next_exp(&parser->tokenizer);
+
+        member->key.value = MALLOC(keyNameToken.length + 1);
+        strncpy(member->key.value, keyNameToken.string, keyNameToken.length);
+        member->key.value[keyNameToken.length] = '\0';
+
+        //TODO Check if next token?
+
+        json_token assignment_token = *json_tokenizer_next_exp(&parser->tokenizer);
+        if (assignment_token.type != ASSIGN) {
+            return false;
+        }
+
+        //TODO Check if next token?
+
+        json_token valueToken = *json_tokenizer_next_exp(&parser->tokenizer);
+
+        switch (valueToken.type) {
+            case OBJECT_OPEN:
+                member->value.value.value_type = JSON_VALUE_OBJECT;
+                member->value.value.value.object = MALLOC(sizeof(json_object));
+                parse_object_exp(parser, member->value.value.value.object, error_desc, token_mem);
+                break;
+            case ARRAY_OPEN:
+                member->value.value.value_type = JSON_VALUE_ARRAY;
+                member->value.value.value.array = MALLOC(sizeof(json_array));
+                parse_array_exp(parser, member->value.value.value.array, error_desc, token_mem);
+                break;
+            case LITERAL_STRING:
+                member->value.value.value_type = JSON_VALUE_STRING;
+                member->value.value.value.string = MALLOC(sizeof(json_string));
+                parse_string_exp(member->value.value.value.string, valueToken);
+                break;
+            case LITERAL_INT:
+            case LITERAL_FLOAT:
+                member->value.value.value_type = JSON_VALUE_NUMBER;
+                member->value.value.value.number = MALLOC(sizeof(json_number));
+                parse_number_exp(member->value.value.value.number, valueToken);
+                break;
+            case LITERAL_TRUE:
+                member->value.value.value_type = JSON_VALUE_TRUE;
+                break;
+            case LITERAL_FALSE:
+                member->value.value.value_type = JSON_VALUE_FALSE;
+                break;
+            case LITERAL_NULL:
+                member->value.value.value_type = JSON_VALUE_NULL;
+                break;
+            default:
+                return ERROR(ERR_PARSETYPE, NULL);
+        }
+
+        delimiter_token = *json_tokenizer_next_exp(&parser->tokenizer);
+    } while (delimiter_token.type == COMMA);
+
+    //TODO get prev Token
+
+    return true;
+}
+
+static bool parse_array_exp(json_parser *parser, json_array *array, json_err *error_desc, struct token_memory *token_mem)
+{
+    vec_create(&array->elements.elements, sizeof(json_element), 250);
+    return parse_elements_exp(&array->elements, parser, error_desc, token_mem);
+
+}
+
+static bool parse_object_exp(json_parser *parser, json_object *object, json_err *error_desc, struct token_memory *token_mem)
+{
+    object->value = MALLOC(sizeof(json_members));
+
+    return parse_members_exp(object->value, parser, error_desc, token_mem);
+}
+
+static bool json_parse_input_exp(json *json, json_err *error_desc, json_parser *parser)
+{
+
+    struct json retval;
+    ZERO_MEMORY(&retval, sizeof(json))
+    retval.element = MALLOC(sizeof(json_element));
+    const json_token *token;
+    int status;
+
+    struct token_memory token_mem = {.init = true, .type = JSON_UNKNOWN};
+
+    token = json_tokenizer_next_exp(&parser->tokenizer);
+    if (LIKELY((status = process_token_exp(error_desc, token, &token_mem)) == true)) {
+        switch(token->type){
+            case OBJECT_OPEN:
+                retval.element->value.value_type = JSON_VALUE_OBJECT;
+                retval.element->value.value.object = MALLOC(sizeof(json_object));
+                parse_object_exp(parser, retval.element->value.value.object, error_desc, &token_mem);
+                break;
+            case ARRAY_OPEN:
+                retval.element->value.value_type = JSON_VALUE_ARRAY;
+                retval.element->value.value.array = MALLOC(sizeof(json_array));
+                parse_array_exp(parser, retval.element->value.value.array, error_desc, &token_mem);
+                break;
+            default:
+                goto cleanup;
+        }
+    } else {
+        goto cleanup;
+    }
+
+    OPTIONAL_SET_OR_ELSE(json, retval, json_drop(json));
+    status = true;
+
+    cleanup:
+    return status;
+}
+
+bool
+json_parse_exp(json *json, json_err *error_desc, json_parser *parser, const char *input)
+{
+    if(!json_parse_check_input(error_desc, input, 0))
+    {
+        return false;
+    }
+
+    json_tokenizer_init(&parser->tokenizer, input);
+
+    return json_parse_input_exp(json, error_desc, parser);
 }

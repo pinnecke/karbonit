@@ -37,10 +37,20 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
         rec doc;
         if (destdir == NULL)
         {
-            if (rec_from_json(&doc, json_in, KEY_NOKEY, NULL))
+            /*if (rec_from_json(&doc, json_in, KEY_NOKEY, NULL))
             {
                 rec_drop(&doc);
-            }
+            }*/
+
+            struct json data;
+            json_err err;
+            json_parser parser;
+
+            json_parse_exp(&data, &err, &parser, json_in);
+            FILE* datei = fopen("/home/steven/Schreibtisch/Check.json", "w");
+            json_print(datei, &data);
+            json_drop(&data);
+
         }
         else
         {

@@ -140,7 +140,7 @@ bool rec_from_json_limited(rec *doc, const char *json, key_e type,
     json_parser parser;
 
     if (!(json_parse_limited(&data, &status, &parser, json, charcount))) {
-        //ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
+        ERROR(ERR_JSONPARSEERR, "parsing JSON file failed");
         return false;
     } else {
         internal_from_json(doc, &data, type, key, OPTIMIZE);

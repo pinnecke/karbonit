@@ -47,8 +47,8 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
             json_parser parser;
 
             json_parse_exp(&data, &err, &parser, json_in);
-            FILE* datei = fopen("/home/steven/Schreibtisch/Check.json", "w");
-            json_print(datei, &data);
+            //FILE* datei = fopen("/home/steven/Schreibtisch/Check.json", "w");
+            //json_print(datei, &data);
             json_drop(&data);
 
         }

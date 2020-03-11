@@ -1604,6 +1604,119 @@ bool json_array_get_type(json_list_type_e *type, const json_array *array)
 
 /*------------------------------------------------------------------------------*/
 
+typedef struct pred_lst_child {
+    json_token_e type;
+    void* parent;
+    void* next;
+    void* first_child;
+    void* last_child;
+    size_t sum_elem;
+    size_t sample_count;
+    size_t gen;
+    size_t depth;
+} pred_lst_child;
+
+typedef struct pred_lst {
+    pred_lst_child* first_child;
+    pred_lst_child* curr_child;
+    size_t curr_gen;
+} pred_lst;
+
+static pred_lst lst;
+
+static pred_lst_child* init_pred_lst_child (json_token_e type, void* parent, size_t gen, size_t depth) {
+    pred_lst_child *child = malloc(sizeof(pred_lst_child));
+    child->type = type;
+    child->parent = parent;
+    child->next = NULL;
+    child->first_child = NULL;
+    child->last_child = NULL;
+    child->sum_elem = 0;
+    child->sample_count = 0;
+    child->gen = gen;
+    child->depth = depth;
+
+    return child;
+}
+
+static void init_pred_lst(pred_lst *list, json_token_e type){
+    pred_lst_child *child = init_pred_lst_child(type, NULL, 0, 0);
+    list->first_child = child;
+    list->curr_child = child;
+    list->curr_gen = 0;
+}
+
+static void new_pred_lst_child_neighbor(pred_lst *list, json_token_e type){
+    pred_lst_child* curr_child = list->curr_child->first_child;
+
+    while(curr_child->next != NULL)
+    {
+        curr_child = curr_child->next;
+    }
+
+    pred_lst_child* neighbor = init_pred_lst_child(type, curr_child->parent, curr_child->gen, curr_child->depth +1);
+    curr_child->next = neighbor;
+    list->curr_child->last_child = neighbor;
+    list->curr_child = neighbor;
+}
+
+static void new_pred_lst_child_child(pred_lst *list, json_token_e type){
+    pred_lst_child* curr_child = list->curr_child;
+    pred_lst_child* child = init_pred_lst_child(type, curr_child, curr_child->gen + 1, 0);
+    curr_child->first_child = child;
+    curr_child->last_child = child;
+    list->curr_child = child;
+}
+
+static void add_count_pred_lst_child(pred_lst *list, size_t count)
+{
+    list->curr_child->sum_elem += count;
+    list->curr_child->sample_count++;
+}
+
+static void close_pred_lst_child(pred_lst *list)
+{
+    list->curr_child = list->curr_child->parent;
+}
+
+static void get_or_set_pred_lst_child(pred_lst *list, json_token_e type)
+{
+    if(list->curr_gen > list->curr_child->gen  && list->curr_child->first_child == NULL)
+    {
+        new_pred_lst_child_child(&lst, type);
+    }
+
+    //if first_child exists, check for last child
+    else if(list->curr_gen > list->curr_child->gen)
+    {
+        if(list->curr_child->first_child != NULL)
+        {
+            //get last child
+            pred_lst_child * last_child = list->curr_child->last_child;
+
+            //if last child type == type, set current child
+            if(last_child->type == type)
+            {
+                list->curr_child = last_child;
+            }
+            //else create new child
+            else {
+                new_pred_lst_child_neighbor(list, type);
+            }
+        }
+    }
+}
+
+static size_t get_prediction(pred_lst *list, json_token_e type)
+{
+    pred_lst_child child = *list->curr_child;
+    if((child.sample_count == 0) || (child.type != type))
+    {
+        return 100;
+    }
+
+    return (child.sum_elem / child.sample_count);
+}
 
 static void parse_number_exp(json_number *number, json_token token)
 {
@@ -1863,11 +1976,19 @@ static bool parse_element_exp(json_parser *parser, json_element *element, json_t
         case OBJECT_OPEN: /** Parse object */
             element->value.value_type = JSON_VALUE_OBJECT;
             element->value.value.object = MALLOC(sizeof(json_object));
+            lst.curr_gen++;
+
+            get_or_set_pred_lst_child(&lst, OBJECT_OPEN);
+
             parse_object_exp(parser, element->value.value.object, error_desc, token_mem);
             break;
         case ARRAY_OPEN: /** Parse array */
             element->value.value_type = JSON_VALUE_ARRAY;
             element->value.value.array = MALLOC(sizeof(json_array));
+
+            lst.curr_gen++;
+            get_or_set_pred_lst_child(&lst, ARRAY_OPEN);
+
             parse_array_exp(parser, element->value.value.array, error_desc, token_mem);
             break;
         case LITERAL_STRING: /** Parse string */
@@ -1901,6 +2022,7 @@ static bool parse_elements_exp(json_elements *elements, json_parser *parser, jso
         json_token current = *json_tokenizer_next_exp(&parser->tokenizer);
         if (current.type != ARRAY_CLOSE && current.type != OBJECT_CLOSE) {
             if (!parse_element_exp(parser, VEC_NEW_AND_GET(&elements->elements, json_element), current, error_desc, token_mem)) {
+                //TODO set error
                 return false;
             }
         }
@@ -1908,13 +2030,16 @@ static bool parse_elements_exp(json_elements *elements, json_parser *parser, jso
     } while (delimiter.type == COMMA);
 
     //TODO get Prev Token
+    add_count_pred_lst_child(&lst, elements->elements.num_elems);
 
+    lst.curr_gen--;
+    close_pred_lst_child(&lst);
     return true;
 }
 
 bool parse_members_exp(json_members *members, json_parser *parser, json_err *error_desc, struct token_memory *token_mem)
 {
-    vec_create(&members->members, sizeof(json_prop), 20);
+    vec_create(&members->members, sizeof(json_prop), get_prediction(&lst, OBJECT_OPEN));
     json_token delimiter_token;
 
     do {
@@ -1929,6 +2054,7 @@ bool parse_members_exp(json_members *members, json_parser *parser, json_err *err
 
         json_token assignment_token = *json_tokenizer_next_exp(&parser->tokenizer);
         if (assignment_token.type != ASSIGN) {
+            //TODO set error
             return false;
         }
 
@@ -1940,11 +2066,19 @@ bool parse_members_exp(json_members *members, json_parser *parser, json_err *err
             case OBJECT_OPEN:
                 member->value.value.value_type = JSON_VALUE_OBJECT;
                 member->value.value.value.object = MALLOC(sizeof(json_object));
+
+                lst.curr_gen++;
+                get_or_set_pred_lst_child(&lst, OBJECT_OPEN);
+
                 parse_object_exp(parser, member->value.value.value.object, error_desc, token_mem);
                 break;
             case ARRAY_OPEN:
                 member->value.value.value_type = JSON_VALUE_ARRAY;
                 member->value.value.value.array = MALLOC(sizeof(json_array));
+
+                lst.curr_gen++;
+                get_or_set_pred_lst_child(&lst, ARRAY_OPEN);
+
                 parse_array_exp(parser, member->value.value.value.array, error_desc, token_mem);
                 break;
             case LITERAL_STRING:
@@ -1976,12 +2110,16 @@ bool parse_members_exp(json_members *members, json_parser *parser, json_err *err
 
     //TODO get prev Token
 
+    add_count_pred_lst_child(&lst, members->members.num_elems);
+
+    lst.curr_gen--;
+    close_pred_lst_child(&lst);
     return true;
 }
 
 static bool parse_array_exp(json_parser *parser, json_array *array, json_err *error_desc, struct token_memory *token_mem)
 {
-    vec_create(&array->elements.elements, sizeof(json_element), 250);
+    vec_create(&array->elements.elements, sizeof(json_element), get_prediction(&lst, ARRAY_OPEN));
     return parse_elements_exp(&array->elements, parser, error_desc, token_mem);
 
 }
@@ -2010,17 +2148,21 @@ static bool json_parse_input_exp(json *json, json_err *error_desc, json_parser *
             case OBJECT_OPEN:
                 retval.element->value.value_type = JSON_VALUE_OBJECT;
                 retval.element->value.value.object = MALLOC(sizeof(json_object));
+                init_pred_lst(&lst, OBJECT_OPEN);
                 parse_object_exp(parser, retval.element->value.value.object, error_desc, &token_mem);
                 break;
             case ARRAY_OPEN:
                 retval.element->value.value_type = JSON_VALUE_ARRAY;
                 retval.element->value.value.array = MALLOC(sizeof(json_array));
+                init_pred_lst(&lst, ARRAY_OPEN);
                 parse_array_exp(parser, retval.element->value.value.array, error_desc, &token_mem);
                 break;
             default:
+                //TODO set error
                 goto cleanup;
         }
     } else {
+        //TODO set error
         goto cleanup;
     }
 
@@ -2031,11 +2173,28 @@ static bool json_parse_input_exp(json *json, json_err *error_desc, json_parser *
     return status;
 }
 
+/*typedef struct pred_lst_child {
+    json_token_e type;
+    void* parent;
+    void* next;
+    void* first_child;
+    size_t gen_elem_count;
+    size_t sample_count;
+    size_t curr_gen;
+    size_t curr_depth;
+} pred_lst_child;
+
+typedef struct pred_lst {
+    pred_lst_child* first_child;
+} pred_lst;*/
+
+
 bool
 json_parse_exp(json *json, json_err *error_desc, json_parser *parser, const char *input)
 {
     if(!json_parse_check_input(error_desc, input, 0))
     {
+        //TODO set error
         return false;
     }
 

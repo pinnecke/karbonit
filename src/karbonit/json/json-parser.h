@@ -12,6 +12,7 @@
 extern "C" {
 #endif
 
+
 typedef enum json_token_type {
         OBJECT_OPEN,
         OBJECT_CLOSE,
@@ -157,6 +158,7 @@ typedef struct json_number {
 typedef struct parser_task_args{
         const char* start;
         size_t size;
+        size_t count;
 } parser_task_args;
 
 bool json_tokenizer_init(json_tokenizer *tokenizer, const char *input);
@@ -166,8 +168,10 @@ void json_token_print(FILE *file, const json_token *token);
 bool json_parse(json *json, json_err *error_desc, json_parser *parser, const char *input);
 bool json_parse_exp(json *json, json_err *error_desc, json_parser *parser, const char *input);
 bool json_parse_limited(json *json, json_err *error_desc, json_parser *parser, const char *input, size_t charcount);
+bool json_parse_limited_exp(json *json, json_err *error_desc, json_parser *parser, const char *input, size_t charcount);
 bool json_parse_split_parallel(const char *input, size_t size_input, size_t num_threads, size_t num_parts);
 bool json_parse_split(const char *input, size_t size_input, const char* destdir, const char* filename);
+bool json_parse_split_exp(const char *input, size_t size_input, const char* destdir, const char* filename);
 bool json_test(json *json);
 bool json_drop(json *json);
 bool json_print(FILE *file, json *json);
@@ -175,6 +179,9 @@ bool json_list_is_empty(const json_elements *elements);
 bool json_list_length(u32 *len, const json_elements *elements);
 json_list_type_e json_fitting_type(json_list_type_e current, json_list_type_e to_add);
 bool json_array_get_type(json_list_type_e *type, const json_array *array);
+
+
+
 
 #ifdef __cplusplus
 }

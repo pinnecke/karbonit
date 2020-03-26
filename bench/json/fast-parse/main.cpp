@@ -46,7 +46,7 @@ bool json_parse_file(const char* src, bool parse_line_by_line, const char* destd
             json_err err;
             json_parser parser;
 
-            json_parse_exp(&data, &err, &parser, json_in);
+            json_parse(&data, &err, &parser, json_in);
             //FILE* datei = fopen("/home/steven/Schreibtisch/Check.json", "w");
             //json_print(datei, &data);
             json_drop(&data);
@@ -132,6 +132,109 @@ bool json_parse_directory(const char* src, DIR* srcdir, bool parse_line_by_line,
     }
 
     return status;
+}
+
+void checkResult()
+{
+    size_t max = 93672;
+    size_t p[] = {4745, 4653, 4731, 4669, 4741, 4772, 4711, 4647
+                , 4660, 4584, 4758, 4718, 4716, 4609, 4564, 4759
+                , 4715, 4531, 4675, 4714};
+
+    FILE* orig;
+    FILE* curr;
+
+    size_t i = 1, j = 1, k = 1;
+
+    char filepathorig[100];
+    char filepathtest[100];
+    char a, b;
+
+    while (j <= max)
+    {
+        //open orig-file
+        snprintf(filepathorig, 100, "/home/steven/Schreibtisch/test/orig/parsed_file%zu.carbon", j);
+        orig = fopen(filepathorig, "r");
+
+        //open test-file
+        snprintf(filepathtest, 100, "/home/steven/Schreibtisch/test/%zu/parsed_file%zu.carbon", k, i);
+        curr = fopen(filepathtest, "r");
+
+        if(orig == NULL)
+        {
+            std::cout << "Fehler orig existiert nicht " << j << std::endl;
+            goto next;
+        }
+
+        if(curr == NULL)
+        {
+            std::cout << "Fehler test existiert nicht " << k << " " << i << std::endl;
+            fclose(orig);
+            goto next;
+        }
+
+        //compare them
+        a = fgetc(orig);
+        b = fgetc(curr);
+
+        while(a != EOF && b != EOF)
+        {
+            if(a != b)
+            {
+                std::cout << "Fehler Inhalt unterschiedlich " << j << std::endl;
+                break;
+            }
+            a = fgetc(orig);
+            b = fgetc(curr);
+        }
+
+        if((a == EOF && b != EOF) || (a != EOF && b == EOF))
+        {
+            std::cout << "Fehler unterschiedliche Laenge " << j << std::endl;
+        }
+
+        //close files
+        fclose(orig);
+        fclose(curr);
+
+        next:
+        //next file
+        j++;
+        i++;
+        if(i > p[k-1])
+        {
+            i=1;
+            k++;
+        }
+    }
+}
+
+void clearFolders()
+{
+    size_t max = 93672;
+    size_t p[] = {4745, 4653, 4731, 4669, 4741, 4772, 4711, 4647
+            , 4660, 4584, 4758, 4718, 4716, 4609, 4564, 4759
+            , 4715, 4531, 4675, 4714};
+
+    size_t i = 1, j = 1, k = 1;
+
+    char filepathtest[100];
+
+    while (j <= max)
+    {
+        //remove test-file
+        snprintf(filepathtest, 100, "/home/steven/Schreibtisch/test/%zu/parsed_file%zu.carbon", k, i);
+        remove(filepathtest);
+
+        //next file
+        j++;
+        i++;
+        if(i > p[k-1])
+        {
+            i=1;
+            k++;
+        }
+    }
 }
 
 
@@ -276,23 +379,23 @@ int main(int argc, char **argv) {
                 w++;
             }
             t++;
-        }
+        }*/
 
-        t = 1;
-        n = 1;
-        w = 0;
+        /*int t = 2;
+        int n = 2;
+        int w = 0;
 
         std::cout << "Phase 2" << std::endl;
-        while (t < 101)
+        while (t < 21)
         {
             std::cout << t << " Threads" << std::endl;
             n = t;
-            while (n < t+3)
+            while (n == t)
             {
                 std::cout << n << " Parts" << std::endl;
                 w = 0;
                 //je 5 wiederholungen
-                while (w < 10) {
+                while (w < 5) {
                     timestamp start = wallclock();
                     json_parse_file(src, parse_line_by_line, dest, "a", t, n);
                     timestamp end = wallclock();
@@ -310,9 +413,11 @@ int main(int argc, char **argv) {
         while (w < 1)
         {
             w++;
+            //clearFolders();
             timestamp start = wallclock();
             json_parse_file(src, parse_line_by_line, dest, "parsed_file", num_threads, num_parts);
             timestamp end = wallclock();
+            //checkResult();
 
             std::cout << (end - start) << std::endl;
         }

@@ -79,56 +79,34 @@ static void
 parse_string_token(json_tokenizer *tokenizer, char c, char delimiter, char delimiter2, char delimiter3,
                    bool include_start, bool include_end)
 {
-        //TODO optimize check if escaped
-        bool escapeQuote = false;
         size_t step = 0;
 
         tokenizer->token.type = LITERAL_STRING;
         if (!include_start) {
-                tokenizer->token.string++;
+            tokenizer->token.string++;
         }
         tokenizer->token.column++;
-        char last_1_c = '\0';
-        size_t escape_count = 0;
         c = *(++tokenizer->cursor);
         tokenizer->charcount--;
 
-        if(c == '\\')
-        {
-            escape_count++;
-        }
-
-        while ((escapeQuote || (c != delimiter && c != delimiter2 && c != delimiter3)) && c != '\r' && c != '\n') {
-                //get next char
-                next_char:
+        while ((c != delimiter && c != delimiter2 && c != delimiter3) && c != '\r' && c != '\n') {
+            if(c == '\\')
+            {
+                //skip next char
                 tokenizer->token.length++;
-                last_1_c = c;
                 c = *(++tokenizer->cursor);
                 tokenizer->charcount--;
-
-                if(c == '\\')
-                {
-                    escape_count++;
-                }
-
-                //if curr char is backslash and last char is backslash
-                if (UNLIKELY(c == '\\' && last_1_c == '\\')) {
-                        goto next_char;
-                }
-
-                escapeQuote = c == '"' && (escape_count%2 == 1);
-
-                if(c != '\\')
-                {
-                    escape_count = 0;
-                }
+            }
+            tokenizer->token.length++;
+            c = *(++tokenizer->cursor);
+            tokenizer->charcount--;
         }
 
         if (include_end) {
-                tokenizer->token.length++;
+            tokenizer->token.length++;
         } else {
-                tokenizer->cursor++;
-                tokenizer->charcount--;
+            tokenizer->cursor++;
+            tokenizer->charcount--;
         }
 
         step = (c == '\r' || c == '\n') ? 1 : 0;
@@ -267,9 +245,9 @@ static void parse_string(json_string *string, vec ofType(json_token) *token_stre
 static void parse_number(json_number *number, vec ofType(json_token) *token_stream,
                          size_t *token_idx);
 
-static bool parse_object_exp(json_parser * parser, json_object *object, json_err *error_desc, struct token_memory *token_mem);
+static bool parse_object_exp(json_parser * parser, json_object *object, json_err *error_desc, struct token_memory *token_mem, size_t cap_elems);
 
-static bool parse_array_exp(json_parser * parser, json_array *array, json_err *error_desc, struct token_memory *token_mem);
+static bool parse_array_exp(json_parser * parser, json_array *array, json_err *error_desc, struct token_memory *token_mem, size_t cap_elems);
 
 static void parse_string_exp(json_string *string, json_token token);
 
@@ -309,22 +287,71 @@ static bool json_ast_node_value_print(FILE *file, json_node_value *value);
 
 static bool json_ast_node_element_print(FILE *file, json_element *element);
 
+void init_parseStats(parseStats* stats);
+static void insert_statsElement(parseStats* stats, char* key, size_t count);
+static statsElement* get_statsElement(parseStats* stats, char* key);
+static size_t stats_get_prediction(parseStats* stats, char* key);
+static void update_statsElement(parseStats* stats, char* key, statsElement* elem, size_t count);
+static void update_or_insert_statsElement(parseStats* stats, char* key, size_t count);
+void build_parseStats(parseStats* stats, const char* input, size_t input_size);
+static void drop_parseStats(parseStats* stats);
+
 #define NEXT_TOKEN(x) { *x = *x + 1; }
 #define PREV_TOKEN(x) { *x = *x - 1; }
 
 static void task_routine_lbl(void *args)
 {
     parser_task_args* task_args = (parser_task_args*) args;
+    json_parse_split(task_args->start, task_args->size, NULL, "");
+}
 
-    //char dirpath[100];
-    //snprintf(dirpath, 100, "/home/steven/Schreibtisch/test/%zu/", task_args->count);
+static void task_routine_lbl_combined_tok_int(void *args)
+{
+    parser_task_args* task_args = (parser_task_args*) args;
+    json_parse_split_exp(task_args->start, task_args->size, NULL, "", NULL);
+}
 
-    json_parse_split_exp(task_args->start, task_args->size, NULL, "");
+static void task_routine_stats(void *args)
+{
+    parser_task_args* task_args = (parser_task_args*) args;
+
+    build_parseStats(task_args->stats, task_args->start, task_args->size);
+}
+
+static void task_routine_lbl_stats(void *args)
+{
+    parser_task_args* task_args = (parser_task_args*) args;
+    json_parse_split_exp(task_args->start, task_args->size, NULL, "", task_args->stats);
 }
 
 bool
-json_parse_split_parallel(const char *input, size_t size_input, size_t num_threads, size_t num_parts)
+json_parse_split_parallel(const char *input, size_t size_input, size_t num_threads, size_t num_parts, bool parse_combined_tok_int, int statmode)
 {
+    parseStats stats;
+
+    //statistic only useable, if tokenizer and interpreter are combined
+    if(!parse_combined_tok_int)
+    {
+        statmode = 0;
+    }
+
+    //if stat
+    if(statmode != 0)
+    {
+        init_parseStats(&stats);
+    }
+
+    if(statmode == 1)
+    {
+        build_parseStats(&stats, input, size_input);
+        //madvise((void *) input, size_input, MADV_WILLNEED);
+    }
+
+    if(num_threads > num_parts)
+    {
+        num_threads = num_parts;
+    }
+
     size_t size_part = 0;
     size_t current_char_pos = 0;
     size_t current_size = 0;
@@ -337,11 +364,26 @@ json_parse_split_parallel(const char *input, size_t size_input, size_t num_threa
     //task_handle hndl[num_parts];
     thread_task tasks[num_parts];
     parser_task_args task_args[num_parts];
+    task_handle task_hndl[num_parts];
 
     //divide size by num_parts
     size_part = size_input / num_parts;
     size_part++;
 
+    if(statmode == 2)
+    {
+        parser_task_args stats_args;
+        stats_args.stats = &stats;
+        stats_args.start = input;
+        stats_args.size = size_input;
+
+        thread_task stats_task;
+        stats_task.args = (void *) &stats_args;
+        stats_task.routine = task_routine_stats;
+
+        task_handle stats_hndl;
+        thread_pool_enqueue_task(&stats_task, pool, &stats_hndl);
+    }
 
     while (i < num_parts)
     {
@@ -356,7 +398,6 @@ json_parse_split_parallel(const char *input, size_t size_input, size_t num_threa
             current_char_pos = size_part;
 
             //search for next EOL or End of String
-            //TODO try if using LIKELY results in better performance
             for (; start_of_part[current_char_pos] != '\n' && LIKELY(start_of_part[current_char_pos] != '\0'); current_char_pos++) {}
         }
 
@@ -365,22 +406,58 @@ json_parse_split_parallel(const char *input, size_t size_input, size_t num_threa
         task_args[i].start = start_of_part;
         task_args[i].size = current_char_pos;
         task_args[i].count = i+1;
+
+        if(statmode != 0)
+        {
+            task_args[i].stats = &stats;
+        }
+
         current_size += current_char_pos;
 
         tasks[i].args = (void *) &task_args[i];
-        tasks[i].routine = task_routine_lbl;
-        //thread_pool_enqueue_task(&tasks[i], pool, &hndl[i]);
 
+        if(parse_combined_tok_int)
+        {
+            if(statmode != 0)
+            {
+                tasks[i].routine = task_routine_lbl_stats;
+            }
+            else
+            {
+                tasks[i].routine = task_routine_lbl_combined_tok_int;
+            }
+        }
+        else
+        {
+            tasks[i].routine = task_routine_lbl;
+        }
+
+        if(statmode == 2)
+        {
+            thread_pool_enqueue_task(&tasks[i], pool, &task_hndl[i]);
+        }
 
         start_of_part = start_of_part + (current_char_pos + 1);
 
         i++;
     }
-
-    thread_pool_enqueue_tasks_wait(tasks, pool, num_parts);
-    //thread_pool_wait_for_all(pool);
+    if(statmode == 2)
+    {
+        thread_pool_wait_for_all(pool);
+    }
+    else
+    {
+        thread_pool_enqueue_tasks_wait(tasks, pool, num_parts);
+    }
 
     thread_pool_free(pool);
+
+    //if stats were used
+    if(statmode != 0)
+    {
+        drop_parseStats(&stats);
+    }
+
     return true;
 }
 
@@ -406,52 +483,24 @@ json_parse_split(const char *input, size_t size_input, const char* destdir, cons
             //set pointer to the beginning of current part
             currentPart = input + lastPart;
 
-            //rec doc;
             l++;
 
             if(destdir == NULL)
             {
-                /*if(rec_from_json_limited(&doc, currentPart, KEY_NOKEY, NULL, i-lastPart))
-                {
-                    rec_drop(&doc);
-                }*/
                 struct json data;
                 json_err err;
                 json_parser parser;
-
-                if(json_parse_limited_exp(&data, &err, &parser, currentPart, i-lastPart)) {
-                    /*FILE* datei = fopen("/home/steven/Schreibtisch/Check.json", "w");
-                    json_print(datei, &data);
-                    remove("/home/steven/Schreibtisch/Check.json");*/
+                if(json_parse_limited(&data, &err, &parser, currentPart, i-lastPart)) {
                     json_drop(&data);
                 }
             }
             else
             {
-                /*if(rec_from_json_limited(&doc, currentPart, KEY_NOKEY, NULL, i-lastPart))
-                {
-                    size_t filepathsize = strlen(destdir) + strlen(filename) + 28;
-
-                    char filepath[filepathsize];
-                    snprintf(filepath, filepathsize, "%s%s%u%s", destdir, filename, l, ".carbon");
-
-                    FILE *file;
-                    file = fopen(filepath, "w");
-
-                    MEMFILE_SAVE_POSITION(&doc.file);
-                    MEMFILE_SEEK(&doc.file, 0);
-                    fwrite(MEMFILE_PEEK(&doc.file, 1), MEMFILE_SIZE(&doc.file), 1, file);
-                    MEMFILE_RESTORE_POSITION(&doc.file);
-                    fclose(file);
-                    remove(filepath);
-                    rec_drop(&doc);
-                }*/
-
                 struct json data;
                 json_err err;
                 json_parser parser;
 
-                if(json_parse_limited_exp(&data, &err, &parser, currentPart, i-lastPart)) {
+                if(json_parse_limited(&data, &err, &parser, currentPart, i-lastPart)) {
                     size_t filepathsize = strlen(destdir) + strlen(filename) + 28;
 
                     char filepath[filepathsize];
@@ -464,7 +513,6 @@ json_parse_split(const char *input, size_t size_input, const char* destdir, cons
                         file = NULL;
                     }
                     json_print(file, &data);
-                    //remove("/home/steven/Schreibtisch/Check.json");
                     fclose(file);
                     json_drop(&data);
                 }
@@ -479,7 +527,6 @@ json_parse_split(const char *input, size_t size_input, const char* destdir, cons
 
 static bool json_parse_check_input(json_err *error_desc, const char *input, size_t charcount)
 {
-    //TODO test this new implementation
     size_t pos = 0;
     size_t endpos = 0;
 
@@ -1919,13 +1966,13 @@ static bool parse_element_exp(json_parser *parser, json_element *element, json_t
             element->value.value_type = JSON_VALUE_OBJECT;
             element->value.value.object = MALLOC(sizeof(json_object));
 
-            parse_object_exp(parser, element->value.value.object, error_desc, token_mem);
+            parse_object_exp(parser, element->value.value.object, error_desc, token_mem, 20);
             break;
         case ARRAY_OPEN: /** Parse array */
             element->value.value_type = JSON_VALUE_ARRAY;
             element->value.value.array = MALLOC(sizeof(json_array));
 
-            parse_array_exp(parser, element->value.value.array, error_desc, token_mem);
+            parse_array_exp(parser, element->value.value.array, error_desc, token_mem, 150);
             break;
         case LITERAL_STRING: /** Parse string */
             element->value.value_type = JSON_VALUE_STRING;
@@ -1968,9 +2015,9 @@ static bool parse_elements_exp(json_elements *elements, json_parser *parser, jso
     return true;
 }
 
-bool parse_members_exp(json_members *members, json_parser *parser, json_err *error_desc, struct token_memory *token_mem)
+bool parse_members_exp(json_members *members, json_parser *parser, json_err *error_desc, struct token_memory *token_mem, size_t cap_elems)
 {
-    vec_create(&members->members, sizeof(json_prop), 20);
+    vec_create(&members->members, sizeof(json_prop), cap_elems);
     //vec_create(&members->members, sizeof(json_prop), 20);
     const json_token* delimiter_token;
 
@@ -1982,28 +2029,27 @@ bool parse_members_exp(json_members *members, json_parser *parser, json_err *err
         strncpy(member->key.value, keyNameToken.string, keyNameToken.length);
         member->key.value[keyNameToken.length] = '\0';
 
-        //TODO Check if next token?
-
         json_token assignment_token = *json_tokenizer_next_exp(&parser->tokenizer);
         if (assignment_token.type != ASSIGN) {
             //TODO set error
             return false;
         }
 
-        //TODO Check if next token?
-
         json_token valueToken = *json_tokenizer_next_exp(&parser->tokenizer);
+        size_t pred_count = 0;
         switch (valueToken.type) {
             case OBJECT_OPEN:
                 member->value.value.value_type = JSON_VALUE_OBJECT;
                 member->value.value.value.object = MALLOC(sizeof(json_object));
+                pred_count = stats_get_prediction(parser->stats, member->key.value);
 
-                parse_object_exp(parser, member->value.value.value.object, error_desc, token_mem);
+                parse_object_exp(parser, member->value.value.value.object, error_desc, token_mem, pred_count);
                 break;
             case ARRAY_OPEN:
                 member->value.value.value_type = JSON_VALUE_ARRAY;
                 member->value.value.value.array = MALLOC(sizeof(json_array));
-                parse_array_exp(parser, member->value.value.value.array, error_desc, token_mem);
+                pred_count = stats_get_prediction(parser->stats, member->key.value);
+                parse_array_exp(parser, member->value.value.value.array, error_desc, token_mem, pred_count);
                 break;
             case LITERAL_STRING:
                 member->value.value.value_type = JSON_VALUE_STRING;
@@ -2032,23 +2078,22 @@ bool parse_members_exp(json_members *members, json_parser *parser, json_err *err
         delimiter_token = json_tokenizer_next_exp(&parser->tokenizer);
     } while (delimiter_token != NULL && delimiter_token->type == COMMA);
 
-    //TODO get prev Token
     return true;
 }
 
-static bool parse_array_exp(json_parser *parser, json_array *array, json_err *error_desc, struct token_memory *token_mem)
+static bool parse_array_exp(json_parser *parser, json_array *array, json_err *error_desc, struct token_memory *token_mem, size_t cap_elems)
 {
-    vec_create(&array->elements.elements, sizeof(json_element), 250);
+    vec_create(&array->elements.elements, sizeof(json_element), cap_elems);
     //vec_create(&array->elements.elements, sizeof(json_element), 250);
     return parse_elements_exp(&array->elements, parser, error_desc, token_mem);
 
 }
 
-static bool parse_object_exp(json_parser *parser, json_object *object, json_err *error_desc, struct token_memory *token_mem)
+static bool parse_object_exp(json_parser *parser, json_object *object, json_err *error_desc, struct token_memory *token_mem, size_t cap_elems)
 {
     object->value = MALLOC(sizeof(json_members));
 
-    return parse_members_exp(object->value, parser, error_desc, token_mem);
+    return parse_members_exp(object->value, parser, error_desc, token_mem, cap_elems);
 }
 
 static bool json_parse_input_exp(json *json, json_err *error_desc, json_parser *parser)
@@ -2069,13 +2114,13 @@ static bool json_parse_input_exp(json *json, json_err *error_desc, json_parser *
                 retval.element->value.value_type = JSON_VALUE_OBJECT;
                 retval.element->value.value.object = MALLOC(sizeof(json_object));
 
-                parse_object_exp(parser, retval.element->value.value.object, error_desc, &token_mem);
+                parse_object_exp(parser, retval.element->value.value.object, error_desc, &token_mem,20);
                 break;
             case ARRAY_OPEN:
                 retval.element->value.value_type = JSON_VALUE_ARRAY;
                 retval.element->value.value.array = MALLOC(sizeof(json_array));
 
-                parse_array_exp(parser, retval.element->value.value.array, error_desc, &token_mem);
+                parse_array_exp(parser, retval.element->value.value.array, error_desc, &token_mem,150);
                 break;
             default:
                 //TODO set error
@@ -2125,7 +2170,7 @@ json_parse_limited_exp(json *json, json_err *error_desc, json_parser *parser, co
 }
 
 bool
-json_parse_split_exp(const char *input, size_t size_input, const char* destdir, const char* filename)
+json_parse_split_exp(const char *input, size_t size_input, const char* destdir, const char* filename, parseStats* stats)
 {
     size_t i = 0;
     size_t lastPart = 0;
@@ -2151,18 +2196,12 @@ json_parse_split_exp(const char *input, size_t size_input, const char* destdir, 
 
             if(destdir == NULL)
             {
-                /*if(rec_from_json_limited(&doc, currentPart, KEY_NOKEY, NULL, i-lastPart))
-                {
-                    rec_drop(&doc);
-                }*/
                 struct json data;
                 json_err err;
                 json_parser parser;
+                parser.stats = stats;
 
                 if(json_parse_limited_exp(&data, &err, &parser, currentPart, i-lastPart)) {
-                    /*FILE* datei = fopen("/home/steven/Schreibtisch/Check.json", "w");
-                    json_print(datei, &data);
-                    remove("/home/steven/Schreibtisch/Check.json");*/
                     json_drop(&data);
                 }
             }
@@ -2190,6 +2229,7 @@ json_parse_split_exp(const char *input, size_t size_input, const char* destdir, 
                 struct json data;
                 json_err err;
                 json_parser parser;
+                parser.stats = stats;
 
                 if(json_parse_limited_exp(&data, &err, &parser, currentPart, i-lastPart)) {
                     size_t filepathsize = strlen(destdir) + strlen(filename) + 28;
@@ -2204,7 +2244,6 @@ json_parse_split_exp(const char *input, size_t size_input, const char* destdir, 
                         file = NULL;
                     }
                     json_print(file, &data);
-                    //remove("/home/steven/Schreibtisch/Check.json");
                     fclose(file);
                     json_drop(&data);
                 }
@@ -2215,4 +2254,328 @@ json_parse_split_exp(const char *input, size_t size_input, const char* destdir, 
     }
 
     return true;
+}
+
+/*-----------------------------------------------------------------------------------------------
+ * start hashtable*/
+
+void init_parseStats(parseStats* stats)
+{
+    stats->size = 50;
+    stats->count = 0;
+
+    size_t i = 0;
+    while (i < stats->size)
+    {
+        stats->arr[i] = NULL;
+        i++;
+    }
+}
+
+static void insert_statsElement(parseStats* stats, char* key, size_t count)
+{
+    if(stats->count == stats->size)
+    {
+        //TODO ERROR or realloc with more elements
+        return;
+    }
+
+    size_t key_hash = HASH_ADDITIVE(strlen(key), key);
+    size_t pos = key_hash % stats->size;
+
+    while (stats->arr[pos] != NULL)
+    {
+        pos++;
+        pos %= stats->size;
+    }
+
+    statsElement* item = malloc(sizeof(statsElement));
+    item->key = key;
+    item->count = count;
+    item->sample_size = 1;
+    item->max_count = count;
+
+    stats->arr[pos] = item;
+    stats->count++;
+}
+
+static statsElement* get_statsElement(parseStats* stats, char* key)
+{
+    //size_t a = strlen(key);
+    size_t key_hash = HASH_ADDITIVE(strlen(key), key);
+    size_t pos = key_hash % stats->size;
+
+    if(stats->count != stats->size)
+    {
+        while((stats->arr[pos] != NULL) && (strcmp((stats->arr[pos])->key, key) != 0))
+        {
+            pos++;
+            pos %= stats->size;
+        }
+    }
+    else
+    {
+        size_t orig_pos = pos;
+
+        while((stats->arr[pos] != NULL) && (strcmp((stats->arr[pos])->key, key) != 0))
+        {
+            pos++;
+            pos %= stats->size;
+
+            if(pos == orig_pos)
+            {
+                return NULL;
+            }
+        }
+    }
+
+    return stats->arr[pos];
+}
+
+static size_t stats_get_prediction(parseStats* stats, char* key)
+{
+    if(stats == NULL)
+    {
+        return 20;
+    }
+
+    statsElement* elem = get_statsElement(stats, key);
+
+    if(elem == NULL)
+    {
+        return 20;
+    }
+
+    return ((elem->count/elem->sample_size) + elem->max_count)/2;
+}
+
+static void update_statsElement(parseStats* stats, char* key, statsElement* elem, size_t count)
+{
+    if(elem == NULL)
+    {
+        elem = get_statsElement(stats, key);
+    }
+
+    elem->count += count;
+    elem->sample_size++;
+
+    if(elem->max_count < count)
+    {
+        elem->max_count = count;
+    }
+}
+
+static void update_or_insert_statsElement(parseStats* stats, char* key, size_t count)
+{
+    statsElement* elem = get_statsElement(stats, key);
+
+    if(elem == NULL)
+    {
+        insert_statsElement(stats, key, count);
+    }
+    else
+    {
+        update_statsElement(stats, key, elem, count);
+    }
+
+    return;
+}
+
+static bool build_parseStats_get_key_check_escaped(const char* input, size_t pos) {
+    char c = input[--pos];
+    bool escaped = false;
+
+    while(c == '\\')
+    {
+        escaped = !escaped;
+        c = input[--pos];
+    }
+
+    return escaped;
+}
+
+static char* build_parseStats_get_key(const char* input, size_t pos) {
+    size_t start = 0;
+    size_t end = 0;
+
+    char c = input[--pos];
+
+    while (isspace(c)) {
+        if (pos == 0) {
+            return NULL;
+        }
+        c = input[--pos];
+    }
+
+    //check if possible end of String
+    if (c != '"') {
+        return NULL;
+    }
+
+    if(!build_parseStats_get_key_check_escaped(input, pos))
+    {
+        end = pos;
+        c = input[--pos];
+
+        while((c != '"') || (build_parseStats_get_key_check_escaped(input, pos)))
+        {
+            c = input[--pos];
+        }
+
+        start = pos+1;
+    }
+
+    char* res = malloc(end-start+1);
+    strncpy(res, input+start, end-start);
+    res[end-start+1] = '\0';
+
+    return res;
+}
+
+static size_t build_parseStats_get_count(const char* input, size_t pos, size_t input_size) {
+    size_t depth = 0;
+    char c = input[++pos];
+    bool escaped = false;
+    bool in_string = false;
+    char start;
+    char end;
+    size_t count = 0;
+
+    while(isspace(c))
+    {
+        c = input[++pos];
+    }
+
+    //if no object or array is opened
+    if((c != '{') && (c != '['))
+    {
+        //return 0, which indicates, that it was no object or array
+        return 0;
+    }
+
+    start = c;
+
+    if(start == '{')
+    {
+        end = '}';
+    } else {
+        end = ']';
+    }
+    pos++;
+    count++;
+    while(((c != end) || depth != 0 || (escaped)) && (pos < input_size))
+    {
+        c = input[pos++];
+
+        if(isspace(c))
+        {
+            continue;
+        }
+
+        //toggle in string and out of string, if not escaped
+        if((c == '"') && (!escaped))
+        {
+            in_string = !in_string;
+        }
+        else if((c == start) && (!escaped) && (!in_string))
+        {
+            depth++;
+        }
+        else if((c == end) && (!escaped) && (!in_string))
+        {
+            if(depth == 0)
+            {
+                return count+1;
+            }
+            depth--;
+        }
+        else if((c == ',') && !escaped && !in_string && (depth == 0))
+        {
+            count++;
+        }
+
+
+        if(c == '\\')
+        {
+            escaped = !escaped;
+        }
+        else
+        {
+            escaped = false;
+        }
+    }
+
+    //increase count by 1, because 0 means it is neither an array, nor object
+    return count+1;
+}
+
+void build_parseStats(parseStats* stats, const char* input, size_t input_size)
+{
+    bool escaped = false;
+    bool in_string = false;
+
+    size_t i = 0;
+    size_t count = 0;
+
+    char* key;
+
+    char c;
+    //madvise((void*) input, input_size, MADV_SEQUENTIAL);
+    while(i < input_size)
+    {
+        c = input[i];
+        i++;
+
+
+        if(isspace(c))
+        {
+            continue;
+        }
+
+        //toggle in string and out of string, if not escaped
+        if((c == '"') && (!escaped))
+        {
+            in_string = !in_string;
+        }
+
+        if((c == ':') && (!in_string) && (!escaped))
+        {
+            key = build_parseStats_get_key(input, i-1);
+            if(key != NULL)
+            {
+                count = build_parseStats_get_count(input, i - 1, input_size);
+
+                if (count != 0)
+                {
+                    update_or_insert_statsElement(stats, key, count-1);
+                }
+            }
+        }
+
+
+        if(c == '\\')
+        {
+            escaped = !escaped;
+        }
+        else
+        {
+            escaped = false;
+        }
+    }
+}
+
+static void drop_parseStats(parseStats* stats)
+{
+    size_t i = 0;
+
+    while ((stats->count != 0) && (i < stats->size))
+    {
+        if(stats->arr[i] != NULL)
+        {
+            free(stats->arr[i]);
+            stats->arr[i] = NULL;
+            stats->count--;
+        }
+        i++;
+    }
 }

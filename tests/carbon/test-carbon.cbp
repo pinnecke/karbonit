@@ -1,0 +1,1350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="test-carbon"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\tools\;CMake Files\tools\carbon-tool\;CMake Files\bench\;CMake Files\bench\carbon\;CMake Files\bench\carbon\src\;CMake Files\bench\carbon\src\core-ops\;CMake Files\bench\carbon\src\core-ops\unmanaged\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\carbon\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\carbon\karbonit\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\bson\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\bson\libbson\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\usr\local\lib\cmake\libbson-1.0\;CMake Files\examples\;CMake Files\examples\carbon-api\;CMake Files\examples\carbon-api\project-setup\;CMake Files\examples\carbon-api\construct-carbon-records\;CMake Files\examples\carbon-api\construct-carbon-records\from-json\;CMake Files\examples\carbon-api\construct-carbon-records\manual-construction\;CMake Files\examples\carbon-api\browse-contents\;CMake Files\tests\;CMake Files\tests\misc\;CMake Files\tests\carbon\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/marcus/git/karbonit/tests/carbon"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-8">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-8" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-8"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-8/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-8" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-8/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-7">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-7" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-7"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-7/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-7" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-7/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-6">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-6" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-6"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-6/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-6" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-6/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-2">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-2" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-2"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-2/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-2" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-2/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-global_id">
+				<Option output="/Users/marcus/git/karbonit/bin/test-global_id" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-global_id"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-global_id/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-global_id" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-global_id/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-from-json">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-from-json" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-from-json"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-from-json/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-from-json" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-from-json/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-4">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-4" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-4"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-4/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-4" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-4/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-fix-map">
+				<Option output="/Users/marcus/git/karbonit/bin/test-fix-map" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-fix-map"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-fix-map/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-fix-map" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-fix-map/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-func-rec-exists">
+				<Option output="/Users/marcus/git/karbonit/bin/test-func-rec-exists" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-func-rec-exists"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-func-rec-exists/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-func-rec-exists" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-func-rec-exists/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-obj-it">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-obj-it" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-obj-it"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-obj-it/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-obj-it" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-obj-it/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-arr-it">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-arr-it" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-arr-it"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-arr-it/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-arr-it" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-arr-it/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-item">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-item" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-item"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-item/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-item" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-item/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-5">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-5" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-5"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-5/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-5" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-5/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-3">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-3" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-3"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-3/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-3" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-3/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-types-arrays">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-types-arrays" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-types-arrays"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-types-arrays/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-types-arrays" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-types-arrays/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-printer-json">
+				<Option output="/Users/marcus/git/karbonit/bin/test-printer-json" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-printer-json"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-printer-json/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-printer-json" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-printer-json/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-9">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-9" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-9"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-9/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-9" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-9/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-printer-marker">
+				<Option output="/Users/marcus/git/karbonit/bin/test-printer-marker" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-printer-marker"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-printer-marker/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-printer-marker" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-printer-marker/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-func-rec-get">
+				<Option output="/Users/marcus/git/karbonit/bin/test-func-rec-get" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-func-rec-get"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-func-rec-get/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-func-rec-get" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-func-rec-get/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-patch">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-patch" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-patch"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-patch/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-patch" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-patch/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-types-columns">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-types-columns" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-types-columns"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-types-columns/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-types-columns" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-types-columns/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-types-objects">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-types-objects" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-types-objects"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-types-objects/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-types-objects" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-types-objects/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-json">
+				<Option output="/Users/marcus/git/karbonit/bin/test-json" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-json"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-json/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-json" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-json/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-type-markers">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-type-markers" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-type-markers"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-abstract-type-markers/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-abstract-type-markers" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-abstract-type-markers/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-mime">
+				<Option output="/Users/marcus/git/karbonit/bin/test-mime" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-mime"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-mime/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-mime" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-mime/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-varuint">
+				<Option output="/Users/marcus/git/karbonit/bin/test-varuint" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-varuint"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-varuint/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-varuint" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-varuint/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-archive-converter">
+				<Option output="/Users/marcus/git/karbonit/bin/test-archive-converter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-archive-converter"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-archive-converter/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-archive-converter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-archive-converter/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-func-rec-set">
+				<Option output="/Users/marcus/git/karbonit/bin/test-func-rec-set" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-func-rec-set"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-func-rec-set/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-func-rec-set" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-func-rec-set/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-archive-iter">
+				<Option output="/Users/marcus/git/karbonit/bin/test-archive-iter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-archive-iter"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-archive-iter/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-archive-iter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-archive-iter/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-1">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-1" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-1"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-carbon-part-1/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-carbon-part-1" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-carbon-part-1/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-archive-ops">
+				<Option output="/Users/marcus/git/karbonit/bin/test-archive-ops" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-archive-ops"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-archive-ops/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/test-archive-ops" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 test-archive-ops/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/Users/marcus/git/karbonit/tests/carbon/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-abstract-type-markers.cpp">
+			<Option target="test-abstract-type-markers"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-abstract-types-arrays.cpp">
+			<Option target="test-abstract-types-arrays"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-abstract-types-columns.cpp">
+			<Option target="test-abstract-types-columns"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-abstract-types-objects.cpp">
+			<Option target="test-abstract-types-objects"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-archive-converter.cpp">
+			<Option target="test-archive-converter"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-archive-iter.cpp">
+			<Option target="test-archive-iter"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-archive-ops.cpp">
+			<Option target="test-archive-ops"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-arr-it.cpp">
+			<Option target="test-carbon-arr-it"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-from-json.cpp">
+			<Option target="test-carbon-from-json"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-item.cpp">
+			<Option target="test-carbon-item"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-obj-it.cpp">
+			<Option target="test-carbon-obj-it"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-1.cpp">
+			<Option target="test-carbon-part-1"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-2.cpp">
+			<Option target="test-carbon-part-2"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-3.cpp">
+			<Option target="test-carbon-part-3"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-4.cpp">
+			<Option target="test-carbon-part-4"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-5.cpp">
+			<Option target="test-carbon-part-5"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-6.cpp">
+			<Option target="test-carbon-part-6"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-7.cpp">
+			<Option target="test-carbon-part-7"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-8.cpp">
+			<Option target="test-carbon-part-8"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-part-9.cpp">
+			<Option target="test-carbon-part-9"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-carbon-patch.cpp">
+			<Option target="test-carbon-patch"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-fix-map.cpp">
+			<Option target="test-fix-map"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-func-rec-exists.cpp">
+			<Option target="test-func-rec-exists"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-func-rec-get.cpp">
+			<Option target="test-func-rec-get"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-func-rec-set.cpp">
+			<Option target="test-func-rec-set"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-global_id.cpp">
+			<Option target="test-global_id"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-json.cpp">
+			<Option target="test-json"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-mime.cpp">
+			<Option target="test-mime"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-printer-json.cpp">
+			<Option target="test-printer-json"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-printer-marker.cpp">
+			<Option target="test-printer-marker"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/test-varuint.cpp">
+			<Option target="test-varuint"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tools\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tools/carbon-tool/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tools\carbon-tool\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\carbon\src\core-ops\unmanaged\reads\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/carbon/karbonit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\carbon\src\core-ops\unmanaged\reads\carbon\karbonit\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\carbon\src\core-ops\unmanaged\reads\bson\libbson\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/../../../../usr/local/lib/cmake/libbson-1.0/libbson-1.0-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\libbson-1.0\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/../../../../usr/local/lib/cmake/libbson-1.0/libbson-1.0-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\libbson-1.0\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/project-setup/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\project-setup\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/construct-carbon-records/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\construct-carbon-records\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/construct-carbon-records/from-json/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\construct-carbon-records\from-json\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/construct-carbon-records/manual-construction/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\construct-carbon-records\manual-construction\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/browse-contents/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\browse-contents\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/misc/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\misc\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\carbon\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

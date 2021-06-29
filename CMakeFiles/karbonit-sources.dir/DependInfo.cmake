@@ -1,0 +1,96 @@
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  "C"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_C
+  "/Users/marcus/git/karbonit/libs/duktape/duktape.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/libs/duktape/duktape.c.o"
+  "/Users/marcus/git/karbonit/libs/libb64/cdecode.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/libs/libb64/cdecode.c.o"
+  "/Users/marcus/git/karbonit/libs/libb64/cencode.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/libs/libb64/cencode.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/cache.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/cache.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/column_doc.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/column_doc.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/converter.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/converter.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/doc.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/doc.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/encode_async.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/encode_async.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/encode_sync.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/encode_sync.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/encoded_doc.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/encoded_doc.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/huffman.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/huffman.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/internal.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/internal.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/io.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/io.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/it.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/it.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/pack.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/pack.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/pack/huffman.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/pack/huffman.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/pack/none.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/pack/none.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/query.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/query.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/strid_it.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/strid_it.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/archive/visitor.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/archive/visitor.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/arr-it.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/arr-it.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/binary.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/binary.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/col-it.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/col-it.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/commit.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/commit.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/container.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/container.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/dot-eval.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/dot-eval.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/dot.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/dot.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/field.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/field.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/find.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/find.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/func.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/func.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/insert.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/insert.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/internal.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/internal.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/item.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/item.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/key.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/key.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/markers.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/markers.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/mime.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/mime.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/obj-it.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/obj-it.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/patch.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/patch.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/pindex.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/pindex.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/prop.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/prop.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/revise.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/revise.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/rewrite.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/rewrite.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/string-field.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/string-field.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/traverse.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/traverse.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/carbon/update.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/carbon/update.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/error.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/error.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/hexdump.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/hexdump.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/json.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/json.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/json/json-parser.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/json/json-parser.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/rec.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/rec.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/async.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/async.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/bitmap.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/bitmap.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/bloom.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/bloom.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/hash/set.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/hash/set.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/hash/table.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/hash/table.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/opt.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/opt.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/spinlock.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/spinlock.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/str_hash/mem.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/str_hash/mem.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/string.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/string.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/thread_pool.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/thread_pool.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/thread_pool/monitor.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/thread_pool/monitor.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/uintvar/marker.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/uintvar/marker.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/uintvar/stream.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/uintvar/stream.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/std/vec.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/std/vec.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/stdx/slicelist.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/stdx/slicelist.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/stdx/unique_id.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/stdx/unique_id.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/utils/convert.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/utils/convert.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/utils/num.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/utils/num.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/utils/priority_queue.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/utils/priority_queue.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/utils/sort.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/utils/sort.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/utils/strings.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/utils/strings.c.o"
+  "/Users/marcus/git/karbonit/src/karbonit/utils/time.c" "/Users/marcus/git/karbonit/CMakeFiles/karbonit-sources.dir/src/karbonit/utils/time.c.o"
+  )
+set(CMAKE_C_COMPILER_ID "AppleClang")
+
+# The include file search paths:
+set(CMAKE_C_TARGET_INCLUDE_PATH
+  "src"
+  "include"
+  "."
+  "/usr/local/include"
+  )
+
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

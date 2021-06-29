@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="bench-reads-libbson"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\tools\;CMake Files\tools\jakson-tool\;CMake Files\bench\;CMake Files\bench\carbon\;CMake Files\bench\carbon\src\;CMake Files\bench\carbon\src\core-ops\;CMake Files\bench\carbon\src\core-ops\unmanaged\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\carbon\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\carbon\libcarbon\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\bson\;CMake Files\bench\carbon\src\core-ops\unmanaged\reads\bson\libbson\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\usr\local\lib\cmake\libbson-1.0\;CMake Files\examples\;CMake Files\examples\carbon-api\;CMake Files\examples\carbon-api\project-setup\;CMake Files\examples\carbon-api\construct-carbon-records\;CMake Files\examples\carbon-api\construct-carbon-records\from-json\;CMake Files\examples\carbon-api\construct-carbon-records\manual-construction\;CMake Files\examples\carbon-api\browse-contents\;CMake Files\tests\;CMake Files\tests\misc\;CMake Files\tests\carbon\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="bench-reads-libbson">
+				<Option output="/Users/marcus/git/karbonit/bin/bench-reads-libbson" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/local/include/libbson-1.0"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 bench-reads-libbson"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="bench-reads-libbson/fast">
+				<Option output="/Users/marcus/git/karbonit/bin/bench-reads-libbson" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/marcus/git/karbonit/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/marcus/git/karbonit/src"/>
+					<Add directory="/Users/marcus/git/karbonit/include"/>
+					<Add directory="/Users/marcus/git/karbonit"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/local/include/libbson-1.0"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 bench-reads-libbson/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/marcus/git/karbonit/cmake-build-debug/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/main.c">
+			<Option target="bench-reads-libbson"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/read_bench.c">
+			<Option target="bench-reads-libbson"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/read_bench.h">
+			<Option target="bench-reads-libbson"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tools\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tools/jakson-tool/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tools\jakson-tool\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\carbon\src\core-ops\unmanaged\reads\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/carbon/libcarbon/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\carbon\src\core-ops\unmanaged\reads\carbon\libcarbon\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\bench\carbon\src\core-ops\unmanaged\reads\bson\libbson\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/../../../../usr/local/lib/cmake/libbson-1.0/libbson-1.0-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\libbson-1.0\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/../../../../usr/local/lib/cmake/libbson-1.0/libbson-1.0-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\libbson-1.0\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/project-setup/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\project-setup\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/construct-carbon-records/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\construct-carbon-records\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/construct-carbon-records/from-json/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\construct-carbon-records\from-json\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/construct-carbon-records/manual-construction/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\construct-carbon-records\manual-construction\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/examples/carbon-api/browse-contents/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\carbon-api\browse-contents\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/misc/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\misc\"/>
+		</Unit>
+		<Unit filename="/Users/marcus/git/karbonit/tests/carbon/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\carbon\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

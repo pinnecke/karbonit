@@ -1,0 +1,269 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/marcus/git/karbonit
+Debug build is enabled
+-- *** cleanup amalgamation output ***
+     - removed /Users/marcus/git/karbonit/include/karbonit/karbonit.c
+     - removed /Users/marcus/git/karbonit/include/karbonit/karbonit.h
+-- *** source amalgamation is turned off ***
+-- Generating inclusion header 'karbonit.h' in /Users/marcus/git/karbonit/include/karbonit/
+     - include /Users/marcus/git/karbonit/src/karbonit/archive.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/cache.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/column_doc.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/converter.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/doc.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/encode_async.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/encode_sync.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/encoded_doc.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/huffman.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/internal.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/io.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/it.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/pack.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/pack/huffman.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/pack/none.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/pred.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/pred/contains.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/pred/equals.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/query.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/strid_it.h
+     - include /Users/marcus/git/karbonit/src/karbonit/archive/visitor.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/abstract.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/arr-it.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/binary.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/col-it.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/commit.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/container.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/dot-eval.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/dot.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/field.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/find.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/func.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/insert.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/internal.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/item.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/key.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/markers.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/mime.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/obj-it.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/patch.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/pindex.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/prop.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/revise.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/rewrite.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/string-field.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/traverse.h
+     - include /Users/marcus/git/karbonit/src/karbonit/carbon/update.h
+     - include /Users/marcus/git/karbonit/src/karbonit/error.h
+     - include /Users/marcus/git/karbonit/src/karbonit/forwdecl.h
+     - include /Users/marcus/git/karbonit/src/karbonit/hexdump.h
+     - include /Users/marcus/git/karbonit/src/karbonit/json.h
+     - include /Users/marcus/git/karbonit/src/karbonit/json/json-parser.h
+     - include /Users/marcus/git/karbonit/src/karbonit/mem/memblock.h
+     - include /Users/marcus/git/karbonit/src/karbonit/mem/memfile.h
+     - include /Users/marcus/git/karbonit/src/karbonit/rec.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/async.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/bitmap.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/bloom.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/hash.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/hash/set.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/hash/table.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/opt.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/spinlock.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/str_hash.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/str_hash/mem.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/string.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/string_dict.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/thread_pool.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/thread_pool/monitor.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/thread_pool/stats.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/thread_pool/status.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/uintvar/marker.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/uintvar/stream.h
+     - include /Users/marcus/git/karbonit/src/karbonit/std/vec.h
+     - include /Users/marcus/git/karbonit/src/karbonit/stdinc.h
+     - include /Users/marcus/git/karbonit/src/karbonit/stdx/slicelist.h
+     - include /Users/marcus/git/karbonit/src/karbonit/stdx/unique_id.h
+     - include /Users/marcus/git/karbonit/src/karbonit/types.h
+     - include /Users/marcus/git/karbonit/src/karbonit/utils/convert.h
+     - include /Users/marcus/git/karbonit/src/karbonit/utils/num.h
+     - include /Users/marcus/git/karbonit/src/karbonit/utils/priority_queue.h
+     - include /Users/marcus/git/karbonit/src/karbonit/utils/sort.h
+     - include /Users/marcus/git/karbonit/src/karbonit/utils/strings.h
+     - include /Users/marcus/git/karbonit/src/karbonit/utils/time.h
+-- Inclusion header 'karbonit.h' has been successfully built
+-- Source files are: 
+     - '/Users/marcus/git/karbonit/include/karbonit/karbonit.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/cache.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/column_doc.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/converter.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/doc.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/encode_async.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/encode_sync.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/encoded_doc.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/huffman.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/internal.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/io.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/it.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pack.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pack/huffman.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pack/none.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pred.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pred/contains.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pred/equals.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/query.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/strid_it.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/visitor.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/abstract.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/arr-it.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/binary.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/col-it.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/commit.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/container.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/dot-eval.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/dot.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/field.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/find.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/func.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/insert.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/internal.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/item.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/key.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/markers.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/mime.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/obj-it.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/patch.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/pindex.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/prop.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/revise.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/rewrite.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/string-field.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/traverse.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/update.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/error.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/forwdecl.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/hexdump.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/json.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/json/json-parser.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/mem/memblock.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/mem/memfile.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/rec.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/async.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/bitmap.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/bloom.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/hash.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/hash/set.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/hash/table.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/opt.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/spinlock.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/str_hash.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/str_hash/mem.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/string.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/string_dict.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/thread_pool.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/thread_pool/monitor.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/thread_pool/stats.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/thread_pool/status.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/uintvar/marker.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/uintvar/stream.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/vec.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/stdinc.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/stdx/slicelist.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/stdx/unique_id.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/types.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/convert.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/num.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/priority_queue.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/sort.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/strings.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/time.h'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/cache.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/column_doc.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/converter.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/doc.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/encode_async.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/encode_sync.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/encoded_doc.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/huffman.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/internal.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/io.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/it.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pack.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pack/huffman.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/pack/none.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/query.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/strid_it.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/archive/visitor.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/arr-it.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/binary.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/col-it.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/commit.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/container.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/dot-eval.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/dot.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/field.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/find.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/func.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/insert.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/internal.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/item.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/key.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/markers.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/mime.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/obj-it.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/patch.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/pindex.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/prop.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/revise.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/rewrite.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/string-field.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/traverse.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/carbon/update.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/error.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/hexdump.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/json.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/json/json-parser.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/rec.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/async.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/bitmap.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/bloom.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/hash/set.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/hash/table.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/opt.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/spinlock.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/str_hash/mem.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/string.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/thread_pool.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/thread_pool/monitor.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/uintvar/marker.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/uintvar/stream.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/std/vec.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/stdx/slicelist.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/stdx/unique_id.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/convert.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/num.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/priority_queue.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/sort.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/strings.c'
+     - '/Users/marcus/git/karbonit/src/karbonit/utils/time.c'
+     - '/Users/marcus/git/karbonit/libs/duktape/duk_config.h'
+     - '/Users/marcus/git/karbonit/libs/duktape/duktape.h'
+     - '/Users/marcus/git/karbonit/libs/libb64/libb64.h'
+     - '/Users/marcus/git/karbonit/libs/duktape/duktape.c'
+     - '/Users/marcus/git/karbonit/libs/libb64/cdecode.c'
+     - '/Users/marcus/git/karbonit/libs/libb64/cencode.c'
+Bench sources: ../../read_bench.h;../../read_bench.c
+CMake Warning at /usr/local/lib/cmake/libbson-1.0/libbson-1.0-config.cmake:15 (message):
+  This CMake target is deprecated.  Use 'mongo::bson_shared' instead.
+  Consult the example projects for further details.
+Call Stack (most recent call first):
+  bench/carbon/src/core-ops/unmanaged/reads/bson/libbson/CMakeLists.txt:6 (find_package)
+
+
+--   libbson found version "1.16.0-pre"
+--   libbson include path "/usr/local/include/libbson-1.0"
+--   libbson libraries "/usr/local/lib/libbson-1.0.dylib"
+Bench sources: ../../read_bench.h;../../read_bench.c
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/marcus/git/karbonit
